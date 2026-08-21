@@ -25,7 +25,7 @@ relative to `skills/` unless noted. Repository-wide items live in
   - The plugin's skill-sync keeps its own manifest and atomically replaces skill
     directories, so a hand deletion is unlikely to survive a sync. Not verified further.
   - This blocks decision 14 and the M3 stage of
-    [../docs/KNOWLEDGE-VAULT-DESIGN.md](../docs/KNOWLEDGE-VAULT-DESIGN.md), both of which
+    [../docs/plans/knowledge-vault-design.md](../docs/plans/knowledge-vault-design.md), both of which
     assume a shared `reflect`.
   - The material worth keeping is already folded into `claude/reflect`; see its
     `ATTRIBUTIONS.md`. The `--sessions` archaeology idea is declined rather than deferred —
