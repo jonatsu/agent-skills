@@ -162,8 +162,8 @@ check_dangerous_patterns() {
   # credential/secret paths near network commands — needs human review
   mapfile -t exfil_hits < <(
     grep -rIlnE '\.ssh/|\.aws/credentials|\.env|id_rsa|GITHUB_TOKEN|SECRET|PASSWORD' \
-      -- "$dir" 2> /dev/null |
-      xargs -r grep -lE 'curl|wget|nc |ncat|/dev/tcp' 2> /dev/null || true
+      -- "$dir" 2> /dev/null \
+      | xargs -r grep -lE 'curl|wget|nc |ncat|/dev/tcp' 2> /dev/null || true
   )
   if ((${#exfil_hits[@]})); then
     warn "credential paths referenced alongside network commands (review for exfiltration):"
