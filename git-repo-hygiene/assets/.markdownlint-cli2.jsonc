@@ -1,0 +1,124 @@
+/*
+ * Configuration for MarkdownLint-CLI2:
+ * https://github.com/DavidAnson/markdownlint-cli2
+ */
+{
+  // Enable schema + autocompletion in editors
+  "$schema": "https://github.com/DavidAnson/markdownlint-cli2/raw/refs/heads/main/schema/markdownlint-cli2-config-schema.json",
+
+  // Only fix on demand (override with --fix)
+  "fix": false,
+
+  // Treat YAML front matter as non-content
+  "frontMatter": "(^---\\s*$[^]*?^---\\s*$)(\\r\\n|\\r|\\n|$)",
+
+  // For full information on the options and defaults, see:
+  // https://github.com/DavidAnson/markdownlint/tree/main#rules--aliases
+  // https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml
+  "config": {
+    "default": true,
+
+    // Use only ATX-style headings (e.g., # Heading 1)
+    "heading-style": "atx",
+
+    // Every level uses the same unordered-list marker.
+    "ul-style": "consistent",
+
+    // Nested unordered list indentation width
+    "ul-indent": {
+      "indent": 2,
+      "start_indented": false,
+    },
+
+    // Disallow hard tabs, except inside code blocks
+    "no-hard-tabs": {
+      "code_blocks": false,
+      "spaces_per_tab": 1,
+    },
+
+    // Allow at most 2 consecutive blank lines
+    "no-multiple-blanks": {
+      "maximum": 2,
+    },
+
+    // Enforce a max line length, but not inside code blocks/tables
+    "line-length": {
+      "code_block_line_length": 80,
+      "code_blocks": false,
+      "heading_line_length": 120,
+      "headings": true,
+      "line_length": 400,
+      "stern": true,
+      "strict": false,
+      "tables": false,
+    },
+
+    // Don't require fenced code blocks to show example command output
+    "commands-show-output": false,
+
+    // Don't require blank lines around headings
+    "blanks-around-headings": false,
+
+    // Duplicate headings: allow when in different sections
+    "no-duplicate-heading": {
+      "siblings_only": true,
+    },
+
+    // Require exactly one top-level heading per document
+    "single-title": true,
+
+    // Don't require blank lines around fenced code blocks
+    "blanks-around-fences": false,
+
+    // Permit safe inline HTML elements often used in docs
+    "no-inline-html": {
+      "allowed_elements": [
+        "p",
+        "a",
+        "img",
+        "br",
+        "sub",
+        "sup",
+        "details",
+        "summary",
+        "kbd",
+      ],
+    },
+
+    // Allow bare URLs (not just <angle-bracket> or [link]() form)
+    "no-bare-urls": false,
+
+    // Allow emphasis/strong text that reads like a heading
+    "no-emphasis-as-heading": false,
+
+    // Don't require a language tag on fenced code blocks
+    "fenced-code-language": false,
+
+    // Don't require the document to start with a top-level heading
+    "first-line-heading": false,
+
+    // Enforce fenced code blocks
+    "code-block-style": {
+      "style": "fenced",
+    },
+
+    // Enforce consistent emphasis/strong markers
+    "emphasis-style": {
+      "style": "consistent",
+    },
+    "strong-style": {
+      "style": "consistent",
+    },
+
+    // Ordered list markers must actually increment (1, 2, 3, ...)
+    "ol-prefix": {
+      "style": "ordered",
+    },
+
+    // Require consistent table column count/style across rows
+    "table-column-style": false,
+  },
+
+  // Use a specific formatter (only valid at root)
+  "outputFormatters": [["markdownlint-cli2-formatter-default"]],
+}

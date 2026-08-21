@@ -1,0 +1,7 @@
+# .mdformat.toml
+#
+# Default values are equal to having no configuration file at all.
+# Change the values for non-default behavior.
+
+end_of_line = "keep"
+number      = true

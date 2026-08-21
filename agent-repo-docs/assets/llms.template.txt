@@ -1,0 +1,14 @@
+# <Project Name>
+
+> <One-sentence summary of the project, with the key orienting facts.>
+
+<Optional: a short paragraph of orienting detail. Any Markdown except headings. Delete if unneeded.>
+
+## Docs
+
+- [README](README.md): <what it covers>
+- [<doc title>](<relative-path-or-url>): <optional note>
+
+## Optional
+
+- [<secondary doc>](<relative-path-or-url>): <can be skipped when a shorter context is needed>

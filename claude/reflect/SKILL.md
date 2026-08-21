@@ -1,0 +1,171 @@
+---
+name: reflect
+description: End-of-session (or on-demand) self-improvement sweep. Reviews the current conversation for uncaptured learnings — user corrections, stated preferences, avoidable mistakes, repeated command sequences, reusable patterns, and repo-specific operational discoveries — and routes each to its durable home (global memory, CLAUDE.md/rules, a repo's AGENTS.md/CLAUDE.md, an in-repo script, or a skill/agent). Also runs a periodic memory-maintenance pass that flags stale, superseded, duplicate, or self-invalidated memories for pruning, and drains the compaction backlog of sessions whose detail was summarized away before capture. Use when the user runs /reflect, says "capture learnings", "write this down", "update your rules/skills", "prune/review memories", "process the compaction backlog", "check pending captures", or at the end of a substantive session. Creates light artifacts directly; proposes heavy ones (skills, agents, global rules) and any memory deletion before acting.
+metadata:
+  author: Joonas Onatsu
+  license: MIT
+---
+
+# Reflect — Self-Improvement Sweep
+
+Distill the current session into durable improvements so the same corrections,
+feedback, and manual work are never re-derived. This skill operationalizes the
+`## Self-Improvement` section of `~/.config/claude/CLAUDE.md` — routing,
+thresholds, and the autonomy boundary all come from there.
+
+**Iron law: capture only what actually happened in this session.** Never invent
+a learning to fill the sweep. Every candidate must cite the turn or action it
+came from. If nothing qualifies, say so plainly and stop.
+
+## 1. Scan the session for candidates
+
+Look for each signal:
+
+- **Corrections** — the user corrected an approach, output, or assumption.
+- **Preferences** — the user stated how they want things done ("always…",
+  "never…", "from now on…", "I prefer…").
+- **Avoidable mistakes** — something went wrong that a captured guard would
+  prevent next time.
+- **Repetition** — a command sequence, script, or manual step recreated,
+  re-typed, or re-derived ~2–3× or more.
+- **Reusable patterns** — a method or role useful beyond this task (candidate
+  skill or agent prompt).
+- **Operational discoveries** — a non-obvious fact about the current repo
+  (paths, gotchas, sudo/permission boundaries, service quirks).
+
+This session is not the only source: §8 covers earlier sessions whose detail
+was compacted away before anyone captured it.
+
+## 2. Route each candidate by scope
+
+| Candidate | Destination |
+|---|---|
+| Cross-repo behavior / preference / correction | Global memory (`feedback`/`user`) |
+| Standing behavioral rule | `~/.config/claude/CLAUDE.md` (or `rules/`) |
+| Repo-specific operational fact | Current repo's `AGENTS.md` / `CLAUDE.md` |
+| Repeated command sequence | In-repo script / justfile recipe |
+| Cross-repo reusable method or role | Global `~/.config/claude/{skills,agents}` |
+| Repo-specific reusable method or role | Repo's `.claude/{skills,agents}` |
+
+Don't mix scopes: repo trivia never goes to global memory; global preferences
+never get buried in one repo.
+
+## 3. Apply the graduated ladder (thresholds)
+
+Promote to the cheapest durable form that fits:
+
+- Note / `AGENTS.md` entry — recurring knowledge or gotcha, ~2 encounters.
+- In-repo script / recipe — manual command sequence, ~3 uses.
+- Skill / agent prompt — reusable method or role, ~3–5 uses **and** useful
+  beyond one repo.
+- `CLAUDE.md` / rules change — any confirmed correction or stated standing
+  preference (once is enough).
+
+Below threshold → list the candidate in the report as "deferred", don't codify.
+
+## 4. Respect the autonomy boundary
+
+- **Light** (repo notes, `AGENTS.md` entries, in-repo scripts): create
+  directly, then report what changed.
+- **Heavy** (new/edited skills, agent prompts, global `CLAUDE.md`/rules):
+  propose first — show the exact text, the destination, and whether it is
+  global- or repo-scoped — and write only after the user approves.
+
+## 5. Write the captures
+
+- **Global memory**: one fact per file with frontmatter
+  (`type: user | feedback | project | reference`), plus a one-line pointer in
+  `MEMORY.md`. Check for an existing file that already covers it and update it
+  rather than duplicating; delete memories proven wrong.
+- `feedback`/`project` bodies: add **Why:** and **How to apply:** lines. Link
+  related memories with `[[name]]`.
+- **Repo files**: match the file's existing structure and voice; convert
+  relative dates to absolute (today is discoverable via the session context).
+- **New skills/agents**: follow `skill-forge` conventions for skills; match the
+  existing `agents/*.md` frontmatter for agents.
+- After any material config edit, run the repo hygiene gate
+  (formatter/linter/pre-commit) on the changed files before calling it done.
+
+## 6. Report
+
+Summarize as a table: **candidate → destination → action** (written /
+proposed / deferred-below-threshold), each with its evidence. List heavy
+proposals awaiting approval in a separate block so the user can approve or
+reject them individually.
+
+## 7. Memory maintenance (periodic)
+
+Global memory grows and goes stale. When invoked with a maintenance intent
+("prune memories", "review memories") or roughly every ~10 captures, sweep
+`~/.config/claude/projects/<project>/memory/` for entries to retire:
+
+- **Self-invalidated** — the memory names a condition for its own removal
+  ("update or remove once X") and X has happened.
+- **Superseded** — a newer memory or a committed rule now covers it (e.g. a
+  `feedback` memory that has since been promoted into `CLAUDE.md`).
+- **Duplicate** — two files cover the same fact; merge into one.
+- **Wrong / drifted** — the memory contradicts the current repo, config, or
+  the user's latest guidance.
+- **Dangling** — before acting on any memory, verify the files, flags, and
+  paths it names still exist; a memory is only as current as its last write.
+
+Deleting a memory changes user data: **propose deletions and merges, don't
+perform them silently.** Present each candidate with its reason and evidence,
+and act only on approval. When a memory is deleted or merged, also remove or
+update its one-line pointer in `MEMORY.md`. Recalled memories may be stale —
+re-verify against live files before recommending anything based on them.
+
+## 8. Compaction backlog (`capture-pending.jsonl`)
+
+The `PreCompact` hook appends one breadcrumb per compaction to
+`${CLAUDE_CONFIG_DIR:-~/.config/claude}/hooks/capture-pending.jsonl` — fields
+`ts`, `session_id`, `cwd`, `transcript_path`, `trigger`. Each line marks a
+session whose detail was summarized away, and is the only surviving pointer
+back to it. Nothing else reads this file.
+
+**Always report the count. Drain it on request or once it grows past ~20.**
+
+```bash
+wc -l < "${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/hooks/capture-pending.jsonl"
+```
+
+Include the count in the §6 report even when not draining, so the backlog stays
+visible instead of accumulating silently.
+
+### Process one entry
+
+1. **Check the transcript still exists.** Paths decay as old sessions are
+   cleaned up. If `transcript_path` is gone the entry is unrecoverable — drop
+   it, report it as expired, and move on. NEVER retain a dangling entry.
+2. **NEVER read a transcript in full.** They routinely exceed the context
+   window. Search it for the §1 signals, or hand the entry to a subagent that
+   returns only candidates with quoted evidence.
+3. **Route to the entry's own project, not the current one.** Memory is siloed
+   per project, and the correct silo is `<dirname of transcript_path>/memory/`
+   — derive it from the breadcrumb, NEVER assume the open project's silo. A
+   repo-scoped fact belongs in the `AGENTS.md`/`CLAUDE.md` at that entry's
+   `cwd`; if that checkout is absent, defer it rather than guessing.
+4. **Apply §2–§5 unchanged.** A candidate recovered from a transcript still
+   goes through routing, thresholds, and the autonomy boundary.
+
+The iron law holds here too: evidence MUST be quoted from the transcript. A
+breadcrumb proves a compaction happened, not that anything was learned — most
+yield nothing, and "no candidates" is a correct result for an entry.
+
+### Prune
+
+Drop an entry only once it is processed or expired, one `session_id` at a time:
+
+```bash
+sed -i '/"session_id":"<id>"/d' \
+  "${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/hooks/capture-pending.jsonl"
+```
+
+Use the in-place form. A `>` redirect into a temp file is rejected outside
+`/tmp` by lean-ctx's write doctrine, so the read-filter-rewrite shape fails
+here even though it is the more familiar idiom.
+
+NEVER truncate or clear the file wholesale — an unprocessed line deleted that
+way loses its transcript pointer permanently. The hook may append while the
+sweep runs, so re-check the count afterwards and leave anything new in place.
+The file is runtime state and gitignored; never stage it.
