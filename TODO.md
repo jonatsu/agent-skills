@@ -2,7 +2,8 @@
 
 Open items for the skills stack. Split out of `skills/README.md` on 2026-08-21 so the
 README describes how the stack works and this file tracks what is still owed. Paths are
-relative to `skills/` unless noted.
+relative to `skills/` unless noted. Repository-wide items live in
+[../TODO.md](../TODO.md).
 
 - **`opencode/headroom-management`** — currently OpenCode-only; generalize it to work with
   Claude Code too, then move to `shared/`.
