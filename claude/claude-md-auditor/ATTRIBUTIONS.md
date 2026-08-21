@@ -29,9 +29,9 @@ This is closer to a rewrite than a port. Provenance per file:
 
 ## Adaptation note
 
-A review of the upstream plugin is recorded at
-`docs/claude-md-management-plugin-review.md`, with file:line evidence for each
-defect below. The upstream plugin is not installed here; this skill replaces it.
+The defects that drove this rewrite are recorded below, each with its file:line
+evidence in the upstream plugin. The upstream plugin is not installed here; this
+skill replaces it.
 
 Material changes, in the order they matter:
 
