@@ -6,8 +6,29 @@ relative to `skills/` unless noted.
 
 - **`opencode/headroom-management`** — currently OpenCode-only; generalize it to work with
   Claude Code too, then move to `shared/`.
-- **`claude/reflect`** — the OpenCode `--sessions` session-archaeology feature could be
-  ported/generalized if wanted.
+- **`claude/reflect` — re-evaluate the OpenCode side.** `reflect` stays in `claude/`
+  rather than moving to `shared/`: OpenCode's `skills/reflect/` is auto-installed by the
+  `oh-my-opencode-slim@2.2.8` plugin, so a shared copy would be a collision rather than a
+  deploy — Kasetto does not own that directory, and the plugin reinstalls its own version.
+  The drift is accepted for now. Revisit once it is decided whether the plugin stays and
+  whether its skill auto-install can be disabled. Detected 2026-08-21 while evaluating the
+  two skills:
+  - Of the 13 OpenCode skill directories no lock owns, 8 match the plugin's bundled set
+    (`clonedeps`, `codemap`, `deepwork`, `oh-my-opencode-slim`, `reflect`, `simplify`,
+    `verification-planning`, `worktrees`) and `release-smoke-test` matches a skill upstream
+    keeps under `.agents/`. The other four — `common`, `config-benchmark`,
+    `opencode-plugins`, `writing` — are unexplained.
+  - The installed copy hardcodes `/home/user/.local/share/opencode/opencode.db`, a
+    contributor's own machine path, so its `--sessions` mode cannot run here. Upstream has
+    since fixed it; the local copy is frozen at the 2026-07-12 install.
+  - The plugin's skill-sync keeps its own manifest and atomically replaces skill
+    directories, so a hand deletion is unlikely to survive a sync. Not verified further.
+  - This blocks decision 14 and the M3 stage of
+    [../docs/KNOWLEDGE-VAULT-DESIGN.md](../docs/KNOWLEDGE-VAULT-DESIGN.md), both of which
+    assume a shared `reflect`.
+  - The material worth keeping is already folded into `claude/reflect`; see its
+    `ATTRIBUTIONS.md`. The `--sessions` archaeology idea is declined rather than deferred —
+    §8's compaction backlog covers that ground Claude-natively.
 - **Quality-refresh pass** — triaged `skill-review` audit of pre-`skill-forge` skills (e.g.
   the `grilling` stub); report-first. Can co-review with a second model via
   OpenCode — see [../docs/skill-co-review.md](../docs/skill-co-review.md).

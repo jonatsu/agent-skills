@@ -50,6 +50,12 @@ was compacted away before anyone captured it.
 Don't mix scopes: repo trivia never goes to global memory; global preferences
 never get buried in one repo.
 
+**Check the destination before proposing a new artifact.** Read what already
+lives there — the memory silo, the rules file, the repo's `AGENTS.md`, the
+deployed skills and agents. When something already covers the candidate, extend
+it; a near-duplicate is worse than no capture, because two artifacts on one
+subject drift apart and neither is authoritative.
+
 ## 3. Apply the graduated ladder (thresholds)
 
 Promote to the cheapest durable form that fits:
@@ -62,6 +68,13 @@ Promote to the cheapest durable form that fits:
   preference (once is enough).
 
 Below threshold → list the candidate in the report as "deferred", don't codify.
+
+Threshold is necessary, not sufficient. Anything written to `CLAUDE.md` or
+`rules/` is re-read at every session start and applied to sessions it was never
+written for. Before codifying one, state what it costs when it fires on the
+wrong session: a rule that makes the agent more eager, more expensive, or more
+invasive needs a benefit that clearly outweighs that. Narrow the wording to the
+case actually observed.
 
 ## 4. Respect the autonomy boundary
 
@@ -83,6 +96,11 @@ Below threshold → list the candidate in the report as "deferred", don't codify
   relative dates to absolute (today is discoverable via the session context).
 - **New skills/agents**: follow `skill-forge` conventions for skills; match the
   existing `agents/*.md` frontmatter for agents.
+- **Never carry a secret into a capture.** Transcripts, logs, and scrollback
+  hold credentials, tokens, hostnames, and client-identifying detail. A
+  captured fact states the mechanism without the secret — name the file a
+  credential lives in, never its value. These files are committed to a
+  repository intended for publication.
 - After any material config edit, run the repo hygiene gate
   (formatter/linter/pre-commit) on the changed files before calling it done.
 
