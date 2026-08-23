@@ -242,10 +242,13 @@ The pointer in the parent, under the heading that stayed:
 leaves a reader unable to tell what left. **The child gains no title:** the moved heading arrives as
 it is, and adding an H1 is an edit in a step that makes none. A document whose whole body is one
 section is a fresh fork's expected shape, and the checker exempts it from the section ceiling rather
-than proposing it fork itself. **If the parent's title names the departed aspect, strike it** — a
-title is a jurisdiction claim, not a claim about the subject, so this is pointer-class annotation and
-permitted on a locked parent. Deletion only: "Vault design and implementation plan" becomes "Vault
-design", never reworded or resequenced.
+than proposing it fork itself. **Strike any jurisdiction claim the departed content leaves behind** —
+the title, and any sentence stating what the document covers. Such a claim describes the document's
+jurisdiction rather than its subject, so striking it is pointer-class annotation and permitted on a
+locked parent. The title is the usual case: "Vault design and implementation plan" becomes "Vault
+design". The bound is deletion, tested literally — **a span is strikeable only if deleting it verbatim
+leaves valid prose and nothing else on the line changes.** Anything needing a word substituted or a
+sentence resequenced is a revision, and waits for the separate step.
 
 **Authority transfers with the content.** The pointer means *this content now lives at X*, not *this
 content is still true*. The locked parent stays honest not by staying correct but by no longer

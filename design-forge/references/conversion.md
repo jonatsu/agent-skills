@@ -119,11 +119,13 @@ Order matters. Do it in this order and stop at the first thing that does not ver
      fresh fork; the checker exempts it from the section ceiling rather than proposing it fork itself.
    - **The parent keeps the heading and puts the pointer under it.** A pointer with no heading floats
      between two unrelated sections, and a reader cannot tell what left.
-   - **If the parent's title names the aspect that just left, strike that aspect from it.** A title is
-     a jurisdiction claim, not a claim about the subject, so this is pointer-class annotation — the
-     same primitive as the pointer itself. The permitted edit is deletion and nothing else: "Vault
-     design and implementation plan" becomes "Vault design". NEVER reword, resequence, or improve the
-     remainder.
+   - **Strike any jurisdiction claim the departed content leaves behind** — the title, and any
+     sentence stating what the document covers. Such a claim describes the document's jurisdiction
+     rather than its subject, so striking it is pointer-class annotation — the same primitive as the
+     pointer itself. The title is the usual case: "Vault design and implementation plan" becomes
+     "Vault design". The bound is deletion, tested literally: **a span is strikeable only if deleting
+     it verbatim leaves valid prose and nothing else on the line changes.** NEVER reword, resequence,
+     or improve the remainder — that is a revision, and it waits for the separate step.
    - Remove the claim from the parent's `owns` if step 1 put it there — see the note below.
    - Carry the parent's `handling` value onto the child. A restriction travels with its content.
    - Verify byte-identity before starting the next row, after the hygiene hooks have run.
