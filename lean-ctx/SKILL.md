@@ -188,3 +188,8 @@ Do NOT load:
 - Do not use hook escapes or raw bypasses as normal workflow. Use them only for
   concrete debugging, interoperability, or recovery reasons, and return to
   lean-ctx tools/MCP when available.
+- Do not run `lean-ctx cheatsheet` or follow it. It is a static upstream panel,
+  not live state: it recommends `update` and `setup` — both writer commands that
+  overwrite the deployed `SKILL.md` — routes edit-prep to `full` instead of
+  `anchored`, and presents out-of-profile tools as the standard workflow. The
+  shell hook triages it down to two header lines anyway.
