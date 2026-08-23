@@ -12,7 +12,7 @@
 
 Four artifacts were reviewed on 2026-08-23 during the design session that produced this skill. The
 review, the licence readings, and the grep evidence behind them are recorded in
-`docs/plans/requirements-skill.md` in this repository. The licences below are as recorded there; they
+`docs/plans/archived/requirements-skill.md` in this repository. The licences below are as recorded there; they
 were read from the upstream LICENSE files by that session, not re-verified when this skill was
 written.
 

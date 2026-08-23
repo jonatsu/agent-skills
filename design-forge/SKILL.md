@@ -1,6 +1,6 @@
 ---
 name: design-forge
-description: Requirements and design documentation as an enforced corpus contract — frontmatter lifecycle, ownership claims, lock semantics, length ceilings, and the operations over them (create, lock, amend, fork-with-pointer, supersede, convert an existing docs tree). Use when writing or revising a requirements or design document, when a document or section has grown too long, when a design should be frozen, when settled content needs changing, when a section should become its own document, or when an existing docs tree needs bringing under the contract. Triggers — 'write requirements', 'requirements doc', 'SRS', 'design doc', 'freeze this design', 'lock this document', 'supersede this', 'amend this', 'fork this section out', 'split this document', 'convert these docs', 'system requirements', 'hardware requirements'. Covers software, system and hardware. NOT for brainstorming an unshaped idea, which is idea-forge. NOT for pressure-testing a written plan, which is grilling. NOT for ADRs or changelogs.
+description: Requirements and design documentation as an enforced corpus contract — frontmatter lifecycle, ownership claims, lock semantics, length ceilings, and the operations over them (create, lock, amend, fork-with-pointer, supersede, convert an existing docs tree). Use when writing or revising a requirements or design document, when a document or section has grown too long, when a design should be frozen, when settled content needs changing, when a section should become its own document, or when an existing docs tree needs bringing under the contract. Triggers — 'write requirements', 'requirements doc', 'SRS', 'design doc', 'freeze this design', 'lock this document', 'supersede this', 'amend this', 'split this document', 'convert these docs', 'customer confidential', 'system requirements', 'hardware requirements'. Covers software, system and hardware. NOT for brainstorming an unshaped idea, which is idea-forge. NOT for pressure-testing a written plan, which is grilling. NOT for ADRs or changelogs.
 metadata:
   author: Joonas Onatsu
   license: MIT
@@ -307,12 +307,6 @@ skipped and perform the checks by reading — NEVER claim they ran.
 
 The generated index carries a marker comment. The script refuses to overwrite an index file that lacks
 it, so a hand-written file is never silently destroyed.
-
-## Requirement-level authoring
-
-Load `references/authoring.md` when writing individual requirements rather than governing the corpus —
-it carries the atomic requirement schema, the identifier scheme, acceptance-criteria patterns, and the
-vague-wording gate.
 
 ## Anti-patterns
 
