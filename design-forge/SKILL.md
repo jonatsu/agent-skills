@@ -33,7 +33,8 @@ PCB. What changes is content vocabulary.
 ### Reference files
 
 Load on demand at the point of need, never up front. Each costs context the operation at hand may not
-need, and the protocols in this file are complete without them.
+need, and every protocol in this file is complete without them — except Convert, which says so where
+it routes.
 
 | File | Load when | Do NOT load |
 |---|---|---|
@@ -42,28 +43,33 @@ need, and the protocols in this file are complete without them.
 | `references/authoring.md` | Writing or reviewing the text of individual requirements | Corpus-level governance — owning a document says nothing about its requirement wording |
 | `references/domains.md` | The subject is hardware or system-level | Software-only requirements. Its verification vocabulary is not the software one, and applying it there produces requirements nobody can verify |
 
-## Workflow
+## The decisions
 
-Copy this checklist and check items off as they complete:
+This is a routing skill, not a workflow, and it deliberately has no progress checklist: pick the
+operation and run its protocol. Exactly one thing is ordered — **the contract in force is established
+before any operation runs.** The rest are decisions, each with the trap that makes it one.
 
-```text
-Design Forge Progress:
+**Before anything, ask: which contract is in force?** Never "does this repo look organised" — that
+question has a wrong answer that looks right, and answering it from evidence is the one move this
+skill forbids outright.
 
-- [ ] Step 1: Establish the contract in force ⛔ BLOCKING
-  - [ ] 1.1 Read the recorded mode declaration
-  - [ ] 1.2 If absent, present the evidence and ask — imposed or house convention ⚠️ REQUIRED
-  - [ ] 1.3 Record the answer where the repo keeps agent instructions
-  - [ ] 1.4 Record the trigger — when the next agent must load this skill
-  - [ ] 1.5 Name the enforcement surface in that same record, or declare advisory-only out loud
-- [ ] Step 2: Route to the operation
-- [ ] Step 3: Run that operation's protocol
-  - [ ] 3.1 Mint no type and no ownership claim the user has not confirmed ⚠️ REQUIRED
-  - [ ] 3.2 Check ownership claims against the index before writing
-- [ ] Step 4: Regenerate the index and run the checker
-- [ ] Step 5: Report incidents only — never an audit
-```
+**Before minting a type or a claim, ask: did the user confirm this one?** Mint freely and a freeform
+vocabulary becomes per-document config, at which point the contract constrains nothing.
 
-## Step 1: Establish the contract in force ⛔ BLOCKING
+**Before writing an ownership claim, ask: does the index already carry it?** A collision is an
+incident to report, never a tie to break.
+
+**Before changing settled content, ask: is this a sentence or an aspect?** A sentence is an amendment,
+an aspect is a fork. When clearing the lock starts to look like the answer, the question is wrong.
+
+**Before reporting, ask: did this actually block me?** The trigger is "I would have to guess to
+proceed", not "this looks bad". An audit nobody asked for trains the reader to skim past the one
+report that mattered.
+
+Close by regenerating the index and running the checker. The pre-delivery checklist at the end of this
+file is the exit gate.
+
+## Establish the contract in force ⛔ BLOCKING
 
 Every check in this skill runs against **the active contract, whichever is in force** — never against
 a fixed template this skill ships.
@@ -97,7 +103,7 @@ signal that a fork relocates verbatim or that the index is generated. Without an
 declaration *reads* as enforced while nothing checks it — this skill's own anti-pattern, committed by
 following this skill. `none — advisory-only` is a valid answer to the second. Silence is not.
 
-## Step 2: Route to the operation
+## Route to the operation
 
 | The user wants | Operation |
 |---|---|
@@ -224,11 +230,22 @@ NEVER combine the steps. "Fork it out and rewrite it" looks like relocation goin
 coming out, and nothing can tell afterwards. When asked for both, do them as two steps the user can
 see.
 
-The pointer in the parent:
+The pointer in the parent, under the heading that stayed:
 
 ```markdown
+## Fetch mechanics
+
 > Authority on fetch mechanics moved to [capture-and-fetch.md](capture-and-fetch.md).
 ```
+
+**The heading stays and the pointer goes under it** — one floating between two unrelated sections
+leaves a reader unable to tell what left. **The child gains no title:** the moved heading arrives as
+it is, and adding an H1 is an edit in a step that makes none. A document whose whole body is one
+section is a fresh fork's expected shape, and the checker exempts it from the section ceiling rather
+than proposing it fork itself. **If the parent's title names the departed aspect, strike it** — a
+title is a jurisdiction claim, not a claim about the subject, so this is pointer-class annotation and
+permitted on a locked parent. Deletion only: "Vault design and implementation plan" becomes "Vault
+design", never reworded or resequenced.
 
 **Authority transfers with the content.** The pointer means *this content now lives at X*, not *this
 content is still true*. The locked parent stays honest not by staying correct but by no longer
@@ -261,7 +278,7 @@ that drops it launders the restriction exactly as a one-step fork launders a rew
 Conversion is a corpus-scale sequence of the fork operation, so it inherits fork's guarantees. It is
 **plan, approve, then execute** — never a single rewriting pass.
 
-Start with `check_corpus.py <dir> --survey`, which produces the Phase 1 inventory. Then load
+Start with the checker's `--survey` mode, which produces the Phase 1 inventory. Then load
 `references/conversion.md` before going further. Do not improvise conversion from this summary.
 
 ## Length ceilings
@@ -299,12 +316,20 @@ default exists.** Where a default exists, take it and say so.
 
 ## The checker
 
+**`<skill-dir>` below is the directory this file was loaded from — resolve the script against it,
+never against the working directory.** `scripts/check_corpus.py` is a path inside the skill package,
+while the agent's cwd is the project root, where that path either misses or hits an unrelated
+`scripts/` the project owns. Substitute the real directory; NEVER type these commands literally.
+
 ```bash
-python3 scripts/check_corpus.py <docs-dir> [--index <path>] [--quiet]
-python3 scripts/check_corpus.py <docs-dir> --survey
-python3 scripts/check_corpus.py <docs-dir> --check-index <path>
-python3 scripts/check_corpus.py --verify-fork <parent>:'## Section' <child> [--since <rev>]
+python3 <skill-dir>/scripts/check_corpus.py <docs-dir>
 ```
+
+**Four modes, and `--help` is the authority on their exact flags** — this file deliberately does not
+copy them, because a transcribed flag list is wrong from the next change onward while still reading as
+authoritative. The default validates; `--survey` inventories a corpus not yet under the contract;
+`--check-index` compares without writing; `--verify-fork` checks a relocation. What follows is why each
+exists and when to reach for it, which `--help` does not carry.
 
 The default mode validates every frontmatter block against the contract, reports ownership collisions,
 verifies amendment markers, reports ceiling breaches, and regenerates the index from the `owns`
@@ -326,8 +351,10 @@ hygiene hooks trim them. It shells out to `git`; where `git` is absent it says s
 
 Exit 1 on contract errors; exit 0 on warnings, because ceilings never block.
 
-MUST establish the interpreter with `command -v python3` first. When it is absent, say the checker was
-skipped and perform the checks by reading — NEVER claim they ran.
+MUST establish two things before running: the interpreter, with `command -v python3`, and the script
+itself, by confirming `<skill-dir>/scripts/check_corpus.py` exists. When either is missing, say the
+checker was skipped, name which one was absent, and perform the checks by reading — NEVER claim they
+ran, and NEVER read a `No such file` as a clean corpus.
 
 The generated index carries a marker comment. The script refuses to overwrite an index file that lacks
 it, so a hand-written file is never silently destroyed.
@@ -348,7 +375,8 @@ it, so a hand-written file is never silently destroyed.
 - Auditing the corpus when nothing blocked the operation at hand.
 - Recording a mode declaration that names no trigger and no enforcement surface.
 - Claiming a rule is enforced when no enforcement surface exists.
-- Claiming the checker ran when `python3` was never probed.
+- Claiming the checker ran when `python3` was never probed or the script was never located.
+- Invoking the checker by a working-directory-relative path instead of resolving it against the skill.
 - Treating `locked` as a lifecycle value, or `superseded` as permission to edit.
 
 ## Pre-delivery checklist

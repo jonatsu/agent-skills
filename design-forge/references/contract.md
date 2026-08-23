@@ -118,7 +118,7 @@ Declared once by a human, recorded where the repo already keeps agent instructio
 - Trigger: load the `design-forge` skill before writing or restructuring anything under a corpus root
 - Corpus roots: `docs/design/`
 - Index: `docs/design/INDEX.md` — generated, never hand-edited
-- Enforcement surface: `make check-docs` — whatever command this repo already runs
+- Enforcement surface: <the command this repo already runs, or `none — advisory-only`>
 - Types in use: `design`, `requirements`, `milestone`
 - Ownership claims: see the generated index
 ```
@@ -133,12 +133,14 @@ row is not.
 **`Corpus roots:` is plural.** A repo may have more than one — a live corpus and an archive, say. Each
 needs its own index line, or an explicit note that it sits below the two-document index threshold.
 
-**Name what this repo actually runs.** The row above is an example, not a requirement to adopt any
-particular runner. A pre-commit hook, a `make` target, an npm script, a `just` recipe, a CI job — all
-are enforcement surfaces. What matters is that the named command exists, that it invokes the checker,
-and that something already runs it without being asked. A command nobody invokes is not a surface, and
-naming one that does not exist is the same failure as naming none. NEVER invent a runner the repo does
-not have: where nothing suitable exists, `none — advisory-only` is the honest value.
+**Name what this repo actually runs.** That row is left as a placeholder deliberately, because it is
+the one row that fails silently when it is wrong: a pasted-in runner name reads as enforcement while
+nothing runs. Every other row fails loudly. A pre-commit hook, a `make` target, an npm script, a
+`just` recipe, a CI job — all are enforcement surfaces. What matters is that the named command
+exists, that it invokes the checker, and that something already runs it without being asked. A
+command nobody invokes is not a surface, and naming one that does not exist is the same failure as
+naming none. NEVER invent a runner the repo does not have: where nothing suitable exists,
+`none — advisory-only` is the honest value.
 
 For a repo that keeps its own convention:
 

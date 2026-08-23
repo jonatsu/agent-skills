@@ -182,3 +182,10 @@ artifacts to ask for; their internal structure was not read and is not described
 This table is the honest state of the research behind this file. When a project needs one of the
 secondary-only items to be load-bearing, buy or borrow the standard and read it — do not promote a
 compliance-lab summary to a citation.
+
+**Researched 2026-08-23, and nothing here re-checks itself.** Standard numbers, directive references,
+method numbers and substance lists are revised on their own schedules, and a superseded citation reads
+exactly like a current one. Treat every figure and identifier above as carrying that date: verify it
+against the issuing body before it becomes load-bearing in a document someone will be held to. The
+vendor reliability notes behind the FIT worked example are cited by kind rather than by name, so that
+figure is illustrative of the temperature effect and is not a citable source.

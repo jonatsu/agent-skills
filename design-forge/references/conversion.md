@@ -36,10 +36,11 @@ across the very documents being moved.
 ## Phase 1 — survey
 
 Read-only. Produce an inventory, not an opinion. Start with the checker, which does the structural
-half mechanically:
+half mechanically. `<skill-dir>` is the directory this skill loaded from, per `SKILL.md`'s checker
+section — never the working directory:
 
 ```bash
-python3 scripts/check_corpus.py <corpus-dir> --survey
+python3 <skill-dir>/scripts/check_corpus.py <corpus-dir> --survey
 ```
 
 It reports each document's length, its sections with line counts, and which sections are fork
@@ -108,7 +109,9 @@ Order matters. Do it in this order and stop at the first thing that does not ver
 1. **Frontmatter first, no content moves.** Every document gets its approved block. Nothing else in
    the file changes. After this step the checker runs and the index generates, so the ownership map
    exists before any content moves against it.
-2. **Forks, one at a time.** For each row of the approved table:
+2. **Forks, one at a time.** The heading, title and H1 rules below are stated again in `SKILL.md`'s
+   Fork section, deliberately — a single fork must not have to load this file to learn them. Change
+   both copies together. For each row of the approved table:
    - Cut the exact line range, heading included. Do not retype it, do not reflow it, do not fix it.
    - Create the destination with its frontmatter, `lifecycle: draft`, unlocked, and the moved claim.
    - Paste the range in verbatim. **The moved heading stays as it is and the child gains no title.**
@@ -147,7 +150,7 @@ understanding, and a conversion is precisely the moment when nobody has re-read 
 The relocated text must be identical to what left. Use the checker:
 
 ```bash
-python3 scripts/check_corpus.py --verify-fork PARENT.md:'## Section' CHILD.md --since HEAD
+python3 <skill-dir>/scripts/check_corpus.py --verify-fork PARENT.md:'## Section' CHILD.md --since HEAD
 ```
 
 It extracts the section from the parent at `--since` and compares it to the child's body, reporting the
@@ -161,6 +164,8 @@ this phase prescribes: the child is untracked and produces no diff at all withou
 parent's diff also carries the frontmatter step 1 added, because both steps share one working tree;
 and the retained heading is coalesced as context, so the two hunks legitimately differ in length. All
 three read as a mismatch on a correct fork, and a check that cries wolf is a check people override.
+*Recorded 2026-08-23 against git 2.43.0 — these are claims about `git diff` output, so re-check them
+if that behaviour changes.*
 
 For a corpus not under version control, checksum the range before and after.
 
