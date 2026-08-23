@@ -37,8 +37,9 @@ parent session; loading a skill or config from a directory that is itself a
 project.
 
 **Markers are not only `.git`.** `package.json`, `Cargo.toml`, `pyproject.toml`,
-`go.mod` and friends capture too, so stripping `.git` from a scratch clone does not
-prevent it.
+`go.mod`, `go.work`, `Makefile`, and `CMakeLists.txt` all capture, so stripping
+`.git` from a scratch clone does not prevent it. Treat any common project file as
+a marker rather than working from a list.
 
 **The root latches to the OUTERMOST marker-bearing ancestor of the touched path,
 not the nearest**, so the captured root can sit far above the file that triggered
@@ -63,6 +64,11 @@ lock times out.
 
 **Root oracles** (there is no root-resolution log): the `(root: …)` string in any
 jail error, and the `Session state … root: …` line in `lean-ctx doctor`.
+
+**One jail error IS worth retrying.** A message reading `Auto-detected … Retry the
+read.` is language-cache auto-registration, not capture: retry once and it
+succeeds. It is the only jail-shaped error that a retry fixes — every other one
+should not be retry-looped, least of all by re-passing `cwd`.
 
 **While jailed**: native file read/write/edit tools pass through; native shell
 does not — it returns the jail error or runs in the captured root.
