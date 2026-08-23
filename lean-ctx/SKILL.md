@@ -20,20 +20,31 @@ doing so, and skip the rest of this skill. NEVER wait for `ctx_*` tools to
 appear, NEVER guess a tool name, and NEVER install lean-ctx to satisfy this
 rule. A missing tool is a fallback, not a task.
 
-## Workflow
+## Three questions that decide everything here
 
-```text
-lean-ctx skill flow:
+**Reading — what do I actually need from this file?** The mode is the decision,
+not an afterthought. API surface → `signatures`. Structure → `map`, and it is the
+only structural mode for md/json/yaml/toml. About to edit → `anchored`. Exact
+bytes → `raw`, paged with `start_line`+`limit`, because it truncates at an output
+cap. Never `full` for orientation: reading more is not understanding more.
 
-- [ ] Step 1: Inspect narrowly ⚠️ REQUIRED
-  - [ ] Use `ctx_tree`, `ctx_glob`, `ctx_search`, `ctx_read`
-  - [ ] Start `signatures`/`map`; use `anchored` before patching
-- [ ] Step 2: Choose execution path ⚠️ REQUIRED
-  - [ ] Use `ctx_shell` when output may be large, compressible, or worth reuse
-  - [ ] Use `ctx_patch` for anchored/batch edits; retry once on stale anchors
-- [ ] Step 3: Load only needed refs
-- [ ] Step 4: Verify with repo-native checks ⚠️ REQUIRED
-```
+**Trusting — could this result be lying to me?** Ask before acting, because each
+of these returns a plausible success. A count at 20 or 200 is a floor, never a
+total. A short shell list may be silently clipped — ask for `| wc -l` in the same
+call. Branch structure read from a compressed mode is not evidence. A
+`[REDACTED:…]` marker is usually a display artifact, so check it with a native
+read, never with `ctx_shell`, which redacts its own stdout and will confirm the
+phantom.
+
+**Editing — what is the smallest op that fails loudly?** Prefer `replace_unique`:
+no anchored read, no hash to go stale, and a non-unique match errors instead of
+editing the wrong line. Reach for `replace_all` only knowing it rewrites the file
+at `0600` and strips `+x`. Anchored ops need a fresh `anchored` read; on CONFLICT
+retry once from the anchors the error hands back, then stop. Never use `dry_run`
+to check an anchor — it answers before opening the file.
+
+Then verify with the repo's own checks, never with a `ctx_*` read of what you
+just wrote.
 
 ## Confirmation gates
 
@@ -75,10 +86,8 @@ speculatively costs more than the trap it would have prevented.
   especially a path-jail key.
 - `references/appendix-mcp-tools.md` — to find which tool does a job and which
   profile exposes it. Trust the per-row `Profile` column, not any total.
-- `references/appendix-cli-map.md` — when you need a CLI command name and
-  `--help` is not reachable.
-- `references/appendix-reference-docs.md` — **900+ lines, larger than the rest of
-  the skill combined.** Load ONE named section (e.g. `## 09 — Team, Cloud & CI`),
+- `references/appendix-reference-docs.md` — **the largest file here, bigger than
+  the rest combined.** Load ONE named section (e.g. `## 09 — Team, Cloud & CI`),
   never the file, and only for upstream surface no other ref covers:
   memory/knowledge, multi-agent, team/cloud/CI, analytics, security posture.
 

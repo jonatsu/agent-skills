@@ -168,29 +168,9 @@ findings/decisions, `ctx_knowledge` operations, OKF export/import, gotchas.
 | Session (CCP) | one working session | `sessions/<id>.json` | auto on new session in same project |
 | Knowledge | whole project, forever | `knowledge/<project-hash>/` | on demand + auto at session start |
 
-### Session commands
-
-```bash
-lean-ctx session task "Refactor auth [40%]"
-lean-ctx session finding "JWT validation in auth/verify.rs"
-lean-ctx session decision "Use session cookies, not JWT"
-lean-ctx session status / save / load [id] / reset
-lean-ctx sessions list / show [id] / delete <id> / cleanup [days]
-lean-ctx sessions doctor [--fix]    # diagnose/repair session restore
-```
-
-### Knowledge commands
-
-```bash
-lean-ctx knowledge remember "Payments use Stripe; secret in STRIPE_WH"
-lean-ctx knowledge recall "how do payments work"
-lean-ctx knowledge search "stripe"
-lean-ctx knowledge status / health
-lean-ctx knowledge consolidate [--all]   # import session + run lifecycle
-lean-ctx knowledge export --output kb.json
-lean-ctx knowledge export --format okf --output ./kb-okf   # portable Markdown
-lean-ctx knowledge import kb.json --merge
-```
+The `lean-ctx session`, `sessions`, and `knowledge` subcommands are
+self-describing; take their spelling from `--help`. The distinctions below are
+the part that is not obvious.
 
 ### Agent must know
 
@@ -519,39 +499,11 @@ crypto audit, per-agent cost.
 | Task tracking | `ctx_task` | shared task board |
 | Context transfer | `ctx_share` | "here, look at these files I already loaded" |
 
-### Key operations
-
-```text
-ctx_agent action=register agent_type=cursor role=dev
-ctx_agent action=status status=active message="implementing auth"
-ctx_agent action=list / info / sync
-ctx_agent action=post message="auth done" category=status [to_agent=<id>]
-ctx_agent action=read                  # poll messages
-ctx_agent action=diary category=discovery content="rate limiting in mw/rl.rs"
-ctx_agent action=recall_diary / diaries
-ctx_agent action=share_knowledge message="db=postgres;cache=redis"
-ctx_agent action=receive_knowledge
-ctx_agent action=handoff to_agent=<id> message="finished; please test"
-```
-
-### Handoff bundles (`ctx_handoff`)
-
-```text
-ctx_handoff action=create paths=["src/auth.rs","src/mw/rl.rs"]
-ctx_handoff action=export write=true filename=auth-handoff.json
-ctx_handoff action=pull path=auth-handoff.json
-ctx_handoff action=import path=auth-handoff.json
-```
-
-Import flags: `apply_workflow`, `apply_session`, `apply_knowledge` (all default
-`true`). Contradictions surfaced, not silently merged.
-
-### Task orchestration (`ctx_task`)
-
-```text
-ctx_task action=create description="add OAuth" to_agent=<id>
-ctx_task action=list / get / update / message / cancel
-```
+Each tool's `action` values are in its own MCP schema — read that rather than a
+copy here. Two behaviors the schema does not state: `ctx_handoff` import flags
+(`apply_workflow`, `apply_session`, `apply_knowledge`) all default to `true`, and
+contradictions between the bundle and local state are **surfaced, not silently
+merged**.
 
 ### Agent must know
 
@@ -634,38 +586,13 @@ lean-ctx compression [off|lite|standard|max]
 Each level expands into 4 coordinated components: agent prompt, output density,
 CRP mode, token-model tuning.
 
-### Tool profiles (MCP surface)
+### Tool profiles, context profiles, config, governance
 
-```bash
-lean-ctx tools minimal    # 5 tools
-lean-ctx tools standard   # 16 tools (incl. ctx_patch)
-lean-ctx tools power      # all tools (default fallback)
-```
-
-### Context profiles (behavior tuning)
-
-```bash
-lean-ctx profile list / active / show <name> / diff <a> <b>
-lean-ctx profile create <name> / set <name>
-```
-
-### Config management
-
-```bash
-lean-ctx config [show|init|schema|validate]
-lean-ctx config set <key> <value>
-lean-ctx config apply              # apply to running daemon
-```
-
-After editing daemon-read config: `lean-ctx restart`.
-
-### Governance
-
-```bash
-lean-ctx rules status / init / diff / lint / sync
-lean-ctx export-rules              # high-confidence knowledge → rules files
-lean-ctx harden [--hard] [--undo]  # deny native Read/Grep
-```
+Profile membership is in `appendix-mcp-tools.md`, and the live answer is
+`lean-ctx tools show`. The `profile`, `config`, `rules`, `export-rules`, and
+`harden` subcommands are self-describing via `--help`. One thing `--help` will
+not remind you: after editing daemon-read config, changes need
+`lean-ctx restart` to take effect.
 
 ### Agent must know
 

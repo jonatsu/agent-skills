@@ -27,7 +27,6 @@
 | `SKILL.md` | Rewritten. The routing shape is local; the "Must-remember gotchas" and "Anti-patterns" blocks are locally measured and have no upstream counterpart |
 | `references/appendix-reference-docs.md` | Derivative. Distilled from upstream `docs/reference/` journeys 01–13; retains upstream's structure, command sets, and many phrasings |
 | `references/appendix-mcp-tools.md` | Derivative. Built from upstream's generated MCP registry and profile map; retains tool names, parameter names, and table structure |
-| `references/appendix-cli-map.md` | Derivative in substance. Local prose over upstream command names |
 | `references/appendix-paths-and-config.md` | Derivative in substance. Local prose over upstream config keys |
 | `references/01-setup-and-onboarding.md` | Local prose summarizing upstream setup flows |
 | `references/04-code-intelligence.md` | Local prose; the LSP-versus-approximation section is original, from local testing |

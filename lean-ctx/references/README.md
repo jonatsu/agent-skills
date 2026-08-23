@@ -22,11 +22,16 @@ for each — use it rather than picking from this list.
 
 ## Upstream snapshots (pinned; live state outranks them)
 
-- `appendix-cli-map.md` — compact CLI command map
 - `appendix-mcp-tools.md` — MCP tool inventory and profile membership
 - `appendix-paths-and-config.md` — config, path jail, editor env guidance
 - `appendix-reference-docs.md` — upstream reference journeys 01–13, distilled.
   Largest file here; read one named section, never the whole thing
+
+Command names are deliberately not catalogued here. `lean-ctx --help` and
+`doctor` are authoritative and always current; a second copy in this repo can
+only drift. Setup and lifecycle commands appear in context in
+`01-setup-and-onboarding.md`, `06-lifecycle.md`, and the debug ladder at the top
+of `12-troubleshooting.md`.
 
 ## About the numbering
 
