@@ -1,28 +1,43 @@
-# Appendix — MCP Tool Map (all 81 tools)
+# Appendix — MCP Tool Map
 
 > Source: upstream `yvgude/lean-ctx` generated registry
 > (`docs/reference/generated/mcp-tools.md`) and profile map
 > (`docs/reference/appendix-mcp-tools.md`).
 > Pinned commit: `5ad09b5030254e5368e91cbd419b07564f98ea95`.
 > Trust live `ctx_discover_tools` / `ctx_load_tools list` over this file.
+>
+> **This file is an inventory, not a contract.** For `ctx_patch` field names and
+> `ctx_read` mode behavior, `14-ctx-patch-contract.md` and
+> `13-silent-failure-modes.md` are authoritative — they are measured against a
+> running server, this table is copied from a pinned snapshot.
 
-Every tool lean-ctx registers. The **Profile** column shows the smallest tool
-profile that exposes the tool (`M` minimal, `S` standard, `P` power). Set your
+Eighty tools are documented below. The **Profile** column shows the smallest tool
+profile that exposes each one (`M` minimal, `S` standard, `P` power). Set your
 profile with `lean-ctx tools <minimal|standard|power>`.
 
 ## Tool profiles at a glance
 
-| Profile | Count | Who it's for |
-|---------|-------|--------------|
-| **minimal** | 5 | Lowest context overhead; the absolute essentials |
-| **standard** | 16 | Balanced default for most coding workflows |
-| **power** | 76 | Everything (default for existing installs) |
+**No total is given here on purpose.** The snapshot's own numbers disagree with
+its rows — the prose named 5 minimal and 16 standard tools while the table marks
+7 rows `M` and 20 `S`, and three different grand totals appeared in one file.
+Counts drift every release and nothing here fails loudly when they do. Ask the
+running server instead:
 
-- **minimal (5):** `ctx_read`, `ctx_shell`, `ctx_search`, `ctx_glob`, `ctx_tree`
-- **standard (+11):** + `ctx_compose`, `ctx_explore`, `ctx_knowledge`,
+```text
+lean-ctx tools show          # active profile
+ctx_discover_tools query=""  # everything reachable right now
+```
+
+Documented membership, as a starting point only:
+
+- **minimal:** `ctx_read`, `ctx_shell`, `ctx_search`, `ctx_glob`, `ctx_tree` —
+  plus `shell` (an alias of `ctx_shell`) and `ctx_session`, which carry `M` in
+  the table below.
+- **standard adds:** `ctx_compose`, `ctx_explore`, `ctx_knowledge`,
   `ctx_callgraph`, `ctx_graph`, `ctx_delta`, `ctx_execute`, `ctx_expand`,
-  `ctx_overview`, `ctx_url_read`, `ctx_patch`
-- **power (+47):** all remaining tools.
+  `ctx_overview`, `ctx_url_read`, `ctx_patch`. Further rows are marked `S`
+  below; where the two disagree, believe the live tool list.
+- **power:** everything remaining.
 
 ---
 
@@ -30,15 +45,15 @@ profile with `lean-ctx tools <minimal|standard|power>`.
 
 | Tool | Purpose | Key params / actions | Profile |
 |------|---------|----------------------|---------|
-| `ctx_read` | Read a file with session cache + compression; re-reads ~13 tokens when unchanged | `path`*, `mode` (full\|raw\|map\|signatures\|diff\|aggressive\|entropy\|task\|reference\|lines:N-M\|auto), `start_line`, `fresh` | M |
+| `ctx_read` | Read a file with session cache + compression; re-reads ~13 tokens when unchanged. **`anchored` is required before any anchored `ctx_patch` op** and is missing from upstream's mode list. Compressed modes drop syntax and truncate silently — see `13-silent-failure-modes.md` | `path`*, `mode` (full\|raw\|map\|signatures\|**anchored**\|diff\|aggressive\|entropy\|task\|reference\|lines:N-M\|auto), `start_line`, `limit`, `fresh` | M |
 | `ctx_multi_read` | Read many files in one call (same modes). Deprecated → use `ctx_read` with `paths=['a.rs','b.rs']` | `paths[]`*, `mode`, `fresh` | S |
 | `ctx_smart_read` | Auto-pick the optimal read mode for a file. Deprecated → `ctx_read` auto-selects mode when omitted | `path`* | P |
 | `ctx_delta` | Incremental diff — only lines changed since last read | `path`* | S |
 | `ctx_edit` | Legacy search-and-replace edit; preimage guards, backup. Prefer `ctx_patch` | `path`*, `new_string`*, `old_string`, `replace_all`, `create` | P |
-| `ctx_patch` | **Hash-anchored line edits** — `LINE:HASH` anchors from `ctx_read(mode="anchored")`; no exact-recall, batch-atomic, tree-sitter gate, `create` for new files. **REQUIRED workflow:** `ctx_read(mode="anchored")` first → use returned line/hash anchors. **Operations:** `set_line` (one line), `replace_lines` (range with start/end anchors), `insert_after` (line 0 = top), `delete` (line or range), `replace_symbol` (name + new_body), `create` (new file from new_text). **Batch:** `ops:[{op,line,hash,new_text},…]` — one preimage, applied all-or-nothing. **Stale anchor protocol:** hash mismatch → refresh with `ctx_read(mode="anchored")` → retry ONCE. Never fabricate hashes or reproduce old text byte-for-byte. | `path`*, `ops[]` (set_line\|replace_lines\|insert_after\|delete\|replace_symbol\|create) | S |
+| `ctx_patch` | **Hash-anchored line edits.** Ops: `set_line`, `replace_lines`, `insert_after`, `delete`, `replace_symbol`, `replace_unique`, `replace_all`, `create`. The anchored ops need `ctx_read(mode="anchored")` first. **Do NOT take field names from this row — see `14-ctx-patch-contract.md`, which is measured against the runtime.** Two traps that used to live here and were wrong: the replacement field is `new_text`, never `new_body`; and batches are NOT all-or-nothing — a failed op does not stop later ops, so verify each intended change landed | `path`*, `ops[]` — per-op fields in `14-ctx-patch-contract.md` | S |
 | `ctx_fill` | Budget-aware context fill within a token limit | `paths[]`, `budget`*, `task` | P |
 | `ctx_symbol` | Read just one named symbol block (fn/struct/class). Deprecated → `ctx_search(action="symbol")` | `name`*, `file`, `kind` | P |
-| `ctx_outline` | List all symbols of a file with signatures (tree-sitter, 27 languages) | `path`*, `kind`, `match`, `format` | P |
+| `ctx_outline` | List all symbols of a file with signatures (tree-sitter; language coverage varies by release) | `path`*, `kind`, `match`, `format` | P |
 | `ctx_retrieve` | Fetch uncompressed original from cache (CCR) | `path`*, `query` | P |
 | `ctx_shell` | Run shell commands with pattern compression (~95 patterns) | `command`*, `raw`, `cwd`, `env`, `timeout_ms` | M |
 | `shell` | Alias of `ctx_shell` (same compression) for clients whose model reaches for a native `shell`/`bash` tool | `command`*, `raw`, `cwd` | M |
@@ -145,12 +160,13 @@ profile with `lean-ctx tools <minimal|standard|power>`.
 
 ## Notes
 
-1. `power` enables all 76 tools; `ToolProfile::is_tool_enabled()` returns `true`
-   for everything under power.
+1. `power` enables every registered tool; `ToolProfile::is_tool_enabled()`
+   returns `true` for everything under power.
 2. `ctx_load_tools` controls *dynamic* categories (`arch`, `debug`, `memory`,
    `metrics`, `session`) independently of the static profile filter.
 3. Lazy clients use `ctx_call` + `ctx_discover_tools` + `ctx_load_tools` to reach
-   tools not in their active profile without listing all 76 upfront.
+   tools not in their active profile without listing every one upfront. The
+   advertised tool list is an advertising filter, not an access boundary.
 4. `ctx_edit` is legacy/power-only; prefer `ctx_patch` for all edits.
 5. `ctx_multi_read`, `ctx_smart_read`, `ctx_semantic_search`, `ctx_symbol` are
    deprecated — folded into `ctx_read` / `ctx_search` respectively. Hidden from
@@ -169,5 +185,6 @@ exposed by the addon's MCP server once installed (`lean-ctx addon add @dasTholo/
 (rendering is an explicit addon call). The `@directive` catalog and `@lean-md` header fields live in the
 addon repo.
 
-- **Integration reference:** [`21-lean-md.md`](21-lean-md.md)
-- **Addon repo:** https://github.com/dasTholo/lean-md
+- **Addon repo:** <https://github.com/dasTholo/lean-md> — the `@directive`
+  catalog and `@lean-md` header fields are documented there. This skill carries
+  no lean-md reference of its own.

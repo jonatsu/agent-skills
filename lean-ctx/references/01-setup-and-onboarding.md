@@ -2,9 +2,12 @@
 
 ## Mental model
 
-Setup stages usually flow: wrap → onboard → setup → install → bootstrap → init.
-Names differ by entrypoint, but intent stays stable: install binary, connect
+Setup stages usually flow: wrap → onboard → setup → bootstrap → init. Names
+differ by entrypoint, but intent stays stable: install binary, connect
 shell/editor/MCP, generate safe guidance, and verify integrations.
+
+`install` is an alias for `setup`, not a separate stage — running both does the
+same work twice, and each run is a writer command (see "Setup gotchas").
 
 ## Fresh install
 

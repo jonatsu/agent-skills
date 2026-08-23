@@ -6,6 +6,13 @@
 > This appendix distills operational detail for agents — not a replacement for
 > the full docs. Trust live `doctor`, `--help`, generated appendices, and
 > `ctx_load_tools` over static prose when versions differ.
+>
+> **Read ONE section, never this whole file.** It is the largest file in the
+> skill — larger than every other reference combined — and it is a snapshot of
+> one upstream commit. Jump to the numbered section you need. If `--help`,
+> `doctor`, or `ctx_discover_tools` can answer the question, ask them instead.
+> For `ctx_patch` fields, `ctx_read` mode behavior, and path-jail mechanics, the
+> measured files (`12`, `13`, `14`) outrank this one.
 
 ---
 
@@ -82,12 +89,17 @@ lean-ctx unwrap <agent>           # restore pre-wrap state from snapshot
 **Covers:** `ctx_read` modes, `ctx_search`/`ctx_glob`/`ctx_tree`/`ctx_shell`,
 cache-aware rereads, anchored edits, `gain`, `tools` profile.
 
-### Read modes (10 total)
+### Read modes
+
+Upstream lists ten and omits `anchored`, which the `ctx_patch` workflow
+requires; it is included here. Compressed modes drop syntax and truncate
+silently — `13-silent-failure-modes.md` covers which, and when.
 
 | Mode | Returns | Use when |
 |------|---------|----------|
 | `auto` | lean-ctx picks best | default |
 | `full` | whole file, cached | you'll edit it |
+| `anchored` | `LINE:HASH` anchors | before any anchored `ctx_patch` op |
 | `map` | imports + API surface | context-only file |
 | `signatures` | fn/type signatures only | need the API |
 | `aggressive` | heavy compression | very large file |
@@ -215,8 +227,10 @@ visualization, heatmap.
 
 ### The graph
 
-One **property graph** (tree-sitter, 26 languages) at
-`graphs/<project-hash>/index.json.zst`. Builds lazily on first use.
+One **property graph** (tree-sitter; language coverage varies by release) at
+`graphs/<project-hash>/index.json.zst`. Builds lazily on first use. Matches are
+name-based, not reference-exact — see `04-code-intelligence.md` before trusting
+an "all usages" answer.
 
 ```bash
 lean-ctx graph build / status
