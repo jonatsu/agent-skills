@@ -69,6 +69,24 @@ Promote to the cheapest durable form that fits:
 
 Below threshold → list the candidate in the report as "deferred", don't codify.
 
+**Apply an addressability filter before the threshold.** Ask what class of thing
+the failure was, and codify only the third:
+
+- A capability limit — the model or the task was simply hard. A rule cannot fix
+  it and will fire forever on sessions it does not help.
+- A one-off environment fault — a flaky network, a half-applied config, a race.
+  Recording it teaches a superstition.
+- A defect in the setup — a tool whose contract surprised you, a rule that said
+  the wrong thing, a step nobody documented. This is the only kind worth a
+  durable artifact.
+
+Then fix it at the lowest level that can express the fix. A stale fact is a
+context fix, not a workflow rewrite; a surprising tool contract belongs in that
+tool's reference, not in an always-loaded rules file. Reach for the higher level
+only when the failure keeps recurring after the lower one was tried. Skipping
+this filter is how an instruction corpus grows by accretion: every annoyance
+becomes a line, and nothing is ever the wrong size.
+
 Threshold is necessary, not sufficient. Anything written to `CLAUDE.md` or
 `rules/` is re-read at every session start and applied to sessions it was never
 written for. Before codifying one, state what it costs when it fires on the
@@ -90,6 +108,27 @@ case actually observed.
   (`type: user | feedback | project | reference`), plus a one-line pointer in
   `MEMORY.md`. Check for an existing file that already covers it and update it
   rather than duplicating; delete memories proven wrong.
+- **Set `scope:`** — `repo:<name>` (default), `machine`, or `global`. Silos are
+  per-project, so a fact true everywhere has no silo that fits and drifts into
+  always-loaded instruction files instead. The field records the intent.
+- **Set `valid_until:`** when the fact has a foreseeable expiry — a version, a
+  migration, a pending fix. `null` (or omitted) means "true until disproved".
+  Retire an expired fact by setting the field, NEVER by deleting the file:
+  invalidate but do not discard, because the history is what stops the same
+  wrong conclusion being re-derived.
+- **Both fields are advisory, so put what must reach retrieval in the
+  `description`.** Recall matches against the description text; nothing filters
+  on frontmatter. A `machine`- or `global`-scoped fact MUST therefore say so in
+  its description, and a fact with a known expiry MUST name the condition there
+  ("until lean-ctx 3.10", "while the vendored hook is in use"). The fields serve
+  the maintenance sweep and the human reader; the description serves the search.
+- **Update by delta, never by wholesale rewrite.** When revising an existing
+  memory or an instruction file, change the lines that are wrong and leave the
+  rest untouched. A model asked to regenerate an accumulated document drops what
+  it judges low-priority, and the measured failure is severe — a rewritten
+  context playbook has collapsed from 18k tokens to 122 in one pass, scoring
+  below never having adapted at all. Rewrite whole only when the user asks for
+  it.
 - `feedback`/`project` bodies: add **Why:** and **How to apply:** lines. Link
   related memories with `[[name]]`.
 - **Repo files**: match the file's existing structure and voice; convert
@@ -117,6 +156,10 @@ Global memory grows and goes stale. When invoked with a maintenance intent
 ("prune memories", "review memories") or roughly every ~10 captures, sweep
 `~/.config/claude/projects/<project>/memory/` for entries to retire:
 
+- **Expired** — `valid_until` has passed, or the condition it names has been
+  met. Mark it and correct the pointer; do not silently leave it recallable,
+  because an expired memory is worse than a missing one. A missing fact produces
+  a question, a stale one produces confident wrong action.
 - **Self-invalidated** — the memory names a condition for its own removal
   ("update or remove once X") and X has happened.
 - **Superseded** — a newer memory or a committed rule now covers it (e.g. a
@@ -149,6 +192,18 @@ wc -l < "${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/hooks/capture-pending.jsonl"
 
 Include the count in the §6 report even when not draining, so the backlog stays
 visible instead of accumulating silently.
+
+**What this sweep structurally cannot recover.** The first turns of a session
+carry the task setup, the user's constraints, and the architectural decisions
+that cannot be re-derived — and they are the first thing compaction discards. An
+end-of-session sweep reads what survived, so a constraint lost at compaction is
+lost to this skill too, and its absence is invisible: the summary reads complete.
+Treat a drained entry as partial evidence rather than a full account, and prefer
+whatever the transcript shows VERBATIM over the compacted summary of it. The
+durable fix is upstream of here — extracting the session's constraints into a
+persistent note while they are still in context — so when a session is heading
+for compaction with constraints only in its early turns, say so at that point
+rather than trusting this backlog to reconstruct them.
 
 ### Process one entry
 
