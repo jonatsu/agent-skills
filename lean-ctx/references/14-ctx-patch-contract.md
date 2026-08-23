@@ -2,6 +2,21 @@
 
 Field names and behaviors verified against lean-ctx 3.9.18.
 
+**Verification status.** Re-exercised against a running 3.9.18 on 2026-08-23,
+all confirmed: `dry_run` returned "would apply" for a deliberately fabricated
+hash while the identical call without `dry_run` returned CONFLICT; the CONFLICT
+carried fresh anchors inline, as the stale-anchor protocol below describes;
+`replace_all` reset a 755 file to 600 and reported plain success, while
+`replace_unique` on the same file preserved 755; the reply's `md5` field came
+back 64 hex characters matching neither `md5sum` nor `sha256sum`, though its
+`bytes` count was accurate; and an anchored read returned the documented `N:hh|`
+4-hex form. The published schema was confirmed to be a flat, all-optional bag —
+`required: []`, no combinators — exactly as the note below says.
+
+Not re-run: batching and partial-application behavior, the NUL-escape trap, the
+syntax and code-health gates, and `replace_symbol`'s repo-wide name resolution.
+Those still rest on their original measurement.
+
 **The runtime error message is the contract.** The published MCP schema is a
 flat, all-optional bag — `allOf`/`oneOf` are stripped before publication — and
 upstream docs disclaim per-op schemas, deferring to the server source. NEVER

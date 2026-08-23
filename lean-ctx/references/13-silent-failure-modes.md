@@ -1,7 +1,16 @@
 # Silent failure modes
 
 Each item below returns a plausible-looking success. Treat the result as wrong,
-not as a finding. Observed on lean-ctx 3.9.x, last verified against 3.9.18.
+not as a finding. Observed on lean-ctx 3.9.x.
+
+**Verification status.** Re-exercised against a running 3.9.18 on 2026-08-23:
+the search result cap (reported "20 matches" where the true count was 22) and
+the absence of brace expansion in `ctx_glob` (`**/*.{md,json}` matched none of
+three present files, with no error). The `outline` entry was corrected in the
+same pass — the fallback is real, the warning is not. Every other entry stands
+on its original measurement and has not been re-run. When lean-ctx updates,
+re-run the two confirmed probes first: they are cheap, and if either has changed
+the rest of this file is suspect.
 
 ## Contents
 
@@ -34,7 +43,10 @@ not as a finding. Observed on lean-ctx 3.9.x, last verified against 3.9.18.
 - **No mode recovers everything.** Invalid UTF-8 is lossily replaced at read
   time and redacted content is removed before any mode sees it — `raw` included.
   Use the host's native read tool for those two.
-- **`outline` is not a mode.** It warns and falls back to a full read.
+- **`outline` is not a mode.** It falls back to a full read — so an orientation
+  call silently costs a whole file. Re-exercised 2026-08-23 on 3.9.18: the
+  fallback happened, but **no warning was emitted**, so do not expect one to
+  tell you. Use `signatures` or `map`.
 - **`raw` truncates at a fixed output cap**, so a mid-size file comes back partial
   even though `raw` promises exact bytes. The cut is labelled
   (`[… truncated at ~N of M tokens …]`) and the notice suggests a `lines=`

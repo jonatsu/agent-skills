@@ -581,40 +581,18 @@ ctx_task action=list / get / update / message / cancel
 **Covers:** CI integration, machine-readable output, team/shared config,
 deterministic validation, automation caveats, cloud account sync, contribute.
 
-### Team server
+The command surface here is stable and self-describing — the `lean-ctx team`,
+`register`, `login`, `sync`, `contribute`, `cloud`, `upgrade`, `bootstrap`,
+`serve`, and `daemon` subcommands. Get them from `--help` rather than from this
+file. What follows is only what `--help` does not tell you.
 
-```bash
-lean-ctx team serve --config team.toml
-lean-ctx team token create --config team.toml --id ci-bot --scopes search,graph
-lean-ctx team sync --config team.toml [--workspace <id>]
-```
+**Token scopes** are least-privilege by design: `search`, `graph`, `artifacts`,
+`index`, `events`, `sessionmutations`, `knowledge`, `audit`.
 
-**Token scopes:** `search`, `graph`, `artifacts`, `index`, `events`,
-`sessionmutations`, `knowledge`, `audit`. Least-privilege by design.
-
-**Managed connectors** (declared in team config `connectors[]`):
-- Providers: `github`, `gitlab`
-- Resources: `issues`, `merge_requests`, `pipelines`
-- `intervalSecs` clamped to 300s floor
-- Credential lives only in injected `team.json`, never written to disk
-
-### Cloud account (optional)
-
-```bash
-lean-ctx register <email> / login <email> / forgot-password <email>
-lean-ctx sync                      # push local data to cloud
-lean-ctx contribute                # anonymized compression data points
-lean-ctx cloud pull-models         # refreshed adaptive compression models
-lean-ctx upgrade                   # account/plan upgrade
-```
-
-### CI usage
-
-```bash
-lean-ctx bootstrap [--json]        # zero-prompt setup, exits non-zero on failure
-lean-ctx serve                     # MCP server (stdio) for agent runners
-lean-ctx daemon                    # background daemon
-```
+**Managed connectors** (team config `connectors[]`) reach `github` and `gitlab`
+for `issues`, `merge_requests`, and `pipelines`. Two non-obvious properties:
+`intervalSecs` is clamped to a 300s floor, and the credential lives only in the
+injected `team.json` — it is never written to disk.
 
 ### Agent must know
 
@@ -717,45 +695,14 @@ lean-ctx harden [--hard] [--undo]  # deny native Read/Grep
 interpreting savings, local-vs-proxy accounting, `savings` ledger, `token-report`,
 `discover`/`ghost`, `dashboard`, `watch`, `cep`, `benchmark scorecard`.
 
-### `gain` — the savings dashboard
+The command surface here is broad and self-describing — `gain`, `savings`,
+`token-report`, `discover`, `ghost`, `slow-log`, `tee`, `dashboard`, `watch`,
+`cep`, `benchmark`, `gotchas`, `learn`, `stats`, `compact`. Get flags from
+`lean-ctx <cmd> --help`, not from this file. What follows is what `--help` does
+not tell you.
 
-```bash
-lean-ctx gain [--live|--graph|--daily|--cost|--score|--tasks|--agents|--heatmap]
-lean-ctx gain --wrapped [--period=month]
-lean-ctx gain --svg [--period=all]        # shareable SVG card
-lean-ctx gain --share [--base-url=...]    # self-hostable HTML page
-lean-ctx gain --deep                      # everything in one shot
-lean-ctx gain --json                      # machine-readable
-```
-
-### Verified savings ledger
-
-```bash
-lean-ctx savings                   # summary: gross, bounce, net, tokenizer, integrity
-lean-ctx savings verify            # re-walk SHA-256 hash chain
-lean-ctx savings export            # every event as JSON
-```
-
-Per-event, append-only, local-only, on by default. Opt out: `LEAN_CTX_SAVINGS_LEDGER=off`.
-
-### Other analytics
-
-```bash
-lean-ctx token-report              # tokens + memory footprint
-lean-ctx discover                  # uncompressed commands in shell history
-lean-ctx ghost [--json]            # hidden token waste
-lean-ctx slow-log list / clear     # slowest compressed commands
-lean-ctx tee list / last / show <id> / clear   # captured output logs
-lean-ctx dashboard [--port 4000]   # web UI at localhost:3333
-lean-ctx dashboard --vscode        # open as editor tab
-lean-ctx watch                     # live TUI event stream
-lean-ctx cep                       # CEP score trends
-lean-ctx benchmark run / report / eval / scorecard
-lean-ctx gotchas list / stats / export / clear
-lean-ctx learn [--apply]           # promote gotchas into rules
-lean-ctx stats [json|reset-cep]
-lean-ctx compact [path]            # compress stored agent transcripts
-```
+The **savings ledger** is per-event, append-only, local-only, and on by default;
+opt out with `LEAN_CTX_SAVINGS_LEDGER=off`.
 
 ### Agent must know
 
