@@ -34,6 +34,8 @@ recorded as missing rather than guessed.
 | `doorstop-dev/doorstop` | LGPL-3.0-only | Nothing — see below |
 | `useblocks/sphinx-needs` | MIT, © 2016-2025 useblocks GmbH | Nothing |
 | `docs.driesventer.com` markdown templates | No licence stated; informal permission to reuse on the site's homepage | Nothing |
+| `softaworks/agent-toolkit` → `requirements-clarity` | MIT, © 2026 Leonardo Flores | Ideas only — see below |
+| `stellarlinkco/myclaude` → `product-requirements` | **AGPL-3.0** | Nothing — see below |
 
 ## What was taken, and at what level
 
@@ -47,6 +49,14 @@ long-standing requirements-engineering practice rather than that skill's inventi
 **The breakout-file pattern** — separating what, how and why into distinct document sets rather than
 one monolith — was noted in the CC0-licensed `jam01/SRS-Template`. CC0 imposes no attribution
 obligation; it is recorded here for provenance.
+
+**The "before the requirements exist" section** of `references/authoring.md` reimplements three ideas
+from the MIT-licensed `softaworks/agent-toolkit` skill `requirements-clarity` (© 2026 Leonardo
+Flores): that a request carrying a file path, a code snippet or a bug repro is already concrete enough
+that clarifying it is wasted motion; that the gaps in a vague ask sort into functional, technical,
+implementation and business dimensions; and that a clarifying question should carry an example set to
+anchor the answer's shape. The prose, the table and the worked example here are written from scratch —
+no text was copied — but the ideas are that skill's and the attribution is owed.
 
 ## Sources quoted in `references/domains.md`
 
@@ -84,6 +94,13 @@ are explicit gaps. That table is part of the deliverable, not a caveat appended 
   both directions, and designed to be bulk-reset. It is prior art for **staleness detection**, which
   is a different thing from the **lifecycle governance** this skill implements, and the design record
   states the distinction rather than claiming the broader novelty.
+- **Anything at all from `stellarlinkco/myclaude`.** It is AGPL-3.0, whose network copyleft would
+  attach to this skill, and its content is structurally identical to the MIT-licensed skill above — so
+  the same ideas were available from a source that permits them. It was read for comparison and
+  nothing, not even a close paraphrase, was carried across.
+- **The scored-rubric gate** that both of those skills use — score the requirement out of 100, refuse
+  to proceed below 90. `references/authoring.md` argues against it explicitly: the agent assigning the
+  score chooses the questions, so it converges by declaring itself finished.
 - Anything from the `docs.driesventer.com` templates. The site offers an informal permission to reuse
   rather than a licence, and its templates carry no lifecycle machinery and no writing conventions to
   lift. Two of them also use `[[_TOC_]]`, which is Azure DevOps wiki syntax that renders as literal

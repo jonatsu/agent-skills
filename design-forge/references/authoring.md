@@ -3,12 +3,60 @@
 Corpus-level rules live in `SKILL.md` and `references/contract.md`. This file is about the text of a
 single requirement.
 
+- [Before the requirements exist](#before-the-requirements-exist)
 - [The atomic schema](#the-atomic-schema)
 - [Identifiers](#identifiers)
 - [One requirement per statement](#one-requirement-per-statement)
 - [The vague-wording gate](#the-vague-wording-gate)
 - [Acceptance criteria](#acceptance-criteria)
 - [What does not belong in the document](#what-does-not-belong-in-the-document)
+
+## Before the requirements exist
+
+The schema below assumes you already know what the requirement is. Often what you have is one sentence
+from a person. This section is how to get from one to the other. It is not a workflow and it does not
+replace `idea-forge`, which shapes an unformed idea, or `grilling`, which pressure-tests a written
+plan.
+
+### First, decide whether to ask at all
+
+Elicitation is wasted motion on a request that is already concrete, and an agent primed to clarify
+will clarify something that needed none — at which point the questions read as obstruction. **Skip it**
+when the ask already carries any of these:
+
+- A file path, a line number, or a named existing function or class.
+- A code snippet.
+- A bug with reproduction steps.
+- An acceptance condition already stated.
+
+### Four dimensions a vague ask is missing
+
+Work these rather than asking whatever comes to mind. A genuinely vague ask is usually missing three
+of the four, and naming which one a question serves stops the interrogation wandering.
+
+| Dimension | What is missing |
+|---|---|
+| Functional | What it does, for whom, and where the behaviour stops |
+| Technical | Where it runs, what it integrates with, what it may not change |
+| Implementation | What already exists, what must be built, and the constraints on building it |
+| Business | Why now, what it is worth, and what happens if it is never done |
+
+### Anchor every question with an example
+
+A question offering no example gets an answer in whatever shape the reader guesses. Ask "email and
+password, social login, magic link, or SSO?" rather than "what kind of authentication?". The example
+set narrows the answer and exposes what you assumed while writing the question.
+
+Ask in rounds of two or three. A dozen questions at once gets one of them answered.
+
+### Do not gate on a completeness score
+
+A pattern in circulation scores the requirement out of 100 and refuses to proceed below 90. **Do not
+adopt it.** The agent assigning the score is the agent choosing the questions, so it converges by
+declaring itself finished — a stopping condition nothing can check is theatre with a number on it.
+
+The honest stopping condition is that every requirement has an Acceptance field someone who did not
+write it could evaluate. That is checkable by reading.
 
 ## The atomic schema
 
