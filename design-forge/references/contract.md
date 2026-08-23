@@ -123,12 +123,18 @@ Declared once by a human, recorded where the repo already keeps agent instructio
 - Ownership claims: see the generated index
 ```
 
-**Both `Trigger:` and `Enforcement surface:` are required rows.** A declaration with no trigger reaches
+**A trigger and an enforcement surface are both required.** A declaration with no trigger reaches
 only an agent that reads the instruction file top to bottom; one that opens a design document directly
 never learns a fork relocates verbatim or that the index is generated. A declaration with no
 enforcement surface *reads* as enforced while nothing checks it — this skill's own anti-pattern,
-reached by following this skill. `none — advisory-only` is a valid value for the second; omitting the
-row is not.
+reached by following this skill. `none — advisory-only` is a valid value for the second; omitting it
+is not.
+
+**Required content, not required form.** The rows above are how a bulleted declaration carries them.
+An instruction file that states the trigger as the sentence opening its contract section satisfies the
+requirement, and usually serves it better — a trigger at the head of the section reaches a reader who
+never gets as far as the list. What does NOT satisfy it is writing the same rule twice in one file to
+match this shape: two copies drift, and the one nobody reads is the one that goes stale.
 
 **`Corpus roots:` is plural.** A repo may have more than one — a live corpus and an archive, say. Each
 needs its own index line, or an explicit note that it sits below the two-document index threshold.
