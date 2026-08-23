@@ -38,6 +38,14 @@ can differ from service env; debug both when keys/proxy vars differ.
 power-profile only; prefer `ctx_patch` unless upstream docs or active profile
 dictate otherwise.
 
+## When to drop to the host's raw shell
+
+Use `ctx_shell` for builds, tests, package managers, git diagnostics, and noisy
+commands. Drop to the host's native shell only when no lean-ctx wrapper exists,
+when exact PTY interaction is required, or when the check is env-sensitive —
+`ctx_shell` keeps the environment the MCP server process was launched with (see
+`13-silent-failure-modes.md`).
+
 ## Write doctrine in ctx_shell
 
 `ctx_shell` rejects shell redirects (`>`, `>>`) outright, pointing at the host's

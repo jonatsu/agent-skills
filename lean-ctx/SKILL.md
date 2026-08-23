@@ -1,6 +1,6 @@
 ---
 name: lean-ctx
-description: Use for lean-ctx and its ctx_* MCP tools — ctx_read, ctx_search, ctx_glob, ctx_tree, ctx_shell, ctx_patch, ctx_call, ctx_expand, ctx_git_read — plus shell hook, MCP config, profiles, compression, proxy, doctor, wrap/onboard/setup/update, and rules injection. Use when picking a read mode or edit op, when a ctx_* call returns a suspicious, empty, or suspiciously complete result, when an edit is rejected or an anchor goes stale, when path-jail or project-root errors appear, or when installing, configuring, or debugging lean-ctx.
+description: Use for lean-ctx and its ctx_* MCP tools — ctx_read, ctx_search, ctx_glob, ctx_tree, ctx_shell, ctx_patch, ctx_call, ctx_expand, ctx_git_read — plus shell hook, MCP config, profiles, compression, proxy, doctor, wrap/onboard/setup/update, and rules injection. Use when picking a read mode or edit op; when a ctx_* call returns a suspicious, empty, truncated, or suspiciously complete result; when an edit is rejected or an anchor goes stale; when a read shows a [REDACTED:...] marker, a text file starts reading as binary, or a patched script loses its +x bit; when a read returns an "already in this conversation" stub; or when path-jail, project-root, install, config, or debugging problems appear.
 metadata:
   author: Joonas Onatsu
   license: Apache-2.0
@@ -12,6 +12,13 @@ IRON LAW: Prefer lean-ctx context tools before raw read/search/shell/patch tools
 when available. Keep context lean, recoverable, and verifiable. Do not assume
 one host, editor, path layout, or config; inspect active tools and local setup
 first.
+
+**When lean-ctx is absent, this skill still applies — as a stop rule.** If no
+`ctx_*` tools are listed this session, lean-ctx is not active here: use the
+host's native read/search/shell/edit tools throughout, say once that you are
+doing so, and skip the rest of this skill. NEVER wait for `ctx_*` tools to
+appear, NEVER guess a tool name, and NEVER install lean-ctx to satisfy this
+rule. A missing tool is a fallback, not a task.
 
 ## Workflow
 
@@ -42,21 +49,48 @@ lean-ctx skill flow:
 
 ## Load-on-demand refs
 
-- `references/01-setup-and-onboarding.md` — install, wrap, onboard, setup
-- `references/02-daily-use.md` — read/search/tree/shell/patch basics
-- `references/04-code-intelligence.md` — symbols, graph, impact, quality
-- `references/05-advanced.md` — power tools, proxy, shell hook, MCP
-- `references/06-lifecycle.md` — update, repair, sessions, cache, migration
-- `references/07-context-engineering.md` — compression, read modes, recovery
-- `references/12-troubleshooting.md` — symptom → fix playbooks
-- `references/13-silent-failure-modes.md` — load when a `ctx_*` result looks
-  wrong, empty, or suspiciously complete
-- `references/14-ctx-patch-contract.md` — load before a batched or non-trivial
-  edit, before a rename or path sweep, and whenever `ctx_patch` rejects a call
-- `references/appendix-cli-map.md` — compact CLI command map
-- `references/appendix-mcp-tools.md` — MCP tool groups and profile caveats
-- `references/appendix-paths-and-config.md` — config, env, path jail guidance
-- `references/appendix-reference-docs.md` — generated reference documentation
+Load by symptom, one at a time. The trigger is the whole point — a ref read
+speculatively costs more than the trap it would have prevented.
+
+- `references/13-silent-failure-modes.md` — when a `ctx_*` result looks wrong,
+  empty, or suspiciously complete: a match count you doubt, a shell list that
+  seems short, a `[REDACTED:…]` marker, or a read returning an "already in this
+  conversation" stub.
+- `references/14-ctx-patch-contract.md` — before a batched or non-trivial edit,
+  before a rename or path sweep, and whenever `ctx_patch` rejects a call or an
+  anchor goes stale. This file is the field-name authority; nothing else here is.
+- `references/12-troubleshooting.md` — when a path tool reports `path escapes
+  project root`, when rules files keep being rewritten, or when a deployed
+  `SKILL.md` changes on its own.
+- `references/01-setup-and-onboarding.md` — before running `wrap`, `onboard`,
+  `setup`, `init`, or `update`, or when a setup step wants to edit shell RC files.
+- `references/04-code-intelligence.md` — before trusting a symbol, callgraph, or
+  "all usages" answer, and when choosing between lean-ctx and a real LSP for a
+  rename.
+- `references/05-advanced.md` — when reaching for a power-profile tool, the
+  proxy, or the shell hook, and when `ctx_shell` refuses a redirect.
+- `references/06-lifecycle.md` — after a `lean-ctx update`, or when a fix you
+  just installed appears not to work.
+- `references/appendix-paths-and-config.md` — before changing a config key,
+  especially a path-jail key.
+- `references/appendix-mcp-tools.md` — to find which tool does a job and which
+  profile exposes it. Trust the per-row `Profile` column, not any total.
+- `references/appendix-cli-map.md` — when you need a CLI command name and
+  `--help` is not reachable.
+- `references/appendix-reference-docs.md` — **900+ lines, larger than the rest of
+  the skill combined.** Load ONE named section (e.g. `## 09 — Team, Cloud & CI`),
+  never the file, and only for upstream surface no other ref covers:
+  memory/knowledge, multi-agent, team/cloud/CI, analytics, security posture.
+
+Do NOT load:
+
+- Do NOT load any ref for a routine read, search, or edit. The gotchas below
+  cover the traps that actually recur.
+- Do NOT load `appendix-reference-docs.md` whole, and do NOT load it for anything
+  `--help`, `doctor`, or `ctx_discover_tools` answers live. It is a snapshot
+  pinned to one upstream commit; live state outranks it.
+- Do NOT load a second ref speculatively "while you are here". Pick by symptom,
+  read it, act.
 
 ## Must-remember gotchas
 
