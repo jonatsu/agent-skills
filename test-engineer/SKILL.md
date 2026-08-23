@@ -45,7 +45,8 @@ MUST classify the task before doing anything else:
 
 - `TEST-STRATEGY`: decide **what** to test, at which level, and against which
   oracle - at any scale, from one change to a whole system. Output is a plan.
-  NEVER writes test code in this mode.
+  NEVER writes test code in this mode. Classifying here MUST be followed by
+  loading `references/test-strategy.md` - the method is there, not below.
 - `TEST-IMPLEMENTATION`: edit tests, fixtures, helpers, or test-only support.
 - `VALIDATION`: run bounded commands and report exact results.
 - `REGRESSION`: protect behavior that changed or previously broke.
@@ -120,11 +121,12 @@ State the blocker, include evidence, and hand back.
 
 ## Strategy Mode
 
-**Load `references/test-strategy.md` before producing any strategy, test plan,
-coverage-gap analysis, or "what should we test" answer.** It carries the method
-SKILL.md deliberately does not: risk ranking, level allocation, the coverage
-taxonomy that stops edge-case enumeration from being whatever came to mind, test
-oracles, and the deliverable template.
+`references/test-strategy.md` carries the method SKILL.md deliberately does not:
+entry moves, risk ranking, level allocation, test oracles, the coverage taxonomy
+that stops edge-case enumeration from being whatever came to mind, and the
+deliverable template. **Load it before producing any strategy, test plan,
+coverage-gap analysis, or "what should we test" answer** - at Mode Gate time,
+not once drafting has started.
 
 The shape of the answer, in one line each: ranked risks -> the behaviors that
 carry them -> the level and oracle that catch each -> the gaps that remain and
