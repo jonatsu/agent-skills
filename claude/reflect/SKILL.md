@@ -32,6 +32,21 @@ Look for each signal:
   skill or agent prompt).
 - **Operational discoveries** — a non-obvious fact about the current repo
   (paths, gotchas, sudo/permission boundaries, service quirks).
+- **Re-derivation** — the session rebuilt something a durable artifact already
+  held. This is the one signal that measures the setup rather than the work, so
+  scan for it explicitly:
+  + a file re-read that a handoff brief had already summarized,
+  + a fact re-established that has a memory file,
+  + a path or command rediscovered that `AGENTS.md` or a rules file documents,
+  + a decision re-litigated that an ADR already settled.
+
+  Each instance is evidence that an artifact exists but failed — wrong content,
+  wrong home, or a description the search could not match. Record which of those
+  three it was, because the fix differs: rewrite, move, or re-word the trigger.
+  Absent an evaluator, this is the only feedback signal available on whether the
+  captures are working at all, and it costs nothing to collect because the
+  re-derivation already happened in front of you. A session that re-derives
+  nothing is the observation worth reporting too.
 
 This session is not the only source: §8 covers earlier sessions whose detail
 was compacted away before anyone captured it.

@@ -145,6 +145,22 @@ Record any temporary change made to obtain a result and then undone, and how you
 know it was undone. An unreverted probe is invisible to the next session and
 reads as intended code.
 
+**Record the files read and deliberately left alone, not only the ones changed.**
+A path examined and found irrelevant is knowledge no command can recover — it
+exists nowhere but in this session — and omitting it buys an exact repeat of the
+search that produced it. One line each, with the reason: "the controller — read,
+no change needed, the check lives in the middleware". This is the cheapest entry
+in the whole brief and the one most often left out.
+
+For files that did change, name what changed inside them — the function, the
+section, the config key — not merely the path. A path tells the reader where to
+look; it does not tell them what they are looking for, and a summary that says
+"updated the config" sends them to re-read the whole file.
+
+This is not in tension with passing a command rather than a value: the working
+tree is recomputable and belongs to `git status`, but what you read, what you
+rejected, and why are history, and history has no command.
+
 Cover what is in progress and what is blocked, each with the branch, file, or
 external dependency involved.
 
