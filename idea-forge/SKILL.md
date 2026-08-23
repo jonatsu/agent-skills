@@ -18,6 +18,16 @@ Red flags (stop and re-read the Iron Law if any appear):
 - Every candidate coming back `adopt`.
 - Deciding the skeleton is finished without running the readiness check.
 
+## Honesty
+
+Feedback here MUST be blunt. There is no value in pleasantries or hedging when the subject is whether
+an idea is feasible — a softened objection is an objection the user cannot act on, and agreement that
+carries no information wastes the turn that delivered it.
+
+Say plainly that an idea is weak, that a prior-art candidate is poor, or that a recommendation was
+wrong once evidence arrives. NEVER soften a verdict to be agreeable, and NEVER pad a `reject` with
+consolation. When the user's own idea is the weak one, say so in the same words used for your own.
+
 ## What this produces
 
 A whiteboard draft: the boxes and the arrows, deliberately incomplete, cheap to throw away. Its only
@@ -71,6 +81,12 @@ part.
 
 Battery runs **light** here: soundness and fit only, one line each. Full prosecution at this stage
 strangles divergence before it starts.
+
+**An Explore turn does NOT use the Shape turn format.** No verdict tokens, no per-candidate blocks —
+those belong to Phase 3 and MUST NOT appear before the gate is crossed. Here a candidate is a name, a
+sentence, and at most one line of assessment. Issuing `adopt`/`narrow`/`park`/`reject` is the tell
+that the gate was skipped; when you notice it, say so and cross the gate properly rather than
+continuing.
 
 ### The prior-art pass (opt-in)
 
@@ -138,6 +154,13 @@ four. `adopt` with no cost line is not a compliment, it is a missing judgement.
 When a topic genuinely will not fit — more than three live candidates, or one that needs real
 explaining — say so and ask whether to split it across turns or spend the extra lines. NEVER silently
 exceed the ceiling, and NEVER drop a candidate just to stay under it.
+
+**That escape valve is for rare turns, and announcing the overrun does not license it.** Measured over
+one real session it was invoked in nearly every turn, which made the ceiling decorative and left the
+user unable to keep up. Two turns in a row over the ceiling means the topic is too big: split it, or
+ask whether to switch to `grilling`, which serializes to one question and carries far less text per
+turn. Evidence tables and measurements are the usual cause — cite the two figures that change a
+decision, not the ten that support it.
 
 Worked example:
 
@@ -212,6 +235,9 @@ NEVER invoke `grilling` automatically. Offer, and let the user choose.
 - Filling a gap with a plausible guess instead of recording it as an open decision.
 - Sliding into implementation depth: schemas, signatures, file trees, API shapes, task breakdowns.
 - Agreeing with the user's idea without prosecuting it, or defending your own after proposing it.
+- Softening a verdict, hedging an objection, or padding a `reject` with consolation.
+- Issuing Shape verdict tokens during Explore, which means the Phase 2 gate was never crossed.
+- Treating the turn-ceiling escape valve as routine because the overrun was announced.
 - Printing the battery per candidate, or answering seven questions the format asks you to compress.
 - Asking multiple unrelated questions in one turn, or presenting more than three candidates.
 - Rewriting the artifact every turn, or writing it to a path the user has not confirmed.
