@@ -92,7 +92,9 @@ looks complete and produces assertion-free tests.
 | Golden file | Diff against a reviewed, committed artifact | Large structured output; MUST be human-reviewable or it is a rubber stamp |
 | Error contract | Specific type, code, and message shape | Every failure path worth naming |
 
-An oracle that only asserts "did not throw" is not an oracle.
+An oracle that only asserts "did not throw" is not an oracle, and neither is a status code. `200` says
+the request was handled, never that the payload is right - pair it with a shape check (schema, contract,
+or named-field assertions) or the response can change past recognition without failing a test.
 
 ## Step 5: Sweep the coverage taxonomy
 
@@ -141,7 +143,16 @@ Carry these into the plan, because they decide whether the suite is still truste
 
 - A flaky test is a failing test. Quarantine with a deadline and an owner, or delete it. Retry-until-green
   destroys the signal the suite exists for.
+- Synchronize on the condition, never on the clock. A fixed sleep is simultaneously too long on the machine
+  that is fast and too short on the one that is loaded, and it is the largest single source of flake.
+  Wait for the state you actually need - the element, the row, the log line, the exit.
+- Bind to the contract, not to the incidental representation: roles and labels over CSS paths, documented
+  fields over positional index, exit codes over stdout formatting. A test that breaks on a rename no user
+  could observe is coupled to the wrong thing, and its failures teach the team to ignore failures.
 - Tests MUST be order-independent and self-seeding. Shared mutable fixtures are the usual cause when they are not.
+- Run the suite where it will be judged. CI differs from a developer machine in fonts, rendering,
+  parallelism, resource contention and network path, so a suite green only locally has not really been run.
+  Where the environments must differ, make the difference explicit and reviewable rather than incidental.
 - Every test names the behavior it protects in its title. `test_case_3` is a test nobody will dare delete or fix.
 - New coverage arrives with the change that needs it. "Tests in a follow-up PR" is the plan's most common lie.
 

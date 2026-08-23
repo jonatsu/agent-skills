@@ -167,6 +167,9 @@ Anti-patterns:
 - Broad snapshots without human-readable intent.
 - Large fixture magic that obscures the scenario.
 - Skipping, relaxing, or deleting assertions to force green.
+- Testing the framework or the library instead of your own code: that the ORM
+  persists, that the HTTP client sets the header, that the matcher matches.
+  Its authors tested it; a failure there is their bug and your wasted run.
 
 Strategy-mode anti-patterns:
 
