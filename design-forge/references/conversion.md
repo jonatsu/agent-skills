@@ -49,6 +49,8 @@ Then read for what a script cannot see:
 - Every section past the ceiling, which is a fork candidate. *(the survey)*
 - Existing implicit ownership: prose like "this document owns X", routing rules, "see Y for Z".
 - Existing implicit lifecycle: status headers, "frozen", "draft", "superseded by", stale dates.
+- Existing confidentiality or provenance prose — "customer supplied", "under NDA", "do not
+  distribute", a copied standard excerpt. Each becomes a proposed `handling` value.
 - Existing spellings of the same idea. Three incompatible spellings of "status" across four documents
   is normal and is exactly what the frontmatter replaces.
 - Cross-references between documents, because forks will break some of them.
@@ -102,6 +104,7 @@ Order matters. Do it in this order and stop at the first thing that does not ver
    - Create the destination with its frontmatter, `lifecycle: draft`, unlocked, and the moved claim.
    - Paste the range in verbatim.
    - Leave the pointer in the parent, and remove the claim from the parent's `owns`.
+   - Carry the parent's `handling` value onto the child. A restriction travels with its content.
    - Verify byte-identity before starting the next row.
 3. **Supersessions.** Set `lifecycle: superseded` and `superseded-by` on each retired document. Leave
    its `locked` value alone.

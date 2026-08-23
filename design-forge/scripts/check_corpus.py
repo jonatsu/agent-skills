@@ -42,7 +42,12 @@ KNOWN_KEYS = (
     "locked",
     "superseded-by",
     "supersedes",
+    "handling",
 )
+# Fixed, unlike `type`. The whole point of the field is to be a signal, and a
+# freeform value means a typo silently disables it. Spelling is all this script
+# can check -- nothing here enforces the restriction itself.
+HANDLING_VALUES = ("internal", "customer-confidential", "third-party")
 SECTION_WARN_LINES = 200
 DOC_WARN_LINES = 1000
 DOC_LIMIT_LINES = 2000
@@ -266,6 +271,11 @@ def check_fields(doc: Doc, report: Report) -> None:
     if "locked" in front and not isinstance(front["locked"], bool):
         report.error(f"{doc.rel}: `locked` must be true or false")
 
+    handling = front.get("handling")
+    if handling is not None and handling not in HANDLING_VALUES:
+        allowed = " | ".join(HANDLING_VALUES)
+        report.error(f"{doc.rel}: `handling` must be one of {allowed} when present")
+
     check_supersession(doc, report)
 
     for key in front:
@@ -438,32 +448,39 @@ def check_ownership(docs: list[Doc], report: Report) -> None:
 
 
 def render_index(docs: list[Doc]) -> str:
-    """Build the index from the ownership declarations, never by hand."""
-    rows: list[tuple[str, str, str, str, str]] = []
+    """Build the index from the ownership declarations, never by hand.
+
+    The handling column appears only when at least one document declares one,
+    so a corpus with no restricted material does not carry a column of dashes.
+    """
+    show_handling = any(doc.front.get("handling") is not None for doc in docs)
+    rows: list[list[str]] = []
     for doc in docs:
         doc_type = doc.front.get("type")
         lifecycle = doc.front.get("lifecycle")
-        locked = "yes" if doc.front.get("locked") is True else "no"
+        handling = doc.front.get("handling")
+        tail = [
+            doc_type if isinstance(doc_type, str) else "?",
+            lifecycle if isinstance(lifecycle, str) else "?",
+            "yes" if doc.front.get("locked") is True else "no",
+        ]
+        if show_handling:
+            tail.append(handling if isinstance(handling, str) else "-")
         for claim in claims_of(doc):
-            rows.append(
-                (
-                    claim,
-                    doc.rel,
-                    doc_type if isinstance(doc_type, str) else "?",
-                    lifecycle if isinstance(lifecycle, str) else "?",
-                    locked,
-                )
-            )
+            rows.append([claim, doc.rel, *tail])
     rows.sort()
+    headers = ["Owns", "Document", "Type", "Lifecycle", "Locked"]
+    if show_handling:
+        headers.append("Handling")
     lines = [
         INDEX_MARKER,
         "",
         "# Document index",
         "",
-        "| Owns | Document | Type | Lifecycle | Locked |",
-        "|---|---|---|---|---|",
+        "| " + " | ".join(headers) + " |",
+        "|" + "---|" * len(headers),
     ]
-    lines.extend(f"| {c} | {d} | {t} | {lc} | {lk} |" for c, d, t, lc, lk in rows)
+    lines.extend("| " + " | ".join(row) + " |" for row in rows)
     lines.append("")
     return "\n".join(lines)
 

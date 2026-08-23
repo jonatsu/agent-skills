@@ -114,6 +114,7 @@ owns:                   # REQUIRED — at least one claim
 locked: true            # OPTIONAL — defaults to false
 superseded-by: new.md   # REQUIRED when lifecycle is superseded, forbidden otherwise
 supersedes: [old.md]    # OPTIONAL — back-link
+handling: internal      # OPTIONAL — internal | customer-confidential | third-party
 ---
 ```
 
@@ -134,6 +135,16 @@ constraining anything.
 **An absent or empty section is a correct and complete state.** NEVER fill a heading to avoid leaving
 it empty; delete the heading instead. An agent told to keep a document complete will fill every leaf
 of a large template, and that is the mechanism behind documents nobody can read.
+
+**`handling` marks content that may not leave the corpus** — a customer-supplied specification, a
+contractor deliverable, a standard excerpt. When a document carries any value, NEVER send its content
+to an external service (web search, a fetch tool, an MCP server, a subagent that may search), and
+NEVER copy it into a document with a weaker restriction. Report that the restriction stopped you.
+
+**It is advisory and cannot be otherwise, so NEVER present it as a security control.** Nothing
+enforces it — the agent reading the field is the agent that could paste the content into a search
+query, and the checker validates spelling only. Where a real guarantee is needed, the material does
+not belong in the repository.
 
 **Non-markdown artifacts do not carry frontmatter and do not need it.** A diagram, an exported
 spreadsheet or a customer-supplied PDF is content that a markdown document owns and declares. NEVER
@@ -212,6 +223,9 @@ claiming jurisdiction.
 
 The pointer and the amendment marker are **the same primitive** — an in-body annotation that redirects
 authority without altering a claim. One rule, two uses.
+
+**A `handling` restriction travels with the content.** The child inherits the parent's value; a fork
+that drops it launders the restriction exactly as a one-step fork launders a rewrite.
 
 ### Create
 
@@ -311,6 +325,7 @@ vague-wording gate.
 - Minting a document type or an ownership claim the user never confirmed.
 - Filling every heading of a template because an empty section looks like an omission.
 - Introducing a sidecar metadata file, a central topic registry, or a hand-typed index.
+- Presenting `handling` as a security control, dropping it across a fork, or routing around it quietly.
 - Blocking on a length ceiling, or warning about one without naming the section to extract.
 - Auditing the corpus when nothing blocked the operation at hand.
 - Claiming a rule is enforced when no enforcement surface exists.

@@ -222,6 +222,58 @@ class FieldCheckTests(TempCorpus):
         self.assertIn("unknown frontmatter key `foo`", joined(report.warnings))
 
 
+class HandlingTests(TempCorpus):
+    def with_handling(self, value: str) -> None:
+        write(self.root, "a.md", VALID.replace("owns:", f"handling: {value}\nowns:"))
+
+    def test_absent_is_the_normal_case(self) -> None:
+        write(self.root, "a.md", VALID)
+        self.assertEqual(run_checks(self.root).errors, [])
+
+    def test_every_permitted_value_is_accepted(self) -> None:
+        for value in cc.HANDLING_VALUES:
+            with self.subTest(value=value):
+                self.with_handling(value)
+                self.assertEqual(run_checks(self.root).errors, [])
+
+    def test_misspelled_value_is_an_error(self) -> None:
+        self.with_handling("confidential")
+        found = joined(run_checks(self.root).errors)
+        self.assertIn("`handling` must be one of", found)
+
+    def test_it_is_a_known_key_not_a_warning(self) -> None:
+        self.with_handling("internal")
+        self.assertEqual(run_checks(self.root).warnings, [])
+
+    def test_index_omits_the_column_when_nothing_declares_one(self) -> None:
+        write(self.root, "a.md", VALID)
+        report = cc.Report()
+        docs = [
+            doc
+            for path in cc.collect(self.root, None)
+            if (doc := cc.load(path, self.root, report)) is not None
+        ]
+        self.assertNotIn("Handling", cc.render_index(docs))
+
+    def test_index_adds_the_column_when_one_document_declares_one(self) -> None:
+        self.with_handling("customer-confidential")
+        write(self.root, "b.md", VALID.replace("- alpha", "- beta"))
+        report = cc.Report()
+        docs = [
+            doc
+            for path in cc.collect(self.root, None)
+            if (doc := cc.load(path, self.root, report)) is not None
+        ]
+        rendered = cc.render_index(docs)
+        self.assertIn(
+            "| Owns | Document | Type | Lifecycle | Locked | Handling |", rendered
+        )
+        self.assertIn(
+            "| alpha | a.md | design | active | no | customer-confidential |", rendered
+        )
+        self.assertIn("| beta | b.md | design | active | no | - |", rendered)
+
+
 class SupersessionTests(TempCorpus):
     def test_superseded_requires_a_pointer(self) -> None:
         write(self.root, "a.md", VALID.replace("active", "superseded"))

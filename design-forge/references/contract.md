@@ -20,6 +20,7 @@ Full field reference, the mode declaration, per-type rules, the section catalogu
 | `locked` | optional, default `false` | boolean | May this be edited? |
 | `superseded-by` | iff `lifecycle: superseded` | path relative to the document | Where did authority go? |
 | `supersedes` | optional | list of paths | What did this replace? |
+| `handling` | optional | one of three fixed values | May this content leave the corpus? |
 
 Nothing else. An unknown key is a warning rather than an error, because a repo may carry its own
 metadata — but this skill's operations read only the fields above, and an unknown key MUST NOT be
@@ -59,6 +60,37 @@ checker requires the field when `lifecycle: superseded`, requires the target to 
 field on any other lifecycle.
 
 Superseding does **not** change `locked`. Retirement is not permission to edit.
+
+### `handling` — an advisory restriction, not a control
+
+Some documents are not yours to hand around: a customer-supplied specification under obligation, a
+contractor deliverable, an excerpt from a paywalled standard, a vendor datasheet. `handling` marks
+them. Absent is the normal case and means nothing was declared.
+
+| Value | Meaning |
+|---|---|
+| `internal` | Belongs in this repository and no further. Do not transmit it outside the machine |
+| `customer-confidential` | Supplied under an obligation to a third party. Do not quote it into documents outside this corpus, and do not transmit it anywhere |
+| `third-party` | Owned by someone else. Do not reproduce beyond fair citation, and do not transmit it |
+
+**Unlike `type`, the value set is fixed.** A field whose purpose is to be a signal must not be
+freeform, because a typo would silently disable it. The checker validates the spelling and rejects
+anything else.
+
+What an agent must do when a document carries any `handling` value:
+
+- **NEVER send its content to an external service.** Web search, a fetch tool, an MCP server, and a
+  research subagent that may search all count as external. Report and stop instead.
+- **NEVER copy its content into a document with a weaker restriction**, including one with none.
+  Content carries its restriction; a quotation launders it otherwise.
+- Say out loud that the restriction stopped the operation, rather than silently routing around it.
+
+**This is advisory and cannot be anything else. Do not treat it as a security control.** Nothing
+enforces it: the agent that reads the field is the same agent that could paste the content into a
+search query, and the checker verifies spelling only. It is a signal that makes the obligation visible
+at the point of work, which is worth having — but a flag honoured by good intentions offers no
+guarantee, and treating it as one is worse than not having it. Where a real guarantee is needed, keep
+the material out of the repository.
 
 ## The mode declaration
 
