@@ -97,7 +97,14 @@ already exists", because the escape normalizes identically on both sides of the
 comparison and the edit looks already-applied. Suspect this whenever an edit claims
 its replacement is already present, or a text file starts reading as binary.
 Recovery is a full rewrite of clean content; a targeted patch cannot remove what it
-cannot match.
+cannot match, and stripping the byte through a shell filter rewrites the file and
+so resets its mode — check it afterwards.
+
+Detecting it is its own trap, because the usual probes disagree. Plain `grep`
+reports `binary file matches` on the file while `grep -P '\x00'` reports no match,
+so neither answer settles it. Compare byte counts instead: the file's size against
+the size with NUL bytes filtered out. Any difference is the count of NULs present,
+and zero difference is proof of absence.
 
 ## replace_all rewrites the file mode
 

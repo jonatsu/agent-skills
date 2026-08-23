@@ -74,6 +74,24 @@ Confirm that every file you are about to list still exists at the path you name.
 When the brief will claim something is verified, MUST name the command that
 verified it and its result. If it was never run, say so instead.
 
+Verify to establish facts, not to inventory state. Every item that reaches the
+brief MUST name the decision it unblocks. If you cannot say which choice the next
+session makes differently because of it, cut it — diligence is not a
+justification, and the writer never observes a useless line failing.
+
+**Pass identity, never tallies.** Paths, branch names, symbol and heading names,
+and commit subjects travel intact. Counts do not: commits ahead of a remote,
+changed-file counts, diffstat totals, percentages, and line numbers are all
+derived over a tree the next session is about to move, so the very work this brief
+enables is what invalidates them.
+
+**Volatile state gets a command, not a value.** Write "run `git status -sb`",
+never "the remote is 3 commits ahead". Freezing a recomputable number is worse
+than omitting it: the reader may trust the snapshot instead of re-running it, so a
+fact that was fresh arrives stale and carrying false confidence. Spend the space
+on what cannot be recomputed — the constraint you were handed, the approach you
+rejected and why, the dead end already explored.
+
 ## Sections
 
 Five sections are always present. The rest MUST appear when they have content
@@ -254,6 +272,10 @@ file outlives the session and may be sent elsewhere. Name the secret's location
 Before delivering, verify each:
 
 - [ ] Every path, branch, and commit was confirmed this turn
+- [ ] Every item names a decision it unblocks; nothing is present merely because
+      it was easy to collect
+- [ ] No tally the reader could recompute — commits ahead, changed-file counts,
+      line numbers — is stated as a value instead of a command
 - [ ] No section duplicates an artifact it could have cited
 - [ ] Every "done" claim names what verified it, or is marked unverified
 - [ ] No empty or placeholder sections remain
@@ -308,6 +330,11 @@ Report the saved path in the reply.
 - **Handing off a handoff.** If the brief mostly summarizes the previous brief,
   the session did no work worth carrying — say that instead.
 - **Stale paths.** Branches deleted, files moved, commits rebased away.
+- **The frozen tally.** A number the reader could recompute in one command —
+  commits ahead of a remote, files changed, a line number — pasted as a fact. It
+  is stale on arrival and invites trust it has not earned. Name the command.
+- **Inventorying state.** Collecting everything cheap to gather because gathering
+  looks like rigor. Each line must earn its place by unblocking a decision.
 - **Under-listing READ FIRST.** The most common failure, and invisible to the
   reader who suffers it.
 - **Recommending skills that do not exist here.**
