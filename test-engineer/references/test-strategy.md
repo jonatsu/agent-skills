@@ -69,6 +69,14 @@ cannot?** No answer means do not test it there.
 | Property-based | Whole input classes at once; finds inputs nobody imagined | Needs an invariant worth stating | Round-trips, encoders, sorting, idempotency, anything with an algebraic law |
 | Manual or exploratory | Judgment, aesthetics, and the unknown-unknowns | Not repeatable, not a gate | Usability, visual output, first pass on a novel area |
 
+**Size is a second axis, and it is not the same question as level.** Level asks how much of the system
+is exercised; size asks what the test is allowed to *touch* - small (one process, no network, no disk,
+no sleeping), medium (one machine: localhost, a temp dir, a local database), large (several machines or
+a real external system). The two are independent: an integration test can be small, a unit test that
+reaches a shared fixture on disk is not. Record both, because size - not level - decides whether a test
+can run in a fast hermetic parallel shard, and it is the axis a slow suite is usually failing on.
+(The small/medium/large framing is from *Software Engineering at Google*, ch. 11.)
+
 Rules that resolve most arguments:
 
 - MUST NOT mock what you are trying to prove. A test whose collaborators are all mocks proves the mocks agree
@@ -143,6 +151,11 @@ Carry these into the plan, because they decide whether the suite is still truste
 
 - A flaky test is a failing test. Quarantine with a deadline and an owner, or delete it. Retry-until-green
   destroys the signal the suite exists for.
+- Ask what the suite would CATCH, not what it covers. Break the production code deliberately - flip a
+  comparison, drop a guard, return a constant - and see whether anything goes red. A mutation nothing
+  kills is the finding, and it is the only evidence that separates tests which assert from tests which
+  merely execute. Mutation tooling (Stryker, PIT, mutmut, cargo-mutants) automates the sweep; by hand,
+  three deliberate breaks in the riskiest function tell you most of what a coverage report will not.
 - Synchronize on the condition, never on the clock. A fixed sleep is simultaneously too long on the machine
   that is fast and too short on the one that is loaded, and it is the largest single source of flake.
   Wait for the state you actually need - the element, the row, the log line, the exit.
@@ -167,8 +180,8 @@ Carry these into the plan, because they decide whether the suite is still truste
 |---|---|---|---|---|
 
 ## Coverage plan
-| Behavior | Level | Oracle | Taxonomy categories applied | Exists? |
-|---|---|---|---|---|
+| Behavior | Level | Size | Oracle | Taxonomy categories applied | Exists? |
+|---|---|---|---|---|---|
 
 ## Existing coverage
 <files inspected, what they already prove, what they leave open>
