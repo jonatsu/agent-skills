@@ -37,12 +37,29 @@ parent session; loading a skill or config from a directory that is itself a
 project.
 
 **Markers are not only `.git`.** `package.json`, `Cargo.toml`, `pyproject.toml`,
-`go.mod` and friends capture too, so the root can land on a *subdirectory*, and
-stripping `.git` from a scratch clone does not prevent it.
+`go.mod` and friends capture too, so stripping `.git` from a scratch clone does not
+prevent it.
 
-**Recovery**: reconnect the MCP server (in Claude Code, `/mcp`). Re-passing
-`cwd=<project root>` to `ctx_shell` is rejected — and the rejected call still
-runs, silently, in the captured root.
+**The root latches to the OUTERMOST marker-bearing ancestor of the touched path,
+not the nearest**, so the captured root can sit far above the file that triggered
+it. It can still land on a *subdirectory* of the tree you touched, and that is the
+same rule rather than an exception: it happens when the tree's own top level
+carries no marker while a nested directory does — exactly what a `.git`-stripped
+clone with a `package.json` under `docs/` looks like.
+
+**Exposure is concentrated at session start.** Once a marker-bearing project root
+IS set, an absolute path into a foreign tree fails closed instead of re-rooting.
+The dangerous window is the first `ctx_read`/`ctx_shell` of a session, while no
+root is set — which is why loading a skill from a config directory that is itself
+a project captures so reliably.
+
+**Recovery**: reconnect the MCP server (in Claude Code, `/mcp`). The root is
+latched and persisted — nothing clears it on a timer, so do NOT wait it out.
+Re-passing `cwd=<project root>` to `ctx_shell` is rejected, and the rejected call
+still runs in the captured root, appending a
+`[cwd: requested path rejected by project-root jail …]` line to the output. Read
+the tail before trusting the result; that notice is missing only when the session
+lock times out.
 
 **Root oracles** (there is no root-resolution log): the `(root: …)` string in any
 jail error, and the `Session state … root: …` line in `lean-ctx doctor`.
@@ -55,7 +72,14 @@ locally; read a local foreign tree with the host's native read tool. Treat an
 absolute path into another project as the trigger, not just `cwd`.
 
 **Config levers** (ask first; see appendix-paths-and-config): `project_root`,
-`extra_roots`, `read_only_roots`, `allow_auto_reroot`.
+`extra_roots`, `read_only_roots`.
+
+**No config key suppresses capture.** `allow_auto_reroot` gates only one of three
+re-root paths and already defaults to `false`, so setting it to `false` is a no-op
+and setting it to `true` only widens the third path. The levers above widen the
+jail so the real project stays reachable; they do NOT stop the root from moving.
+The only switch that disables the jail outright is `path_jail = false`, which gives
+up containment entirely.
 
 ## Patch issues
 

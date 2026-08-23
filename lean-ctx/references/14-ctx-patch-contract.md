@@ -11,6 +11,8 @@ is rejected for a missing or unknown field, follow the error, then fix this file
 ## Contents
 
 - Operations and their fields
+- Why an exact-match op misses
+- replace_all rewrites the file mode
 - Batching and atomicity
 - dry_run does not validate anchors
 - line is advisory; the hash carries identity
@@ -40,6 +42,13 @@ Traps inside that table:
   outright. `replace` MUST be passed explicitly; there is no default.
 - `replace_symbol` takes `new_text`, never `new_body`, and `new_text` is the FULL
   replacement declaration — the whole function or class block, not just a body.
+- `replace_symbol`'s `name` resolves against the WHOLE repository index, and the
+  top-level `path` does NOT scope it. A common name returns
+  `AMBIGUOUS_SYMBOL: 'x' matches N symbols; qualify it:` listing candidates from
+  every language in the repo, shell scripts included — `name=main` with `path` set
+  to a single file returned 10 candidates across 7 other files. The error prints
+  qualified `path:symbol` forms. For any name that is not repo-unique, use
+  `replace_unique` on the declaration line instead.
 - `replace_unique` requires a non-empty `old_text` (`old_string`/`new_string` are
   accepted aliases); `find`/`replace` are rejected there.
 - On `delete`, the mere presence of `start_line` or `end_line` selects the range
@@ -53,9 +62,33 @@ Traps inside that table:
 - `new_text` on a single-line op is the replacement content only, never the old
   line repeated back.
 
-SHOULD prefer `replace_unique` or `replace_all` for renames and path sweeps: no
-anchored read, no hash to go stale, and a non-unique match fails loudly instead
-of editing the wrong line.
+SHOULD prefer `replace_unique` for renames and path sweeps: no anchored read, no
+hash to go stale, and a non-unique match fails loudly instead of editing the wrong
+line. `replace_all` covers every occurrence in one call but rewrites the file mode
+— see below before reaching for it.
+
+## Why an exact-match op misses
+
+`replace_unique` and `replace_all` match bytes, so the miss is almost always
+invisible whitespace rather than a wrong string.
+
+The most common trigger is a **formatted markdown table**: a formatter pads cells,
+so a row's trailing `|` sits behind a run of spaces and an `old_text` ending in
+`… |` never matches. End the match before the padding.
+
+## replace_all rewrites the file mode
+
+**`replace_all` destroys the file's mode; the other ops do not.** It rewrites the
+file at `0600`, so a patched script keeps `100755` in the index while the working
+copy loses `+x`, and the next invocation dies with `Permission denied`.
+
+The edit reports success, and `git status` stays silent because the index is
+unchanged — the drift shows only as `ls -l` disagreeing with `git ls-files -s`. On
+a 755 probe file, `replace_unique` and anchored `set_line` both preserved 755 while
+`replace_all` reset it to `0600`.
+
+After ANY `replace_all` on an executable, `chmod` it back and verify. Prefer
+`replace_unique`, which is the better tool for a rename sweep regardless.
 
 ## Batching and atomicity
 
@@ -71,6 +104,11 @@ of editing the wrong line.
   comes back as ordinary text in an otherwise successful-looking response.
 - A batch containing `replace_unique` or `replace_symbol` applies sequentially,
   so earlier ops are already on disk when a later one fails.
+- **Partial application runs in BOTH directions.** A failed op does not stop later
+  ops in the same batch, so op 1 can fail while ops 2 and 3 land. The aggregate
+  response then reads as success: each applied op prints its own `✓` and the error
+  is one block among them. After any multi-op batch, confirm each intended change
+  actually landed rather than scanning for an overall failure.
 
 ## dry_run does not validate anchors
 

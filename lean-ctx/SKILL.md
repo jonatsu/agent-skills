@@ -52,7 +52,7 @@ lean-ctx skill flow:
 - `references/13-silent-failure-modes.md` — load when a `ctx_*` result looks
   wrong, empty, or suspiciously complete
 - `references/14-ctx-patch-contract.md` — load before a batched or non-trivial
-  edit, and whenever `ctx_patch` rejects a call
+  edit, before a rename or path sweep, and whenever `ctx_patch` rejects a call
 - `references/appendix-cli-map.md` — compact CLI command map
 - `references/appendix-mcp-tools.md` — MCP tool groups and profile caveats
 - `references/appendix-paths-and-config.md` — config, env, path jail guidance
@@ -89,6 +89,14 @@ lean-ctx skill flow:
 - `dry_run` does not check anchors: on anchored ops it answers "would apply"
   before opening the file, even for a fabricated hash. It MUST be a JSON boolean,
   because the string `"true"` reads as false and the edit applies.
+- `replace_all` rewrites the file at `0600`, silently stripping `+x` from a script
+  while the index keeps `100755`. The edit reports success and `git status` stays
+  clean, so prefer `replace_unique` for sweeps and `chmod` back if `replace_all`
+  touched an executable.
+- Read-dedup is cross-agent: a file a subagent read returns as an
+  `[unchanged … read-dedup]` stub in your own context, claiming it is "already in
+  this conversation above" when it is not. It intercepts native reads too. Recover
+  with `fresh=true`, never by re-issuing the identical read.
 - Archived `ctx_shell`/`ctx_execute`/`ctx_search`/`ctx_tree` output is retrievable
   with `ctx_expand(id=…)`; re-running the command pays for it twice.
 - The advertised tool list is an advertising filter, not an access boundary:

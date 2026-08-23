@@ -33,6 +33,18 @@ not as a finding. Observed on lean-ctx 3.9.x, last verified against 3.9.18.
   time and redacted content is removed before any mode sees it — `raw` included.
   Use the host's native read tool for those two.
 - **`outline` is not a mode.** It warns and falls back to a full read.
+- **`raw` truncates at a fixed output cap**, so a mid-size file comes back partial
+  even though `raw` promises exact bytes. The cut is labelled
+  (`[… truncated at ~N of M tokens …]`) and the notice suggests a `lines=`
+  parameter — pass `start_line`+`limit` and page instead. The cap is on output,
+  not a fraction of the file: two `raw` reads of one 426-line file both stopped at
+  ~4182 tokens, one reading a 7479-token whole and one a 4660-token tail.
+- **Read-dedup is cross-agent, so a file a SUBAGENT read comes back as a stub in
+  your own context.** The reply is `[unchanged NL · lean-ctx read-dedup]` plus
+  "already in this conversation above" — but it is not, and no content is
+  returned. This intercepts the host's NATIVE read tool too, not only `ctx_read`.
+  Recover with `fresh=true`, or by copying the file into the project and reading
+  the copy. NEVER re-issue the identical read.
 
 ## Searches and globs that truncate
 
