@@ -12,7 +12,9 @@ is rejected for a missing or unknown field, follow the error, then fix this file
 
 - Operations and their fields
 - Why an exact-match op misses
+- Content the ops cannot express
 - replace_all rewrites the file mode
+- The reported digest is not an md5
 - Batching and atomicity
 - dry_run does not validate anchors
 - line is advisory; the hash carries identity
@@ -76,6 +78,27 @@ The most common trigger is a **formatted markdown table**: a formatter pads cell
 so a row's trailing `|` sits behind a run of spaces and an `old_text` ending in
 `… |` never matches. End the match before the padding.
 
+## Content the ops cannot express
+
+**A trailing newline is trimmed, so no single-line op can create a blank line.**
+`insert_after` and `set_line` with a `new_text` ending in a newline insert only the
+content line, and `set_line` with a bare trailing newline errors as a no-op. To
+separate two paragraphs, use `replace_lines` spanning both lines and embed the
+blank line inside `new_text` as `…\n\n…`.
+
+**A JSON NUL escape — backslash, `u`, four zeros — in any `new_text` writes a REAL
+NUL byte**, because the escape resolves at the tool boundary before the content
+reaches disk. Written out literally here it would do exactly that to this file, so
+it is spelled rather than shown.
+
+The file becomes binary, subsequent reads refuse it outright, and — the confusing
+part — `replace_unique` then fails with "old_string not found, but new_string
+already exists", because the escape normalizes identically on both sides of the
+comparison and the edit looks already-applied. Suspect this whenever an edit claims
+its replacement is already present, or a text file starts reading as binary.
+Recovery is a full rewrite of clean content; a targeted patch cannot remove what it
+cannot match.
+
 ## replace_all rewrites the file mode
 
 **`replace_all` destroys the file's mode; the other ops do not.** It rewrites the
@@ -89,6 +112,20 @@ a 755 probe file, `replace_unique` and anchored `set_line` both preserved 755 wh
 
 After ANY `replace_all` on an executable, `chmod` it back and verify. Prefer
 `replace_unique`, which is the better tool for a rename sweep regardless.
+
+## The reported digest is not an md5
+
+Every `ctx_patch` reply prints `preimage`/`postimage` lines carrying `bytes`,
+`mtime_ms`, and a field labelled `md5`. That field is 64 hex characters and
+matches NEITHER `md5sum` NOR `sha256sum` of the file on disk.
+
+It is stable and self-consistent across calls — one call's `postimage` equals the
+next call's `preimage` — so it chains, and a matching pair does prove the file was
+untouched between two patches. It does NOT interoperate with shell hashes. To
+prove an inverse patch restored a file byte-for-byte, compare digest to digest, or
+hash both sides with a native shell tool. Comparing the reported value against
+`md5sum` output will always disagree, and that disagreement is not evidence of
+corruption.
 
 ## Batching and atomicity
 

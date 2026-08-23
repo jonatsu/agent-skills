@@ -6,8 +6,10 @@ not as a finding. Observed on lean-ctx 3.9.x, last verified against 3.9.18.
 ## Contents
 
 - Reads that omit
+- Redaction rewrites what you read
 - Searches and globs that truncate
 - Caches that answer for a stale tree
+- Shell calls that mislead
 - Arguments that are silently reinterpreted
 - Retrieving what was archived
 
@@ -46,6 +48,41 @@ not as a finding. Observed on lean-ctx 3.9.x, last verified against 3.9.18.
   Recover with `fresh=true`, or by copying the file into the project and reading
   the copy. NEVER re-issue the identical read.
 
+## Redaction rewrites what you read
+
+Secret redaction runs on the way out of every `ctx_*` read and shell call, and
+`mode="raw"` does NOT bypass it. It fires on ordinary text that merely looks
+credential-shaped, and the substitution is not a clean swap: an
+`Authorization: Bearer <value> and …` line came back as
+`Authorization: Bearer [REDACTED:Authorization header] token] and …`, injecting a
+stray ` token]` that was never in the file. The altered span can therefore be
+longer than the marker and can carry invented text.
+
+**The transform is display-layer, not a write.** After two `ctx_patch` edits to
+unrelated lines of a file containing redaction-triggering text, the file on disk
+held zero markers, every credential span was intact, and the byte count moved by
+exactly the size of the intended edits.
+
+**On-disk corruption comes from ROUND-TRIPPING.** Content obtained through a
+`ctx_*` read and then written back by any tool persists the marker, and the
+original is gone. NEVER reconstruct or re-emit a file from a `ctx_*` read of it.
+Patch it in place, or re-read it with the host's native read tool first.
+
+**Seeing a marker is not evidence the file is damaged.** This is the most
+expensive part of the failure mode, because the natural reading of invented text
+in a read is "something corrupted my file", and investigating that burns far more
+time than the redaction cost. Diagnose in this order: re-read the span with the
+host's native read tool, and if it is clean, the marker was a display artifact and
+there is nothing to fix. Only if the native read also shows the marker has
+anything been written to disk. NEVER run that check through `ctx_shell` — it
+redacts its own stdout with the same heuristic and will re-confirm a phantom.
+
+**Absence of a marker proves nothing.** The heuristic is context-dependent:
+`TOKEN=old` and a bare 13-digit epoch passed through untouched in one file while
+comparable shapes are redacted elsewhere. When the exact bytes matter, verify with
+a native read — never with `ctx_shell`, which redacts its own stdout and so cannot
+confirm itself.
+
 ## Searches and globs that truncate
 
 - **`ctx_search` stops at `max_results` (default 20) and prints "N matches" with
@@ -54,6 +91,19 @@ not as a finding. Observed on lean-ctx 3.9.x, last verified against 3.9.18.
 - **`ctx_glob` has no brace expansion.** `**/*.{rs,ts}` matches nothing and does
   not error. Issue one glob per extension. `ctx_search(include=…)` does expand
   braces.
+- **`ctx_search` also under-reports from a STALE INDEX**, which is a separate
+  failure from the result cap. It searches its own index, which lags recently
+  created or edited files: a regex search reported "20 matches in 6 files" while
+  omitting ten further matches in three files that a plain recursive grep found.
+  A count under the cap is therefore not proof of completeness either.
+- **`ctx_shell` output compression drops whole lines with no marker.** A
+  `git status --short` returned twelve entries where the raw run returned
+  thirteen, and a `jq` query listing names returned twelve where the real answer
+  was twenty-nine. The clipped list looks complete and plausible. Defend against
+  it by asking for the count in the same call (`| wc -l`, `jq '… | length'`) and
+  checking it against the lines you can actually see — a count is one token and it
+  is the only thing that makes clipping visible. Pass `raw` whenever completeness
+  is the point rather than the gist.
 - **`ctx_git_read`'s grep is `git grep` BRE and always case-insensitive.**
   Alternation, `+`, and `?` are literal characters there, so `foo|bar` searches
   for the string `foo|bar` and finds nothing. Character classes and anchors do
@@ -72,6 +122,22 @@ not as a finding. Observed on lean-ctx 3.9.x, last verified against 3.9.18.
   the pattern alone — so the same pattern run against a different directory is
   diffed against the previous directory's results. This one is labelled: read
   the header before trusting the count.
+
+## Shell calls that mislead
+
+- **`ctx_shell` detaches any command still running at the foreground cap** (~110s)
+  and returns a job id immediately. A `sleep 300` used as "wait for the build"
+  therefore returns at once, so a poll-after-sleep loop fires far faster than real
+  time. The symptom reads as a hang: a background job polled ten times still says
+  `running`. Check elapsed time against a clock — a file mtime versus `date` — not
+  against how many polls you have made. To actually block, keep the sleep under
+  the cap and do not request background execution.
+- **`ctx_shell` runs inside the long-lived MCP server process and keeps the
+  environment that process was launched with.** A variable exported into a shell
+  profile mid-session is invisible to it, and any subprocess it spawns inherits
+  the stale environment too, so an env-dependent check can report a false negative
+  while the change is correct. Variables that existed before the host launched are
+  visible normally. Verify env-sensitive work with the host's native shell.
 
 ## Arguments that are silently reinterpreted
 
