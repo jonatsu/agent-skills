@@ -39,6 +39,10 @@ They answer different questions and come apart in both directions.
 document. Collapsing them into one enum loses the ability to ask "is this still true?" separately from
 "may I change it?".
 
+There is deliberately no lifecycle value for "finished". A document that is complete and still true is
+`active` and `locked` — the normal frozen case. Finishing is not a claim about authority, so it is not
+a lifecycle event. An evidence record that will gain no further evidence is exactly this cell.
+
 ### `owns` — the ownership claim
 
 The root cause of two documents disagreeing is that neither declared what it owns, so an ad-hoc
@@ -48,6 +52,16 @@ subdirectory and a section inside a frozen document can both claim the same mate
 - A claim belongs to exactly one document. The checker treats a duplicate as an error.
 - Claims are **human-minted**. Propose freely; never create one unilaterally.
 - When content forks out, **the claim moves with it**. The parent stops claiming jurisdiction.
+
+**Size a claim to what a fork would move.** The fork protocol carries the claim out with the content,
+so a claim that cannot move alone is the wrong size. In practice this is a top-level section: a
+document with three forkable sections declares three claims. A document with one subject declares one
+claim. NEVER mint a claim per heading — a claim nothing could ever collide with constrains nothing.
+
+**A heading that recurs across documents is not a claim.** Three documents each carrying
+`## Open questions` is structure, not overlap — they hold different open questions. A collision is two
+documents claiming the same *subject matter*, which is why claims are minted from what a document is
+about and never from its headings.
 
 There is no central registry mapping topics to documents. The index is generated from these
 declarations, so a registry would be a second copy that rots. Overlap is caught at fork time and by
@@ -101,11 +115,30 @@ Declared once by a human, recorded where the repo already keeps agent instructio
 ## Design documentation contract
 
 - Mode: imposed
-- Corpus root: `docs/design/`
-- Index: `docs/design/INDEX.md`
+- Trigger: load the `design-forge` skill before writing or restructuring anything under a corpus root
+- Corpus roots: `docs/design/`
+- Index: `docs/design/INDEX.md` — generated, never hand-edited
+- Enforcement surface: `make check-docs` — whatever command this repo already runs
 - Types in use: `design`, `requirements`, `milestone`
 - Ownership claims: see the generated index
 ```
+
+**Both `Trigger:` and `Enforcement surface:` are required rows.** A declaration with no trigger reaches
+only an agent that reads the instruction file top to bottom; one that opens a design document directly
+never learns a fork relocates verbatim or that the index is generated. A declaration with no
+enforcement surface *reads* as enforced while nothing checks it — this skill's own anti-pattern,
+reached by following this skill. `none — advisory-only` is a valid value for the second; omitting the
+row is not.
+
+**`Corpus roots:` is plural.** A repo may have more than one — a live corpus and an archive, say. Each
+needs its own index line, or an explicit note that it sits below the two-document index threshold.
+
+**Name what this repo actually runs.** The row above is an example, not a requirement to adopt any
+particular runner. A pre-commit hook, a `make` target, an npm script, a `just` recipe, a CI job — all
+are enforcement surfaces. What matters is that the named command exists, that it invokes the checker,
+and that something already runs it without being asked. A command nobody invokes is not a surface, and
+naming one that does not exist is the same failure as naming none. NEVER invent a runner the repo does
+not have: where nothing suitable exists, `none — advisory-only` is the honest value.
 
 For a repo that keeps its own convention:
 
@@ -113,6 +146,7 @@ For a repo that keeps its own convention:
 ## Design documentation contract
 
 - Mode: house convention
+- Trigger: load the `design-forge` skill before forking, locking, amending or superseding a document
 - The existing layout under `doc/` is authoritative. Do not restructure it.
 - Enforcement surface: none. The lock, amendment and fork protocols still apply, advisory-only.
 ```
@@ -145,6 +179,11 @@ narrow the list.
 
 Recommended starting points, **never a template to fill**. An absent or empty section is a correct and
 complete state. Delete any heading with nothing under it.
+
+**The catalogue covers `design` and `requirements` only.** Types are freeform, so most corpora mint
+types it says nothing about — `evaluation`, `milestone`, `explainer`. That is expected: a minted type
+gets its rule in the mode declaration, not a section list here. Do not read the two catalogues below
+as the menu of available types.
 
 For `design`:
 

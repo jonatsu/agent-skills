@@ -1,6 +1,6 @@
 ---
 name: design-forge
-description: Requirements and design documentation as an enforced corpus contract — frontmatter lifecycle, ownership claims, lock semantics, length ceilings, and the operations over them (create, lock, amend, fork-with-pointer, supersede, convert an existing docs tree). Use when writing or revising a requirements or design document, when a document or section has grown too long, when a design should be frozen, when settled content needs changing, when a section should become its own document, or when an existing docs tree needs bringing under the contract. Triggers — 'write requirements', 'requirements doc', 'SRS', 'design doc', 'freeze this design', 'lock this document', 'supersede this', 'amend this', 'split this document', 'convert these docs', 'customer confidential', 'system requirements', 'hardware requirements'. Covers software, system and hardware. NOT for brainstorming an unshaped idea, which is idea-forge. NOT for pressure-testing a written plan, which is grilling. NOT for ADRs or changelogs.
+description: Requirements and design documentation as an enforced corpus contract — frontmatter lifecycle, ownership claims, lock semantics, length ceilings, and the operations over them (create, lock, amend, fork-with-pointer, supersede, convert an existing docs tree). Use when writing or revising a requirements or design document, when a document or section has grown too long, when a design should be frozen, when settled content needs changing, when a section should become its own document, or when an existing docs tree needs bringing under the contract. Triggers — 'write requirements', 'requirements doc', 'SRS', 'design doc', 'freeze this design', 'lock this document', 'supersede this', 'amend this', 'split this document', 'convert these design docs', 'customer confidential', 'system requirements', 'hardware requirements'. Covers software, system and hardware. NOT for brainstorming an unshaped idea, which is idea-forge. NOT for pressure-testing a written plan, which is grilling. NOT for ADRs or changelogs.
 metadata:
   author: Joonas Onatsu
   license: MIT
@@ -53,7 +53,8 @@ Design Forge Progress:
   - [ ] 1.1 Read the recorded mode declaration
   - [ ] 1.2 If absent, present the evidence and ask — imposed or house convention ⚠️ REQUIRED
   - [ ] 1.3 Record the answer where the repo keeps agent instructions
-  - [ ] 1.4 Name the enforcement surface, or declare advisory-only out loud
+  - [ ] 1.4 Record the trigger — when the next agent must load this skill
+  - [ ] 1.5 Name the enforcement surface in that same record, or declare advisory-only out loud
 - [ ] Step 2: Route to the operation
 - [ ] Step 3: Run that operation's protocol
   - [ ] 3.1 Mint no type and no ownership claim the user has not confirmed ⚠️ REQUIRED
@@ -76,6 +77,11 @@ Two modes:
 Mode is **declared once and recorded** where the repo already keeps agent instructions (`CLAUDE.md`,
 `AGENTS.md`, or the repo's equivalent). Evidence informs the question; a human answers it.
 
+**The request itself may be the declaration.** When the user's own instruction states the mode —
+"convert this tree to the contract" is *imposed*, "keep our existing layout" is *house convention* —
+record it and name the words that carried it. Asking anyway is theatre, and a ⚠️ REQUIRED gate that is
+theatre gets substituted for by judgement rather than followed. The *recording* is never optional.
+
 **NEVER auto-detect the mode.** The false positive is the dangerous direction: a tree with seven
 documents, consistent naming and a milestone subdirectory scores as "established convention" under any
 plausible detector, and the detector then blesses as canonical the very structure that needed fixing.
@@ -84,6 +90,12 @@ Where no enforcement surface exists — documents that cannot carry frontmatter,
 with no machine-readable field — **say so and run advisory-only**. Announced degradation beats silent
 pretence. The named failure this prevents is an agent claiming a rule is in force while enforcing
 nothing.
+
+**The declaration MUST carry a trigger and an enforcement surface.** Without a trigger it binds only an
+agent that reads the instruction file top to bottom; one that opens a design document directly gets no
+signal that a fork relocates verbatim or that the index is generated. Without an enforcement surface the
+declaration *reads* as enforced while nothing checks it — this skill's own anti-pattern, committed by
+following this skill. `none — advisory-only` is a valid answer to the second. Silence is not.
 
 ## Step 2: Route to the operation
 
@@ -189,8 +201,9 @@ The figure under "Fetch mechanics" was measured against the wrong endpoint. Thir
 observed p99 including redirects.
 ```
 
-Every `### A<n>` MUST have exactly one matching `[amended A<n>]` in the body. The checker verifies
-this mechanically.
+Every `### A<n>` MUST have at least one matching `[amended A<n>]` in the body — one at every point the
+amendment invalidates. A correction that lands in three places is marked in three places. Zero is an
+error: an amendment nobody finds is worse than none. The checker verifies this mechanically.
 
 **At five amendments, warn and propose a named successor document.** Never block. A document with
 fifteen amendments should have been replaced, and an append-only section grows without bound.
@@ -289,6 +302,8 @@ default exists.** Where a default exists, take it and say so.
 ```bash
 python3 scripts/check_corpus.py <docs-dir> [--index <path>] [--quiet]
 python3 scripts/check_corpus.py <docs-dir> --survey
+python3 scripts/check_corpus.py <docs-dir> --check-index <path>
+python3 scripts/check_corpus.py --verify-fork <parent>:'## Section' <child> [--since <rev>]
 ```
 
 The default mode validates every frontmatter block against the contract, reports ownership collisions,
@@ -299,6 +314,15 @@ declarations. Standard library only.
 line counts, and which sections are fork candidates, treating absent frontmatter as expected rather
 than as an error. Use it on any corpus not yet under the contract — the default mode drops a document
 with no frontmatter before analysing it, which is useless on exactly the corpus that needs the help.
+It covers the structural half of Phase 1 and no more: the ownership, lifecycle and confidentiality prose
+and the cross-reference graph are separate reads.
+
+`--check-index` regenerates the index in memory and compares it to the file, never writing. It is what a
+read-only gate wants, and it suppresses the warning the plain mode emits about a missing index.
+
+`--verify-fork` replaces reading a `git diff` by eye. It extracts the named section from the parent at
+`--since` (default `HEAD`) and compares it to the child's body, normalising trailing blank lines because
+hygiene hooks trim them. It shells out to `git`; where `git` is absent it says so and skips.
 
 Exit 1 on contract errors; exit 0 on warnings, because ceilings never block.
 
@@ -322,6 +346,7 @@ it, so a hand-written file is never silently destroyed.
 - Presenting `handling` as a security control, dropping it across a fork, or routing around it quietly.
 - Blocking on a length ceiling, or warning about one without naming the section to extract.
 - Auditing the corpus when nothing blocked the operation at hand.
+- Recording a mode declaration that names no trigger and no enforcement surface.
 - Claiming a rule is enforced when no enforcement surface exists.
 - Claiming the checker ran when `python3` was never probed.
 - Treating `locked` as a lifecycle value, or `superseded` as permission to edit.
@@ -329,11 +354,12 @@ it, so a hand-written file is never silently destroyed.
 ## Pre-delivery checklist
 
 - [ ] The mode in force was read or asked, and recorded where the repo keeps agent instructions.
+- [ ] The recorded declaration names a trigger and an enforcement surface, or says advisory-only.
 - [ ] Every document touched carries `type`, `lifecycle` and at least one `owns` claim.
 - [ ] `superseded-by` is present on every superseded document and absent everywhere else.
 - [ ] No lock was cleared, and any lock set was explicitly confirmed in-session.
 - [ ] Every fork happened in two steps, and the relocated text is byte-identical.
-- [ ] Every amendment entry has exactly one matching inline marker.
+- [ ] Every amendment entry has a marker at every point it invalidates.
 - [ ] No type and no ownership claim was minted without confirmation.
 - [ ] The index was regenerated from declarations, not edited by hand.
 - [ ] The checker ran and its errors are resolved, or its absence was reported.

@@ -17,6 +17,8 @@ Or, from this directory:
 from __future__ import annotations
 
 import io
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -348,19 +350,23 @@ class AmendmentTests(TempCorpus):
     def test_entry_without_marker(self) -> None:
         write(self.root, "a.md", with_amendments(entries=1, markers=0))
         found = joined(run_checks(self.root).errors)
-        self.assertIn("amendment A1 has 0 inline markers", found)
+        self.assertIn("amendment A1 has no inline marker", found)
 
     def test_marker_without_entry(self) -> None:
         write(self.root, "a.md", with_amendments(entries=0, markers=1))
         found = joined(run_checks(self.root).errors)
         self.assertIn("[amended A1] has no matching", found)
 
-    def test_duplicate_markers_for_one_entry(self) -> None:
+    def test_several_markers_for_one_entry_are_legal(self) -> None:
+        # One correction routinely invalidates more than one point. Requiring
+        # exactly one marker made that case unrepresentable, so an amendment
+        # marked in three places had to be split into three near-duplicates.
         doc = with_amendments(entries=1, markers=1)
-        doc = doc.replace("# Alpha", "# Alpha\n\nagain [amended A1]")
+        doc = doc.replace(
+            "# Alpha", "# Alpha\n\nagain [amended A1]\n\nthird [amended A1]"
+        )
         write(self.root, "a.md", doc)
-        found = joined(run_checks(self.root).errors)
-        self.assertIn("amendment A1 has 2 inline markers", found)
+        self.assertEqual(run_checks(self.root).errors, [])
 
     def test_marker_inside_the_amendments_section_does_not_count(self) -> None:
         doc = with_amendments(entries=1, markers=1)
@@ -388,10 +394,21 @@ class CeilingTests(TempCorpus):
         write(self.root, "a.md", "\n".join(body) + "\n")
 
     def test_long_section_names_itself(self) -> None:
-        self.build(section_lines=cc.SECTION_WARN_LINES + 10)
+        self.build(section_lines=cc.SECTION_WARN_LINES + 10, tail_lines=1)
         found = joined(run_checks(self.root).warnings)
         self.assertIn("section 'Long section'", found)
         self.assertIn("propose forking it", found)
+
+    def test_one_section_document_is_exempt(self) -> None:
+        # The expected shape of a freshly forked child. Warning here proposes
+        # that the document fork itself, which is a remedy nobody can apply.
+        self.build(section_lines=cc.SECTION_WARN_LINES + 10)
+        self.assertNotIn("propose forking it", joined(run_checks(self.root).warnings))
+
+    def test_document_ceiling_names_the_sections_it_computed(self) -> None:
+        self.build(section_lines=10, tail_lines=cc.DOC_LIMIT_LINES)
+        found = joined(run_checks(self.root).warnings)
+        self.assertIn("extracting 'Tail'", found)
 
     def test_short_section_stays_quiet(self) -> None:
         self.build(section_lines=10)
@@ -560,6 +577,251 @@ class MainTests(TempCorpus):
         write(self.root, "b.md", VALID.replace("- alpha", "- beta"))
         _, out = self.run_main(str(self.root))
         self.assertIn("no index was generated", out)
+
+
+class IndexFlagTests(TempCorpus):
+    """The two index flags, and the warning a read-only gate should not see."""
+
+    def run_main(self, *argv: str) -> tuple[int, str]:
+        buf = io.StringIO()
+        with redirect_stdout(buf), redirect_stderr(buf):
+            code = cc.main(list(argv))
+        return code, buf.getvalue()
+
+    def two_docs(self) -> None:
+        write(self.root, "a.md", VALID)
+        write(self.root, "b.md", VALID.replace("- alpha", "- beta"))
+
+    def test_check_index_suppresses_the_missing_index_warning(self) -> None:
+        self.two_docs()
+        index = self.root / "INDEX.md"
+        self.run_main(str(self.root), "--index", str(index))
+        code, out = self.run_main(str(self.root), "--check-index", str(index))
+        self.assertEqual(code, cc.EXIT_OK)
+        self.assertNotIn("no index was generated", out)
+
+    def test_check_index_fails_on_drift(self) -> None:
+        self.two_docs()
+        index = self.root / "INDEX.md"
+        self.run_main(str(self.root), "--index", str(index))
+        write(self.root, "c.md", VALID.replace("- alpha", "- gamma"))
+        code, out = self.run_main(str(self.root), "--check-index", str(index))
+        self.assertEqual(code, cc.EXIT_CONTRACT_ERRORS)
+        self.assertIn("index is stale", out)
+        self.assertIn("gamma", out)
+
+    def test_index_and_check_index_are_mutually_exclusive(self) -> None:
+        write(self.root, "a.md", VALID)
+        code, out = self.run_main(
+            str(self.root),
+            "--index",
+            str(self.root / "i.md"),
+            "--check-index",
+            str(self.root / "j.md"),
+        )
+        self.assertEqual(code, cc.EXIT_BAD_USAGE)
+        self.assertIn("use one", out)
+
+    def test_a_corpus_directory_is_required(self) -> None:
+        code, out = self.run_main()
+        self.assertEqual(code, cc.EXIT_BAD_USAGE)
+        self.assertIn("corpus directory is required", out)
+
+
+class CompareIndexTests(TempCorpus):
+    """A read-only gate compares; it never writes what it is checking."""
+
+    def generated(self) -> str:
+        write(self.root, "a.md", VALID)
+        report = cc.Report()
+        docs = [
+            doc
+            for path in cc.collect(self.root, None)
+            if (doc := cc.load(path, self.root, report)) is not None
+        ]
+        return cc.render_index(docs)
+
+    def test_matching_index_is_silent(self) -> None:
+        content = self.generated()
+        path = write(self.root, "INDEX.md", content)
+        report = cc.Report()
+        cc.compare_index(path, content, report)
+        self.assertEqual(report.errors, [])
+
+    def test_drift_is_an_error_naming_the_row(self) -> None:
+        content = self.generated()
+        path = write(self.root, "INDEX.md", content.replace("alpha", "beta"))
+        report = cc.Report()
+        cc.compare_index(path, content, report)
+        found = joined(report.errors)
+        self.assertIn("index is stale", found)
+        self.assertIn("alpha", found)
+
+    def test_missing_index_is_an_error(self) -> None:
+        content = self.generated()
+        report = cc.Report()
+        cc.compare_index(self.root / "nope.md", content, report)
+        self.assertIn("index missing", joined(report.errors))
+
+    def test_comparing_never_writes(self) -> None:
+        content = self.generated()
+        path = write(self.root, "INDEX.md", "stale\n")
+        cc.compare_index(path, content, cc.Report())
+        self.assertEqual(path.read_text(encoding="utf-8"), "stale\n")
+
+
+# --------------------------------------------------------------------------
+# fork verification
+# --------------------------------------------------------------------------
+
+
+class SectionExtractionTests(unittest.TestCase):
+    def test_deeper_heading_does_not_end_the_section(self) -> None:
+        lines = ["## A", "one", "### Inner", "two", "## B", "three"]
+        self.assertEqual(
+            cc.extract_section(lines, "## A"), ["## A", "one", "### Inner", "two"]
+        )
+
+    def test_last_section_runs_to_end_of_file(self) -> None:
+        lines = ["## A", "one", "## B", "two", "three"]
+        self.assertEqual(cc.extract_section(lines, "## B"), ["## B", "two", "three"])
+
+    def test_absent_section_returns_none(self) -> None:
+        self.assertIsNone(cc.extract_section(["## A"], "## Missing"))
+
+
+class TrimBlanksTests(unittest.TestCase):
+    def test_strips_both_ends_only(self) -> None:
+        self.assertEqual(cc.trim_blanks(["", "a", "", "b", "", ""]), ["a", "", "b"])
+
+    def test_all_blank_collapses_to_empty(self) -> None:
+        self.assertEqual(cc.trim_blanks(["", "  "]), [])
+
+
+class NameLongestTests(unittest.TestCase):
+    def test_names_the_longest_first(self) -> None:
+        sections = [("A", 0, 10), ("B", 0, 300), ("C", 0, 50)]
+        self.assertEqual(cc.name_longest(sections, limit=2), "'B' (300), 'C' (50)")
+
+    def test_no_sections_falls_back_to_prose(self) -> None:
+        self.assertEqual(cc.name_longest([]), "its longest sections")
+
+
+PARENT_BEFORE_FORK = """---
+type: design
+lifecycle: active
+owns:
+  - alpha
+  - moving
+---
+
+# Alpha
+
+## Keeps
+
+kept line
+
+## Moves
+
+first moved line
+second moved line
+"""
+
+FORKED_CHILD = """---
+type: milestone
+lifecycle: draft
+owns:
+  - moving
+---
+
+## Moves
+
+first moved line
+second moved line
+"""
+
+
+def git(root: Path, *args: str) -> None:
+    """Run one git command inside a temporary repository."""
+    subprocess.run(  # noqa: S603
+        ["git", *args], cwd=root, capture_output=True, check=True, text=True
+    )
+
+
+@unittest.skipIf(shutil.which("git") is None, "git is not installed")
+class VerifyForkTests(TempCorpus):
+    """The check that replaced reading a `git diff` by eye.
+
+    The prescribed diff recipe reported a mismatch on a correct fork three
+    different ways, so these cases pin the two things that actually matter: a
+    formatter artifact must pass, and a changed word must not.
+    """
+
+    def setUp(self) -> None:
+        super().setUp()
+        git(self.root, "init", "-q")
+        git(self.root, "config", "user.email", "t@example.com")
+        git(self.root, "config", "user.name", "T")
+        write(self.root, "parent.md", PARENT_BEFORE_FORK)
+        git(self.root, "add", "parent.md")
+        git(self.root, "commit", "-qm", "before the fork")
+
+    def verify(
+        self, child_text: str, heading: str = "## Moves", rev: str = "HEAD"
+    ) -> tuple[bool, cc.Report, str]:
+        write(self.root, "child.md", child_text)
+        report = cc.Report()
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            ok = cc.verify_fork(
+                f"{self.root / 'parent.md'}:{heading}",
+                self.root / "child.md",
+                rev,
+                report,
+            )
+        return ok, report, buf.getvalue()
+
+    def test_identical_relocation_verifies(self) -> None:
+        ok, report, out = self.verify(FORKED_CHILD)
+        self.assertTrue(ok)
+        self.assertEqual(report.errors, [])
+        self.assertIn("fork verified", out)
+
+    def test_trailing_blank_trimmed_by_a_hook_still_verifies(self) -> None:
+        # end-of-file-fixer rewrites relocated content after the move. That is
+        # a formatter artifact, and reading it as a rewrite is what trained the
+        # previous recipe's users to override it.
+        ok, report, _ = self.verify(FORKED_CHILD.rstrip("\n"))
+        self.assertTrue(ok)
+        self.assertEqual(report.errors, [])
+
+    def test_a_changed_word_fails(self) -> None:
+        ok, report, _ = self.verify(FORKED_CHILD.replace("first moved", "1st moved"))
+        self.assertFalse(ok)
+        self.assertIn("fork mismatch at body line", joined(report.errors))
+
+    def test_a_dropped_line_fails(self) -> None:
+        ok, report, _ = self.verify(FORKED_CHILD.replace("second moved line\n", ""))
+        self.assertFalse(ok)
+        self.assertIn("fork mismatch", joined(report.errors))
+
+    def test_an_added_line_fails(self) -> None:
+        ok, report, _ = self.verify(FORKED_CHILD + "\nsmuggled in\n")
+        self.assertFalse(ok)
+        self.assertIn("fork mismatch", joined(report.errors))
+
+    def test_missing_section_is_named(self) -> None:
+        _, report, _ = self.verify(FORKED_CHILD, heading="## Absent")
+        self.assertIn("no section '## Absent'", joined(report.errors))
+
+    def test_unknown_revision_is_reported(self) -> None:
+        _, report, _ = self.verify(FORKED_CHILD, rev="nosuchrev")
+        self.assertIn("failed", joined(report.errors))
+
+    def test_malformed_spec_is_rejected(self) -> None:
+        report = cc.Report()
+        cc.verify_fork("parent.md", self.root / "child.md", "HEAD", report)
+        self.assertIn("--verify-fork needs", joined(report.errors))
 
 
 if __name__ == "__main__":
