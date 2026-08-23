@@ -27,9 +27,9 @@ this repo (source of truth)
 ```
 
 The edit loop is: **edit a skill here → commit → a post-commit hook syncs the changed scope
-→ the live copy refreshes.** Both the hook and `./scripts/kasetto-deploy.sh` re-resolve
-local skills by name and leave every remote source pinned to the lock, so warm syncs stay
-~instant and need no network. To deploy by hand, run `./scripts/kasetto-deploy.sh`.
+→ the live copy refreshes.** The hook delegates to `./scripts/kasetto-deploy.sh`, which
+re-resolves local skills by name and leaves every remote source pinned to the lock, so warm
+syncs stay ~instant and need no network. To deploy by hand, run the same script.
 
 ## Layout
 
@@ -98,11 +98,10 @@ non-zero and is safe to re-run). Warm syncs use the lock and touch no network.
 
 **Hand-crafted:** create `shared/<name>/SKILL.md` (or under `claude/`/`opencode/` if
 agent-coupled). No config edit is needed — the configs discover every skill in the group
-via `skills: "*"`. But a plain `kst sync` **won't deploy a new skill**: it re-hashes only
-skills already in the lock and does not re-resolve glob membership, so the commit hook and
-`./scripts/kasetto-deploy.sh` alike report the new skill as absent. Deploy it with the
-`--update` step in "Adding or removing a skill" below. Use the `skill-forge` skill for
-authoring conventions.
+via `skills: "*"`, and committing is enough to deploy it: the post-commit hook re-resolves
+glob membership along with the content hashes, so a new skill reaches both agent dirs with
+no extra step. See "Adding or removing a skill" below for why that works. Use the
+`skill-forge` skill for authoring conventions.
 
 **Third-party:** add a source entry to `kasetto/base.yaml` (Kasetto discovers skills in a
 source's root or its `skills/` subdir; use `sub-dir:` for deeper layouts), then deploy.
@@ -115,32 +114,35 @@ scope the commit touched, so edits go live in both agents. Requires `pre-commit 
 once (bootstrap does this). Every file counts, so `references/`/`scripts/` edits propagate
 too — not just `SKILL.md`.
 
-The hook passes the touched skill names as `kst sync --project --update <name>`. That
-matters: a plain `kst sync` trusts the locked hash and never re-reads a local source, so an
-edited skill is reported `unchanged` and silently never deploys. Naming the skills
-re-resolves only their sources, leaving third-party moving refs pinned.
+The hook maps the commit's changed paths to Kasetto scopes and delegates to
+`./scripts/kasetto-deploy.sh --scope <name>`, which names every local skill in that scope's
+group as `kst sync --project --update <name>...`. That matters: a plain `kst sync` trusts the
+locked hash and never re-reads a local source, so an edited skill is reported `unchanged` and
+silently never deploys. Naming the local skills re-resolves only their sources, leaving
+third-party moving refs pinned.
 
 ## Adding or removing a skill
 
-Changing which skills a `skills: "*"` glob source provides — **adding a new one or
-deleting an existing one** — needs an `--update` the edit path doesn't. A plain `kst sync`
-re-hashes only the skills already in the lock; it never re-resolves glob membership. So a
-new skill deploys as absent and a deleted skill survives (reported `unchanged`, with its
-lock entry and live copy intact). The post-commit hook re-resolves only the skills a commit
-touched, and `./scripts/kasetto-deploy.sh` re-resolves only the local skills already
-present in each scope's group, so neither picks up a membership change on its own.
+`git add` (or `git rm`) the skill directory and commit. That is the whole procedure: the
+post-commit hook adds a new skill to the lock and deploys it, and drops a deleted one from
+the lock and prunes its live copies. Commit the resulting `kasetto.lock` changes after, the
+same as for an edit.
 
-After `git`-adding or `git rm`-ing the skill directory and committing, re-resolve glob
-membership with `--update` for each affected scope — this adds new skills to the lock and
-deploys them, and drops deleted skills from the lock and prunes their live copies:
+**Why that works**, because the mechanism is not obvious and the old note here got it wrong:
+`--update <name>` maps a name to a source **through the lock**, so a brand-new skill — which
+is in no lock — matches no source and re-resolves nothing. Naming the new skill is therefore
+useless. But per `kst sync --help`, *"updating one asset from a multi-asset source re-resolves
+that whole source"*, and the local groups are `skills: "*"` globs. `kasetto-deploy.sh` names
+**every** local skill in the group, so an already-locked sibling re-reads the glob from disk
+and the membership change comes with it. Measured 2026-08-23 in both directions, offline and
+in single-digit ms.
 
-```bash
-for scope in claude opencode; do ( cd "kasetto/$scope" && kst sync --project --update ); done
-```
+A bare `kst sync --project --update` also re-resolves membership, but re-resolves moving refs
+on the remote third-party sources too — so reach for it only when pulling upstream drift is
+what you actually want.
 
-Then commit the updated `kasetto.lock` files. `--update` also re-resolves moving refs on
-third-party sources, so run it deliberately (or pass skill names, `--update <name>`, to
-limit it to the sources you mean).
+If a skill ever fails to appear, `kst lock --check` (via `just check`) is the backstop: it
+exits 1 on membership drift and names the offender, e.g. `+ ../../shared::my-new-skill`.
 
 ## Reproducibility & the lock
 
