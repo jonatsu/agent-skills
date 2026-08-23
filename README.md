@@ -108,11 +108,19 @@ source's root or its `skills/` subdir; use `sub-dir:` for deeper layouts), then 
 
 ## Editing a skill
 
-Edit the files here and **commit** — the `post-commit` hook
+Edit the files here and **commit**, then run **`just skills-sync`**. The `post-commit` hook
 (`scripts/sync-skills-kasetto.sh`, wired via `.pre-commit-config.yaml`) syncs whichever
 scope the commit touched, so edits go live in both agents. Requires `pre-commit install`
 once (bootstrap does this). Every file counts, so `references/`/`scripts/` edits propagate
 too — not just `SKILL.md`.
+
+That deploy rewrites the scope's `kasetto.lock`, leaving it dirty in an otherwise clean
+commit. `just skills-sync` settles it: warm redeploy, then a `chore(kasetto):` commit of
+the locks alone, staged by explicit path (never `git add -A` — the checkout is often open
+in more than one agent session, and it refuses if the index already holds staged changes
+it did not put there). Skipping the recipe is safe in the moment, since the skills are
+already live, but a stale committed lock defeats the `kst lock --check` drift gate the
+lock exists for.
 
 The hook maps the commit's changed paths to Kasetto scopes and delegates to
 `./scripts/kasetto-deploy.sh --scope <name>`, which names every local skill in that scope's
@@ -125,8 +133,8 @@ third-party moving refs pinned.
 
 `git add` (or `git rm`) the skill directory and commit. That is the whole procedure: the
 post-commit hook adds a new skill to the lock and deploys it, and drops a deleted one from
-the lock and prunes its live copies. Commit the resulting `kasetto.lock` changes after, the
-same as for an edit.
+the lock and prunes its live copies. Settle the resulting `kasetto.lock` changes with
+`just skills-sync`, the same as for an edit.
 
 **Why that works**, because the mechanism is not obvious and the old note here got it wrong:
 `--update <name>` maps a name to a source **through the lock**, so a brand-new skill — which
