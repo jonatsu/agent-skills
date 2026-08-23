@@ -24,6 +24,38 @@ skill-name/
 
 **Default assumption:** the agent is already very capable. MUST only add what it does not already know. SHOULD challenge every paragraph: "Does this justify its token cost?"
 
+**Second test — is it recoverable?** "The agent does not know it" is necessary
+and NEVER sufficient. Before writing any factual content, ask three questions:
+
+1. Can the agent obtain this at run time from an authoritative live source —
+   `--help`, `--version`, a tool schema, `doctor`/`status`, a registry listing,
+   or the file itself?
+2. Will that source be reachable in the situations where this skill fires?
+3. Is that source correct? Measured, NEVER assumed.
+
+Three yeses → MUST write the pointer, NEVER the content. Any no → write it, and
+state in one line why the live source does not serve.
+
+Recoverable by default: CLI flags and subcommands, parameter schemas, config
+keys, inventory counts, version numbers, supported-language lists, error
+catalogues. A skill that transcribes these inherits a maintenance burden it
+cannot meet, and its copy is wrong from the next upstream release onward while
+still reading as authoritative. One audited skill gave its tool count as 81, 76
+and 63 within a single file, against 80 actual rows — four answers to a question
+the running tool answers once, correctly.
+
+Question 3 is load-bearing. Where the live source is WRONG — a published schema
+stripped of its combinators, a documented warning that never fires — the skill's
+measured correction is among the most valuable content it can hold, and it looks
+exactly like the transcription this rule tells you to cut. Question 2 covers the
+other exception: a troubleshooting skill cannot route the agent to the `--help`
+of the tool that is broken.
+
+The pointer replaces the transcription, NEVER the judgement. "Get the flags from
+`<tool> <cmd> --help`" plus the residue `--help` does not carry — the clamped
+floor, the credential that never touches disk, which op to prefer for a sweep —
+is the correct shape.
+
 ## Complexity Tiers
 
 MUST detect the appropriate tier based on the user's description:
@@ -141,9 +173,20 @@ MUST write a rule that prevents it. MUST place it at the top of SKILL.md, right 
 
 Load `references/writing-techniques.md` for Iron Law patterns and red flag signals.
 
-### 5.2 Design Workflow Checklist
+### 5.2 Design Workflow Checklist (shape-dependent)
 
-Create a trackable checklist with:
+MUST first ask whether this skill has a workflow at all. A checklist earns its
+place in a Process skill — a phased procedure with real ordering and
+prerequisites. In a Mindset, Navigation or Tool skill it is a no-op: "Step 1:
+Inspect narrowly … Step 4: Verify" instructs the agent to do what it already
+does, and a scored review will dock it. NEVER add a checklist to satisfy this
+step. Skip it, and say in one line that the shape does not call for one.
+
+Where the skill is NOT a workflow, write the decisions the agent must actually
+get right instead: "before X, ask yourself …", each carrying the non-obvious
+trap that makes it a decision rather than a habit.
+
+Where the skill IS a workflow, create a trackable checklist with:
 - ⚠️ REQUIRED for steps that MUST NOT be skipped
 - ⛔ BLOCKING for prerequisites
 - Sub-step nesting for complex steps
@@ -193,6 +236,8 @@ Load `references/output-patterns.md` for checklist patterns and priority-based o
   - For a skill adapted from upstream, MUST still set `metadata.author` to `Joonas Onatsu` and MUST set `metadata.license` to the upstream license.
   - For a skill adapted from upstream, MUST move upstream provenance out of `SKILL.md` frontmatter and into `ATTRIBUTIONS.md`.
   - `ATTRIBUTIONS.md` MUST record original author or authors, upstream project or URL, pinned commit or tag when available, and a short adaptation note.
+  - For a skill adapted from upstream, a verbatim copy of the upstream license MUST ship beside `ATTRIBUTIONS.md` as `LICENSE.upstream`, and upstream's own `NOTICE` (where one exists) as `NOTICE.upstream`. A link is NOT compliance: Apache-2.0 sections 4(a) and 4(d) require both to travel with a modified version, and provenance metadata alone satisfies neither. Keep both files with the skill when redistributing or re-deploying it.
+  - MUST verify the upstream license against a primary source. `gh repo view --json licenseInfo` misreports repositories that DO carry a LICENSE file; use `gh api repos/OWNER/REPO/license` and fetch the license and NOTICE files themselves.
   - When creating `ATTRIBUTIONS.md`, SHOULD start from `assets/ATTRIBUTIONS.template.md`.
 - **Match freedom to fragility**:
   - High freedom (text): multiple valid approaches
@@ -205,6 +250,24 @@ Load `references/output-patterns.md` for checklist patterns and priority-based o
     (`command -v <tool>`) and nothing else. NEVER assume a tool is installed,
     and NEVER hardcode an install path (`/usr/local/bin/x`,
     `~/.local/share/mise/installs/...`, `/opt/homebrew/...`).
+  - **A project-local entry point is NOT a tool, and no `PATH` probe validates
+    it.** `just check`, `npm run lint`, `make test`, `mise run ci`,
+    `pre-commit run`, `nox -s tests` and `./scripts/gate.sh` are contracts of one
+    REPOSITORY, not of a machine. `command -v just` succeeds on any machine that
+    has `just` while that repo's `check` recipe does not exist — the probe passes
+    and the command still fails, which is worse than no probe at all. A portable
+    skill MUST NOT name one.
+  - Instead, DISCOVER the repo's entry point at run time, and state the detection
+    order: a pre-commit config, then a task runner (`justfile`, `Makefile`,
+    `mise.toml`, `package.json` scripts, `pyproject` scripts), then a
+    `scripts/`/`bin/` entry. Run what is found. When nothing is found, report that
+    and skip — NEVER invent a command, and NEVER assume the conventional name is
+    present.
+  - **Exception: repo-scoped skills.** A skill that ships inside the repository
+    it serves MAY, and SHOULD, name that repo's commands directly — they are its
+    contract rather than an assumption. It MUST say so near the top, so the next
+    reader knows the naming is deliberate and does not lift the skill somewhere
+    it cannot work.
   - When a tool is absent, the skill MUST degrade to a reported skip or a named
     alternative, NEVER fail and NEVER silently continue as though the step ran.
   - Where several tools do the job, list them in preference order and accept any
@@ -227,6 +290,9 @@ Load `references/output-patterns.md` for checklist patterns and priority-based o
 - MUST organize by domain, not by type
 - MUST use one level of nesting only
 - Large files (>100 lines) SHOULD have a table of contents at the top
+- Every reference MUST carry a symptom-shaped load trigger in SKILL.md — "load when X happens", never a topic label. "`05-advanced.md` — power tools, proxy, shell hook" says what is inside; it never says when to pay for it, and an agent given only topic labels loads nothing or loads everything.
+- The package MUST carry a "do NOT load" block naming what not to read, and when.
+- NEVER let one reference outgrow the rest of the package combined. Split it, cut what is recoverable from it, and give each named section its own trigger. A reference that large is loaded whole or not at all, and both are wrong.
 
 Load `references/patterns.md` for proven workflow patterns and anti-patterns.
 
@@ -240,10 +306,11 @@ Load `references/patterns.md` for proven workflow patterns and anti-patterns.
 
 Load `references/testing-guide.md` for the full testing methodology.
 
-Three areas to cover:
+Four areas to cover:
 1. **Triggering**: does the skill activate for the right queries and stay dormant for others?
 2. **Functional**: does each workflow produce correct outputs?
 3. **Performance**: is the skill better than no skill? (fewer messages, fewer errors, better consistency)
+4. **Claim verification**: where the skill asserts how a tool or system behaves, MUST exercise those claims against the real thing rather than reviewing them by reading. Record the version and the date, name which claims were checked and which were not, and state what to re-run first after an upgrade. A reference skill has no workflow to test functionally, so without this it ships unexercised — which is how a documented warning that never fires survives review.
 
 MUST test before proceeding to review.
 
@@ -265,15 +332,19 @@ the Pre-Delivery Checklist below.
 - [ ] Description includes trigger keywords and usage scenarios
 - [ ] Frontmatter metadata uses current author and correct license
 - [ ] Adapted skills have `ATTRIBUTIONS.md` with upstream provenance
+- [ ] Adapted skills ship `LICENSE.upstream`, and `NOTICE.upstream` where upstream has one
 - [ ] No example or placeholder files left from initialization
 
 #### Quality
 - [ ] Has an Iron Law or core constraint at the top
-- [ ] Has a trackable workflow checklist with ⚠️/⛔ markers
+- [ ] Has a trackable workflow checklist with ⚠️/⛔ markers, OR is not a Process skill and deliberately has none
 - [ ] Confirmation gates before destructive or generative operations
 - [ ] Uses question-style instructions, not vague directives
 - [ ] Lists anti-patterns (what NOT to do)
-- [ ] References loaded progressively, not all upfront
+- [ ] References loaded progressively, and each carries a symptom-shaped load trigger
+- [ ] A "do NOT load" block exists; no single reference exceeds the rest combined
+- [ ] No transcribed CLI flags, schemas, config keys, or counts a live source reports
+- [ ] Claims about tool behavior carry the version and date they were verified
 - [ ] All behavioral directives use RFC 2119 keywords in ALL CAPS
 
 #### Resources
@@ -288,6 +359,10 @@ the Pre-Delivery Checklist below.
 - [ ] No absolute install paths, no `~`-rooted paths to bundled files, no
       authoring-machine paths or usernames
 - [ ] Where alternatives exist, more than one tool is accepted
+- [ ] No project-local entry point (`just <recipe>`, `npm run <script>`,
+      `make <target>`, `./scripts/*`) named by a portable skill; the repo's own
+      runner is discovered at run time instead
+- [ ] A repo-scoped skill declares that scope where it names repo commands
 
 #### Anti-Patterns to Avoid
 - Stuffing everything into one massive SKILL.md (>500 lines)
@@ -298,6 +373,10 @@ the Pre-Delivery Checklist below.
 - Including README.md, INSTALLATION_GUIDE.md, or other user-facing docs
 - "When to Use" info in the body instead of the description field
 - Hardcoding one tool, one install path, or the authoring machine's layout
+- Transcribing a CLI surface, parameter schema, config-key list, or inventory count the tool reports about itself
+- A workflow checklist in a skill that has no workflow
+- Naming another repository's task recipe (`just check`, `npm run lint`, `make test`) in a portable skill, or probing for the runner binary and calling that verification
+- Asserting how a tool behaves without having run it, or without saying at which version
 
 ## Step 9: Package
 

@@ -25,15 +25,35 @@ A skill's value is its **knowledge delta**: decision trees, trade-offs, edge
 cases, anti-patterns, and domain procedures that take real experience to
 accumulate. Everything the model already holds (basic concepts, standard library
 use, generic best practice, "write clean code") is a **no-op** that wastes shared
-context. Classify every section as one of three knowledge types:
+context. Classify every section as one of four knowledge types:
 
 | Type | Definition | Treatment |
 |------|------------|-----------|
 | **Expert** | The model genuinely doesn't know this | Keep — this is the value |
 | **Activation** | Known, but the model may not think of it unprompted | Keep only if brief |
+| **Recoverable** | The model lacks it, but a live authoritative source answers it better | Replace with a pointer |
 | **Redundant** | The model definitely knows this | Delete |
 
 Maximize Expert, use Activation sparingly, cut Redundant without mercy.
+
+**Recoverable is the type reviewers miss**, because it passes the knowledge-delta
+test: the model really does not know that flag, parameter name, or count. Ask the
+second question — can the agent obtain this at run time from `--help`,
+`--version`, a tool schema, `doctor`/`status`, a registry listing, or the file
+itself? If yes, the skill's copy is not merely wasteful, it **drifts**: wrong from
+the next upstream release onward while still reading as authoritative. One graded
+appendix gave its tool count as 81 in the title, 76 in two notes, and 63 by its
+own arithmetic, against 80 actual rows — four answers to a question the running
+tool answers once, correctly.
+
+Two exceptions, and they decide real cases. Content is NOT recoverable when the
+live source is unreachable in the situations the skill fires in — a
+troubleshooting skill cannot route you to the `--help` of the tool that is
+broken — or when the live source is **wrong**: a published schema stripped of its
+own combinators, a documented warning that never fires. Content recording where
+the authoritative source lies is among the most valuable a skill can carry, and
+it looks exactly like the content this type tells you to cut. Check correctness
+before cutting.
 
 ## Evaluation dimensions (120 points)
 
@@ -50,9 +70,13 @@ Does the skill add genuine expert knowledge?
 
 Red flags (cap at ≤5): "what is [basic concept]" sections, step-by-step tutorials
 for standard operations, common-library usage, generic best practice, definitions
-of industry-standard terms. Green flags: decision trees for non-obvious choices,
-trade-offs only an expert knows, real-world edge cases, "NEVER do X because
-[non-obvious reason]", domain-specific thinking frameworks.
+of industry-standard terms, and transcribed CLI surfaces, parameter schemas,
+config-key lists, or inventory counts that the tool reports about itself.
+
+Green flags: decision trees for non-obvious choices, trade-offs only an expert
+knows, real-world edge cases, "NEVER do X because [non-obvious reason]",
+domain-specific thinking frameworks, and content that records where an
+authoritative source is wrong.
 
 ### D2 — Mindset + domain procedures (15)
 
@@ -158,11 +182,29 @@ stated fallbacks when the primary path fails, and realistic edge cases.
 nature: it runs on machines nobody configured for it, long after it was written.
 Cap D8 at **10** when the skill depends on an environmental fact it never
 verifies, and at **5** when that dependency is silent — no probe, no fallback,
-no message. What to check:
+no message.
+
+**First decide which kind of dependency it is.** A skill that *uses* a tool
+incidentally MUST NOT assume it. A skill that *documents* a tool obviously
+requires that tool, and demanding tool-agnosticism there is incoherent — do NOT
+cap a skill for naming its own subject. Require instead that it states its
+degradation path: what the agent does when the tool is absent. A tool skill whose
+opening rule says "prefer these tools when available" and never names the
+alternative has the same defect in a different place, and that IS capped. What to
+check:
 
 - Tool availability established by a `PATH` probe (`command -v <tool>`) and
   nothing else. An assumed tool is a defect even when the authoring machine has
   it.
+- No project-local entry point named by a portable skill. `just check`,
+  `npm run lint`, `make test`, `pre-commit run`, `./scripts/gate.sh` are ONE
+  repository's contract, not a machine's — and `command -v just` passes while
+  that repo's `check` recipe is still absent, so the probe reassures without
+  testing anything. The repo's runner must be DISCOVERED at run time, in a stated
+  detection order, with a reported skip when none is found. Establish which kind
+  of skill you are grading first: one that ships INSIDE the repository it serves
+  is exempt, because naming those commands is its contract rather than an
+  assumption, and it should say so.
 - Absent tool degrades to a reported skip or a named alternative — never a
   crash, and never silent continuation that reads as a pass.
 - No hardcoded install paths (`/usr/local/bin/x`, `~/.local/share/mise/...`,
@@ -176,17 +218,37 @@ no message. What to check:
 A skill that pins one tool by name is not wrong today and will be wrong later,
 which is exactly the failure this dimension exists to catch.
 
+**Claims about observable behavior need provenance.** A skill asserting how a
+tool behaves — result caps, silent truncation, which op resets a file mode — is
+only as good as its last measurement, and it rots invisibly because nothing fails
+when the tool updates. Expect a version and a date on measured claims, and treat
+a package full of unstamped empirical assertions as unverifiable rather than
+usable. Deduct where a reader has no way to tell which claims to re-check after
+an upgrade.
+
 ## Evaluation protocol
 
-1. **Knowledge-delta scan.** Read the whole SKILL.md; tag each section
-   `[E]`/`[A]`/`[R]` and estimate the ratio. Good skill: >70% E, <10% R.
-2. **Structure pass.** Validate frontmatter; count SKILL.md lines; list
-   reference files and sizes; identify the skill shape; check load triggers.
-3. **Score each dimension.** Cite specific lines as evidence; give a one-line
+1. **Read the whole package, not just SKILL.md.** Reference files are where
+   contradictions hide, and a grade that skipped them is a guess wearing a score.
+   Record which files you read and which you did not.
+2. **Knowledge-delta scan.** Tag each section `[E]`/`[A]`/`[Rec]`/`[R]` and give
+   the ratio TWICE — once for SKILL.md, once for the whole package. They diverge
+   sharply when the weight sits in `references/`, and one number reported without
+   its scope is two different claims about the same skill. Good skill: >70% E,
+   <10% R, and nothing left `[Rec]` that a pointer could replace.
+3. **Cross-file consistency pass.** Where two files state the same fact, check
+   they agree. A reference contradicting the body is worse than either being
+   absent: the agent reads one, acts on it, and never sees the other. Field
+   names, op semantics, counts, and defaults are where this bites.
+4. **Structure pass.** Validate frontmatter; count SKILL.md lines; list
+   reference files and sizes; identify the skill shape; check load triggers; flag
+   any single reference larger than the rest of the package combined.
+5. **Score each dimension.** Cite specific lines as evidence; give a one-line
    justification per score; note the fix when below max.
-4. **Total and grade.** Sum D1–D8 (max 120). A ≥90% (108+), B 80–89% (96–107),
-   C 70–79% (84–95), D 60–69% (72–83), F <60% (<72).
-5. **Report** using the template below.
+6. **Total and grade.** Sum D1–D8 (max 120). A ≥90% (108+), B 80–89% (96–107),
+   C 70–79% (84–95), D 60–69% (72–83), F <60% (<72). A grade over a partially
+   read package MUST say so, and its D1, D5 and D8 scores are provisional.
+7. **Report** using the template below.
 
 ## Report template
 
@@ -195,7 +257,8 @@ which is exactly the failure this dimension exists to catch.
 
 - **Score**: X/120 (X%) — Grade [A–F]
 - **Shape**: [Mindset/Navigation/Philosophy/Process/Tool]
-- **Knowledge ratio** E:A:R = X:Y:Z
+- **Knowledge ratio** SKILL.md E:A:Rec:R = W:X:Y:Z | package E:A:Rec:R = W:X:Y:Z
+- **Coverage**: read [files]; not read [files] — scores provisional if any
 - **Verdict**: [one sentence]
 
 | Dimension | Score | Max | Note |
@@ -230,7 +293,14 @@ score the dimension here.
 - **The Orphan references** — reference files with no load trigger. Fix: add
   explicit "read this when…" and "do NOT load…". Hits D5.
 - **The Checkbox procedure** — mechanical Step 1/2/3 for what the model already
-  does. Fix: convert to "before X, ask yourself…". Hits D2.
+  does. Fix: convert to "before X, ask yourself…". Hits D2. Judge by shape: a
+  Process skill earns its checklist; a Mindset, Navigation or Tool skill almost
+  never does.
+- **The Transcription** — a CLI surface, parameter schema, config-key list or
+  inventory count copied out of a tool that reports it live (**Recoverable**).
+  Fix: replace with a pointer to the live source, keeping only the residue that
+  source does not carry. Hits D1. Confirm the source is correct and reachable
+  before cutting.
 - **The Vague warning** — "be careful", "consider edge cases". Fix: specific
   NEVER list with non-obvious reasons. Hits D3.
 - **The Invisible skill** — great body, vague description, never fires. Fix:
@@ -240,6 +310,12 @@ score the dimension here.
 - **The Local skill** — works only on the machine it was written on: an assumed
   tool, a hardcoded install path, a `~`-rooted path to its own files. Fix:
   `command -v` probes, relative paths, accept alternatives. Hits D8, capped.
+- **The Borrowed Runner** — a portable skill invoking another repository's task
+  recipe (`just check`, `npm run lint`, `make test`), often with a `command -v`
+  probe for the runner binary presented as verification. Fix: discover the repo's
+  own entry point at run time in a stated detection order, and skip with a report
+  when none is found. Hits D8, capped. Exempt when the skill is repo-scoped and
+  declares it.
 
 ## NEVER when evaluating
 
@@ -250,7 +326,14 @@ score the dimension here.
 - NEVER treat all procedures as valuable — separate domain-specific from generic.
 - NEVER excuse an environmental dependency because the tool happens to be
   installed here. The question is whether the skill still works on a machine
-  that never heard of it.
+  that never heard of it — unless the tool IS the skill's subject, in which case
+  the question is whether it says what to do when the tool is absent.
+- NEVER score a package you have only partly read without saying which files you
+  skipped. A grade resting on half a package reads exactly as confident as one
+  resting on all of it.
+- NEVER cut content just because a live source also carries it. Check first that
+  the source is correct and reachable when the skill fires; documenting where an
+  authoritative source lies is high-value content that looks like duplication.
 
 ## The meta-question
 
