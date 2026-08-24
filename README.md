@@ -1,12 +1,18 @@
-# agent-skills
+# Skills
 
 Single source of truth for my agent skills, deployed to **Claude Code**, **OpenCode** and
 **GitHub Copilot CLI** from one place. Edit a skill here once; every agent picks it up.
 
-This repo exists because skills previously lived in two config dirs
-(`~/.config/claude/skills` and `~/.config/opencode/skills`) and drifted. Now they live
-here and are deployed out via [Kasetto](https://github.com/pivoshenko/kasetto) (`kst`), a
-declarative, lock-first skills manager.
+The skills previously lived in two config dirs (`~/.config/claude/skills` and
+`~/.config/opencode/skills`) and drifted. Now they live here and deploy out via
+[Kasetto](https://github.com/pivoshenko/kasetto) (`kst`), a declarative, lock-first skills
+manager.
+
+This directory is where the repository started, as `agent-skills`. It was renamed to
+`agent-setup` on 2026-08-21 to become the base the other config repositories merge into, so
+the repository is no longer only skills — see [../README.md](../README.md) for the whole of
+it, and [../docs/plans/repo-consolidation.md](../docs/plans/repo-consolidation.md) for what
+has merged and what has not.
 
 > **History:** deployment was previously handled by `skillsmgr`, which kept a central store
 > and symlinked each agent's skills dir into it. It is retired; its scripts and the reasons
@@ -60,14 +66,14 @@ the skill, so take that route only when the upstream cannot be used unmodified.
 
 ## The Kasetto config (`kasetto/`)
 
-The deploy uses **five** configs. Kasetto's `extends` inherits a parent's skills only when
+The deploy uses **six** configs. Kasetto's `extends` inherits a parent's skills only when
 the child declares none — a child's own `skills:` *replaces* the parent's, and multi-parent
 lists don't merge. Since `shared/` goes to every agent but the agent-coupled skills go to
 one each, those skills can't ride on the shared base and need their own configs.
 
 | Config dir | What it deploys | Destination |
 |---|---|---|
-| `kasetto/base.yaml` | Common set: 25 third-party + `shared/` (local) | *(inherited, no destination)* |
+| `kasetto/base.yaml` | Common set: 24 third-party + `shared/` (local) | *(inherited, no destination)* |
 | `kasetto/claude/` | `extends base.yaml` | `~/.config/claude/skills` |
 | `kasetto/opencode/` | `extends base.yaml` | `~/.config/opencode/skills` |
 | `kasetto/copilot/` | `extends base.yaml` | `~/.copilot/skills` |
@@ -94,15 +100,20 @@ dotbot deploys that file from `copilot/`.
 
 ## Deploy
 
+The root `justfile` is the entry point. `just deploy` runs the Kasetto sync **and** the dotbot
+map, which is what puts the Copilot CLI configuration in `~/.copilot` and the knowledge-vault
+tooling in `~/.local/share/` — skills alone are not the whole deploy any more.
+
 ```bash
-./scripts/kasetto-deploy.sh              # sync every config to every agent
+just deploy                              # skills + the dotbot map
+just deploy-skills                       # skills only: sync every config to every agent
 ./scripts/kasetto-deploy.sh --dry-run    # preview without writing
 ./scripts/kasetto-deploy.sh --check      # audit each lock against its config (CI drift gate)
 ```
 
 The script requires only `kst` on `PATH`. Set a `GITHUB_TOKEN` in your environment: a **cold**
-sync clones ~13 upstream repos and can hit unauthenticated GitHub rate limits (it exits
-non-zero and is safe to re-run). Warm syncs use the lock and touch no network.
+sync clones 12 upstream sources across 9 repositories and can hit unauthenticated GitHub rate
+limits (it exits non-zero and is safe to re-run). Warm syncs use the lock and touch no network.
 
 ## Adding a skill
 
@@ -179,11 +190,11 @@ and absolute `destination`. It is committed like `Cargo.lock`.
 ## Fresh-machine bootstrap
 
 ```bash
-git clone git@github.com:jonatsu/agent-skills.git ~/src/agent-skills
-cd ~/src/agent-skills
+git clone git@github.com:jonatsu/agent-setup.git ~/src/agent-setup
+cd ~/src/agent-setup
 cargo install kasetto            # provides `kst`
 pre-commit install               # wires pre-commit checks + the post-commit redeploy hook
-./scripts/kasetto-deploy.sh      # deploy the whole stack to every agent
+just deploy                      # skills to every agent, plus the dotbot map
 ```
 
 ## Coexistence & rollback
@@ -192,8 +203,8 @@ pre-commit install               # wires pre-commit checks + the post-commit red
   (e.g. ad-hoc `oh-my-opencode` skills) is untouched — scoped per-lock pruning never removes
   what isn't in the config's lock.
 - **Rollback:** `kst clean` (per config dir) removes Kasetto-managed skills; deleting
-  `kasetto/` and the store leaves nothing behind. Pre-migration copies remain in the
-  `~/.config/claude` and `opencode-config` git histories.
+  `kasetto/` afterwards leaves nothing behind — there is no store to clear. Pre-migration
+  copies remain in the `~/.config/claude` and `opencode-config` git histories.
 
 ## Licensing
 
