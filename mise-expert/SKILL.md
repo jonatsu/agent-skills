@@ -183,6 +183,7 @@ Your final answer MUST include:
 - Adding hooks for work that should be explicit tasks.
 - Using experimental features like `mise oci`, `mise mcp`, `bootstrap`, `deps`, or task templates without flagging them as experimental.
 - Ignoring parent-config leakage in monorepos or nested repos.
+- Declaring an accelerator that mise itself invokes (e.g. `cargo-binstall`) as a mise-managed tool — `mise install --force` then replaces it mid-run while depending on it.
 - Guessing config keys or field types without consulting the official JSON Schema when authoring or editing mise TOML config files.
 
 ## Pre-Delivery Checklist
