@@ -13,8 +13,8 @@ re-run the two confirmed probes first: they are cheap, and if either has changed
 the rest of this file is suspect.
 
 One entry was added 2026-08-24 from live observation rather than a deliberate
-probe — `raw` versus triage filtering, under "Reads that omit". It is marked in
-place as observed, not settled.
+probe — `raw` versus triage filtering, under "Reads that omit". It was settled
+the same day, across a full session, and is no longer provisional.
 
 ## Contents
 
