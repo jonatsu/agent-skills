@@ -197,6 +197,22 @@ confirm itself.
 - **A `cwd` the path jail rejects still runs the command in the captured root**,
   appending a `[cwd: requested path rejected by project-root jail …]` line to
   the output. Read the tail before trusting the result.
+- **The host's native shell tool keeps a `cd` only while it stays inside the
+  project root.** The bullet above is `ctx_shell`; the native tool behaves
+  differently and its own documentation promises a persistent working directory
+  without qualification. Measured 2026-08-25: `cd <subdir-of-root>` persists to
+  the next call silently, while `cd /tmp` prints `/tmp`, then appends
+  `Shell cwd was reset to <project root>` and the next call starts at the root
+  again. So the two tools disagree — `ctx_shell` will sit in a foreign `cwd`
+  indefinitely, the native tool refuses to.
+  The practical consequence is that an agent cannot walk the native shell out of
+  the project. Where a guard is scoped to "inside the current directory" — this
+  machine's cc-safety-net blocks `rm -rf` outside `cwd` — no sequence of calls
+  reaches a target outside the root, because the `cd` that would get there is
+  undone before the next command runs. Hand the user the command. Do NOT reach
+  for `find -delete`, a script file, or a compound `cd && rm`: the analyser
+  resolves `cwd` before parsing, so the compound form is judged from the old
+  directory anyway, and the rest is guard-widening by another name.
 
 ## Retrieving what was archived
 
