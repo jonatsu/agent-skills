@@ -88,6 +88,19 @@ still applies.
   form, so the reader sees the likeness.
 - **Omit needless words.** Cut "the fact that", "there is/are … that", and "who
   is/which was" padding. Every word MUST carry meaning.
+- **Attach an opening phrase to the subject that follows it.** "Having read the
+  log, the cause was obvious" says the cause read the log. Either name the actor
+  — "having read the log, I saw the cause" — or drop the participle: "the log
+  made the cause obvious".
+- **Keep related words together.** Word order carries relation: a modifier
+  attaches to whatever it sits beside, so a phrase wedged between subject and
+  verb, or a relative pronoun stranded from its antecedent, changes what the
+  sentence claims. "He only found two" and "he found only two" are different
+  facts.
+- **Break a run of loose sentences.** Three or more sentences in a row built as
+  a main clause plus a trailing "and", "but" or "which" clause go sing-song, and
+  the shape gives every idea the same weight regardless of what it is worth.
+  Recast one as a simple sentence and subordinate another.
 
 ### Budget the dash; do NOT ban it
 

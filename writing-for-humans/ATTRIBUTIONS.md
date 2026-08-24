@@ -16,11 +16,18 @@ backbone of this skill:
 - The author's own global writing rules (`rules/WRITING.md`), ported into a
   portable, agent-agnostic skill.
 
-**Secondary source** — four distilled composition rules: positive form, parallel
-construction, emphatic word at sentence end, and omit-needless-words phrase
-reductions:
+**Secondary source** — seven distilled composition rules: positive form, parallel
+construction, emphatic word at sentence end, omit-needless-words phrase
+reductions, the dangling-modifier rule, keeping related words together, and
+breaking a run of loose sentences:
 
 - *The Elements of Style* by William Strunk Jr. (1918). Public domain.
+- The first four were taken when this skill was written. The last three were
+  added 2026-08-25, after reviewing `softaworks/agent-toolkit`'s
+  `writing-clearly-and-concisely`, which is Strunk repackaged as a skill: the
+  comparison showed this skill had independently absorbed 8 of his 11 composition
+  rules and was missing three that are concrete and worth having. Stated as
+  compact modern directives, NEVER as the verbatim 1918 prose.
 
 **Tertiary source** — the promotional-vocabulary blocklist in
 `references/phrases.md`:
@@ -184,6 +191,26 @@ drainage project. That is the third reviewed skill in a row demonstrating
 fabrication in its canonical examples, which is why `references/examples.md`
 records the mechanism rather than any single instance, and why the anti-pattern
 list now names injected personality directly.
+
+`softaworks/agent-toolkit`'s `writing-clearly-and-concisely` was re-reviewed on
+2026-08-25, having been an upstream since this skill was written. Three Strunk
+rules were taken (see the secondary source above). Its ~50-entry misused-words
+glossary was examined and declined: it is prescriptive usage correctness for an
+author rather than a rewrite discipline, and parts of it are obsolete. Its
+`signs-of-ai-writing.md` is Wikipedia's guide unabridged, and every portable
+category in it was already present here.
+
+**All five reviewed skills trace to one source.** Wikipedia's
+[Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing),
+maintained by WikiProject AI Cleanup, is upstream of `blader/humanizer`, of
+`jpeggdev/humanize-writing` which cites it, and of both softaworks skills — one
+toolkit shipping the guide unabridged and a distillation of it under two names.
+Recorded because it explains why the returns collapsed after the second skill and
+sets the expectation for any future candidate: a sixth skill from this lineage
+would add nothing. It also means Wikipedia's own framing is worth more than any
+of its downstreams. That page describes itself as "descriptive, not prescriptive
+— observations, not rules", which is nearer this skill's converging-signals gate
+than to the flat blocklists every downstream made of it.
 
 A second `skill-judge` pass on 2026-08-25 scored the package 100/120 again and
 found three defects the first pass could not have seen, because round 2 created
