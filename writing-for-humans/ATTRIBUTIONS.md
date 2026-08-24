@@ -5,54 +5,124 @@
 - Skill: `writing-for-humans`
 - Current author: Joonas Onatsu
 - Current license: MIT
-- Status: assembled from the author's own writing rules plus two adapted
+- Status: assembled from the author's own writing rules plus three adapted
   upstream sources
 
 ## Original authors and sources
 
-- Primary source (structure, provenance, and skimmability principles — the
-  backbone of this skill):
-  - The author's own global writing rules (`~/.config/claude/rules/WRITING.md`),
-    ported into a portable, agent-agnostic skill.
-- Secondary source (four distilled composition rules — positive form, parallel
-  construction, emphatic word at sentence end, and omit-needless-words phrase
-  reductions):
-  - *The Elements of Style* by William Strunk Jr. (1918). Public domain.
-- Tertiary source (the promotional-vocabulary blocklist under "Avoid AI tells"):
-  - Upstream project:
-    [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit),
-    skill `writing-clearly-and-concisely`.
-  - Upstream chain: adapted by softaworks from
-    [joshuadavidthomas/agent-skills](https://github.com/joshuadavidthomas/agent-skills),
-    itself adapted from [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style).
-  - Upstream license: MIT.
+**Primary source** — structure, provenance and skimmability principles, the
+backbone of this skill:
+
+- The author's own global writing rules (`rules/WRITING.md`), ported into a
+  portable, agent-agnostic skill.
+
+**Secondary source** — four distilled composition rules: positive form, parallel
+construction, emphatic word at sentence end, and omit-needless-words phrase
+reductions:
+
+- *The Elements of Style* by William Strunk Jr. (1918). Public domain.
+
+**Tertiary source** — the promotional-vocabulary blocklist in
+`references/phrases.md`:
+
+- Upstream project: [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit),
+  skill `writing-clearly-and-concisely`.
+- Upstream chain: adapted by softaworks from
+  [joshuadavidthomas/agent-skills](https://github.com/joshuadavidthomas/agent-skills),
+  itself adapted from [obra/the-elements-of-style](https://github.com/obra/the-elements-of-style).
+- Upstream license: MIT, Copyright (c) 2026 Leonardo Flores.
+
+**Quaternary source** — the AI-tell catalogues that became `references/phrases.md`,
+`references/structures.md` and `references/examples.md`, plus several rules in
+the Specificity and agency section:
+
+- Upstream project: [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop).
+- Pinned at commit `8da1f030185bdfe8471220585162991eaeb970e9` (branch `main`),
+  resolved 2026-08-24. Upstream's own changelog last records content changes on
+  2026-01-13.
+- Upstream license: MIT, Copyright (c) 2025 Hardik Pandya.
+- Original author: Hardik Pandya (https://hvpandya.com).
+
+Both upstream MIT licenses were fetched verbatim from their repositories'
+`LICENSE` files on 2026-08-24 and ship beside this file as `LICENSE.upstream`.
 
 ## Adaptation note
 
 This skill takes its structure and provenance discipline from the author's own
-`WRITING.md`, adds four distilled rules from Strunk (stated as compact modern
-directives, not the verbatim 1918 prose), and adopts only the
-promotional-vocabulary blocklist from softaworks' `writing-clearly-and-concisely`
-— the one category that `stop-slop` (this repo's AI-tell skill) does not already
-cover. Strunk's dogmatic "avoid the passive voice" was deliberately softened to
-an "active, third-person; passive when the actor is irrelevant" rule.
+`WRITING.md`, adds four distilled rules from Strunk stated as compact modern
+directives rather than the verbatim 1918 prose, and adopts the
+promotional-vocabulary blocklist from softaworks' `writing-clearly-and-concisely`.
+Strunk's dogmatic "avoid the passive voice" was softened to an "active by
+default, passive when the actor is irrelevant" rule.
 
-## Upstream license (MIT, softaworks chain)
+On 2026-08-24 the separately deployed `stop-slop` skill was merged into this one
+and removed from `skills/kasetto/base.yaml`. The two skills overlapped little by
+volume but contradicted each other wherever they touched, and both were loadable
+in the same session. What changed in the merge:
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+- **Reframed rather than copied.** Stop-slop's "narrator-from-a-distance",
+  "put the reader in the room" and "cut quotables" rules were written for essays.
+  Restated as specificity and unnamed-actor rules, they apply to any prose, which
+  is what let the merged skill stay genre-generic instead of splitting by
+  document type.
+- **Person and fragmentation became a register table**, replacing stop-slop's
+  "'You' beats 'People'" and its blanket fragment ban, both of which contradicted
+  this skill's third-person default for reference prose.
+- **The em-dash ban became a budget and a substitution ladder.** This repo's
+  author reported on 2026-08-24 that banning the glyph relocates the habit to
+  `--` rather than removing it. That is a field report, not a measurement; the
+  reasoning behind the ladder is that the defect is the undecided aside, and the
+  glyph only its symptom.
+- **Dropped:** the absolute passive-voice ban, the "two items beat three" rule,
+  the "kill all adverbs" absolute (kept as a named-offender list, since
+  "explicitly" and "deliberately" are load-bearing in normative prose), and the
+  five-dimension 1-10 scoring rubric, which graded essay qualities that
+  `technical-writing`'s review checklist already covers for documentation.
+- **Kept close to upstream:** the phrase blocklists, the binary-contrast,
+  negative-listing and rhetorical-setup tables, and the false-agency table.
+- **Upstream's five before/after examples were dropped.** Both review gates below
+  found they demonstrate single-pattern fixes the model already performs and that
+  `phrases.md` already names. `references/examples.md` keeps only two multi-step
+  rewrites, both written for this skill.
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+## Review record, 2026-08-24
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+The merged draft was graded by the `skill-judge` skill and separately exercised
+against three real prose samples from this repository, each in a different
+register. Both ran in fresh subagents with no access to the reasoning behind the
+merge. The draft scored 100/120. What the two gates changed:
+
+- **A worked example taught fabrication.** It rewrote an actor-less sentence into
+  named people, months and counts that the original did not support, and praised
+  the result. `technical-writing`'s Iron Law forbids exactly this. The example now
+  shows both the has-the-history and the has-only-the-draft rewrite, and states
+  the prohibition.
+- **The Iron Law was one-directional**, policing subtraction while an example
+  praised addition. It now requires a rewrite to carry exactly the claims the
+  original carried.
+- **"Cut lazy extremes" fired on RFC 2119 keywords** — found independently by
+  both gates. Applied to this repository's design corpus it would have downgraded
+  obligations while appearing to cut tone. The rule now governs descriptive
+  claims only.
+- **"Cut engineered punchlines" was cut entirely.** It misfired on both
+  argumentative samples, could not distinguish a compressed conclusion from
+  decoration, and failed this skill's own invariant that every rule be failable
+  against a specific sentence. What replaced it tests whether removing the line
+  loses a claim.
+- **Dates that mark a sentence now lead rather than defer.** The corpus check
+  found the original provenance rule contradicted this repository's
+  amend-in-place-with-a-date convention, where the date's position IS the marker.
+- **"Recorded because…" was exempted from the meta-commentary blocklist**, for
+  the same reason: this repository's house voice requires it.
+- **A fragment ceiling living only in a reference** contradicted the register
+  table in the body and added a second conditional, breaking invariant 1. Removed.
+- **The wh-word ban was narrowed to pseudo-cleft openers.** As written it
+  condemned two sentences in this skill's own body.
+
+What the corpus check found that no fix addresses, recorded because it sets
+expectations for this skill rather than pointing at a defect: the skill changed
+the outcome materially on instructional prose, contributed one cosmetic change to
+reference prose already written to a stricter internal standard, and produced one
+correct fix plus three declined findings on argumentative prose. The dash budget
+fired twice, was right both times, and never identified a paragraph that the
+sentence-length rule had not already flagged.

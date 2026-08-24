@@ -37,10 +37,11 @@ accessible presentation, and concrete examples.
    point. Use informative headings that name a task or takeaway. Convert
    dense enumerations into lists with parallel structure. Put prerequisites,
    limits, and caveats before the reader hits them.
-   - For the sentence- and paragraph-level skimmability discipline (topic
-     sentences, active third-person voice, positive form, emphatic word order,
-     deferred provenance), apply the `writing-for-humans` skill via the Skill
-     tool if it appears in this session's available-skills list.
+   - For the sentence- and paragraph-level discipline (topic sentences,
+     register and person, active voice, positive form, emphatic word order,
+     specificity, deferred provenance, and the dash budget), apply the
+     `writing-for-humans` skill via the Skill tool if it appears in this
+     session's available-skills list.
 5. **Make examples earn their length.** Use the smallest realistic example
    that proves the point. Explain why it matters when that isn't obvious.
    Avoid irrelevant setup. Use anti-examples only when they clarify a likely
@@ -55,11 +56,11 @@ accessible presentation, and concrete examples.
    context. Give each paragraph one clear job. Verify every term, command,
    filename, flag, and example. Cut any sentence that doesn't help the reader
    decide or act.
-   - MAY invoke the `stop-slop` and/or `humanize-writing` skills via the Skill
-     tool if either appears in this session's available-skills list, for a
-     final pass over drafted or rewritten prose that strips AI writing tells
-     (filler, hedging, buzzwords, formulaic structure). If neither is listed,
-     rely on the Rewrite Heuristics and Review Checklist below instead.
+   - For a final AI-tell pass over drafted or rewritten prose (filler, hedging,
+     buzzwords, formulaic structure), use the `writing-for-humans` skill already
+     invoked at step 4 and load its `references/phrases.md` and
+     `references/structures.md`. If that skill is not listed this session, rely
+     on the Rewrite Heuristics and Review Checklist below instead.
 
 ## Default Output Pattern
 

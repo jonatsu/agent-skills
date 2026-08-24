@@ -44,9 +44,11 @@ Material changes from peizh/tech-writing include:
   conventions).
 - Folded a short documentation-type taxonomy into the "choose the right
   document shape" workflow step.
-- Added a conditional step wiring in this repo's `stop-slop` and
-  `humanize-writing` skills (global, installed under `~/.agents/skills`) for
-  a final AI-tell pass, when either is available in the current session.
+- Added conditional steps wiring in this repo's `writing-for-humans` skill for
+  prose-level discipline and a final AI-tell pass, when it is available in the
+  current session. Until 2026-08-24 these steps named `stop-slop` and
+  `humanize-writing`; the former was merged into `writing-for-humans` and the
+  latter never existed on this machine.
 - Dropped the Chinese-technical-prose reference branch.
 
 ## Upstream license (MIT, both sources)
