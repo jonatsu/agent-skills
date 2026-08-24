@@ -114,7 +114,8 @@ Do NOT load:
   installs, so it is what a dotfile repo should generate from. `--style=dropin`
   is NOT what makes it safe: on 3.9.19, `init --global --style=dropin` printed a
   progress report and wrote four files (`~/.bashrc`, `~/.bash_profile`,
-  `env.sh`, `shell-hook.bash`). Same shape for `zsh`, `fish`, `powershell`.
+  `env.sh`, `shell-hook.bash`). Verified identical behaviour for `bash`, `zsh`,
+  `fish` and `powershell` — each prints its own hook and writes nothing.
   `lean-ctx config schema` is likewise stdout-only.
 - `lean-ctx init --help` does NOT print help — it runs a full init, rewriting
   `~/.bashrc` and `~/.bash_profile` in place and dropping `*.lean-ctx.bak`

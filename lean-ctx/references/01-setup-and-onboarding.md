@@ -41,7 +41,7 @@ files and config dir. "Writes" is what appeared in the sandbox.
 
 | Command | stdout | writes |
 |---|---|---|
-| `init <shell> --style=dropin` | the shell hook | nothing |
+| `init <shell> --style=dropin` | that shell's hook | nothing |
 | `config schema` | the JSON schema | nothing |
 | `doctor` (no `--fix`), `status` | diagnostics | nothing |
 | `init --global --style=dropin` | a progress report | `~/.bashrc`, `~/.bash_profile`, `env.sh`, `shell-hook.bash` |
@@ -49,6 +49,12 @@ files and config dir. "Writes" is what appeared in the sandbox.
 
 The distinguishing argument is the SHELL NAME positional with no `--global`.
 Dropping the shell name turns a print into an install.
+
+All four shell names were exercised, not just `bash`: `bash`, `zsh`, `fish` and
+`powershell` each printed their own hook and wrote nothing. Note their header
+lines differ — `bash`/`zsh`/`fish` say "smart shell mode (track-by-default)"
+while `powershell` says "transparent CLI compression (95+ patterns)" — so a
+header string is NOT a staleness signal; it identifies the variant.
 
 NOT verified: `wrap`, `onboard`, `setup`, `install`, `update`, `doctor --fix`,
 `skill`. Treat every one as a writer. Re-run this table after a version bump —
