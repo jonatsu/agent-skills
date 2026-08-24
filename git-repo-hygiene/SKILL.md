@@ -66,6 +66,9 @@ Git Repo Hygiene Progress:
   - [ ] REPORT findings plus the remediation command for each; flag which are
         history-rewriting. NEVER untrack, delete, or rewrite tracked content
         without a separate explicit request
+  - [ ] (REFRESH, when a README already exists) check its concrete claims against
+        the repo as it is now and REPORT the stale ones — see Stale README
+        Detection below
 - [ ] Step 6: Validate repository hygiene ⚠️ REQUIRED
   - [ ] Placeholders, links, project name, contact paths, dates
   - [ ] README covers what/why/how/help/maintainer where applicable
@@ -100,6 +103,30 @@ separate explicit request; several remediations rewrite history.
 Purging secrets or large blobs from history (`git filter-repo`, BFG) is
 **history-rewriting and out of this skill's scope** — flag it and hand off to
 `git-master`, don't perform it here.
+
+## Stale README Detection (REFRESH — report-only)
+
+An existing README is the one hygiene file whose defect a presence check cannot
+see: it is there, it is well-formed, and it describes a repo that has since moved.
+Nothing else here catches that — Step 6 validates a README this skill just wrote,
+and REFRESH otherwise leaves what "already exists and is healthy" untouched
+without ever testing healthy.
+
+Read the README and check each concrete claim against the repo as it is now:
+
+- **Commands**, against `package.json` scripts, `Makefile`, `justfile`,
+  `mise.toml` tasks, `pyproject.toml`, or CI workflows.
+- **Paths and file names**, against the tree.
+- **Capabilities, requirements and supported versions**, against the code and its
+  dependency manifests.
+- **Links**, against their targets.
+
+REPORT each stale claim with the evidence that contradicts it. NEVER rewrite an
+existing README's claims here: a claim that reads as stale may be the intended
+behaviour and the code the regression, and this skill cannot tell which. Bump a
+`Last reviewed` date only when the user approves the content change it attests to
+— a fresh date over unverified prose is worse than a stale one, because it
+certifies the sentence nobody checked.
 
 ## Baseline File Guidance
 
@@ -195,6 +222,8 @@ NEVER:
 - Force one global indent style in a mixed-language repository.
 - Add stale placeholders like `TODO`, `your-email@example.com`, or fake URLs.
 - Replace existing repo files silently.
+- Rewrite an existing README's claims during a REFRESH, or bump its `Last
+  reviewed` date, instead of reporting the staleness for the user to decide.
 - Copy inspiration repositories or Jinja2 template syntax verbatim.
 - Make a private/internal repo look like a public OSS community project.
 - Drop a template asset's comments because the file you derived is short. That
