@@ -65,9 +65,25 @@ place as observed, not settled.
   sits against the "`raw` and `anchored` are exempt" claim above, and against the
   standing advice to recover a compressed read with `raw=true`; the label names a
   triage layer, which may be a mechanism distinct from context-pressure
-  degradation. Two observations in one session, so treat it as observed rather
-  than settled — but when verbatim bytes matter, reach for the native read first
-  instead of spending calls proving `raw` works.
+  degradation. Re-confirmed across a full session on 2026-08-24 — a dozen-plus
+  hits, on `full`, `raw`, `anchored`, `aggressiveness=0` and `fresh=true` alike,
+  and on `ctx_shell`, `ctx_search` and `ctx_patch` output as well as `ctx_read`.
+  Treat it as settled, not provisional. Two consequences: when verbatim bytes
+  matter, reach for the native read FIRST rather than spending calls proving
+  `raw` works; and `mode="anchored"` is filtered too, which makes `ctx_patch`'s
+  anchored ops (`set_line`, `replace_lines`, `insert_after`, `delete`)
+  effectively unusable while triage is active — use `replace_unique` or
+  `replace_all`, which need no anchored read.
+- **`ctx_git_read(mode=read)` compresses source files to signatures-only, and
+  `max_tokens` does not turn it off.** Measured 2026-08-24 on a Rust file at
+  6000, 12000, 14000 and 60000: every call returned the use-statements, type
+  names and function signatures with every function BODY dropped, so no
+  condition, default, or branch could be read from it. This is the same class of
+  loss as the compression entry above, but it has no `raw=true` escape — the
+  tool exposes no verbatim mode. For anything body-level in a remote repo, fetch
+  `raw.githubusercontent.com/<owner>/<repo>/<ref>/<path>` directly (via a fetch
+  or scrape tool) and read that. Use `ctx_git_read` for locating files
+  (`mode=tree`) and lines (`mode=grep`), not for reading logic.
 - **Read-dedup is cross-agent, so a file a SUBAGENT read comes back as a stub in
   your own context.** The reply is `[unchanged NL · lean-ctx read-dedup]` plus
   "already in this conversation above" — but it is not, and no content is
