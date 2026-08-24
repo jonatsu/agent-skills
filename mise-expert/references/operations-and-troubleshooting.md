@@ -55,6 +55,16 @@ Likely causes:
 - no `min_version`
 - lockfile not regenerated or not committed
 
+### `mise install --force` left the tool gone, not stale
+
+`--force` runs an **uninstall step first**, then installs. A force-reinstall that fails partway leaves the tool removed rather than at its previous version, and the failure message describes the install, not the removal.
+
+Never force-reinstall a tool you depend on mid-task without a restore plan. If one fails, reinstall without `--force` to recover.
+
+### Go tools write to `$HOME/go`
+
+mise sets no `GOPATH` and does not know about `GOMODCACHE`, so `go install` falls back to Go's own `$HOME/go` default in any context that did not export `GOPATH`. Load `references/go-backend.md`.
+
 ## Practical fixes
 
 - For automation, switch to `mise exec --`.

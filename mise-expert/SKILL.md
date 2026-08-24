@@ -63,7 +63,7 @@ MUST use `https://raw.githubusercontent.com/jdx/mise/refs/heads/main/llms.txt` a
 
 The mise repository ships JSON Schema definitions for every TOML config file it accepts (`mise.toml`, `.miserc.toml`, global settings, task definitions, plugin configs, and registry tool entries). They live at `https://github.com/jdx/mise/tree/main/schema`. When authoring or editing any mise TOML config, consult the relevant schema to confirm valid keys, field types, and structure. Load `references/schemas.md` for the schema-to-file mapping, fetch instructions, and per-schema scope.
 
-Load `references/overview.md` first. If containers, CI, or bootstrap are involved, also load `references/install-and-activation.md`. If `.miserc.toml` or environment selection is involved, also load `references/config-and-env.md`.
+Load `references/overview.md` first. If containers, CI, or bootstrap are involved, also load `references/install-and-activation.md`. If `.miserc.toml` or environment selection is involved, also load `references/config-and-env.md`. If the `go:` backend, any `go.*` setting, or Go writing files somewhere unexpected is involved, also load `references/go-backend.md`.
 
 ## Step 2: Inspect existing mise surface ⚠️ REQUIRED
 

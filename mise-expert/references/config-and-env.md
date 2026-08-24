@@ -56,6 +56,16 @@ Important features:
 - `env._.source` for sourced shell snippets when truly needed
 - `redactions` or per-var redaction controls for secret-safe output
 
+## `[env]` applies during installation, not just activation
+
+`[env]` is resolved before tools, so it reaches tool-installation subprocesses — upstream states this in `docs/environments/index.md`, and the code path runs `dependency_env` → `full_env_without_tools` → `Toolset::env`, where the config `[env]` block is applied last and therefore overrides a tool's own `exec_env`.
+
+The carve-out is mise's own self-configuration: `MISE_DATA_DIR`, `MISE_INSTALLS_DIR` and friends are read at process start, so set those in the shell or CI environment rather than in `[env]`.
+
+This is the supported way to control an install subprocess's environment — for example redirecting `GOPATH` so `go:` backend installs stop writing to `$HOME/go`. Load `references/go-backend.md` for that case.
+
+`install_env` on a `[tools]` entry is a different scope: it applies to **that tool's own install and postinstall only**. Putting `install_env` on the `go` entry configures the installation of Go itself and never reaches tools installed through the `go:` backend.
+
 ## Important path and expansion facts
 
 - `{{config_root}}` is the portable anchor for project-relative paths.
