@@ -1,7 +1,7 @@
 # agent-skills
 
-Single source of truth for my agent skills, deployed to both **Claude Code** and
-**OpenCode** from one place. Edit a skill here once; both agents pick it up.
+Single source of truth for my agent skills, deployed to **Claude Code**, **OpenCode** and
+**GitHub Copilot CLI** from one place. Edit a skill here once; every agent picks it up.
 
 This repo exists because skills previously lived in two config dirs
 (`~/.config/claude/skills` and `~/.config/opencode/skills`) and drifted. Now they live
@@ -23,6 +23,7 @@ in a committed `kasetto.lock`. There is no central store and no symlink layer.
 this repo (source of truth)
   ├─ shared/  claude/  opencode/     hand-crafted skills (local sources)
   └─ kasetto/*.yaml  ──kst sync──▶   ~/.config/{claude,opencode}/skills/   (real copies)
+                                     ~/.copilot/skills/
                                      tracked by kasetto/**/kasetto.lock
 ```
 
@@ -38,9 +39,15 @@ Hand-crafted skills are grouped by target agent. Each skill is a directory with 
 
 | Group | Deployed to | Contents |
 |---|---|---|
-| `shared/` | Claude Code + OpenCode | Agent-agnostic skills (the majority) |
+| `shared/` | Claude Code + OpenCode + Copilot CLI | Agent-agnostic skills (the majority) |
 | `claude/` | Claude Code only | Claude-coupled skills (e.g. `reflect`) |
 | `opencode/` | OpenCode only | OpenCode-coupled skills (e.g. `headroom-management`) |
+
+There is no `copilot/` group. Copilot CLI gets `shared/` and nothing else: the Claude-only
+skills are Claude-coupled by the placement rule — they are about `CLAUDE.md`, `.claude/agents`
+and Claude subagents — so deploying them there would ship skills describing a different agent.
+Add the group, and a `kasetto/copilot-extra/` config, the first time a Copilot-coupled skill
+is written.
 
 Third-party skills used **as-is** are not vendored here — they are pulled from their upstream
 repos by Kasetto and listed in `kasetto/base.yaml`, so they stay upstream-updatable.
@@ -53,17 +60,17 @@ the skill, so take that route only when the upstream cannot be used unmodified.
 
 ## The Kasetto config (`kasetto/`)
 
-The deploy uses **four** configs. Kasetto's `extends` inherits a parent's skills only when
+The deploy uses **five** configs. Kasetto's `extends` inherits a parent's skills only when
 the child declares none — a child's own `skills:` *replaces* the parent's, and multi-parent
-lists don't merge. Since `shared/` goes to both agents but the agent-coupled skills go to
-one each, the two agent-specific skills can't ride on the shared base and need their own
-configs.
+lists don't merge. Since `shared/` goes to every agent but the agent-coupled skills go to
+one each, those skills can't ride on the shared base and need their own configs.
 
 | Config dir | What it deploys | Destination |
 |---|---|---|
 | `kasetto/base.yaml` | Common set: 25 third-party + `shared/` (local) | *(inherited, no destination)* |
 | `kasetto/claude/` | `extends base.yaml` | `~/.config/claude/skills` |
 | `kasetto/opencode/` | `extends base.yaml` | `~/.config/opencode/skills` |
+| `kasetto/copilot/` | `extends base.yaml` | `~/.copilot/skills` |
 | `kasetto/claude-extra/` | `claude/` group (e.g. `reflect`) | `~/.config/claude/skills` |
 | `kasetto/opencode-extra/` | `opencode/` group (e.g. `headroom-management`) | `~/.config/opencode/skills` |
 
@@ -80,12 +87,15 @@ An extra config targets the **same destination** as its base overlay. That is sa
 (nor any pre-existing foreign skill already in the agent dir).
 
 Unlike the old `skillsmgr` path, Kasetto needs **no `CLAUDE_CONFIG_DIR`** — each config
-carries an explicit `~/.config/.../skills` destination (Kasetto expands `~`, but not `$VARS`).
+carries an explicit tilde destination (Kasetto expands `~`, but not `$VARS`). The Copilot
+overlay names its destination rather than using Kasetto's `github-copilot` preset, because
+that preset also claims `~/.copilot/copilot-instructions.md` as a file it generates, and
+dotbot deploys that file from `copilot/`.
 
 ## Deploy
 
 ```bash
-./scripts/kasetto-deploy.sh              # sync all four configs to both agents
+./scripts/kasetto-deploy.sh              # sync every config to every agent
 ./scripts/kasetto-deploy.sh --dry-run    # preview without writing
 ./scripts/kasetto-deploy.sh --check      # audit each lock against its config (CI drift gate)
 ```
@@ -99,7 +109,7 @@ non-zero and is safe to re-run). Warm syncs use the lock and touch no network.
 **Hand-crafted:** create `shared/<name>/SKILL.md` (or under `claude/`/`opencode/` if
 agent-coupled). No config edit is needed — the configs discover every skill in the group
 via `skills: "*"`, and committing is enough to deploy it: the post-commit hook re-resolves
-glob membership along with the content hashes, so a new skill reaches both agent dirs with
+glob membership along with the content hashes, so a new skill reaches every agent dir with
 no extra step. See "Adding or removing a skill" below for why that works. Use the
 `skill-forge` skill for authoring conventions.
 
@@ -110,7 +120,7 @@ source's root or its `skills/` subdir; use `sub-dir:` for deeper layouts), then 
 
 Edit the files here and **commit**, then run **`just skills-sync`**. The `post-commit` hook
 (`scripts/sync-skills-kasetto.sh`, wired via `.pre-commit-config.yaml`) syncs whichever
-scope the commit touched, so edits go live in both agents. Requires `pre-commit install`
+scope the commit touched, so edits go live in every agent. Requires `pre-commit install`
 once (bootstrap does this). Every file counts, so `references/`/`scripts/` edits propagate
 too — not just `SKILL.md`.
 
@@ -173,7 +183,7 @@ git clone git@github.com:jonatsu/agent-skills.git ~/src/agent-skills
 cd ~/src/agent-skills
 cargo install kasetto            # provides `kst`
 pre-commit install               # wires pre-commit checks + the post-commit redeploy hook
-./scripts/kasetto-deploy.sh      # deploy the whole stack to both agents
+./scripts/kasetto-deploy.sh      # deploy the whole stack to every agent
 ```
 
 ## Coexistence & rollback
