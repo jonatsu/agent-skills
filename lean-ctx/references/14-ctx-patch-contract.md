@@ -17,6 +17,9 @@ Not re-run: batching and partial-application behavior, the NUL-escape trap, the
 syntax and code-health gates, and `replace_symbol`'s repo-wide name resolution.
 Those still rest on their original measurement.
 
+Added 2026-08-24 from live observation: `create` rejects an existing path, so it
+is not a full-file-replacement route.
+
 **The runtime error message is the contract.** The published MCP schema is a
 flat, all-optional bag — `allOf`/`oneOf` are stripped before publication — and
 upstream docs disclaim per-op schemas, deferring to the server source. NEVER
@@ -68,6 +71,10 @@ Traps inside that table:
   `replace_unique` on the declaration line instead.
 - `replace_unique` requires a non-empty `old_text` (`old_string`/`new_string` are
   accepted aliases); `find`/`replace` are rejected there.
+- `create` refuses an existing path — `already exists — create is for new files
+  only` — so it cannot replace a file wholesale. For a full-file rewrite, take an
+  anchored read of the first and last lines and `replace_lines` across the whole
+  span. Observed 2026-08-24.
 - On `delete`, the mere presence of `start_line` or `end_line` selects the range
   shape and then demands all four anchor fields.
 - `replace_lines` tolerates missing hashes, which silently disables conflict

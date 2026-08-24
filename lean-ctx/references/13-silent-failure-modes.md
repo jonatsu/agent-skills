@@ -12,6 +12,10 @@ on its original measurement and has not been re-run. When lean-ctx updates,
 re-run the two confirmed probes first: they are cheap, and if either has changed
 the rest of this file is suspect.
 
+One entry was added 2026-08-24 from live observation rather than a deliberate
+probe — `raw` versus triage filtering, under "Reads that omit". It is marked in
+place as observed, not settled.
+
 ## Contents
 
 - Reads that omit
@@ -53,6 +57,17 @@ the rest of this file is suspect.
   parameter — pass `start_line`+`limit` and page instead. The cap is on output,
   not a fraction of the file: two `raw` reads of one 426-line file both stopped at
   ~4182 tokens, one reading a 7479-token whole and one a 4660-token tail.
+- **`raw` did not defeat triage filtering.** Observed twice on 2026-08-24: a
+  single-path `ctx_read(path=…, raw=true)` and a batch `ctx_read(paths=[…],
+  mode="raw")` each returned a two-line excerpt followed by
+  `[lean-ctx: N lines filtered by triage (level 2)]`, with N at 29 and 79. The
+  host's native read returned both files verbatim immediately afterwards. This
+  sits against the "`raw` and `anchored` are exempt" claim above, and against the
+  standing advice to recover a compressed read with `raw=true`; the label names a
+  triage layer, which may be a mechanism distinct from context-pressure
+  degradation. Two observations in one session, so treat it as observed rather
+  than settled — but when verbatim bytes matter, reach for the native read first
+  instead of spending calls proving `raw` works.
 - **Read-dedup is cross-agent, so a file a SUBAGENT read comes back as a stub in
   your own context.** The reply is `[unchanged NL · lean-ctx read-dedup]` plus
   "already in this conversation above" — but it is not, and no content is
