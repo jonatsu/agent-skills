@@ -11,6 +11,7 @@
 - [Single-Frame Capture (Testing)](#single-frame-capture-testing)
 - [yavta — Low-Level Capture and Control](#yavta--low-level-capture-and-control)
 - [V4L2 Buffer Lifecycle](#v4l2-buffer-lifecycle)
+- [Capture Performance Triage](#capture-performance-triage)
 - [What to Record When a Camera Issue is Solved](#what-to-record-when-a-camera-issue-is-solved)
 
 ## Minimum Context to Collect Before Debugging
@@ -47,6 +48,8 @@ the layer below it is healthy.
    - Expected colorspace and Bayer order
    - Dropped frames or timeout patterns
    - CPU and memory pressure during capture
+   - For frame-rate, latency or CPU problems, work the bisection in
+     *Capture Performance Triage* below rather than tuning by instinct
 
 ## Essential Diagnostic Commands
 
@@ -184,6 +187,63 @@ Use **`poll()` / `epoll()` level-triggered** when:
 
 - Combining the camera with control sockets, IPC, or shutdown events
 - Capturing multiple video devices simultaneously
+
+## Capture Performance Triage
+
+Bisect before tuning. Run the smallest possible capture and compare its cost against
+the application's — that one comparison decides which layer to work in.
+
+```bash
+# Minimal capture: 200 frames straight to /dev/null, 4 buffers
+v4l2-ctl -d /dev/video0 --stream-mmap=4 --stream-count=200 --stream-to=/dev/null
+
+# Same path via the raw ioctls
+yavta -f UYVY -s 640x480 -c200 -n4 /dev/video0
+```
+
+| Minimal capture | Application | Where the problem is |
+|---|---|---|
+| Already expensive | — | Driver and DMA path; userspace is not the cause |
+| Cheap | Expensive | Userspace: `memcpy`, format conversion, event-loop structure |
+| Cheap | Cheap, FPS still low | Sensor mode, bus format and lane count, host throughput ceiling |
+| Fine at first | Degrades over a long run | Buffer leaks, queue starvation, logging left enabled, thermal or scheduler effects |
+
+Then tune in this order, one change at a time, keeping a before/after metric table:
+
+1. **Baseline** — frame rate, drop count, end-to-end latency, per-process CPU.
+2. **Queue health** — buffer count, how long userspace holds a buffer before
+   requeue, whether the queue ever starves.
+3. **Copy and conversion** — an extra `memcpy`, YUV/RGB conversion, scaling or
+   compression sitting in the hot path.
+4. **Readiness and wakeups** — blocking `DQBUF` vs `poll`/`epoll`, timer wakeups,
+   busy waits.
+5. **Locking** — critical-section length before lock primitive. Shortening the hold
+   is safer than swapping the primitive, and a lock is often standing in for
+   unclear buffer ownership.
+6. **DMA, cache and allocator** — cache-maintenance cost, and contiguous-memory
+   constraints on vendor stacks.
+7. **Scheduler and system effects** — CPU affinity, competing threads, tracing or
+   debug logging left on.
+
+**Edge-triggered `epoll` is rarely the win it looks like.** It removes redundant
+wakeups only where the loop drains readiness correctly, and it buys missed-event and
+state bugs in exchange. An insufficient buffer count, slow processing before `QBUF`,
+a needless `memcpy`, a long lock hold, and a queue that never recovers from a
+transient error all cost more in practice. Prove in `perf` or `ftrace` that the
+wakeup path is the bottleneck before restructuring it.
+
+Reading a profile:
+
+- High CPU, normal frame rate, many syscalls → wakeup or polling design.
+- High CPU dominated by `memcpy` → copy reduction before any event-loop change.
+- Low CPU with a bad frame rate → sensor mode, bus bandwidth, queue starvation, or a
+  host throughput ceiling.
+- Good average frame rate with jitter or drops → long userspace processing gaps, a
+  missed requeue, or lock-contention spikes.
+
+Record per profiling run, or the comparison is not reproducible: kernel or BSP
+release, format and frame size, buffer count, frame rate and drop count, the top two
+CPU hotspots, whether the queue starved, and what changed since the previous run.
 
 ## What to Record When a Camera Issue is Solved
 

@@ -221,6 +221,28 @@ ssh root@192.168.1.100 sha256sum /tmp/mybinary
 # Both should match
 ```
 
+### The board pings but SSH stalls: two host NICs on one subnet
+
+A lab host usually has the site LAN on one interface and a direct link to the board
+on another. When both land in the same subnet the host can send from the wrong
+source interface, and the failure misleads: `ping <board>` succeeds while `ssh` and
+every other TCP connection stall, the board cannot reach the host, and `arp -a`
+shows the board's address against two interfaces or with a MAC that changes.
+
+Pin the interface in the SSH config rather than chasing it per command:
+
+```sshconfig
+Host board
+  HostName 192.168.1.100
+  User root
+  BindAddress 192.168.1.10        # host IP on the board-facing NIC
+  StrictHostKeyChecking accept-new
+```
+
+Deploy through the alias afterwards (`scp mybinary board:/usr/local/bin/`). The
+successful `ping` is what makes this expensive: it reads as proof the link is
+healthy, so the investigation starts one layer too high.
+
 ## pkg-config Sysroot
 
 When cross-compiling, `pkg-config` defaults to host paths and emits `-L/usr/lib`

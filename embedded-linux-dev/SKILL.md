@@ -197,7 +197,7 @@ Canonical upstream docs (cite the release-matched version):
 - `deploy-and-iterate.md` — the QEMU edit-build-test loop and a deploy-verify pattern (vermagic match, DTB/DTBO present, boot-config sanity).
 - `cross-compilation.md` — toolchain types, Yocto SDK, autotools/CMake/Meson cross builds, sysroot and pkg-config, ABI diagnosis, static/musl licensing.
 - `debugging.md` — strace, gdbserver, perf + flame graphs, ftrace/trace-cmd, dynamic_debug, devmem/devmem2, kgdb/kdb, kmemleak, crash, valgrind, oops decode.
-- `camera-v4l2.md` — camera bring-up order, V4L2 + media-ctl diagnostics, `v4l2-compliance`, `yavta`, buffer lifecycle, failure buckets.
+- `camera-v4l2.md` — camera bring-up order, V4L2 + media-ctl diagnostics, `v4l2-compliance`, `yavta`, buffer lifecycle, failure buckets, capture performance triage (minimal-vs-application bisection, tuning order, profile interpretation).
 - `ota-updates.md` — the userspace update-framework layer above the bootloader: A/B vs single-copy+recovery vs delta strategy, RAUC (`system.conf`/`.raucb`/mark-good, `plain`/`verity`/`crypt` bundle formats), swupdate (`sw-description`/`.swu`/suricatta), RAUC-vs-swupdate choice, signing, rollback verification; cross-links `uboot-dev` for the boot-slot mechanics.
 - `rootfs-integrity.md` — read-only, cryptographically verified rootfs with dm-verity as the rootfs link of a verified-boot chain: Merkle hash tree and root hash, `veritysetup` build, `dm-mod.create`/initramfs bring-up, anchoring the root hash in a signed FIT cmdline, A/B per-slot root hashes, read-only rootfs consequences; cross-links `uboot-dev` for the FIT/secure-boot half and `ota-updates.md` (RAUC `verity` bundle format is a DISTINCT use of dm-verity).
 
