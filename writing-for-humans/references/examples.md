@@ -59,3 +59,22 @@ does not say who acted, ask the author, or state the gap and drop the
 unsupported claim. A rewrite that reads better because it fabricated specifics
 has broken the Iron Law in the worst available way: the prose now carries
 confident detail that nothing supports.
+
+## Why this warning is here
+
+Other AI-writing skills teach the opposite, and they teach it through their
+worked examples rather than their rules, which is where a model actually learns
+the behaviour. Reviewed 2026-08-24, `jpeggdev/humanize-writing` demonstrates its
+rewriting procedure on a passage about AI coding assistants and produces an
+"after" containing two named interviewees with direct quotes, a "2024 study by
+Google" reporting 55% faster completion, and a "2024 Uplevel study" reporting no
+significant difference. None of it appears in the "before". Smaller instances run
+through the same skill's other passes: a rewrite gains a purpose clause the
+original never stated, another gains "which is considered a delicacy".
+
+The prose is better in every respect the rules measure, which is what makes the
+failure worth recording. Specificity is the reward those rules optimise for, and
+fabricating it is the cheapest way to earn that reward. **A rule that asks for
+concrete detail creates pressure to invent concrete detail.** Assume that
+pressure applies to you, and check the source of every specific your rewrite
+gained.

@@ -43,7 +43,29 @@ the Specificity and agency section:
 - Upstream license: MIT, Copyright (c) 2025 Hardik Pandya.
 - Original author: Hardik Pandya (https://hvpandya.com).
 
-Both upstream MIT licenses were fetched verbatim from their repositories'
+**Quinary source** — three mechanisms in `SKILL.md`: the converging-signals rule
+before rewriting, the count-each-passage-once rule, and the supplied-writing-sample
+override:
+
+- Upstream project: [blader/humanizer](https://github.com/blader/humanizer),
+  itself built from Wikipedia's
+  [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
+  (WikiProject AI Cleanup).
+- Upstream license: MIT, Copyright (c) 2025 Siqi Chen.
+
+**Senary source** — five entries in `references/structures.md` (copula avoidance,
+synonym cycling, forced groups of three, false ranges, the document-level formula
+table) and two in `references/phrases.md` (closers, knowledge-cutoff hedging):
+
+- Upstream project: [jpeggdev/humanize-writing](https://github.com/jpeggdev/humanize-writing).
+- Upstream license: MIT, Copyright (c) 2025 jpeggdev.
+- Only the patterns were taken. Its architecture was rejected: a per-pattern
+  conditional for nearly every rule, and a 15-item "5+ hits = likely
+  AI-generated" scoring rubric. Its worked examples are cited in
+  `references/examples.md` as a warning rather than a model — see the review
+  record below.
+
+All upstream MIT licenses were fetched verbatim from their repositories'
 `LICENSE` files on 2026-08-24 and ship beside this file as `LICENSE.upstream`.
 
 ## Adaptation note
@@ -118,6 +140,31 @@ merge. The draft scored 100/120. What the two gates changed:
   table in the body and added a second conditional, breaking invariant 1. Removed.
 - **The wh-word ban was narrowed to pseudo-cleft openers.** As written it
   condemned two sentences in this skill's own body.
+
+## Candidate review, 2026-08-24
+
+Three further AI-writing skills were reviewed for adoptable material, in two
+research lanes. All three are MIT. Only what is listed under the quinary and
+senary sources above was taken, and every claimed gap was verified absent from
+this skill's files by search before adoption rather than on the reviewer's word.
+
+- [blader/humanizer](https://github.com/blader/humanizer) — three mechanisms
+  adopted. Its 35-pattern table was declined as already covered.
+- [jpeggdev/humanize-writing](https://github.com/jpeggdev/humanize-writing) —
+  seven patterns adopted, architecture declined. **Its worked examples fabricate
+  named sources, quotes and statistics as part of the demonstrated fix**, which
+  is the failure this skill's Iron Law exists to prevent. Recorded in
+  `references/examples.md` because the mechanism generalises: a rule that rewards
+  concrete detail creates pressure to invent it. Its Pass 8 ("Add Human Texture
+  and Soul") has no register gating and would inject first person and personal
+  asides into a spec.
+- [israelsaba/ai-writing-detector-skill](https://github.com/israelsaba/ai-writing-detector-skill)
+  (MIT, Copyright (c) 2026 Israel Saba) — **nothing adopted.** Its absolute
+  em-dash ban is the failure mode this skill's dash budget exists to avoid, and
+  its pt-BR wordlists would be a second conditional. Its one idea worth keeping,
+  a coefficient-of-variation burstiness metric over sentence length, is deferred
+  to `skills/TODO.md`: the mechanism is sound, its published thresholds cite no
+  study, and computing it needs a script rather than a rule.
 
 What the corpus check found that no fix addresses, recorded because it sets
 expectations for this skill rather than pointing at a defect: the skill changed

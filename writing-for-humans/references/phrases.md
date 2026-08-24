@@ -12,6 +12,8 @@ Contents:
 - [Promotional and LLM vocabulary](#promotional-and-llm-vocabulary)
 - [Adverbs and intensifiers](#adverbs-and-intensifiers)
 - [Filler phrases](#filler-phrases)
+- [Closers](#closers)
+- [Knowledge-cutoff hedging](#knowledge-cutoff-hedging)
 - [Meta-commentary](#meta-commentary)
 - [Telling instead of showing](#telling-instead-of-showing)
 - [Vague declaratives](#vague-declaratives)
@@ -98,6 +100,38 @@ Test: delete it and reread. If nothing changed, it was volume.
 - "When it comes to"
 - "In a world where"
 - "The reality is"
+
+## Closers
+
+Endings that gesture at significance instead of landing anywhere. Each can be
+deleted outright: the paragraph above it already made the point, or did not.
+
+- "The bottom line is…"
+- "Only time will tell."
+- "The future is bright." / "Exciting times lie ahead."
+- "Watch this space."
+- "Start your journey today."
+- "One thing is certain:…"
+
+End on a specific fact, the next action, or nothing at all. A document is allowed
+to stop.
+
+## Knowledge-cutoff hedging
+
+A tell specific to model-written prose: hedging about what is knowable rather
+than going to find out.
+
+- "Based on available information…"
+- "While specific details are limited…"
+- "As of my last update…"
+- "Publicly available sources suggest…"
+
+Find the source, or drop the claim and say which question stayed open. Naming the
+gap is honest; hedging around it reads as authority the writer does not have.
+
+**"As of [date]" is NOT this pattern** when the date is real and the data is
+time-sensitive. "As of 2026-08-24 the lock pins commit 8da1f03" is exactly the
+dated claim the Provenance rules ask for.
 
 ## Meta-commentary
 

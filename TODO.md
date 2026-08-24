@@ -38,6 +38,22 @@ relative to `skills/` unless noted. Repository-wide items live in
   check, and its discovery searches for two filenames that do not exist. Everything it
   does is already covered by `claude/reflect` and `shared/system-prompts`. The evidence
   for each defect is in `claude/claude-md-auditor/ATTRIBUTIONS.md`.
+- **`shared/writing-for-humans` — evaluate a burstiness check.** Deferred 2026-08-24
+  while reviewing three AI-writing skills for adoptable material. The idea comes from
+  [israelsaba/ai-writing-detector-skill](https://github.com/israelsaba/ai-writing-detector-skill)
+  (MIT): score sentence-length variation as a coefficient of variation, `std/mean`, and
+  treat a low score as the rhythm tell. It is the only countable test for rhythm anyone
+  in that review offered, and the skill currently has none — "vary sentence length" is
+  the one rule there with no way to fail it against a specific passage.
+  - Not adopted as written, for two reasons. Its thresholds (human above 0.40,
+    algorithmic below 0.35) cite no study in anything retrievable, and shipping an
+    unsourced number as a gate is the kind of confident-looking assertion the skill
+    itself bans. And a CV needs computing, so it is a script, not a rule — which makes
+    it a companion check like `check-doc-corpora.sh`, not a line in `SKILL.md`.
+  - To evaluate: measure the CV of a dozen real documents from `docs/plans/` and of a
+    few known-model-written passages, and see whether the distributions separate at all
+    on this corpus before picking any threshold. If they do not separate, record that
+    and close the item — a negative result here is worth as much as the check.
 - **Pin third-party versions** — third-party sources currently track `main`. If a surprise
   upstream change is a concern, add `ref:` pins in `kasetto/base.yaml` and roll forward
   deliberately with `kst sync --update`.

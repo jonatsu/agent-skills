@@ -10,9 +10,11 @@ Contents:
 - [Rhetorical setups](#rhetorical-setups)
 - [Unnamed actors](#unnamed-actors)
 - [Passive voice](#passive-voice)
+- [Verb and word choice](#verb-and-word-choice)
 - [Sentence starters](#sentence-starters)
 - [Fragmentation](#fragmentation)
 - [Rhythm](#rhythm)
+- [Document-level formula](#document-level-formula)
 
 ## Binary contrasts
 
@@ -95,6 +97,44 @@ signed on the server").
 | "Mistakes were made" | Name who made them |
 | "The decision was reached" | Name who decided |
 
+## Verb and word choice
+
+Three habits that survive a clean vocabulary pass, because each is about how words
+relate to one another rather than about any word being wrong.
+
+### Copula avoidance
+
+Elaborate constructions standing in for "is" and "has". **The tell is clustering,
+NOT any single instance** — "the museum serves as both archive and gallery" is an
+ordinary sentence. A passage that never says "is" and rotates through "serves
+as", "stands as", "represents", "functions as" is the pattern.
+
+| Pattern | Fix |
+|---|---|
+| serves as, stands as, represents, functions as | is |
+| boasts, features, offers | has |
+
+### Synonym cycling
+
+Rotating words for one thing to avoid repeating it: "protagonist… main
+character… central figure… hero" inside a paragraph. Pick the clearest term and
+repeat it. Repetition of the right noun reads as precision; variation reads as
+evasion, and in technical prose it makes the reader ask whether two names mean
+two things.
+
+### Forced groups of three
+
+A tricolon is a legitimate device and most groups of three are fine. **Flag only
+where the third item adds nothing or restates the first two**: "innovation,
+inspiration, and insights". If the third item carries weight, leave it; if it is
+padding, cut to two.
+
+### False ranges
+
+"From X to Y" where X and Y are not endpoints of any real scale: "from the
+singularity of the Big Bang to the grand cosmic web". The construction promises a
+spectrum and delivers two nouns. List what is actually covered.
+
 ## Sentence starters
 
 | Pattern | Fix |
@@ -128,3 +168,24 @@ the whole rule; this file adds nothing to it.
 
 For dashes, use the ladder and the per-paragraph budget in `SKILL.md`; a blanket
 ban only relocates the habit to `--`.
+
+## Document-level formula
+
+Every rule above works inside a paragraph. A document can pass all of them and
+still announce itself, because the tell a reader notices first is the **section
+template repeating**. Check the document as a shape, not only as prose.
+
+| Pattern | Fix |
+|---|---|
+| Every section ending on a takeaway, a "why it matters", or a bottom line | Let some sections stop when the point is made |
+| Sections of near-identical length, or identical paragraph counts | Vary them. Some sections need two paragraphs, some need six |
+| Every list carrying the same number of items | Let list length follow the content |
+| Every bullet built to the same grammatical shape and length | Let some be a fragment and some a full sentence |
+| "Despite its [strength]… faces challenges… Despite these challenges…" | Replace the loop with the specific facts |
+| A conclusion balancing good news against bad and closing on uplift | End on one statement, or on the next action |
+
+A repeated shape is only a defect when it is imposed. A reference document whose
+sections genuinely share a structure — every API entry carrying signature,
+parameters, returns, errors — is consistent, and consistency is what a reader
+came for. Ask whether the shape follows the content or the content was cut to
+fit the shape.

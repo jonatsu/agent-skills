@@ -18,6 +18,12 @@ the density and rigor; change the presentation so a human can navigate it.
 Applies to any prose a person reads. Does NOT apply to chat replies or terse tool
 output, which have their own budget.
 
+**When editing a file, rewrite the prose and nothing else.** Code blocks, inline
+code, frontmatter, link targets, table syntax, identifiers, command names and
+quoted material are all out of scope — a quoted passage belongs to whoever said
+it, and "improving" it silently falsifies a quotation. Leave them byte-identical
+even where they break a rule below.
+
 This skill has no workflow, so it carries no step checklist. It is a set of
 decisions to get right while writing, and a scan to run before delivering.
 
@@ -41,6 +47,12 @@ the register.
 document takes the first row even where its prose turns argumentative; an
 argument embedded in reference material inherits the document's register rather
 than claiming its own.
+
+**A supplied writing sample outranks this table and every default below it.**
+When the author gives you two or three paragraphs of their own prose as the
+target, match that voice — including its person, its rhythm and its dash habits.
+The rules here describe a good default, NEVER a house style to impose on someone
+who has already shown you theirs.
 
 ## Structure
 
@@ -147,6 +159,17 @@ Run this scan before handing prose over:
 
 If two or more of these fire, load `references/phrases.md` and rescan the whole
 draft rather than patching the lines you noticed.
+
+**Require converging signals before rewriting.** One dash, one short sentence,
+one curly quote or one unsourced claim is not evidence of anything: prose that
+reads as machine-written fails several checks at once, and any single check fires
+constantly on good writing. Rewrite where two or more independent tells land on
+the same passage; leave a lone signal alone.
+
+**Count each passage once.** When several tells hit the same phrase — boldface
+plus scare quotes plus a dashed aside on one coined term — that is one finding
+about one phrase, not three. Reporting it three times inflates the count and
+turns a small defect into an apparent pattern.
 
 ## References
 
