@@ -375,13 +375,23 @@ read-only gate wants, and it suppresses the warning the plain mode emits about a
 `--since` (default `HEAD`) and compares it to the child's body, normalising trailing blank lines because
 hygiene hooks trim them. It shells out to `git`; where `git` is absent it says so and skips.
 
-**The default compares against the last commit, which is the wrong baseline whenever the parent is
-dirty — and a dirty parent is the normal case.** You fork the document you were just editing, so
-`HEAD` holds a version that predates the session and a correct relocation reports a mismatch. Commit
-the parent's pre-fork state before forking, or pass `--since` a revision that has it. The check
-detects the situation and appends the explanation to any failure it reports, so a confusing mismatch
-names its own cause; it stays silent when the parent is dirty but the comparison still succeeds,
-because an edit outside the moved section costs nothing.
+**Get the baseline right or the check reports a mismatch that has nothing to do with the fork.**
+`--since` must name a revision where the parent still holds the section, and the default `HEAD` is
+that revision in neither of the two common situations:
+
+- **The parent is dirty**, which is the normal case — you fork the document you were just editing, so
+  `HEAD` predates the session and a correct relocation compares against the wrong text.
+- **The fork is already committed**, so `HEAD` holds the retained heading and its pointer, and there
+  is nothing left in the parent to compare against.
+
+The check detects both and appends the explanation to any failure it reports, so a confusing mismatch
+names its own cause. The already-forked hint wins when both apply, being conclusive where dirtiness is
+only likely. Neither fires on success: a dirty parent whose edits fell outside the moved section
+compares perfectly well, and warning anyway would put a hint on every fork.
+
+**Commit the parent's pre-fork state before forking.** That is what makes `--since` usable at all, and
+it is the one preparation step this check needs. Without it the tool can only tell you *why* it cannot
+verify the relocation, which is better than a bare mismatch and still not a verification.
 
 Exit 1 on contract errors; exit 0 on warnings, because ceilings never block.
 

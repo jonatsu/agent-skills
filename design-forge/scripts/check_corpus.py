@@ -656,6 +656,33 @@ def trim_blanks(lines: list[str]) -> list[str]:
     return lines[start:end]
 
 
+MARKDOWN_LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+
+
+def section_is_fork_pointer(section: list[str], child: Path) -> bool:
+    """Whether ``section`` is the pointer a completed fork leaves behind.
+
+    The second wrong-baseline case. Running the check *after* committing the
+    fork reads a parent whose section is already the retained heading plus a
+    pointer, so the comparison is against the wrong revision again -- and the
+    parent is clean, so the dirty-tree hint correctly stays quiet.
+
+    The test requires the body to be nothing but a blockquote *and* to link to
+    the child being compared. Both together make it conclusive rather than
+    likely: a section that quotes a specification is all-blockquote too, and
+    would otherwise be accused of being a pointer.
+    """
+    body = trim_blanks(section[1:])
+    if not body:
+        return False
+    if any(line.strip() and not line.lstrip().startswith(">") for line in body):
+        return False
+    targets = {
+        Path(target).name for line in body for target in MARKDOWN_LINK.findall(line)
+    }
+    return child.name in targets
+
+
 def verify_fork(spec: str, child: Path, rev: str, report: Report) -> bool:
     """Check that a forked section arrived byte-identical.
 
@@ -679,10 +706,21 @@ def verify_fork(spec: str, child: Path, rev: str, report: Report) -> bool:
         return False
     parent = Path(parent_raw)
     dirty = parent_is_dirty(parent)
+    already_forked = False
 
     def baseline_hint() -> None:
-        """Explain a failure that the comparison baseline, not the fork, caused."""
-        if dirty:
+        """Explain a failure that the comparison baseline, not the fork, caused.
+
+        Two causes, and the more specific one wins: a parent already carrying
+        the pointer is conclusive, where a dirty parent is only likely.
+        """
+        if already_forked:
+            report.warn(
+                f"{parent} at {rev} already carries the fork pointer to {child.name}, so "
+                f"the section had moved out of it by that revision and there was nothing "
+                f"left to compare against. Pass --since a revision from BEFORE the fork."
+            )
+        elif dirty:
             report.warn(
                 f"{parent} has uncommitted changes, so --since {rev} compared the child "
                 f"against the COMMITTED version, not the one the section was forked out "
@@ -700,10 +738,12 @@ def verify_fork(spec: str, child: Path, rev: str, report: Report) -> bool:
         report.error(f"{parent} at {rev}: no section {heading.strip()!r}")
         baseline_hint()
         return False
+    already_forked = section_is_fork_pointer(section, child)
     try:
         child_lines = child.read_text(encoding="utf-8").splitlines()
     except (OSError, UnicodeDecodeError) as exc:
         report.error(f"{child}: cannot read ({exc})")
+        baseline_hint()
         return False
     _, _, body_start = split_frontmatter(child_lines)
     want = trim_blanks(section)
@@ -970,6 +1010,13 @@ def main(argv: list[str] | None = None) -> int:
         verify_fork(spec, Path(child), args.since, report)
         for message in report.errors:
             print(f"ERROR {message}")
+        # Warnings carry the baseline hints, and a mismatch without its cause is
+        # the confusing report they exist to replace. This branch printed errors
+        # only until 2026-08-24, so both hints were reachable from the unit tests
+        # and invisible from the command line.
+        if not args.quiet:
+            for message in report.warnings:
+                print(f"WARN  {message}")
         return EXIT_CONTRACT_ERRORS if report.failed else EXIT_OK
 
     problem = usage_error(root, index, check_index, args.survey)

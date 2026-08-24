@@ -740,6 +740,34 @@ first moved line
 second moved line
 """
 
+# The parent as it looks once the fork has been made and committed: the heading
+# stays, its content is a pointer. Running the check at this revision compares
+# the child against a pointer, which is the second wrong-baseline case.
+PARENT_AFTER_FORK = """---
+type: design
+lifecycle: active
+owns:
+  - alpha
+---
+
+# Alpha
+
+## Keeps
+
+kept line
+
+## Moves
+
+> **Authority on this moved to [child.md](child.md)**, which owns it.
+"""
+
+# All-blockquote, but a quotation rather than a pointer -- it links nowhere near
+# the child. The pointer test must not accuse it.
+PARENT_WITH_QUOTED_SECTION = PARENT_AFTER_FORK.replace(
+    "> **Authority on this moved to [child.md](child.md)**, which owns it.",
+    "> Quoted from [the standard](https://example.invalid/spec.html), verbatim.",
+)
+
 
 def git(root: Path, *args: str) -> None:
     """Run one git command inside a temporary repository."""
@@ -842,6 +870,62 @@ class VerifyForkTests(TempCorpus):
         ok, report, _ = self.verify(FORKED_CHILD.replace("first moved", "1st moved"))
         self.assertFalse(ok)
         self.assertNotIn("uncommitted changes", joined(report.warnings))
+
+    def commit_parent(self, text: str) -> None:
+        """Replace the parent and commit it, so HEAD carries that state."""
+        write(self.root, "parent.md", text)
+        git(self.root, "add", "parent.md")
+        git(self.root, "commit", "-qm", "parent updated")
+
+    def test_a_parent_already_carrying_the_pointer_says_so(self) -> None:
+        # Running the check after committing the fork: HEAD holds the pointer,
+        # not the section, and the tree is clean so the dirty hint stays quiet.
+        self.commit_parent(PARENT_AFTER_FORK)
+        ok, report, _ = self.verify(FORKED_CHILD)
+        self.assertFalse(ok)
+        self.assertIn("already carries the fork pointer", joined(report.warnings))
+        self.assertIn("BEFORE the fork", joined(report.warnings))
+
+    def test_the_pointer_hint_wins_over_the_dirty_hint(self) -> None:
+        # Both causes can hold at once. The pointer is conclusive where
+        # dirtiness is only likely, so only the conclusive one is reported.
+        self.commit_parent(PARENT_AFTER_FORK)
+        write(self.root, "parent.md", PARENT_AFTER_FORK + "\nan uncommitted edit\n")
+        ok, report, _ = self.verify(FORKED_CHILD)
+        self.assertFalse(ok)
+        self.assertIn("already carries the fork pointer", joined(report.warnings))
+        self.assertNotIn("uncommitted changes", joined(report.warnings))
+
+    def test_the_cli_prints_the_hint_and_quiet_suppresses_it(self) -> None:
+        # The hints were reachable from these tests and invisible from the
+        # command line, because the --verify-fork branch printed errors only.
+        # A hint nobody sees is the confusing report it exists to replace.
+        self.commit_parent(PARENT_AFTER_FORK)
+        write(self.root, "child.md", FORKED_CHILD)
+        argv = [
+            "--verify-fork",
+            f"{self.root / 'parent.md'}:## Moves",
+            str(self.root / "child.md"),
+        ]
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            code = cc.main(argv)
+        self.assertEqual(code, cc.EXIT_CONTRACT_ERRORS)
+        self.assertIn("already carries the fork pointer", buf.getvalue())
+
+        quiet = io.StringIO()
+        with redirect_stdout(quiet):
+            cc.main([*argv, "--quiet"])
+        self.assertIn("ERROR", quiet.getvalue())
+        self.assertNotIn("already carries the fork pointer", quiet.getvalue())
+
+    def test_an_all_blockquote_section_is_not_mistaken_for_a_pointer(self) -> None:
+        # A section that quotes a specification is all-blockquote too. Accusing
+        # it of being a pointer would send the reader after the wrong cause.
+        self.commit_parent(PARENT_WITH_QUOTED_SECTION)
+        ok, report, _ = self.verify(FORKED_CHILD)
+        self.assertFalse(ok)
+        self.assertNotIn("already carries the fork pointer", joined(report.warnings))
 
     def test_a_dirty_parent_that_still_matches_stays_silent(self) -> None:
         # Dirtiness alone is never a failure: an edit outside the moved section
