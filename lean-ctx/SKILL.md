@@ -1,6 +1,6 @@
 ---
 name: lean-ctx
-description: Use for lean-ctx and its ctx_* MCP tools — ctx_read, ctx_search, ctx_glob, ctx_tree, ctx_shell, ctx_patch, ctx_call, ctx_expand, ctx_git_read — plus shell hook, MCP config, profiles, compression, proxy, doctor, wrap/onboard/setup/update, and rules injection. Use when picking a read mode or edit op; when a ctx_* call returns a suspicious, empty, truncated, or suspiciously complete result; when an edit is rejected or an anchor goes stale; when a read shows a [REDACTED:...] marker, a text file starts reading as binary, or a patched script loses its +x bit; when a read returns an "already in this conversation" stub; or when path-jail, project-root, install, config, or debugging problems appear.
+description: Use for lean-ctx and its ctx_* MCP tools — ctx_read, ctx_search, ctx_glob, ctx_tree, ctx_shell, ctx_patch, ctx_call, ctx_expand, ctx_git_read — plus shell hook, MCP config, profiles, compression, proxy, doctor, wrap/onboard/setup/init/update, and rules injection. Use when picking a read mode or edit op; when a ctx_* call returns a suspicious, empty, truncated, or suspiciously complete result; when an edit is rejected or an anchor goes stale; when a read shows a [REDACTED:...] marker, a text file starts reading as binary, or a patched script loses its +x bit; when a read returns an "already in this conversation" stub; or when path-jail, project-root, install, config, or debugging problems appear.
 metadata:
   author: Joonas Onatsu
   license: Apache-2.0
@@ -108,8 +108,19 @@ Do NOT load:
   unless user opts in.
 - `onboard`, `setup`, `init`, and `init --global` may edit shell profiles.
   Safer no-RC-edit paths: manual MCP config or `lean-ctx init --agent <tool>`.
-- Under dotfile control, prefer manual eval snippet or
-  `lean-ctx init --global --style=dropin` over automatic shell-hook flows.
+- Under dotfile control, the stdout-only form is `lean-ctx init <shell>
+  --style=dropin` — a SHELL NAME positional, and NO `--global`. It prints the
+  hook and writes nothing; its output is byte-identical to what a real `init`
+  installs, so it is what a dotfile repo should generate from. `--style=dropin`
+  is NOT what makes it safe: on 3.9.19, `init --global --style=dropin` printed a
+  progress report and wrote four files (`~/.bashrc`, `~/.bash_profile`,
+  `env.sh`, `shell-hook.bash`). Same shape for `zsh`, `fish`, `powershell`.
+  `lean-ctx config schema` is likewise stdout-only.
+- `lean-ctx init --help` does NOT print help — it runs a full init, rewriting
+  `~/.bashrc` and `~/.bash_profile` in place and dropping `*.lean-ctx.bak`
+  beside each. The reflex "check `--help` first" is precisely what detonates it,
+  so this surface cannot be discovered safely from the CLI: learn it from the
+  stdout-only forms above, or under a throwaway `HOME`.
 - Do not store durable local policy in regenerated `AGENTS.md`; keep it in
   stable instruction/config files.
 - Hook escapes: `lean-ctx-off`, `LEAN_CTX_DISABLED=1`, `LEAN_CTX_RAW=1`.
