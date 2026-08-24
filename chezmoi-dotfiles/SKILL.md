@@ -150,6 +150,7 @@ chezmoi git -- log --oneline -5        # recent commit history
 - `run_once_` scripts won't re-run: already recorded in state. Reset with `chezmoi state delete-bucket --bucket=scriptState`.
 - `forget` needs TTY: use `chezmoi forget --force <path>`.
 - Flood of `DA` in status: untracked dirs (e.g. node_modules). Add patterns to `.chezmoiignore`.
+- `.chezmoiignore` patterns match the **target-stripped name** (`run_once_`/`dot_`/`private_` prefixes and `.tmpl` suffix removed), not the raw source filename. A rule using the raw name silently never matches — no error, the "ignored" script just keeps running. Verify with `chezmoi --no-tty ignored`. Detail: `references/scripts-ignores.md`.
 
 ## Pre-Delivery Checklist
 
