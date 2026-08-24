@@ -54,6 +54,23 @@ relative to `skills/` unless noted. Repository-wide items live in
     few known-model-written passages, and see whether the distributions separate at all
     on this corpus before picking any threshold. If they do not separate, record that
     and close the item — a negative result here is worth as much as the check.
+- **README-touching skills — evaluate `crafting-effective-readmes`.** Deferred 2026-08-25 at the
+  user's request, raised while re-reviewing `requirements-clarity` for `design-forge`. Candidate:
+  [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit) skill
+  `crafting-effective-readmes`, MIT © 2026 Leonardo Flores — that licence was read from the
+  repository's LICENSE file on 2026-08-23 and again on 2026-08-24, and ships as `LICENSE.upstream`
+  beside `shared/writing-for-humans/ATTRIBUTIONS.md`. Unread as of this entry, so it carries no
+  verdict.
+  - **Judge it against all four README-touching skills at once, not one of them.**
+    `shared/git-repo-hygiene` bootstraps the README as a community file, `shared/agent-repo-docs`
+    keeps `AGENTS.md` and `llms.txt` consistent with it, `shared/technical-writing` owns a document's
+    structure, scope and audience, and `shared/writing-for-humans` owns its prose. A rule adopted
+    into the wrong one lands where nobody writing a README will load it.
+  - **Two toolkit-specific tells to check before anything else**, both found in sibling skills of
+    this toolkit during the 2026-08-24 and 2026-08-25 reviews recorded in
+    `shared/writing-for-humans/ATTRIBUTIONS.md`: a scored rubric with a refuse-below-N gate, and
+    worked examples that fabricate the specifics they then praise. Its `requirements-clarity`
+    sibling ships the first and `humanizer` shipped the second.
 - **Pin third-party versions** — third-party sources currently track `main`. If a surprise
   upstream change is a concern, add `ref:` pins in `kasetto/base.yaml` and roll forward
   deliberately with `kst sync --update`.
