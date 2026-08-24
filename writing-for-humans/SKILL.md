@@ -29,15 +29,15 @@ decisions to get right while writing, and a scan to run before delivering.
 
 ## Register: decide once, hold it
 
-Person and fragment tolerance are the only rules here that vary by what you are
-writing. Decide both before the first sentence.
+**This table is where document type is answered, and the only place.** Read your
+row before the first sentence; no rule below asks the question again.
 
-| You are writing | Person | Sentence fragments |
-|---|---|---|
-| Reference, spec, ADR, API doc | third | NEVER |
-| Instructions, how-to, tutorial | second | NEVER |
-| Argument, essay, post | second or first | SPARINGLY, for real emphasis |
-| Note to self, working log | any | MAY |
+| You are writing | Person | Fragments | Capitalised MUST / NEVER | "Recorded because…" |
+|---|---|---|---|---|
+| Reference, spec, ADR, API doc, rules file | third | NEVER | RFC 2119 obligations — NEVER edit them as tone | permitted, and often required |
+| Instructions, how-to, tutorial | second | NEVER | RFC 2119 obligations — NEVER edit them as tone | navigation aids only |
+| Argument, essay, post | second or first | SPARINGLY, for real emphasis | none — cut as lazy extremes | NEVER |
+| Note to self, working log | any | MAY | none — cut as lazy extremes | MAY |
 
 **Pick one and hold it for the whole document.** Mixed person is the defect;
 which one you picked rarely is. Every other rule below applies unchanged whatever
@@ -48,11 +48,16 @@ document takes the first row even where its prose turns argumentative; an
 argument embedded in reference material inherits the document's register rather
 than claiming its own.
 
-**A supplied writing sample outranks this table and every default below it.**
+**A supplied writing sample outranks this table and the STYLE defaults below it.**
 When the author gives you two or three paragraphs of their own prose as the
-target, match that voice — including its person, its rhythm and its dash habits.
-The rules here describe a good default, NEVER a house style to impose on someone
-who has already shown you theirs.
+target, match its person, its register and its sentence rhythm. The rules here
+describe a good default, NEVER a house style to impose on someone who has already
+shown you theirs.
+
+**The override has a floor.** It does NOT reach the Iron Law, the fabrication
+check, or the scope-protection rule above. Two or three paragraphs also cannot
+establish a dash *rate*, which is what the budget measures, so the dash ladder
+still applies.
 
 ## Structure
 
@@ -121,10 +126,8 @@ Most prose that reads as AI-written fails here rather than at the sentence level
 - **Prefer a concrete instance to an abstraction.** "The 4 GB upload fails" beats
   "large uploads may encounter issues".
 - **Cut lazy extremes.** "Every", "always", "never", "everyone" claim authority
-  the evidence rarely supports. Say how many, or how often. This governs
-  *descriptive* claims only: a capitalised NEVER, MUST or ALWAYS in a spec, ADR
-  or rules file is an RFC 2119 keyword carrying a defined obligation, and cutting
-  it changes what the document requires rather than how it sounds.
+  the evidence rarely supports. Say how many, or how often. Capitalised keywords
+  are governed by the register table, NOT by this rule.
 - **Cut decoration, NEVER compression.** A closing line that compresses the
   paragraph's cost into few words is the paragraph working. Cut a closing line
   only when removing it loses no claim: that is the test, and "it sounds
@@ -160,16 +163,16 @@ Run this scan before handing prose over:
 If two or more of these fire, load `references/phrases.md` and rescan the whole
 draft rather than patching the lines you noticed.
 
-**Require converging signals before rewriting.** One dash, one short sentence,
-one curly quote or one unsourced claim is not evidence of anything: prose that
-reads as machine-written fails several checks at once, and any single check fires
-constantly on good writing. Rewrite where two or more independent tells land on
-the same passage; leave a lone signal alone.
+**Require converging signals before rewriting for STYLE.** One dash, one
+pseudo-cleft opener or one adverb is not evidence of anything: any single style
+check fires constantly on good writing, and prose that reads as machine-written
+fails several at once. Rewrite where two or more independent style tells land on
+the same passage; leave a lone style signal alone.
 
-**Count each passage once.** When several tells hit the same phrase — boldface
-plus scare quotes plus a dashed aside on one coined term — that is one finding
-about one phrase, not three. Reporting it three times inflates the count and
-turns a small defect into an apparent pattern.
+**This gate covers the style checks ONLY.** The last two checks above enforce the
+Iron Law. A single dropped claim, or a single actor, date, number or causal link
+the original did not support, is acted on alone and immediately — there is no
+threshold, and nothing converges with it.
 
 ## References
 
@@ -198,10 +201,13 @@ Skip them entirely for short drafts.
 - **Banning a glyph instead of budgeting the construction.** Forbidding em dashes
   produces `--` spam; forbidding both produces comma splices.
 - **Applying a blocklist mechanically.** "Explicitly", "deliberately" and
-  "measured" carry meaning in normative prose. Cut the empty ones.
+  "measured" change what a sentence claims. Cut the empty ones.
 - **Flattening a distinctive voice into generic correct prose.** These rules
   remove tells, NEVER personality.
-- **Treating the register table as permission to invent more conditionals.**
+- **Injecting personality the source did not have.** Several sibling skills
+  instruct exactly this — add opinions, use "I", let some mess in. Applied to a
+  spec it is vandalism, and applied anywhere it manufactures a stance the author
+  never took. Match a voice; NEVER supply one.
 
 ## Keeping this skill honest
 
@@ -209,9 +215,18 @@ Two invariants for whoever edits this file next. Both exist because a
 genre-generic writing skill decays by accumulating exceptions until no rule
 constrains anything.
 
-1. **The register table is the ONLY conditional in this skill.** A rule that
-   needs a second "except when writing X" belongs in a specialist skill, NOT
-   here.
-2. **Every rule MUST be failable against a specific sentence.** A rule you cannot
-   point at a sentence and say "this violates it" has already decayed. Cut it or
-   make it concrete.
+1. **Document type is a conditional axis ONLY in the register table.** Every rule
+   keyed on what kind of document you are writing MUST become a column of that
+   table, so a reader answers the genre question once and never again. A rule MAY
+   narrow its own predicate — "the tell is clustering, not any single instance" —
+   because that is answered from the passage in front of you, not from the
+   document's kind. Audited 2026-08-25: five stray genre clauses across three
+   files had each invented their own vocabulary for the axis ("rules file",
+   "normative prose", "evidential prose", "a long reference document"), none of
+   which the table defined. Folding them in is what makes this invariant true.
+2. **Every rule MUST name the span it is failable against — a sentence, a
+   paragraph, a passage or the document — and MUST be failable by inspecting that
+   span alone.** A rule needing the author's intent, or a fact not present in the
+   span, has already decayed. Cut it or make it concrete. Reworded 2026-08-25:
+   "sentence" was always too narrow, since the dash budget is per paragraph and
+   the formula table is per document.

@@ -14,6 +14,8 @@ Contents:
 - [Sentence starters](#sentence-starters)
 - [Fragmentation](#fragmentation)
 - [Rhythm](#rhythm)
+- [Markup and typography](#markup-and-typography)
+- [Chat artifacts in a document](#chat-artifacts-in-a-document)
 - [Document-level formula](#document-level-formula)
 
 ## Binary contrasts
@@ -169,6 +171,33 @@ the whole rule; this file adds nothing to it.
 For dashes, use the ladder and the per-paragraph budget in `SKILL.md`; a blanket
 ban only relocates the habit to `--`.
 
+## Markup and typography
+
+Tells that live in the formatting rather than the words. Each is failable by
+looking at the rendered page, and each is a *frequency* judgement — one bolded
+term is emphasis, a bolded term in every bullet is a habit.
+
+| Pattern | Fix |
+|---|---|
+| Boldface on a term in every list item, or several times a paragraph | Keep it for a genuinely important term on first mention |
+| Inline-header bullets — `- **Label:** sentence that restates the label` | Cut the label, or cut the sentence. Rarely are both needed |
+| Title Case In Every Heading, with no style guide calling for it | Sentence case. Only a tell where nothing else sets the convention |
+| Emoji decorating headings or bullets | Remove |
+| Curly quotes in plain-text or code contexts | Straight quotes. In formatted prose curly quotes are correct and NOT a tell |
+
+## Chat artifacts in a document
+
+Correspondence that arrived with pasted model output and was never cut. It reads
+as addressed to someone who is not the reader.
+
+- "I hope this helps!" / "Let me know if you would like me to expand."
+- "Certainly!" / "Of course!" / "Great question!"
+- "You're absolutely right!"
+- "Here is an overview of…" opening a document that IS the overview
+- "Would you like me to…" at the end of a section
+
+Delete outright. Nothing is lost: none of it addresses the document's reader.
+
 ## Document-level formula
 
 Every rule above works inside a paragraph. A document can pass all of them and
@@ -184,8 +213,8 @@ template repeating**. Check the document as a shape, not only as prose.
 | "Despite its [strength]… faces challenges… Despite these challenges…" | Replace the loop with the specific facts |
 | A conclusion balancing good news against bad and closing on uplift | End on one statement, or on the next action |
 
-A repeated shape is only a defect when it is imposed. A reference document whose
-sections genuinely share a structure — every API entry carrying signature,
-parameters, returns, errors — is consistent, and consistency is what a reader
-came for. Ask whether the shape follows the content or the content was cut to
-fit the shape.
+Judge the shape by frequency, as with dashes: a template repeating across every
+section is the tell, one section shaped that way is not. A document where every
+entry carries signature, parameters, returns and errors is consistent by design,
+and consistency is what the reader came for. Look for a section cut short or
+padded out to fit the shape. If none was, the repetition belongs to the content.

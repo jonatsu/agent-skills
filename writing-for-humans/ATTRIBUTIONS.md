@@ -163,8 +163,44 @@ this skill's files by search before adoption rather than on the reviewer's word.
   em-dash ban is the failure mode this skill's dash budget exists to avoid, and
   its pt-BR wordlists would be a second conditional. Its one idea worth keeping,
   a coefficient-of-variation burstiness metric over sentence length, is deferred
-  to `skills/TODO.md`: the mechanism is sound, its published thresholds cite no
-  study, and computing it needs a script rather than a rule.
+  to `skills/TODO.md` in this skill's source repository (`agent-setup`; the path
+  does not resolve from a deployed copy): the mechanism is sound, its published
+  thresholds cite no study, and computing it needs a script rather than a rule.
+
+## Second candidate review and re-score, 2026-08-25
+
+`softaworks/agent-toolkit`'s `humanizer` skill was reviewed after the adoptions
+above. It is a fork of `blader/humanizer`, so 18 of its 24 patterns were already
+present here, several with the same examples. Five markup tells were adopted into
+`references/structures.md` (boldface overuse, inline-header bullets, title case,
+emoji, curly quotes in plain-text contexts) along with the chat-artifacts list.
+Nothing else was taken.
+
+**Its "PERSONALITY AND SOUL" section instructs the opposite of this skill's Iron
+Law**, and its worked examples fabricate throughout: an invented New York Times
+interview with a year and an argument, an invented architect's quote, an invented
+2019 Chinese Academy of Sciences survey, invented dates for IT parks and a
+drainage project. That is the third reviewed skill in a row demonstrating
+fabrication in its canonical examples, which is why `references/examples.md`
+records the mechanism rather than any single instance, and why the anti-pattern
+list now names injected personality directly.
+
+A second `skill-judge` pass on 2026-08-25 scored the package 100/120 again and
+found three defects the first pass could not have seen, because round 2 created
+them:
+
+- **The converging-signals gate sat above the two Iron Law checks**, so read
+  literally, a single fabricated statistic in an otherwise clean rewrite was a
+  lone signal to be left alone. That inverted the rule this skill treats as
+  outranking every other. The gate is now scoped to style checks explicitly.
+- **The voice-sample override had no floor** and reached the fabrication check.
+  It now stops at the Iron Law, the fabrication check and scope protection, and
+  states that two paragraphs cannot establish a dash rate.
+- **Invariant 1 was false, and had been before round 2.** The audit found five
+  genre conditionals outside the register table, each with its own vocabulary for
+  the axis. They are folded into the table as two new columns; the invariant is
+  reworded to what it actually protects. `Count each passage once` was cut as a
+  reviewer-output rule in a skill that produces no report.
 
 What the corpus check found that no fix addresses, recorded because it sets
 expectations for this skill rather than pointing at a defect: the skill changed

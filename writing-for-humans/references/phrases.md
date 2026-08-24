@@ -79,9 +79,8 @@ about what the thing does instead.
 ## Adverbs and intensifiers
 
 Cut the ones that only add volume. Keep the ones that change the claim:
-"explicitly", "deliberately", "measured" and "verified" are load-bearing in
-normative or evidential prose, and deleting them changes what the sentence
-asserts.
+deleting "explicitly", "deliberately", "measured" or "verified" changes what the
+sentence asserts, which is an edit to the content rather than to the tone.
 
 Empty by default:
 
@@ -150,15 +149,12 @@ structure.
 - "As we'll see…"
 - "I want to explore…"
 
-Two exceptions, both carrying information the reader cannot get elsewhere:
+Two kinds carry information the reader cannot get elsewhere, and the register
+table's last column says which of them your document admits:
 
-- **Navigation in a long reference document.** "Load this file when X happens"
-  is structure.
-- **Provenance of a sentence.** "Recorded because…", "Stated because…", "Both
-  flags were declined, recorded here because the next reader will make the same
-  misreading" tell the reader which sentences were expensive to learn. Some
-  corpora require this; check the repository's own writing conventions before
-  cutting one.
+- **Navigation.** "Load this file when X happens" is structure, not commentary.
+- **Provenance of a sentence.** "Recorded because…", "Stated because…" tell the
+  reader which sentences were expensive to learn.
 
 ## Telling instead of showing
 
