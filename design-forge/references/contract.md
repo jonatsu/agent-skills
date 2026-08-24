@@ -179,6 +179,16 @@ The `design` rule above is the worked example from a real corpus: a document tit
 implementation plan**" announced in its own title that it owned two lifecycles, and grew past 2400
 lines because the perishable half kept accreting into the durable one.
 
+**A type name may not reuse a `lifecycle` value** — `draft`, `active`, `stale`, `superseded`. `SKILL.md`
+carries the rule and the reason; the short form is that type and lifecycle are orthogonal axes and a
+shared word destroys the reader's ability to tell which one a value belongs to.
+
+**The declaration is also where a corpus records its house voice**, if it has one. Nothing in this
+skill says how a design document should read, and that is deliberate — voice is corpus-specific. A
+few one-line conventions next to the type list is the whole mechanism; a style guide long enough to
+feel thorough becomes a template by another route, which is the failure the section catalogue below
+is kept short to avoid.
+
 Freeform types are **reversible and expected to tighten.** They were chosen because no adequate fixed
 vocabulary existed yet, not because a fixed set is wrong. When real use supplies the vocabulary,
 narrow the list.

@@ -823,6 +823,40 @@ class VerifyForkTests(TempCorpus):
         cc.verify_fork("parent.md", self.root / "child.md", "HEAD", report)
         self.assertIn("--verify-fork needs", joined(report.errors))
 
+    def test_a_dirty_parent_explains_the_mismatch_it_causes(self) -> None:
+        # The normal case: you fork the document you were just editing, so the
+        # parent is dirty and `--since HEAD` compares against a version that
+        # predates the session. Without the hint this reads as a botched fork.
+        write(
+            self.root, "parent.md", PARENT_BEFORE_FORK.replace("first moved", "edited")
+        )
+        ok, report, _ = self.verify(FORKED_CHILD.replace("first moved", "edited"))
+        self.assertFalse(ok)
+        self.assertIn("fork mismatch at body line", joined(report.errors))
+        self.assertIn("uncommitted changes", joined(report.warnings))
+        self.assertIn("COMMITTED version", joined(report.warnings))
+
+    def test_a_clean_parent_gets_no_baseline_hint(self) -> None:
+        # The hint must not fire on a genuine relocation error, or it becomes
+        # the excuse a real mismatch gets waved through with.
+        ok, report, _ = self.verify(FORKED_CHILD.replace("first moved", "1st moved"))
+        self.assertFalse(ok)
+        self.assertNotIn("uncommitted changes", joined(report.warnings))
+
+    def test_a_dirty_parent_that_still_matches_stays_silent(self) -> None:
+        # Dirtiness alone is never a failure: an edit outside the moved section
+        # leaves the comparison correct, and warning anyway would be noise on
+        # every fork.
+        write(
+            self.root,
+            "parent.md",
+            PARENT_BEFORE_FORK + "\n## Added later\n\nunrelated\n",
+        )
+        ok, report, out = self.verify(FORKED_CHILD)
+        self.assertTrue(ok)
+        self.assertEqual(report.warnings, [])
+        self.assertIn("fork verified", out)
+
 
 if __name__ == "__main__":
     unittest.main()

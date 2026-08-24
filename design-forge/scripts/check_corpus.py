@@ -596,6 +596,31 @@ def git_show(rev: str, path: Path) -> tuple[str | None, str | None]:
     return proc.stdout, None
 
 
+def parent_is_dirty(parent: Path) -> bool:
+    """Whether ``parent`` has uncommitted changes.
+
+    A fork is normally performed in the document you were just editing, so the
+    parent is usually dirty and ``--since HEAD`` then compares the child against
+    a version that predates the session. That produces a mismatch on a correct
+    relocation, which reads as a botched fork. Knowing this lets the mismatch
+    explain itself; it is never a failure on its own, because a parent whose
+    edits fell outside the moved section compares perfectly well.
+    """
+    if shutil.which("git") is None:
+        return False
+    try:
+        proc = subprocess.run(  # noqa: S603
+            ["git", "status", "--porcelain", "--", parent.name],
+            cwd=parent.parent if str(parent.parent) else ".",
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return False
+    return proc.returncode == 0 and bool(proc.stdout.strip())
+
+
 def extract_section(lines: list[str], heading: str) -> list[str] | None:
     """Return the named ``##`` section including its heading, or None.
 
@@ -653,13 +678,27 @@ def verify_fork(spec: str, child: Path, rev: str, report: Report) -> bool:
         report.error(f"--verify-fork needs PARENT.md:'## Section'; got {spec!r}")
         return False
     parent = Path(parent_raw)
+    dirty = parent_is_dirty(parent)
+
+    def baseline_hint() -> None:
+        """Explain a failure that the comparison baseline, not the fork, caused."""
+        if dirty:
+            report.warn(
+                f"{parent} has uncommitted changes, so --since {rev} compared the child "
+                f"against the COMMITTED version, not the one the section was forked out "
+                f"of. Commit the parent's pre-fork state and re-run, or pass --since with "
+                f"a revision that has it."
+            )
+
     text, problem = git_show(rev, parent)
     if text is None:
         report.error(problem or f"cannot read {parent} at {rev}")
+        baseline_hint()
         return False
     section = extract_section(text.splitlines(), heading)
     if section is None:
         report.error(f"{parent} at {rev}: no section {heading.strip()!r}")
+        baseline_hint()
         return False
     try:
         child_lines = child.read_text(encoding="utf-8").splitlines()
@@ -675,12 +714,14 @@ def verify_fork(spec: str, child: Path, rev: str, report: Report) -> bool:
                 f"fork mismatch at body line {number}: {parent} has {left!r}, "
                 f"{child} has {right!r}"
             )
+            baseline_hint()
             return False
     if len(want) != len(have):
         report.error(
             f"fork mismatch: the section in {parent} is {len(want)} lines, "
             f"the body of {child} is {len(have)}"
         )
+        baseline_hint()
         return False
     print(f"fork verified: {len(want)} lines identical")
     return True

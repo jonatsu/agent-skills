@@ -103,6 +103,14 @@ signal that a fork relocates verbatim or that the index is generated. Without an
 declaration *reads* as enforced while nothing checks it — this skill's own anti-pattern, committed by
 following this skill. `none — advisory-only` is a valid answer to the second. Silence is not.
 
+**This skill governs structure, lifecycle and the operations over them — not prose.** The section
+catalogue in `references/contract.md` is a heading list, and `references/authoring.md` is scoped to
+requirement text; nothing here says how a design document should read. That is deliberate: voice is
+corpus-specific, and a hardware requirements corpus and a software design corpus should not share one.
+**The mode declaration is where a corpus records its own**, next to the type list, if it wants the
+conventions to survive the agent that established them. Say so when asked — silence reads as "no rules
+exist" when the answer is "your corpus declares them, and has not yet".
+
 ## Route to the operation
 
 | The user wants | Operation |
@@ -150,9 +158,24 @@ ones, but creating either is the user's call — one confirmation, since the two
 coincide. Without that gate, freeform types degenerate into per-document config and the contract stops
 constraining anything.
 
+**A type name MUST NOT reuse a `lifecycle` value.** `type: draft` beside `lifecycle: active` reads as
+a contradiction and beside `lifecycle: draft` as a tautology; either way the reader stops being able
+to tell which axis a word belongs to. Type and lifecycle are orthogonal for the same reason `locked`
+is — what a document *is* does not move when its state does. Reject `draft`, `active`, `stale` and
+`superseded` as type names and pick one that says what the document holds.
+
 **An absent or empty section is a correct and complete state.** NEVER fill a heading to avoid leaving
 it empty; delete the heading instead. An agent told to keep a document complete will fill every leaf
 of a large template, and that is the mechanism behind documents nobody can read.
+
+**A numbered entry keeps its number forever, in any document type.** NEVER renumber to close a gap
+left by a closed or withdrawn entry, and NEVER give a new entry a number that has been used before.
+Everything that cites an entry — another document, a commit message, a ticket, a test plan — cites the
+number, and reuse silently redirects those citations to unrelated content. The observed failure: a
+corpus that reused two settled open-question numbers ended up with *as then numbered* appended to
+every back-reference, forever, as the cheapest available repair. `references/authoring.md` states the
+same rule for requirement IDs and adds their format; this is the general case, and it governs open
+questions, decisions, invariants and anything else a document numbers.
 
 **`handling` marks content that may not leave the corpus** — a customer-supplied specification, a
 contractor deliverable, a standard excerpt. When a document carries any value, NEVER send its content
@@ -351,6 +374,14 @@ read-only gate wants, and it suppresses the warning the plain mode emits about a
 `--verify-fork` replaces reading a `git diff` by eye. It extracts the named section from the parent at
 `--since` (default `HEAD`) and compares it to the child's body, normalising trailing blank lines because
 hygiene hooks trim them. It shells out to `git`; where `git` is absent it says so and skips.
+
+**The default compares against the last commit, which is the wrong baseline whenever the parent is
+dirty — and a dirty parent is the normal case.** You fork the document you were just editing, so
+`HEAD` holds a version that predates the session and a correct relocation reports a mismatch. Commit
+the parent's pre-fork state before forking, or pass `--since` a revision that has it. The check
+detects the situation and appends the explanation to any failure it reports, so a confusing mismatch
+names its own cause; it stays silent when the parent is dirty but the comparison still succeeds,
+because an edit outside the moved section costs nothing.
 
 Exit 1 on contract errors; exit 0 on warnings, because ceilings never block.
 

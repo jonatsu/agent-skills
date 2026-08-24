@@ -113,6 +113,10 @@ Format `<CLASS>-<AREA>-<NNN>`, three digits, zero-padded.
 requirement — downstream test plans, tickets and hardware drawings cite them. A retired requirement
 either stays in place marked as withdrawn, or leaves via an amendment that records its ID.
 
+The rule is not specific to requirements and `SKILL.md` now states the general case: **any** numbered
+entry, in any document type, keeps its number forever. What this section adds is the format and the
+class vocabulary below.
+
 ## One requirement per statement
 
 Split on every "and", "or", and comma that joins two obligations. Two obligations in one statement
