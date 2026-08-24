@@ -50,13 +50,26 @@ long-standing requirements-engineering practice rather than that skill's inventi
 one monolith — was noted in the CC0-licensed `jam01/SRS-Template`. CC0 imposes no attribution
 obligation; it is recorded here for provenance.
 
-**The "before the requirements exist" section** of `references/authoring.md` reimplements three ideas
+**The "before the requirements exist" section** of `references/authoring.md` reimplements four ideas
 from the MIT-licensed `softaworks/agent-toolkit` skill `requirements-clarity` (© 2026 Leonardo
 Flores): that a request carrying a file path, a code snippet or a bug repro is already concrete enough
 that clarifying it is wasted motion; that the gaps in a vague ask sort into functional, technical,
-implementation and business dimensions; and that a clarifying question should carry an example set to
-anchor the answer's shape. The prose, the table and the worked example here are written from scratch —
-no text was copied — but the ideas are that skill's and the attribution is owed.
+implementation and business dimensions; that a clarifying question should carry an example set to
+anchor the answer's shape; and that the implementation dimension covers edge cases, error handling and
+input validation rather than only build constraints, which is where the off-nominal prompt under that
+table comes from. The prose, the table and the worked example here are written from scratch — no text
+was copied — but the ideas are that skill's and the attribution is owed.
+
+**Re-reviewed 2026-08-25 for anything the first pass left behind.** Both its files were read in full at
+`main`, and the off-nominal prompt is the only thing that survived: nothing in this skill had asked what
+a requirement does on invalid input, on a dependency failure, or while degraded, and `references/domains.md`
+carried the hardware half of that gap alone. Everything else is a PRD generator whose one template mixes
+requirements, architecture decisions, risk assessment and four timed execution phases into a single
+document — the lifecycle split this skill exists to enforce — and whose 100-point gate is refused below.
+Two defects worth recording rather than adopting: its `description` advertises two core questions, a YAGNI
+check and a KISS check, that appear nowhere in its body, and its worked dialogue shows a clarity score
+rising on newly specific details whose supplying user turn is not shown. Recorded so a third review is not
+spent on this skill.
 
 ## Sources quoted in `references/domains.md`
 

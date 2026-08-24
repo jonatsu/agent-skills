@@ -38,8 +38,15 @@ of the four, and naming which one a question serves stops the interrogation wand
 |---|---|
 | Functional | What it does, for whom, and where the behaviour stops |
 | Technical | Where it runs, what it integrates with, what it may not change |
-| Implementation | What already exists, what must be built, and the constraints on building it |
+| Implementation | What already exists, what must be built, the constraints on building it, and what it does when something goes wrong |
 | Business | Why now, what it is worth, and what happens if it is never done |
+
+**Ask the implementation dimension for the off-nominal case explicitly, because nobody volunteers it.**
+A requester describes the path where the input is valid, the dependency answers and the operator is
+present. Invalid and boundary input, the failure of each dependency named, and behaviour while degraded
+are requirements too, and left unasked they get supplied by whoever writes the code. Hardware and
+system-level work has the same gap in a different vocabulary — `references/domains.md` states it as
+operational states and modes across standby, active, fault and degraded operation.
 
 ### Anchor every question with an example
 
