@@ -132,6 +132,10 @@ SHOULD start from a small generic baseline, then trim based on the answers:
   `files`/`exclude` only when type selection is insufficient. Optional format
   configs ship in `assets/` (`.markdownlint-cli2.jsonc`, `.mdformat.toml`,
   `.yamlfmt.yaml`, `.yamllint.yaml`) — add only the ones the approved plan wants.
+  When both `.mdformat.toml` and `.markdownlint-cli2.jsonc` are adopted, choose
+  the MD013 limit deliberately: mdformat rewrites and markdownlint only reports,
+  so a tight `line_length` turns every mdformat rejoin into a failing gate. The
+  shipped asset uses 400; a repo choosing 80 or 120 will meet it often.
 - `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`: add for public, shared,
   or community repos as appropriate.
 - `.github/PULL_REQUEST_TEMPLATE.md` and `.github/ISSUE_TEMPLATE/*`: lightweight
@@ -193,6 +197,18 @@ NEVER:
 - Replace existing repo files silently.
 - Copy inspiration repositories or Jinja2 template syntax verbatim.
 - Make a private/internal repo look like a public OSS community project.
+- Drop a template asset's comments because the file you derived is short. That
+  judgement is the trap: a trimmed config looks self-evident precisely when the
+  reasoning has been removed. Carry the comment for every rule you keep. In
+  `assets/.editorconfig` they are the CommonMark rationale for preserving
+  trailing whitespace in Markdown, why Makefiles require tabs, and the fact that
+  `[[shell]]` is a non-standard shfmt extension rather than an EditorConfig
+  property — each one answers a question the next editor will otherwise resolve
+  by guessing. Adapt values freely; keep the reasons attached to what survives.
+- Break an inline code span across a line break in Markdown. mdformat will not
+  wrap inside one, so it joins the whole paragraph onto a single line instead.
+  The file comes back "modified by this hook" and MD013 then fails on one
+  over-long line. The tell is a long joined line containing a backtick pair.
 
 ## Pre-Delivery Checklist
 
