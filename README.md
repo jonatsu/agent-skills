@@ -21,14 +21,15 @@ has merged and what has not.
 
 ## Mental model
 
-Kasetto reads a declarative config (`kasetto/**/kasetto.yaml`), resolves each source, and
+Kasetto reads a declarative config (`kasetto/base.yaml` plus the five overlays at
+`kasetto/*/kasetto.yaml`), resolves each source, and
 installs **real copies** into each agent's skills dir, recording exactly what it installed
 in a committed `kasetto.lock`. There is no central store and no symlink layer.
 
 ```
 this repo (source of truth)
   ├─ shared/  claude/  opencode/     hand-crafted skills (local sources)
-  └─ kasetto/*.yaml  ──kst sync──▶   ~/.config/{claude,opencode}/skills/   (real copies)
+  └─ kasetto/ configs ──kst sync──▶  ~/.config/{claude,opencode}/skills/   (real copies)
                                      ~/.copilot/skills/
                                      tracked by kasetto/**/kasetto.lock
 ```
