@@ -86,6 +86,28 @@ Rules that resolve most arguments:
   level that can actually fail for the right reason.
 - When a behavior is only reachable end-to-end, that is a testability finding (step 6), not a level decision.
 
+### Making the exploratory row actionable
+
+"Manual or exploratory" in the table above is a real allocation, not a shrug - but it only produces findings if it
+is chartered. An uncharted session is browsing, and it reports as "looked fine".
+
+A charter is four lines, written before the session starts:
+
+- **Explore** the area, feature, or seam.
+- **With** the data, roles, tools, or conditions to use.
+- **To discover** the class of problem being hunted: crashes, wrong output, confusing states, missing feedback,
+  unhandled input.
+- **Timebox** decided up front, never when interest runs out.
+
+The session's output is notes, NEVER a verdict: what was covered, what was NOT reached, bugs found, questions
+raised. MUST NOT report a charter as a gate - it is not repeatable, so nothing regressed when it stops passing,
+and treating it as one launders judgment into evidence.
+
+Charter rather than skip, because exploratory testing is the only row in the table that can find a problem nobody
+thought to specify. Every other row confirms or denies something already named in step 1. A plan that allocates no
+exploratory time has silently assumed its own behavior list is complete - the same failure as omitting non-goals,
+one level up.
+
 ## Step 4: Choose an oracle for each
 
 The oracle is how a wrong answer is recognized. Naming scenarios without oracles is the most common way a plan
@@ -189,6 +211,10 @@ Carry these into the plan, because they decide whether the suite is still truste
 ## Testability blockers
 | Blocker | Unblocking change | Owner |
 |---|---|---|
+
+## Exploratory charters   <!-- omit this section when no exploratory time is allocated -->
+| Explore | With | To discover | Timebox |
+|---|---|---|---|
 
 ## Non-goals
 | Not tested | Why | What would change this |

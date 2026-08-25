@@ -15,6 +15,14 @@ ledger, not a licence obligation.
   incidental representation, and that a suite must run where it will be judged. No code, prose,
   identifiers, or examples were carried over.
 
+  The same repository's `skills/qa-manual-istqb/`, read 2026-08-25 at `HEAD`, prompted one further
+  addition: the exploratory-charter shape in `references/test-strategy.md`, which makes the
+  level table's "Manual or exploratory" row actionable. Upstream ships a charter as a fill-in
+  template; the version here is a written-from-scratch four-line form plus the rule that a charter
+  reports notes and NEVER a verdict. Its ISTQB estimation, monitoring-metrics, entry/exit-criteria
+  and traceability-matrix material was evaluated and deliberately rejected as process machinery
+  this lane does not want. Again, no text travelled.
+
 - [sarathsomana/tech-skills](https://github.com/sarathsomana/tech-skills) (MIT),
   `skills/test-engineer/`, read 2026-08-24 at rev `3595ee02`. Prompted two rules, both rewritten
   from the idea: that exit status rather than parsed output settles pass/fail, and that a bounded

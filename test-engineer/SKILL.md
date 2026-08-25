@@ -86,10 +86,13 @@ BEFORE any success, completion, fixed, or passing claim:
 
 Skipping a step is not verifying, and reporting it as verified is a false claim.
 
-**Exit status settles pass/fail; printed output never does.** Shell capture drops
-lines silently - the trailing summary line most often - so a suite that printed
-`OK` may have failed and a suite whose failures scrolled past may look clean.
-Parse output for the *cause*, never for the verdict.
+**Exit status settles pass/fail; printed output never does.** Agent shell-capture
+layers drop lines silently - the trailing summary line most often - so a suite
+that printed `OK` may have failed and a suite whose failures scrolled past may
+look clean. Observed on this repository's own toolchain rather than proven of
+shells generally; treat it as a property of whatever sits between the runner and
+you, and re-check it if that changes. Parse output for the *cause*, never for the
+verdict.
 
 **A non-zero exit from a runner that never ran is not a test result.** A missing
 dependency, an unresolvable import, a bad config, or an absent binary is an
@@ -237,12 +240,41 @@ Execution modes (`TEST-IMPLEMENTATION`, `VALIDATION`, `REGRESSION`,
 - What remains unverified and why.
 - Verdict: `PASS`, `FAIL`, or `BLOCKED`.
 
+### Defect handoff
+
+When the finding is a production defect rather than a test gap, the report IS the
+handoff - the implementation lane acts on it without re-deriving anything. MUST
+carry:
+
+- **Trigger**: the minimal input, state, or sequence that produces it. Minimal
+  means reduced, not merely the first case that happened to fail.
+- **Expected vs actual**, both concrete. "Does not work" names neither.
+- **Evidence**: the failing test or command, and the first *useful* line of its
+  output - the cause, not the last line of the stack.
+- **Environment**, only where it is load-bearing: version, platform, config,
+  role, data shape. Omit it when the defect reproduces everywhere; a wall of
+  irrelevant environment is how the one line that mattered gets skipped.
+- **Blast radius**: what is affected, and whether it fails silently. A defect
+  with no alarm outranks a louder one.
+- **Frequency**, when it is not deterministic: how many runs out of how many, and
+  what differs between them. "Intermittent" without a rate is not a report.
+
+MUST NOT state the production cause as fact. A hypothesis is welcome, labelled as
+one - this lane sees the symptom, and a confident wrong cause sends the fix to the
+wrong file.
+
+A defect found while doing something else is still reported, NEVER quietly worked
+around. Adjusting a test to sidestep a real bug is hiding it, and the suite then
+certifies the bug as intended behavior.
+
 `TEST-STRATEGY` - a plan has no pass/fail, so MUST NOT report one. Report:
 
 - Ranked risks, highest blast radius first.
 - Coverage plan: behavior -> level -> oracle, one row each.
 - Existing coverage found, cited by file, and the gaps it leaves.
 - Testability blockers, with the recommended production change and its owner.
+- Exploratory charters, when exploratory time is allocated - omitted entirely
+  otherwise, never left as an empty heading.
 - Non-goals: what is deliberately untested, and the risk that accepts.
 - Open questions that change the plan depending on the answer.
 - Verdict: `STRATEGY` or `BLOCKED`.
