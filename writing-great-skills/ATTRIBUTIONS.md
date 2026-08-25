@@ -29,5 +29,6 @@ Material changes include:
 
 ## Upstream license
 
-The upstream source is MIT-licensed. See `LICENSE` in this directory for the full
-notice.
+The upstream source is MIT-licensed. See `LICENSE.upstream` in this directory for
+the full notice, reproduced verbatim from the upstream repository's own `LICENSE`
+at the source commit above.
