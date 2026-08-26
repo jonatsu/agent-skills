@@ -372,6 +372,11 @@ the Pre-Delivery Checklist below.
 - [ ] No transcribed CLI flags, schemas, config keys, or counts a live source reports
 - [ ] Claims about tool behavior carry the version and date they were verified
 - [ ] All behavioral directives use RFC 2119 keywords in ALL CAPS
+- [ ] Every rule the skill states is obeyed by its own examples, templates,
+      commands and conduct — check each rule against the instances it governs,
+      not against other rules
+- [ ] Every countable claim about the package ("each…", "all four…", "the
+      only…") was recounted after the last edit
 
 #### Resources
 - [ ] Scripts tested and executable

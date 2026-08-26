@@ -177,6 +177,11 @@ Findings worth reporting regardless of score:
   content.** Three agents read three different things; see
   `loading-model.md`. Report it — never auto-resolve it.
 - An instruction file at a filename no first-class agent reads
+- **An instruction file stating a rule that its own examples, templates or code
+  blocks break.** Both halves read as correct alone; only checking them against
+  each other finds it, and nothing about the file looks wrong until you do
+- Agent-agnostic guidance living in a directory named for one agent, reachable
+  by the others only through a pointer
 - Path-scoping frontmatter on a rule file → treat that file as **not loaded**
 - Contradictions between two instruction files in the same repository — on at
   least one agent both texts are in context and neither wins

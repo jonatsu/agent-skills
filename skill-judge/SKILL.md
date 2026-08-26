@@ -252,10 +252,32 @@ an upgrade.
    sharply when the weight sits in `references/`, and one number reported without
    its scope is two different claims about the same skill. Good skill: >70% E,
    <10% R, and nothing left `[Rec]` that a pointer could replace.
-3. **Cross-file consistency pass.** Where two files state the same fact, check
-   they agree. A reference contradicting the body is worse than either being
-   absent: the agent reads one, acts on it, and never sees the other. Field
-   names, op semantics, counts, and defaults are where this bites.
+3. **Cross-file consistency pass**, in two directions.
+
+   **Assertion vs assertion** — where two files state the same fact, check they
+   agree. A reference contradicting the body is worse than either being absent:
+   the agent reads one, acts on it, and never sees the other. Field names, op
+   semantics, counts, and defaults are where this bites.
+
+   **Assertion vs the artifact it governs** — the direction that catches more,
+   and the one a careful reader skips, because both halves read as correct in
+   isolation and neither looks like a defect on its own. Three classes:
+   - **Rule vs its own examples.** Does every worked example, template, and
+     command obey the rule the package states elsewhere? A package that
+     penalizes a pattern in its rubric and demonstrates it in its templates has
+     shipped the defect twice and taught it once.
+   - **Meta-claim vs package.** Countable claims about the package itself —
+     "each section carries a warning", "all four templates", "the only
+     mechanism that…" — are cheap to verify and routinely false after an edit
+     that added a fifth thing.
+   - **Rule vs the skill's own conduct.** Does the skill obey what it demands?
+     A portability rule broken by the command printed beneath it, or a MUST the
+     skill itself does not satisfy, is a rule the reader learns to discount —
+     and it discredits the neighbouring rules that were fine.
+
+   Report each against whichever dimension the broken instance sits in — D1 for
+   a wrong example, D8 for a wrong command. Do NOT add a dimension; the
+   120-point scale is fixed.
 4. **Structure pass.** Validate frontmatter, and read `metadata.scope` FIRST —
    it decides how D8 is scored, and reading it after forming an impression of
    the skill is how an undeclared local skill talks its way into an exemption.
@@ -322,6 +344,14 @@ score the dimension here.
   before cutting.
 - **The Vague warning** — "be careful", "consider edge cases". Fix: specific
   NEVER list with non-obvious reasons. Hits D3.
+- **The Broken Own Rule** — the package states a rule and then breaks it in its
+  own examples, templates, commands, or conduct: a rubric that penalizes a
+  pattern its templates demonstrate, a countable claim ("each of these carries
+  a warning") falsified by the package, a portability rule contradicted by the
+  line beneath it. Fix: check every rule against the instances it governs, not
+  against other rules. Hits whichever dimension the broken instance sits in.
+  This is the most-missed defect class, because both halves are individually
+  correct and only their relationship is wrong.
 - **The Invisible skill** — great body, vague description, never fires. Fix:
   WHAT + WHEN + keywords. Hits D4.
 - **The Freedom mismatch** — rigid scripts for creative work, or vague guidance

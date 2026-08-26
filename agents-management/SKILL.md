@@ -282,13 +282,34 @@ itself to a centralized rules file, with no sibling. The pair logic above does
 not apply — there is no local real file to reconcile against — but the filename
 still decides everything: a lone `AGENTS.md` in a subdirectory is invisible to
 an agent that only looks for `CLAUDE.md` there, however good the rules file it
-points to. Add the sibling under the other name, pointing at the **same target**,
-and a pointer row in the root file:
+points to.
+
+**Default: promote the content, do not link to it.** Move the file into the
+directory that uses it as the real `AGENTS.md`, put the sibling symlink beside
+it, and leave a pointer row in the root file:
 
 ```bash
-ln -s ../.claude/rules/thing.md pkg/AGENTS.md
-ln -s ../.claude/rules/thing.md pkg/CLAUDE.md    # same target, not a link to the link
+git mv .claude/rules/thing.md pkg/AGENTS.md
+ln -s AGENTS.md pkg/CLAUDE.md
 ```
+
+⚠️ **A vendor-named directory is the wrong home for agent-agnostic content.**
+`.claude/rules/`, and any equivalent named for one agent, binds text that serves
+every agent to a single vendor's namespace, and makes every other agent reach it
+only through a pointer. Promotion removes that dependency; linking preserves it.
+Recommending the link is the same defect as writing an instruction file that
+only one agent can find, which is the thing this skill exists to prevent.
+
+Keep the file centralized **only** when it genuinely serves several directories,
+and then link both names at the **same target** — never a link to a link:
+
+```bash
+ln -s ../shared/thing.md pkg/AGENTS.md
+ln -s ../shared/thing.md pkg/CLAUDE.md
+```
+
+Even then, prefer a vendor-neutral directory over a vendor-named one, and say so
+in the proposal rather than silently keeping the existing home.
 
 Report this as a finding wherever the root file cites the subdirectory as though
 it already provided coverage — a centralized rules file wired to the one
