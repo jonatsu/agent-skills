@@ -70,13 +70,33 @@ For a commit that is in no reflog because it was never on a branch you moved to,
 `git branch -D` prints the hash it deleted. If that output is still on screen,
 `git branch <name> <hash>` restores it exactly.
 
-Otherwise the branch's own reflog is gone with it, so search HEAD's:
+Otherwise the branch's own reflog is gone with it, so search HEAD's — but
+**grepping for the branch name finds the wrong commit**, and finds it
+confidently. HEAD's reflog records commits as `commit: <message>`; the branch
+name appears only on the `checkout: moving from/to <branch>` lines, and both of
+those carry the **branch point**, not the tip. Verified on git 2.43.0,
+2026-08-26: after deleting a two-commit branch, the grep returned only the branch
+point and the true tip sat on an unmatched line.
 
-```bash
-git reflog --date=iso | grep -i "<branch-name>"
+```text
+f2cb4d5 checkout: moving from wip/parser to main     <-- grep matches, WRONG hash
+1aafd89 commit: test: cover the empty case           <-- the tip, unmatched
+0e3ece0 commit: fix: handle empty input
+f2cb4d5 checkout: moving from main to wip/parser     <-- grep matches, WRONG hash
 ```
 
-Failing that, `git fsck --lost-found`.
+Restoring from that hash gives an **empty** branch and reads as "the work was
+never committed". So use the grep to locate the *region*, never the hash: find
+the `checkout: moving from <branch>` line, then take the entry immediately
+**above** it — the last position HEAD held while on that branch.
+
+Prefer the reliable route and skip the grep entirely:
+
+```bash
+git fsck --lost-found          # dangling commit 1aafd89… — the tip, directly
+git show <hash>                # confirm before restoring
+git branch <name> <hash>
+```
 
 ## The commit recorded the wrong content
 

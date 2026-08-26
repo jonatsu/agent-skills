@@ -1,6 +1,6 @@
 ---
 name: github-operations
-description: "Work with GitHub through the gh CLI and its APIs — pull requests, merge state, review threads, issues and sub-issues, branch protection and rulesets, auto-merge, token scopes and rate limits, plus a short GitHub Actions reference. Use when a PR will not merge or reports BLOCKED with every check green, a merge gate or automation script silently passes everything, a gh command exits 0 but returns nothing useful, an API call 403s or 404s, auto-merge does not fire for a bot PR, a required status check waits forever, an operation has no gh subcommand and needs GraphQL, or a bulk query returns implausibly few results. Triggers: gh, gh api, gh pr, gh issue, GraphQL, pull request, review thread, mergeStateStatus, BLOCKED, auto-merge, merge queue, branch protection, ruleset, required checks, CODEOWNERS, sub-issue, rate limit, GITHUB_TOKEN, workflow permissions, Dependabot, Renovate. NOT for local git operations, which is git-operations."
+description: "Work with GitHub through the gh CLI and its APIs — pull requests, merge state, review threads, branch protection and rulesets, auto-merge, token scopes and rate limits, and finding an API surface gh appears to lack, plus a short GitHub Actions reference. Use when a PR will not merge or reports BLOCKED with every check green, a merge gate or automation script silently passes everything, a gh command exits 0 but returns nothing useful, an API call 403s, 404s or 429s, auto-merge does not fire for a bot PR, a required status check waits forever, an operation seems to have no gh subcommand and might need GraphQL, or a bulk query returns implausibly few results. Triggers: gh, gh api, gh pr, GraphQL, pull request, review thread, mergeStateStatus, BLOCKED, auto-merge, merge queue, branch protection, ruleset, required checks, CODEOWNERS, rate limit, secondary rate limit, GITHUB_TOKEN, workflow permissions, Dependabot, Renovate. NOT for local git operations, which is git-operations. Not general issue management."
 metadata:
   author: Joonas Onatsu
   license: MIT
@@ -39,8 +39,11 @@ substitute raw `curl` with a token scraped from the environment.
 
 ## The fail-open catalogue
 
-Each of these returns success while telling you nothing, or something false.
-Measured on gh 2.98.0, 2026-08-26.
+Each of these hands a script something that passes a naive check — a non-empty
+result, a populated field, a plausible count — whatever `gh`'s exit status says.
+**The fail-open lives in the caller, not in `gh`.** Two of the four below exit
+non-zero and still take a script down, because the script tested the output
+rather than the status. Measured on gh 2.98.0, 2026-08-26.
 
 **`gh api` writes its error BODY to stdout.** A 404 puts well-formed JSON —
 `{"message": "Not Found", "status": "404"}` — on **stdout**, a human-readable
@@ -81,8 +84,17 @@ the ENDPOINT needs — and that is what turns a 403 into a guess.
 Ask the endpoint:
 
 ```bash
-gh api -i <endpoint> 2>/dev/null | grep -i "^x-accepted-oauth-scopes:"
+if resp=$(gh api -i <endpoint> 2>/dev/null); then :; else
+  echo "call failed — headers below are from the error response, not a success"
+fi
+printf '%s\n' "$resp" | grep -i "^x-\(accepted-\)\?oauth-scopes:"
 ```
+
+Capture before grepping. A bare `gh api -i … | grep` discards the exit status, so
+"no such header" and "the call never happened" print identically — the ambiguity
+the closing checklist forbids. `-i` emits the full header block on an error
+response too, which is what makes this usable at all: you reach for it *after* a
+403, when `gh` has already exited non-zero.
 
 `X-Accepted-Oauth-Scopes` lists the scopes that endpoint accepts. Compare it
 against `X-Oauth-Scopes` on the same response to see the gap.
@@ -118,12 +130,20 @@ Guard the call, because this is the Iron Law's own trap — `--jq` is bypassed o
 an error and the error body reaches stdout:
 
 ```bash
-if out=$(gh api repos/{owner}/{repo}/branches/{branch}/protection 2>/dev/null); then
-  printf '%s' "$out" | jq -r '.required_status_checks.contexts[]?'
+if out=$(gh api repos/{owner}/{repo}/branches/{branch}/protection \
+           --jq '.required_status_checks.contexts[]?' 2>/dev/null); then
+  printf '%s\n' "$out"
 else
   echo "no classic protection (or no permission) — check rulesets"
 fi
 ```
+
+`--jq` goes **inside** the guard, not after it. It still applies on the success
+path, so the external `jq` is unnecessary here — and the `if` is what makes it
+safe, because on the error path `--jq` is bypassed and the raw body reaches
+stdout regardless of where the filter sits. `{owner}`, `{repo}` and `{branch}`
+are not placeholders to substitute: `gh api` expands them from the current
+repository, so the command runs verbatim.
 
 **Rulesets and classic branch protection are separate systems.** A repository can
 be governed by a ruleset that the classic endpoint does not report — and the miss
@@ -155,15 +175,42 @@ retracted. Establish it by measurement, and measure the right thing:
 So search subcommand help, not the noun's:
 
 ```bash
-for c in $(gh issue --help 2>&1 | awk '/AVAILABLE COMMANDS/{f=1;next} f&&NF{print $1}'); do
-  gh issue "$c" --help 2>&1
+noun=issue   # or pr, repo, release, run, workflow…
+subs=$(gh "$noun" --help 2>&1 |
+       awk '/^[A-Z ]*COMMANDS$/{f=1;next} /^[A-Z]/{f=0} f&&NF{gsub(/:$/,"",$1);print $1}')
+[ -n "$subs" ] || { echo "discovery FAILED for $noun — not an answer"; exit 1; }
+for c in $subs; do
+  gh "$noun" "$c" --help 2>&1 | sed "s/^/$c: /"
 done | grep -i "<the thing you want>"
 ```
 
-Verified GraphQL-only as of 2.98.0: **resolving a review thread** (`gh pr review
---help` has no resolve verb). Verified NOT GraphQL-only, against common advice:
-sub-issues (above), merge-queue enqueueing (`gh pr merge` adds to the queue when
-the target branch requires one), and `mergeStateStatus`.
+Three things in that loop are load-bearing, and a hand-written version misses
+them. **The section header is not the same across nouns.** Measured on gh 2.98.0,
+2026-08-26: `gh run` and `gh workflow` use `AVAILABLE COMMANDS`, while `gh
+issue`, `gh pr`, `gh repo` and `gh release` use `GENERAL COMMANDS` and `TARGETED
+COMMANDS` — so a loop keyed on `AVAILABLE COMMANDS` alone iterates **zero times**
+on the four nouns you most want it for, and prints exactly what "no such flag"
+prints. The `/^[A-Z]/{f=0}` reset stops the extraction running past the commands
+block into `FLAGS` and `LEARN MORE`, and the `gsub` strips the trailing colon
+`gh` puts on each name; without either, every invocation in the loop fails.
+
+**An empty subcommand list MUST be reported as discovery failure, never as "not
+found".** That guard is the Iron Law applied to this skill's own procedure: a
+loop that matched nothing and a loop that searched everything and found nothing
+produce identical silence, and only one of them is an answer. Piping through
+`sed` names which subcommand carries the flag, which is the part you actually
+need next.
+
+**Rule out REST before concluding GraphQL — there are three surfaces, not two.**
+"No `gh` subcommand" is a fact about the CLI and says nothing about the API
+beneath it. *Replying* to a review thread has no `gh` verb but does have a REST
+endpoint (`POST /repos/{owner}/{repo}/pulls/{n}/comments/{id}/replies`), reachable
+with `gh api --method POST`. *Resolving* one has neither, and is GraphQL-only as
+of 2.98.0. Same noun, two different answers.
+
+Verified NOT GraphQL-only, against common advice: sub-issues (above),
+merge-queue enqueueing (`gh pr merge` adds to the queue when the target branch
+requires one), and `mergeStateStatus`.
 
 Read `references/graphql-operations.md` when the check above finds no
 subcommand, or when a `--json` field you expected turns out not to exist. It
@@ -196,8 +243,15 @@ workflow — which is most of this skill.
   the other usable.
 - Paginate explicitly with `--paginate`. A default-page result that happens to
   hold 30 items is indistinguishable from a complete one.
-- A secondary rate limit presents as a **403**, not a 429, and asks you to slow
-  down rather than stop. Back off; do not retry immediately in a loop.
+- **A rate limit presents as a `403` OR a `429`, and the status does not tell you
+  which limit you hit.** GitHub's REST documentation states both codes for both
+  the primary and the secondary limit, so a backoff handler matching only one
+  retries straight into the other. Read the headers instead: honour `retry-after`
+  if present; else if `x-ratelimit-remaining` is `0`, wait until
+  `x-ratelimit-reset`; else wait at least a minute. A secondary limit is
+  identified by its error *message*, not its status code. *Documented, not
+  measured here* — triggering a limit to observe it is abuse. Checked against the
+  REST rate-limit documentation 2026-08-26.
 
 ## Anti-patterns
 
@@ -212,7 +266,10 @@ NEVER:
   without also checking rulesets.
 - Treat a search result count as complete — 1000-result cap, 10/min budget.
 - Force-update an open PR's head ref to its base commit.
-- Retry into a 403 that is a secondary rate limit.
+- Decide a 403 is not a rate limit because it was not a 429, or the reverse.
+  Both codes serve both limits; read `retry-after` and the error message.
+- Conclude an operation needs GraphQL from the absence of a `gh` subcommand,
+  without checking REST first.
 - Hand-roll `curl` with a scraped token because `gh` was missing.
 - Transcribe `gh --help` output into a script's comments as though it were a
   contract; it changes between minor versions.

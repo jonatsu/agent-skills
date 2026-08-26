@@ -1,12 +1,12 @@
 ---
-name: git-repo-hygiene
-description: "Set up, refresh, or clean up Git repository hygiene for any repo — new or long-existing — without assuming a language or framework. Use to bootstrap a new repo's baseline (README, LICENSE, .gitignore, .editorconfig, .gitattributes, pre-commit) OR to add/refresh hygiene and cleanliness hooks on a pre-existing or messy repo, fill missing community files, and detect tracked cruft (committed secrets, gitignored-but-tracked files, large files) for cleanup. Triggers: set up a repo, bootstrap repo, initialize GitHub repository, template repository, add pre-commit hooks, add hygiene/cleanliness hooks, clean up this repo, repo hygiene, refresh repo baseline, add editorconfig/gitattributes/gitignore, scan for committed secrets or large files. NOT for making commits, rebasing, or git-history questions (use git-operations)."
+name: repo-management
+description: "Set up, refresh, or clean up a repository's baseline and hygiene — new or long-existing — without assuming a language or framework. Use to bootstrap a repo (README, LICENSE, .gitignore, .editorconfig, .gitattributes, pre-commit) OR to fill gaps in an existing one, add or refresh hooks and community files, report tracked cruft (committed secrets, gitignored-but-tracked files, large files), and check whether an existing README still describes the repo. Triggers: set up a repo, bootstrap repo, initialize GitHub repository, template repository, add pre-commit hooks, add hygiene hooks, clean up this repo, repo hygiene, refresh repo baseline, add editorconfig/gitattributes/gitignore, scan for committed secrets or large files, stale README, missing LICENSE, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, issue or PR template. NOT for making commits, rebasing, recovering lost work, or git-history questions, which is git-operations."
 metadata:
   author: Joonas Onatsu
   license: MIT
 ---
 
-# Git Repo Hygiene
+# Repo Management
 
 IRON LAW: NEVER create, overwrite, or modify repository files until the user has
 approved a concrete plan. When assessing an existing repo, NEVER mutate tracked
@@ -30,7 +30,7 @@ inspect first (Step 1), then classify.
 ## Workflow
 
 ```text
-Git Repo Hygiene Progress:
+Repo Management Progress:
 - [ ] Step 1: Inspect repo state ⚠️ REQUIRED
   - [ ] Check `.git/` presence, commit count, current branch, remote
   - [ ] Inventory existing hygiene: README, LICENSE, .gitignore, .editorconfig,
@@ -137,7 +137,7 @@ SHOULD start from a small generic baseline, then trim based on the answers:
   classified in Step 2 — OSS, personal, internal, or config (XDG/dotfiles).
   Default to the generic `assets/README.template.md`; for a specific audience,
   start from the matching `assets/README.<type>.template.md` and include only the
-  sections that type needs. See `reference/readme-by-audience.md` for the
+  sections that type needs. See `references/readme-by-audience.md` for the
   section-by-audience matrix.
 - `LICENSE`: only when the user chooses a license; use canonical text.
 - `.gitignore`: use official GitHub templates, not a baked-in generic file.
@@ -188,7 +188,7 @@ Copy or adapt these only after plan approval:
 - `assets/README.template.md` (generic default) plus audience variants
   `assets/README.oss.template.md`, `assets/README.personal.template.md`,
   `assets/README.internal.template.md`, `assets/README.config.template.md`
-  (see `reference/readme-by-audience.md`)
+  (see `references/readme-by-audience.md`)
 - `assets/CONTRIBUTING.template.md`
 - `assets/SECURITY.template.md`
 - `assets/CODE_OF_CONDUCT.template.md`
@@ -201,7 +201,23 @@ Copy or adapt these only after plan approval:
 - `assets/.markdownlint-cli2.jsonc`, `assets/.mdformat.toml`,
   `assets/.yamlfmt.yaml`, `assets/.yamllint.yaml` (optional format configs)
 
-See `reference/config-adaptation-notes.md` for how to keep these generic.
+## Reference Files
+
+Read `references/readme-by-audience.md` when you are about to write or replace a
+README and the repo's audience is settled — it carries the project-type
+definitions and the section-by-audience matrix that decides which sections
+belong. Reach for it at Step 4, after Step 2 has classified OSS, personal,
+internal or config; it answers "which sections", not "which repo type".
+
+Read `references/config-adaptation-notes.md` before trimming or extending any
+`assets/*` config — the patch/diff safety rule, when a repo-specific exclusion is
+justified, and when a stack hook may be added at all.
+
+**Do NOT load either** to inspect a repo, classify its mode, run the cruft report,
+or answer a question about hygiene in the abstract. Both are for the moment you
+are about to write a file, and loading them earlier spends context on decisions
+Steps 1–3 have not reached yet. Neither is needed to decide whether a change is
+safe: that is the Iron Law and the approval gate, which are resident here.
 
 ## Anti-Patterns
 

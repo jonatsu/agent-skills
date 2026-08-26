@@ -62,8 +62,12 @@ sufficient here.
 **The real fail-open is one level down, in mutations.** A mutation that rejects
 its input returns `userErrors` INSIDE the payload with no top-level `errors`
 array — so the request is a success by every outer measure, `gh` exits **0**, and
-the mutation did nothing. In a file about mutations, that is the check that
-matters:
+the mutation did nothing. *Documented, not measured here* — confirming it needs a
+mutation, which the read-only authorisation this package was written under
+forbids. It is the one empirical claim in this file with no measurement behind
+it, and it is also the most load-bearing, so treat it as a rule and verify it the
+first time you run a real mutation. In a file about mutations, that is the check
+that matters:
 
 ```bash
 gh api graphql -f query='mutation {...}' --jq '.data.<mutationName>.userErrors'
@@ -89,7 +93,9 @@ connections can cost far more than several flat ones. Ask what a query costs
 before running it in a loop:
 
 ```bash
-gh api graphql -f query='{ rateLimit { limit cost remaining resetAt } … }' --jq '.data.rateLimit'
+gh api graphql -f query='{ rateLimit { limit cost remaining resetAt }
+  # your real fields go here
+}' --jq '.data.rateLimit'
 ```
 
 Including `rateLimit` in the query itself reports the cost of that same query.
@@ -100,21 +106,35 @@ Including `rateLimit` in the query itself reports the cost of that same query.
 
 | Operation | Needs GraphQL? |
 |---|---|
-| Resolve or reply to a review thread | **Yes** — `gh pr review` has no resolve verb |
+| Resolve a review thread | **Yes** — no `gh` verb and no REST endpoint |
+| Reply to a review thread | **No** — REST `POST /repos/{owner}/{repo}/pulls/{n}/comments/{id}/replies` via `gh api`; no `gh` subcommand |
 | Link a sub-issue | **No** — `gh issue edit --add-sub-issue`, `gh issue create --parent`, since v2.94.0 |
 | Add a PR to a merge queue | **No** — `gh pr merge` enqueues when the target branch requires a queue |
 | Read `mergeStateStatus` | **No** — `gh pr view --json mergeStateStatus` |
 
-The last three are all widely documented as GraphQL-only. **Re-measure before
-writing a mutation**, and measure the SUBCOMMAND help, not the noun's — `gh issue
---help` has zero occurrences of "sub-issue" while `gh issue edit --help`
-documents two flags for it, which is precisely how the wrong answer above gets
-produced with a real measurement behind it:
+**"No `gh` subcommand" and "needs GraphQL" are different findings**, and the
+reply row is where conflating them goes wrong: `gh` has no verb for it, yet REST
+does, so `gh api --method POST` reaches it without a mutation. Rule out REST
+before concluding GraphQL — the CLI is the narrowest of the three surfaces.
+
+The last rows are widely documented as GraphQL-only. **Re-measure before writing
+a mutation**, and measure the SUBCOMMAND help, not the noun's — `gh issue --help`
+has zero occurrences of "sub-issue" while `gh issue edit --help` documents two
+flags for it, which is precisely how the wrong answer above gets produced with a
+real measurement behind it:
 
 ```bash
-for c in $(gh <noun> --help 2>&1 | awk '/AVAILABLE COMMANDS/{f=1;next} f&&NF{print $1}'); do
-  gh <noun> "$c" --help 2>&1
+noun=pr      # the header differs by noun: AVAILABLE COMMANDS on run/workflow,
+             # GENERAL + TARGETED COMMANDS on issue/pr/repo/release
+subs=$(gh "$noun" --help 2>&1 |
+       awk '/^[A-Z ]*COMMANDS$/{f=1;next} /^[A-Z]/{f=0} f&&NF{gsub(/:$/,"",$1);print $1}')
+[ -n "$subs" ] || { echo "discovery FAILED for $noun — not an answer"; exit 1; }
+for c in $subs; do
+  gh "$noun" "$c" --help 2>&1 | sed "s/^/$c: /"
 done | grep -i "<the thing you want>"
 
 gh pr view --json 2>&1 | head -20   # prints the valid field list on error
 ```
+
+See `SKILL.md` for why each part of that loop is load-bearing. An empty result
+means discovery broke, NEVER that the feature is absent.

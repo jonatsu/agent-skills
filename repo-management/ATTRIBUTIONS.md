@@ -2,7 +2,7 @@
 
 ## Current skill
 
-- Skill: `git-repo-hygiene`
+- Skill: `repo-management`
 - Current author: Joonas Onatsu
 - Current license: MIT
 - Status: original skill; one component adapted from upstream
@@ -10,7 +10,7 @@
 ## Adapted component
 
 - Component: the README project-type taxonomy — the audience section matrix in
-  `reference/readme-by-audience.md` and the audience template assets
+  `references/readme-by-audience.md` and the audience template assets
   (`assets/README.oss.template.md`, `README.personal.template.md`,
   `README.internal.template.md`, `README.config.template.md`) — plus, added
   2026-08-25, the stale-README check in `SKILL.md`.
@@ -27,7 +27,7 @@ Only the taxonomy (four project types, the section-by-audience matrix, and the
 per-audience section sets) was carried over. The templates were rewritten to this
 skill's `{{PLACEHOLDER}}` convention and anti-patterns — no fabricated badges,
 emails, or URLs — and the generic `assets/README.template.md` remains the
-default. The rest of `git-repo-hygiene` is original.
+default. The rest of `repo-management` is original.
 
 ## Re-review, 2026-08-25
 

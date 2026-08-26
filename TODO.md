@@ -54,36 +54,90 @@ relative to `skills/` unless noted. Repository-wide items live in
     few known-model-written passages, and see whether the distributions separate at all
     on this corpus before picking any threshold. If they do not separate, record that
     and close the item — a negative result here is worth as much as the check.
-- **`shared/git-operations` — regrade and improve.** Written 2026-08-26 to replace
-  `git-master`, whose SUL 1.0 licence could not be carried. Two independent `skill-judge`
-  passes scored it 86/120 then 91/120, both Grade C; every defect each raised was verified
-  in a scratch repo and fixed, but **the 91 is the score for the version the second grader
-  read, not the one on disk** — the post-fix package has never been graded. Open items:
-  - Re-run `skill-judge` from a fresh subagent against the current package. Both prior
-    rounds found real defects the previous round missed, so a third is not ceremony.
-  - The skill has never been used on a real task. Trigger behaviour is unmeasured in both
-    directions, and none of the confirmation gates has fired in anger.
-  - `SKILL.md` grew from 260 to 363 lines across the two fix rounds, all additive. The next
-    substantive addition should displace something rather than append.
-  - One claim is still marked *reported, not measured*: that rebasing a branch whose tip is
-    a merge commit can collapse it to empty. Measure it or cut it.
-- **`shared/github-operations` — regrade and improve.** Written 2026-08-26. One `skill-judge`
-  pass scored 88/120, Grade C; every defect was re-measured against live `gh` and fixed, but
-  the score belongs to the graded version, not the fixed one. The skill has never run against
-  a real task.
-  - **The defect that pass caught is worth remembering as a pattern, not just a fix.** The
-    draft claimed sub-issues had no `gh` CLI surface, citing a real measurement — `gh issue
-    --help` genuinely has zero occurrences of "sub-issue". But the flags live on the
-    subcommands: `gh issue edit --add-sub-issue` and `gh issue create --parent` shipped in
-    v2.94.0 on 2026-06-10. A correct measurement of the wrong object licensed a false
-    generalisation, which is the failure the skill's own Iron Law exists to prevent. The
-    corrected form is now the skill's worked example.
-  - Claims still marked *reported, not measured*: the head-ref-equals-base auto-close, the
-    `gh search code` under-reporting, and the four Actions traps. The first two need a
-    repository to mutate; read-only probing cannot settle them.
-  - Re-run `skill-judge` from a fresh subagent, with read-only `gh` authorisation and an
-    explicit ban on mutations — that authorisation is what made this pass useful, since three
-    of its findings were refutations of claims no amount of reading would have caught.
+- **`shared/git-operations` — third regrade done 2026-08-26, all findings fixed.** Written
+  2026-08-26 to replace `git-master`, whose SUL 1.0 licence could not be carried. Three
+  independent `skill-judge` passes: 86/120, then 91/120, then **107/120 (Grade B)**. Every
+  defect each round raised was reproduced in a scratch repo before being fixed, and the
+  third round's four command-level defects were **re-verified independently** rather than
+  taken on the grader's word. What that round found, all now fixed:
+  - **`references/recovery.md` gave a deleted-branch recovery command that returns the wrong
+    hash** — the worst defect class a recovery document can have, a confident wrong answer
+    instead of an error. `git reflog | grep -i "<branch>"` matches only the
+    `checkout: moving from/to <branch>` lines, which carry the **branch point**; the tip sits
+    on an unmatched `commit:` line. Restoring from it yields an EMPTY branch and reads as
+    "the work was never committed". Reproduced: true tip `1aafd89`, grep returned only
+    `f2cb4d5`. Replaced with `git fsck --lost-found` as the primary route.
+  - "`--git-path` … (both as absolute paths)" was false under the very configuration the
+    skill names four lines later: husky sets `core.hooksPath` **relatively**, so the path is
+    relative too (`../../.husky/pre-commit` from two levels down). Only a linked worktree is
+    unconditionally absolute.
+  - The pre-commit detector false-positived on any hand-written hook mentioning "pre-commit"
+    in a comment, routing the agent into guidance the same section disclaims. Now matches
+    pre-commit's own generated banner.
+  - The push fallback hardcoded `origin/main` in a skill whose own opening says a repository
+    with no `main` is ordinary — a Broken Own Rule. Now discovers `origin/HEAD`.
+  - Signing had **zero description coverage**, so the section answering "why does git report
+    `No signature` on my signed commit" could not fire on that question. Keywords added.
+  - **The length instruction was honoured by displacement, not appending.** `SKILL.md` is
+    368 lines against 363 before — net +5 while absorbing every fix, because 118 lines moved
+    into two new references: `signed-commits.md` (44) and `rewriting-hooks.md` (74), each
+    with a symptom-shaped load trigger and a "do NOT load" line.
+  - **Still true and still the main gap: the skill has never been used on a real task.**
+    Trigger behaviour is unmeasured in both directions, and no confirmation gate has fired
+    in anger. Grading is not exercise.
+  - One claim stays marked *reported, not measured*, by decision 2026-08-26: that rebasing a
+    branch whose tip is a merge commit can collapse it to empty. Leaving the marker is honest
+    and costs nothing; measuring it was declined rather than deferred.
+  - Worth keeping from the round: the grader reproduced **22 empirical assertions and 21 held
+    exactly**, including the `gpgsig` message-body spoof, which is real — an unsigned commit
+    whose body begins `gpgsig -----BEGIN SSH SIGNATURE-----` reads as signed without the
+    `sed '/^$/q;p'` guard. That guard is load-bearing, not decoration.
+- **`shared/github-operations` — second regrade done 2026-08-26, all findings fixed.** Two
+  `skill-judge` passes: 88/120, then **103/120 (Grade B)**. Both ran with read-only `gh`
+  authorisation and an explicit mutation ban, which is what made them useful — several
+  findings in each round were refutations no amount of reading would have produced.
+  - **The pattern both rounds caught is the same one, and it is worth remembering over any
+    individual fix: a correct measurement of the WRONG OBJECT licenses a false
+    generalisation.** Round one: the draft claimed sub-issues had no `gh` surface, citing a
+    true measurement (`gh issue --help` genuinely has zero occurrences of "sub-issue") — but
+    the flags live on the SUBCOMMANDS, `gh issue edit --add-sub-issue` and `gh issue create
+    --parent`, shipped v2.94.0 on 2026-06-10. Round two found the identical shape twice more:
+    "`gh pr review` has no resolve verb" (true) was widened into "replying to a review thread
+    needs GraphQL" (false — REST has `POST …/comments/{id}/replies`), and a CLI measurement
+    was used to settle an API question. The skill now says explicitly that there are **three
+    surfaces, not two**, and that REST must be ruled out before concluding GraphQL.
+  - **The worst defect was that the skill's own flagship command reproduced the failure it
+    exists to prevent.** The subcommand-discovery loop keyed on a section header
+    `AVAILABLE COMMANDS` — which `gh run` and `gh workflow` use, but `gh issue`, `gh pr`,
+    `gh repo` and `gh release` do NOT (they use `GENERAL COMMANDS` + `TARGETED COMMANDS`).
+    Independently reproduced: the loop iterated **zero times** on `gh issue`, printed
+    nothing, and an agent reads that as "no such flag" — the exact false conclusion the
+    twelve lines above it refute. Fixed, plus a zero-result guard that MUST report discovery
+    failure rather than absence, a `/^[A-Z]/{f=0}` reset (the old form leaked `FLAGS` and
+    `LEARN` into the loop) and a `gsub` for the trailing colon.
+  - **A rate-limit fact was simply wrong**: "presents as a 403, not a 429". GitHub's REST
+    documentation, read verbatim 2026-08-26, says **both** primary and secondary limits
+    return "a `403` **or** `429` response". A handler written to the old rule retries
+    straight into the other code. Now states both, plus the `retry-after` /
+    `x-ratelimit-reset` guidance that was missing entirely.
+  - `SKILL.md` is 287 lines. The description was narrowed and re-fitted under the 1024-char
+    ceiling — it hit 1056 on the first attempt, which is the ceiling the root `AGENTS.md`
+    warns a keyword-dense description reaches easily.
+  - **Deferred by decision, not oversight: general issue-management coverage.** The old
+    description advertised "issues and sub-issues" while the body carried sub-issues only as
+    a methodological worked example — no issue types, no `blocked-by`/`blocking`
+    relationships, no `gh issue list` filtering, all of which shipped with v2.94.0. Rather
+    than grow the skill, the description now says "Not general issue management". If Issues
+    2.0 work becomes common, that is the signal to add the surface — same boundary discipline
+    as the deferred Actions skill below.
+  - Claims still marked *reported/documented, not measured*, all by decision 2026-08-26: the
+    head-ref-equals-base auto-close, the `gh search code` under-reporting, the four Actions
+    traps, and the GraphQL `userErrors` fail-open. The last was previously **unmarked** and is
+    the most load-bearing claim in `graphql-operations.md`; it now carries its marker, and it
+    is the one to confirm the first time a real mutation runs. All need mutations, which the
+    read-only authorisation forbids.
+  - **Still true: the skill has never run against a real task.** Trigger behaviour is
+    unmeasured in both directions.
 - **A proper GitHub Actions skill — deferred 2026-08-26, deliberately.**
   `shared/github-operations` ships `references/actions-basics.md` as a short orientation and
   says so in the file: enough Actions grounding to do PR and repository work, explicitly not a
