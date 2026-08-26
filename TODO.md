@@ -67,6 +67,54 @@ relative to `skills/` unless noted. Repository-wide items live in
     substantive addition should displace something rather than append.
   - One claim is still marked *reported, not measured*: that rebasing a branch whose tip is
     a merge commit can collapse it to empty. Measure it or cut it.
+- **`shared/github-operations` — regrade and improve.** Written 2026-08-26. One `skill-judge`
+  pass scored 88/120, Grade C; every defect was re-measured against live `gh` and fixed, but
+  the score belongs to the graded version, not the fixed one. The skill has never run against
+  a real task.
+  - **The defect that pass caught is worth remembering as a pattern, not just a fix.** The
+    draft claimed sub-issues had no `gh` CLI surface, citing a real measurement — `gh issue
+    --help` genuinely has zero occurrences of "sub-issue". But the flags live on the
+    subcommands: `gh issue edit --add-sub-issue` and `gh issue create --parent` shipped in
+    v2.94.0 on 2026-06-10. A correct measurement of the wrong object licensed a false
+    generalisation, which is the failure the skill's own Iron Law exists to prevent. The
+    corrected form is now the skill's worked example.
+  - Claims still marked *reported, not measured*: the head-ref-equals-base auto-close, the
+    `gh search code` under-reporting, and the four Actions traps. The first two need a
+    repository to mutate; read-only probing cannot settle them.
+  - Re-run `skill-judge` from a fresh subagent, with read-only `gh` authorisation and an
+    explicit ban on mutations — that authorisation is what made this pass useful, since three
+    of its findings were refutations of claims no amount of reading would have caught.
+- **A proper GitHub Actions skill — deferred 2026-08-26, deliberately.**
+  `shared/github-operations` ships `references/actions-basics.md` as a short orientation and
+  says so in the file: enough Actions grounding to do PR and repository work, explicitly not a
+  reference manual. Its closing section lists what it does not cover — matrix strategy,
+  caching design, self-hosted runners, reusable-workflow authoring, composite actions,
+  environments and deployment gates, artifact retention, the expression language — and that
+  list is the scope of the skill owed here. **The boundary is the point: if
+  `actions-basics.md` starts growing to meet Actions questions, that is the signal to build
+  this, not to keep extending the reference.**
+  - The evidence is already gathered. Mining `netresearch/github-project-skill` on 2026-08-26
+    found its Actions material to be a **second coherent skill of roughly 82 KB across eight
+    files** (`actionlint-guide`, `actions-upgrade-guide`, `reusable-workflow-pitfalls`,
+    `reusable-workflow-security`, `workflow-bash-patterns`, `ci-runner-capacity`,
+    `agentic-workflows`, `pages-and-collector-workflows`) — and that package's own README says
+    CI/CD is delegated elsewhere, so a quarter of its payload contradicts its stated scope.
+    That is the split to copy, not the sprawl.
+  - **Licence: facts only.** That upstream is `LICENSE-MIT` for scripts and assets but
+    **CC-BY-SA-4.0 for all prose** ("skill definitions, documentation, references"). Nothing
+    written can be lifted or lightly edited; re-derive from primary sources and write fresh,
+    exactly as `git-operations` had to.
+  - **Do not repeat its transcription defects.** `ci-runner-capacity.md` copies GitHub's
+    published concurrency-limit table with **no verification date**, and
+    `actions-upgrade-guide.md` is 70–80% a version inventory that Renovate invalidates. Both
+    are live-recoverable and both drift while reading as authoritative.
+  - Claims worth measuring first, all currently marked *reported, not measured* in
+    `actions-basics.md`: the reusable-workflow permissions **intersection**; `GITHUB_TOKEN`
+    not raising events; a renamed job wedging a required status check; a `pull_request` rerun
+    reusing the original merge commit and so testing the old base; `sha_pinning_required`
+    failing at `Set up job`; and the `push` vs `merge_group` trigger gap under a merge queue.
+    Several need a scratch repository with workflows enabled, which read-only probing cannot
+    reach — so budget for that, or keep the markers.
 - **Third-party skill pointers — captured 2026-08-26, unevaluated.** Four sources handed over
   for later evaluation. **Nothing below has been fetched, read, or licence-checked**: the
   capture was explicitly scoped to recording the URLs, so every characterisation here is
