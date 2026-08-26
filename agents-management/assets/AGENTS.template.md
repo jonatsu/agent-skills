@@ -10,12 +10,19 @@
   Every line below must be something the agent cannot get by reading the repo.
   Delete any section the repository does not justify; an empty section costs the
   same as a full one.
+
+  Fill these from the ecosystem the repo ACTUALLY has — its manifest, its
+  runner, its conventions. If the repo has no ecosystem yet, delete the
+  Commands and Environment sections rather than guessing one: a greenfield repo
+  should not be committed to a package manager or test runner by its
+  instruction file.
 -->
 
 ## Commands
 
 <Only invocations carrying something the runner does not state. A transcription
-of the runner's own recipe list is worse than nothing — the agent can read it.>
+of the runner's own recipe list is worse than nothing — the agent can read it.
+Delete this section entirely if the repo has no runner yet.>
 
 - `<command>` — `<the constraint or reason that is not in the runner>`
 

@@ -133,11 +133,27 @@ is citable, or the criterion is `not assessed`.
 
 ## Phase 3b: AUTHOR — Inspect the Repo
 
-Gather only facts you can see:
+**Detect the ecosystem first — it decides everything that follows.** Look for a
+manifest, a lockfile, a task runner, a CI workflow, a toolchain pin. Three
+outcomes, three different obligations:
 
-- What are the real setup, build, test and run commands? Find them in whatever
-  runner or manifest this repo has. NEVER invent a conventional-looking command,
-  and NEVER assume an ecosystem the repo has not shown you.
+| What you find | What to do |
+|---|---|
+| **One clear ecosystem** | ADAPT to it. Name its actual manifest, its actual commands, its actual conventions. Generic advice where the repo has a real toolchain is a wasted file |
+| **Several, or a manifest that disagrees with the code** | ⚠️ ASK which is authoritative before writing. Do NOT pick the one that looks primary |
+| **None — an empty or greenfield repo** | ⚠️ ASK before introducing any. Write the sections that hold regardless, and leave the ecosystem-shaped ones out |
+
+The last row is the one that matters most. A new repository has no ecosystem
+yet, and an instruction file that invents one commits the project to a package
+manager, a test runner and a layout nobody chose. NEVER write a command, a
+manifest path, or a toolchain convention into a repo that has not adopted it —
+ask, or omit the section.
+
+Then gather only facts you can see:
+
+- What are the real setup, build, test and run commands? Read them out of the
+  runner or manifest the detection step found. NEVER invent a
+  conventional-looking command, however standard it looks for that ecosystem.
 - What language and toolchain, and which linters or formatters actually exist?
 - What is the directory structure, and where do the real docs live?
 - What conventions are evidenced — commit style from history, a contributing
@@ -177,10 +193,13 @@ from a flat B.
 
 ## Phase 4b: AUTHOR — Confirm the Plan ⚠️ REQUIRED
 
-Present the files to write or change, the section list, and every fact that
-could NOT be verified. ⚠️ Get approval before writing — especially before
-touching an existing file; show a diff. See `references/templates.md` for
-section shapes and `assets/` for starting points.
+Present the files to write or change, the section list, the ecosystem the plan
+assumes and the evidence for it, and every fact that could NOT be verified.
+⚠️ Get approval before writing — especially before touching an existing file;
+show a diff. Where Phase 3b found no ecosystem or more than one, the question
+goes here and MUST be answered before writing, not resolved by picking a
+default. See `references/templates.md` for section shapes and `assets/` for
+starting points.
 
 ## Phase 5: Propose Diffs → Approval Gate ⛔ BLOCKING
 
@@ -289,6 +308,13 @@ from scratch — there is nothing to score yet.
 - **Inventing conventional-looking commands** not present in the repo, or
   assuming an ecosystem — a package manager, a test runner — the repo has not
   shown you.
+- **Committing an empty repository to an ecosystem it has not chosen.** A
+  greenfield repo with no manifest gets the sections that hold regardless, and a
+  question about the rest — never a plausible default toolchain written in as
+  though it were a finding.
+- **Writing generic advice into a repo that has a real toolchain.** The mirror
+  failure: where an ecosystem is present, the file MUST name its actual
+  manifest, commands and conventions.
 - **Recommending path-scoped instruction frontmatter.** Behavior differs per
   agent and is not verified everywhere; see `references/loading-model.md`.
 - **Treating nested files as launch-loaded.** They are conditional on two
@@ -310,6 +336,8 @@ from scratch — there is nothing to score yet.
 - [ ] Every file classified launch-loaded, conditional, or not loaded
 - [ ] Includes followed; effective line counts reported
 - [ ] Every command, path and convention was located in the repo
+- [ ] Ecosystem detected: adapted to it where one exists, asked where none or
+      several do, and nothing toolchain-shaped written into a repo without one
 - [ ] Every score cites its evidence; unbacked criteria say `not assessed`
 - [ ] Total reported as earned over assessed, per file, never averaged
 - [ ] Red flags reported even where the score is high

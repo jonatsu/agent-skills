@@ -25,6 +25,12 @@ naively — each carries the warning inline.
 Use only the sections the repository justifies. An empty or generic section
 costs the same as a full one.
 
+**Fill the placeholders from the ecosystem the repository actually has.** Where
+one exists, name its real manifest, commands and conventions — a generic file
+in a repo with a clear toolchain wastes the reader's time. Where none exists
+yet, omit the toolchain-shaped sections and ask; an instruction file MUST NOT
+be what commits a greenfield repo to a package manager or a test runner.
+
 ## Sections
 
 ### Commands
