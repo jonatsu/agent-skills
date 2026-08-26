@@ -184,14 +184,30 @@ Cap D8 at **10** when the skill depends on an environmental fact it never
 verifies, and at **5** when that dependency is silent — no probe, no fallback,
 no message.
 
+**Detection is not a judgement call — read `metadata.scope`.** Only `repo-local`
+earns the exemption for naming its repository's runners and paths. Treat an
+absent key as `portable`: a skill carrying local bindings without declaring
+repo-local scope is a portable skill with a defect, and the cap applies at full
+strength. NEVER infer repo-local intent from the bindings themselves — that
+reasoning excuses every instance of the defect this dimension exists to catch,
+and it is the excuse a well-written skill makes most convincingly. A
+`repo-local` declaration that never names its repository is itself a finding.
+
 **First decide which kind of dependency it is.** A skill that *uses* a tool
 incidentally MUST NOT assume it. A skill that *documents* a tool obviously
 requires that tool, and demanding tool-agnosticism there is incoherent — do NOT
 cap a skill for naming its own subject. Require instead that it states its
 degradation path: what the agent does when the tool is absent. A tool skill whose
 opening rule says "prefer these tools when available" and never names the
-alternative has the same defect in a different place, and that IS capped. What to
-check:
+alternative has the same defect in a different place, and that IS capped.
+
+**A tool-subject skill is exempt for its subject and for nothing else.** Cap it
+normally where it assumes a SECOND tool, names a project-local runner,
+hardcodes a path, or binds to an ecosystem that is not the thing it documents. A
+pytest skill may say `pytest -x`; the same skill saying `just test`, or assuming
+a config directory, has the ordinary defect — and it is easy to wave through,
+because the first binding was legitimate and the second looks like more of the
+same. What to check:
 
 - Tool availability established by a `PATH` probe (`command -v <tool>`) and
   nothing else. An assumed tool is a defect even when the authoring machine has
@@ -240,7 +256,10 @@ an upgrade.
    they agree. A reference contradicting the body is worse than either being
    absent: the agent reads one, acts on it, and never sees the other. Field
    names, op semantics, counts, and defaults are where this bites.
-4. **Structure pass.** Validate frontmatter; count SKILL.md lines; list
+4. **Structure pass.** Validate frontmatter, and read `metadata.scope` FIRST —
+   it decides how D8 is scored, and reading it after forming an impression of
+   the skill is how an undeclared local skill talks its way into an exemption.
+   Absent means `portable`. Count SKILL.md lines; list
    reference files and sizes; identify the skill shape; check load triggers; flag
    any single reference larger than the rest of the package combined.
 5. **Score each dimension.** Cite specific lines as evidence; give a one-line
@@ -314,8 +333,18 @@ score the dimension here.
   recipe (`just check`, `npm run lint`, `make test`), often with a `command -v`
   probe for the runner binary presented as verification. Fix: discover the repo's
   own entry point at run time in a stated detection order, and skip with a report
-  when none is found. Hits D8, capped. Exempt when the skill is repo-scoped and
-  declares it.
+  when none is found. Hits D8, capped. Exempt when the skill declares
+  `metadata.scope: repo-local`.
+- **The Undeclared Local** — a skill that reads as repo-specific, names one
+  repository's runners or paths, and declares no scope. Fix: declare
+  `metadata.scope: repo-local` and name the repository, or remove the bindings.
+  Hits D8, capped — an absent declaration means portable, so this is a defect
+  and not a contract. Do NOT let the obvious usefulness of the bindings argue
+  you into reading intent that the frontmatter does not state.
+- **The Subject's Coattails** — a tool-subject skill that binds legitimately to
+  its own subject and then assumes a second tool, a project-local runner, or a
+  config path on the same authority. Fix: probe everything that is not the
+  subject. Hits D8, capped.
 
 ## NEVER when evaluating
 

@@ -243,6 +243,22 @@ Load `references/output-patterns.md` for checklist patterns and priority-based o
   - High freedom (text): multiple valid approaches
   - Medium (pseudocode/params): preferred pattern, some variation OK
   - Low (specific scripts): fragile operations, consistency critical
+- **Scope declaration**: `metadata.scope` is either `portable` or `repo-local`,
+  and it decides which half of the next rule applies. A **`repo-local` skill
+  MUST declare it** — the exemption for naming a repository's runners and paths
+  is not available without the declaration. A portable skill MAY omit it, since
+  absent already means portable. The burden sits on the exception deliberately:
+  a rule that obliges every skill to restate the default is one nobody keeps.
+  - `portable` — the default, and what MUST be assumed when the key is absent.
+    Runs in any repository on any machine. MUST NOT name a project-local entry
+    point, an install path, or an ecosystem the target repo has not evidenced.
+  - `repo-local` — ships inside the repository it serves. MAY name that repo's
+    runners, paths and conventions directly; they are its contract rather than
+    an assumption. MUST name that repository in its opening lines, so the next
+    reader does not lift it somewhere it cannot work.
+  - A skill carrying local bindings with no `repo-local` declaration is a
+    portable skill with a defect, NEVER a repo-local skill that forgot to say
+    so. Declare the scope, or remove the bindings.
 - **Environment independence**: a skill is universal by nature — it runs on
   machines nobody configured for it, months after it was written. It MUST NOT
   depend on any environmental fact it did not verify at run time.
@@ -265,9 +281,19 @@ Load `references/output-patterns.md` for checklist patterns and priority-based o
     present.
   - **Exception: repo-scoped skills.** A skill that ships inside the repository
     it serves MAY, and SHOULD, name that repo's commands directly — they are its
-    contract rather than an assumption. It MUST say so near the top, so the next
-    reader knows the naming is deliberate and does not lift the skill somewhere
-    it cannot work.
+    contract rather than an assumption. It MUST declare `metadata.scope:
+    repo-local` and name that repository near the top, so the next reader knows
+    the naming is deliberate and does not lift the skill somewhere it cannot
+    work.
+  - **Exception: a skill ABOUT a tool may bind to that tool, and to nothing
+    else.** Naming `pytest` inside a pytest skill is its subject, not an
+    assumption, and demanding tool-agnosticism there is incoherent. The
+    carve-out covers the subject ONLY: that same skill MUST still discover the
+    repo's runner rather than naming `just test`, MUST still probe for any tool
+    beyond its subject, and MUST still state what happens when its own subject
+    is absent. Assuming a SECOND tool is the ordinary defect wearing the
+    subject's clothes, and it is harder to see precisely because the first
+    binding was legitimate.
   - When a tool is absent, the skill MUST degrade to a reported skip or a named
     alternative, NEVER fail and NEVER silently continue as though the step ran.
   - Where several tools do the job, list them in preference order and accept any
@@ -362,7 +388,11 @@ the Pre-Delivery Checklist below.
 - [ ] No project-local entry point (`just <recipe>`, `npm run <script>`,
       `make <target>`, `./scripts/*`) named by a portable skill; the repo's own
       runner is discovered at run time instead
-- [ ] A repo-scoped skill declares that scope where it names repo commands
+- [ ] Any skill with repo-specific bindings declares `metadata.scope:
+      repo-local` AND names its repository near the top; a portable skill may
+      omit the key, because absent means portable
+- [ ] A skill about a tool binds to that tool only — every OTHER tool it touches
+      is still probed, and its own runner is still discovered
 
 #### Anti-Patterns to Avoid
 - Stuffing everything into one massive SKILL.md (>500 lines)
@@ -376,6 +406,8 @@ the Pre-Delivery Checklist below.
 - Transcribing a CLI surface, parameter schema, config-key list, or inventory count the tool reports about itself
 - A workflow checklist in a skill that has no workflow
 - Naming another repository's task recipe (`just check`, `npm run lint`, `make test`) in a portable skill, or probing for the runner binary and calling that verification
+- Carrying local bindings without declaring `metadata.scope: repo-local` — an undeclared skill is portable, so the bindings are a defect rather than a contract
+- Letting a tool-subject skill assume a SECOND tool, on the strength of the carve-out that only ever covered its subject
 - Asserting how a tool behaves without having run it, or without saying at which version
 
 ## Step 9: Package
