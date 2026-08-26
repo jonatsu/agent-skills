@@ -48,7 +48,8 @@ Hand-crafted skills are grouped by target agent. Each skill is a directory with 
 |---|---|---|
 | `shared/` | Claude Code + OpenCode + Copilot CLI | Agent-agnostic skills (the majority) |
 | `claude/` | Claude Code only | Claude-coupled skills (e.g. `reflect`) |
-| `opencode/` | OpenCode only | OpenCode-coupled skills (e.g. `headroom-management`) |
+| `opencode/` | OpenCode only | OpenCode-coupled skills. **Currently empty** — `headroom-management` was archived 2026-08-26, and git does not track empty directories, so the group is absent until the next OpenCode-only skill recreates it |
+| `archived/` | nothing | Kept for reference, deployed nowhere. See `archived/README.md` |
 
 There is no `copilot/` group. Copilot CLI gets `shared/` and nothing else: the Claude-only
 skills are Claude-coupled by the placement rule — they are about `CLAUDE.md`, `.claude/agents`
@@ -79,7 +80,7 @@ one each, those skills can't ride on the shared base and need their own configs.
 | `kasetto/opencode/` | `extends base.yaml` | `~/.config/opencode/skills` |
 | `kasetto/copilot/` | `extends base.yaml` | `~/.copilot/skills` |
 | `kasetto/claude-extra/` | `claude/` group (e.g. `reflect`) | `~/.config/claude/skills` |
-| `kasetto/opencode-extra/` | `opencode/` group (e.g. `headroom-management`) | `~/.config/opencode/skills` |
+| `kasetto/opencode-extra/` | `opencode/` group — **empty since 2026-08-26**, scope kept deliberately | `~/.config/opencode/skills` |
 
 Two mechanics make the per-dir invocation load-bearing — `scripts/kasetto-deploy.sh` and the
 post-commit hook both `cd` into each config dir before syncing:

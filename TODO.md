@@ -5,8 +5,6 @@ README describes how the stack works and this file tracks what is still owed. Pa
 relative to `skills/` unless noted. Repository-wide items live in
 [../TODO.md](../TODO.md).
 
-- **`opencode/headroom-management`** — currently OpenCode-only; generalize it to work with
-  Claude Code too, then move to `shared/`.
 - **`claude/reflect` — re-evaluate the OpenCode side.** `reflect` stays in `claude/`
   rather than moving to `shared/`: OpenCode's `skills/reflect/` is auto-installed by the
   `oh-my-opencode-slim@2.2.8` plugin, so a shared copy would be a collision rather than a
