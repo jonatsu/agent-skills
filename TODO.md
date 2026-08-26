@@ -34,9 +34,9 @@ relative to `skills/` unless noted. Repository-wide items live in
 - **`claude-md-management` plugin** — reviewed and recommended for removal rather than a
   fork: its rubric awards 35 of 100 points for things it never reads the codebase to
   check, and its discovery searches for two filenames that do not exist. Everything it
-  does is already covered by `claude/reflect` and `shared/system-prompts`. The evidence
-  for each defect is in `shared/agents-management/ATTRIBUTIONS.md`.
-- **`shared/writing-for-humans` — evaluate a burstiness check.** Deferred 2026-08-24
+  does is already covered by `claude/reflect` and `shared/agent-stack/system-prompts`. The evidence
+  for each defect is in `shared/agent-stack/agents-management/ATTRIBUTIONS.md`.
+- **`shared/writing/writing-for-humans` — evaluate a burstiness check.** Deferred 2026-08-24
   while reviewing three AI-writing skills for adoptable material. The idea comes from
   [israelsaba/ai-writing-detector-skill](https://github.com/israelsaba/ai-writing-detector-skill)
   (MIT): score sentence-length variation as a coefficient of variation, `std/mean`, and
@@ -52,7 +52,7 @@ relative to `skills/` unless noted. Repository-wide items live in
     few known-model-written passages, and see whether the distributions separate at all
     on this corpus before picking any threshold. If they do not separate, record that
     and close the item — a negative result here is worth as much as the check.
-- **`shared/git-operations` — third regrade done 2026-08-26, all findings fixed.** Written
+- **`shared/git/git-operations` — third regrade done 2026-08-26, all findings fixed.** Written
   2026-08-26 to replace `git-master`, whose SUL 1.0 licence could not be carried. Three
   independent `skill-judge` passes: 86/120, then 91/120, then **107/120 (Grade B)**. Every
   defect each round raised was reproduced in a scratch repo before being fixed, and the
@@ -90,7 +90,7 @@ relative to `skills/` unless noted. Repository-wide items live in
     exactly**, including the `gpgsig` message-body spoof, which is real — an unsigned commit
     whose body begins `gpgsig -----BEGIN SSH SIGNATURE-----` reads as signed without the
     `sed '/^$/q;p'` guard. That guard is load-bearing, not decoration.
-- **`shared/github-operations` — second regrade done 2026-08-26, all findings fixed.** Two
+- **`shared/git/github-operations` — second regrade done 2026-08-26, all findings fixed.** Two
   `skill-judge` passes: 88/120, then **103/120 (Grade B)**. Both ran with read-only `gh`
   authorisation and an explicit mutation ban, which is what made them useful — several
   findings in each round were refutations no amount of reading would have produced.
@@ -137,7 +137,7 @@ relative to `skills/` unless noted. Repository-wide items live in
   - **Still true: the skill has never run against a real task.** Trigger behaviour is
     unmeasured in both directions.
 - **A proper GitHub Actions skill — deferred 2026-08-26, deliberately.**
-  `shared/github-operations` ships `references/actions-basics.md` as a short orientation and
+  `shared/git/github-operations` ships `references/actions-basics.md` as a short orientation and
   says so in the file: enough Actions grounding to do PR and repository work, explicitly not a
   reference manual. Its closing section lists what it does not cover — matrix strategy,
   caching design, self-hosted runners, reusable-workflow authoring, composite actions,
@@ -178,11 +178,11 @@ relative to `skills/` unless noted. Repository-wide items live in
   - The content-licence check is not a formality. `netresearch/agent-rules-skill`, evaluated in
     this stack earlier, is MIT for code and **CC-BY-SA-4.0 for content** — the reference prose.
     Share-alike would propagate into any adapted text and collide with the Apache-2.0
-    obligations `shared/agents-management` already carries. Check for this per source, before
+    obligations `shared/agent-stack/agents-management` already carries. Check for this per source, before
     lifting prose rather than after.
   - <https://github.com/modem-dev/skills/tree/main/write-discoverable-code> — name suggests
-    code-discoverability guidance. Adjacency to check: `shared/system-prompts` and
-    `shared/technical-writing`, and whether it overlaps `agents-management`'s llms.txt lane.
+    code-discoverability guidance. Adjacency to check: `shared/agent-stack/system-prompts` and
+    `shared/writing/technical-writing`, and whether it overlaps `agents-management`'s llms.txt lane.
   - <https://github.com/microsoft/skills/tree/main/.github/skills/continual-learning> — name
     suggests session-learning capture. Adjacency to check: `claude/reflect`, which owns that
     lane here, including its compaction backlog. Note the path: it ships under `.github/skills/`,
@@ -192,7 +192,7 @@ relative to `skills/` unless noted. Repository-wide items live in
     differently; Kasetto installs skill directories, not plugins.
   - <https://github.com/stellarlinkco/myclaude/tree/master/agents/requirements> — an agent
     definition, not a skill, and on `master` rather than `main`. Adjacency to check:
-    `shared/design-forge`, which owns the requirements-document contract, and the deliberate
+    `shared/design/design-forge`, which owns the requirements-document contract, and the deliberate
     decision recorded there NOT to use `references/authoring.md`'s atomic `FR-`/`NFR-` schema.
 - **Pin third-party versions** — third-party sources currently track `main`. If a surprise
   upstream change is a concern, add `ref:` pins in `kasetto/base.yaml` and roll forward

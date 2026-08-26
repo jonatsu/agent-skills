@@ -28,8 +28,9 @@ in a committed `kasetto.lock`. There is no central store and no symlink layer.
 
 ```
 this repo (source of truth)
-  ├─ shared/  claude/  opencode/     hand-crafted skills (local sources)
-  └─ kasetto/ configs ──kst sync──▶  ~/.config/{claude,opencode}/skills/   (real copies)
+  ├─ shared/<domain>/                hand-crafted skills (local sources)
+  ├─ claude/  opencode/              these two groups stay flat
+  └─ kasetto/ configs ──kst sync──▶  ~/.config/{claude,opencode}/skills/   (real copies, flat)
                                      ~/.copilot/skills/
                                      tracked by kasetto/**/kasetto.lock
 ```
@@ -46,8 +47,8 @@ Hand-crafted skills are grouped by target agent. Each skill is a directory with 
 
 | Group | Deployed to | Contents |
 |---|---|---|
-| `shared/` | Claude Code + OpenCode + Copilot CLI | Agent-agnostic skills (the majority) |
-| `claude/` | Claude Code only | Claude-coupled skills (e.g. `reflect`) |
+| `shared/` | Claude Code + OpenCode + Copilot CLI | Agent-agnostic skills (the majority), organised by domain one level down — see below |
+| `claude/` | Claude Code only | Claude-coupled skills (e.g. `reflect`). Flat: two skills do not need a taxonomy |
 | `opencode/` | OpenCode only | OpenCode-coupled skills. **Currently empty** — `headroom-management` was archived 2026-08-26, and git does not track empty directories, so the group is absent until the next OpenCode-only skill recreates it |
 | `archived/` | nothing | Kept for reference, deployed nowhere. See `archived/README.md` |
 
@@ -57,13 +58,47 @@ and Claude subagents — so deploying them there would ship skills describing a 
 Add the group, and a `kasetto/copilot-extra/` config, the first time a Copilot-coupled skill
 is written.
 
+### Domains within `shared/`
+
+Since 2026-08-26 the shared group is organised by subject: `shared/<domain>/<skill>/`. Forty-three
+skills in one directory had stopped being a list anyone could read.
+
+| Domain | Holds |
+|---|---|
+| `agent-stack/` | Authoring the setup itself — skills, prompts, agent instruction files |
+| `context/` | Context and token economy: handoffs, compression, lean-ctx |
+| `design/` | Shaping and recording a design before it is built |
+| `development/` | Doing the work: debugging, testing, dev-environment tooling |
+| `review/` | Judging work already done — the brooks-lint lanes and security-audit |
+| `embedded/` | Embedded Linux build systems and bring-up |
+| `nix/` | Nix, NixOS, home-manager, and the flake ecosystem |
+| `git/` | Git, GitHub, and repository hygiene |
+| `ops/` | Machines and runtimes: containers, systemd, dotfiles |
+| `writing/` | Human-facing prose |
+
+**The domain level exists only in this repository.** Kasetto deploys flat, so every agent still
+reads `<skills-dir>/<skill>/` and no skill needs to know where its source lives.
+
+Three consequences worth knowing before you move anything:
+
+- **A skill name MUST stay unique across all domains.** The lock records no domain, so two
+  same-named skills collapse to one key and Kasetto silently deploys whichever it resolves last.
+  `just skills-deployed` reports that as `ambiguous`; nothing else catches it.
+- **Moving a skill between domains is free.** Lock keys are `../../shared::<name>`, so a `git mv`
+  produces no lock diff. A lock diff after a pure move means something else changed.
+- **Adding or emptying a domain needs a `kasetto/base.yaml` edit.** Kasetto discovers skills
+  exactly one level under a source root, so each domain is its own `sub-dir:` entry there, and
+  `sub-dir: "*"` is not supported. A named domain that does not exist fails the sync outright —
+  which, since git does not track empty directories, is a failure that appears on the next clone
+  rather than here.
+
 Third-party skills used **as-is** are not vendored here — they are pulled from their upstream
 repos by Kasetto and listed in `kasetto/base.yaml`, so they stay upstream-updatable.
 
 A skill is vendored into a group only when it is **forked**: materially modified and no longer
 tracking upstream. A fork keeps the upstream license in frontmatter `metadata.license` and
 records provenance plus the list of changes in `ATTRIBUTIONS.md` (see
-`shared/agents-management`, `claude/claude-automation-recommender`). Forking trades upstream updates for the right to fix
+`shared/agent-stack/agents-management`, `claude/claude-automation-recommender`). Forking trades upstream updates for the right to fix
 the skill, so take that route only when the upstream cannot be used unmodified.
 
 ## The Kasetto config (`kasetto/`)
@@ -75,7 +110,7 @@ one each, those skills can't ride on the shared base and need their own configs.
 
 | Config dir | What it deploys | Destination |
 |---|---|---|
-| `kasetto/base.yaml` | Common set: 24 third-party + `shared/` (local) | *(inherited, no destination)* |
+| `kasetto/base.yaml` | Common set: 24 third-party + `shared/` (local, one entry per domain) | *(inherited, no destination)* |
 | `kasetto/claude/` | `extends base.yaml` | `~/.config/claude/skills` |
 | `kasetto/opencode/` | `extends base.yaml` | `~/.config/opencode/skills` |
 | `kasetto/copilot/` | `extends base.yaml` | `~/.copilot/skills` |
@@ -119,12 +154,16 @@ limits (it exits non-zero and is safe to re-run). Warm syncs use the lock and to
 
 ## Adding a skill
 
-**Hand-crafted:** create `shared/<name>/SKILL.md` (or under `claude/`/`opencode/` if
-agent-coupled). No config edit is needed — the configs discover every skill in the group
-via `skills: "*"`, and committing is enough to deploy it: the post-commit hook re-resolves
-glob membership along with the content hashes, so a new skill reaches every agent dir with
-no extra step. See "Adding or removing a skill" below for why that works. Use the
-`skill-forge` skill for authoring conventions.
+**Hand-crafted:** create `shared/<domain>/<name>/SKILL.md`, picking an existing domain (or
+under `claude/`/`opencode/`, which are flat, if the skill is agent-coupled). No config edit is
+needed — the configs discover every skill in the group via `skills: "*"`, and committing is
+enough to deploy it: the post-commit hook re-resolves glob membership along with the content
+hashes, so a new skill reaches every agent dir with no extra step. See "Adding or removing a
+skill" below for why that works. Use the `skill-forge` skill for authoring conventions.
+
+**A new domain is the one case that does need a config edit:** add a matching
+`- source: ../../shared` / `sub-dir: <domain>` / `skills: "*"` entry to `kasetto/base.yaml`, in
+the same commit that creates the directory.
 
 **Third-party:** add a source entry to `kasetto/base.yaml` (Kasetto discovers skills in a
 source's root or its `skills/` subdir; use `sub-dir:` for deeper layouts), then deploy.
@@ -216,7 +255,7 @@ their own license via their frontmatter `metadata.license` and `ATTRIBUTIONS.md`
 alongside. Do not assume MIT for a skill that declares otherwise. A skill whose upstream
 licence would block the use we need is replaced by an independently written one rather than
 adapted: `git-master` (SUL 1.0, personal/non-commercial only) was retired on 2026-08-26 in
-favour of `shared/git-operations`, which is MIT.
+favour of `shared/git/git-operations`, which is MIT.
 
 ## Future work / TODOs
 

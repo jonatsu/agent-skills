@@ -7,7 +7,7 @@ wherever python3 does.
 
 Run from anywhere:
 
-    python3 skills/shared/design-forge/scripts/test_check_corpus.py
+    python3 skills/shared/design/design-forge/scripts/test_check_corpus.py
 
 Or, from this directory:
 
