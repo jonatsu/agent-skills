@@ -77,7 +77,7 @@ Git Repo Hygiene Progress:
 - [ ] Step 7: Report follow-ups
   - [ ] GitHub optional settings: template toggle, branch protection, CODEOWNERS,
         security advisories, Dependabot, discussions, issue/PR settings
-  - [ ] Agent onboarding docs (AGENTS.md, llms.txt) → offer the `agent-repo-docs` skill
+  - [ ] Agent onboarding docs (AGENTS.md, llms.txt) → offer the `agents-management` skill
   - [ ] Any cruft the user chose to defer
 ```
 

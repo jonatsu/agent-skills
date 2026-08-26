@@ -2,9 +2,9 @@
 
 Six criteria, 100 points. Every criterion names the evidence required to score
 it. **A criterion whose evidence was not gathered is reported `not assessed` and
-its points leave the denominator.** Scoring from the CLAUDE.md text alone, for a
-criterion that requires the codebase, produces a number that looks like
-measurement and is not.
+its points leave the denominator.** Scoring from the instruction file's text
+alone, for a criterion that requires the codebase, produces a number that looks
+like measurement and is not.
 
 Score only at the anchors given. They are coarse on purpose: the underlying
 judgment does not support finer resolution, and a `17/20` implies a precision
@@ -24,9 +24,9 @@ nobody has.
 
 ## 1. Commands and Workflows (20)
 
-**Evidence required**: the project's task runner or manifest — `package.json`
-scripts, `justfile`, `Makefile`, `pyproject.toml`, `mise.toml`, `Cargo.toml`, or
-the CI workflow. Without it, the criterion is `not assessed`.
+**Evidence required**: the project's task runner or manifest — whichever this
+repo actually has. Discover it; do NOT assume an ecosystem. Without it, the
+criterion is `not assessed`.
 
 | Anchor | Meaning |
 |--------|---------|
@@ -37,9 +37,12 @@ the CI workflow. Without it, the criterion is `not assessed`.
 | 0 | None |
 
 Deduct to the next anchor down when documented commands duplicate what the
-runner already exposes with no added context. A bare list of `package.json`
-scripts costs tokens and adds nothing; `npm test -- --runInBand` *because the
-suite shares a database* is the version worth keeping.
+runner already exposes with no added context. A transcription of the runner's
+own recipe list costs tokens and adds nothing. The version worth keeping carries
+what the runner does not state — a flag together with the reason it exists: a
+test command forced to run sequentially *because the suite shares a database*,
+or a build invoked through the project's environment manager *because the
+ambient interpreter resolves differently*.
 
 ## 2. Architecture Orientation (15)
 
@@ -52,10 +55,10 @@ suite shares a database* is the version worth keeping.
 | 5 | A directory listing reproduced as prose |
 | 0 | Absent, or contradicted by the tree |
 
-**A directory tree that Claude can produce with one `ls` is not worth context.**
-Score high only for what reading the tree does not reveal: why a boundary
-exists, which of two similar directories is authoritative, what the dead code
-is. Score a verbatim tree dump at 5 and recommend cutting it.
+**A directory tree the agent can produce with one listing command is not worth
+context.** Score high only for what reading the tree does not reveal: why a
+boundary exists, which of two similar directories is authoritative, what the
+dead code is. Score a verbatim tree dump at 5 and recommend cutting it.
 
 ## 3. Non-Obvious Knowledge (20)
 
@@ -69,31 +72,33 @@ is. Score a verbatim tree dump at 5 and recommend cutting it.
 | 5 | Generic best practice dressed as project knowledge |
 | 0 | None |
 
-This is the highest-value content in any CLAUDE.md and the hardest to
-reconstruct. "Tests must run sequentially (`--runInBand`) due to shared DB
-state" is a 20-point line. "Write meaningful variable names" is a 0-point line
-that costs the same tokens forever.
+This is the highest-value content in any instruction file and the hardest to
+reconstruct. "Tests must run sequentially due to shared database state" is a
+20-point line. "Write meaningful variable names" is a 0-point line that costs
+the same tokens forever.
 
 ## 4. Density (15)
 
-**Evidence required**: the file text, plus every `@`-imported file.
+**Evidence required**: the file text, plus every included file.
 
 | Anchor | Meaning |
 |--------|---------|
-| 15 | Every line earns its place; no restatement of the code |
+| 15 | Every line earns its place; no restatement of the code or the environment |
 | 10 | Mostly tight, some padding |
 | 5 | Verbose; explanations where a line would do |
 | 0 | Mostly filler, or explains a well-known technology |
 
-Judge the **effective** size — entrypoint plus imports — against the 200-line
-target, never the entrypoint alone. Report both numbers when they differ.
+Judge the **effective** size — entrypoint plus includes — against the file's
+budget, never the entrypoint alone. Report both numbers when they differ. Where
+the repository sets no budget of its own, 150 to 200 effective lines is the
+usual point at which a root file stops being read carefully.
 
 ## 5. Currency (20)
 
 **Evidence required**: verification against the repository. Check that
-referenced paths exist (`ls`/`test -e`), that documented commands exist in the
-runner, and that named tools appear in the manifest. Running a build is not
-required; confirming a command is still *defined* is.
+referenced paths exist, that documented commands exist in the runner, and that
+named tools appear in the manifest. Running a build is not required; confirming
+a command is still *defined* is.
 
 | Anchor | Meaning |
 |--------|---------|
@@ -142,18 +147,32 @@ Rules:
   produces a number with no meaning.
 - State the grade's weakest link. A B built on a 0 in Non-obvious knowledge and
   a 20 in Commands needs a different fix than a flat B.
+- **The score answers "does this file have the right shape", never "is the
+  knowledge still here".** An edit that deletes a hard-won convention to meet a
+  line budget scores higher afterwards. Run the preservation check in Phase 7;
+  never let the score stand in for it.
 
 ## Red Flags
 
 Findings worth reporting regardless of score:
 
-- A memory file at a path Claude Code never reads (`.claude.md`,
-  `.claude.local.md`, or `AGENTS.md` with no importing `CLAUDE.md`)
-- Contradictions between scopes — both texts are in context, and neither wins
-- An import chain deeper than four hops; everything past the fourth is silently absent
-- A relative import written as if it resolved from the working directory rather
-  than from the importing file
-- Content duplicated between a root file and a nested one, paying twice for one instruction
+- **`AGENTS.md` and `CLAUDE.md` both present as real files with divergent
+  content.** Three agents read three different things; see
+  `loading-model.md`. Report it — never auto-resolve it.
+- An instruction file at a filename no first-class agent reads
+- Path-scoping frontmatter on a rule file → treat that file as **not loaded**
+- Contradictions between two instruction files in the same repository — on at
+  least one agent both texts are in context and neither wins
+- An include chain deeper than the shallowest first-class agent's limit;
+  everything past it is silently absent
+- Guidance that depends on include expansion in a repository whose agents
+  include one that does not parse includes
+- A relative include written as if it resolved from the working directory
+  rather than from the including file
+- Content duplicated between a root file and a nested one, paying twice for one
+  instruction
+- A per-package instruction file with no pointer row in the root file
 - An instruction that must hold every time, written as prose rather than a hook
+  or a CI gate
 - `TODO` entries that predate the last release
-- A file over 200 effective lines with no path-scoped rules extracted
+- A file over its effective line budget with nothing extracted and pointed at

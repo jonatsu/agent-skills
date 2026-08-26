@@ -36,7 +36,7 @@ The upstream skill was read in full — `SKILL.md`, `README.md`,
 templates — to find what the first adoption left behind. One idea had been: its
 "Reviewing" task, which reads an existing README and checks it against the
 project's actual state. Nothing in this repository's skills owned that check.
-`technical-writing`'s review checklist grades prose, `agent-repo-docs` reads the
+`technical-writing`'s review checklist grades prose, `agents-management` reads the
 README only to avoid duplicating it into AGENTS.md, and this skill's REFRESH mode
 left a README that "already exists and is healthy" alone without ever testing
 healthy. It is implemented here as report-only, per this skill's Iron Law, rather

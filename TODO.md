@@ -37,7 +37,7 @@ relative to `skills/` unless noted. Repository-wide items live in
   fork: its rubric awards 35 of 100 points for things it never reads the codebase to
   check, and its discovery searches for two filenames that do not exist. Everything it
   does is already covered by `claude/reflect` and `shared/system-prompts`. The evidence
-  for each defect is in `claude/claude-md-auditor/ATTRIBUTIONS.md`.
+  for each defect is in `shared/agents-management/ATTRIBUTIONS.md`.
 - **`shared/writing-for-humans` — evaluate a burstiness check.** Deferred 2026-08-24
   while reviewing three AI-writing skills for adoptable material. The idea comes from
   [israelsaba/ai-writing-detector-skill](https://github.com/israelsaba/ai-writing-detector-skill)
