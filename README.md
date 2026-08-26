@@ -61,8 +61,8 @@ repos by Kasetto and listed in `kasetto/base.yaml`, so they stay upstream-updata
 
 A skill is vendored into a group only when it is **forked**: materially modified and no longer
 tracking upstream. A fork keeps the upstream license in frontmatter `metadata.license` and
-records provenance plus the list of changes in `ATTRIBUTIONS.md` (see `shared/git-master`,
-`claude/claude-automation-recommender`). Forking trades upstream updates for the right to fix
+records provenance plus the list of changes in `ATTRIBUTIONS.md` (see
+`shared/agents-management`, `claude/claude-automation-recommender`). Forking trades upstream updates for the right to fix
 the skill, so take that route only when the upstream cannot be used unmodified.
 
 ## The Kasetto config (`kasetto/`)
@@ -211,8 +211,11 @@ just deploy                      # skills to every agent, plus the dotbot map
 
 Repo `LICENSE` is **MIT** and covers the original works here. Individual skills may carry
 their own license via their frontmatter `metadata.license` and `ATTRIBUTIONS.md` — e.g.
-`git-master` is **SUL 1.0** per its upstream. Do not assume MIT for a skill that declares
-otherwise.
+`agents-management` is **Apache-2.0** per its upstream, and ships `LICENSE.upstream`
+alongside. Do not assume MIT for a skill that declares otherwise. A skill whose upstream
+licence would block the use we need is replaced by an independently written one rather than
+adapted: `git-master` (SUL 1.0, personal/non-commercial only) was retired on 2026-08-26 in
+favour of `shared/git-operations`, which is MIT.
 
 ## Future work / TODOs
 

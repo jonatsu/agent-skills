@@ -1,6 +1,6 @@
 ---
 name: git-repo-hygiene
-description: "Set up, refresh, or clean up Git repository hygiene for any repo — new or long-existing — without assuming a language or framework. Use to bootstrap a new repo's baseline (README, LICENSE, .gitignore, .editorconfig, .gitattributes, pre-commit) OR to add/refresh hygiene and cleanliness hooks on a pre-existing or messy repo, fill missing community files, and detect tracked cruft (committed secrets, gitignored-but-tracked files, large files) for cleanup. Triggers: set up a repo, bootstrap repo, initialize GitHub repository, template repository, add pre-commit hooks, add hygiene/cleanliness hooks, clean up this repo, repo hygiene, refresh repo baseline, add editorconfig/gitattributes/gitignore, scan for committed secrets or large files. NOT for making commits, rebasing, or git-history questions (use git-master)."
+description: "Set up, refresh, or clean up Git repository hygiene for any repo — new or long-existing — without assuming a language or framework. Use to bootstrap a new repo's baseline (README, LICENSE, .gitignore, .editorconfig, .gitattributes, pre-commit) OR to add/refresh hygiene and cleanliness hooks on a pre-existing or messy repo, fill missing community files, and detect tracked cruft (committed secrets, gitignored-but-tracked files, large files) for cleanup. Triggers: set up a repo, bootstrap repo, initialize GitHub repository, template repository, add pre-commit hooks, add hygiene/cleanliness hooks, clean up this repo, repo hygiene, refresh repo baseline, add editorconfig/gitattributes/gitignore, scan for committed secrets or large files. NOT for making commits, rebasing, or git-history questions (use git-operations)."
 metadata:
   author: Joonas Onatsu
   license: MIT
@@ -102,7 +102,7 @@ separate explicit request; several remediations rewrite history.
 
 Purging secrets or large blobs from history (`git filter-repo`, BFG) is
 **history-rewriting and out of this skill's scope** — flag it and hand off to
-`git-master`, don't perform it here.
+`git-operations`, don't perform it here.
 
 ## Stale README Detection (REFRESH — report-only)
 
@@ -179,7 +179,7 @@ approves:
 - GitHub security advisories / private vulnerability reporting
 - template repository toggle
 - stack-specific CI, lint, format, release, or dependency automation
-- history rewriting to purge committed secrets or large blobs (hand to `git-master`)
+- history rewriting to purge committed secrets or large blobs (hand to `git-operations`)
 
 ## Template Assets
 
