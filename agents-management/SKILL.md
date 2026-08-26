@@ -85,17 +85,18 @@ ls -la AGENTS.md CLAUDE.md CLAUDE.local.md 2>/dev/null
 ls -la .github/copilot-instructions.md 2>/dev/null
 
 # Rules and path-scoped instruction directories — recursive
-find .claude/rules .github/instructions -name '*.md' -print 2>/dev/null | xargs -r ls -ld
+find .claude/rules .github/instructions -name '*.md' -exec ls -ld {} + 2>/dev/null
 
 # Nested per-package files. The prune list skips vendored and build output
 # across common ecosystems; extend it for whatever this repo actually has.
 # NEVER add -type f: it excludes symlinks, and a symlink is the single most
-# important thing this phase has to find. Piping to `ls -ld` shows each link's
-# target. (`find -printf` would too, but it is GNU-only.)
+# important thing this phase has to find. `-exec ls -ld {} +` shows each link's
+# target; it is POSIX and safe for paths containing spaces, which `-printf`
+# (GNU-only) and a bare `| xargs` (splits on whitespace) are not.
 find . \( -name AGENTS.md -o -name CLAUDE.md -o -name CLAUDE.local.md \) \
   -not -path '*/.git/*' -not -path '*/node_modules/*' -not -path '*/vendor/*' \
   -not -path '*/target/*' -not -path '*/dist/*' -not -path '*/build/*' \
-  -not -path '*/.venv/*' -print 2>/dev/null | xargs -r ls -ld
+  -not -path '*/.venv/*' -exec ls -ld {} + 2>/dev/null
 ```
 
 Classify every file found as **launch-loaded**, **conditional** (a nested file,
@@ -233,7 +234,7 @@ When a proposal is really a mechanism change, say so instead of editing prose:
 | Symptom | Proposal |
 |---------|----------|
 | Guidance applies to one file type or subtree | Keep it in a separate file and add an imperative pointer row in the main file naming the trigger |
-| File is over its line budget | Extract to pointed-to files; note that includes reorganize without reducing cost on agents that parse them, and do nothing on agents that do not |
+| File is past the point it stops being read carefully — the repo's own budget, or commonly 150–200 effective lines | Extract to pointed-to files; note that includes reorganize without reducing cost on agents that parse them, and do nothing on agents that do not. NEVER extract guidance that must not fail to load |
 | Instruction must hold every time | A hook or a CI gate — an instruction file is context, not enforcement |
 | Enforcement already exists and the file never mentions it | Add the orientation. A hook or deny-list that refuses a command the agent had no reason to avoid reads as an unexplained failure. The inverse of the row above, and more common |
 | Repo ships its own skills and requires one for a path or operation | State the OBLIGATION — when it must be loaded, for what. NEVER describe what the skill does; the agent already has its description. Offer this; do not insist |
@@ -309,13 +310,36 @@ have the right shape", never "is the knowledge still here". Use the repo's
 version control if it has any; where it has none, diff against the copy taken
 before editing:
 
+**Check every path this run touched**, not a fixed pair — Phase 6 can edit rules
+files, per-package files and `llms.txt` too, and a check hardcoded to the root
+pair reports clean on all of them.
+
 ```bash
+# Every path edited this run. Substitute the real list; do NOT leave the default.
+CHANGED="AGENTS.md CLAUDE.md"
+
 if command -v git >/dev/null && git rev-parse --git-dir >/dev/null 2>&1; then
-  git diff -- AGENTS.md CLAUDE.md | grep -E '^-' | grep -vE '^---'
+  # 1. Confirm the check is looking at something. Empty here means the diff
+  #    found nothing — which is NOT the same as "nothing was removed".
+  git diff HEAD --stat -- $CHANGED
+
+  # 2. Removed lines. HEAD covers staged AND unstaged. The trailing space in
+  #    '^--- ' matters: a DELETED `---` renders as `----`, and a filter without
+  #    the space swallows it — hiding frontmatter delimiters from the very
+  #    check meant to catch deletions.
+  git diff HEAD -- $CHANGED | grep -E '^-' | grep -vE '^--- '
+
+  # 3. Files created this run are untracked; no diff can see them.
+  git status --porcelain -- $CHANGED
 else
-  echo "no git checkout — compare against the pre-edit copy by hand"
+  echo "no git checkout — diff each path against the copy taken before editing"
 fi
 ```
+
+⚠️ **An empty result from step 2 is only meaningful if step 1 showed changes.**
+Empty output from both means the check examined nothing, which looks identical
+to a pass and is the failure mode this phase exists to prevent. Say which of the
+two you observed.
 
 Any removed line that carried a convention, a gotcha, or a reason MUST be
 restored or explicitly approved for removal. An update that deletes hard-won
@@ -328,11 +352,11 @@ agent does not pick up instruction-file edits in an already-running session.
 
 ## References
 
-Load on symptom, never by default:
+One reference is unconditional; the rest load on symptom.
 
 | Load when | File |
 |---|---|
-| Before Phase 1, always — which agent reads what, includes, nesting, ground-truth commands | `references/loading-model.md` |
+| **Always, before Phase 1** — which agent reads what, includes, nesting, ground-truth commands | `references/loading-model.md` |
 | Scoring a file, or explaining a red flag | `references/scoring-rubric.md` |
 | Deciding whether a line earns its place, or proposing a diff | `references/update-guidelines.md` |
 | A file is missing structure and needs section shapes | `references/templates.md` |

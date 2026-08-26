@@ -19,12 +19,18 @@ for this skill and is not described here.
 ## The matrix
 
 Three agents are first-class because their behavior was checked. Every cell
-carries how it is known: **measured** here, **documented** by the vendor, or
-**unverified**.
+carries how it is known:
+
+| Stamp | Means |
+|---|---|
+| *measured* | Observed directly, at a stated version and date |
+| *reported* | Observed by the skill's user across sessions, not reproduced under test. Weaker than measured — say so when it is load-bearing |
+| *documented* | Stated by the vendor's own documentation, read on a stated date, not exercised |
+| *unverified* | Neither |
 
 | | `AGENTS.md` | `CLAUDE.md` | Nested files | Parsed includes | Path-scoping |
 |---|---|---|---|---|---|
-| **Claude Code** | not read *(measured)* | read *(measured)* | discovered, on demand *(documented)* | yes, depth 4 *(documented)* | frontmatter exists but **did not fire** *(measured)* |
+| **Claude Code** | not read *(reported)* | read *(measured)* | discovered, on demand *(documented)* | yes, depth 4 *(documented)* | frontmatter exists but **did not fire** *(measured)* |
 | **OpenCode** | read *(documented)* | fallback only, when no `AGENTS.md` *(documented)* | **not discovered** — upward traversal only *(documented)* | **none — not parsed** *(documented)* | none *(documented)* |
 | **Copilot CLI** | read *(documented)* | read *(documented)* | nearest-wins *(documented)* | yes *(documented)* | `applyTo` frontmatter *(documented, unverified here)* |
 
@@ -159,9 +165,18 @@ because an agent is unrecognized, and NEVER claim coverage that was not checked.
 
 - Claude Code cells marked *measured*: observed on Claude Code 2.1.239,
   2026-08-25 and 2026-08-26. The path-scoping result is a negative — the rule
-  files were absent from the loaded set after matching files were read. The
-  `AGENTS.md` cell is a user observation repeated across sessions.
+  files were absent from the loaded set after matching files were read.
+- The Claude Code `AGENTS.md` cell is *reported*, not measured: repeated
+  user observation across sessions, never reproduced under test. **It is also
+  the cell the symlink requirement rests on**, so it carries the weakest stamp
+  and the heaviest load. Measuring it directly is the single highest-value
+  correction anyone can make to this file. It is hard to measure in a repo where
+  the two filenames are already symlinked, since both then resolve to identical
+  bytes and no observation separates them — use a repo with two distinct real
+  files, or a scratch one.
 - OpenCode and Copilot CLI cells marked *documented*: vendor documentation read
-  2026-08-26, not exercised here.
+  2026-08-26, not exercised here. **Agent versions not recorded** — the docs
+  were read as current rather than pinned, so a behavior change since then
+  would not show. Record the version when next confirming these.
 - Re-check the *measured* cells first after any Claude Code upgrade; they are
   the ones a release can silently flip.

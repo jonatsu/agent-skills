@@ -136,37 +136,9 @@ the instruction, not as a description of something that happens automatically.
 
 ## Template: root, fuller
 
-````markdown
-# <Project Name>
-
-<One-line description>
-
-## Commands
-
-- `<command>` — `<constraint the runner does not state>`
-
-## Architecture
-
-- `<what the directory tree does not reveal>`
-
-## Conventions
-
-- `<convention>`, never `<alternative>`
-
-## Environment
-
-- `<VAR>` — `<purpose and timing>`
-
-## Gotchas
-
-- `<gotcha>`
-
-## Pointers
-
-| Read before you touch | File | Holds |
-|---|---|---|
-| `<path or glob>` | `<file>` | `<what is in it>` |
-````
+Use `assets/AGENTS.template.md` — it is the fillable copy of the sections above,
+with each warning inline. Reproducing it here would be a third rendering of one
+section list, which is the cost this file is supposed to be arguing against.
 
 ## Template: package or module
 
@@ -187,6 +159,10 @@ that do not discover nested files are told to open it.
 
 ## Dependencies
 
+⚠️ Only what the manifest does not already answer — an ordering requirement, a
+version pinned for a reason, a dependency whose absence fails silently. A list
+of names restates the manifest and scores 5.
+
 - `<dependency>` — `<why it is needed, or what breaks without it>`
 
 ## Notes
@@ -202,6 +178,12 @@ that do not discover nested files are told to open it.
 <Description>
 
 ## Packages
+
+⚠️ A directory listing in a table is still a directory listing — the same defect
+the Architecture section warns about, and the rubric scores it at 5. Keep this
+only for what listing the tree does NOT reveal: which package is authoritative
+where two overlap, which is deprecated, which owns a boundary. Delete it if the
+rows would only restate the paths.
 
 | Package | Path | What lives there |
 |---------|------|------------------|
