@@ -54,6 +54,46 @@ relative to `skills/` unless noted. Repository-wide items live in
     few known-model-written passages, and see whether the distributions separate at all
     on this corpus before picking any threshold. If they do not separate, record that
     and close the item — a negative result here is worth as much as the check.
+- **`shared/git-operations` — regrade and improve.** Written 2026-08-26 to replace
+  `git-master`, whose SUL 1.0 licence could not be carried. Two independent `skill-judge`
+  passes scored it 86/120 then 91/120, both Grade C; every defect each raised was verified
+  in a scratch repo and fixed, but **the 91 is the score for the version the second grader
+  read, not the one on disk** — the post-fix package has never been graded. Open items:
+  - Re-run `skill-judge` from a fresh subagent against the current package. Both prior
+    rounds found real defects the previous round missed, so a third is not ceremony.
+  - The skill has never been used on a real task. Trigger behaviour is unmeasured in both
+    directions, and none of the confirmation gates has fired in anger.
+  - `SKILL.md` grew from 260 to 363 lines across the two fix rounds, all additive. The next
+    substantive addition should displace something rather than append.
+  - One claim is still marked *reported, not measured*: that rebasing a branch whose tip is
+    a merge commit can collapse it to empty. Measure it or cut it.
+- **Third-party skill pointers — captured 2026-08-26, unevaluated.** Four sources handed over
+  for later evaluation. **Nothing below has been fetched, read, or licence-checked**: the
+  capture was explicitly scoped to recording the URLs, so every characterisation here is
+  inferred from the path alone and none of it is evidence. Before any adoption, each needs the
+  full treatment the `writing-for-humans` entry above demonstrates — the raw `LICENSE` file
+  read directly (NEVER `gh repo view --json licenseInfo`, which reports `null` for repos that
+  do carry one), a check for a separate content licence on reference prose, and a named reason
+  it would or would not be adopted as written.
+  - The content-licence check is not a formality. `netresearch/agent-rules-skill`, evaluated in
+    this stack earlier, is MIT for code and **CC-BY-SA-4.0 for content** — the reference prose.
+    Share-alike would propagate into any adapted text and collide with the Apache-2.0
+    obligations `shared/agents-management` already carries. Check for this per source, before
+    lifting prose rather than after.
+  - <https://github.com/modem-dev/skills/tree/main/write-discoverable-code> — name suggests
+    code-discoverability guidance. Adjacency to check: `shared/system-prompts` and
+    `shared/technical-writing`, and whether it overlaps `agents-management`'s llms.txt lane.
+  - <https://github.com/microsoft/skills/tree/main/.github/skills/continual-learning> — name
+    suggests session-learning capture. Adjacency to check: `claude/reflect`, which owns that
+    lane here, including its compaction backlog. Note the path: it ships under `.github/skills/`,
+    so its scope conventions may be Copilot-shaped rather than portable.
+  - <https://github.com/wshobson/agents/tree/main/plugins/conductor> — a plugin rather than a
+    bare skill, so it may carry agent definitions or commands that this stack deploys
+    differently; Kasetto installs skill directories, not plugins.
+  - <https://github.com/stellarlinkco/myclaude/tree/master/agents/requirements> — an agent
+    definition, not a skill, and on `master` rather than `main`. Adjacency to check:
+    `shared/design-forge`, which owns the requirements-document contract, and the deliberate
+    decision recorded there NOT to use `references/authoring.md`'s atomic `FR-`/`NFR-` schema.
 - **Pin third-party versions** — third-party sources currently track `main`. If a surprise
   upstream change is a concern, add `ref:` pins in `kasetto/base.yaml` and roll forward
   deliberately with `kst sync --update`.
