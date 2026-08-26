@@ -14,6 +14,7 @@ whole mechanism; there is no separate opt-out to remember.
 | Skill | Archived | Why |
 |---|---|---|
 | `headroom-management` | 2026-08-26 | The Headroom proxy it manages was rejected, so the skill governs a tool this setup no longer runs. See its `ARCHIVED.md`. |
+| `lean-ctx` | 2026-08-27 | lean-ctx was removed from this setup, so every `ctx_*` trigger in the skill names a tool that no longer exists. Its three locally-measured reference files are why this is an archive rather than a deletion, and its Apache-2.0 `LICENSE.upstream`/`NOTICE.upstream` must stay with the directory. See its `ARCHIVED.md`. |
 
 ## Archiving a skill
 

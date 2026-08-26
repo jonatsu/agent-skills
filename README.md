@@ -66,7 +66,7 @@ skills in one directory had stopped being a list anyone could read.
 | Domain | Holds |
 |---|---|
 | `agent-stack/` | Authoring the setup itself — skills, prompts, agent instruction files |
-| `context/` | Context and token economy: handoffs, compression, lean-ctx |
+| `context/` | Context and token economy: handoffs, compression, token budgets |
 | `design/` | Shaping and recording a design before it is built |
 | `development/` | Doing the work: debugging, testing, dev-environment tooling |
 | `review/` | Judging work already done — the brooks-lint lanes and security-audit |
