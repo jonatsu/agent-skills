@@ -21,6 +21,13 @@ work.
 and global configuration — a home-directory config tree, machine policy — is a
 different job and MUST NOT be edited, scored, or reported on here.
 
+**The test, when a tracked file blurs the two:** in scope if a first-class agent
+would load it while working *in this repository*; out of scope if it is only a
+payload this repo deploys somewhere else. A repo that stores another tool's
+instruction file for deployment holds a build artifact, not its own instructions
+— report it as out of scope in one line rather than auditing or ignoring it
+silently.
+
 **Universality is best-effort, not a guarantee.** Three agents are first-class
 because their behavior has been checked: Claude Code, OpenCode, Copilot CLI.
 Others get the portable fallback in `references/loading-model.md` and an honest
@@ -78,22 +85,25 @@ ls -la AGENTS.md CLAUDE.md CLAUDE.local.md 2>/dev/null
 ls -la .github/copilot-instructions.md 2>/dev/null
 
 # Rules and path-scoped instruction directories — recursive
-find .claude/rules .github/instructions -type f -name '*.md' 2>/dev/null
+find .claude/rules .github/instructions -name '*.md' -print 2>/dev/null | xargs -r ls -ld
 
 # Nested per-package files. The prune list skips vendored and build output
 # across common ecosystems; extend it for whatever this repo actually has.
-find . -type f \( -name AGENTS.md -o -name CLAUDE.md -o -name CLAUDE.local.md \) \
+# NEVER add -type f: it excludes symlinks, and a symlink is the single most
+# important thing this phase has to find. Piping to `ls -ld` shows each link's
+# target. (`find -printf` would too, but it is GNU-only.)
+find . \( -name AGENTS.md -o -name CLAUDE.md -o -name CLAUDE.local.md \) \
   -not -path '*/.git/*' -not -path '*/node_modules/*' -not -path '*/vendor/*' \
   -not -path '*/target/*' -not -path '*/dist/*' -not -path '*/build/*' \
-  -not -path '*/.venv/*' 2>/dev/null
-
-# Symlink or real file? The distinction decides the whole reconciliation
-ls -la AGENTS.md CLAUDE.md 2>/dev/null
+  -not -path '*/.venv/*' -print 2>/dev/null | xargs -r ls -ld
 ```
 
 Classify every file found as **launch-loaded**, **conditional** (a nested file,
 loaded when the agent works in that directory), or **not loaded by any
 first-class agent**. The three MUST NOT be scored as one pool.
+
+**Record the link target of every symlink, not just that it is one.** A link
+pointing outside its own directory changes what the file means — see Phase 6.
 
 MUST NOT report a `find` result as "the instruction files". Report it as the
 candidate set, and name which method established the loaded set.
@@ -160,6 +170,12 @@ Then gather only facts you can see:
   guide, an editorconfig? What agent gotchas exist — generated files, restart
   requirements, ordering dependencies?
 - What does the README already cover? An instruction file MUST NOT duplicate it.
+- Does the repo ship its own skills, and does it *require* one for some path or
+  operation? Only the obligation is worth writing — when it must be loaded, for
+  what. NEVER restate what a skill does: the agent already receives every
+  discoverable skill's description, so a summary is a no-op. And name only
+  skills the repository contains; one it merely benefits from is either already
+  visible or not installed, and neither case is helped by naming it.
 
 Apply the cache test to every candidate line before it earns a place. See
 `references/update-guidelines.md`.
@@ -203,8 +219,10 @@ starting points.
 
 ## Phase 5: Propose Diffs → Approval Gate ⛔ BLOCKING
 
-See `references/update-guidelines.md` for what earns a place, with worked
-good-versus-bad pairs and the two tests that decide it.
+⛔ **Load `references/update-guidelines.md` BEFORE writing the first proposal.**
+Not "consult if useful" — it holds the two tests that decide whether a line
+earns its place, and a proposal written without them is a guess. Proposing
+first and reading after is the failure this marker exists to stop.
 
 Every proposal MUST carry the file, the diff, and one line on why it helps a
 future session. Prefer removal: the cost of a line is paid every session, so
@@ -217,6 +235,8 @@ When a proposal is really a mechanism change, say so instead of editing prose:
 | Guidance applies to one file type or subtree | Keep it in a separate file and add an imperative pointer row in the main file naming the trigger |
 | File is over its line budget | Extract to pointed-to files; note that includes reorganize without reducing cost on agents that parse them, and do nothing on agents that do not |
 | Instruction must hold every time | A hook or a CI gate — an instruction file is context, not enforcement |
+| Enforcement already exists and the file never mentions it | Add the orientation. A hook or deny-list that refuses a command the agent had no reason to avoid reads as an unexplained failure. The inverse of the row above, and more common |
+| Repo ships its own skills and requires one for a path or operation | State the OBLIGATION — when it must be loaded, for what. NEVER describe what the skill does; the agent already has its description. Offer this; do not insist |
 | `AGENTS.md` and `CLAUDE.md` both real and divergent | Reconcile to one real file plus a symlink; see Phase 6 |
 | Monorepo package guidance not reaching the agent | A file in the package directory, plus a pointer row in the root file |
 | Maintainer note with no value to an agent | An HTML comment — stripped before injection on some agents, cheap on all |
@@ -234,7 +254,15 @@ at the repository root:
 | `CLAUDE.md` real, no `AGENTS.md` | Create `AGENTS.md` as a symlink to `CLAUDE.md` |
 | Neither exists | Author `AGENTS.md` as the real file, then symlink `CLAUDE.md` to it |
 | One real, one already a symlink to it | Correct — leave it alone |
-| Both real | ⛔ STOP. Report it. NEVER auto-resolve — one of them holds content the other does not |
+| A symlink pointing OUTSIDE its own directory | Not the pair above. See "links to shared rules" below |
+| Both real | ⛔ STOP and report, per the shape below. NEVER auto-resolve — one of them holds content the other does not |
+
+**Reporting the both-real case.** "Report it" means give the user what they need
+to decide, not a notification: which sections exist in only one file, a diff of
+the sections present in both, which of the two each first-class agent currently
+reads, and the three options — keep A and link B to it, keep B and link A to it,
+or merge into one and link. NEVER recommend a winner on length or recency alone;
+the shorter, older file is often the deliberate one.
 
 ```bash
 ln -s AGENTS.md CLAUDE.md    # never with -f; a real file must never be clobbered
@@ -247,6 +275,23 @@ the "both real" case above.
 package instruction files exist, mirror the same symlink inside each package
 directory, and add a pointer row for each in the root file. The symlink serves
 agents that discover nested files; the pointer serves agents that do not.
+
+**Links to shared rules.** A subdirectory may hold a symlink pointing *out* of
+itself to a centralized rules file, with no sibling. The pair logic above does
+not apply — there is no local real file to reconcile against — but the filename
+still decides everything: a lone `AGENTS.md` in a subdirectory is invisible to
+an agent that only looks for `CLAUDE.md` there, however good the rules file it
+points to. Add the sibling under the other name, pointing at the **same target**,
+and a pointer row in the root file:
+
+```bash
+ln -s ../.claude/rules/thing.md pkg/AGENTS.md
+ln -s ../.claude/rules/thing.md pkg/CLAUDE.md    # same target, not a link to the link
+```
+
+Report this as a finding wherever the root file cites the subdirectory as though
+it already provided coverage — a centralized rules file wired to the one
+filename an agent never reads is worse than no file, because it reads as done.
 
 **llms.txt** is written only when the user asked for it. It is a link index, not
 an instruction file: an H1, an optional summary blockquote, optional detail

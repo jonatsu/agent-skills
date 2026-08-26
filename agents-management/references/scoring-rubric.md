@@ -28,6 +28,14 @@ nobody has.
 repo actually has. Discover it; do NOT assume an ecosystem. Without it, the
 criterion is `not assessed`.
 
+**A repository may have more than one, and they may not agree.** A polyglot repo
+can carry several manifests, and a second runner in a subdirectory may be only
+partly forwarded to from the root — so "documented" against one runner can still
+leave a whole surface undocumented. Establish which is the entry point and which
+are independent BEFORE scoring, state that reading in the report, and score
+against all of them. A file that documents the root runner completely while
+never mentioning a non-forwarded sibling is incomplete, not complete.
+
 | Anchor | Meaning |
 |--------|---------|
 | 20 | Every command a contributor needs is present, and each matches the runner |
@@ -92,6 +100,15 @@ Judge the **effective** size — entrypoint plus includes — against the file's
 budget, never the entrypoint alone. Report both numbers when they differ. Where
 the repository sets no budget of its own, 150 to 200 effective lines is the
 usual point at which a root file stops being read carefully.
+
+**The line budget is a heuristic, and this criterion is where it must be allowed
+to lose.** Some repositories genuinely need a longer file — one whose subject
+matter *is* agent configuration, or one where the guidance is load-bearing every
+session. If the only way to score higher is to extract content that must not be
+missed, the rubric is wrong for that repo: say so in the Evidence column, score
+what the file is worth, and NEVER propose an extraction whose sole benefit is
+this number. An edit that raises Density by moving critical instructions
+somewhere they may never load has made the file worse and the score better.
 
 ## 5. Currency (20)
 
