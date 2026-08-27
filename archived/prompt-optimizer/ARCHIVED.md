@@ -26,7 +26,7 @@ and the reference copy is only worth having if it is exactly what ran.
 | Six-step workflow | `system-prompts` → "Branch: REPAIR", unchanged in substance |
 | Symptom → cause → fix table | `system-prompts/references/failure-modes.md`, plus two new rows routing rank and authority failures back to the main file |
 | Technique catalog | Same reference file, with a new rule: apply the minimum, because three techniques at once make the verification step uninterpretable |
-| General prompt anatomy, few-shot, prefill, temperature, stop, caching | `system-prompts` → "API and task prompts", partitioned so an agent-prompt reader skips it |
+| General prompt anatomy, few-shot, prefill, temperature, stop, caching | `system-prompts/references/api-prompts.md`, loaded only when the target is an API call |
 | `claude-api` handoff for model IDs, params and caching | Kept in both the scope section and the API section |
 | Anti-patterns | Merged into `system-prompts`' single anti-pattern table |
 | Pre-delivery checklist | `system-prompts`, split into a shared list and a REPAIR-only list |

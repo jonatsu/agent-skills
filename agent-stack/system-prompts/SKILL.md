@@ -81,10 +81,10 @@ No workflow, and deliberately none: authoring has no fixed phase order.
 Read in this order, skipping what does not apply:
 [What a prompt cannot do](#what-a-prompt-cannot-do) →
 [Normative language](#normative-language) → [Density](#density) →
-[Voice](#voice) → [Structure and placement](#structure-and-placement). Then load
-the one reference matching the target — `api-prompts.md`, `tool-prompts.md` or
-`global-rule-files.md` — and finish on the shared half of the
-[checklist](#pre-delivery-checklist).
+[Voice](#voice) → [Structure and placement](#structure-and-placement) →
+[Anti-patterns](#anti-patterns). Then load the one reference matching the target
+— `api-prompts.md`, `tool-prompts.md` or `global-rule-files.md` — and finish on
+the shared half of the [checklist](#pre-delivery-checklist).
 
 **Evidence standard.** A sentence earns its place by the decision it changes or
 the house rule it breaks. Where you cannot name either, cut the sentence whole
@@ -95,9 +95,8 @@ Do NOT load `failure-modes.md` or `review-tests.md` here — see
 
 ## Branch: REVIEW
 
-An audit produces **findings, never a score** — no quality or size threshold for
-prompts is established, and a number invites cutting to reach it. Rank by
-consequence instead.
+An audit produces **findings, never a score**, ranked by consequence.
+`references/review-tests.md` carries the reason.
 
 ```text
 Prompt Review Progress:
@@ -116,19 +115,14 @@ a name the tool does not read is invisible, and nothing reports it. Reviewing
 text that never reaches the model is the one failure that invalidates the whole
 review rather than one finding in it.
 
-Then establish two more things before reading a line:
-
-- **Precedence.** A correct rule that is overridden is not in force. Where
-  precedence is undocumented, flag conflicts rather than reasoning about which
-  wins.
-- **What delegated contexts inherit.** Subagents rarely receive the same set as
-  the main session, the difference is usually undocumented, and it decides where
-  a rule must live.
+Then establish **precedence** — an overridden rule is not in force — and **what
+delegated contexts inherit**, which decides where a rule must live. Both are
+usually undocumented; flag conflicts rather than reasoning about which wins.
+`references/global-rule-files.md` owns the specifics for global rule files.
 
 Measure everything loading unconditionally, not only the prompt under review —
 tool schemas, skill manifests, memory indexes, injected server instructions.
-Optimising the smaller half first is common and wasted. For a global rule file,
-`references/global-rule-files.md` has the per-tool paths and inheritance facts.
+Optimising the smaller half first is common and wasted.
 
 ### Steps 2–3: Apply the tests, grade the claims
 
@@ -228,9 +222,8 @@ Pick the minimum that fixes the diagnosed mode — one technique per hypothesis.
 The techniques are in `references/api-prompts.md`; which to
 reach for, and the two specific to repair, are in `references/failure-modes.md`.
 
-Prefer restructuring over emphasis. Adding an instruction MUST come with removing
-the one it duplicates or contradicts. A prompt that grows on every repair is
-being patched, not fixed.
+Adding an instruction MUST come with removing the one it duplicates or
+contradicts. A prompt that grows on every repair is being patched, not fixed.
 
 ### Step 5: Verify
 
@@ -284,9 +277,10 @@ above applies unchanged.
 
 RFC 2119 keywords in full caps, no bold. **Caps mark requirement strength for the
 reader and the reviewer** — they make an obligation greppable and let a review
-tell a rule from a description. They are NOT an adherence lever: the widely
+tell a rule from a description. They are not an adherence lever: the widely
 repeated claim that emphasis keywords improve compliance traces back to a
-conditional vendor tip naming only `IMPORTANT`, for one line at a time.
+conditional vendor tip naming only `IMPORTANT`, for one line at a time — a
+correction graded DOCUMENTED-at-one-remove in `references/global-rule-files.md`.
 
 **Reserve caps for requirement strength.** Decorative capitals — FIRST, ONLY,
 BEFORE — dilute the keywords that carry meaning.
@@ -334,7 +328,7 @@ Target **5–12 words per tactical bullet**, longer only for multi-part contract
 where each clause carries a distinct constraint.
 
 AVOID compressing: factual reference (operator definitions, return formats,
-schemas), worked examples (the example IS the explanation), and the first
+schemas), worked examples (the example *is* the explanation), and the first
 occurrence of a non-obvious term.
 
 ## Voice
@@ -372,12 +366,14 @@ more absolute a rule's wording, the further it is followed off the cliff.
 
 ## Structure and placement
 
-**Put the rules you cannot afford to lose first, and the ones you can least
-afford to lose at the very top.** Two separate results converge on the edges and
-they do not weight them equally — retrieval favours beginning *and* end, while
-instruction-following degrades selectively in favour of **what comes first**. So
-the start is the privileged position and the end is second, not its equal. See
-`references/evidence.md`.
+**Put the rules you cannot afford to lose first.** One measured result and one
+traced correction point the same way without weighting the edges equally.
+Retrieval favours beginning *and* end (Liu et al., in `references/evidence.md`,
+which also states that extending it to instruction adherence is an inference).
+Instruction-following is separately reported to degrade in favour of **what comes
+first** — a correction graded DOCUMENTED-at-one-remove in
+`references/global-rule-files.md`, not re-verified here. Treat the start as the
+privileged position and the end as second, not its equal.
 
 Front matter, in order: role and agency in one line; the RFC alias contract;
 why correctness matters here; response style; the top-priority rules.
@@ -430,7 +426,8 @@ opposite claim has. See `references/evidence.md`.
 
 ## References
 
-Load by branch, then by what the target is. Never more than two.
+One branch file, plus one target file. `evidence.md` is looked up on demand and
+does not count against that.
 
 | Load when | File |
 |---|---|
@@ -439,7 +436,7 @@ Load by branch, then by what the target is. Never more than two.
 | The target is a per-user file a tool loads every session — `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md` and equivalents | `references/global-rule-files.md` |
 | The target is the prompt behind a single API call — few-shot, prefill, temperature, stop, caching | `references/api-prompts.md` |
 | The target is a tool or function description the model reads to decide whether to call it | `references/tool-prompts.md` |
-| A claim in this skill is load-bearing for a decision, or a prompt's own citations need checking | `references/evidence.md` |
+| A sentence here says "see `evidence.md`", or a reviewed prompt cites a study, a number or a token count | `references/evidence.md` |
 
 **Do NOT load:**
 
@@ -454,6 +451,8 @@ Load by branch, then by what the target is. Never more than two.
   is how a stale path gets repeated as fact.
 - More than one of `api-prompts.md`, `tool-prompts.md` and `global-rule-files.md`
   per pass — three different targets; needing two means the target is unsettled.
+- `evidence.md` speculatively. It settles a claim you are about to rest a
+  decision on; read cover to cover it is a bibliography, not guidance.
 
 ## Pre-delivery checklist
 
@@ -472,7 +471,8 @@ All three branches:
 - [ ] Prohibitions paired with an alternative where it is not obvious
 - [ ] Every rule is obeyed by the prompt's own examples and templates
 - [ ] Every empirical claim graded or marked unmeasured; no unopened citation
-- [ ] No hedging, no ceremony, no closing summaries
+- [ ] No hedging, no ceremony, no ceremonial closing summary. A deliberate
+      end-position repeat of a load-bearing rule is not one
 
 REVIEW only:
 
@@ -481,14 +481,14 @@ REVIEW only:
 - [ ] Everything else loading unconditionally was measured too
 - [ ] Each finding names the line, the test it failed, the evidence, the action
 - [ ] Findings ranked by consequence, and separated from preferences
-- [ ] What was NOT assessed is stated
+- [ ] What was not assessed is stated
 - [ ] No score reported, and nothing cut to reach a target
 - [ ] Any shipped cut verified by blind reader or diff critic, against criteria
       written before the edits existed
 
 REPAIR only:
 
-- [ ] Over- versus under-compliance settled BEFORE any rewording
+- [ ] Over- versus under-compliance settled before any rewording
 
 - [ ] The real prompt was read verbatim, not a paraphrase
 - [ ] Each change maps to a named failure mode from Step 2

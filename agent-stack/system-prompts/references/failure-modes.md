@@ -37,10 +37,10 @@ open.
 
 ## Choosing techniques
 
-**The techniques themselves live in `SKILL.md` → "API and task prompts"** —
-delimiting, few-shot sets, prefill, stop sequences, temperature, explicit
-fallbacks, caching. This file does not restate them. What belongs here is how
-many to reach for and which two the main file does not cover.
+**The techniques themselves live in `api-prompts.md`** — delimiting, few-shot
+sets, prefill, stop sequences, temperature, explicit fallbacks, caching. This
+file does not restate them. What belongs here is how many to reach for, and the
+two that belong to repair rather than authoring.
 
 **Pick the minimum that fixes the diagnosed mode.** Applying three techniques to
 one symptom makes Step 5 uninterpretable: when it works you do not know which one

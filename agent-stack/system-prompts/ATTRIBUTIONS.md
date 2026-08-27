@@ -24,8 +24,7 @@ rewritten rather than edited, for four reasons:
   ` AVOID` is 2 tokens in both encodings, and both keywords cost 2 at the start
   of a line. A "~20%" middle-of-context degradation figure was attributed to no
   source and does not appear in the abstract of the paper the effect comes from.
-  Both are now in the skill's `Measured claims` section with what actually backs
-  them.
+  Both are now in `references/evidence.md` with what actually backs them.
 - **A tag vocabulary presented as house style.** The seven-tag table
   (`<system-conventions>`, `<stakes>`, `<yielding>`, …) was upstream's own
   harness convention. It is replaced by a four-line rule: adopt the target
@@ -35,7 +34,8 @@ rewritten rather than edited, for four reasons:
 - **A scope collision.** The description claimed `CLAUDE.md`, `AGENTS.md` and
   `rules/*.md`, which `agents-management` owns. Two skills competed for the same
   prompt. Scope is now system prompts, agent and subagent definitions, and tool
-  descriptions, with the three neighbouring skills named explicitly.
+  descriptions. Two neighbouring skills are named as boundaries, and `claude-api`
+  as a handoff for model and parameter facts.
 
 Retained ideas, all independently re-expressed and none carrying upstream
 phrasing: RFC 2119 discipline in prompts, one-claim-per-bullet density,
@@ -44,8 +44,10 @@ imperative voice, and the shape of a tool prompt. The RFC alias convention itsel
 upstream's.
 
 Because no contiguous run of upstream code or prose survives, this is a ledger
-entry rather than a licence header, and no `LICENSE.upstream` ships. Upstream was
-MIT and this skill is MIT, so no relicensing question arises either way.
+entry rather than a licence header, and **oh-my-pi contributes no
+`LICENSE.upstream`** — the one that ships covers a different upstream, named
+under Third-party material below. Upstream was MIT and this skill is MIT, so no
+relicensing question arises either way.
 
 ## Third-party material
 

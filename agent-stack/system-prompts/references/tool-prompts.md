@@ -13,7 +13,7 @@ fallback chains, performance tuning — stays in code.
 
 ### Describe surface, not machinery
 
-The model picks tools from prose, not source. Tell it WHEN and WHY, NEVER HOW the
+The model picks tools from prose, not source. Tell it *when* and *why*, NEVER *how* the
 tool works internally. If the model's behavior would not change based on a
 detail, the detail does NOT belong in the prompt.
 
@@ -27,7 +27,7 @@ NOT mention the chunker, the binary sniffer, or the cache layer.
    "compact, line-anchored edit format".
 2. **Input grammar.** Operators, parameters, selectors — the concrete syntax the
    model will emit verbatim.
-3. **Worked examples**, 3–8, covering the common shapes. Each example IS the
+3. **Worked examples**, 3–8, covering the common shapes. Each example *is* the
    explanation; do NOT narrate it twice.
 4. **Failure shapes the caller owns** — those it can fix by changing its input.
    Skip failures the engine recovers from silently.

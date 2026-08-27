@@ -11,13 +11,13 @@ has and an agent prompt does not.
 
 **Anatomy, and the order is load-bearing:** role and task -> long context and
 data -> numbered instructions -> few-shot examples -> output format -> prefill
-and stop. Long data goes BEFORE the instructions, so the instructions are the
+and stop. Long data goes *before* the instructions, so the instructions are the
 most recent thing the model read. Delimit each section so boundaries are findable.
 
 **Few-shot sets.** 2–5 diverse examples in the exact target format. Cover the
 edge cases. AVOID over-fitting: a model given near-identical examples parrots
 them. On a strong model with an already-clear task, few-shot may add noise rather
-than signal — see [Measured claims](#measured-claims).
+than signal — see `evidence.md`.
 
 **Prefill** the assistant turn to force a format and skip preamble. **Stop
 sequences** end generation at a known boundary. **Temperature** trades diversity

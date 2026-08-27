@@ -17,8 +17,8 @@ Each test names what settles it. A line that fails one is a finding.
 | **Contradiction** | Does any other loaded line disagree with this one? | Reading them together. On at least one tool both texts are in context and neither wins |
 | **Currency** | Does every named path, command, tool and file still exist? | Checking each. A stale rule is worse than a missing one — it misdirects, and the model follows it correctly to a wrong result |
 | **Mechanism fit** | Is this held by the weakest mechanism that can hold it? | The ladder below |
-| **Rank** | Does this line claim authority the prompt does not have? | [What a prompt cannot do](#what-a-prompt-cannot-do) |
-| **Escape hatch** | Does this rule say what to do when it does not fit? | Its own text. See [Escape hatches](#escape-hatches) |
+| **Rank** | Does this line claim authority the prompt does not have? | `SKILL.md` → What a prompt cannot do |
+| **Escape hatch** | Does this rule say what to do when it does not fit? | Its own text. See `SKILL.md` → Escape hatches |
 | **Plain English** | Is there an everyday word that loses nothing? | Substituting it. Keep genuine terms of art; replace in-house shorthand |
 | **Size** | What is the effective size in bytes, including everything pulled in? | Measuring. Never lines — wrapping alone moves that count by a factor of two |
 
@@ -38,7 +38,7 @@ sits at its tier, or someone later "improves" it into a broken regex.
 ⚠️ **Cut per rule, never to a target.** Removing a duplicate, a contradiction, an
 obsolete fact or an inert line is defensible on its own terms. Cutting to reach a
 byte or line count is not — no threshold is established for prompts, and the
-evidence that exists is contested. See [Measured claims](#measured-claims).
+evidence that exists is contested. See `evidence.md`.
 
 ### Step 3: Grade the prompt's own claims
 
