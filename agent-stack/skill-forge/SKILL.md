@@ -1,6 +1,6 @@
 ---
 name: skill-forge
-description: "Create high-quality, production-grade agent skills. Expert guidance on skill architecture, workflow design, prompt engineering, description writing, packaging, and quality control. Use when user wants to create a new skill, build a skill, design a skill, write a skill, update an existing skill, improve a skill, refactor a skill, debug a skill, test a skill, or package a skill. Triggers: 'create skill', 'build skill', 'new skill', 'skill creation', 'write a skill', 'make a skill', 'design a skill', 'improve skill', 'package skill', 'skill development', 'skill template', 'skill best practices', 'write SKILL.md'."
+description: "Authors and repairs agent skills. Covers SKILL.md structure, description and trigger keywords, progressive disclosure and reference load triggers, when to bundle a script, portability, licensing for adapted skills, and the evidence a skill needs before it ships. Use when creating a new skill, writing a SKILL.md, updating or improving an existing one, refactoring it, splitting an overlong one into references, or debugging one that fires at the wrong times or not at all. Triggers: 'create skill', 'build skill', 'new skill', 'write a skill', 'design a skill', 'improve skill', 'refactor skill', 'skill development', 'skill template', 'write SKILL.md', 'my skill does not trigger'. NOT for scoring a skill against a rubric, which is skill-judge. NOT for system prompts, subagent definitions, tool descriptions or global rule files, which is system-prompts. NOT for a repository's AGENTS.md or CLAUDE.md, which is agents-management. NOT for finding or installing third-party skills, which is find-skills."
 metadata:
   author: Joonas Onatsu
   license: MIT
@@ -192,10 +192,18 @@ Key constraints:
 MUST skip if working on an existing skill. Otherwise run:
 
 ```bash
-python3 scripts/init_skill.py <skill-name> --path <output-directory>
+python3 scripts/init_skill.py <skill-name> --path <output-directory> \
+  --license <spdx-id> [--author "<name>"]
 ```
 
-The script creates a template with Iron Law placeholder, workflow checklist, and proper directory structure.
+It writes one shape-neutral `SKILL.md` and nothing else — no empty `scripts/`,
+`references/` or `assets/`, which git does not track and which vanish on clone.
+
+`--license` MUST be the licence of the repository the skill will live in, read
+from that repo's own `LICENSE` — or the UPSTREAM licence when adapting someone
+else's skill. The script refuses without it; `--author` falls back to
+`git config user.name` and then fails closed. A fabricated author or licence is a
+false provenance claim in a file that reads as authoritative.
 It also seeds default frontmatter metadata for newly created skills.
 
 ## Step 4: Write Description
@@ -300,8 +308,8 @@ only when a check you wrote cannot be settled by looking at the output.
 - **Imperative form**: SHOULD use "Analyze the input" not "You should analyze the input"
 - **RFC 2119 keywords**: all behavioral directives MUST use ALL CAPS keywords (MUST, SHOULD, NEVER, MAY)
 - **Authorship and license metadata**:
-  - For a newly created skill, MUST set `metadata.author` to `Joonas Onatsu` and `metadata.license` to `MIT`.
-  - For a skill adapted from upstream, MUST still set `metadata.author` to `Joonas Onatsu` and MUST set `metadata.license` to the upstream license.
+  - For a newly created skill, MUST set `metadata.author` to the person or team authoring it, and `metadata.license` to the licence of the repository it will live in. Discover that licence from the repo's own `LICENSE` file; NEVER assume one.
+  - For a skill adapted from upstream, MUST set `metadata.author` to whoever did the adaptation, and MUST set `metadata.license` to the UPSTREAM licence — not the adopting repository's. Relicensing someone else's work is not yours to do.
   - For a skill adapted from upstream, MUST move upstream provenance out of `SKILL.md` frontmatter and into `ATTRIBUTIONS.md`.
   - `ATTRIBUTIONS.md` MUST record original author or authors, upstream project or URL, pinned commit or tag when available, and a short adaptation note.
   - For a skill adapted from upstream, a verbatim copy of the upstream license MUST ship beside `ATTRIBUTIONS.md` as `LICENSE.upstream`, and upstream's own `NOTICE` (where one exists) as `NOTICE.upstream`. A link is NOT compliance: Apache-2.0 sections 4(a) and 4(d) require both to travel with a modified version, and provenance metadata alone satisfies neither. Keep both files with the skill when redistributing or re-deploying it.
@@ -342,7 +350,7 @@ only when a check you wrote cannot be settled by looking at the output.
 ### Scripts
 - MUST encapsulate deterministic, repeatable operations
 - Scripts execute without loading into context; major token savings
-- MUST test every script before packaging
+- MUST test every script before delivery
 - In SKILL.md, MUST document only command and arguments, not source code
 - MUST say per script whether to EXECUTE it or read it as reference, and MUST handle
   anticipated failures inside the script with a message naming the next action —
@@ -379,7 +387,7 @@ MUST test before proceeding to review.
 
 ## Step 8: Review ⚠️ REQUIRED
 
-MUST present the skill summary to the user and confirm before packaging.
+MUST present the skill summary to the user and confirm before delivering.
 
 For a scored design review, MAY invoke the `skill-judge` skill via the Skill tool
 if it appears in this session's available-skills list — it grades the draft

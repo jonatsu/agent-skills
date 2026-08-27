@@ -3,7 +3,7 @@
 ## Current skill
 
 - Skill: `<skill-name>`
-- Current author: Joonas Onatsu
+- Current author: `<who-did-the-adaptation>`
 - Current license: `<current-license>`
 - Status: adapted from upstream and materially modified
 
