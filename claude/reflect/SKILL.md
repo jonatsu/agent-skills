@@ -10,8 +10,10 @@ metadata:
 
 Distill the current session into durable improvements so the same corrections,
 feedback, and manual work are never re-derived. This skill operationalizes the
-`## Self-Improvement` section of `~/.config/claude/CLAUDE.md` — routing,
-thresholds, and the autonomy boundary all come from there.
+`## Self-Improvement` section of `~/.config/claude/rules/WORKFLOW.md`, which
+owns routing by scope and the autonomy boundary. The graduated ladder in §3
+below is the authoritative copy; that file points here for it rather than
+restating it.
 
 **Iron law: capture only what actually happened in this session.** Never invent
 a learning to fill the sweep. Every candidate must cite the turn or action it
