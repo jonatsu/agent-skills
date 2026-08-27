@@ -28,7 +28,7 @@ is agent-specific. Four terms resolve to your current agent:
   WebFetch, Read, Write; OpenCode: `read`/`write`).
 - **permission config** — Claude Code: settings.json permissions; OpenCode:
   `~/.config/opencode/opencode.json`.
-- **`skill-forge` / `skill-review`** — sibling skills in your skills directory;
+- **`skill-forge` / `skill-judge`** — sibling skills in your skills directory;
   load them by name.
 
 ## Source Tiers (provenance — agent-neutral)
@@ -73,8 +73,11 @@ actually does and its caveats.
   ```bash
   scripts/verify_skill.sh <downloaded-skill-dir>
   ```
-  Deterministic and vendor-independent: hidden-Unicode/bidi scan, secret scan,
-  `curl|bash`/exfiltration patterns, and shellcheck/semgrep on bundled scripts.
+  Deterministic given the tools present, and vendor-independent: hidden-Unicode/bidi
+  scan, secret scan, `curl|bash`/exfiltration patterns, and shellcheck/semgrep on
+  bundled scripts. Each check probes for its tool and reports `[skip]` when none is
+  found, so the same candidate can pass with fewer checks run than you assume —
+  read the skip lines, do NOT read a clean exit as a clean candidate.
   Exit 2 (blockers) → MUST discard. Exit 1 (warnings) → review each with the
   user before recommending.
 - **L2 — Direct SKILL.md read** ⚠️ REQUIRED. Read the actual markdown yourself.

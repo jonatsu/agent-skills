@@ -9,10 +9,16 @@
 
 ## Original author and source
 
+- Original author: Leonardo Flores
+- Copyright holder: `Copyright (c) 2026 Leonardo Flores`, as stated in upstream's
+  `LICENSE`
 - Upstream project:
-  [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit),
-  skill `skill-judge`.
-- Upstream license: MIT.
+  [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit)
+- Source path: `skills/skill-judge`
+- Source commit: `3027f20f3181758385a1bb8c022d4041dfb4de84`. **Not recorded at
+  adaptation time** — this is upstream's HEAD as of 2026-08-27, dated
+  2026-03-05, which predates the 2026-07-27 commit that added this skill here.
+  It is therefore the commit adapted from unless upstream rewrote history.
 
 ## Adaptation note
 
@@ -36,22 +42,19 @@ Material changes from the upstream skill:
 - Rewrote frontmatter to this repo's conventions (`metadata.author` /
   `metadata.license`) and added an Iron Law.
 
-## Upstream license (MIT)
+## Upstream license
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+MIT. The verbatim upstream `LICENSE` ships beside this file as
+`LICENSE.upstream` and MUST travel with the skill when it is redistributed or
+re-deployed. Upstream publishes no `NOTICE` file, so there is no
+`NOTICE.upstream`.
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+The licence text was previously inlined here **without its copyright line**,
+which made it neither a verbatim reproduction nor compliant with MIT's own
+requirement that the copyright notice travel with the software. Replaced on
+2026-08-27 with the byte-for-byte file.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Verified against the primary source on 2026-08-27 — `gh api
+repos/softaworks/agent-toolkit/license` reported `MIT`, and the `LICENSE` blob
+itself was fetched and copied byte-for-byte. `gh repo view --json licenseInfo`
+was NOT used; it misreports repositories that do carry a licence.

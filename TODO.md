@@ -204,14 +204,23 @@ relative to `skills/` unless noted. Repository-wide items live in
   95/120 C, `find-skills` 93/120 C, `writing-great-skills` 92/120 C. ⚠️ D1/D5 are
   **provisional** for `skill-forge`, `find-skills` and `writing-great-skills` — their
   `references/` were not read, so those three totals are soft.
-  - **Licence compliance, and the only items here that are not style.** `skill-forge` and
+  - ~~**Licence compliance, and the only items here that are not style.** `skill-forge` and
     `skill-judge` both declare upstream adaptation in `ATTRIBUTIONS.md` and ship no
     `LICENSE.upstream`, which `skill-forge` itself requires of adapted skills.
     `skill-judge` inlines MIT text under "Upstream license (MIT)" that is **missing the
     copyright line**, so it is not a verbatim reproduction and satisfies neither
     `skill-forge`'s rule nor MIT's own notice requirement. Neither records a holder or a
     primary-source read date, which `skill-forge` also mandates. Verify each against
-    `gh api repos/OWNER/REPO/license` and the LICENSE file itself, not `gh repo view`.
+    `gh api repos/OWNER/REPO/license` and the LICENSE file itself, not `gh repo view`.~~
+    **FIXED 2026-08-27.** Both now ship a byte-for-byte `LICENSE.upstream` fetched from
+    the upstream `LICENSE` blob, and both `ATTRIBUTIONS.md` record the holder, the
+    verification method and the read date. Verified via `gh api
+    repos/OWNER/REPO/license` plus the blob itself: `sanyuan0704/sanyuan-skills` MIT
+    `Copyright (c) 2025 sanyuan0704`; `softaworks/agent-toolkit` MIT `Copyright (c) 2026
+    Leonardo Flores`. Neither upstream publishes a `NOTICE`, so no `NOTICE.upstream` was
+    needed. `skill-judge`'s source commit was never recorded at adaptation time; it is
+    now pinned to upstream HEAD `3027f20f` and **marked as an inference**, sound because
+    that commit is dated 2026-03-05 and this skill landed here 2026-07-27.
   - **`skill-judge` depends on a skill no skill can invoke.** It tells the agent to consult
     `writing-great-skills` for vocabulary in three places, and names it in its description.
     `writing-great-skills` sets `disable-model-invocation: true`, and its own text states the
@@ -223,10 +232,16 @@ relative to `skills/` unless noted. Repository-wide items live in
     description claims "improve a skill" and the literal trigger `'improve skill'`,
     `skill-judge`'s claims "improving a SKILL.md" and "how do I make this skill better".
     Routing is one-way — `skill-judge` defers to `skill-forge` for authoring; `skill-forge`
-    carries **no NOT clause at all**, the only one of the six that lacks one, and names
-    `skill-judge` only in its body, which loads after triggering. `skill-forge` also
-    advertises "prompt engineering", which is `system-prompts`' whole subject. Add NOT
-    clauses routing review/score → `skill-judge` and prompt work → `system-prompts`.
+    carries **no NOT clause at all** and names `skill-judge` only in its body, which loads
+    after triggering. `skill-forge` also advertises "prompt engineering", which is
+    `system-prompts`' whole subject. Add NOT clauses routing review/score → `skill-judge`
+    and prompt work → `system-prompts`.
+    **Recount correction, 2026-08-27:** the original entry called `skill-forge` "the only
+    one of the six that lacks one". It is not. `grep -c "NOT for"` gives find-skills 1,
+    system-prompts 1, agents-management 1, and **0 for `skill-forge`, `skill-judge` and
+    `writing-great-skills`** — three of six. `skill-judge` routes in prose ("Complements
+    skill-forge (authoring); this is the grading lane") but carries no NOT clause, so the
+    routing gap is wider than the entry claimed.
   - **`skill-forge` breaks three of its own checklist items.** It mandates a "do NOT load"
     block twice and ships none across nine references. It forbids topic-label load triggers
     ("says what is inside; never when to pay for it") and uses them — "for keyword bombing
@@ -235,16 +250,22 @@ relative to `skills/` unless noted. Repository-wide items live in
     or fallback, against its own rule that an absent dependency MUST degrade to a reported
     skip; the working invocation (`uv run --with pyyaml …`) exists only in this repo's root
     `AGENTS.md`, which the skill's readers do not have.
-  - **`find-skills` carries three stale bindings and a dangling reference.** It points at a
-    sibling skill named `skill-review`, which does not exist — it is `skill-judge`. Its
+  - **`find-skills` carries three stale bindings and a dangling reference.**
+    **Partly fixed 2026-08-27:** the `skill-review` → `skill-judge` pointer (`:31`) and the
+    "deterministic" overstatement (`:76`) are done; the self-update section is held pending
+    the remove-or-declare decision below. ~~It points at a
+    sibling skill named `skill-review`, which does not exist — it is `skill-judge`.~~ Its
     self-update section names the repo as `agent-skills` (it is `agent-setup`), the path as
     `shared/find-skills/` (it is `shared/agent-stack/find-skills/`), and warns about being
     "overwritten on the next store update" — skillsmgr-era text; Kasetto has no store. That
     section is also an undeclared repo binding: either remove it or declare
-    `metadata.scope: repo-local` and name the repository in the opening lines. Separately,
+    `metadata.scope: repo-local` and name the repository in the opening lines. ~~Separately,
     its L1 verification is called "deterministic" while the script correctly probes and
     skips — the same candidate passes with shellcheck present and reports `skip` without it.
-    Reword to "deterministic given the tools present".
+    Reword to "deterministic given the tools present".~~ Confirmed against
+    `scripts/verify_skill.sh`, which probes with `command -v` and calls `skip()` for the
+    hidden-Unicode scan, the secret scan, shellcheck and semgrep independently. Reworded,
+    and a line added telling the reader that a clean exit is not a clean candidate.
   - **`writing-great-skills` was never brought up to repo conventions**, which its own
     `ATTRIBUTIONS.md` half-discloses ("body and GLOSSARY.md preserved verbatim from
     upstream"): zero RFC 2119 keywords in 86 lines, no NEVER list, and `GLOSSARY.md` at 201
@@ -256,6 +277,12 @@ relative to `skills/` unless noted. Repository-wide items live in
     prohibition should be kept only as a hard guardrail; `skill-forge` §5.6 and
     `skill-judge`'s D3 both make an explicit NEVER list a scored requirement, capped at 3
     for "no anti-patterns". Both positions are defensible. The silence is not.
-  - **One defect shipped verbatim in two skills.** `skill-forge` and `skill-judge` both say
+  - ~~**One defect shipped verbatim in two skills.** `skill-forge` and `skill-judge` both say
     a skill gave "four answers to a question the running tool answers once" — the example
-    lists 81, 76 and 63, which is **three** claimed answers against 80 actual. Fix in both.
+    lists 81, 76 and 63, which is **three** claimed answers against 80 actual. Fix in both.~~
+    **FIXED 2026-08-27, in `skill-forge` only — the entry above was wrong to say "in both".**
+    `skill-judge:45` reads "81 in the title, 76 in **two notes**, and 63 by its own
+    arithmetic": four instances of three distinct values, and internally coherent.
+    `skill-forge:43` had condensed that to "as 81, 76 and 63", dropping the clause the
+    count rested on. A one-file off-by-one, now repaired by restoring the instance detail.
+    `skill-judge` was correct and was left untouched.

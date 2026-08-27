@@ -40,9 +40,9 @@ Recoverable by default: CLI flags and subcommands, parameter schemas, config
 keys, inventory counts, version numbers, supported-language lists, error
 catalogues. A skill that transcribes these inherits a maintenance burden it
 cannot meet, and its copy is wrong from the next upstream release onward while
-still reading as authoritative. One audited skill gave its tool count as 81, 76
-and 63 within a single file, against 80 actual rows — four answers to a question
-the running tool answers once, correctly.
+still reading as authoritative. One audited skill gave its tool count as 81 in a
+title, 76 in two separate notes, and 63 by its own arithmetic, against 80 actual
+rows — four answers to a question the running tool answers once, correctly.
 
 Question 3 is load-bearing. Where the live source is WRONG — a published schema
 stripped of its combinators, a documented warning that never fires — the skill's
