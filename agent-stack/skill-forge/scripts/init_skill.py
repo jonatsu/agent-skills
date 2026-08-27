@@ -18,53 +18,40 @@ metadata:
 
 IRON LAW: [TODO: Ask \"What is the ONE mistake the agent will most likely make with this skill?\", then write the unbreakable rule that prevents it. e.g. \"NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.\" Nothing goes above this line but the H1.]
 
-## Workflow
+[TODO: PICK A SHAPE BEFORE WRITING THE BODY. This template deliberately gives you no
+skeleton, because the skeleton depends on the answer.
 
-Copy this checklist and check off items as you complete them:
+  process     a phased procedure with real ordering and prerequisites
+              -> a trackable checklist with the ⚠️ REQUIRED / ⛔ BLOCKING markers
+  mindset     taste and judgement                  -> NO checklist; a strong NEVER list
+  navigation  routes the reader to other material  -> NO checklist; a routing table
+  tool        decision trees, low freedom          -> NO checklist; the trees themselves
+  philosophy  craft-first prose                    -> NO checklist
 
-```text
-{skill_title} Progress:
-
-- [ ] Step 1: [TODO: First step] ⚠️ REQUIRED
-  - [ ] 1.1 [TODO: Sub-step]
-  - [ ] 1.2 [TODO: Sub-step]
-- [ ] Step 2: Confirm with user ⚠️ REQUIRED
-- [ ] Step 3: [TODO: Core operation]
-- [ ] Step 4: [TODO: Output / delivery]
-```
-
-## Step 1: [TODO: First Step]
-
-[TODO: Use question-style instructions, not vague directives.]
-
-## Step 2: Confirm ⚠️ REQUIRED
-
-- Proceed with all?
-- Only high-priority items?
-- Select specific items?
-- View only, no changes?
-
-⚠️ Do NOT proceed without user confirmation.
-
-## Step 3: [TODO: Core Operation]
-
-- Load references/[TODO].md for [specific purpose]
-
-## Step 4: [TODO: Output]
-
-[TODO: Define output format and structure]
+A checklist in anything but a Process skill instructs the agent to do what it already
+does. It is a no-op, and a scored review will dock it. Delete this block once the body
+exists.]
 
 ## Anti-Patterns
 
-[TODO: Ask: \"What would the agent's lazy default look like?\"]
+[TODO: Ask \"What would the agent's lazy default look like for this task?\", then forbid
+it explicitly. Each entry MUST carry the non-obvious reason, or it reads as fussiness.]
 - [TODO]
 - [TODO]
 
 ## Pre-Delivery Checklist
 
-- [ ] [TODO: e.g., No placeholder text remaining (TODO, FIXME)]
-- [ ] [TODO: e.g., All generated code runs without errors]
-- [ ] [TODO: e.g., Output matches requested format]
+[TODO: Each item MUST be settleable by looking at the output. \"Ensure good quality\" is
+not; \"no placeholder text remaining (TODO, FIXME, xxx)\" is.]
+- [ ] [TODO]
+- [ ] [TODO]
+
+[TODO: references/ is OPTIONAL — start with none and add one only when SKILL.md is
+genuinely too long. If you do add any, each MUST carry a symptom-shaped load trigger in
+this file — \"load when X happens\", NEVER a topic label like \"for patterns and
+examples\", which says what is inside but never when to pay for it. The package MUST also
+carry a \"do NOT load\" block naming what not to read, and when. Delete this block if the
+skill ships no references.]
 """
 
 

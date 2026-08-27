@@ -42,17 +42,29 @@ argument-hint: [content] [--style name] [--quick] [--lang code]
 
 ### Quick Mode
 
-A `--quick` flag that skips confirmation gates is a common pattern:
+A `--quick` flag MAY skip gates that only collect **preferences** — which style, which
+language, which of several equally valid outputs.
+
+`--quick` MUST NEVER skip a gate guarding a destructive operation: delete, overwrite,
+force-push, send, deploy. One flag typed up front cannot authorize an action the user had no
+way to foresee when they typed it, and a gate that a flag can switch off is not a gate.
 
 ```markdown
-## Step 2: Confirm Options ⚠️ REQUIRED
+## Step 2: Confirm Options (skipped by `--quick`)
 
 Unless `--quick` was passed:
-- Present options to user
-- Wait for confirmation
+- Present the style and language options
+- Wait for the user's selection
 
-If `--quick`: use auto-selected defaults and proceed.
+If `--quick`: use the documented defaults and proceed.
+
+## Step 5: Confirm Overwrite ⚠️ REQUIRED
+
+Ask before replacing the existing file. `--quick` does NOT skip this gate.
 ```
+
+If every gate a skill has is destructive, that skill has no `--quick` mode. Say so, rather
+than adding a flag that skips nothing.
 
 ### Default Values
 

@@ -111,11 +111,31 @@ Skill Forge Progress:
 - [ ] Step 8: Review ⚠️ REQUIRED
   - [ ] Run pre-delivery checklist
   - [ ] Present summary to user for confirmation
-- [ ] Step 9: Package
-  - [ ] Run quick_validate.py
-  - [ ] Run package_skill.py
+- [ ] Step 9: Validate
+  - [ ] Run quick_validate.py, and read its warnings as well as its verdict
 - [ ] Step 10: Iterate based on real usage
 ```
+
+## References, and when NOT to load them
+
+Seven files. Each step below names the symptom that earns its load; nothing here needs
+reading up front, and reading it all costs more than the body it supports.
+
+**Do NOT load:**
+
+- `architecture-patterns.md` for a single linear procedure. Its eight shapes are for
+  skills that route, fan out, loop or degrade; a sequential workflow needs none of them,
+  and shopping the list invites structure the skill does not need.
+- `pro-agent.md` when no script is in question. It settles script-versus-prose, and read
+  outside that decision it argues for scripting work that does not want a script.
+- `parameter-system.md` for a skill that takes no arguments. Read speculatively it
+  suggests flags, and a flag nobody asked for is a gate nobody wanted.
+- `workflow-patterns.md` to decide WHETHER a checklist belongs. It assumes that question
+  is settled and supplies the markers; loaded early it answers "yes" by default, which is
+  the exact defect Step 5.2 exists to prevent.
+- More than one of `description-guide.md`, `writing-techniques.md` and `testing-guide.md`
+  at a time. They serve Steps 4, 5 and 7 respectively; needing two at once means the step
+  you are on is not the step you think you are on.
 
 ## Step 1: Understand the Skill ⚠️ REQUIRED
 
@@ -136,11 +156,25 @@ For each concrete example, ask:
 2. What domain knowledge is needed at specific steps? -> `references/`
 3. What files are used in output but not in reasoning? -> `assets/`
 
+Three levels load at three moments, and the split exists to exploit that: `name` +
+`description` are always resident, the body arrives on trigger, and the rest costs nothing
+until something reaches for it.
+
 Key constraints:
-- SKILL.md MUST stay under 500 lines; everything else goes to `references/`
-- References SHOULD be organized by domain, one level of nesting only
-- Load `references/architecture-guide.md` for progressive loading patterns
-- Load `references/pro-agent.md` for the 3-layer architecture (directive/orchestration/execution)
+- SKILL.md MUST stay under 500 lines; everything else goes to `references/`. The context
+  window is shared with the system prompt, the conversation and every other skill's
+  metadata, so a bloated SKILL.md crowds out work that is not yours
+- References SHOULD be organized by domain, not by type, one level of nesting only.
+  `references/palettes/`, `references/config/` — NEVER `references/checklists/`,
+  `references/templates/`, which sort by shape and leave the agent guessing which
+  shape holds its answer
+- ⛔ Load `references/architecture-patterns.md` when the skill must support several
+  distinct operations, fan out to subagents, loop until a quality bar is met, or keep
+  working when a tool it wanted is missing — it carries the eight orchestration shapes
+  and what each is for. Skip it for a single linear procedure
+- ⛔ Load `references/pro-agent.md` when deciding what belongs in a script versus in
+  prose, and the call is not obvious — typically when a step is deterministic but
+  feels too small to extract
 
 ## Step 3: Initialize ⛔ BLOCKING
 
@@ -159,7 +193,9 @@ The description determines:
 1. Whether the skill triggers automatically
 2. Whether users find it by search
 
-Load `references/description-guide.md` for keyword bombing and good/bad examples.
+⛔ Load `references/description-guide.md` before writing the description — every time,
+because a description that reads well to its author is the single most common reason a
+finished skill never fires.
 
 Key rule: NEVER put "When to Use" info in the SKILL.md body. The body loads after triggering; too late.
 
@@ -174,7 +210,8 @@ MUST write a rule that prevents it. MUST place it immediately after the H1 title
 and before any other prose — that is the top of the body, since every SKILL.md
 opens with its H1.
 
-Load `references/writing-techniques.md` for Iron Law patterns and red flag signals.
+⛔ Load `references/writing-techniques.md` when you cannot name the one mistake, or when
+the rule you wrote could be read as advice rather than a prohibition.
 
 ### 5.2 Design Workflow Checklist (shape-dependent)
 
@@ -195,7 +232,10 @@ Where the skill IS a workflow, create a trackable checklist with:
 - Sub-step nesting for complex steps
 - (conditional) for steps that depend on earlier choices
 
-Load `references/workflow-patterns.md` for checklist patterns and examples.
+⛔ Load `references/workflow-patterns.md` once you have decided this IS a Process skill and
+need the marker vocabulary — it also covers gates and output shape, so one load serves
+5.2, 5.3 and 5.7. Do NOT load it to decide whether a checklist belongs; that decision is
+above, and the file assumes it is settled.
 
 ### 5.3 Add Confirmation Gates
 
@@ -204,11 +244,18 @@ MUST force the agent to stop and ask the user before:
 - Generative operations with significant cost
 - Applying changes based on analysis
 
-Load `references/workflow-patterns.md` for confirmation gate patterns.
+A `--quick`-style flag MAY skip a gate that only collects preferences. It MUST NEVER
+skip a destructive-operation gate: one flag typed up front cannot authorize an action
+the user had no way to foresee when they typed it.
+
+Already loaded at 5.2 if this is a Process skill. Otherwise load it now only if a gate's
+wording is unclear — the categories above are usually enough on their own.
 
 ### 5.4 Add Parameter System (if applicable)
 
-If the skill benefits from flags like `--quick`, `--style`, `--regenerate N`, load `references/parameter-system.md`.
+⛔ Load `references/parameter-system.md` when the skill will accept flags at all — it
+carries the `$ARGUMENTS` mechanics and, critically, which gates a `--quick` flag may and
+may NOT skip. Skip the file entirely when the skill takes no arguments.
 
 ### 5.5 Apply Writing Techniques
 
@@ -217,7 +264,8 @@ Three techniques that dramatically improve output quality:
 2. Anti-pattern documentation: list what NOT to do
 3. Iron Law + red flags: prevent shortcuts
 
-Load `references/writing-techniques.md` for examples.
+Already loaded at 5.1. Return to it when a directive you have written still reads as a
+suggestion after rewording.
 
 ### 5.6 Add Anti-Patterns List
 
@@ -227,7 +275,8 @@ Ask: "What would the agent's lazy default look like for this task?" Then MUST ex
 
 MUST add concrete, verifiable checks. NOT "ensure good quality"; instead "no placeholder text remaining (TODO, FIXME, xxx)".
 
-Load `references/output-patterns.md` for checklist patterns and priority-based output.
+Covered by `references/workflow-patterns.md` — load it here if you have not already, and
+only when a check you wrote cannot be settled by looking at the output.
 
 ### Writing Principles
 
@@ -323,7 +372,7 @@ Load `references/output-patterns.md` for checklist patterns and priority-based o
 - The package MUST carry a "do NOT load" block naming what not to read, and when.
 - NEVER let one reference outgrow the rest of the package combined. Split it, cut what is recoverable from it, and give each named section its own trigger. A reference that large is loaded whole or not at all, and both are wrong.
 
-Load `references/patterns.md` for proven workflow patterns and anti-patterns.
+Already covered at Step 2 by `references/architecture-patterns.md`; do NOT re-load it here.
 
 ### Assets
 - Templates, images, fonts used in output
@@ -333,7 +382,8 @@ Load `references/patterns.md` for proven workflow patterns and anti-patterns.
 
 ## Step 7: Test ⚠️ REQUIRED
 
-Load `references/testing-guide.md` for the full testing methodology.
+⛔ Load `references/testing-guide.md` here — the four areas below are headings; the file
+carries what each test actually consists of and the metric targets to hit.
 
 Four areas to cover:
 1. **Triggering**: does the skill activate for the right queries and stay dormant for others?
@@ -403,29 +453,37 @@ the Pre-Delivery Checklist below.
       is still probed, and its own runner is still discovered
 
 #### Anti-Patterns to Avoid
-- Stuffing everything into one massive SKILL.md (>500 lines)
-- Vague description like "A tool for X"
-- No workflow; letting the agent freestyle
-- No confirmation gates; unchecked execution
-- Vague instructions like "ensure good quality"
-- Including README.md, INSTALLATION_GUIDE.md, or other user-facing docs
-- "When to Use" info in the body instead of the description field
-- Hardcoding one tool, one install path, or the authoring machine's layout
-- Transcribing a CLI surface, parameter schema, config-key list, or inventory count the tool reports about itself
-- A workflow checklist in a skill that has no workflow
-- Naming another repository's task recipe (`just check`, `npm run lint`, `make test`) in a portable skill, or probing for the runner binary and calling that verification
-- Carrying local bindings without declaring `metadata.scope: repo-local` — an undeclared skill is portable, so the bindings are a defect rather than a contract
-- Letting a tool-subject skill assume a SECOND tool, on the strength of the carve-out that only ever covered its subject
-- Asserting how a tool behaves without having run it, or without saying at which version
 
-## Step 9: Package
+Every checklist item above is also an anti-pattern; they are not repeated here. These two
+have no checklist counterpart because they are about what the package CONTAINS rather than
+what it says:
+
+- Shipping user-facing documentation inside the skill — `README.md`,
+  `INSTALLATION_GUIDE.md`, `QUICK_REFERENCE.md`, `CHANGELOG.md`. A skill SHOULD contain only
+  files that directly support its function; docs about the skill belong outside it.
+- Putting "When to Use" guidance in the body instead of the `description`. The body loads
+  only after the description has already decided whether to trigger, so guidance there can
+  never affect the decision it describes.
+
+## Step 9: Validate
 
 ```bash
 python3 scripts/quick_validate.py <path/to/skill-folder>
-python3 scripts/package_skill.py <path/to/skill-folder> [output-directory]
 ```
 
-MUST validate before packaging. MUST fix errors and re-run.
+MUST fix every error and re-run. Needs PyYAML; where it is absent, invoke it through a
+runner that supplies it (`uv run --with pyyaml python3 …`) rather than treating the
+ImportError as a validation result.
+
+⚠️ **Read the warnings, not just the verdict.** Failures are structural only. An
+unrecognised frontmatter key warns rather than fails, because each target harness owns its
+own schema and adds fields on its own timetable — so it means "check that agent's docs",
+never "this is broken". Unset `metadata.author`/`license` warns for the same reason: a
+defect in a skill authored here, expected in a third-party skill under evaluation.
+
+**A pass is not a review.** It reads frontmatter and nothing else — not the 500-line
+ceiling, a missing Iron Law, a topic-label trigger, leftover placeholders or an absent
+`LICENSE.upstream`. The Pre-Delivery Checklist covers those, and it is not automated.
 
 ## Step 10: Iterate
 
@@ -435,4 +493,6 @@ After real usage:
 3. Add more specific instructions, examples, or anti-patterns
 4. Re-test and re-package
 
-Load `references/testing-guide.md` for iteration signals (under-triggering, over-triggering, execution issues).
+Load `references/testing-guide.md` again only when the skill is misbehaving in the wild —
+firing when it should not, staying silent when it should fire, or failing mid-workflow. Its
+Iteration Signals table maps each symptom to the adjustment.

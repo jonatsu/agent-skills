@@ -1,5 +1,12 @@
 # Workflow Patterns
 
+Serves Steps 5.2, 5.3 and 5.7 — one load covers all three.
+
+- [The Checklist Pattern](#the-checklist-pattern) — structure, markers, design principles
+- [Confirmation Gates](#confirmation-gates) — when to gate, and the two gate shapes
+- [Output Templates](#output-templates) — strict vs flexible, and worked examples
+- [Pre-Delivery Checklist Pattern](#pre-delivery-checklist-pattern) — verifiable checks, priority levels
+
 ## The Checklist Pattern
 
 A trackable checklist gives the agent a clear execution path. Without one, it freestyles - inconsistent, skipping steps, mixing priorities.
@@ -64,6 +71,52 @@ Present findings to the user. Ask:
 
 - Found -> load and continue
 - Not found -> run first-time setup -> MUST complete before Step 1
+```
+
+## Output Templates
+
+Provide an output template when consistency across runs matters more than phrasing.
+
+### Strict Template
+
+When the exact format matters, because something downstream parses it:
+
+```markdown
+## Output Format
+
+For each issue found, output:
+
+| Field | Format |
+|-------|--------|
+| severity | P0 / P1 / P2 / P3 |
+| location | file:line |
+| description | One sentence explaining the problem |
+| suggestion | One sentence with the fix |
+```
+
+### Flexible Template
+
+When the structure matters but the content varies:
+
+```markdown
+## Output Structure
+
+1. **Summary** (2-3 sentences)
+2. **Details**: most important first
+3. **Next Steps**: actionable, prioritized
+```
+
+### Worked Example Instead of a Rule
+
+An input/output pair conveys style and depth that a rule cannot. Show the pair rather than
+describing it:
+
+```markdown
+## Comment Style
+
+Bad: "This function is too long."
+Good: "P1: `processOrder()` (142 lines) handles validation, payment, and notification.
+       Split into `validateOrder()`, `processPayment()`, `sendNotification()`."
 ```
 
 ## Pre-Delivery Checklist Pattern
