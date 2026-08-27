@@ -56,18 +56,13 @@ The pointer replaces the transcription, NEVER the judgement. "Get the flags from
 floor, the credential that never touches disk, which op to prefer for a sweep —
 is the correct shape.
 
-## Complexity Tiers
+## Structure
 
-MUST detect the appropriate tier based on the user's description:
-
-| Tier | Structure | Use When |
-|------|-----------|----------|
-| 1 | Single SKILL.md (<200 lines) | Simple workflow, no scripts needed |
-| 2 | SKILL.md + scripts/ | Needs deterministic execution (validation, data processing) |
-| 3 | Multi-skill orchestrator | Complex domain with multiple distinct workflows |
-| 4 | Full ecosystem (orchestrator + agents + scripts) | Enterprise-grade with parallel delegation |
-
-MUST start at the lowest tier that works. MUST upgrade only when complexity demands it.
+A `SKILL.md` plus, only where the task needs them, `scripts/`, `references/` and
+`assets/`. No ladder of skill types, no classification to make: MUST start with
+`SKILL.md` alone and add a directory when something concrete belongs in it, NEVER
+in anticipation. **One ceiling governs every skill — under 500 lines — and there is
+no per-kind target.** A short skill is correct, not incomplete.
 
 ## Workflow
 
@@ -80,7 +75,7 @@ Skill Forge Progress:
   - [ ] 1.1 Clarify purpose and concrete use cases
   - [ ] 1.2 Collect 3+ concrete usage examples
   - [ ] 1.3 Identify trigger scenarios and keywords
-  - [ ] 1.4 Determine complexity tier (1-4)
+  - [ ] 1.4 Decide whether this is an ordered procedure, and which workflow mechanisms it needs
 - [ ] Step 2: Plan Architecture
   - [ ] 2.1 Identify reusable resources (scripts, references, assets)
   - [ ] 2.2 Design progressive loading strategy
@@ -143,7 +138,8 @@ Ask yourself:
 - What specific problem does this skill solve that the agent cannot do well on its own?
 - What would a user literally type to trigger this skill?
 - What are 3-5 concrete usage examples with realistic inputs and expected outputs?
-- What complexity tier fits? (See Complexity Tiers above)
+- Is this an ordered procedure — real sequencing, real prerequisites — or a body of
+  judgement the agent applies in whatever order the situation calls for?
 
 If unclear, MUST ask the user. MUST start with the most critical question first.
 
@@ -170,8 +166,9 @@ Key constraints:
   shape holds its answer
 - ⛔ Load `references/architecture-patterns.md` when the skill must support several
   distinct operations, fan out to subagents, loop until a quality bar is met, or keep
-  working when a tool it wanted is missing — it carries the eight orchestration shapes
-  and what each is for. Skip it for a single linear procedure
+  working when a tool it wanted is missing — it carries the eight workflow mechanisms
+  and what each is for. These describe CONTROL FLOW the task needs, never a kind of
+  skill; pick from them by need. Skip the file for a single linear procedure
 - ⛔ Load `references/pro-agent.md` when deciding what belongs in a script versus in
   prose, and the call is not obvious — typically when a step is deterministic but
   feels too small to extract
@@ -213,29 +210,32 @@ opens with its H1.
 ⛔ Load `references/writing-techniques.md` when you cannot name the one mistake, or when
 the rule you wrote could be read as advice rather than a prohibition.
 
-### 5.2 Design Workflow Checklist (shape-dependent)
+### 5.2 Design Workflow Checklist (conditional)
 
-MUST first ask whether this skill has a workflow at all. A checklist earns its
-place in a Process skill — a phased procedure with real ordering and
-prerequisites. In a Mindset, Navigation or Tool skill it is a no-op: "Step 1:
-Inspect narrowly … Step 4: Verify" instructs the agent to do what it already
-does, and a scored review will dock it. NEVER add a checklist to satisfy this
-step. Skip it, and say in one line that the shape does not call for one.
+⛔ **One question decides this: does the task have real ordering and real
+prerequisites — steps that fail or mislead if run out of sequence?**
 
-Where the skill is NOT a workflow, write the decisions the agent must actually
-get right instead: "before X, ask yourself …", each carrying the non-obvious
-trap that makes it a decision rather than a habit.
+If NO, there is no checklist. "Step 1: Inspect narrowly … Step 4: Verify"
+instructs the agent to do what it already does, so it costs tokens and buys
+nothing. NEVER add one to satisfy this step; skip it, and say in one line that
+the task has no ordering.
 
-Where the skill IS a workflow, create a trackable checklist with:
+If YES, the checklist is how the ordering survives contact with a long session.
+
+Where there is no ordering, write the decisions the agent must actually get
+right instead: "before X, ask yourself …", each carrying the non-obvious trap
+that makes it a decision rather than a habit.
+
+Where there IS ordering, create a trackable checklist with:
 - ⚠️ REQUIRED for steps that MUST NOT be skipped
 - ⛔ BLOCKING for prerequisites
 - Sub-step nesting for complex steps
 - (conditional) for steps that depend on earlier choices
 
-⛔ Load `references/workflow-patterns.md` once you have decided this IS a Process skill and
-need the marker vocabulary — it also covers gates and output shape, so one load serves
-5.2, 5.3 and 5.7. Do NOT load it to decide whether a checklist belongs; that decision is
-above, and the file assumes it is settled.
+⛔ Load `references/workflow-patterns.md` once the ordering question is answered YES and you
+need the marker vocabulary — it also covers gates and output shape, so one load serves 5.2,
+5.3 and 5.7. Do NOT load it to decide WHETHER a checklist belongs; that decision is above,
+and the file assumes it is settled.
 
 ### 5.3 Add Confirmation Gates
 
@@ -248,7 +248,7 @@ A `--quick`-style flag MAY skip a gate that only collects preferences. It MUST N
 skip a destructive-operation gate: one flag typed up front cannot authorize an action
 the user had no way to foresee when they typed it.
 
-Already loaded at 5.2 if this is a Process skill. Otherwise load it now only if a gate's
+Already loaded at 5.2 if the task has ordering. Otherwise load it now only if a gate's
 wording is unclear — the categories above are usually enough on their own.
 
 ### 5.4 Add Parameter System (if applicable)
@@ -416,7 +416,8 @@ the Pre-Delivery Checklist below.
 
 #### Quality
 - [ ] Has an Iron Law or core constraint at the top
-- [ ] Has a trackable workflow checklist with ⚠️/⛔ markers, OR is not a Process skill and deliberately has none
+- [ ] Has a trackable workflow checklist with ⚠️/⛔ markers, OR the task has no real
+      ordering and the skill says so in one line
 - [ ] Confirmation gates before destructive or generative operations
 - [ ] Uses question-style instructions, not vague directives
 - [ ] Lists anti-patterns (what NOT to do)

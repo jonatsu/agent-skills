@@ -150,19 +150,37 @@ makes a mistake here, what's the consequence?" High consequence → low freedom.
 | 11–13 | Well calibrated for most scenarios |
 | 14–15 | Calibrated throughout |
 
-### D7 — Pattern recognition (10)
+### D7 — Evaluation evidence (10)
 
-Does it follow a coherent skill shape rather than sprawling? Common shapes:
-Mindset (~50 lines, taste + strong NEVER list), Navigation (~30, routes to
-sub-files), Philosophy (~150, craft-first), Process (~200, phased workflow),
-Tool (~300, decision trees + low freedom).
+Was the skill built against evidence, or written and then admired? A skill is an
+addition to a model, so its value is an empirical claim — and the only way to
+know it helps is to have measured a task it was supposed to help with.
 
 | Score | Criteria |
 |-------|----------|
-| 0–3 | No recognizable shape, chaotic |
-| 4–6 | A shape with significant deviations |
-| 7–8 | Clear shape, minor deviations |
-| 9–10 | Masterful use of the appropriate shape |
+| 0–3 | No evaluations. Verified by reading it back and finding it plausible |
+| 4–6 | Ad-hoc trigger checks only, run after the package was already written |
+| 7–8 | ≥3 real evaluations, but authored after the body, or run on one model |
+| 9–10 | ≥3 evaluations designed BEFORE the body, run across every model class the skill deploys to, compared against a no-skill baseline, and retained so a regression reproduces |
+
+**Order is the discriminator, not count.** Evaluations written after the body
+test what was built; evaluations written first test what was needed, and are the
+only ones that can show the skill was unnecessary. Ask which came first and
+expect the artifact to prove it.
+
+**A no-skill baseline is what makes a number mean anything.** "The skill works"
+is not a result. "Without it the agent missed the auth step in 3 of 5 runs; with
+it, 0 of 5" is.
+
+**Weakest-model coverage is where this silently fails.** A skill tuned on a
+frontier model routinely underspecifies for a small one, and a skill that
+deploys to several agents or runs inside delegated contexts is being read by
+models nobody tested. Deduct where the tested set is narrower than the deployed
+set, and say which models were untested.
+
+NEVER accept "it obviously helps" in place of a measurement, and NEVER treat the
+absence of evaluations as a documentation gap — it is missing evidence for the
+skill's central claim.
 
 ### D8 — Practical usability (15)
 
@@ -282,7 +300,8 @@ an upgrade.
    it decides how D8 is scored, and reading it after forming an impression of
    the skill is how an undeclared local skill talks its way into an exemption.
    Absent means `portable`. Count SKILL.md lines; list
-   reference files and sizes; identify the skill shape; check load triggers; flag
+   reference files and sizes; note which workflow mechanisms the procedure uses,
+   as description rather than classification; check load triggers; flag
    any single reference larger than the rest of the package combined.
 5. **Score each dimension.** Cite specific lines as evidence; give a one-line
    justification per score; note the fix when below max.
@@ -297,7 +316,7 @@ an upgrade.
 # Skill Evaluation: [name]
 
 - **Score**: X/120 (X%) — Grade [A–F]
-- **Shape**: [Mindset/Navigation/Philosophy/Process/Tool]
+- **Workflow mechanisms**: [ordering/routing/delegation/refinement/detection/scoring/templating/degradation, or none] — descriptive, not scored
 - **Knowledge ratio** SKILL.md E:A:Rec:R = W:X:Y:Z | package E:A:Rec:R = W:X:Y:Z
 - **Coverage**: read [files]; not read [files] — scores provisional if any
 - **Verdict**: [one sentence]
@@ -310,7 +329,7 @@ an upgrade.
 | D4 Spec / description | X | 15 | |
 | D5 Progressive disclosure | X | 15 | |
 | D6 Freedom calibration | X | 15 | |
-| D7 Pattern recognition | X | 10 | |
+| D7 Evaluation evidence | X | 10 | |
 | D8 Usability | X | 15 | |
 
 ## Critical issues
@@ -334,9 +353,10 @@ score the dimension here.
 - **The Orphan references** — reference files with no load trigger. Fix: add
   explicit "read this when…" and "do NOT load…". Hits D5.
 - **The Checkbox procedure** — mechanical Step 1/2/3 for what the model already
-  does. Fix: convert to "before X, ask yourself…". Hits D2. Judge by shape: a
-  Process skill earns its checklist; a Mindset, Navigation or Tool skill almost
-  never does.
+  does. Fix: convert to "before X, ask yourself…". Hits D2. One question decides
+  it: does the task have real ordering and real prerequisites — steps that fail
+  or mislead out of sequence? If yes the checklist is earned; if no it is a
+  no-op, however tidy it looks.
 - **The Transcription** — a CLI surface, parameter schema, config-key list or
   inventory count copied out of a tool that reports it live (**Recoverable**).
   Fix: replace with a pointer to the live source, keeping only the residue that

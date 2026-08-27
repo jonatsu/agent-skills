@@ -1,6 +1,10 @@
-# Skill Workflow Patterns
+# Workflow Mechanisms
 
-## Patterns
+Eight shapes of CONTROL FLOW a skill's procedure can take. They are not kinds of skill and
+carry no size implication — pick the ones the task needs, and expect most skills to need
+one or none. A skill needing several is describing several jobs.
+
+## Mechanisms
 
 ### 1. Sequential Workflow
 Steps execute in order; each step's output feeds the next.

@@ -18,19 +18,18 @@ metadata:
 
 IRON LAW: [TODO: Ask \"What is the ONE mistake the agent will most likely make with this skill?\", then write the unbreakable rule that prevents it. e.g. \"NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.\" Nothing goes above this line but the H1.]
 
-[TODO: PICK A SHAPE BEFORE WRITING THE BODY. This template deliberately gives you no
-skeleton, because the skeleton depends on the answer.
+[TODO: ANSWER ONE QUESTION BEFORE WRITING THE BODY. This template deliberately gives you
+no skeleton, because the skeleton depends on the answer.
 
-  process     a phased procedure with real ordering and prerequisites
-              -> a trackable checklist with the ⚠️ REQUIRED / ⛔ BLOCKING markers
-  mindset     taste and judgement                  -> NO checklist; a strong NEVER list
-  navigation  routes the reader to other material  -> NO checklist; a routing table
-  tool        decision trees, low freedom          -> NO checklist; the trees themselves
-  philosophy  craft-first prose                    -> NO checklist
+  Does this task have real ordering and real prerequisites - steps that fail or mislead
+  if run out of sequence?
 
-A checklist in anything but a Process skill instructs the agent to do what it already
-does. It is a no-op, and a scored review will dock it. Delete this block once the body
-exists.]
+  YES -> a trackable checklist, with ⚠️ REQUIRED and ⛔ BLOCKING markers.
+  NO  -> NO checklist. Write the decisions the agent must get right instead:
+         \"before X, ask yourself ...\", each carrying the non-obvious trap.
+
+A checklist over a task with no ordering instructs the agent to do what it already does.
+It costs tokens and buys nothing. Delete this block once the body exists.]
 
 ## Anti-Patterns
 
