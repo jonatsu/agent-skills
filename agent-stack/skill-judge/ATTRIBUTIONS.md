@@ -30,15 +30,19 @@ catalog.
 Material changes from the upstream skill:
 
 - Cut the ~40-line philosophy preamble ("what is a Skill", training-cost tables,
-  hot-swappable-LoRA analogy) — it restates concepts this repo's
-  `writing-great-skills` already owns. Replaced with a two-line intent plus
-  cross-references, so those concepts have a single source of truth.
+  hot-swappable-LoRA analogy) as material the model already holds. Replaced with a
+  two-line statement of intent. This originally cross-referenced a sibling skill for
+  vocabulary; those pointers were removed on 2026-08-27, because that skill sets
+  `disable-model-invocation: true` and so cannot be reached from here. Every term is
+  now defined in place.
 - Removed the ASCII-art boxes (activation-flow diagram, quick-check panel),
   folding their content into tables and prose.
 - Neutralized provider-specific framing ("Claude" → "the agent/model") so the
   skill is agent-agnostic.
-- Mapped the failure patterns onto `writing-great-skills` vocabulary (no-op,
-  sprawl, duplication) instead of re-explaining them.
+- Rewrote the failure patterns as a standalone diagnosis catalogue, each entry naming
+  the dimension it hits. It briefly borrowed a sibling skill's vocabulary; that was
+  reversed on 2026-08-27 for the reachability reason above, and the catalogue moved to
+  `references/failure-patterns.md`.
 - Rewrote frontmatter to this repo's conventions (`metadata.author` /
   `metadata.license`) and added an Iron Law.
 

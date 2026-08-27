@@ -1,6 +1,6 @@
 ---
 name: skill-judge
-description: Evaluate an agent skill's design quality with a scored rubric — 8 weighted dimensions, a 120-point total, a knowledge-delta scan, and an improvement report. Use when reviewing, auditing, grading, or improving a SKILL.md or skill package, or when asked "is this skill any good", "score this skill", or "how do I make this skill better". Complements skill-forge (authoring) and writing-great-skills (vocabulary); this is the grading lane.
+description: Evaluate an agent skill's design quality with a scored rubric — 8 weighted dimensions, a 120-point total, a knowledge-delta scan, and an improvement report. Use when reviewing, auditing, grading, or improving a SKILL.md or skill package, or when asked "is this skill any good", "score this skill", or "how do I make this skill better". Complements skill-forge, which authors skills; this is the grading lane. NOT for writing or refactoring a skill, which is skill-forge, and NOT for prompt or rule files, which is system-prompts.
 metadata:
   author: Joonas Onatsu
   license: MIT
@@ -13,9 +13,9 @@ that explains what the model already knows is a bad skill. Length, tone, and
 structure never earn points on their own — only knowledge the model lacks does.
 
 Grade an existing skill and return an actionable report. This is the review lane
-for skills; `skill-forge` authors them, `writing-great-skills` supplies the
-vocabulary (leading word, no-op, duplication, progressive disclosure, freedom
-calibration) — consult it rather than re-deriving those concepts here.
+for skills; `skill-forge` authors them. Every term used here is defined here — a
+review that has to fetch its vocabulary from elsewhere stalls when that elsewhere
+is unavailable.
 
 ## The core measure
 
@@ -71,7 +71,7 @@ band's bottom.** Every deduction MUST carry a `file:line` and a one-line reason.
 - Where deductions would take you under the band bottom, you are in the wrong
   band. Drop a band and re-apply the rule rather than clamping.
 
-D7 does not use bands; it awards four inspectable properties additively.
+This applies to every dimension including D7.
 
 Two reviewers who agree on the band now agree on the number, unless one found
 something the other did not — and that difference is a citation they can settle,
@@ -198,28 +198,46 @@ makes a mistake here, what's the consequence?" High consequence → low freedom.
 | 11–13 | Well calibrated for most scenarios |
 | 14–15 | Calibrated throughout |
 
-### D7 — Evaluation evidence (10)
+### D7 — Verification evidence (10)
 
-Was the skill built against evidence, or written and then admired? A skill is an
-addition to a model, so its value is an empirical claim — and the only way to
-know it helps is to have measured a task it was supposed to help with.
+Was anything in this skill checked against something outside its author's own
+judgement, and can a reader tell which parts? A skill asserts how the world
+behaves; the question is whether anybody looked.
 
-**Score only what the package can show.** Four things are inspectable; award them
-independently rather than picking a band by feel:
+| Score | Criteria |
+|-------|----------|
+| 0 | Asserted throughout. Nothing was checked against anything |
+| 1–3 | Claims stamped with a date but no source, or a single self-review with no adversary |
+| 4–6 | Some claims traced to a source and dated; countable claims recounted; what went unchecked is stated |
+| 7–8 | Every empirical claim traced to a primary source with a read date, AND an independent adversarial pass recorded — including what it refuted, not only what it confirmed |
+| 9–10 | The above, plus executed evaluations against a no-skill baseline, models named, retained so a regression re-runs |
 
-| Present in the package | Points |
-|---|---|
-| ≥3 evaluations, each naming a realistic request and what counts as success | 4 |
-| A recorded no-skill baseline — what the agent did unaided | 3 |
-| The models the runs were made on, named | 2 |
-| Enough retained detail that a regression re-runs without reconstruction | 1 |
+**Executed evaluations are the strongest evidence and NOT the required kind.**
+Running them needs fixtures, a scoring method and a baseline, which for many
+skills costs more than the skill. Requiring them would score 0 on every skill
+anyone actually ships, and a dimension that always reads 0 teaches reviewers to
+skip it. Reward them where they exist; NEVER treat their absence as no evidence.
 
-**Do NOT score authoring order.** Whether evaluations were written before or
-after the body is what makes them worth having, and it is **not establishable
-from a finished package** — only version history shows it. If the repository
-proves the order, say so as a finding; NEVER infer it, and NEVER deduct for an
-order you cannot see. `skill-forge` owns teaching the order; this dimension owns
-whether the evidence exists.
+**What separates evidence from diligence is legibility.** "I read it carefully"
+is not scoreable and MUST NOT earn a point — nobody can check it. "Verified
+against `gh api repos/OWNER/REPO/license` on 2026-08-27" is, because the next
+reader can re-run it and find out. Score what a stranger could audit.
+
+**An adversarial pass counts only if it could have failed.** A review recording
+only confirmations is a review that was never at risk. Expect at least one claim
+the reviewer overturned, or the pass scores as a self-review.
+
+⛔ **A confident, unmarked claim that turns out to be WRONG takes this dimension
+to 0**, below an honestly unstamped one. Unstamped is a gap a reader can route
+around; wrong-and-confident is a defect that propagates, and every downstream
+reader inherits it.
+
+**Do NOT score authoring order.** Whether evaluations came before or after the
+body is what makes them worth having, and it is **not establishable from a
+finished package** — only version history shows it. Report it as a finding where
+the repository proves it; NEVER infer it, and NEVER deduct for an order you
+cannot see. `skill-forge` owns teaching the order; this dimension owns whether
+the evidence exists at all.
 
 **A no-skill baseline is what makes a number mean anything.** "The skill works"
 is not a result. "Without it the agent missed the auth step in 3 of 5 runs; with
@@ -360,7 +378,7 @@ exemptions and the trap inside each, and the full checklist.
 | D4 Spec / description | X | 15 | |
 | D5 Progressive disclosure | X | 15 | |
 | D6 Freedom calibration | X | 15 | |
-| D7 Evaluation evidence | X | 10 | |
+| D7 Verification evidence | X | 10 | |
 | D8 Usability | X | 15 | |
 
 ## Critical issues

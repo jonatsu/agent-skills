@@ -34,9 +34,12 @@ counted twice.
   keywords, and a negative trigger. Hits D4.
 - **The Freedom mismatch** — rigid scripts for creative work, or vague guidance for fragile
   ops. Fix: match freedom to fragility. Hits D6.
-- **The Unmeasured skill** — no evaluations, no baseline, no record of which models were run;
-  its central claim that it helps has never been tested. Fix: three evaluations kept in the
-  repo, run unaided and then with the skill. Hits D7.
+- **The Unchecked skill** — asserts how tools, formats or systems behave and cites nothing:
+  no source, no date, no adversary, no recount. Every claim rests on the author having been
+  confident. Fix: trace each empirical claim to a primary source and stamp it with the date
+  read; have an independent reader try to refute the load-bearing ones; recount every
+  countable claim. Executed evaluations are better still, where the skill can afford them.
+  Hits D7.
 - **The Local skill** — works only on the machine it was written on: an assumed tool, a
   hardcoded install path, a `~`-rooted path to its own files. Fix: `command -v` probes,
   relative paths, accept alternatives. Hits D8, capped.
