@@ -8,10 +8,11 @@ metadata:
 
 # System Prompts
 
-IRON LAW: NEVER change a prompt to make it read better. A sentence you ADD MUST
-change a decision the model makes. A sentence you CHANGE MUST target a named
-failure and be checked against a concrete input. Prose quality is not the
-deliverable, and "it reads cleaner now" is not evidence.
+IRON LAW: NEVER change a prompt to make it read better. Every sentence MUST earn
+its place against evidence, and which evidence depends on the branch: on AUTHOR,
+the decision the sentence changes or the house rule it breaks; on REPAIR, a named
+failure mode and a concrete input that exercises it. "It reads cleaner now" is
+not evidence on either branch.
 
 ## Scope
 
@@ -33,18 +34,19 @@ prompt-caching behavior, read the `claude-api` skill. MUST NOT guess these.
 
 | You have | Branch |
 |---|---|
-| A specification and no prompt yet, or a prompt to review against the house style | **AUTHOR** — the craft sections below. No workflow; there is no fixed phase order |
-| A prompt plus an output that is wrong | **REPAIR** — the six steps. MUST start at Step 1 |
+| A specification and no prompt yet, or a prompt to review against the house style | **AUTHOR** |
+| A prompt plus an output that is wrong | **REPAIR** |
 
-The branches share everything from [What a prompt cannot do](#what-a-prompt-cannot-do)
-onward. The difference is the entry point and the evidence required: AUTHOR
-justifies a sentence by the decision it changes, REPAIR by the failure it fixes.
+**Both branches read [Three calibrations](#three-calibrations) and every craft
+section from [What a prompt cannot do](#what-a-prompt-cannot-do) onward.** The
+branch sections differ only in entry point and evidence standard.
 
 NEVER run REPAIR without a failing output or representative inputs. A repair with
 no observed failure is authoring with extra steps, and it silently replaces a
-prompt that may have been working.
+prompt that may have been working. A prompt that merely *looks* wrong against the
+house style is an AUTHOR review, not a repair.
 
-## Three calibrations before writing
+## Three calibrations
 
 **Target format.** The rules below assume prose or a lightly structured prompt.
 Where the target is a markdown file the harness loads as memory, keep the
@@ -64,6 +66,26 @@ of it. A system prompt outranks the user's turn on style and safety and loses to
 it on task intent; a subagent definition loses to the orchestrator that spawned
 it; a tool description loses to both. Writing a rule at the wrong rank produces
 text that reads as binding and is not.
+
+## Branch: AUTHOR
+
+No workflow, and deliberately none: authoring has no fixed phase order. You
+arrive with a specification, a blank file, or a prompt to check against the house
+style, and which craft section you need depends on which.
+
+Read in this order, skipping what does not apply:
+[What a prompt cannot do](#what-a-prompt-cannot-do) →
+[Normative language](#normative-language) → [Density](#density) →
+[Voice](#voice) → [Structure and placement](#structure-and-placement), then
+[API and task prompts](#api-and-task-prompts) or
+[Tool prompt authoring](#tool-prompt-authoring) if the target is one of those.
+Finish on the shared half of the [checklist](#pre-delivery-checklist).
+
+**Evidence standard.** A sentence earns its place by the decision it changes or
+the house rule it breaks. Where you cannot name either, cut the sentence whole
+rather than trimming words from it.
+
+Do NOT load `references/failure-modes.md` here — see [References](#references).
 
 ## Branch: REPAIR
 
@@ -105,9 +127,13 @@ a format contract, a tone, a downstream parser?
 
 ### Step 4: Apply targeted edits
 
-Pick the minimum that fixes the diagnosed mode; the technique catalog is in
-`references/failure-modes.md`. Prefer restructuring over emphasis. Adding an
-instruction MUST come with removing the one it duplicates or contradicts.
+Pick the minimum that fixes the diagnosed mode — one technique per hypothesis.
+The techniques are in [API and task prompts](#api-and-task-prompts); which to
+reach for, and the two specific to repair, are in `references/failure-modes.md`.
+
+Prefer restructuring over emphasis. Adding an instruction MUST come with removing
+the one it duplicates or contradicts. A prompt that grows on every repair is
+being patched, not fixed.
 
 ### Step 5: Verify
 
@@ -354,7 +380,8 @@ Everything here that asserts model or tokenizer behavior, with what backs it.
 Use Long Contexts*, TACL 2023 ([arXiv:2307.03172](https://arxiv.org/abs/2307.03172)),
 abstract read 2026-08-27: performance "is often highest when relevant information
 occurs at the beginning or end of the input context, and significantly degrades
-when models must access relevant information in the middle." Measured for
+when models must access relevant information in the middle of long contexts, even
+for explicitly long-context models." Measured for
 **retrieval** in multi-document QA and key-value tasks. Extending it to
 instruction adherence in a system prompt is an inference, not a result. This
 skill previously cited a "~20%" degradation figure; that number is not in the
@@ -364,18 +391,31 @@ abstract and was removed rather than sourced.
 
 | Text | cl100k_base | o200k_base |
 |---|---|---|
-| ` NEVER` | 1 | 1 |
-| ` MUST NOT` | 2 | 2 |
-| ` AVOID` | 2 | 2 |
-| ` SHOULD NOT` | 2 | 2 |
+| ` NEVER` mid-sentence | 1 | 1 |
+| ` MUST NOT` mid-sentence | 2 | 2 |
+| ` AVOID` mid-sentence | 2 | 2 |
+| ` SHOULD NOT` mid-sentence | 2 | 2 |
+| `NEVER` at line start | 2 | 2 |
+| `MUST NOT` at line start | 3 | 3 |
+| `AVOID` at line start | 2 | 2 |
+| `SHOULD NOT` at line start | 3 | 4 |
 
-So `NEVER` saves one token against `MUST NOT` mid-sentence, and `AVOID` saves
-**nothing** against `SHOULD NOT`. This skill previously stated both were
-single-token; that was false for `AVOID` and for both keywords at the start of a
-line, where each costs 2. Prefer the aliases for readability and house
-consistency, NEVER on a token argument. Note also that these are OpenAI
-tokenizers — a prompt targeting a different vendor's model is not measured by
-them at all.
+**The saving is real but position-dependent and tiny.** Mid-sentence, `NEVER`
+saves one token against `MUST NOT` and `AVOID` saves none against `SHOULD NOT`.
+At line start both aliases save one, and `AVOID` saves two under `o200k_base`.
+Prefer the aliases for readability and house consistency; a token argument in
+either direction is worth less than the sentence spent making it.
+
+Two corrections are recorded here rather than quietly applied. This skill first
+claimed both aliases were single-token, which is false in every position except
+` NEVER` mid-sentence. The correction that replaced it published only the
+mid-sentence rows and concluded `AVOID` "saves nothing" — true for those four
+rows and false at line start, which is the same one-sided reading in the opposite
+direction. The full eight rows are above so neither claim can be made again from
+half the data.
+
+These are OpenAI tokenizers. A prompt targeting a different vendor's model is not
+measured by them at all.
 
 **Unmeasured here, widely repeated.** Carried because they cost nothing to
 follow, NEVER as established results: that "be efficient with tokens" invites

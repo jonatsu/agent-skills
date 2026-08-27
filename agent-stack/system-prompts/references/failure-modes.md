@@ -7,7 +7,7 @@ forbids.
 
 **Contents**
 - [The diagnostic table](#the-diagnostic-table)
-- [Technique catalog](#technique-catalog)
+- [Choosing techniques](#choosing-techniques)
 - [Reading the table honestly](#reading-the-table-honestly)
 
 ---
@@ -35,27 +35,27 @@ The last two rows route out of this file deliberately. A prompt that skips an
 approval is usually not a wording defect, and fixing it in prose leaves the gap
 open.
 
-## Technique catalog
+## Choosing techniques
 
-Pick the **minimum** that fixes the diagnosed mode. Applying three techniques to
-one symptom makes Step 5 uninterpretable — when it works, you do not know which
-one worked, and the other two are permanent cost.
+**The techniques themselves live in `SKILL.md` → "API and task prompts"** —
+delimiting, few-shot sets, prefill, stop sequences, temperature, explicit
+fallbacks, caching. This file does not restate them. What belongs here is how
+many to reach for and which two the main file does not cover.
 
-- **Delimit** instructions, data and examples so boundaries are findable.
-- **Few-shot**: 2–5 diverse examples in the exact target format, covering the
-  edge cases. AVOID near-identical examples; the model parrots them.
-- **Prefill** the assistant turn to force a format and skip preamble.
-- **A thinking section** for reasoning tasks, kept separate from the final answer.
-- **Split by durability**: persona and standing constraints in the system prompt,
-  per-request detail in the user turn.
-- **Explicit fallbacks**: "if X is missing, respond Y", and permit "I don't know".
-  A model with no escape hatch invents one.
-- **Parameters as levers**: temperature, stop sequences, caching. Confirm exact
-  names and behavior via the `claude-api` skill; MUST NOT guess them.
+**Pick the minimum that fixes the diagnosed mode.** Applying three techniques to
+one symptom makes Step 5 uninterpretable: when it works you do not know which one
+worked, so the other two become permanent cost you can never justify removing.
+One technique per hypothesis, then verify.
 
-**Prefer restructuring over emphasis.** Adding an instruction MUST come with
-removing the one it duplicates or contradicts. A prompt that grows on every
-repair is being patched, not fixed.
+Two techniques belong to repair rather than to authoring, so they are here:
+
+- **A thinking section**, for a symptom diagnosed as reasoning error rather than
+  instruction failure. Keep it separate from the final answer, or the format
+  problem you did not have arrives with the fix.
+- **Split by durability.** Where a prompt fails intermittently across turns, the
+  cause is often a standing constraint living in the user turn, or per-request
+  detail frozen into the system prompt. Move each to where its lifetime belongs
+  before touching the wording.
 
 ## Reading the table honestly
 

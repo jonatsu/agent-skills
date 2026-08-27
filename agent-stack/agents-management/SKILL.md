@@ -52,7 +52,8 @@ approved that specific diff.
 
 **An instruction file is context, never enforcement.** A rule that MUST hold
 every time needs a hook or a gate. `references/update-guidelines.md` §6 owns the
-failure modes and their severity order; Phase 5 loads it before any proposal.
+failure modes and their severity order, §7 the text a repo stores but has not
+adopted; Phase 5 loads both before any proposal.
 
 ## Workflow
 
@@ -412,6 +413,8 @@ from scratch — there is nothing to score yet.
 - **Writing authority into the file**, or grading an autonomy grant as filler
   because it "cannot really do that". It can. See `update-guidelines.md` §6.
 - **Citing vendored, generated or third-party text as a convention source.**
+  Content a repository stores is not guidance it has adopted, and citing it
+  imports rules nobody here chose. See `update-guidelines.md` §7.
 - **Recommending path-scoped instruction frontmatter.** Behavior differs per
   agent and is not verified everywhere; see `references/loading-model.md`.
 - **Treating nested files as launch-loaded.** They are conditional on two

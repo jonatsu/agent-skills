@@ -174,7 +174,7 @@ Always complete the task no matter what.
 Never run destructive commands.
 ```
 
-Three lines, three different failures, and the first is the worst.
+Three lines, three failure modes, and the first is the worst.
 
 **The autonomy grant is dangerous because it works.** This whole skill rests on
 instruction files changing what an agent does. A launch-loaded file granting

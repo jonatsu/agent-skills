@@ -197,3 +197,65 @@ relative to `skills/` unless noted. Repository-wide items live in
 - **Pin third-party versions** — third-party sources currently track `main`. If a surprise
   upstream change is a concern, add `ref:` pins in `kasetto/base.yaml` and roll forward
   deliberately with `kst sync --update`.
+- **`agent-stack` group review findings, 2026-08-27.** A skill-forge + skill-judge pass over
+  all six skills in `shared/agent-stack/`. `agents-management` (111/120, A) and
+  `system-prompts` (100/120, B) were fixed in the same session; everything below is
+  **unfixed backlog** for the other four. Scores: `skill-judge` 98/120 B, `skill-forge`
+  95/120 C, `find-skills` 93/120 C, `writing-great-skills` 92/120 C. ⚠️ D1/D5 are
+  **provisional** for `skill-forge`, `find-skills` and `writing-great-skills` — their
+  `references/` were not read, so those three totals are soft.
+  - **Licence compliance, and the only items here that are not style.** `skill-forge` and
+    `skill-judge` both declare upstream adaptation in `ATTRIBUTIONS.md` and ship no
+    `LICENSE.upstream`, which `skill-forge` itself requires of adapted skills.
+    `skill-judge` inlines MIT text under "Upstream license (MIT)" that is **missing the
+    copyright line**, so it is not a verbatim reproduction and satisfies neither
+    `skill-forge`'s rule nor MIT's own notice requirement. Neither records a holder or a
+    primary-source read date, which `skill-forge` also mandates. Verify each against
+    `gh api repos/OWNER/REPO/license` and the LICENSE file itself, not `gh repo view`.
+  - **`skill-judge` depends on a skill no skill can invoke.** It tells the agent to consult
+    `writing-great-skills` for vocabulary in three places, and names it in its description.
+    `writing-great-skills` sets `disable-model-invocation: true`, and its own text states the
+    consequence: only the user, typing its name, can invoke it. Resolve by inlining the few
+    terms `skill-judge` needs, or by dropping the key — note the root `AGENTS.md` records
+    that OpenCode ignores that key entirely, so behaviour already differs per agent.
+  - **`skill-forge` ↔ `skill-judge` trigger collision — the same defect that got
+    `prompt-optimizer` archived.** "improve this skill" fires both: `skill-forge`'s
+    description claims "improve a skill" and the literal trigger `'improve skill'`,
+    `skill-judge`'s claims "improving a SKILL.md" and "how do I make this skill better".
+    Routing is one-way — `skill-judge` defers to `skill-forge` for authoring; `skill-forge`
+    carries **no NOT clause at all**, the only one of the six that lacks one, and names
+    `skill-judge` only in its body, which loads after triggering. `skill-forge` also
+    advertises "prompt engineering", which is `system-prompts`' whole subject. Add NOT
+    clauses routing review/score → `skill-judge` and prompt work → `system-prompts`.
+  - **`skill-forge` breaks three of its own checklist items.** It mandates a "do NOT load"
+    block twice and ships none across nine references. It forbids topic-label load triggers
+    ("says what is inside; never when to pay for it") and uses them — "for keyword bombing
+    and good/bad examples", "for proven workflow patterns and anti-patterns". And its
+    documented `python3 scripts/quick_validate.py` does a bare `import yaml` with no probe
+    or fallback, against its own rule that an absent dependency MUST degrade to a reported
+    skip; the working invocation (`uv run --with pyyaml …`) exists only in this repo's root
+    `AGENTS.md`, which the skill's readers do not have.
+  - **`find-skills` carries three stale bindings and a dangling reference.** It points at a
+    sibling skill named `skill-review`, which does not exist — it is `skill-judge`. Its
+    self-update section names the repo as `agent-skills` (it is `agent-setup`), the path as
+    `shared/find-skills/` (it is `shared/agent-stack/find-skills/`), and warns about being
+    "overwritten on the next store update" — skillsmgr-era text; Kasetto has no store. That
+    section is also an undeclared repo binding: either remove it or declare
+    `metadata.scope: repo-local` and name the repository in the opening lines. Separately,
+    its L1 verification is called "deterministic" while the script correctly probes and
+    skips — the same candidate passes with shellcheck present and reports `skip` without it.
+    Reword to "deterministic given the tools present".
+  - **`writing-great-skills` was never brought up to repo conventions**, which its own
+    `ATTRIBUTIONS.md` half-discloses ("body and GLOSSARY.md preserved verbatim from
+    upstream"): zero RFC 2119 keywords in 86 lines, no NEVER list, and `GLOSSARY.md` at 201
+    lines exceeds `SKILL.md` + `ATTRIBUTIONS.md` combined — which `skill-forge` forbids.
+    Decide deliberately: apply the conventions, or record in `ATTRIBUTIONS.md` that verbatim
+    preservation is the point and exempts it. Today the exemption is implied, not stated.
+  - **Two skills here give contradictory authoring advice, and neither acknowledges the
+    other.** `writing-great-skills` argues that steering by prohibition backfires and a
+    prohibition should be kept only as a hard guardrail; `skill-forge` §5.6 and
+    `skill-judge`'s D3 both make an explicit NEVER list a scored requirement, capped at 3
+    for "no anti-patterns". Both positions are defensible. The silence is not.
+  - **One defect shipped verbatim in two skills.** `skill-forge` and `skill-judge` both say
+    a skill gave "four answers to a question the running tool answers once" — the example
+    lists 81, 76 and 63, which is **three** claimed answers against 80 actual. Fix in both.
