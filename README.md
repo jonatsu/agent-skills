@@ -257,6 +257,42 @@ licence would block the use we need is replaced by an independently written one 
 adapted: `git-master` (SUL 1.0, personal/non-commercial only) was retired on 2026-08-26 in
 favour of `shared/git/git-operations`, which is MIT.
 
+## External references on skill authoring
+
+Consulted on **2026-08-27** to settle a dispute about how skills should be structured, and
+recorded here so the next reader does not re-find them. Each is pinned, because an unpinned
+citation to a moving document is not evidence.
+
+| Source | What it settles | Pinned at |
+|---|---|---|
+| [Anthropic, *Skill authoring best practices*](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | The platform vendor's own guidance, and the strongest anchor available | read 2026-08-27 |
+| [Claude Code skills reference](https://code.claude.com/docs/en/skills) | The real frontmatter field list, and which fields belong to which surface | read 2026-08-27 |
+| [mgechev/skills-best-practices](https://github.com/mgechev/skills-best-practices) | A short opinionated distillation that defers to Anthropic's guide | commit `a0bfa56` |
+| [mgechev/skillgrade](https://github.com/mgechev/skillgrade) | Not read in depth. An external grading tool that evaluates skills by RUNNING them against fixtures with graders, rather than by rubric inspection — a different model from `skill-judge`'s, and worth a look before that skill changes again | unpinned |
+
+**What they agree on**, and what this repo therefore enforces: `SKILL.md` under 500 lines;
+`references/` exactly one level deep; a table of contents for any reference over 100 lines;
+`name` 1–64 characters, lowercase with single hyphens, matching its parent directory;
+`description` non-empty, under 1024 characters, written in the third person; forward slashes
+everywhere; and no user-facing documentation inside a skill package.
+
+**What neither has, and the finding that mattered most: no taxonomy of skill types, shapes,
+categories or tiers.** Anthropic's guide legislates character sets, description person and
+nesting depth, so a five-way type system is not something it would have left out by accident.
+That absence — together with the fact that three of `skill-judge`'s five former "shapes" were
+re-scoring other dimensions — is why the shape taxonomy and the four complexity tiers were
+deleted on 2026-08-27. The eight items in `skill-forge/references/architecture-patterns.md`
+survived as *workflow mechanisms*: control flow a procedure needs, never a kind of skill.
+
+**Two places they are wrong, or narrower than they read.** mgechev's
+`scripts/validate-metadata.py` rejects any first- or second-person pronoun in a description;
+measured against this repo's six `agent-stack` skills it fired on three, **every one a false
+positive**, because the pronouns sat inside quoted user utterances (`'my CLAUDE.md is too
+long'`) — which is exactly what a trigger list should contain. And Anthropic's ban on
+`anthropic`/`claude` in a skill name binds claude.ai uploads and the Skills API, not Claude
+Code: this repo's own `claude-automation-recommender` is deployed and working, so
+`quick_validate.py` warns rather than fails.
+
 ## Future work / TODOs
 
 Tracked separately in [TODO.md](TODO.md).
