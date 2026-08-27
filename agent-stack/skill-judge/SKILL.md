@@ -255,38 +255,46 @@ skill's central claim.
 
 ### D8 — Practical usability (15)
 
-Can an agent act on it immediately?
+Three different questions, scored separately because one number over all of them
+says nothing about which failed. Award each sub-area its top value and deduct 1
+per cited defect, as everywhere else. **The report MUST name the sub-area for
+every deduction**, or the total is unreadable.
 
-| Score | Criteria |
-|-------|----------|
-| 0–5 | Confusing, incomplete, or self-contradictory |
-| 6–10 | Usable with noticeable gaps |
-| 11–13 | Clear for common cases |
-| 14–15 | Covers edge cases, fallbacks, and error handling |
+#### Acts now (7)
 
-Check for decision trees on multi-path scenarios, working (not pseudo) examples,
-stated fallbacks when the primary path fails, and realistic edge cases.
+Can an agent execute this immediately, without filling a gap itself? Decision
+trees where a path branches, working rather than pseudo examples, a stated
+fallback when the primary path fails, and realistic edge cases. Deduct where the
+skill is confusing, incomplete or self-contradictory — a contradiction costs 2,
+because the agent will act on one half and never see the other.
 
-**Also deduct here for the operational contract:**
+#### Acts safely (4)
 
 - No confirmation gate before a destructive or expensive operation, or a gate a
   `--quick`-style flag can switch off. One flag typed up front cannot authorize
   an action the user had no way to foresee, and a gate a flag disables is not one.
 - A pre-delivery checklist whose items cannot be settled by looking at the output
   — "ensure good quality" instead of "no placeholder text remaining".
+
+#### Still works elsewhere, later (4)
+
 - A bundled script that fails bare and leaves the agent to work out why. Its
   `stderr` is the agent's only input for self-correcting; expect anticipated
   failures handled in the script and a message naming the next action. Unjustified
-  constants belong here too: if the skill cannot say why the timeout is 47, the
-  agent cannot either.
+  constants belong here: if the skill cannot say why the timeout is 47, the agent
+  cannot either.
 - A script whose point of use does not say whether to EXECUTE it or read it as
   reference. The two have different context costs and the filename shows neither.
+- Empirical claims without a version and a date — unverifiable rather than usable.
 
-**Portability is scored here, and it is a hard cap rather than a deduction.** Cap
-D8 at **10** when the skill depends on an environmental fact it never verifies,
-and at **5** when that dependency is silent — no probe, no fallback, no message.
-Provenance on empirical claims is scored here too: a version and a date, or the
-claim is unverifiable rather than usable.
+**A skill that bundles no scripts scores the script items in full**, marked `n/a`.
+Absence of a script is not a defect; NEVER deduct for a directory the skill was
+right not to create.
+
+**Portability caps the D8 SUBTOTAL and is not a deduction**, so it applies after
+the three sub-areas are summed. Cap at **10** where the skill depends on an
+environmental fact it never verifies, and at **5** where that dependency is silent
+— no probe, no fallback, no message.
 
 ⛔ Load `references/portability-scoring.md` when the target names any tool, path,
 runner or repository binding, or asserts how something behaves. It carries the
@@ -379,7 +387,7 @@ exemptions and the trap inside each, and the full checklist.
 | D5 Progressive disclosure | X | 15 | |
 | D6 Freedom calibration | X | 15 | |
 | D7 Verification evidence | X | 10 | |
-| D8 Usability | X | 15 | |
+| D8 Usability | X | 15 | now A/7 + safe B/4 + later C/4, cap applied; name the sub-area per deduction |
 
 ## Critical issues
 [must-fix problems]
