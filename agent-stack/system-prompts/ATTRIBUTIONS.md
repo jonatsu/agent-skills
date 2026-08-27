@@ -78,6 +78,44 @@ to retrieved content. It was NOT adopted as written — most of its rungs are
 harness-design concerns. Only the two that change what a prompt author writes
 survive, as the `Rank` calibration.
 
+### Rules-audit notebook (local), and its upstream chain
+
+- Source: `~/.config/claude/docs/RULES-AUDIT-NOTEBOOK.md`, dated 2026-08-27 — a
+  local document, not published, merging this machine's own rules audit with a
+  third-party principles document
+- Upstream half:
+  [`abhishekray07/claude-md-templates`](https://github.com/abhishekray07/claude-md-templates),
+  `principles.md` at commit `8514fe7460db` (2026-04-09). MIT, Copyright (c) 2026
+  Abhishek Ray, itself attributed to the CLAUDE.md Starter Kit by Claude Code Camp
+- Read 2026-08-27
+
+The REVIEW branch, `references/global-rule-files.md`, the escape-hatch and
+hedge-word sections, the over- versus under-compliance gate, the evidence-grade
+table and six corrections to claims this skill previously asserted all derive
+from that notebook. Ideas and structure were taken; no text was copied, and the
+decomposition was changed — the notebook is organised as one review procedure for
+global rule files, while this skill splits the same material across three
+branches covering prompts generally.
+
+**Attribution here is deliberately conservative.** The notebook states that half
+its content is upstream-derived and half is original, but does not mark which is
+which per section, so the upstream chain is named in full rather than guessed at.
+Both the notebook's own licence position and this skill's are MIT, so no
+relicensing question arises; `LICENSE.upstream` ships with Abhishek Ray's notice
+because a portion of what was drawn on is derivative of it and the boundary is
+not determinable.
+
+Two things were taken from the notebook and **downgraded rather than adopted as
+stated**: the two arXiv studies and the corrections table are recorded here as
+reported by that audit and have NOT been re-verified against the primary sources
+inside this skill. Both places that use them say so and grade them
+DOCUMENTED-at-one-remove. The notebook's own rule — open the source before
+repeating a number — is the reason the downgrade is stated rather than assumed.
+
+Not adopted: the notebook's four-tier size discussion beyond "no threshold is
+established", and its per-rule metadata schema, which belongs to a maintained
+multi-tool ruleset rather than to a single prompt.
+
 ## Sources cited in the skill
 
 - Nelson F. Liu, Kevin Lin, John Hewitt, Ashwin Paranjape, Michele Bevilacqua,
