@@ -57,6 +57,26 @@ before cutting.
 
 ## Evaluation dimensions (120 points)
 
+### How to pick the number
+
+A band is a range, and choosing inside it by feel is why two careful reviewers
+produce different totals from the same package. One rule removes that:
+
+⛔ **Award the band's TOP value. Deduct 1 per cited defect, and NEVER below the
+band's bottom.** Every deduction MUST carry a `file:line` and a one-line reason.
+
+- A dimension scored at its band top needs no citations — that is the default.
+- **A score below the band top with no citation is invalid.** It is not a harsh
+  review; it is an unfinished one, and MUST be corrected before reporting.
+- Where deductions would take you under the band bottom, you are in the wrong
+  band. Drop a band and re-apply the rule rather than clamping.
+
+D7 does not use bands; it awards four inspectable properties additively.
+
+Two reviewers who agree on the band now agree on the number, unless one found
+something the other did not — and that difference is a citation they can settle,
+rather than a disagreement about taste they cannot.
+
 ### D1 — Knowledge delta (20) — the core dimension
 
 Does the skill add genuine expert knowledge?
@@ -118,9 +138,25 @@ behind a vague description is a skill that never fires.
 | 11–13 | Valid; description states WHAT but is weak on WHEN |
 | 14–15 | Description answers WHAT, WHEN, and carries trigger KEYWORDS |
 
-`name`: lowercase, alphanumeric + hyphens, ≤64 chars. Description must answer
-WHAT it does, WHEN to use it (explicit trigger scenarios), and which KEYWORDS
-should surface it. (See `writing-great-skills` on writing the description.)
+`name`: 1–64 characters, lowercase letters, digits and single hyphens — none
+leading, trailing or consecutive — and it MUST match the parent directory name,
+or the skill is unreachable under the name it advertises. `anthropic` and
+`claude` are rejected by claude.ai uploads and the Skills API but load fine in
+Claude Code, so treat either as a distribution finding, NEVER as a defect.
+
+Description: WHAT it does, WHEN to use it, the KEYWORDS that surface it, and at
+least one **negative** trigger routing a near-miss elsewhere. Third person
+throughout — except inside a quoted user utterance, where a pronoun is correct
+because that is what the user types. Do NOT flag `'my CLAUDE.md is too long'`.
+
+**Also deduct here for structural contract:** no Iron Law or equivalent core
+constraint, or one buried below other prose rather than immediately after the H1;
+behavioural directives not in ALL-CAPS RFC 2119 keywords, so a reader cannot tell
+a rule from a description; user-facing documentation shipped inside the package
+(`README.md`, `CHANGELOG.md`, `INSTALLATION_GUIDE.md`); and, for an adapted
+skill, a missing `ATTRIBUTIONS.md`, `LICENSE.upstream` or `NOTICE.upstream`.
+Licence incompleteness is a compliance failure, not a style one — deduct to the
+band bottom for it.
 
 ### D5 — Progressive disclosure (15)
 
@@ -133,6 +169,13 @@ Metadata (name + description) is always in memory; the body loads on trigger;
 | 6–10 | References exist but no guidance on when to load them |
 | 11–13 | Good layering with explicit load triggers |
 | 14–15 | Load triggers embedded in workflow + "do NOT load" guidance |
+
+**Also deduct here for reference hygiene:** references organised by type
+(`checklists/`, `templates/`) rather than by domain, which leaves the agent
+guessing which shape holds its answer; nesting deeper than one level, which
+invites partial reads; a reference over 100 lines with no table of contents; and
+any single reference larger than the rest of the package combined, which is
+loaded whole or not at all and both are wrong.
 
 **A skill with no references is not thereby capped.** Ask first whether any
 content in the body is specialist lookup material — needed for some reviews and
@@ -206,6 +249,21 @@ Can an agent act on it immediately?
 Check for decision trees on multi-path scenarios, working (not pseudo) examples,
 stated fallbacks when the primary path fails, and realistic edge cases.
 
+**Also deduct here for the operational contract:**
+
+- No confirmation gate before a destructive or expensive operation, or a gate a
+  `--quick`-style flag can switch off. One flag typed up front cannot authorize
+  an action the user had no way to foresee, and a gate a flag disables is not one.
+- A pre-delivery checklist whose items cannot be settled by looking at the output
+  — "ensure good quality" instead of "no placeholder text remaining".
+- A bundled script that fails bare and leaves the agent to work out why. Its
+  `stderr` is the agent's only input for self-correcting; expect anticipated
+  failures handled in the script and a message naming the next action. Unjustified
+  constants belong here too: if the skill cannot say why the timeout is 47, the
+  agent cannot either.
+- A script whose point of use does not say whether to EXECUTE it or read it as
+  reference. The two have different context costs and the filename shows neither.
+
 **Portability is scored here, and it is a hard cap rather than a deduction.** Cap
 D8 at **10** when the skill depends on an environmental fact it never verifies,
 and at **5** when that dependency is silent — no probe, no fallback, no message.
@@ -222,11 +280,25 @@ exemptions and the trap inside each, and the full checklist.
 1. **Read the whole package, not just SKILL.md.** Reference files are where
    contradictions hide, and a grade that skipped them is a guess wearing a score.
    Record which files you read and which you did not.
-2. **Knowledge-delta scan.** Tag each section `[E]`/`[A]`/`[Rec]`/`[R]` and give
-   the ratio TWICE — once for SKILL.md, once for the whole package. They diverge
-   sharply when the weight sits in `references/`, and one number reported without
-   its scope is two different claims about the same skill. Good skill: >70% E,
-   <10% R, and nothing left `[Rec]` that a pointer could replace.
+2. **Knowledge-delta scan.** Tag each block `[E]`/`[A]`/`[Rec]`/`[R]`, then
+   report the ratio TWICE — once for SKILL.md, once for the whole package. They
+   diverge sharply when the weight sits in `references/`, and one number reported
+   without its scope is two different claims about the same skill. Good skill:
+   >70% E, <10% R, and nothing left `[Rec]` that a pointer could replace.
+
+   **Weight by LINES, never by block count**, or a one-line aside counts the same
+   as a forty-line section and the ratio stops meaning anything. Definitions, so
+   the number is reproducible:
+
+   - A **block** is a heading plus everything under it up to the next heading of
+     any level. A fenced code example belongs to its block.
+   - The **denominator** is total body lines in scope: SKILL.md body for the
+     first ratio, body plus every `references/` file for the second.
+   - **Excluded from both:** YAML frontmatter, `ATTRIBUTIONS.md`,
+     `LICENSE.upstream`, `NOTICE.upstream`. They are provenance, not knowledge,
+     and counting them inflates whichever class you assign them to.
+   - A genuinely mixed block **splits at the line**. Do NOT round it to whichever
+     class holds more — that is where two reviewers diverge most.
 3. **Cross-file consistency pass**, in two directions.
 
    **Assertion vs assertion** — where two files state the same fact, check they
@@ -260,8 +332,10 @@ exemptions and the trap inside each, and the full checklist.
    reference files and sizes; note which workflow mechanisms the procedure uses,
    as description rather than classification; check load triggers; flag
    any single reference larger than the rest of the package combined.
-5. **Score each dimension.** Cite specific lines as evidence; give a one-line
-   justification per score; note the fix when below max.
+5. **Score each dimension.** Pick the band, award its top value, then deduct 1 per
+   cited defect down to the band bottom — see [How to pick the number](#how-to-pick-the-number).
+   Every deduction carries a `file:line` and its reason, and those citations ARE the
+   justification; do NOT write a separate one. Note the fix when below max.
 6. **Total and grade.** Sum D1–D8 (max 120). A ≥90% (108+), B 80–89% (96–107),
    C 70–79% (84–95), D 60–69% (72–83), F <60% (<72). A grade over a partially
    read package MUST say so, and its D1, D5 and D8 scores are provisional.
@@ -274,11 +348,11 @@ exemptions and the trap inside each, and the full checklist.
 
 - **Score**: X/120 (X%) — Grade [A–F]
 - **Workflow mechanisms**: [ordering/routing/delegation/refinement/detection/scoring/templating/degradation, or none] — descriptive, not scored
-- **Knowledge ratio** SKILL.md E:A:Rec:R = W:X:Y:Z | package E:A:Rec:R = W:X:Y:Z
+- **Knowledge ratio** (line-weighted) SKILL.md E:A:Rec:R = W:X:Y:Z over N lines | package = W:X:Y:Z over M lines
 - **Coverage**: read [files]; not read [files] — scores provisional if any
 - **Verdict**: [one sentence]
 
-| Dimension | Score | Max | Note |
+| Dimension | Score | Max | Band top, then each deduction with its `file:line` |
 |-----------|-------|-----|------|
 | D1 Knowledge delta | X | 20 | |
 | D2 Mindset + procedures | X | 15 | |
@@ -329,6 +403,9 @@ Two files. Both are lookup material for part of a review, never preparation for 
 - NEVER score a package you have only partly read without saying which files you
   skipped. A grade resting on half a package reads exactly as confident as one
   resting on all of it.
+- NEVER score below a band's top without a `file:line` for each point deducted.
+  An uncited deduction is indistinguishable from a mood, and it is the single
+  thing that stops two reviewers reproducing the same total.
 - NEVER cut content just because a live source also carries it. Check first that
   the source is correct and reachable when the skill fires; documenting where an
   authoritative source lies is high-value content that looks like duplication.
