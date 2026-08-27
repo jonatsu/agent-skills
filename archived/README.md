@@ -16,6 +16,7 @@ whole mechanism; there is no separate opt-out to remember.
 | `headroom-management` | 2026-08-26 | The Headroom proxy it manages was rejected, so the skill governs a tool this setup no longer runs. See its `ARCHIVED.md`. |
 | `lean-ctx` | 2026-08-27 | lean-ctx was removed from this setup, so every `ctx_*` trigger in the skill names a tool that no longer exists. Its three locally-measured reference files are why this is an archive rather than a deletion, and its Apache-2.0 `LICENSE.upstream`/`NOTICE.upstream` must stay with the directory. See its `ARCHIVED.md`. |
 | `prompt-optimizer` | 2026-08-27 | Merged into `shared/agent-stack/system-prompts` as its REPAIR branch — same subject, opposite direction, and the two collided on "write a system prompt" and "fix this prompt". Nothing was dropped; `ARCHIVED.md` maps every section to its new home. Archived rather than deleted because its diagnostic table was written against real failures. |
+| `writing-great-skills` | 2026-08-27 | Unreachable and unconsumed: `disable-model-invocation: true` meant no skill could invoke it and Claude Code could not preload it, and its only dependents were removed from `skill-judge` in `7704d3e`. It was also a second authority on skill authoring that contradicted `skill-forge` on prohibitions without acknowledging it. Preserved verbatim from upstream, which is why it was never brought up to repo conventions — and why bringing it up would have destroyed the property it was kept for. `ARCHIVED.md` names the four concepts `skill-forge` does not carry. |
 
 ## Archiving a skill
 

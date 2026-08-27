@@ -204,6 +204,10 @@ relative to `skills/` unless noted. Repository-wide items live in
   95/120 C, `find-skills` 93/120 C, `writing-great-skills` 92/120 C. ⚠️ D1/D5 are
   **provisional** for `skill-forge`, `find-skills` and `writing-great-skills` — their
   `references/` were not read, so those three totals are soft.
+  **Status 2026-08-27:** the group is now FIVE skills — `writing-great-skills` was archived
+  rather than repaired, see the struck bullets below. The bullets against `skill-forge` and
+  `skill-judge` were worked in `1897d7f` and `ef15c5f` but were never struck through here;
+  re-audit them against the current files before treating any of them as open.
   - ~~**Licence compliance, and the only items here that are not style.** `skill-forge` and
     `skill-judge` both declare upstream adaptation in `ATTRIBUTIONS.md` and ship no
     `LICENSE.upstream`, which `skill-forge` itself requires of adapted skills.
@@ -221,12 +225,14 @@ relative to `skills/` unless noted. Repository-wide items live in
     needed. `skill-judge`'s source commit was never recorded at adaptation time; it is
     now pinned to upstream HEAD `3027f20f` and **marked as an inference**, sound because
     that commit is dated 2026-03-05 and this skill landed here 2026-07-27.
-  - **`skill-judge` depends on a skill no skill can invoke.** It tells the agent to consult
+  - ~~**`skill-judge` depends on a skill no skill can invoke.** It tells the agent to consult
     `writing-great-skills` for vocabulary in three places, and names it in its description.
     `writing-great-skills` sets `disable-model-invocation: true`, and its own text states the
     consequence: only the user, typing its name, can invoke it. Resolve by inlining the few
     terms `skill-judge` needs, or by dropping the key — note the root `AGENTS.md` records
-    that OpenCode ignores that key entirely, so behaviour already differs per agent.
+    that OpenCode ignores that key entirely, so behaviour already differs per agent.~~
+    **FIXED 2026-08-27 in `7704d3e`**, by cutting the dependency rather than the key, and
+    closed for good by the archival below.
   - **`skill-forge` ↔ `skill-judge` trigger collision — the same defect that got
     `prompt-optimizer` archived.** "improve this skill" fires both: `skill-forge`'s
     description claims "improve a skill" and the literal trigger `'improve skill'`,
@@ -266,17 +272,27 @@ relative to `skills/` unless noted. Repository-wide items live in
     `scripts/verify_skill.sh`, which probes with `command -v` and calls `skip()` for the
     hidden-Unicode scan, the secret scan, shellcheck and semgrep independently. Reworded,
     and a line added telling the reader that a clean exit is not a clean candidate.
-  - **`writing-great-skills` was never brought up to repo conventions**, which its own
+  - ~~**`writing-great-skills` was never brought up to repo conventions**, which its own
     `ATTRIBUTIONS.md` half-discloses ("body and GLOSSARY.md preserved verbatim from
     upstream"): zero RFC 2119 keywords in 86 lines, no NEVER list, and `GLOSSARY.md` at 201
     lines exceeds `SKILL.md` + `ATTRIBUTIONS.md` combined — which `skill-forge` forbids.
     Decide deliberately: apply the conventions, or record in `ATTRIBUTIONS.md` that verbatim
-    preservation is the point and exempts it. Today the exemption is implied, not stated.
-  - **Two skills here give contradictory authoring advice, and neither acknowledges the
+    preservation is the point and exempts it. Today the exemption is implied, not stated.~~
+  - ~~**Two skills here give contradictory authoring advice, and neither acknowledges the
     other.** `writing-great-skills` argues that steering by prohibition backfires and a
     prohibition should be kept only as a hard guardrail; `skill-forge` §5.6 and
     `skill-judge`'s D3 both make an explicit NEVER list a scored requirement, capped at 3
-    for "no anti-patterns". Both positions are defensible. The silence is not.
+    for "no anti-patterns". Both positions are defensible. The silence is not.~~
+    **RESOLVED 2026-08-27 by archiving `writing-great-skills`**, the third option rather
+    than either of the two the first bullet offered. Applying the conventions would have
+    destroyed the verbatim-preservation property the package was kept for; recording the
+    exemption would have kept a deployed skill that nothing reached. Its dependents were
+    already gone, `disable-model-invocation: true` meant no skill could invoke it and
+    Claude Code could not preload it, and the contradiction closes because one side of it
+    no longer deploys. The four concepts `skill-forge` does NOT carry — leading words,
+    context-vs-cognitive load, the two granularity cuts, premature completion — are named
+    in `archived/writing-great-skills/ARCHIVED.md`, and re-deriving them into `skill-forge`
+    is deliberately left open rather than done in the same change.
   - ~~**One defect shipped verbatim in two skills.** `skill-forge` and `skill-judge` both say
     a skill gave "four answers to a question the running tool answers once" — the example
     lists 81, 76 and 63, which is **three** claimed answers against 80 actual. Fix in both.~~
@@ -286,3 +302,36 @@ relative to `skills/` unless noted. Repository-wide items live in
     `skill-forge:43` had condensed that to "as 81, 76 and 63", dropping the clause the
     count rested on. A one-file off-by-one, now repaired by restoring the instance detail.
     `skill-judge` was correct and was left untouched.
+- **Twenty references over 100 lines still have no contents list — measured 2026-08-27.**
+  `skill-forge` says a reference over 100 lines SHOULD carry a table of contents, and three
+  independent sources agree on the threshold (Anthropic's authoring guide, mgechev's
+  checklist, `skill-forge` itself; see `README.md` → "External references on skill
+  authoring"). The 2026-08-27 `agent-stack` pass checked only that group and fixed the one
+  file it found. This is the rest.
+  - **Method, so the count is reproducible:** every `*.md` under any `references/` outside
+    `archived/`, line-counted; a file counts as having a contents list if a
+    `## Contents`-style heading or an anchor-link bullet list appears in its first 40 lines.
+    **69 files exceed 100 lines and 21 had no list**; `agents-management/update-guidelines.md`
+    (289) was fixed the same day, leaving 20. Three negatives and one positive were checked
+    by hand and the heuristic held on all four — but it IS a heuristic, so re-run it rather
+    than trusting these paths after any reference edit.
+  - `shared/ops/containers` — 7: `compose-systemd.md` (1255), `dockerfile-patterns.md` (387),
+    `image-scanning.md` (319), `docker-compose.md` (262), `ci-cd.md` (248),
+    `runtime-security.md` (247), `base-image-comparison.md` (245).
+  - `shared/nix/dendritic-pattern` — 4: `policies.md` (141), `schema-and-resolution.md` (123),
+    `quirks-and-pipes.md` (111), `debugging.md` (107).
+  - `claude/claude-automation-recommender` — 3: `mcp-servers.md` (294),
+    `subagent-templates.md` (225), `plugins-reference.md` (126).
+  - `shared/development/mise-expert` — 3: `templating-and-early-init.md` (126),
+    `tools-tasks-and-isolation.md` (112), `operations-and-troubleshooting.md` (103).
+  - `shared/ops/systemd` — 2: `socket-activation.md` (120), `services-and-execution.md` (107).
+  - `shared/git/github-operations` — 1: `graphql-operations.md` (140).
+  - **This is a backlog, not a violation set.** The rule is SHOULD, not MUST, and nothing
+    gates it — `quick_validate.py` reads frontmatter only. The 1255-line
+    `compose-systemd.md` is the one worth doing first on its own merits; it does NOT
+    breach `skill-forge`'s "no reference outgrows the rest of the package combined" rule
+    (1255 against 2275 in its siblings), so a contents list is the whole fix there.
+  - The house shape to copy is `agents-management/references/`: a lead paragraph, then a
+    bold `**Contents**` line, then one anchor-link bullet per H2. Headings inside fenced
+    code blocks get no anchor and MUST be left out — `update-guidelines.md` has six of
+    them and `grep '^## '` reports every one.
