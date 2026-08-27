@@ -1,5 +1,49 @@
 # Skill Testing Guide
 
+- [Evaluations, written first](#evaluations-written-first) — format, baseline, model matrix
+- [Four Testing Areas](#four-testing-areas) — triggering, functional, comparison, claim verification
+- [Quality Metrics](#quality-metrics) · [Iteration Signals](#iteration-signals) · [Test Inventory](#test-inventory-requirements)
+
+## Evaluations, written first
+
+MUST exist before any body text. Three minimum. Each is a realistic request plus the
+behaviour that counts as success — not an assertion that the skill "works".
+
+```json
+{
+  "skill": "pdf-processing",
+  "query": "Extract all text from this PDF and save it to output.txt",
+  "files": ["fixtures/document.pdf"],
+  "expected_behavior": [
+    "Reads the PDF with an appropriate library or CLI tool",
+    "Extracts text from every page, missing none",
+    "Writes output.txt in a readable form"
+  ]
+}
+```
+
+**Baseline first, with no skill loaded.** Run all three unaided and record what the agent
+actually did. Without that number, "the skill helps" is an impression. With it, the claim
+is "unaided the agent missed the auth step in 3 of 5 runs; with the skill, 0 of 5".
+
+**MUST run the matrix, not one model.** A skill is an addition to a model, so its behaviour
+is the model's behaviour plus the skill:
+
+| Model class | What it tests |
+|---|---|
+| Smallest deployed | Is there ENOUGH guidance? Compression a strong model reconstructs, a weak one drops |
+| Mid | Is it clear and efficient? |
+| Strongest deployed | Does it over-explain what this model already knows? |
+
+MUST cover every model class the skill actually deploys to, including the ones running
+delegated or subagent contexts, and MUST state which classes went untested. A skill tuned
+on a frontier model routinely underspecifies for a small one, and that failure is invisible
+from the model you tuned on.
+
+**Keep the evaluations in the repository, not in a chat.** A baseline nobody can re-run is
+not a baseline. Retain the request, the expected behaviour, the models, the date and the
+result, so a regression reproduces.
+
 ## Four Testing Areas
 
 ### 1. Triggering Tests

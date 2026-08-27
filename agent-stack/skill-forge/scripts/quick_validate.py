@@ -18,6 +18,16 @@ import yaml
 # Advisory only. Union of the surfaces this repo deploys to, verified 2026-08-27
 # against https://code.claude.com/docs/en/skills. Being absent from this set is a
 # prompt to check, NEVER evidence of a defect.
+# Lowercase, digits, single hyphens; no leading, trailing or consecutive hyphens.
+NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+
+# Rejected in a skill name by claude.ai uploads and the Skills API. Verified 2026-08-27
+# against https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+# Warned rather than failed: Claude Code loads such a skill fine -- this repo's own
+# claude-automation-recommender is deployed and working -- so the constraint bounds
+# distribution, not local use.
+RESERVED_WORDS = ("anthropic", "claude")
+
 KNOWN_KEYS = {
     # Claude Code skill frontmatter
     "name",
@@ -87,8 +97,30 @@ def validate_skill(skill_path):
             return False, f"metadata.{key} cannot be empty", warnings
 
     name = str(frontmatter.get("name", "")).strip()
-    if not re.match(r"^[a-z0-9-]+$", name):
-        return False, f"Name '{name}' should be hyphen-case", warnings
+    if not 1 <= len(name) <= 64:
+        return False, f"Name '{name}' is {len(name)} characters; must be 1-64", warnings
+    if not NAME_RE.match(name):
+        return (
+            False,
+            f"Name '{name}' must be lowercase letters, digits and single hyphens, "
+            "with no leading, trailing or consecutive hyphens",
+            warnings,
+        )
+    for word in RESERVED_WORDS:
+        if word in name:
+            warnings.append(
+                f"name contains '{word}', which claude.ai uploads and the Skills API "
+                "reject. Claude Code loads such a skill without complaint, so this "
+                "blocks distribution rather than local use."
+            )
+    if name != skill_path.resolve().name:
+        return (
+            False,
+            f"Name '{name}' does not match its directory "
+            f"'{skill_path.resolve().name}'; the skill is unreachable under the "
+            "name it advertises",
+            warnings,
+        )
 
     description = str(frontmatter.get("description", "")).strip()
     if not description:

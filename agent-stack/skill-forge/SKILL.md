@@ -10,18 +10,6 @@ metadata:
 
 IRON LAW: Every line in a skill MUST justify its token cost. If it does not make the agent's output better, more consistent, or more reliable, cut it.
 
-## What is a Skill
-
-A skill is an onboarding guide for an agent, transforming it from a general-purpose assistant into a specialized one with procedural knowledge, domain expertise, and bundled tools.
-
-```text
-skill-name/
-├── SKILL.md           # Required: workflow + instructions (<500 lines)
-├── scripts/           # Optional: deterministic, repeatable operations
-├── references/        # Optional: loaded into context on demand
-└── assets/            # Optional: used in output, never loaded into context
-```
-
 **Default assumption:** the agent is already very capable. MUST only add what it does not already know. SHOULD challenge every paragraph: "Does this justify its token cost?"
 
 **Second test — is it recoverable?** "The agent does not know it" is necessary
@@ -58,10 +46,17 @@ is the correct shape.
 
 ## Structure
 
-A `SKILL.md` plus, only where the task needs them, `scripts/`, `references/` and
-`assets/`. No ladder of skill types, no classification to make: MUST start with
-`SKILL.md` alone and add a directory when something concrete belongs in it, NEVER
-in anticipation. **One ceiling governs every skill — under 500 lines — and there is
+```text
+skill-name/
+├── SKILL.md           # Required: workflow + instructions (<500 lines)
+├── scripts/           # Optional: deterministic, repeatable operations
+├── references/        # Optional: loaded into context on demand
+└── assets/            # Optional: used in output, never loaded into context
+```
+
+No ladder of skill types, no classification to make: MUST start with `SKILL.md`
+alone and add a directory when something concrete belongs in it, NEVER in
+anticipation. **One ceiling governs every skill — under 500 lines — and there is
 no per-kind target.** A short skill is correct, not incomplete.
 
 ## Workflow
@@ -76,6 +71,8 @@ Skill Forge Progress:
   - [ ] 1.2 Collect 3+ concrete usage examples
   - [ ] 1.3 Identify trigger scenarios and keywords
   - [ ] 1.4 Decide whether this is an ordered procedure, and which workflow mechanisms it needs
+  - [ ] 1.5 Write 3+ evaluations ⚠️ REQUIRED — BEFORE any body text exists
+  - [ ] 1.6 Run them with no skill loaded; record the baseline and the models used
 - [ ] Step 2: Plan Architecture
   - [ ] 2.1 Identify reusable resources (scripts, references, assets)
   - [ ] 2.2 Design progressive loading strategy
@@ -113,12 +110,15 @@ Skill Forge Progress:
 
 ## References, and when NOT to load them
 
-Seven files. Each step below names the symptom that earns its load; nothing here needs
+Eight files. Each step below names the symptom that earns its load; nothing here needs
 reading up front, and reading it all costs more than the body it supports.
 
 **Do NOT load:**
 
-- `architecture-patterns.md` for a single linear procedure. Its eight shapes are for
+- `portability.md` when the skill touches no tool, path or runner at all. That is rare —
+  if in doubt, load it; the failures it prevents are silent ones.
+
+- `architecture-patterns.md` for a single linear procedure. Its eight mechanisms are for
   skills that route, fan out, loop or degrade; a sequential workflow needs none of them,
   and shopping the list invites structure the skill does not need.
 - `pro-agent.md` when no script is in question. It settles script-versus-prose, and read
@@ -144,6 +144,20 @@ Ask yourself:
 If unclear, MUST ask the user. MUST start with the most critical question first.
 
 NEVER proceed until you have at least 3 concrete examples.
+
+### 1.5–1.6 Evaluations, before the body ⚠️ REQUIRED
+
+⛔ **MUST write 3+ evaluations and run them with NO skill loaded, before any body
+text exists.** Record what the agent did unaided and which models were run.
+
+**The order is the whole point.** Evaluations written afterwards test what you
+built; written first, they test what was needed — and they are the only ones that
+can tell you the skill is unnecessary, which is unreachable once a body exists to
+justify. The baseline is what makes "it helps" a measurement, and is what Step 10
+compares against.
+
+⛔ Load `references/testing-guide.md` here for the format, the baseline procedure
+and the model matrix.
 
 ## Step 2: Plan Architecture
 
@@ -192,7 +206,9 @@ The description determines:
 
 ⛔ Load `references/description-guide.md` before writing the description — every time,
 because a description that reads well to its author is the single most common reason a
-finished skill never fires.
+finished skill never fires. It carries the third-person rule and its quoted-utterance
+exception, and the naming constraints (1–64 chars, single hyphens, matches the directory,
+no reserved words).
 
 Key rule: NEVER put "When to Use" info in the SKILL.md body. The body loads after triggering; too late.
 
@@ -311,50 +327,15 @@ only when a check you wrote cannot be settled by looking at the output.
   - A skill carrying local bindings with no `repo-local` declaration is a
     portable skill with a defect, NEVER a repo-local skill that forgot to say
     so. Declare the scope, or remove the bindings.
-- **Environment independence**: a skill is universal by nature — it runs on
-  machines nobody configured for it, months after it was written. It MUST NOT
-  depend on any environmental fact it did not verify at run time.
-  - Tool availability MUST be established by a `PATH` probe
-    (`command -v <tool>`) and nothing else. NEVER assume a tool is installed,
-    and NEVER hardcode an install path (`/usr/local/bin/x`,
-    `~/.local/share/mise/installs/...`, `/opt/homebrew/...`).
-  - **A project-local entry point is NOT a tool, and no `PATH` probe validates
-    it.** `just check`, `npm run lint`, `make test`, `mise run ci`,
-    `pre-commit run`, `nox -s tests` and `./scripts/gate.sh` are contracts of one
-    REPOSITORY, not of a machine. `command -v just` succeeds on any machine that
-    has `just` while that repo's `check` recipe does not exist — the probe passes
-    and the command still fails, which is worse than no probe at all. A portable
-    skill MUST NOT name one.
-  - Instead, DISCOVER the repo's entry point at run time, and state the detection
-    order: a pre-commit config, then a task runner (`justfile`, `Makefile`,
-    `mise.toml`, `package.json` scripts, `pyproject` scripts), then a
-    `scripts/`/`bin/` entry. Run what is found. When nothing is found, report that
-    and skip — NEVER invent a command, and NEVER assume the conventional name is
-    present.
-  - **Exception: repo-scoped skills.** A skill that ships inside the repository
-    it serves MAY, and SHOULD, name that repo's commands directly — they are its
-    contract rather than an assumption. It MUST declare `metadata.scope:
-    repo-local` and name that repository near the top, so the next reader knows
-    the naming is deliberate and does not lift the skill somewhere it cannot
-    work.
-  - **Exception: a skill ABOUT a tool may bind to that tool, and to nothing
-    else.** Naming `pytest` inside a pytest skill is its subject, not an
-    assumption, and demanding tool-agnosticism there is incoherent. The
-    carve-out covers the subject ONLY: that same skill MUST still discover the
-    repo's runner rather than naming `just test`, MUST still probe for any tool
-    beyond its subject, and MUST still state what happens when its own subject
-    is absent. Assuming a SECOND tool is the ordinary defect wearing the
-    subject's clothes, and it is harder to see precisely because the first
-    binding was legitimate.
-  - When a tool is absent, the skill MUST degrade to a reported skip or a named
-    alternative, NEVER fail and NEVER silently continue as though the step ran.
-  - Where several tools do the job, list them in preference order and accept any
-    one. A single hardcoded tool rots the moment the ecosystem moves.
-  - Paths to a skill's own bundled files MUST be relative to the skill
-    directory. NEVER write `~/.claude/skills/<name>/...`: it breaks under
-    `CLAUDE_CONFIG_DIR` and for project-scoped installs alike.
-  - NEVER reference the authoring machine — its absolute paths, its usernames,
-    its specific package manager, or a tool version only it has.
+- **Environment independence**: a skill runs on machines nobody configured for it,
+  months after it was written, and MUST NOT depend on any environmental fact it did
+  not verify at run time. Probe every tool with `command -v`; degrade to a reported
+  skip when one is absent; NEVER name another repository's runner, hardcode an
+  install path, or reference the authoring machine.
+  - ⛔ Load `references/portability.md` when the skill will touch ANY tool, path or
+    runner — which is nearly always. It carries why a `command -v just` probe proves
+    nothing about `just check`, the run-time discovery order, and the two exceptions
+    (repo-scoped skills, and a skill about a tool) with the trap in each.
 
 ## Step 6: Build Resources
 
@@ -363,6 +344,9 @@ only when a check you wrote cannot be settled by looking at the output.
 - Scripts execute without loading into context; major token savings
 - MUST test every script before packaging
 - In SKILL.md, MUST document only command and arguments, not source code
+- MUST say per script whether to EXECUTE it or read it as reference, and MUST handle
+  anticipated failures inside the script with a message naming the next action —
+  `references/pro-agent.md` carries both, and the constant-justification rule
 
 ### References
 - MUST organize by domain, not by type
@@ -388,7 +372,7 @@ carries what each test actually consists of and the metric targets to hit.
 Four areas to cover:
 1. **Triggering**: does the skill activate for the right queries and stay dormant for others?
 2. **Functional**: does each workflow produce correct outputs?
-3. **Performance**: is the skill better than no skill? (fewer messages, fewer errors, better consistency)
+3. **Performance**: re-run the Step 1 evaluations WITH the skill loaded, on every model class it deploys to, and compare against the baseline recorded there. A skill that does not beat its own baseline has not earned its tokens — say so rather than shipping it
 4. **Claim verification**: where the skill asserts how a tool or system behaves, MUST exercise those claims against the real thing rather than reviewing them by reading. Record the version and the date, name which claims were checked and which were not, and state what to re-run first after an upgrade. A reference skill has no workflow to test functionally, so without this it ships unexercised — which is how a documented warning that never fires survives review.
 
 MUST test before proceeding to review.
@@ -408,6 +392,10 @@ the Pre-Delivery Checklist below.
 #### Structure
 - [ ] SKILL.md under 500 lines
 - [ ] Frontmatter has `name` and `description`
+- [ ] `name` is 1–64 chars, single hyphens only, matches the directory, and contains
+      neither `anthropic` nor `claude`
+- [ ] Description is third person; any first/second-person pronoun sits inside a quoted
+      user utterance
 - [ ] Description includes trigger keywords and usage scenarios
 - [ ] Frontmatter metadata uses current author and correct license
 - [ ] Adapted skills have `ATTRIBUTIONS.md` with upstream provenance
@@ -432,8 +420,14 @@ the Pre-Delivery Checklist below.
 - [ ] Every countable claim about the package ("each…", "all four…", "the
       only…") was recounted after the last edit
 
+#### Evidence
+- [ ] 3+ evaluations exist, were written BEFORE the body, and are kept in the repo
+- [ ] A no-skill baseline was recorded, with the models it was run on
+- [ ] Every model class the skill deploys to was tested, or the untested ones are named
+
 #### Resources
 - [ ] Scripts tested and executable
+- [ ] Each script says whether to execute it or read it, and handles its own failures
 - [ ] References organized by domain, one level deep
 - [ ] Large references have table of contents
 - [ ] Assets used in output, not loaded into context
@@ -488,11 +482,8 @@ ceiling, a missing Iron Law, a topic-label trigger, leftover placeholders or an 
 
 ## Step 10: Iterate
 
-After real usage:
-1. Notice where the agent struggles or is inconsistent
-2. Identify which workflow step needs improvement
-3. Add more specific instructions, examples, or anti-patterns
-4. Re-test and re-package
+Re-run the Step 1 evaluations after real usage; a regression against a recorded
+baseline is the signal, not an impression that something feels worse.
 
 Load `references/testing-guide.md` again only when the skill is misbehaving in the wild —
 firing when it should not, staying silent when it should fire, or failing mid-workflow. Its
