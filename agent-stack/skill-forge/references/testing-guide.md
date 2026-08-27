@@ -1,6 +1,6 @@
 # Skill Testing Guide
 
-## Three Testing Areas
+## Four Testing Areas
 
 ### 1. Triggering Tests
 Does the skill activate at the right times?
@@ -20,6 +20,15 @@ Is the skill better than no skill?
 - Baseline without skill: measure messages to completion, error rate, token usage, output quality
 - With skill: SHOULD reduce messages, errors, and token consumption
 - With skill: SHOULD improve output consistency and correctness
+
+### 4. Claim Verification
+Where the skill asserts how a tool or system behaves, is that assertion true of the real thing?
+- MUST exercise each such claim against the tool itself. Reading the claim back and finding it
+  plausible is NOT verification, and it is how a documented warning that never fires survives review
+- MUST record the tool version and the date the claim was checked
+- MUST name which claims were checked and which were not, so a reader can tell what to distrust
+- MUST state what to re-run first after an upgrade
+- A reference skill has no workflow to test functionally, so without this area it ships unexercised
 
 ## Quality Metrics
 

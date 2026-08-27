@@ -2,7 +2,7 @@
 
 ## Technique 1: The Iron Law
 
-MUST set one unbreakable rule at the top of SKILL.md, right after frontmatter. This prevents the agent from taking shortcuts.
+MUST set one unbreakable rule at the top of SKILL.md, immediately after the H1 title and before any other prose. This prevents the agent from taking shortcuts.
 
 ### Examples
 

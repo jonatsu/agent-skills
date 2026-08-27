@@ -107,6 +107,7 @@ Skill Forge Progress:
   - [ ] Run trigger tests (5+ positive, 5+ negative)
   - [ ] Run functional tests for each workflow
   - [ ] Compare with/without skill performance
+  - [ ] Verify every claim about tool behavior against the tool, with version and date
 - [ ] Step 8: Review ⚠️ REQUIRED
   - [ ] Run pre-delivery checklist
   - [ ] Present summary to user for confirmation
@@ -169,7 +170,9 @@ Load reference files as needed for each sub-step.
 ### 5.1 Set Iron Law
 
 Ask: "What is the ONE mistake the agent will most likely make with this skill?"
-MUST write a rule that prevents it. MUST place it at the top of SKILL.md, right after frontmatter.
+MUST write a rule that prevents it. MUST place it immediately after the H1 title
+and before any other prose — that is the top of the body, since every SKILL.md
+opens with its H1.
 
 Load `references/writing-techniques.md` for Iron Law patterns and red flag signals.
 

@@ -35,4 +35,12 @@ MUST use instructions when:
 
 ## Key Insight
 
-LLMs are probabilistic. Business logic is deterministic. 90% accuracy per step cascades to 59% over 5 steps. MUST push deterministic work into scripts.
+LLMs are probabilistic. Business logic is deterministic. Error compounds across a chain of steps,
+so a long agent-driven sequence is less reliable than its per-step accuracy suggests. MUST push
+deterministic work into scripts.
+
+The usual illustration — 90% per step giving 0.9^5 = 59% over five steps — is **arithmetic on
+assumed inputs, NEVER a measurement.** It holds only if the steps are independent and each is
+exactly 90% accurate, and neither condition has been established for any real agent. Use it to
+convey the shape of compounding error; NEVER cite it as evidence, and NEVER derive a threshold
+from it.

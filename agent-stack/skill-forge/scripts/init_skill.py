@@ -16,9 +16,7 @@ metadata:
 
 # {skill_title}
 
-[TODO: Write your Iron Law here. Ask: \"What is the ONE mistake the agent will most likely make?\" Then write an unbreakable rule to prevent it.]
-
-IRON LAW: [TODO: e.g., \"NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.\"]
+IRON LAW: [TODO: Ask \"What is the ONE mistake the agent will most likely make with this skill?\", then write the unbreakable rule that prevents it. e.g. \"NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.\" Nothing goes above this line but the H1.]
 
 ## Workflow
 
