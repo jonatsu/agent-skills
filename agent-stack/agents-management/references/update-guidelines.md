@@ -1,5 +1,15 @@
 # What Earns a Place in an Instruction File
 
+**Contents**
+- [Core principle: a document that restates the environment is a cache](#core-principle-a-document-that-restates-the-environment-is-a-cache)
+- [The two tests](#the-two-tests)
+- [What TO add](#what-to-add)
+- [What NOT to add](#what-not-to-add)
+- [Dates: which ones earn their place](#dates-which-ones-earn-their-place)
+- [Separating generated content from hand-written knowledge](#separating-generated-content-from-hand-written-knowledge)
+- [Diff format for updates](#diff-format-for-updates)
+- [Validation checklist](#validation-checklist)
+
 ## Core principle: a document that restates the environment is a cache
 
 The repository is a source of truth in its own right. The task runner, the
