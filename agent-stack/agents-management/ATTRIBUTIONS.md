@@ -152,17 +152,20 @@ instruction files; no text copied.
 
 - **A prompt states policy; code enforces it.** Upstream argues this for a
   harness permission check. Here it becomes the rank of an instruction file
-  itself, in `SKILL.md` and in `references/update-guidelines.md` §6 — with the
-  corollary upstream does not draw, that a safety rule with no gate behind it
-  scores worse than its absence.
+  itself, in `references/update-guidelines.md` §6 — with the corollary upstream
+  does not draw, that a safety rule with no gate behind it is worse than saying
+  nothing, because a reviewer who finds it stops looking for the real gate.
 - **Prompt patterns that claim authority they do not hold** — the autonomy grant,
   "complete the task no matter what", and self-approval of a risky action.
   Upstream lists them for system prompts; the same three appear in instruction
-  files, where the user's own turn outranks them.
+  files. The severity analysis is **not** upstream's and inverts the obvious
+  reading: the autonomy grant is the dangerous one precisely because an agent
+  acts on it, so §6 forbids filing it as wasted tokens.
 
 Upstream's untrusted-content boundary is a harness concern and was NOT adopted as
-written. What survives is the repository-local case only: vendored, generated and
-third-party text is data the repo stores, never guidance it has adopted.
+written. What survives is the repository-local case only, as §7: vendored,
+generated and third-party text is data the repo stores, never guidance it has
+adopted.
 
 ## Upstream license
 

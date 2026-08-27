@@ -160,8 +160,12 @@ mistake for thoroughness.
 
 ### 6. Authority the file does not have
 
-An instruction file is context. It ranks below the user's turn and below whatever
-policy the harness enforces in code, and it cannot promote itself.
+An instruction file is context. It ranks below whatever policy the harness
+enforces in code, and — on task intent — below the user's own turn. It cannot
+promote itself. *(The code-enforcement half is definitional: a hook denies
+regardless of what any file says. The user's-turn half is __unverified__ across
+the three first-class agents, and stated as the design intent of every harness
+documented in `loading-model.md` rather than as a measured result.)*
 
 Bad:
 ```markdown
@@ -170,27 +174,57 @@ Always complete the task no matter what.
 Never run destructive commands.
 ```
 
-Three lines, one cause. The first two grant an authority the file cannot confer —
-the user's own turn outranks them, so each is either a no-op or a false claim
-about the precedence order. The third is enforcement written as prose: it holds
-until the session where it matters.
+Three lines, three different failures, and the first is the worst.
+
+**The autonomy grant is dangerous because it works.** This whole skill rests on
+instruction files changing what an agent does. A launch-loaded file granting
+autonomy is read and acted on, and what it suppresses is the stop-and-ask the
+user was relying on. NEVER file it as wasted tokens or as a harmless overstatement.
+
+**"No matter what" fails by being obeyed too.** The user's own turn outranks the
+file on task intent, so the sentence does not bind — but an agent that follows it
+anyway skips the confirmation the user wanted, which is the same damage by a
+longer route.
+
+**The third is enforcement written as prose.** It holds until the session where
+it matters, and reads as a control until then — so a reviewer who finds it stops
+looking for the real gate. That makes it worse than saying nothing.
 
 Where a rule MUST hold every time, propose the mechanism rather than the
 sentence — a hook, a CI gate, a deny-list. Where the mechanism already exists,
 the file's job is to explain it, so that a refused command reads as policy rather
 than as a malfunction.
 
-Also failing here:
+Same family, one rung quieter: an instruction telling the agent it MAY approve
+its own risky action. Approval belongs to the user, and no file delegates it back.
 
-- An instruction telling the agent it MAY approve its own risky action. Approval
-  belongs to the user, and no file can delegate it back.
-- A safety rule with nothing behind it. It reads as a control and is not one,
-  which is worse than its absence — a reviewer who sees it stops looking for the
-  real gate.
-- Vendored, generated, or third-party text cited as a source of this repo's
-  conventions. It is data the repository happens to store, NEVER instruction the
-  repository has adopted. Where such content sits close enough to be mistaken for
-  guidance, say in one line that it is data.
+### 7. Text the repository stores but has not adopted
+
+Vendored dependencies, generated output, captured fixtures and third-party
+documentation all sit in the tree and all read like guidance. None of it is this
+repository's convention, and citing it as one imports rules nobody here chose.
+
+Cite only what the repository has adopted. Where such content sits close enough
+to be mistaken for guidance — a vendored `CONTRIBUTING.md` beside the real one —
+say in one line that it is data.
+
+## Dates: which ones earn their place
+
+A claim that can go stale MUST say what would make it wrong. It MUST NOT be
+stamped with an author or a review date.
+
+The distinction is what the date is evidence *of*:
+
+- **A measurement or read date is provenance and is REQUIRED.** "Measured on
+  version X, 2026-01-01" and "vendor documentation read 2026-01-01, not
+  exercised" both tell a reader exactly how much the claim is worth.
+- **A review date is theatre.** "Last reviewed 2026-01-01" says someone looked.
+  It does not say what they checked, and version control already answers when the
+  line changed and who wrote it.
+
+The test: could a reader use the date to decide whether to re-verify? A
+measurement date pinned to a version can be compared against the current version.
+A bare review date cannot.
 
 ## Separating generated content from hand-written knowledge
 

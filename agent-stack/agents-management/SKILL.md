@@ -50,13 +50,9 @@ depends on it, and it is the file to correct when any of this changes.
 diffs second, edits third. NEVER edit an instruction file before the user has
 approved that specific diff.
 
-**An instruction file is context, never enforcement.** It ranks below the user's
-turn and below whatever the harness enforces in code, and it cannot promote
-itself. A rule that MUST hold every time needs a hook or a gate; the file's job
-is then to explain that gate, so a refused command reads as policy rather than as
-a malfunction. `references/update-guidelines.md` owns the failure modes — the
-autonomy grant, the self-approval, the safety rule with nothing behind it, and
-vendored or generated text cited as though this repository had adopted it.
+**An instruction file is context, never enforcement.** A rule that MUST hold
+every time needs a hook or a gate. `references/update-guidelines.md` §6 owns the
+failure modes and their severity order; Phase 5 loads it before any proposal.
 
 ## Workflow
 
@@ -102,9 +98,9 @@ find .claude/rules .github/instructions -name '*.md' -exec ls -ld {} + 2>/dev/nu
 # target; it is POSIX and safe for paths containing spaces, which `-printf`
 # (GNU-only) and a bare `| xargs` (splits on whitespace) are not.
 find . \( -name AGENTS.md -o -name CLAUDE.md -o -name CLAUDE.local.md \) \
-  -not -path '*/.git/*' -not -path '*/node_modules/*' -not -path '*/vendor/*' \
-  -not -path '*/target/*' -not -path '*/dist/*' -not -path '*/build/*' \
-  -not -path '*/.venv/*' -exec ls -ld {} + 2>/dev/null
+  ! -path '*/.git/*' ! -path '*/node_modules/*' ! -path '*/vendor/*' \
+  ! -path '*/target/*' ! -path '*/dist/*' ! -path '*/build/*' \
+  ! -path '*/.venv/*' -exec ls -ld {} + 2>/dev/null
 ```
 
 Classify every file found as **launch-loaded**, **conditional** (a nested file,
@@ -413,12 +409,9 @@ from scratch — there is nothing to score yet.
 - **Writing generic advice into a repo that has a real toolchain.** The mirror
   failure: where an ecosystem is present, the file MUST name its actual
   manifest, commands and conventions.
-- **Writing authority into the file** — an autonomy grant, an "always finish no
-  matter what", a self-approval, or a safety rule with no hook or gate behind it.
-  The last is the worst: it reads as a control, and a reviewer who sees it stops
-  looking for the real one.
+- **Writing authority into the file**, or grading an autonomy grant as filler
+  because it "cannot really do that". It can. See `update-guidelines.md` §6.
 - **Citing vendored, generated or third-party text as a convention source.**
-  Content a repository stores is not guidance the repository has adopted.
 - **Recommending path-scoped instruction frontmatter.** Behavior differs per
   agent and is not verified everywhere; see `references/loading-model.md`.
 - **Treating nested files as launch-loaded.** They are conditional on two
