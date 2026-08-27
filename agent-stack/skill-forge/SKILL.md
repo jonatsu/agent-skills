@@ -353,7 +353,7 @@ only when a check you wrote cannot be settled by looking at the output.
 - MUST use one level of nesting only
 - Large files (>100 lines) SHOULD have a table of contents at the top
 - Every reference MUST carry a symptom-shaped load trigger in SKILL.md — "load when X happens", never a topic label. "`05-advanced.md` — power tools, proxy, shell hook" says what is inside; it never says when to pay for it, and an agent given only topic labels loads nothing or loads everything.
-- The package MUST carry a "do NOT load" block naming what not to read, and when.
+- A package that HAS references MUST carry a "do NOT load" block naming what not to read, and when. A package with none MUST NOT carry one: "do not load any references; none exist" spends tokens stating a filesystem fact.
 - NEVER let one reference outgrow the rest of the package combined. Split it, cut what is recoverable from it, and give each named section its own trigger. A reference that large is loaded whole or not at all, and both are wrong.
 
 Already covered at Step 2 by `references/architecture-patterns.md`; do NOT re-load it here.
@@ -410,7 +410,8 @@ the Pre-Delivery Checklist below.
 - [ ] Uses question-style instructions, not vague directives
 - [ ] Lists anti-patterns (what NOT to do)
 - [ ] References loaded progressively, and each carries a symptom-shaped load trigger
-- [ ] A "do NOT load" block exists; no single reference exceeds the rest combined
+- [ ] Where references exist: a "do NOT load" block exists, and no single reference
+      exceeds the rest combined
 - [ ] No transcribed CLI flags, schemas, config keys, or counts a live source reports
 - [ ] Claims about tool behavior carry the version and date they were verified
 - [ ] All behavioral directives use RFC 2119 keywords in ALL CAPS

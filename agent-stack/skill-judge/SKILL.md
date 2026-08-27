@@ -134,8 +134,13 @@ Metadata (name + description) is always in memory; the body loads on trigger;
 | 11–13 | Good layering with explicit load triggers |
 | 14–15 | Load triggers embedded in workflow + "do NOT load" guidance |
 
-For simple skills (<100 lines, no references), score on conciseness and
-self-containment instead.
+**A skill with no references is not thereby capped.** Ask first whether any
+content in the body is specialist lookup material — needed for some reviews and
+dead weight in others. If none is, the correct package HAS no references, and it
+scores on conciseness and self-containment against the bands above: a
+self-contained skill carrying nothing it does not always need earns the top band
+with zero reference files. Size does not decide this; content does. Cap only
+where material that clearly belongs behind a trigger is loaded on every run.
 
 ### D6 — Freedom calibration (15)
 
@@ -156,27 +161,32 @@ Was the skill built against evidence, or written and then admired? A skill is an
 addition to a model, so its value is an empirical claim — and the only way to
 know it helps is to have measured a task it was supposed to help with.
 
-| Score | Criteria |
-|-------|----------|
-| 0–3 | No evaluations. Verified by reading it back and finding it plausible |
-| 4–6 | Ad-hoc trigger checks only, run after the package was already written |
-| 7–8 | ≥3 real evaluations, but authored after the body, or run on one model |
-| 9–10 | ≥3 evaluations designed BEFORE the body, run across every model class the skill deploys to, compared against a no-skill baseline, and retained so a regression reproduces |
+**Score only what the package can show.** Four things are inspectable; award them
+independently rather than picking a band by feel:
 
-**Order is the discriminator, not count.** Evaluations written after the body
-test what was built; evaluations written first test what was needed, and are the
-only ones that can show the skill was unnecessary. Ask which came first and
-expect the artifact to prove it.
+| Present in the package | Points |
+|---|---|
+| ≥3 evaluations, each naming a realistic request and what counts as success | 4 |
+| A recorded no-skill baseline — what the agent did unaided | 3 |
+| The models the runs were made on, named | 2 |
+| Enough retained detail that a regression re-runs without reconstruction | 1 |
+
+**Do NOT score authoring order.** Whether evaluations were written before or
+after the body is what makes them worth having, and it is **not establishable
+from a finished package** — only version history shows it. If the repository
+proves the order, say so as a finding; NEVER infer it, and NEVER deduct for an
+order you cannot see. `skill-forge` owns teaching the order; this dimension owns
+whether the evidence exists.
 
 **A no-skill baseline is what makes a number mean anything.** "The skill works"
 is not a result. "Without it the agent missed the auth step in 3 of 5 runs; with
 it, 0 of 5" is.
 
 **Weakest-model coverage is where this silently fails.** A skill tuned on a
-frontier model routinely underspecifies for a small one, and a skill that
-deploys to several agents or runs inside delegated contexts is being read by
-models nobody tested. Deduct where the tested set is narrower than the deployed
-set, and say which models were untested.
+frontier model routinely underspecifies for a small one, and a skill deployed to
+several agents or read inside delegated contexts is being run by models nobody
+tested. Award the model point only where the tested set covers the deployed set,
+and name the untested classes in the report.
 
 NEVER accept "it obviously helps" in place of a measurement, and NEVER treat the
 absence of evaluations as a documentation gap — it is missing evidence for the
@@ -188,7 +198,7 @@ Can an agent act on it immediately?
 
 | Score | Criteria |
 |-------|----------|
-| 0–5 | Confusing, incomplete, contradictory, or untested |
+| 0–5 | Confusing, incomplete, or self-contradictory |
 | 6–10 | Usable with noticeable gaps |
 | 11–13 | Clear for common cases |
 | 14–15 | Covers edge cases, fallbacks, and error handling |
@@ -196,69 +206,16 @@ Can an agent act on it immediately?
 Check for decision trees on multi-path scenarios, working (not pseudo) examples,
 stated fallbacks when the primary path fails, and realistic edge cases.
 
-**Portability is scored here, and it is a hard cap.** A skill is universal by
-nature: it runs on machines nobody configured for it, long after it was written.
-Cap D8 at **10** when the skill depends on an environmental fact it never
-verifies, and at **5** when that dependency is silent — no probe, no fallback,
-no message.
+**Portability is scored here, and it is a hard cap rather than a deduction.** Cap
+D8 at **10** when the skill depends on an environmental fact it never verifies,
+and at **5** when that dependency is silent — no probe, no fallback, no message.
+Provenance on empirical claims is scored here too: a version and a date, or the
+claim is unverifiable rather than usable.
 
-**Detection is not a judgement call — read `metadata.scope`.** Only `repo-local`
-earns the exemption for naming its repository's runners and paths. Treat an
-absent key as `portable`: a skill carrying local bindings without declaring
-repo-local scope is a portable skill with a defect, and the cap applies at full
-strength. NEVER infer repo-local intent from the bindings themselves — that
-reasoning excuses every instance of the defect this dimension exists to catch,
-and it is the excuse a well-written skill makes most convincingly. A
-`repo-local` declaration that never names its repository is itself a finding.
-
-**First decide which kind of dependency it is.** A skill that *uses* a tool
-incidentally MUST NOT assume it. A skill that *documents* a tool obviously
-requires that tool, and demanding tool-agnosticism there is incoherent — do NOT
-cap a skill for naming its own subject. Require instead that it states its
-degradation path: what the agent does when the tool is absent. A tool skill whose
-opening rule says "prefer these tools when available" and never names the
-alternative has the same defect in a different place, and that IS capped.
-
-**A tool-subject skill is exempt for its subject and for nothing else.** Cap it
-normally where it assumes a SECOND tool, names a project-local runner,
-hardcodes a path, or binds to an ecosystem that is not the thing it documents. A
-pytest skill may say `pytest -x`; the same skill saying `just test`, or assuming
-a config directory, has the ordinary defect — and it is easy to wave through,
-because the first binding was legitimate and the second looks like more of the
-same. What to check:
-
-- Tool availability established by a `PATH` probe (`command -v <tool>`) and
-  nothing else. An assumed tool is a defect even when the authoring machine has
-  it.
-- No project-local entry point named by a portable skill. `just check`,
-  `npm run lint`, `make test`, `pre-commit run`, `./scripts/gate.sh` are ONE
-  repository's contract, not a machine's — and `command -v just` passes while
-  that repo's `check` recipe is still absent, so the probe reassures without
-  testing anything. The repo's runner must be DISCOVERED at run time, in a stated
-  detection order, with a reported skip when none is found. Establish which kind
-  of skill you are grading first: one that ships INSIDE the repository it serves
-  is exempt, because naming those commands is its contract rather than an
-  assumption, and it should say so.
-- Absent tool degrades to a reported skip or a named alternative — never a
-  crash, and never silent continuation that reads as a pass.
-- No hardcoded install paths (`/usr/local/bin/x`, `~/.local/share/mise/...`,
-  `/opt/homebrew/...`), no authoring-machine paths or usernames.
-- Bundled files referenced relative to the skill directory, never
-  `~/.claude/skills/<name>/...`, which breaks under `CLAUDE_CONFIG_DIR` and for
-  project-scoped installs.
-- Where several tools do the job, more than one is accepted. A single hardcoded
-  tool rots when the ecosystem moves.
-
-A skill that pins one tool by name is not wrong today and will be wrong later,
-which is exactly the failure this dimension exists to catch.
-
-**Claims about observable behavior need provenance.** A skill asserting how a
-tool behaves — result caps, silent truncation, which op resets a file mode — is
-only as good as its last measurement, and it rots invisibly because nothing fails
-when the tool updates. Expect a version and a date on measured claims, and treat
-a package full of unstamped empirical assertions as unverifiable rather than
-usable. Deduct where a reader has no way to tell which claims to re-check after
-an upgrade.
+⛔ Load `references/portability-scoring.md` when the target names any tool, path,
+runner or repository binding, or asserts how something behaves. It carries the
+`metadata.scope` rule that decides whether the cap applies at all, the two
+exemptions and the trap inside each, and the full checklist.
 
 ## Evaluation protocol
 
@@ -341,60 +298,22 @@ an upgrade.
 3. …
 ```
 
-## Common failure patterns
+## References
 
-Several map onto `writing-great-skills` terms — use that skill's diagnosis, then
-score the dimension here.
+Two files. Both are lookup material for part of a review, never preparation for one.
 
-- **The Tutorial** — explains basics the model knows (a **no-op**). Fix: delete;
-  keep only expert decisions and trade-offs. Hits D1.
-- **The Dump** — 800-line SKILL.md, no layering (**sprawl**). Fix: routing +
-  decision trees in the body, detail in `references/`. Hits D5.
-- **The Orphan references** — reference files with no load trigger. Fix: add
-  explicit "read this when…" and "do NOT load…". Hits D5.
-- **The Checkbox procedure** — mechanical Step 1/2/3 for what the model already
-  does. Fix: convert to "before X, ask yourself…". Hits D2. One question decides
-  it: does the task have real ordering and real prerequisites — steps that fail
-  or mislead out of sequence? If yes the checklist is earned; if no it is a
-  no-op, however tidy it looks.
-- **The Transcription** — a CLI surface, parameter schema, config-key list or
-  inventory count copied out of a tool that reports it live (**Recoverable**).
-  Fix: replace with a pointer to the live source, keeping only the residue that
-  source does not carry. Hits D1. Confirm the source is correct and reachable
-  before cutting.
-- **The Vague warning** — "be careful", "consider edge cases". Fix: specific
-  NEVER list with non-obvious reasons. Hits D3.
-- **The Broken Own Rule** — the package states a rule and then breaks it in its
-  own examples, templates, commands, or conduct: a rubric that penalizes a
-  pattern its templates demonstrate, a countable claim ("each of these carries
-  a warning") falsified by the package, a portability rule contradicted by the
-  line beneath it. Fix: check every rule against the instances it governs, not
-  against other rules. Hits whichever dimension the broken instance sits in.
-  This is the most-missed defect class, because both halves are individually
-  correct and only their relationship is wrong.
-- **The Invisible skill** — great body, vague description, never fires. Fix:
-  WHAT + WHEN + keywords. Hits D4.
-- **The Freedom mismatch** — rigid scripts for creative work, or vague guidance
-  for fragile ops. Fix: match freedom to fragility. Hits D6.
-- **The Local skill** — works only on the machine it was written on: an assumed
-  tool, a hardcoded install path, a `~`-rooted path to its own files. Fix:
-  `command -v` probes, relative paths, accept alternatives. Hits D8, capped.
-- **The Borrowed Runner** — a portable skill invoking another repository's task
-  recipe (`just check`, `npm run lint`, `make test`), often with a `command -v`
-  probe for the runner binary presented as verification. Fix: discover the repo's
-  own entry point at run time in a stated detection order, and skip with a report
-  when none is found. Hits D8, capped. Exempt when the skill declares
-  `metadata.scope: repo-local`.
-- **The Undeclared Local** — a skill that reads as repo-specific, names one
-  repository's runners or paths, and declares no scope. Fix: declare
-  `metadata.scope: repo-local` and name the repository, or remove the bindings.
-  Hits D8, capped — an absent declaration means portable, so this is a defect
-  and not a contract. Do NOT let the obvious usefulness of the bindings argue
-  you into reading intent that the frontmatter does not state.
-- **The Subject's Coattails** — a tool-subject skill that binds legitimately to
-  its own subject and then assumes a second tool, a project-local runner, or a
-  config path on the same authority. Fix: probe everything that is not the
-  subject. Hits D8, capped.
+| Load when | File |
+|---|---|
+| Scoring D8 on a skill that names any tool, path, runner or repository binding, or that asserts how something behaves | `references/portability-scoring.md` |
+| A dimension has already scored low and the finding needs a named diagnosis and a stated repair | `references/failure-patterns.md` |
+
+**Do NOT load:**
+
+- `portability-scoring.md` for a skill with no tool, path or runner dependency at all — its
+  caps cannot apply, and reading it invites hunting for a defect the package cannot have.
+- `failure-patterns.md` BEFORE scoring. It is a catalogue of named defects, and a reviewer
+  holding it scores toward the patterns it lists rather than the package in front of them.
+  Score first from the dimensions, then name what you found.
 
 ## NEVER when evaluating
 
