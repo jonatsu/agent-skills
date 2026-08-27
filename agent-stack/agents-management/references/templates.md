@@ -109,6 +109,12 @@ the instruction, not as a description of something that happens automatically.
 | `<path or glob>` | `<file>` | `<what is in it>` |
 ```
 
+Where a pointed-to file makes a claim that can go stale — a measured behavior, a
+vendor's documented default, a version-dependent flag — state what would make it
+wrong. Do NOT stamp it with an author or a review date: version control already
+answers when a line changed and who wrote it, and neither answers whether the
+claim still holds.
+
 ### Workflow
 
 ```markdown

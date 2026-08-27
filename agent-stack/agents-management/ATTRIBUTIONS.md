@@ -137,6 +137,33 @@ copyright does not cover, and each was re-expressed independently:
 - Structure and score checks answer "right shape", never "is the knowledge still
   here"; a diff of removed lines is the check that does.
 
+### DenisSergeevitch/agents-best-practices
+
+- Source: <https://github.com/DenisSergeevitch/agents-best-practices>,
+  `references/system-prompts-instructions.md` and `references/architecture.md`
+- License: MIT, Copyright (c) 2026 Denis Shiryaev. Read verbatim from the
+  repository's own `LICENSE` at the default branch, 2026-08-27
+- Read 2026-08-27
+
+Upstream is a harness-design skill and covers none of this skill's subject — it
+never mentions `AGENTS.md`, `CLAUDE.md`, `copilot-instructions` or `llms.txt`.
+Two ideas were taken from it and independently re-expressed for repository-local
+instruction files; no text copied.
+
+- **A prompt states policy; code enforces it.** Upstream argues this for a
+  harness permission check. Here it becomes the rank of an instruction file
+  itself, in `SKILL.md` and in `references/update-guidelines.md` §6 — with the
+  corollary upstream does not draw, that a safety rule with no gate behind it
+  scores worse than its absence.
+- **Prompt patterns that claim authority they do not hold** — the autonomy grant,
+  "complete the task no matter what", and self-approval of a risky action.
+  Upstream lists them for system prompts; the same three appear in instruction
+  files, where the user's own turn outranks them.
+
+Upstream's untrusted-content boundary is a harness concern and was NOT adopted as
+written. What survives is the repository-local case only: vendored, generated and
+third-party text is data the repo stores, never guidance it has adopted.
+
 ## Upstream license
 
 The upstream source is used under the Apache License, Version 2.0. A verbatim

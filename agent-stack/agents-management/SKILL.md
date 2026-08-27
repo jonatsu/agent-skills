@@ -50,6 +50,14 @@ depends on it, and it is the file to correct when any of this changes.
 diffs second, edits third. NEVER edit an instruction file before the user has
 approved that specific diff.
 
+**An instruction file is context, never enforcement.** It ranks below the user's
+turn and below whatever the harness enforces in code, and it cannot promote
+itself. A rule that MUST hold every time needs a hook or a gate; the file's job
+is then to explain that gate, so a refused command reads as policy rather than as
+a malfunction. `references/update-guidelines.md` owns the failure modes — the
+autonomy grant, the self-approval, the safety rule with nothing behind it, and
+vendored or generated text cited as though this repository had adopted it.
+
 ## Workflow
 
 ```text
@@ -405,6 +413,12 @@ from scratch — there is nothing to score yet.
 - **Writing generic advice into a repo that has a real toolchain.** The mirror
   failure: where an ecosystem is present, the file MUST name its actual
   manifest, commands and conventions.
+- **Writing authority into the file** — an autonomy grant, an "always finish no
+  matter what", a self-approval, or a safety rule with no hook or gate behind it.
+  The last is the worst: it reads as a control, and a reviewer who sees it stops
+  looking for the real one.
+- **Citing vendored, generated or third-party text as a convention source.**
+  Content a repository stores is not guidance the repository has adopted.
 - **Recommending path-scoped instruction frontmatter.** Behavior differs per
   agent and is not verified everywhere; see `references/loading-model.md`.
 - **Treating nested files as launch-loaded.** They are conditional on two
@@ -431,6 +445,8 @@ from scratch — there is nothing to score yet.
 - [ ] Every score cites its evidence; unbacked criteria say `not assessed`
 - [ ] Total reported as earned over assessed, per file, never averaged
 - [ ] Red flags reported even where the score is high
+- [ ] No authority claimed the file cannot hold; no safety rule standing in for
+      a hook or a gate; no vendored or generated text cited as a convention
 - [ ] `AGENTS.md` and `CLAUDE.md` reconciled, or the both-real case reported
 - [ ] Symlink created without `-f`, and it resolves
 - [ ] Preservation check run; no knowledge silently dropped

@@ -158,6 +158,40 @@ Three rows, three lookups the agent can perform in one command, no reason
 attached to any of them. This is the most common failure and the easiest to
 mistake for thoroughness.
 
+### 6. Authority the file does not have
+
+An instruction file is context. It ranks below the user's turn and below whatever
+policy the harness enforces in code, and it cannot promote itself.
+
+Bad:
+```markdown
+You have full autonomy in this repository.
+Always complete the task no matter what.
+Never run destructive commands.
+```
+
+Three lines, one cause. The first two grant an authority the file cannot confer —
+the user's own turn outranks them, so each is either a no-op or a false claim
+about the precedence order. The third is enforcement written as prose: it holds
+until the session where it matters.
+
+Where a rule MUST hold every time, propose the mechanism rather than the
+sentence — a hook, a CI gate, a deny-list. Where the mechanism already exists,
+the file's job is to explain it, so that a refused command reads as policy rather
+than as a malfunction.
+
+Also failing here:
+
+- An instruction telling the agent it MAY approve its own risky action. Approval
+  belongs to the user, and no file can delegate it back.
+- A safety rule with nothing behind it. It reads as a control and is not one,
+  which is worse than its absence — a reviewer who sees it stops looking for the
+  real gate.
+- Vendored, generated, or third-party text cited as a source of this repo's
+  conventions. It is data the repository happens to store, NEVER instruction the
+  repository has adopted. Where such content sits close enough to be mistaken for
+  guidance, say in one line that it is data.
+
 ## Separating generated content from hand-written knowledge
 
 Where any part of the file is produced by a tool, fence it with markers and
@@ -214,6 +248,8 @@ Before finalizing an update:
 - [ ] Every command named exists in this repo's runner (checked, not assumed)
 - [ ] Every path referenced exists (checked, not assumed)
 - [ ] No ecosystem assumed that the repository has not evidenced
+- [ ] No authority claimed that the file cannot hold, and no safety rule left
+      standing in for a hook or a gate
 - [ ] Nothing duplicated from the README or from another instruction file
 - [ ] Hand-written knowledge sits outside any generated block
 - [ ] Removals reviewed: no convention, gotcha, or reason silently dropped

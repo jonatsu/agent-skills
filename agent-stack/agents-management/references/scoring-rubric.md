@@ -196,5 +196,13 @@ Findings worth reporting regardless of score:
 - A per-package instruction file with no pointer row in the root file
 - An instruction that must hold every time, written as prose rather than a hook
   or a CI gate
+- **A safety rule with no hook or gate behind it.** It reads as a control and is
+  not one — a reviewer who sees it stops looking for the real gate, so this
+  scores worse than the rule's absence
+- An autonomy grant, an "always finish no matter what", or an instruction that
+  the agent may approve its own risky action. The file cannot confer authority it
+  does not hold, and the user's own turn outranks it
+- Vendored, generated, or third-party text cited as a source of this repo's
+  conventions — data the repository stores, not guidance it has adopted
 - `TODO` entries that predate the last release
 - A file over its effective line budget with nothing extracted and pointed at
