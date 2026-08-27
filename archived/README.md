@@ -27,14 +27,33 @@ whole mechanism; there is no separate opt-out to remember.
    `SKILL.md` byte-identical to what was last deployed** — the reference copy is
    only worth keeping if it is exactly what ran.
 3. Add a row to the table above.
-4. **Prune the deployed copy by hand.** The post-commit hook will NOT do it, and
-   the reason is worth knowing rather than rediscovering — see below.
+4. **Prune the deployed copy by hand, then confirm with `ls` against each agent's
+   skills directory.** The post-commit hook will NOT do it — usually without
+   saying so — and the two reasons are worth knowing rather than rediscovering;
+   see below. `git status` cannot see the orphan, because it lives outside this
+   repository.
 5. Update whatever named the skill as live: `skills/README.md`, the header
    comment in `scripts/kasetto-deploy.sh`, and any open item in
    `skills/TODO.md` that planned future work on it.
 
-## The prune step is manual, and the automation says so
+## The prune step is manual, for two separate reasons
 
+**One of them is silent, and it fires on every archival.** The post-commit hook
+maps a commit's changed paths to Kasetto scopes with `git diff --name-only HEAD~1
+HEAD`, and git's rename detection collapses a 100% rename to its **destination
+path only**. An archival is `skills/shared/…` → `skills/archived/…`, so nothing
+matches `^skills/shared/`, no scope is selected, and the hook exits 0 having done
+nothing — no warning, no output, ~0.02s. Reproduced on `84cd615`
+(`writing-great-skills`), where the skill was still deployed to all three agents
+afterwards; `git diff --no-renames --name-only 84cd615~1 84cd615` shows the four
+source paths the default invocation hides. Tracked in `skills/TODO.md`; the
+candidate fix is `--no-renames` on that diff.
+
+Recovery is `./scripts/kasetto-deploy.sh`, which prunes correctly as long as the
+group still holds a skill to name. That was enough for `writing-great-skills`:
+`0 updated 0 added 1 removed 64 unchanged`, confirmed by `ls`.
+
+**The second reason is loud, and it fires only when archiving empties a group.**
 `scripts/kasetto-deploy.sh` names every local skill in a scope's group as
 `--update <name>...`, because a plain `kst sync` trusts the locked hash and never
 re-reads a local source. When archiving empties a group, there are no names left

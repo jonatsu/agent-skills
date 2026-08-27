@@ -302,6 +302,32 @@ relative to `skills/` unless noted. Repository-wide items live in
     `skill-forge:43` had condensed that to "as 81, 76 and 63", dropping the clause the
     count rested on. A one-file off-by-one, now repaired by restoring the instance detail.
     `skill-judge` was correct and was left untouched.
+- **The redeploy hook is blind to a `git mv` out of a deployed group — found 2026-08-27,
+  UNFIXED.** `scripts/sync-skills-kasetto.sh:168` maps the commit's changed paths to Kasetto
+  scopes with `git diff --name-only HEAD~1 HEAD`, and git's rename detection collapses a 100%
+  rename to its **destination path only**. Archiving moves `skills/shared/…` →
+  `skills/archived/…`, so nothing matches `^skills/shared/`, no scope is selected, and the
+  hook exits 0 having done nothing.
+  - Reproduced on `84cd615` (the `writing-great-skills` archival): the hook reported `Passed`
+    in 0.02s and printed no `redeploying scope(s)` line, and the skill was still present in
+    all three agent skill directories afterwards. `git diff --no-renames --name-only
+    84cd615~1 84cd615` lists the four `skills/shared/agent-stack/writing-great-skills/*`
+    source paths that the default invocation hides.
+  - **This is a SECOND, distinct cause of the orphaned-deployment hazard**, and it is not the
+    one `archived/README.md` documents. That one is the emptied-group fallback, where the
+    script warns loudly. This one is silent, and it fires for any group with skills left in
+    it. It would also hit a `git mv` between groups — `shared/` → `claude/` — where the
+    source scope goes unsynced while the destination scope deploys a second copy. A move
+    between DOMAINS inside `shared/` is unaffected: both paths keep the `skills/shared/`
+    prefix.
+  - **Candidate fix is one flag** — `--no-renames` (or `-M0`) on that diff, which makes the
+    change set list both sides of every rename. Not applied here: it is a runtime change to
+    a gate script and wants independent verification, and the archival it was found by was
+    already recovered by hand with `./scripts/kasetto-deploy.sh`, which pruned all three
+    directories (`0 updated 0 added 1 removed 64 unchanged`, confirmed by `ls`).
+  - Until it is fixed, **`archived/README.md` step 4 stands for every archival regardless of
+    whether the group is emptied**: prune by hand and confirm with `ls` against the
+    destination, never `git status`.
 - **Twenty references over 100 lines still have no contents list — measured 2026-08-27.**
   `skill-forge` says a reference over 100 lines SHOULD carry a table of contents, and three
   independent sources agree on the threshold (Anthropic's authoring guide, mgechev's
