@@ -1,6 +1,6 @@
 ---
 name: system-prompts
-description: "Write and review system prompts, agent and subagent definitions, and tool descriptions — the prompt text a model reads as its operating contract. Covers RFC 2119 normative language, density and one-claim-per-bullet discipline, imperative voice, where critical rules go, the authority a prompt cannot hold, untrusted-content boundaries, and tool-prompt anatomy. Use when authoring or editing a system prompt, developer message, agent definition, subagent prompt, tool description or persona; when a prompt has grown too long, reads as vague, or states rules the model ignores; or on mentions of system prompt, operating contract, agent definition, tool description, prompt house style, RFC 2119 in a prompt. NOT for a repository's AGENTS.md, CLAUDE.md or rules files, which is agents-management. NOT for repairing a prompt against an observed failure, which is prompt-optimizer. NOT for authoring skills, which is skill-forge."
+description: "Author, review and repair the prompt text a model reads as its operating contract — system prompts, agent and subagent definitions, tool descriptions, and API or task prompts. Two branches: write from a specification, or diagnose an observed failure and fix it. Covers RFC 2119 normative language, density, voice, where critical rules go, the authority a prompt cannot hold, untrusted-content boundaries, tool-prompt anatomy, symptom-to-cause diagnosis, few-shot design, prefill and stop sequences. Use for 'write a system prompt', 'optimize this prompt', 'improve my prompt', 'my prompt is not working', 'the model ignores the format', 'output is inconsistent', 'it hallucinates', 'it refuses', 'too verbose', 'reduce prompt tokens', 'fix these agent instructions', 'design few-shot examples', or a prompt grown too long or vague. NOT for a repository's AGENTS.md or CLAUDE.md, which is agents-management. NOT for authoring skills, which is skill-forge."
 metadata:
   author: Joonas Onatsu
   license: MIT
@@ -8,32 +8,41 @@ metadata:
 
 # System Prompts
 
-IRON LAW: EVERY SENTENCE MUST CHANGE A DECISION THE MODEL MAKES. A sentence the
-model already obeys by default, or one claiming an authority the prompt cannot
-enforce, is cost with no effect. Cut it, or replace it with the mechanism that
-does the work.
-
-This is a reference, not a procedure. It has no workflow checklist because
-prompt authoring has no fixed phase order — you arrive with a draft, a blank
-file, or a complaint, and the section you need depends on which.
+IRON LAW: NEVER change a prompt to make it read better. A sentence you ADD MUST
+change a decision the model makes. A sentence you CHANGE MUST target a named
+failure and be checked against a concrete input. Prose quality is not the
+deliverable, and "it reads cleaner now" is not evidence.
 
 ## Scope
 
-Covers the prompt text a model reads as its operating contract: system prompts,
-developer messages, agent and subagent definitions, tool descriptions, personas.
+The prompt text a model reads as its operating contract: system prompts,
+developer messages, agent and subagent definitions, tool descriptions, personas,
+and the API or task prompts behind a single call.
 
-Three neighbours, and the boundary matters because all four look like "writing
-instructions for a model":
+Two neighbours own adjacent ground:
 
 | Ask | Skill |
 |---|---|
 | A repository's `AGENTS.md`, `CLAUDE.md`, `.claude/rules`, `llms.txt` | `agents-management` |
-| "This prompt is producing the wrong output" — a named, observed failure | `prompt-optimizer` |
 | A `SKILL.md` and its package | `skill-forge` |
 
-The split with `prompt-optimizer` is direction, not subject. This skill writes
-from a specification; that one repairs against evidence. Arriving with a failing
-output and no hypothesis, use that one.
+For Claude model IDs, pricing, parameter names, prefill mechanics and
+prompt-caching behavior, read the `claude-api` skill. MUST NOT guess these.
+
+## Pick a branch first
+
+| You have | Branch |
+|---|---|
+| A specification and no prompt yet, or a prompt to review against the house style | **AUTHOR** — the craft sections below. No workflow; there is no fixed phase order |
+| A prompt plus an output that is wrong | **REPAIR** — the six steps. MUST start at Step 1 |
+
+The branches share everything from [What a prompt cannot do](#what-a-prompt-cannot-do)
+onward. The difference is the entry point and the evidence required: AUTHOR
+justifies a sentence by the decision it changes, REPAIR by the failure it fixes.
+
+NEVER run REPAIR without a failing output or representative inputs. A repair with
+no observed failure is authoring with extra steps, and it silently replaces a
+prompt that may have been working.
 
 ## Three calibrations before writing
 
@@ -54,7 +63,64 @@ especially a softened prohibition.
 of it. A system prompt outranks the user's turn on style and safety and loses to
 it on task intent; a subagent definition loses to the orchestrator that spawned
 it; a tool description loses to both. Writing a rule at the wrong rank produces
-text that reads as binding and is not. See below.
+text that reads as binding and is not.
+
+## Branch: REPAIR
+
+```text
+Prompt Repair Progress:
+
+- [ ] Step 1: Locate the prompt and the failure ⚠️ REQUIRED
+  - [ ] 1.1 The actual prompt text, verbatim, and the target model
+  - [ ] 1.2 The failing output vs. the desired one, or representative inputs
+- [ ] Step 2: Diagnose — symptom to failure mode, hypothesis stated before editing
+- [ ] Step 3: Confirm scope ⚠️ REQUIRED before a substantial rewrite or a token/accuracy trade
+- [ ] Step 4: Apply targeted edits
+- [ ] Step 5: Verify against the Step 1 inputs
+- [ ] Step 6: Deliver as a diff plus per-change rationale
+```
+
+### Step 1: Locate ⚠️ REQUIRED
+
+MUST obtain the real prompt, not a paraphrase, and the target model. Ask what
+the model actually output and what was wanted instead. Where no failing sample
+exists, ask for 2–3 representative inputs including an edge case — empty, null,
+very long, adversarial.
+
+NEVER optimize a prompt you have only been described. Read it verbatim first.
+
+### Step 2: Diagnose
+
+Map the symptom to a failure mode and state the hypothesis before editing. The
+symptom-to-cause table is in `references/failure-modes.md`; load it here.
+
+### Step 3: Confirm scope ⚠️ REQUIRED
+
+Before a substantial rewrite, or any change trading tokens against accuracy, stop
+and ask: rewrite in place or produce an alternative to compare? Optimize for
+accuracy, latency or token cost — which wins on conflict? What MUST be preserved:
+a format contract, a tone, a downstream parser?
+
+⚠️ NEVER silently replace a working prompt.
+
+### Step 4: Apply targeted edits
+
+Pick the minimum that fixes the diagnosed mode; the technique catalog is in
+`references/failure-modes.md`. Prefer restructuring over emphasis. Adding an
+instruction MUST come with removing the one it duplicates or contradicts.
+
+### Step 5: Verify
+
+Trace the revised prompt against the Step 1 inputs — at minimum the failing
+sample and one edge case — and compare against the desired result. Still missing?
+Return to Step 2. NEVER ship on faith. Where an eval harness exists, run it and
+report the delta.
+
+### Step 6: Deliver
+
+A diff, old to new, and for each change the failure mode it targets. State
+residual risks and any token/accuracy trade-off. NEVER deliver a silent full
+replacement.
 
 ## What a prompt cannot do
 
@@ -72,8 +138,8 @@ Four patterns that claim authority the prompt does not hold:
 
 | Pattern | Why it fails |
 |---|---|
-| "You have full autonomy" | Grants what the harness's permission layer actually decides. Either a no-op or a false statement about rank |
-| "Always complete the task no matter what" | Overrides the user's own turn, which outranks the prompt on task intent. In practice it suppresses the stop-and-ask the user wanted |
+| "You have full autonomy" | Grants what the harness's permission layer actually decides. Dangerous rather than inert — a model acts on it, and what it suppresses is the stop-and-ask |
+| "Always complete the task no matter what" | The user's own turn outranks the prompt on task intent, so it does not bind — but a model that obeys it anyway skips the confirmation the user wanted |
 | "You may approve your own risky actions" | Approval belongs to the user. No prompt delegates it back |
 | A safety rule with no gate behind it | See above — a control that is not one |
 
@@ -111,8 +177,7 @@ top:
 > `SHOULD NOT` respectively.
 
 The aliases are a readability convention, NOT a token optimization — see
-[Measured claims](#measured-claims) for what the tokenizer actually says, which
-is not what this skill claimed before 2026-08-27.
+[Measured claims](#measured-claims).
 
 NEVER convert to keywords: factual descriptions of what a tool returns or what a
 parameter does, code blocks, examples, schemas, template syntax.
@@ -183,16 +248,50 @@ does, match its vocabulary rather than inventing one, and make every tag name
 real content. NEVER add ornamental tags for emphasis — they dilute the ones
 carrying semantics, and in a markdown file they clash with the format outright.
 
+## API and task prompts
+
+Everything above applies. This section is the extra surface a single API call
+has and an agent prompt does not — skip it when the target is an agent.
+
+**Anatomy, and the order is load-bearing:** role and task -> long context and
+data -> numbered instructions -> few-shot examples -> output format -> prefill
+and stop. Long data goes BEFORE the instructions, so the instructions are the
+most recent thing the model read. Delimit each section so boundaries are findable.
+
+**Few-shot sets.** 2–5 diverse examples in the exact target format. Cover the
+edge cases. AVOID over-fitting: a model given near-identical examples parrots
+them. On a strong model with an already-clear task, few-shot may add noise rather
+than signal — see [Measured claims](#measured-claims).
+
+**Prefill** the assistant turn to force a format and skip preamble. **Stop
+sequences** end generation at a known boundary. **Temperature** trades diversity
+against format stability; lower it when the shape matters more than the wording.
+
+**Explicit fallbacks beat silent failure.** "If X is missing, respond Y", and
+permit "I don't know" — a model with no escape hatch invents one.
+
+**Static context belongs in the cache**, and cache-busting content belongs after
+it. NEVER put timestamps, request IDs or volatile state at the start of a
+cacheable prompt.
+
+⚠️ Confirm exact model IDs, parameter names, prefill mechanics and caching
+behavior against the `claude-api` skill. MUST NOT guess them.
+
 ## Anti-patterns
 
 | Pattern | Problem |
 | --- | --- |
+| Rewriting prose to "read better" with no failure hypothesis | Violates the Iron Law; unfalsifiable |
+| Piling on emphasis — ALL CAPS, "VERY IMPORTANT" — instead of restructuring | Treats a placement problem as a volume problem |
+| Adding an instruction without removing what it contradicts | Net contradiction; the model picks one and you do not know which |
 | Restating the bolded lead in the body | Wastes tokens; reads as padding |
 | Lowercase rfc keywords | The all-caps form IS the marker; lowercase reads as ordinary prose |
 | "Don't do X" with no alternative | Leaves the model to guess the replacement |
-| Critical instructions only in the middle | Weakest position; see above |
+| Critical instructions only in the middle | Weakest position |
 | Inventing tags for emphasis | Tags carry semantics; ornament dilutes them |
 | A rule the prompt's own examples break | Both halves read as correct alone; only checking one against the other finds it |
+| Cutting tokens by dropping edge-case coverage | Trades a visible cost for an invisible one |
+| Testing only the happy path | Ignores the input that caused the complaint |
 | Politeness padding, bribes, threats | Cost with no mechanism behind it |
 | Safety rules with no enforcing gate | A control that is not one |
 | Instructing a reasoning model to "think step by step" | Duplicates what its own reasoning already does |
@@ -286,7 +385,19 @@ finds what the first pass missed. Treat each as a hypothesis. Where one is
 load-bearing for a decision, test it against the target model rather than citing
 this line.
 
+## References
+
+| Load when | File |
+|---|---|
+| REPAIR Step 2 or Step 4 — a prompt misbehaves and the symptom needs a cause, or a diagnosed mode needs a technique | `references/failure-modes.md` |
+
+Do NOT load `references/failure-modes.md` on the AUTHOR branch. There is no
+observed failure to diagnose, and its fix directions read as a menu of techniques
+to apply speculatively — which is the Iron Law's failure mode with extra steps.
+
 ## Pre-delivery checklist
+
+Both branches:
 
 - [ ] Every sentence changes a decision; no-ops cut whole, not trimmed
 - [ ] The prompt's rank is established, and no rule sits above it
@@ -296,9 +407,17 @@ this line.
 - [ ] The alias contract is stated once, near the top
 - [ ] Critical rules appear at start AND end
 - [ ] Tactical bullets ≤ 12 words, or justified by distinct sub-claims
-- [ ] Bolded leads not restated in the body
 - [ ] Prohibitions paired with an alternative where it is not obvious
-- [ ] A verification path is named — tests, lint, typecheck — never "review your work"
 - [ ] Every rule is obeyed by the prompt's own examples and templates
 - [ ] Every behavioral claim is measured and cited, or marked unmeasured
 - [ ] No hedging, no ceremony, no closing summaries
+
+REPAIR only:
+
+- [ ] The real prompt was read verbatim, not a paraphrase
+- [ ] Each change maps to a named failure mode from Step 2
+- [ ] Traced against ≥1 failing input and ≥1 edge case
+- [ ] No net contradiction introduced
+- [ ] Token/accuracy trade-offs disclosed
+- [ ] Model IDs, params and caching verified via `claude-api`, never guessed
+- [ ] Delivered as a diff plus rationale, never a silent replacement

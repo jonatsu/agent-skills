@@ -7,6 +7,10 @@
 - License: MIT
 - Status: **original work.** Written from the domain on 2026-08-27, replacing an
   adaptation of the upstream skill named below. No upstream text survives.
+- Composition: absorbed `prompt-optimizer` (original, MIT, same author) on
+  2026-08-27 as its REPAIR branch. Same author and same licence, so the merge
+  raises no licensing question. `skills/archived/prompt-optimizer/ARCHIVED.md`
+  maps every section of the predecessor to its new home here.
 
 ## What this replaces
 
