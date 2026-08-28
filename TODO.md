@@ -303,7 +303,9 @@ relative to `skills/` unless noted. Repository-wide items live in
     count rested on. A one-file off-by-one, now repaired by restoring the instance detail.
     `skill-judge` was correct and was left untouched.
 - **The redeploy hook is blind to a `git mv` out of a deployed group — found 2026-08-27,
-  UNFIXED.** `scripts/sync-skills-kasetto.sh:168` maps the commit's changed paths to Kasetto
+  UNFIXED.** The operational rule moved to [AGENTS.md](AGENTS.md) on 2026-08-28 — read that
+  before moving or archiving a skill. What remains owed HERE is the fix, not the warning.
+  `scripts/sync-skills-kasetto.sh:168` maps the commit's changed paths to Kasetto
   scopes with `git diff --name-only HEAD~1 HEAD`, and git's rename detection collapses a 100%
   rename to its **destination path only**. Archiving moves `skills/shared/…` →
   `skills/archived/…`, so nothing matches `^skills/shared/`, no scope is selected, and the
