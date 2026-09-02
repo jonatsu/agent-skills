@@ -23,11 +23,6 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/skills_ref"]
 
-# Keep the vendored source byte-identical to its pinned upstream revision while
-# allowing this repository's broader Ruff rules to check the surrounding code.
-[tool.ruff.lint]
-ignore = ["PIE790", "RUF022", "UP045"]
-
 [dependency-groups]
 dev = [
     "pytest>=7.0",

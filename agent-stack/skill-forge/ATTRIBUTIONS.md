@@ -51,7 +51,7 @@ was NOT used; it misreports repositories that do carry a licence.
 - License: Apache-2.0; its license text is bundled at
   `scripts/skills-ref/LICENSE` with the repository-required final newline
 - Modifications: upstream tests and development environment artifacts are
-  omitted from the deployed runtime copy; a Ruff configuration preserves the
-  upstream source unchanged under this repository's broader lint rules
+  omitted from the deployed copy; bundled runtime source and project files are
+  unmodified
 
 Upstream supplies no `NOTICE` file at the pinned revision.
