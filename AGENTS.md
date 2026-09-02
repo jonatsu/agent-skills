@@ -21,6 +21,9 @@ Read the focused source before acting:
   begins.
 - Archived skills marked as deferred remain unreviewed. Do not spend time validating or repairing them unless
   their review is explicitly resumed.
+- Keep `description` as an inline YAML scalar within the 120-column ceiling. Kasetto 3.8.0 records a folded
+  scalar's `>-` marker as the lock description instead of its text; reproduced on 2026-09-02 across all four
+  shared locks. Both skill validators accepted the folded scalar, so they do not catch this failure.
 
 ## Archive Without Losing Structure
 
