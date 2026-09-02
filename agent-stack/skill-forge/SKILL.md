@@ -1,8 +1,8 @@
 ---
 name: skill-forge
-description: "Use to create or repair Agent Skills: discovery, resources, evaluation, portability, and provenance."
+description: "Create, update, and repair Agent Skills: discovery, resources, evaluation, portability, and provenance."
 license: MIT
-compatibility: The bundled specification validator requires Python 3.11+, uv, and dependency access on its first run.
+compatibility: The bundled validators require Python 3.11+, uv, and dependency access on their first run.
 metadata:
   author: Joonas Onatsu
 ---
@@ -23,6 +23,7 @@ Read the existing skill and all bundled resources when updating one. For new ski
 - the concrete task the skill enables;
 - representative requests and successful outcomes;
 - the decisions or knowledge a capable agent lacks without the skill;
+- the current author and applicable license;
 - whether the work is a new skill, substantial revision, or focused update;
 - whether the skill is portable or repository-specific; and
 - whether any material derives from another source.
@@ -48,6 +49,10 @@ completed work, capture:
 Useful project evidence includes runbooks, API specifications, schemas, configuration, review comments,
 issue history, version-control fixes, and recorded failures with their resolutions. Label unsupported guidance
 as uncertain or omit it; do not turn plausible generic advice into asserted expertise.
+
+For a new skill, run `python3 scripts/init_skill.py --help`, then use the initializer when its minimal scaffold
+fits the requested package. Replace every generated placeholder before validation. Create files manually when
+the scaffold would require unnecessary cleanup.
 
 Ask the user only when a missing answer would change behavior, scope, portability, provenance, compatibility,
 or cost. Proceed directly when the repository and request settle those choices.
@@ -177,8 +182,10 @@ equivalent.
 Run this skill's local-policy validator when its dependencies are available:
 
 ```bash
-python3 scripts/quick_validate.py <skill-directory>
+uv run scripts/quick_validate.py <skill-directory>
 ```
+
+The local-policy validator exits 0 for a valid skill, 1 for policy failures, and 2 for invalid invocation.
 
 Then follow the target repository's applicable mechanical checks and deployment workflow. Add further checks
 only when the skill's domain or risk requires them. Report performed and omitted validation accurately.

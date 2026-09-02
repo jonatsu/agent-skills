@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["PyYAML==6.0.3"]
+# ///
 """Check Skill Forge policies outside the Agent Skills specification.
 
 Run ``skills-ref validate`` separately for specification compliance. This script does
 not duplicate that external schema and must not be reported as an equivalent check.
 """
 
+import argparse
 import re
 import sys
 from pathlib import Path
@@ -15,10 +20,10 @@ FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---(?:\n|$)", re.DOTALL)
 PLACEHOLDERS = ("[TODO", "FIXME", "<skill-name>", "<upstream-")
 
 
-def validate_skill(skill_path):
+def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
     """Return local-policy errors and warnings for a skill directory."""
-    errors = []
-    warnings = []
+    errors: list[str] = []
+    warnings: list[str] = []
     skill_path = Path(skill_path)
     skill_md = skill_path / "SKILL.md"
 
@@ -91,12 +96,18 @@ def validate_skill(skill_path):
     return errors, warnings
 
 
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: python3 quick_validate.py <skill-directory>", file=sys.stderr)
-        sys.exit(2)
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        epilog="Exit status: 0 valid, 1 policy failures, 2 invalid invocation.",
+    )
+    parser.add_argument("skill_directory", type=Path, help="Agent Skill directory")
+    return parser.parse_args()
 
-    errors, warnings = validate_skill(sys.argv[1])
+
+def main() -> None:
+    args = _parse_args()
+    errors, warnings = validate_skill(args.skill_directory)
     for warning in warnings:
         print(f"warning: {warning}")
     for error in errors:
