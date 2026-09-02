@@ -5,6 +5,13 @@ README describes how the stack works and this file tracks what is still owed. Pa
 relative to `skills/` unless noted. Repository-wide items live in
 [../TODO.md](../TODO.md).
 
+- **Codex global skill-description budget.** Deferred 2026-09-02 after adding the Codex
+  Kasetto overlay. Deploying the full common set installs 63 global skills successfully,
+  but a fresh Codex session warns that descriptions were shortened to fit the skills
+  context budget. Codex still exposes every skill, so the deployment remains enabled.
+  Revisit whether Codex should receive all 63 common skills, only the 39 repository-owned
+  `shared/` skills, or a smaller curated set. Measure whether `shared/` alone removes the
+  warning before changing the overlay; do not infer that reducing the count guarantees it.
 - **`claude/reflect` — re-evaluate the OpenCode side.** `reflect` stays in `claude/`
   rather than moving to `shared/`: OpenCode's `skills/reflect/` is auto-installed by the
   `oh-my-opencode-slim@2.2.8` plugin, so a shared copy would be a collision rather than a

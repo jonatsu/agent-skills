@@ -1,7 +1,7 @@
 # Skills
 
-Single source of truth for my agent skills, deployed to **Claude Code**, **OpenCode** and
-**GitHub Copilot CLI** from one place. Edit a skill here once; every agent picks it up.
+Single source of truth for my agent skills, deployed to **Claude Code**, **OpenCode**,
+**GitHub Copilot CLI** and **Codex** from one place. Edit a skill here once; every agent picks it up.
 
 The skills previously lived in two config dirs (`~/.config/claude/skills` and
 `~/.config/opencode/skills`) and drifted. Now they live here and deploy out via
@@ -21,7 +21,7 @@ has merged and what has not.
 
 ## Mental model
 
-Kasetto reads a declarative config (`kasetto/base.yaml` plus the five overlays at
+Kasetto reads a declarative config (`kasetto/base.yaml` plus the six overlays at
 `kasetto/*/kasetto.yaml`), resolves each source, and
 installs **real copies** into each agent's skills dir, recording exactly what it installed
 in a committed `kasetto.lock`. There is no central store and no symlink layer.
@@ -31,7 +31,7 @@ this repo (source of truth)
   ├─ shared/<domain>/                hand-crafted skills (local sources)
   ├─ claude/  opencode/              these two groups stay flat
   └─ kasetto/ configs ──kst sync──▶  ~/.config/{claude,opencode}/skills/   (real copies, flat)
-                                     ~/.copilot/skills/
+                                     ~/.copilot/skills/  ~/.codex/skills/
                                      tracked by kasetto/**/kasetto.lock
 ```
 
@@ -47,7 +47,7 @@ Hand-crafted skills are grouped by target agent. Each skill is a directory with 
 
 | Group | Deployed to | Contents |
 |---|---|---|
-| `shared/` | Claude Code + OpenCode + Copilot CLI | Agent-agnostic skills (the majority), organised by domain one level down — see below |
+| `shared/` | Claude Code + OpenCode + Copilot CLI + Codex | Agent-agnostic skills (the majority), organised by domain one level down — see below |
 | `claude/` | Claude Code only | Claude-coupled skills (e.g. `reflect`). Flat: two skills do not need a taxonomy |
 | `opencode/` | OpenCode only | OpenCode-coupled skills. **Currently empty** — `headroom-management` was archived 2026-08-26, and git does not track empty directories, so the group is absent until the next OpenCode-only skill recreates it |
 | `archived/` | nothing | Kept for reference, deployed nowhere. See `archived/README.md` |
@@ -57,6 +57,10 @@ skills are Claude-coupled by the placement rule — they are about `CLAUDE.md`, 
 and Claude subagents — so deploying them there would ship skills describing a different agent.
 Add the group, and a `kasetto/copilot-extra/` config, the first time a Copilot-coupled skill
 is written.
+
+Codex also receives `shared/` and nothing agent-specific. Its built-in `.system` skills remain
+platform-owned beside the Kasetto-managed global skills and are excluded by exact path from the
+ownership gate.
 
 ### Domains within `shared/`
 
@@ -103,7 +107,7 @@ the skill, so take that route only when the upstream cannot be used unmodified.
 
 ## The Kasetto config (`kasetto/`)
 
-The deploy uses **six** configs. Kasetto's `extends` inherits a parent's skills only when
+The deploy uses **seven** configs. Kasetto's `extends` inherits a parent's skills only when
 the child declares none — a child's own `skills:` *replaces* the parent's, and multi-parent
 lists don't merge. Since `shared/` goes to every agent but the agent-coupled skills go to
 one each, those skills can't ride on the shared base and need their own configs.
@@ -114,6 +118,7 @@ one each, those skills can't ride on the shared base and need their own configs.
 | `kasetto/claude/` | `extends base.yaml` | `~/.config/claude/skills` |
 | `kasetto/opencode/` | `extends base.yaml` | `~/.config/opencode/skills` |
 | `kasetto/copilot/` | `extends base.yaml` | `~/.copilot/skills` |
+| `kasetto/codex/` | `extends base.yaml` | `~/.codex/skills` |
 | `kasetto/claude-extra/` | `claude/` group (e.g. `reflect`) | `~/.config/claude/skills` |
 | `kasetto/opencode-extra/` | `opencode/` group — **empty since 2026-08-26**, scope kept deliberately | `~/.config/opencode/skills` |
 
@@ -243,6 +248,8 @@ just deploy                      # skills to every agent, plus the dotbot map
 - **Foreign skills are left alone.** Any skill in an agent dir that Kasetto didn't install
   (e.g. ad-hoc `oh-my-opencode` skills) is untouched — scoped per-lock pruning never removes
   what isn't in the config's lock.
+- **Codex system skills remain platform-owned.** Kasetto does not claim or prune
+  `~/.codex/skills/.system`; the ownership gate recognizes that exact built-in path.
 - **Rollback:** `kst clean` (per config dir) removes Kasetto-managed skills; deleting
   `kasetto/` afterwards leaves nothing behind — there is no store to clear. Pre-migration
   copies remain in the `~/.config/claude` and `opencode-config` git histories.
