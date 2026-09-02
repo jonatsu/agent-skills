@@ -2,10 +2,10 @@
 
 ## Current skill
 
-- Skill: `skill-judge`
+- Skill: `skill-review`
 - Current author: Joonas Onatsu
 - Current license: MIT
-- Status: adapted from upstream and materially trimmed
+- Status: adapted from upstream and substantially rewritten
 
 ## Original author and source
 
@@ -22,10 +22,9 @@
 
 ## Adaptation note
 
-Kept the evaluation instrument: the eight scored dimensions (D1–D8), the
-120-point total and grade scale, the Expert/Activation/Redundant knowledge-ratio
-scan, the evaluation protocol, the report template, and the failure-pattern
-catalog.
+Retained the upstream skill's purpose and its concern for actionable review, progressive
+disclosure, workflow fit, and concrete evidence. Replaced its fixed structural rubric with a
+contract-based review that separates validity, design judgment, and behavioral evidence.
 
 Material changes from the upstream skill:
 
@@ -39,12 +38,19 @@ Material changes from the upstream skill:
   folding their content into tables and prose.
 - Neutralized provider-specific framing ("Claude" → "the agent/model") so the
   skill is agent-agnostic.
-- Rewrote the failure patterns as a standalone diagnosis catalogue, each entry naming
-  the dimension it hits. It briefly borrowed a sibling skill's vocabulary; that was
-  reversed on 2026-08-27 for the reachability reason above, and the catalogue moved to
-  `references/failure-patterns.md`.
-- Rewrote frontmatter to this repo's conventions (`metadata.author` /
-  `metadata.license`) and added an Iron Law.
+- Consolidated the useful failure-pattern diagnoses into `references/review-lenses.md`,
+  expressed as consequence-based questions rather than score deductions.
+- Rewrote frontmatter to the Agent Skills specification's top-level `license` field and
+  retained `metadata.author`.
+- Retained Expert/Activation/Recoverable/Redundant as qualitative diagnoses, cross-file
+  consistency checks, freedom calibration, the acts-now/acts-safely/still-works questions,
+  evidence legibility, and the detailed portability distinctions.
+- Removed the eight-dimension 120-point grade, line-weighted knowledge ratios, structural
+  quotas, portability score caps, and mandatory praise. These measures conflicted with the
+  current `skill-forge` contract by rewarding techniques that authoring now treats as
+  conditional.
+- Added separate hard gates, consequence-based findings, readiness verdicts, proportional
+  behavioral evaluation, and decision-specific metrics.
 
 ## Upstream license
 

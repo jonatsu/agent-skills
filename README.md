@@ -96,7 +96,7 @@ Third-party skills used **as-is** are not vendored here — they are pulled from
 repos by Kasetto and listed in `kasetto/base.yaml`, so they stay upstream-updatable.
 
 A skill is vendored into a group only when it is **forked**: materially modified and no longer
-tracking upstream. A fork keeps the upstream license in frontmatter `metadata.license` and
+tracking upstream. A fork keeps the upstream license in the top-level frontmatter `license` field and
 records provenance plus the list of changes in `ATTRIBUTIONS.md` (see
 `shared/agent-stack/agents-management`, `claude/claude-automation-recommender`). Forking trades upstream updates for the right to fix
 the skill, so take that route only when the upstream cannot be used unmodified.
@@ -250,7 +250,7 @@ just deploy                      # skills to every agent, plus the dotbot map
 ## Licensing
 
 Repo `LICENSE` is **MIT** and covers the original works here. Individual skills may carry
-their own license via their frontmatter `metadata.license` and `ATTRIBUTIONS.md` — e.g.
+their own license via their top-level frontmatter `license` field and `ATTRIBUTIONS.md` — e.g.
 `agents-management` is **Apache-2.0** per its upstream, and ships `LICENSE.upstream`
 alongside. Do not assume MIT for a skill that declares otherwise. A skill whose upstream
 licence would block the use we need is replaced by an independently written one rather than
@@ -268,21 +268,21 @@ citation to a moving document is not evidence.
 | [Anthropic, *Skill authoring best practices*](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | The platform vendor's own guidance, and the strongest anchor available | read 2026-08-27 |
 | [Claude Code skills reference](https://code.claude.com/docs/en/skills) | The real frontmatter field list, and which fields belong to which surface | read 2026-08-27 |
 | [mgechev/skills-best-practices](https://github.com/mgechev/skills-best-practices) | A short opinionated distillation that defers to Anthropic's guide | commit `a0bfa56` |
-| [mgechev/skillgrade](https://github.com/mgechev/skillgrade) | Not read in depth. An external grading tool that evaluates skills by RUNNING them against fixtures with graders, rather than by rubric inspection — a different model from `skill-judge`'s, and worth a look before that skill changes again | unpinned |
+| [mgechev/skillgrade](https://github.com/mgechev/skillgrade) | Not read in depth. An external grading tool that evaluates skills by running them against fixtures with graders; useful as a comparison point for behavioral evaluation, but not treated here as an authority | unpinned |
 
-**What they agree on**, and what this repo therefore enforces: `SKILL.md` under 500 lines;
-`references/` exactly one level deep; a table of contents for any reference over 100 lines;
-`name` 1–64 characters, lowercase with single hyphens, matching its parent directory;
-`description` non-empty, under 1024 characters, written in the third person; forward slashes
-everywhere; and no user-facing documentation inside a skill package.
+The Agent Skills specification is the structural authority. `skill-forge`'s vendored reference
+validator checks that contract; its local validator separately checks this repository's policy.
+Line counts, reference depth, tables of contents, prose person, and package shape can inform a
+review when they cause a concrete problem, but they are not universal quality gates.
 
 **What neither has, and the finding that mattered most: no taxonomy of skill types, shapes,
 categories or tiers.** Anthropic's guide legislates character sets, description person and
 nesting depth, so a five-way type system is not something it would have left out by accident.
-That absence — together with the fact that three of `skill-judge`'s five former "shapes" were
+That absence — together with the fact that three of `skill-review`'s five former "shapes" were
 re-scoring other dimensions — is why the shape taxonomy and the four complexity tiers were
-deleted on 2026-08-27. The eight items in `skill-forge/references/architecture-patterns.md`
-survived as *workflow mechanisms*: control flow a procedure needs, never a kind of skill.
+deleted on 2026-08-27. The current `skill-forge` instead treats sequence, branching, iteration,
+delegation, degradation, and templates as conditional workflow mechanisms rather than skill
+categories.
 
 **Two places they are wrong, or narrower than they read.** mgechev's
 `scripts/validate-metadata.py` rejects any first- or second-person pronoun in a description;
