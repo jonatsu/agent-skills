@@ -56,6 +56,13 @@ was then rolled back when pre-commit restored already-dirty lock files.
 | Move between deployment groups                                    | Selects the destination but can miss the source            |
 | Edit `kasetto/base.yaml`                                          | Selects Claude, OpenCode, Copilot, and Codex shared scopes |
 
+Kasetto 3.8.0 does not prune a deployed directory when a source edit removes its last file. Reproduced on
+2026-09-02 by deleting every file under `chezmoi-dotfiles/references/`: redeployment reported the skill
+unchanged, while `just skills-deployed` found `Only in <destination>: references`. Removing the empty source
+directory and redeploying did not repair the destination. Keep a meaningful file when the directory still
+serves the skill; otherwise resolve the stale directory through Kasetto and verify all destinations. Never
+edit the deployed copies directly.
+
 After any move, archive, or removal:
 
 1. Commit source changes separately from generated locks.
