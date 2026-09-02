@@ -1,208 +1,67 @@
-# Instruction File Section Shapes
+# Instruction File Shapes
 
-Shapes only. Whether a section earns its place is decided by
-`update-guidelines.md`, and several shapes below fail that test if filled in
-naively — each carries the warning inline.
+Use these shapes only during initialization or a structural rewrite. Include a section only when verified repository
+knowledge earns the recurring context cost.
 
-**Contents**
-- [Key principles](#key-principles)
-- [Sections](#sections)
-- [Template: root, minimal](#template-root-minimal)
-- [Template: root, fuller](#template-root-fuller)
-- [Template: package or module](#template-package-or-module)
-- [Template: monorepo root](#template-monorepo-root)
-
----
-
-## Key principles
-
-- **Concise**: one line per concept where possible.
-- **Actionable**: a reviewer can tell from a diff whether it was followed.
-- **Project-specific**: what is true here, not what is true everywhere.
-- **Non-derivable**: if a listing command or a manifest answers it, cut it.
-- **Current**: reflects the repository as it is, checked rather than assumed.
-
-Use only the sections the repository justifies. An empty or generic section
-costs the same as a full one.
-
-**Fill the placeholders from the ecosystem the repository actually has.** Where
-one exists, name its real manifest, commands and conventions — a generic file
-in a repo with a clear toolchain wastes the reader's time. Where none exists
-yet, omit the toolchain-shaped sections and ask; an instruction file MUST NOT
-be what commits a greenfield repo to a package manager or a test runner.
-
-## Sections
-
-### Commands
-
-⚠️ A transcription of the runner's recipe list scores 5 and should be cut. Give
-the invocations that carry something the runner does not state.
+## Root File
 
 ```markdown
+# <Project Name>
+
+<One sentence that distinguishes this repository for an agent.>
+
 ## Commands
 
-- `<command>` — `<the constraint or reason that is not in the runner>`
-- `<command>` — `<why this form rather than the obvious one>`
-```
+- `<command>`: `<constraint or reason the runner does not state>`
 
-### Architecture
-
-⚠️ A directory tree the agent can produce with one listing command is not worth
-context. Write what the tree does not show.
-
-```markdown
 ## Architecture
 
-- `<dir>` owns `<responsibility>`; `<other dir>` looks similar but is `<status>`
-- Entry point is `<path>`, not the obvious `<other path>`
-- `<boundary>` exists because `<reason>`
-```
+- `<path>` owns `<responsibility>`; `<similar path>` has `<different status>`.
 
-### Conventions
-
-```markdown
 ## Conventions
 
-- `<convention>`, never `<the alternative it replaces>`
-- `<preference>` because `<reason>`
-```
+- `<concrete, repository-evidenced convention>`
 
-### Environment
-
-```markdown
-## Environment
-
-- `<VAR_NAME>` — `<purpose, and when it must be set>`
-- `<setup step that is not in the manifest>`
-```
-
-### Gotchas
-
-The highest-value section. Each line should be something that cost someone a
-debugging session.
-
-```markdown
 ## Gotchas
 
-- `<non-obvious behavior>` — `<what it looks like when it bites>`
-- `<ordering dependency or prerequisite>`
-- `<thing that fails silently>`
-```
+- `<non-obvious behavior>`: `<failure symptom or consequence>`
 
-### Pointers to other files
-
-The portable mechanism for anything not in the main file: guidance scoped to a
-subtree, per-package files, long reference material. Works whether or not the
-agent parses includes.
-
-⚠️ Phrase each row as an imperative naming its trigger. A row that describes
-what the harness supposedly does is not an instruction.
-
-```markdown
 ## Pointers
 
-Open the matching file yourself before working in its area — treat this table as
-the instruction, not as a description of something that happens automatically.
+Open the matching file before working in its area.
 
 | Read before you touch | File | Holds |
 |---|---|---|
-| `<path or glob>` | `<file>` | `<what is in it>` |
+| `<path or glob>` | `<instruction file>` | `<scope>` |
 ```
 
-### Workflow
+Delete sections that would contain a runner transcription, directory listing, generic advice, or README summary. The
+fillable version is `../assets/AGENTS.template.md`.
+
+## Package File
+
+Use a package file when its instructions differ materially from the root. Add the verified filename adapter beside it and
+an imperative pointer in the root file.
 
 ```markdown
-## Workflow
-
-- `<when to do X>`
-- `<preferred approach for Y, and what it replaces>`
-```
-
-## Template: root, minimal
-
-````markdown
-# <Project Name>
-
-<One-line description>
-
-## Commands
-
-- `<command>` — `<the reason this form is needed>`
-
-## Gotchas
-
-- `<gotcha>`
-````
-
-## Template: root, fuller
-
-Use `assets/AGENTS.template.md` — it is the fillable copy of the sections above,
-with each warning inline. Reproducing it here would be a third rendering of one
-section list, which is the cost this file is supposed to be arguing against.
-
-## Template: package or module
-
-For a package inside a monorepo, or a distinct module with its own rules.
-
-Pair this with a symlink beside it, so agents that discover nested files by
-their own filename find it, and with a pointer row in the root file, so agents
-that do not discover nested files are told to open it.
-
-````markdown
 # <Package Name>
 
-<What this package is for>
+<What differs from the repository root.>
 
 ## Usage
 
-- `<the non-obvious part of consuming it>`
+- `<non-obvious usage constraint>`
 
 ## Dependencies
 
-⚠️ Only what the manifest does not already answer — an ordering requirement, a
-version pinned for a reason, a dependency whose absence fails silently. A list
-of names restates the manifest and scores 5.
+- `<ordering or initialization dependency the manifest does not show>`
 
-- `<dependency>` — `<why it is needed, or what breaks without it>`
+## Gotchas
 
-## Notes
+- `<package-specific failure mode>`
+```
 
-- `<constraint that does not apply elsewhere in the repo>`
-````
+## llms.txt
 
-## Template: monorepo root
-
-````markdown
-# <Monorepo Name>
-
-<Description>
-
-## Packages
-
-⚠️ A directory listing in a table is still a directory listing — the same defect
-the Architecture section warns about, and the rubric scores it at 5. Keep this
-only for what listing the tree does NOT reveal: which package is authoritative
-where two overlap, which is deprecated, which owns a boundary. Delete it if the
-rows would only restate the paths.
-
-| Package | Path | What lives there |
-|---------|------|------------------|
-| `<name>` | `<path>` | `<purpose>` |
-
-## Commands
-
-- `<repo-wide command>` — `<reason>`
-
-## Pointers
-
-Open the package's own file before working in it.
-
-| Read before you touch | File | Holds |
-|---|---|---|
-| `<package path>` | `<package file>` | `<what is in it>` |
-
-## Cross-Package Patterns
-
-- `<shared pattern>`
-- `<generation or sync rule, and what breaks if it is skipped>`
-````
+Use `../assets/llms.template.txt` only when the user requests a documentation index. Keep an H1, an optional summary
+blockquote, H2 groups of resolving links, and an `Optional` group last. Do not place agent instructions in it.
