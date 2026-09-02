@@ -13,17 +13,33 @@ whole mechanism; there is no separate opt-out to remember.
 
 | Skill | Archived | Why |
 |---|---|---|
+| `anti-rationalization` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `brooks-lint-debt-scan` | 2026-09-02 | Temporarily removed with the intact `review/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `brooks-lint-design-review` | 2026-09-02 | Temporarily removed with the intact `review/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `brooks-lint-maintainability-review` | 2026-09-02 | Temporarily removed with the intact `review/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `brooks-lint-test-review` | 2026-09-02 | Temporarily removed with the intact `review/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `buildroot-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `embedded-linux-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `find-skills` | 2026-09-02 | Retired at the user's direction. Its cross-agent source catalogue, trust model and installation workflow require continuing maintenance against external services and agent interfaces; Codex's system `skill-installer` now covers its narrower installation lane. The security and provenance material remains useful as a reference. See its `ARCHIVED.md`. |
 | `headroom-management` | 2026-08-26 | The Headroom proxy it manages was rejected, so the skill governs a tool this setup no longer runs. See its `ARCHIVED.md`. |
 | `lean-ctx` | 2026-08-27 | lean-ctx was removed from this setup, so every `ctx_*` trigger in the skill names a tool that no longer exists. Its three locally-measured reference files are why this is an archive rather than a deletion, and its Apache-2.0 `LICENSE.upstream`/`NOTICE.upstream` must stay with the directory. See its `ARCHIVED.md`. |
-| `prompt-optimizer` | 2026-08-27 | Merged into `shared/agent-stack/system-prompts` as its REPAIR branch — same subject, opposite direction, and the two collided on "write a system prompt" and "fix this prompt". Nothing was dropped; `ARCHIVED.md` maps every section to its new home. Archived rather than deleted because its diagnostic table was written against real failures. |
+| `kas-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `prompt-optimizer` | 2026-08-27 | Merged into `system-prompts`, now also archived, as its REPAIR branch — same subject, opposite direction, and the two collided on "write a system prompt" and "fix this prompt". Nothing was dropped; `ARCHIVED.md` maps every section to its new home. Archived rather than deleted because its diagnostic table was written against real failures. |
+| `security-audit` | 2026-09-02 | Temporarily removed with the intact `review/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `semantic-compression` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `system-prompts` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `technical-writing` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `token-optimiser` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `uboot-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `writing-great-skills` | 2026-08-27 | Unreachable and unconsumed: `disable-model-invocation: true` meant no skill could invoke it and Claude Code could not preload it, and its only dependents were removed from `skill-judge` in `7704d3e`. It was also a second authority on skill authoring that contradicted `skill-forge` on prohibitions without acknowledging it. Preserved verbatim from upstream, which is why it was never brought up to repo conventions — and why bringing it up would have destroyed the property it was kept for. `ARCHIVED.md` names the four concepts `skill-forge` does not carry. |
+| `yocto-oe-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 
 ## Archiving a skill
 
 1. `git mv skills/<group>/<name> skills/archived/<name>` — use `git mv` so
-   history and rename detection survive.
-2. Write `skills/archived/<name>/ARCHIVED.md`: the date, why it was archived,
+   history and rename detection survive. When archiving a complete shared domain, preserve
+   it as `skills/archived/<domain>/<name>` instead of flattening its skills.
+2. Write `ARCHIVED.md` inside the moved skill package: the date, why it was archived,
    what it was deployed to last, and where any successor lives. **Leave
    `SKILL.md` byte-identical to what was last deployed** — the reference copy is
    only worth keeping if it is exactly what ran.
@@ -33,7 +49,7 @@ whole mechanism; there is no separate opt-out to remember.
    saying so — and the two reasons are worth knowing rather than rediscovering;
    see below. `git status` cannot see the orphan, because it lives outside this
    repository.
-5. Update whatever named the skill as live: `skills/README.md`, the header
+5. Update whatever named the skill or domain as live: `skills/README.md`, `skills/kasetto/base.yaml`, the header
    comment in `scripts/kasetto-deploy.sh`, and any open item in
    `skills/TODO.md` that planned future work on it.
 

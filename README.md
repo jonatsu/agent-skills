@@ -64,8 +64,8 @@ ownership gate.
 
 ### Domains within `shared/`
 
-Since 2026-08-26 the shared group is organised by subject: `shared/<domain>/<skill>/`. Forty-three
-skills in one directory had stopped being a list anyone could read.
+Since 2026-08-26 the shared group is organised by subject: `shared/<domain>/<skill>/`. Before that
+change, forty-three skills in one directory had stopped being a list anyone could read.
 
 | Domain | Holds |
 |---|---|
@@ -73,8 +73,6 @@ skills in one directory had stopped being a list anyone could read.
 | `context/` | Context and token economy: handoffs, compression, token budgets |
 | `design/` | Shaping and recording a design before it is built |
 | `development/` | Doing the work: debugging, testing, dev-environment tooling |
-| `review/` | Judging work already done — the brooks-lint lanes and security-audit |
-| `embedded/` | Embedded Linux build systems and bring-up |
 | `nix/` | Nix, NixOS, home-manager, and the flake ecosystem |
 | `git/` | Git, GitHub, and repository hygiene |
 | `ops/` | Machines and runtimes: containers, systemd, dotfiles |

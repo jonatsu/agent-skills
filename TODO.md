@@ -41,7 +41,7 @@ relative to `skills/` unless noted. Repository-wide items live in
 - **`claude-md-management` plugin** — reviewed and recommended for removal rather than a
   fork: its rubric awards 35 of 100 points for things it never reads the codebase to
   check, and its discovery searches for two filenames that do not exist. Everything it
-  does is already covered by `claude/reflect` and `shared/agent-stack/system-prompts`. The evidence
+  does is already covered by `claude/reflect` and archived `system-prompts`. The evidence
   for each defect is in `shared/agent-stack/agents-management/ATTRIBUTIONS.md`.
 - **`shared/writing/writing-for-humans` — evaluate a burstiness check.** Deferred 2026-08-24
   while reviewing three AI-writing skills for adoptable material. The idea comes from
@@ -150,8 +150,8 @@ relative to `skills/` unless noted. Repository-wide items live in
     obligations `shared/agent-stack/agents-management` already carries. Check for this per source, before
     lifting prose rather than after.
   - <https://github.com/modem-dev/skills/tree/main/write-discoverable-code> — name suggests
-    code-discoverability guidance. Adjacency to check: `shared/agent-stack/system-prompts` and
-    `shared/writing/technical-writing`, and whether it overlaps `agents-management`'s llms.txt lane.
+    code-discoverability guidance. Adjacency to check: archived `system-prompts` and
+    `technical-writing`, and whether it overlaps `agents-management`'s llms.txt lane.
   - <https://github.com/microsoft/skills/tree/main/.github/skills/continual-learning> — name
     suggests session-learning capture. Adjacency to check: `claude/reflect`, which owns that
     lane here, including its compaction backlog. Note the path: it ships under `.github/skills/`,
