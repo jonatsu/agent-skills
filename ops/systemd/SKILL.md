@@ -1,138 +1,128 @@
 ---
 name: systemd
-description: "Reference and troubleshooting guide for systemd: unit files, services, timers, journald/journalctl, sandboxing/hardening, cgroup resource control, socket activation, and systemd-networkd/systemd-resolved. Use to write, edit, review, harden, or debug unit files (.service, .timer, .socket, .target, .mount, .path, .slice), configure systemd-networkd (.network, .netdev, .link) or systemd-resolved (DNS, resolvectl), diagnose failed/masked units, read journalctl, or interpret systemd-analyze verify/blame/critical-chain/security output. Triggers: systemd, systemctl, journalctl, journald, unit file, timer unit, socket unit, target unit, .service, .timer, .socket, .target, .network, .netdev, .link, networkd, resolved, resolvectl, networkctl, systemd-analyze, ExecStart, WantedBy, OnCalendar, drop-in, daemon-reload, ProtectSystem, NoNewPrivileges, DynamicUser, socket activation, cgroup, ordering cycle, masked unit, service won't start."
+description: Write, review, harden, and debug systemd units and service-manager behavior on Linux systems.
+license: MIT
+compatibility: Requires Linux with systemd and its command-line tools; available directives vary by systemd version.
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # systemd
 
-IRON LAW: NEVER HAND-EDIT A UNIT FILE OR .network/.netdev/.link FILE UNDER A VENDOR/PACKAGE-OWNED PATH
-(`/usr/lib/systemd/...`). ALWAYS PLACE NEW OR OVERRIDDEN CONFIG UNDER `/etc/systemd/...` (`systemctl edit` / a
-`.d/` drop-in), AND ALWAYS CALL OUT `systemctl daemon-reload` (or `networkctl reload`) WHEN AN ALREADY-LOADED
-UNIT'S ON-DISK DEFINITION CHANGES. A vendor-path edit is silently discarded on the next package upgrade, and a
-missed reload makes a fix look like it "didn't work" when it simply never took effect.
+Use the target system's manual pages and installed tools as the authority. A directive available in upstream's
+latest documentation may not exist on the target host. Start by recording `systemd --version`, then consult the
+relevant local manual page such as `systemd.unit(5)`, `systemd.service(5)`, `systemd.exec(5)`, or
+`systemd.timer(5)`.
 
-## Workflow
+This skill covers system and user units, service lifecycle, dependencies, timers, sockets, journal-based diagnosis,
+sandboxing, and cgroup resource controls. Use the separate `systemd-networking` skill for systemd-networkd,
+systemd-resolved, `.network`, `.netdev`, and `.link` configuration.
 
-Copy this checklist and check off items as you complete them:
+## Establish the Target
+
+Determine these facts before editing or diagnosing:
+
+- the target systemd version and distribution;
+- whether the system manager or a user manager owns the unit;
+- the effective unit definition, including drop-ins;
+- whether the task is static authoring, offline image work, or a live-host change; and
+- which state-changing commands the user has already authorized.
+
+Inspect the effective definition with `systemctl cat UNIT` or `systemctl --user cat UNIT`. Use
+`systemctl show UNIT` when exact properties matter. Do not infer the active configuration from one file on disk.
+
+## Put Configuration in the Correct Scope
+
+Never edit package-owned unit files. Choose the local configuration location from the manager and lifetime:
+
+- System manager: use `/etc/systemd/system/` for persistent files and `/run/systemd/system/` for runtime files.
+- Current user's manager: use `${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/` for persistent files and
+  `$XDG_RUNTIME_DIR/systemd/user/` for runtime files.
+- All user managers: find the persistent path with `systemd-path systemd-user-conf`; inspect the target's unit search
+  path for other locations.
+
+Prefer `systemctl edit UNIT` or `systemctl --user edit UNIT` for a small override. Use `--full` only when a drop-in
+cannot express the change. List-valued service commands such as `ExecStart=` may require an empty assignment before
+the replacement; confirm reset behavior in the directive's manual page.
+
+After a hand edit, reload the same manager that owns the unit:
+
+- system manager: `systemctl daemon-reload`
+- user manager: `systemctl --user daemon-reload`
+
+`systemctl edit` normally reloads the selected manager itself. Application configuration changes do not require
+`daemon-reload`; reload or restart the application only when its own behavior requires it.
+
+## Author Units from Behavior
+
+Choose directives from the program's actual lifecycle and dependencies:
+
+- Select `Type=` from the program's readiness behavior. Use `notify` only when the program sends systemd readiness
+  notifications, and use `forking` only for a daemon that forks into the background.
+- Treat dependency and ordering as separate decisions. `Wants=` and `Requires=` pull units into a transaction;
+  `After=` and `Before=` order jobs. Add ordering only when one unit must wait for another.
+- Keep a timer and its activated service separate. Test calendar expressions with `systemd-analyze calendar`, and
+  ensure a recurring timer's target can become inactive before the next activation.
+- Confirm whether a socket-activated program accepts inherited file descriptors. A `.socket` unit cannot make an
+  arbitrary daemon socket-aware.
+- Use directory directives such as `StateDirectory=` when systemd should create and own service storage. Avoid
+  embedding secrets in `Environment=` because unit properties and process environments may expose them.
+
+Do not copy a generic hardening block into a service. Start with the service's required files, devices, address
+families, capabilities, syscalls, writable paths, and runtime behavior. Add restrictions incrementally and exercise
+the real workload after each meaningful group of changes. Treat `systemd-analyze security` as a list of possible
+improvements, not a safety verdict or universal score target.
+
+## Diagnose from Observed State
+
+Collect evidence that is available for the reported failure. On a live host, the usual starting set is:
 
 ```text
-systemd Progress:
-
-- [ ] Step 1: Identify the task category ⚠️ REQUIRED
-- [ ] Step 2: Load the matching reference file(s) before writing directives from memory ⛔ BLOCKING
-- [ ] Step 3: Author, review, or debug using the loaded reference
-- [ ] Step 4: Verify before declaring done ⚠️ REQUIRED
-  - [ ] 4.1 `systemd-analyze verify` on any authored/edited unit file
-  - [ ] 4.2 `systemd-analyze security <unit>` if hardening directives were added/changed
-  - [ ] 4.3 `systemctl status` + `journalctl -xeu <unit>` if debugging a failure
-- [ ] Step 5: Confirm before executing changes on a live/production system ⚠️ REQUIRED (conditional — see below)
+systemctl status UNIT
+systemctl show UNIT -p LoadState -p ActiveState -p SubState -p Result
+journalctl -u UNIT --since TIME
 ```
 
-## Step 1: Identify the Task Category
+Use `--user` with `systemctl` for a user unit. Use `journalctl --user-unit=UNIT` when the journal supports user-unit
+filtering. Ask for `journalctl -xeu UNIT` only when catalog explanations and the end of the current log are useful;
+`-x` adds generated explanatory text that should usually be omitted from bug reports.
 
-Ask: which of these does the task actually need?
+Follow the evidence:
 
-| Category                                                                                                                                                     | Load                                     |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- |
-| Unit anatomy, `[Unit]`/`[Install]`, dependency directives (`Wants=`/`Requires=`/`After=`...), specifiers, safe overrides, `systemctl enable`/`daemon-reload` | `references/units-and-dependencies.md`   |
-| `systemd.service` specifics: `Type=`, `Exec*=`, `Restart=`, timeouts, `User=`/environment                                                                    | `references/services-and-execution.md`   |
-| Timers, `OnCalendar=` syntax, `Persistent=`, timers vs cron                                                                                                  | `references/timers-and-scheduling.md`    |
-| journald config, `journalctl` filters, persistent journal, structured logging                                                                                | `references/journald-and-logging.md`     |
-| Sandboxing/hardening directives, `systemd-analyze security`, cgroup resource control                                                                         | `references/sandboxing-and-hardening.md` |
-| Socket-activated services (`.socket`, `LISTEN_FDS`, `Accept=`)                                                                                               | `references/socket-activation.md`        |
-| A unit/service won't start, is masked, is in a weird state, boot is slow, ordering cycle                                                                     | `references/troubleshooting.md`          |
-| `systemd-networkd`: `.network`/`.netdev`/`.link`, static IP, DHCP, bridges, VLANs                                                                            | `references/networkd.md`                 |
-| `systemd-resolved`: DNS, `resolved.conf`, split-DNS, `resolvectl`, `/etc/resolv.conf` modes                                                                  | `references/resolved.md`                 |
+- `LoadState=not-found` points to naming, installation, or search-path problems.
+- `LoadState=masked` means a `/dev/null` mask blocks activation.
+- an exit status in systemd's 200-range usually means process setup failed before the executable ran; decode the
+  exact value with `systemd.exec(5)` on the target version;
+- repeated fast failures may reach the start-rate limit; inspect the earlier failure before using `reset-failed`;
+- a unit that never receives a start job may have a dependency, condition, assertion, or transaction problem; and
+- slow boot diagnosis needs `systemd-analyze critical-chain` or `plot`; `blame` alone does not identify the critical
+  path.
 
-Most real tasks touch 2+ of these (e.g. "write a hardened timer-triggered backup job" needs
-`services-and-execution.md` + `timers-and-scheduling.md` + `sandboxing-and-hardening.md`). Load all that apply
-— don't guess at directive names or defaults for a category whose reference hasn't been loaded yet.
+If the user supplied sufficient status and journal output, analyze it directly. Do not require redundant live-host
+access. When the target is unavailable, state which diagnosis remains unverified and provide the exact read-only
+command that would settle it.
 
-## Step 2: Load Before Writing ⛔ BLOCKING
+## Validate in the Target Environment
 
-Ask: is every directive name, default value, and section placement in the answer something just confirmed
-against a loaded reference (or the man page), or is any of it recalled from general training-data familiarity
-with systemd?
+Run `systemd-analyze verify FILE...` for authored or edited units against the target systemd version and filesystem.
+A check on another distribution may reject valid target directives or resolve users, executables, and dependencies
+differently. Use the target host, a matching image, or the tool's supported offline options when those differences
+matter.
 
-systemd's directive surface is large, versioned, and full of easy-to-invent-sounding names that don't actually
-exist (or exist with different semantics than expected — `Wants=` vs `Requires=` vs `BindsTo=` is the single
-most common confusion, see `references/units-and-dependencies.md` §3). Treat unverified recall as a guess, not
-an answer.
+For a live change, verify the outcome that the task requires:
 
-## Step 3: Author, Review, or Debug
+- inspect the merged unit after reload;
+- start, reload, or restart only when already authorized;
+- read status and relevant journal entries after activation;
+- exercise the service's real behavior; and
+- inspect resource or sandbox effects when those settings changed.
 
-Use question-style diagnosis rather than jumping to a fix:
+Before stopping, restarting, masking, or otherwise changing a live unit, reuse authorization already present in the
+request. Ask first when the command's target, blast radius, or authorization remains unclear. Never present a static
+validation result as proof that the service works at runtime.
 
-- Writing a unit: what `Type=` does this daemon actually need (does it fork? call `sd_notify()`? exit after
-  one run?), and does `[Install]` have the right `WantedBy=`/`RequiredBy=` for how it should be pulled in?
-- Reviewing a unit: is every `Wants=`/`Requires=` paired with the `After=` it needs, or is an ordering
-  assumption being made that the directive doesn't actually provide (see
-  `references/units-and-dependencies.md` §3)?
-- Hardening a unit: which directives from `references/sandboxing-and-hardening.md` §1 actually fit what this
-  specific daemon does (network? home-dir access? JIT?), not a copy-pasted maximal template?
-- Debugging a failure: what do LOAD/ACTIVE/SUB actually say (`references/troubleshooting.md` §1), not just "is
-  it green"?
+## Primary References
 
-## Step 4: Verify Before Declaring Done ⚠️ REQUIRED
-
-- Any authored or edited unit file: run (or tell the user to run) `systemd-analyze verify <file>` — this is
-  the equivalent of a linter/typecheck and catches unknown directives, bad references, and missing
-  `ExecStart=` before deploy.
-- Any hardening/sandboxing change: run `systemd-analyze security <unit>` and read the result as "what's a
-  cheap additional win," not as a pass/fail gate — a low score is not proof of safety and a high score is not
-  proof of danger (see `references/sandboxing-and-hardening.md` §3).
-- Any failure-diagnosis task: don't conclude a root cause without having actually looked at `systemctl status`
-  output and `journalctl -xeu <unit>` — decode the specific `code=exited`/`code=killed` status shown, don't
-  guess from the unit name alone (see `references/troubleshooting.md` §2 and §8).
-
-## Step 5: Confirm Before Executing on a Live System ⚠️ REQUIRED (conditional)
-
-If the task involves actually *running* commands against a live/production host (not just authoring/reviewing
-files), stop and confirm before:
-
-- Restarting, stopping, or masking any service whose blast radius isn't fully known.
-- Applying `systemd-networkd`/`systemd-resolved` config changes on a host reached over SSH/remote access —
-  reconfiguring the network interface or DNS in use for the current connection can cut that connection.
-- Any change described as "destructive/hard-to-reverse" by the top-level guidance this skill operates under
-  (mask, unit deletion, resetting `/etc/resolv.conf`, etc.).
-
-Authoring the config and recommending the command is in scope without asking; actually executing it against a
-real running system is not, unless already authorized for that scope.
-
-## Anti-Patterns to Avoid
-
-- Inventing a directive name or assuming its default without checking the loaded reference — systemd has
-  hundreds of directives across unit types and many have non-obvious defaults (e.g. `RestartSec=100ms`,
-  `TimeoutStartSec=90s`, `ProtectHome=false`).
-- Hand-editing `/usr/lib/systemd/system/*.service` or `/usr/lib/systemd/network/*` — always use
-  `/etc/systemd/system/` (or `systemctl edit`) / `/etc/systemd/network/`.
-- Setting `Wants=`/`Requires=` and assuming it also orders startup — it doesn't; pair it with
-  `After=`/`Before=` explicitly whenever ordering is actually needed.
-- Recommending a maximal sandboxing template (every directive in `references/sandboxing-and-hardening.md` §1
-  at once) without checking which ones the specific service actually needs — `PrivateNetwork=true` on a
-  network daemon or `MemoryDenyWriteExecute=yes` on a JIT runtime breaks the service outright.
-- Declaring a unit file "correct" without having run or recommended `systemd-analyze verify`.
-- Treating `systemctl restart`'s success as proof a config change took effect, without confirming
-  `daemon-reload` happened first for a hand-edited already-loaded unit.
-- Restarting `systemd-networkd`/`NetworkManager`/`systemd-resolved` on a remote host as a casual
-  troubleshooting step without flagging the connectivity risk first.
-- Reading only the `ACTIVE` field of unit state and ignoring `LOAD`/`SUB` — a unit can be `masked` (LOAD) or
-  `failed` (SUB) in ways `ACTIVE` alone doesn't distinguish.
-
-## Pre-Delivery Checklist
-
-- [ ] Every directive name/default/section used was confirmed against a loaded reference file (or
-  primary-source man page), not recalled unverified
-- [ ] Any new/edited unit or network file targets `/etc/systemd/...`, never `/usr/lib/systemd/...`
-- [ ] `daemon-reload`/`networkctl reload` called out explicitly wherever an already-loaded unit's definition
-  changed
-- [ ] `systemd-analyze verify` run or recommended for any authored/edited unit file
-- [ ] `Wants=`/`Requires=` paired with a matching `After=`/`Before=` wherever ordering is actually required
-  (not left implicit)
-- [ ] Hardening directives chosen for what the specific service needs, not copy-pasted wholesale from the
-  template
-- [ ] Live-system execution (not just authoring) confirmed with the user first if it touches service state or
-  network/DNS config on a reachable host
+- `man systemd.unit`, `man systemd.service`, `man systemd.exec`, `man systemd.timer`, and `man systemd.socket`
+- `man systemctl`, `man journalctl`, and `man systemd-analyze`
+- [Upstream systemd manual](https://www.freedesktop.org/software/systemd/man/latest/)
