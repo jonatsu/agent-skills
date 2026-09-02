@@ -204,10 +204,9 @@ relative to `skills/` unless noted. Repository-wide items live in
   95/120 C, `find-skills` 93/120 C, `writing-great-skills` 92/120 C. ⚠️ D1/D5 are
   **provisional** for `skill-forge`, `find-skills` and `writing-great-skills` — their
   `references/` were not read, so those three totals are soft.
-  **Status 2026-08-27:** the group is now FIVE skills — `writing-great-skills` was archived
-  rather than repaired, see the struck bullets below. The bullets against `skill-forge` and
-  `skill-judge` were worked in `1897d7f` and `ef15c5f` but were never struck through here;
-  re-audit them against the current files before treating any of them as open.
+  **Status 2026-09-02:** `writing-great-skills` and `find-skills` are archived. The bullets
+  against `skill-forge` and the former `skill-judge` were superseded by their later rewrites;
+  re-audit them against the current files before treating any historical finding as open.
   - ~~**Licence compliance, and the only items here that are not style.** `skill-forge` and
     `skill-judge` both declare upstream adaptation in `ATTRIBUTIONS.md` and ship no
     `LICENSE.upstream`, which `skill-forge` itself requires of adapted skills.
@@ -256,7 +255,7 @@ relative to `skills/` unless noted. Repository-wide items live in
     or fallback, against its own rule that an absent dependency MUST degrade to a reported
     skip; the working invocation (`uv run --with pyyaml …`) exists only in this repo's root
     `AGENTS.md`, which the skill's readers do not have.
-  - **`find-skills` carries three stale bindings and a dangling reference.**
+  - ~~**`find-skills` carries three stale bindings and a dangling reference.**
     **Partly fixed 2026-08-27:** the `skill-review` → `skill-judge` pointer (`:31`) and the
     "deterministic" overstatement (`:76`) are done; the self-update section is held pending
     the remove-or-declare decision below. ~~It points at a
@@ -271,7 +270,9 @@ relative to `skills/` unless noted. Repository-wide items live in
     Reword to "deterministic given the tools present".~~ Confirmed against
     `scripts/verify_skill.sh`, which probes with `command -v` and calls `skip()` for the
     hidden-Unicode scan, the secret scan, shellcheck and semgrep independently. Reworded,
-    and a line added telling the reader that a clean exit is not a clean candidate.
+    and a line added telling the reader that a clean exit is not a clean candidate.~~
+    **RESOLVED 2026-09-02 by archiving `find-skills`** at the user's direction. Its archived
+    copy preserves the stale text byte-identically as evidence of what last ran.
   - ~~**`writing-great-skills` was never brought up to repo conventions**, which its own
     `ATTRIBUTIONS.md` half-discloses ("body and GLOSSARY.md preserved verbatim from
     upstream"): zero RFC 2119 keywords in 86 lines, no NEVER list, and `GLOSSARY.md` at 201
