@@ -6,6 +6,8 @@ technique is a finding only when its absence harms the skill's declared job.
 ## Discovery
 
 - Does the description state what the skill does and when it applies?
+- Does it provide enough capability and user-intent context for accurate activation when it names a
+  specialized tool, product, or artifact?
 - Does each trigger phrase represent a distinct supported branch rather than a synonym quota?
 - Could a nearby but unsupported request activate it? Would an intended request fail to activate it?
 - Is routing information trapped in the body, where it arrives after activation?
@@ -13,6 +15,21 @@ technique is a finding only when its absence harms the skill's declared job.
 
 Test discovery with realistic positive requests, near-miss negatives, and ambiguous cases when triggering
 matters. Do not infer activation quality from keywords alone.
+
+“Build and maintain justfiles” is incomplete because it assumes the router already knows what Just provides.
+“Build and maintain Just command-runner files for repeatable project tasks” supplies the missing capability
+and user intent. A description need not define concepts the target agent can reasonably be expected to know.
+
+## Scope Coherence
+
+A skill must own one coherent job. Inventory each subject, tool, language, workflow, and output, then identify
+the shared task or decision boundary that requires them to be taught together.
+
+Multiple aspects may remain together when the package shows a deliberate relationship, such as one workflow
+whose safe execution crosses those boundaries. Shared popularity, one author's environment, possible
+integration, or occasional co-use is insufficient. Treat unrelated guidance as a material design failure,
+assign a `not ready` verdict, and recommend splitting or removing it. Do not invent a unifying purpose that
+the package does not establish.
 
 ## Behavioral Value
 

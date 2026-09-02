@@ -1,6 +1,6 @@
 ---
 name: skill-review
-description: Reviews Agent Skills for specification compliance, discovery, behavioral effectiveness, safety, portability, maintainability, and evidence. Use when auditing a SKILL.md or skill package, investigating why a skill triggers or performs poorly, comparing skill revisions, or deciding whether a skill is ready to use. Excludes authoring or refactoring the skill itself, which belongs to skill-forge.
+description: Review Agent Skills for defects and readiness. Use when reviewing, comparing, or repairing a skill.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -28,6 +28,8 @@ combine these into an aggregate score that hides the distinction.
 Read the user's request, the complete skill package, and applicable repository instructions. Identify:
 
 - the task the skill enables and representative requests;
+- the single coherent job that owns the skill's content;
+- every additional subject, tool, language, workflow, or output and why that job requires it;
 - observable successful outcomes and consequential failures;
 - intended invocation behavior;
 - declared clients, models, tools, environments, and compatibility limits;
@@ -58,10 +60,16 @@ validator. Do not let a passing structural check imply behavioral quality.
 
 ### 3. Inspect Design
 
-Review only the lenses relevant to the skill:
+Always inspect discovery and scope coherence. Review the other lenses relevant to the skill:
 
-- **Discovery:** The name and description communicate the capability, distinct trigger branches, and likely
-  boundaries.
+- **Discovery:** The name and description communicate the capability, user intent, distinct trigger branches,
+  and likely boundaries. When they name a specialized tool, product, or artifact, they provide enough plain
+  context for accurate activation instead of relying on the name alone. They need not define concepts the
+  target agent can reasonably be expected to know.
+- **Scope coherence:** Every aspect serves one coherent job. Multiple aspects pass only when the package
+  establishes a deliberate shared task or decision boundary that requires them together. Shared popularity,
+  one author's environment, possible integration, or occasional co-use is insufficient. Do not invent a
+  unifying purpose that the package does not establish.
 - **Behavioral value:** Instructions add decisions, knowledge, or reliable operations the agent would
   otherwise miss.
 - **Information hierarchy:** Shared essentials stay available; branch-specific detail is reachable where
@@ -129,6 +137,10 @@ Lead with material findings. Then report:
 Use `invalid` for a failed hard requirement, `not ready` for a material behavioral or safety defect,
 `ready with risks` for bounded weaknesses that do not defeat the intended job, and `ready` only when available
 evidence supports that job.
+
+A skill with unjustified scope mixing is `not ready`. A description that relies on an unexplained specialized
+name without communicating the underlying capability or user intent is a high-severity discovery defect and
+makes the skill `not ready`.
 
 Do not assign a numeric score unless the user needs one for a stated decision. If requested, define a
 task-specific rubric from the contract, keep hard gates outside it, show raw observations, and label

@@ -34,6 +34,23 @@ mechanical facts; use human or blinded model judgment for qualities that cannot 
 Read execution traces when available. They can expose ignored instructions, unnecessary steps, repeated
 reinvention, premature completion, or expensive branches that a final artifact hides.
 
+## Skill-Review Regression Cases
+
+Test activation through a client where the agent chooses among available skills. Do not supply the
+`skill-review` path. Include:
+
+- positive requests to assess or repair a skill without using the word “review”; and
+- near-miss requests that use or modify artifacts governed by a skill without assessing the skill itself.
+
+Test review quality by supplying `skill-review` explicitly. Include:
+
+- unrelated aspects with no established shared job: the verdict must be `not ready`;
+- multiple aspects with a demonstrated shared workflow: scope alone must not prevent readiness;
+- an opaque description such as “Build and maintain justfiles”: the verdict must be `not ready` with a
+  high-severity discovery finding; and
+- a description that supplies sufficient capability and user-intent context: contextual completeness must
+  not produce a finding.
+
 ## Choose a Baseline
 
 Use the same request and environment for each comparison:
