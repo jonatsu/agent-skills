@@ -109,9 +109,25 @@ when it would provide little additional evidence.
 Read [references/testing-guide.md](references/testing-guide.md) when designing behavioral evaluations or diagnosing a
 skill that triggers or performs incorrectly.
 
-### 7. Validate and Deliver
+### 7. Finish the Content, Then Validate
 
-Run the vendored specification validator, resolving `<skill-forge-root>` to this skill's directory:
+Complete substantive writing, package design, resource routing, and behavioral evaluation before running mechanical
+validators. Do not use `skills-ref`, `quick_validate.py`, linters, or formatters as an early proxy for evaluating the
+content. Any content change after a mechanical check makes that result stale.
+
+Before mechanical validation, verify at least:
+
+- the result fulfills the requested use cases without unrelated behavior;
+- every instruction and resource earns its context or maintenance cost;
+- references are reachable at the point they become relevant;
+- declared compatibility and scope match actual dependencies;
+- provenance and license artifacts are complete and preserved; and
+- no scaffold placeholders remain.
+
+Run new or changed scripts with representative success and failure inputs before the final mechanical checks.
+
+After the content has settled, run the vendored specification validator, resolving `<skill-forge-root>` to this skill's
+directory:
 
 ```bash
 uv run --isolated --no-dev --project <skill-forge-root>/scripts/skills-ref \
@@ -128,17 +144,5 @@ Run this skill's local-policy validator when its dependencies are available:
 python3 scripts/quick_validate.py <skill-directory>
 ```
 
-Run new or changed scripts with representative success and failure inputs. Follow the target repository's applicable
-checks and deployment workflow.
-
-Before delivery, verify at least:
-
-- the result fulfills the requested use cases without unrelated behavior;
-- every instruction and resource earns its context or maintenance cost;
-- references are reachable at the point they become relevant;
-- declared compatibility and scope match actual dependencies;
-- provenance and license artifacts are complete and preserved;
-- no scaffold placeholders remain; and
-- performed and omitted validation is reported accurately.
-
-Add further checks only when the skill's domain or risk requires them.
+Then follow the target repository's applicable mechanical checks and deployment workflow. Add further checks only when the
+skill's domain or risk requires them. Report performed and omitted validation accurately.
