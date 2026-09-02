@@ -1,182 +1,161 @@
 ---
 name: chezmoi-dotfiles
-description: Generic chezmoi dotfiles management across machines. Use for init, add, edit, apply, sync, templates, encryption, secrets, run scripts, conflict resolution, manage dotfiles, dotfile sync, chezmoi apply, chezmoi edit, chezmoi init, chezmoi diff, chezmoi update, chezmoi add. Triggers on chezmoi, dotfiles, dotfile management, cross-machine config sync.
+description: Manage chezmoi edits, applies, syncs, templates, scripts, ignores, secrets, and conflicts.
+license: MIT
+compatibility: Requires chezmoi. Git is required for source repositories that use Git.
+metadata:
+  author: Joonas Onatsu
 ---
 
-# Chezmoi Dotfiles Management
+# Chezmoi Dotfiles
 
-IRON LAW: NEVER run `chezmoi apply` without `chezmoi diff` first. Blind apply overwrites uncommitted home dir
-changes.
+Manage the source state, actual files, and rendered target state without losing local changes. Treat the
+installed chezmoi version as the authority for command behavior. Check `chezmoi --version` and
+`chezmoi <command> --help` before relying on version-sensitive flags, then use the official documentation
+when help does not answer the question.
 
-## Workflow
+## Establish Ownership and State
 
-```
-Chezmoi Workflow Progress:
+Read the repository and machine instructions before changing files. Determine:
 
-- [ ] Step 1: Assess ⛔ BLOCKING ⚠️ REQUIRED
-  - [ ] 1.1 `chezmoi status` — check drift
-  - [ ] 1.2 `chezmoi doctor` — verify env (if new machine)
-- [ ] Step 2: Edit ⚠️ REQUIRED
-  - [ ] 2.1 `chezmoi edit <file>` — edit source state
-  - [ ] 2.2 `chezmoi diff` — preview changes BEFORE apply
-- [ ] Step 3: Apply ⚠️ REQUIRED
-  - [ ] 3.1 Confirm `chezmoi diff` output reviewed — no unexpected changes
-  - [ ] 3.2 `chezmoi apply` — write source → home dir
-- [ ] Step 4: Sync (if remote repo) (conditional)
-  - [ ] 4.1 `chezmoi git -- pull` + `chezmoi diff` — review remote changes
-  - [ ] 4.2 `chezmoi apply` — apply remote changes
-  - [ ] 4.3 `chezmoi git -- add -A && commit && push` — push local changes
-- [ ] Step 5: Verify
-  - [ ] 5.1 `chezmoi verify` — confirm all files match source
-```
+- which target paths the request covers;
+- whether the source directory uses Git, templates, encryption, scripts, or automatic apply and push;
+- whether the actual file contains changes that chezmoi did not write.
 
-## Quick Reference
+Inspect automatic Git behavior with `chezmoi dump-config` before changing source state. If `git.autoPush` is
+enabled and the user has not authorized publishing, stop before a source-changing command. Disclose an
+enabled `git.autoCommit` when the requested edit did not already authorize a commit.
 
-```bash
-chezmoi init                          # initialize (empty source)
-chezmoi init --apply <repo-url>       # clone existing repo + apply
-chezmoi add ~/.bashrc                 # track a file
-chezmoi edit ~/.bashrc                # edit source in $EDITOR
-chezmoi apply                         # apply source → home directory
-chezmoi diff                          # preview pending changes
-chezmoi update                        # pull + apply (one step)
-chezmoi status                        # drift overview
-chezmoi cd                            # shell into source dir
-chezmoi doctor                        # diagnose environment
-chezmoi unmanaged ~                   # list untracked files in home dir
-```
+Inspect `chezmoi status [target]...` before choosing a direction. Its columns are:
 
-## Source Filename Conventions
+1. last state written by chezmoi to actual state; and
+2. actual state to rendered target state, including what `chezmoi apply` will do.
 
-Chezmoi encodes metadata in source filenames — no separate config database.
+For example, `DA` means the actual entry was deleted after chezmoi last wrote it and apply will create it
+again. Do not interpret the columns as Git index and worktree status. `chezmoi diff [target]...` compares the
+actual state with the rendered target: removed lines come from the actual file and added lines come from the
+target state.
 
-| Prefix / Suffix | Effect on target                        | Example                     |
-| --------------- | --------------------------------------- | --------------------------- |
-| `dot_`          | Leading `.` in target name              | `dot_zshrc` → `.zshrc`      |
-| `private_`      | 0600 (files) / 0700 (dirs) permissions  | `private_dot_ssh/`          |
-| `executable_`   | +x (755) permissions                    | `executable_setup.sh`       |
-| `encrypted_`    | Decrypted transparently on apply        | `encrypted_private_key.age` |
-| `.tmpl` suffix  | Rendered as Go template before writing  | `dot_gitconfig.tmpl`        |
-| `run_once_`     | Run only on first apply (state-tracked) | `run_once_install-pkgs.sh`  |
-| `run_onchange_` | Run when script content changes         | `run_onchange_setup.sh`     |
-| `run_always_`   | Run on every apply                      | `run_always_reload.sh`      |
-| `run_before_`   | Run before files are written            | `run_before_decrypt.sh`     |
-| `run_after_`    | Run after files are written             | `run_after_rehash.sh`       |
+## Choose the Change Direction
 
-Prefixes compose: `private_dot_ssh/private_executable_deploy-key` → `~/.ssh/deploy-key` (0600, +x).
+### Change Source State, Then Apply
 
-## Core Workflows
-
-### Initialize
+Use this path when the source should define new target contents:
 
 ```bash
-# Fresh start
-chezmoi init
-chezmoi add ~/.zshrc ~/.gitconfig
-chezmoi git -- remote add origin git@github.com:<user>/dotfiles.git
-chezmoi git -- push -u origin main
-
-# Clone existing repo
-chezmoi init --apply git@github.com:<user>/dotfiles.git
-
-# Universal one-liner (installs chezmoi + inits)
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply <user>
+chezmoi edit <target>
+chezmoi diff <target>
+chezmoi apply <target>
+chezmoi verify <target>
 ```
 
-### Daily edit loop
+For a deliberately narrow edit, `chezmoi edit --apply <target>` can combine the edit and apply. Before a
+broad apply, `update`, or `init --apply`, review `chezmoi diff` and use
+`chezmoi apply --dry-run --verbose` when scripts, removals, permissions, or many targets are involved.
+
+Current chezmoi prompts before overwriting a target modified since chezmoi last wrote it. Preserve that
+protection. Do not add `--force`, suppress interaction, or rely on an unavailable prompt without confirming
+the affected targets and the user's authority.
+
+### Preserve an Intentional Actual-State Change
+
+Use this path when the actual file contains the desired change:
+
+1. Inspect `chezmoi status <target>` and `chezmoi source-path <target>`.
+2. Run `chezmoi re-add <target>` for a managed non-template file.
+3. Inspect the source repository diff and confirm that only the intended source path changed.
+
+Current `re-add` does not overwrite templates. Update a template with `chezmoi edit <target>` or reconcile it
+with `chezmoi merge <target>`, then preview and apply the rendered result. Check live help when supporting an
+older chezmoi version.
+
+### Reconcile Divergence
+
+Use `chezmoi merge <target>` when both actual and source-derived states contain changes worth keeping. Review
+the merged source, run `chezmoi diff <target>`, and apply only after the rendered target is correct.
+
+For Git conflicts, published rollback, or history repair, use the available Git operations guidance. Preserve
+dirty work before changing history. Revert published commits with `git revert`; do not prescribe destructive
+reset or checkout recovery.
+
+## Sync a Git-Backed Source
+
+Inspect the source repository before pulling or publishing:
 
 ```bash
-chezmoi edit ~/.zshrc          # edit source; does not apply automatically
-chezmoi edit -a ~/.zshrc       # edit + auto-apply on save
-chezmoi diff                   # preview before applying
-chezmoi apply                  # apply all pending changes
+chezmoi git -- status --short
+chezmoi git -- diff
 ```
 
-### Absorb home dir changes
+Preserve unresolved or unrelated work before pulling. After a safe pull, review `chezmoi diff`, run a dry-run
+when the change is broad or includes scripts, apply, and verify.
+
+Before committing, inspect the index and source diff. Stage explicit source paths only. Push only when the
+user has authorized publishing to the resolved remote and branch. Automatic `git.autoCommit` or
+`git.autoPush` configuration does not supply missing authorization.
+
+## Templates, Scripts, and Ignores
+
+Use templates for machine-dependent content. Test a rendered value with `chezmoi execute-template`, and
+inspect a complete rendered target with `chezmoi cat <target>`.
+
+`.chezmoiscripts/` keeps scripts out of the target state; its subdirectory names do not select an operating
+system. Gate an operating-system-specific script in its rendered content. An empty rendered script does not
+run:
+
+```gotemplate
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/sh
+command ...
+{{ end -}}
+```
+
+Scripts that call chezmoi should use the executable path supplied by chezmoi:
+
+```sh
+"$CHEZMOI_EXECUTABLE" age decrypt ...
+```
+
+`run_once_` records each successfully executed rendered-content hash. A changed rendered script can run
+again, even with the same filename. `chezmoi state delete-bucket --bucket=scriptState` clears the history for
+all `run_once_` scripts, so disclose that broad effect and obtain approval before using it.
+
+`.chezmoiignore` patterns match target paths. Use `.config/nvim/**`, for example, rather than the source path
+`dot_config/nvim/**`. The ignore file is always a template, so gate target paths there for machine-specific
+selection. Verify the result with `chezmoi --no-tty ignored`.
+
+## Protect Secrets
+
+Never store plaintext credentials in source state. Prefer password-manager template functions or
+`chezmoi add --encrypt <target>`. Configure additions to fail closed where practical:
+
+```toml
+[add]
+  secrets = "error"
+```
+
+Treat rendered output, diffs, logs, and temporary merge files as sensitive when templates or encrypted files
+produce secrets. Do not publish source changes until secret checks and the staged diff are clean.
+
+## Completion
+
+Verify the requested scope rather than assuming a successful command covered it:
 
 ```bash
-chezmoi re-add ~/.zshrc        # single file
-chezmoi re-add                 # all managed files
+chezmoi status <target>...
+chezmoi diff <target>...
+chezmoi verify <target>...
 ```
 
-Prefer `re-add` over `add` for already-managed files — tends to produce fewer extraneous diffs.
+Confirm that remaining status entries are understood, the source repository contains only intended changes,
+scripts and ignores select the expected machines, and no plaintext secret entered the source or Git index.
+Report any skipped apply, unavailable prompt, unresolved drift, or unverified platform.
 
-### Push to remote
+## Live References
 
-```bash
-chezmoi git -- add -A
-chezmoi git -- commit -m "update dotfiles"
-chezmoi git -- push
-```
-
-### Safe remote sync
-
-```bash
-chezmoi git -- pull              # pull source only, no apply
-chezmoi diff                     # review what would change
-chezmoi apply --dry-run --verbose
-chezmoi apply
-```
-
-## Untrack / Remove
-
-```bash
-chezmoi forget --force ~/.config/app/config.local.toml  # stop tracking, keep file
-chezmoi destroy ~/.config/app/config.local.toml         # remove source + delete file
-```
-
-## Validation
-
-```bash
-chezmoi verify                         # exit 0 = all files match source
-chezmoi diff                           # empty = no drift
-chezmoi managed                        # list all tracked files
-chezmoi doctor | grep -v "^ok"         # warnings and errors only
-chezmoi git -- log --oneline -5        # recent commit history
-```
-
-## Anti-Patterns
-
-- ❌ `chezmoi apply` without `chezmoi diff` first
-- ❌ `chezmoi re-add` on `.tmpl` files — clobbers template syntax with rendered output
-- ❌ Plaintext secrets in source — use encryption or password manager template functions
-- ❌ `chezmoi update` when review needed — use `git pull` + `diff` + `apply` separately
-- ❌ Editing files in home dir directly then `apply` — home dir changes get overwritten
-
-## Key Gotchas
-
-- `chezmoi re-add` on `.tmpl` files: expands rendered dest → source, overwrites `.tmpl` syntax. Check
-  `chezmoi source-path <file>` first — if ends in `.tmpl`, use `chezmoi edit` instead.
-- `chezmoi status` columns: `[source][dest]` format — `MM` = both changed, ` M` = dest only changed, `DA` =
-  deleted in source but exists in dest (often junk like `node_modules/`). Read both columns to understand
-  drift direction.
-- `chezmoi diff` direction: `-` lines = current dest (will be removed), `+` lines = target after apply (will
-  be added). Not a standard git diff — the "from" is your live home dir, the "to" is the rendered source
-  state.
-- `run_once_` scripts won't re-run: already recorded in state. Reset with
-  `chezmoi state delete-bucket --bucket=scriptState`.
-- `forget` needs TTY: use `chezmoi forget --force <path>`.
-- Flood of `DA` in status: untracked dirs (e.g. node_modules). Add patterns to `.chezmoiignore`.
-- `.chezmoiignore` patterns match the **target-stripped name** (`run_once_`/`dot_`/`private_` prefixes and
-  `.tmpl` suffix removed), not the raw source filename. A rule using the raw name silently never matches — no
-  error, the "ignored" script just keeps running. Verify with `chezmoi --no-tty ignored`. Detail:
-  `references/scripts-ignores.md`.
-
-## Pre-Delivery Checklist
-
-- [ ] `chezmoi diff` run and reviewed before any `chezmoi apply`
-- [ ] `chezmoi verify` exits 0 after apply
-- [ ] No plaintext secrets in source state
-- [ ] Template files checked with `chezmoi source-path` before `re-add`
-
-## On-Demand References
-
-Load these when workflow needs deeper detail:
-
-| Topic                                  | File                               |
-| -------------------------------------- | ---------------------------------- |
-| Templates, variables, partials         | `references/templates.md`          |
-| Encryption, password managers          | `references/encryption-secrets.md` |
-| Run scripts, ignore rules              | `references/scripts-ignores.md`    |
-| Troubleshooting, conflicts, validation | `references/troubleshooting.md`    |
-| External docs URL index                | `references/external-docs.md`      |
+- [Command reference](https://www.chezmoi.io/reference/commands/)
+- [Status model](https://www.chezmoi.io/reference/commands/status/)
+- [Source-state attributes](https://www.chezmoi.io/reference/source-state-attributes/)
+- [Special files](https://www.chezmoi.io/reference/special-files/)
+- [Special directories](https://www.chezmoi.io/reference/special-directories/)
+- [Script behavior](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/)
