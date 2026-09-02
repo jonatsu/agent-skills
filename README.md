@@ -262,7 +262,7 @@ their own license via their top-level frontmatter `license` field and `ATTRIBUTI
 alongside. Do not assume MIT for a skill that declares otherwise. A skill whose upstream
 licence would block the use we need is replaced by an independently written one rather than
 adapted: `git-master` (SUL 1.0, personal/non-commercial only) was retired on 2026-08-26 in
-favour of `shared/git/git-operations`, which is MIT.
+favour of `shared/git/git-ops`, which is MIT.
 
 ## External references on skill authoring
 

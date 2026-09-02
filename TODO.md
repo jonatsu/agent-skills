@@ -59,44 +59,6 @@ relative to `skills/` unless noted. Repository-wide items live in
     few known-model-written passages, and see whether the distributions separate at all
     on this corpus before picking any threshold. If they do not separate, record that
     and close the item — a negative result here is worth as much as the check.
-- **`shared/git/git-operations` — third regrade done 2026-08-26, all findings fixed.** Written
-  2026-08-26 to replace `git-master`, whose SUL 1.0 licence could not be carried. Three
-  independent `skill-judge` passes: 86/120, then 91/120, then **107/120 (Grade B)**. Every
-  defect each round raised was reproduced in a scratch repo before being fixed, and the
-  third round's four command-level defects were **re-verified independently** rather than
-  taken on the grader's word. What that round found, all now fixed:
-  - **`references/recovery.md` gave a deleted-branch recovery command that returns the wrong
-    hash** — the worst defect class a recovery document can have, a confident wrong answer
-    instead of an error. `git reflog | grep -i "<branch>"` matches only the
-    `checkout: moving from/to <branch>` lines, which carry the **branch point**; the tip sits
-    on an unmatched `commit:` line. Restoring from it yields an EMPTY branch and reads as
-    "the work was never committed". Reproduced: true tip `1aafd89`, grep returned only
-    `f2cb4d5`. Replaced with `git fsck --lost-found` as the primary route.
-  - "`--git-path` … (both as absolute paths)" was false under the very configuration the
-    skill names four lines later: husky sets `core.hooksPath` **relatively**, so the path is
-    relative too (`../../.husky/pre-commit` from two levels down). Only a linked worktree is
-    unconditionally absolute.
-  - The pre-commit detector false-positived on any hand-written hook mentioning "pre-commit"
-    in a comment, routing the agent into guidance the same section disclaims. Now matches
-    pre-commit's own generated banner.
-  - The push fallback hardcoded `origin/main` in a skill whose own opening says a repository
-    with no `main` is ordinary — a Broken Own Rule. Now discovers `origin/HEAD`.
-  - Signing had **zero description coverage**, so the section answering "why does git report
-    `No signature` on my signed commit" could not fire on that question. Keywords added.
-  - **The length instruction was honoured by displacement, not appending.** `SKILL.md` is
-    368 lines against 363 before — net +5 while absorbing every fix, because 118 lines moved
-    into two new references: `signed-commits.md` (44) and `rewriting-hooks.md` (74), each
-    with a symptom-shaped load trigger and a "do NOT load" line.
-  - **Still true and still the main gap: the skill has never been used on a real task.**
-    Trigger behaviour is unmeasured in both directions, and no confirmation gate has fired
-    in anger. Grading is not exercise.
-  - One claim stays marked *reported, not measured*, by decision 2026-08-26: that rebasing a
-    branch whose tip is a merge commit can collapse it to empty. Leaving the marker is honest
-    and costs nothing; measuring it was declined rather than deferred.
-  - Worth keeping from the round: the grader reproduced **22 empirical assertions and 21 held
-    exactly**, including the `gpgsig` message-body spoof, which is real — an unsigned commit
-    whose body begins `gpgsig -----BEGIN SSH SIGNATURE-----` reads as signed without the
-    `sed '/^$/q;p'` guard. That guard is load-bearing, not decoration.
 - **`shared/git/github-operations` — second regrade done 2026-08-26, all findings fixed.** Two
   `skill-judge` passes: 88/120, then **103/120 (Grade B)**. Both ran with read-only `gh`
   authorisation and an explicit mutation ban, which is what made them useful — several
@@ -162,7 +124,7 @@ relative to `skills/` unless noted. Repository-wide items live in
   - **Licence: facts only.** That upstream is `LICENSE-MIT` for scripts and assets but
     **CC-BY-SA-4.0 for all prose** ("skill definitions, documentation, references"). Nothing
     written can be lifted or lightly edited; re-derive from primary sources and write fresh,
-    exactly as `git-operations` had to.
+    exactly as `git-ops` had to.
   - **Do not repeat its transcription defects.** `ci-runner-capacity.md` copies GitHub's
     published concurrency-limit table with **no verification date**, and
     `actions-upgrade-guide.md` is 70–80% a version inventory that Renovate invalidates. Both

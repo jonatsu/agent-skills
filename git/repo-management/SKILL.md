@@ -1,6 +1,6 @@
 ---
 name: repo-management
-description: "Set up, refresh, or clean up a repository's baseline and hygiene — new or long-existing — without assuming a language or framework. Use to bootstrap a repo (README, LICENSE, .gitignore, .editorconfig, .gitattributes, pre-commit) OR to fill gaps in an existing one, add or refresh hooks and community files, report tracked cruft (committed secrets, gitignored-but-tracked files, large files), and check whether an existing README still describes the repo. Triggers: set up a repo, bootstrap repo, initialize GitHub repository, template repository, add pre-commit hooks, add hygiene hooks, clean up this repo, repo hygiene, refresh repo baseline, add editorconfig/gitattributes/gitignore, scan for committed secrets or large files, stale README, missing LICENSE, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, issue or PR template. NOT for making commits, rebasing, recovering lost work, or git-history questions, which is git-operations."
+description: "Set up, refresh, or clean up a repository's baseline and hygiene — new or long-existing — without assuming a language or framework. Use to bootstrap a repo (README, LICENSE, .gitignore, .editorconfig, .gitattributes, pre-commit) OR to fill gaps in an existing one, add or refresh hooks and community files, report tracked cruft (committed secrets, gitignored-but-tracked files, large files), and check whether an existing README still describes the repo. Triggers: set up a repo, bootstrap repo, initialize GitHub repository, template repository, add pre-commit hooks, add hygiene hooks, clean up this repo, repo hygiene, refresh repo baseline, add editorconfig/gitattributes/gitignore, scan for committed secrets or large files, stale README, missing LICENSE, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, issue or PR template. NOT for making commits, rebasing, recovering lost work, or git-history questions, which is git-ops."
 metadata:
   author: Joonas Onatsu
   license: MIT
@@ -102,7 +102,7 @@ separate explicit request; several remediations rewrite history.
 
 Purging secrets or large blobs from history (`git filter-repo`, BFG) is
 **history-rewriting and out of this skill's scope** — flag it and hand off to
-`git-operations`, don't perform it here.
+`git-ops`, don't perform it here.
 
 ## Stale README Detection (REFRESH — report-only)
 
@@ -179,7 +179,7 @@ approves:
 - GitHub security advisories / private vulnerability reporting
 - template repository toggle
 - stack-specific CI, lint, format, release, or dependency automation
-- history rewriting to purge committed secrets or large blobs (hand to `git-operations`)
+- history rewriting to purge committed secrets or large blobs (hand to `git-ops`)
 
 ## Template Assets
 

@@ -1,4 +1,4 @@
-# History investigation
+# History Investigation
 
 Load this when the question is who changed something, when it changed, or which
 commit broke it. All of it is read-only.
@@ -8,7 +8,7 @@ This file deliberately does NOT restate flags or command syntax: `git help log`,
 history question is being asked, and a copy here would drift. What follows is
 what those pages do not tell you.
 
-## Pick the cheapest tool that can answer it
+## Pick the Cheapest Tool That Can Answer It
 
 | The question | Reach for |
 |---|---|
@@ -23,7 +23,7 @@ Order matters: `bisect` costs one build or test run per step, and `log -S`
 frequently answers the same question in one command. Reach for `bisect` when you
 have a deterministic check and no idea where to look, not as a first move.
 
-## The pickaxe misses a pure rename — silently
+## The Pickaxe Silently Misses a Pure Rename
 
 `-S` counts occurrences **per file pair**, so a commit that only moves code
 changes no count anywhere and does not match. Measured on git 2.43.0,
@@ -45,41 +45,41 @@ matched, never whether it matches. In the same measurement it widened the file
 list from `a.c` to `a.c main.c` and left the matched commits identical.
 
 So when `-S` finds an introduction but no removal, suspect a move before
-concluding the code is still live — and re-run with `--no-renames`.
+concluding the code is still live, then re-run with `--no-renames`.
 
 `-G` is the wider net: it matches any diff *line* matching the regex, added or
 removed, so it catches reformatting and movement that `-S` skips, at the cost of
 noise.
 
-## An empty result is first a broken query
+## Treat an Empty Result as a Broken Query First
 
 Before reporting that something never existed, prove the query works by running
 it against a string you know is present. Pathspec typos, a wrong branch, and a
 literal-vs-regex mix-up all produce a confident empty result.
 
-## A positive text-search result is first a coincidence
+## Treat a Positive Text Result as a Coincidence First
 
 `git log --grep` searches prose written by people and bots, and is the weakest
 evidence available. An issue or PR number in a message routinely belongs to a
-different repository — dependency-bump commits embed upstream changelogs
+different repository because dependency-bump commits embed upstream changelogs
 wholesale, upstream issue numbers included. Confirm with content evidence before
 treating a message match as proof.
 
-## Blame points at the last edit, not the author of the logic
+## Blame Points at the Last Edit
 
 A reformat, a rename sweep or a whitespace fix rewrites every line's
 attribution, so blame's answer is often about noise. `-w`, `-C` and `-M` reduce
 it. The technique that actually gets through: once a commit is identified as
-noise, re-run blame from just before it — `git blame <hash>~1 -L …` — and repeat.
+noise, re-run blame from just before it with `git blame <hash>~1 -L …`, then repeat.
 Blame yields a hash; the answer is usually in `git show <hash>`.
 
-## Bisect is only as good as its check
+## Bisect Is Only as Good as Its Check
 
 A flaky test makes `git bisect` report a random commit with complete confidence,
 and nothing in the output reveals it. Confirm the check is deterministic by
 running it twice on the known-bad commit before starting. Mark untestable commits
 skipped rather than guessing at good or bad, and always reset the session when
-finished — an abandoned bisect leaves the repository on an arbitrary detached
+finished. An abandoned bisect leaves the repository on an arbitrary detached
 commit that will be mistaken for a real state later.
 
 Bisect finds where the check *started failing*, which is not always where the
@@ -94,6 +94,6 @@ and the diff or line context supporting the claim.
 Where several commits touch the same lines, or blame lands on a reformat, say
 what remains unproven instead of naming the most plausible commit. Where the
 conclusion rests on a name-matched text search rather than a reference-resolving
-tool, say that too — "no other callers" from a text search misses dynamic
+tool, say that too. A claim of "no other callers" from a text search misses dynamic
 dispatch, names built from strings, and callers in languages the search never
 covered.

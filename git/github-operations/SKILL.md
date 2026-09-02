@@ -1,6 +1,6 @@
 ---
 name: github-operations
-description: "Work with GitHub through the gh CLI and its APIs — pull requests, merge state, review threads, branch protection and rulesets, auto-merge, token scopes and rate limits, and finding an API surface gh appears to lack, plus a short GitHub Actions reference. Use when a PR will not merge or reports BLOCKED with every check green, a merge gate or automation script silently passes everything, a gh command exits 0 but returns nothing useful, an API call 403s, 404s or 429s, auto-merge does not fire for a bot PR, a required status check waits forever, an operation seems to have no gh subcommand and might need GraphQL, or a bulk query returns implausibly few results. Triggers: gh, gh api, gh pr, GraphQL, pull request, review thread, mergeStateStatus, BLOCKED, auto-merge, merge queue, branch protection, ruleset, required checks, CODEOWNERS, rate limit, secondary rate limit, GITHUB_TOKEN, workflow permissions, Dependabot, Renovate. NOT for local git operations, which is git-operations. Not general issue management."
+description: "Work with GitHub through the gh CLI and its APIs — pull requests, merge state, review threads, branch protection and rulesets, auto-merge, token scopes and rate limits, and finding an API surface gh appears to lack, plus a short GitHub Actions reference. Use when a PR will not merge or reports BLOCKED with every check green, a merge gate or automation script silently passes everything, a gh command exits 0 but returns nothing useful, an API call 403s, 404s or 429s, auto-merge does not fire for a bot PR, a required status check waits forever, an operation seems to have no gh subcommand and might need GraphQL, or a bulk query returns implausibly few results. Triggers: gh, gh api, gh pr, GraphQL, pull request, review thread, mergeStateStatus, BLOCKED, auto-merge, merge queue, branch protection, ruleset, required checks, CODEOWNERS, rate limit, secondary rate limit, GITHUB_TOKEN, workflow permissions, Dependabot, Renovate. NOT for local git operations, which is git-ops. Not general issue management."
 metadata:
   author: Joonas Onatsu
   license: MIT
@@ -18,7 +18,7 @@ mistake in this file is a script that treated one as data.
 skill fires, and a copy here would drift while still reading as authoritative.
 What follows is what those pages do not tell you.
 
-Local git — commits, rebases, worktrees, recovery — is `git-operations`, not
+Local git — commits, rebases, worktrees, recovery — is `git-ops`, not
 this skill.
 
 ## Establish the tool before using it
