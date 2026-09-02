@@ -96,8 +96,8 @@ reaches tools installed through the `go:` backend.
 
 - `mise cfg`
 - `mise env`
-- `mise trust`
-- `mise install`
+- `mise trust --show`
+- `mise install --dry-run`
 
 ## Footguns
 

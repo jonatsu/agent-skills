@@ -63,7 +63,8 @@ Caveat:
 
 ## Shell mutation rules
 
-Never edit shell rc files until the user confirms that shell activation is truly desired.
+Edit shell rc files only when the request already authorizes interactive-shell integration or the user
+separately confirms that scope.
 
 Prefer no-shell-mutation setups when:
 
@@ -84,7 +85,7 @@ Prefer no-shell-mutation setups when:
 - `mise doctor`
 - `mise env`
 - `mise exec -- <tool> --version`
-- `mise install`
+- `mise install --dry-run` to inspect missing tools without installing them
 
 ## Footguns
 

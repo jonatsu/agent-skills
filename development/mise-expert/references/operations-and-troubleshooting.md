@@ -1,19 +1,24 @@
 ## When to load this file
 
-Load this whenever mise behavior is surprising, activation is flaky, tools are not found, trust blocks
-execution, or CI or containers behave differently than local shells.
+Load this whenever mise behavior is surprising, activation is flaky, tools are not found, trust blocks execution, or CI
+or containers behave differently than local shells.
 
-## Fast diagnostic sequence
+## Diagnostic sequence
 
-Run in this order:
+Start with read-only evidence and select only the commands relevant to the symptom:
 
 1. `mise --version`
 2. `mise doctor`
 3. `mise cfg`
 4. `mise env`
-5. `mise install`
-6. `mise exec -- <tool> --version`
-7. `mise tasks` or `mise run <task>` if tasks are involved
+5. `mise trust --show`
+6. `mise ls`
+7. `mise tasks` if tasks are involved
+
+Reproduce through `mise exec -- <tool> --version` or `mise run <task>` only when running that target is safe.
+Do not run `mise install` during diagnosis. If evidence identifies missing tools and the user authorized repair,
+preview with `mise install --dry-run` when useful, install the required scope, and repeat the original
+reproduction.
 
 ## Common failure patterns
 
@@ -65,19 +70,18 @@ Likely causes:
 
 ### `mise install --force` left the tool gone, not stale
 
-`--force` runs an **uninstall step first**, then installs. A force-reinstall that fails partway leaves the
-tool removed rather than at its previous version, and the failure message describes the install, not the
-removal.
+`--force` runs an **uninstall step first**, then installs. A force-reinstall that fails partway leaves the tool removed
+rather than at its previous version, and the failure message describes the install, not the removal.
 
-Never force-reinstall a tool you depend on mid-task without a restore plan. If one fails, reinstall without
-`--force` to recover.
+Never force-reinstall a tool you depend on mid-task without a restore plan. If one fails, reinstall without `--force` to
+recover.
 
 ### A force-reinstall breaks when the installer is itself a mise-managed tool
 
-`mise install --force` with no arguments reinstalls **every** configured tool and exempts nothing — including
-the tools mise uses to do the installing. Declare `cargo-binstall` in the config and a forced run replaces
-cargo-binstall while other `cargo:` crates are being installed through it. The first forced run fails and
-plain re-runs then succeed, so it reads as intermittent.
+`mise install --force` with no arguments reinstalls **every** configured tool and exempts nothing — including tools mise
+uses for installation. Declare `cargo-binstall` in the config and a forced run replaces cargo-binstall while other
+`cargo:` crates are being installed through it. The first forced run fails and plain re-runs then succeed, so it reads as
+intermittent.
 
 Observed on mise 2026.8.12 with cargo-binstall 1.21.1:
 
@@ -88,20 +92,20 @@ ERROR ~/.local/share/mise/shims/cargo-binstall failed
 
 Two things compound it:
 
-- mise passes `--disable-strategies compile,quick-install` to an external cargo-binstall, and its own
-  `cargo install` retry fires **only on exit code 94** ("no prebuilt artifact"). Other binstall errors do not
-  trigger it, and binstall does not return 94 when compile is disabled and no artifact exists.
-- `cargo.binstall_native` applies only "when cargo-binstall is not installed". Setting it true while
-  cargo-binstall is installed leaves it inert, so a config can declare a fallback it never uses.
+- mise passes `--disable-strategies compile,quick-install` to an external cargo-binstall, and its own `cargo install` retry
+  fires **only on exit code 94** ("no prebuilt artifact"). Other binstall errors do not trigger it, and binstall does not
+  return 94 when compile is disabled and no artifact exists.
+- `cargo.binstall_native` applies only "when cargo-binstall is not installed". Setting it true while cargo-binstall is
+  installed leaves it inert, so a config can declare a fallback it never uses.
 
-Check for **every** copy before concluding it is gone. `type -a cargo-binstall` can list a stray
-`CARGO_HOME/bin` artifact from a plain `cargo install`, the mise install directory, and the shim — and
-`CARGO_HOME/bin` often wins on PATH, so removing only the mise tool entry changes nothing.
+Check for **every** copy before concluding it is gone. `type -a cargo-binstall` can list a stray `CARGO_HOME/bin` artifact
+from a plain `cargo install`, the mise install directory, and the shim — and `CARGO_HOME/bin` often wins on PATH, so removing
+only the mise tool entry changes nothing.
 
 ### Go tools write to `$HOME/go`
 
-mise sets no `GOPATH` and does not know about `GOMODCACHE`, so `go install` falls back to Go's own `$HOME/go`
-default in any context that did not export `GOPATH`. Load `references/go-backend.md`.
+mise sets no `GOPATH` and does not know about `GOMODCACHE`, so `go install` falls back to Go's own `$HOME/go` default
+in any context that did not export `GOPATH`. Load `references/go-backend.md`.
 
 ## Practical fixes
 
@@ -121,5 +125,5 @@ If the setup uses `mise mcp`, OCI, bootstrap, deps, dotfiles, or task templates,
 
 ## Example note
 
-This skill also collected real-repo `.miserc.toml` and `mise.toml` patterns for inspiration. Use them only as
-examples, never as proof of official behavior.
+This skill also collected real-repo `.miserc.toml` and `mise.toml` patterns for inspiration. Use them only as examples,
+never as proof of official behavior.

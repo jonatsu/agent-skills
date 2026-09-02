@@ -104,12 +104,14 @@ Reusable ideas gathered during research:
 
 ## Verification commands
 
-- `mise install`
+- `mise install --dry-run` before an installation when a preview is useful
 - `mise tasks`
 - `mise tasks deps <name>`
 - `mise run <task>`
 - `mise exec -- <tool> --version`
-- `mise lock`
+- `mise lock --dry-run` before updating a lockfile
+
+Run installation, task, and lockfile-writing commands only when the request authorizes their effects.
 
 ## Footguns
 
