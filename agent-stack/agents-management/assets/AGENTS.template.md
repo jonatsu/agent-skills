@@ -53,8 +53,8 @@ files, ordering dependencies, things that fail silently, restart requirements.>
 
 ## Pointers
 
-\<Delete if the repo has no auxiliary instruction files. Otherwise: this table is the only mechanism that
-works on every agent, including those that do not parse includes and those that do not discover nested files.>
+\<Delete if the repo has no auxiliary instruction files. Otherwise: use this table to guide agents that do
+not parse includes or discover nested files. Verify the pointer behavior for each target agent.>
 
 Open the matching file yourself before working in its area. Treat this table as the instruction rather than a
 description of automatic loading.

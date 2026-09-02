@@ -1,6 +1,6 @@
 ---
 name: agents-management
-description: Initialize, maintain, migrate, or audit repository-local agent context files such as AGENTS.md, CLAUDE.md, scoped instruction files, and llms.txt. Use when setting up a repository for coding agents, updating or reconciling its agent instructions, investigating ignored or conflicting project context, or reviewing whether its context system loads and helps as intended. Excludes user-level agent configuration, subagent definitions, session-memory capture, and skill authoring.
+description: Create, maintain, and audit repo-local AGENTS.md, CLAUDE.md, scoped agent instructions, and llms.txt.
 license: Apache-2.0
 metadata:
   author: Joonas Onatsu
