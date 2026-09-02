@@ -13,9 +13,11 @@
 - Copyright holder: `Copyright (c) 2026 Leonardo Flores`, as stated in upstream's `LICENSE`
 - Upstream project: [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit)
 - Source path: `skills/skill-judge`
-- Source commit: `3027f20f3181758385a1bb8c022d4041dfb4de84`. **Not recorded at adaptation time** — this is
-  upstream's HEAD as of 2026-08-27, dated 2026-03-05, which predates the 2026-07-27 commit that added this
-  skill here. It is therefore the commit adapted from unless upstream rewrote history.
+- Exact source revision: unknown. The initial local attribution in commit `165701f` recorded the upstream
+  project, skill path, and MIT license but did not record a commit or tag.
+- Later comparison snapshot: `3027f20f3181758385a1bb8c022d4041dfb4de84`, upstream HEAD as observed on
+  2026-08-27. It predates the local addition and provides an auditable comparison point; it does not establish
+  which revision was originally adapted.
 
 ## Adaptation note
 

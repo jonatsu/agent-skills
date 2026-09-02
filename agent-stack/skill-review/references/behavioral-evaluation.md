@@ -36,20 +36,19 @@ reinvention, premature completion, or expensive branches that a final artifact h
 
 ## Skill-Review Regression Cases
 
-Test activation through a client where the agent chooses among available skills. Do not supply the
-`skill-review` path. Include:
+Run the exact discovery cases in [../evals/activation.json](../evals/activation.json) through a client where
+the agent chooses among registered skills. Do not supply the `skill-review` path or tell the agent to load it.
+Use the declared positive, near-miss, and ambiguous cases, and observe whether the client loads `SKILL.md`.
 
-- positive requests to assess or repair a skill without using the word “review”; and
-- near-miss requests that use or modify artifacts governed by a skill without assessing the skill itself.
+Run the cases in [../evals/review-quality.json](../evals/review-quality.json) in clean contexts with
+`skill-review` supplied explicitly. Use the package fixtures under `../evals/fixtures/`. A correct verdict
+alone does not pass: require the finding, confidence, evidence, consequence, repair, and validation declared
+for the case.
 
-Test review quality by supplying `skill-review` explicitly. Include:
-
-- unrelated aspects with no established shared job: the verdict must be `not ready`;
-- multiple aspects with a demonstrated shared workflow: scope alone must not prevent readiness;
-- an opaque description such as “Build and maintain justfiles”: the verdict must be `not ready` with a
-  high-severity discovery finding; and
-- a description that supplies sufficient capability and user-intent context: contextual completeness must
-  not produce a finding.
+For every execution, record the client, model, date, baseline, raw result, and trace or output location. Use
+the pre-`4229cbd` revision declared in the quality-case file when measuring whether the scope and discovery
+changes improved review behavior. Keep results in a dated repository evaluation record rather than replacing
+the reusable case definitions with one run's output.
 
 ## Choose a Baseline
 

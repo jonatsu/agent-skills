@@ -1,0 +1,61 @@
+{
+  "skill_name": "skill-review",
+  "mode": "explicit review quality",
+  "run_contract": {
+    "supply_skill_path": true,
+    "clean_context_per_case": true,
+    "previous_version_commit": "c7a1446d2b76b1aff2acf6842d790d63796e0ec7",
+    "changed_version_commit": "4229cbd3d696e03b40f1267adb7353a789830611",
+    "record": ["client", "model", "date", "baseline", "raw_result", "output_location"]
+  },
+  "cases": [
+    {
+      "id": "unrelated-scope",
+      "fixture": "fixtures/mixed-dotfiles-nix",
+      "prompt": "Review this Agent Skill for readiness.",
+      "expected_verdict": "not ready",
+      "assertions": [
+        "Reports a confirmed scope-coherence finding with material severity.",
+        "Cites the unrelated Chezmoi and Nix responsibilities as evidence.",
+        "Explains that unrelated routing and instructions can activate or distract the agent incorrectly.",
+        "Recommends splitting the responsibilities or removing the unrelated one.",
+        "Validates the repair by reviewing each resulting coherent package and testing their discovery boundaries."
+      ]
+    },
+    {
+      "id": "coherent-multi-aspect",
+      "fixture": "fixtures/database-reporting",
+      "prompt": "Review this Agent Skill for readiness.",
+      "expected_verdict": "ready with risks",
+      "assertions": [
+        "Does not report scope incoherence merely because querying and report formatting are distinct operations.",
+        "Identifies the shared database-reporting workflow that requires both operations.",
+        "States that behavioral execution remains untested when assigning ready with risks."
+      ]
+    },
+    {
+      "id": "opaque-description",
+      "fixture": "fixtures/opaque-just-task-runner",
+      "prompt": "Review this Agent Skill for readiness.",
+      "expected_verdict": "not ready",
+      "assertions": [
+        "Reports a confirmed high-severity discovery finding.",
+        "Cites the description's reliance on Just and justfiles without the underlying capability or intent.",
+        "Explains that outcome-phrased command-runner requests can miss activation.",
+        "Recommends adding command-runner and repeatable-project-task context.",
+        "Validates the repair with client-selected positive and near-miss discovery cases."
+      ]
+    },
+    {
+      "id": "contextual-description",
+      "fixture": "fixtures/contextual-just-task-runner",
+      "prompt": "Review this Agent Skill for readiness.",
+      "expected_verdict": "ready with risks",
+      "assertions": [
+        "Does not report contextual-completeness or scope-coherence defects.",
+        "Recognizes that command-runner files and repeatable project tasks explain the named tool and artifact.",
+        "States that behavioral execution remains untested when assigning ready with risks."
+      ]
+    }
+  ]
+}
