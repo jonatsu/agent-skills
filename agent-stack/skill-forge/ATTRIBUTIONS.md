@@ -19,7 +19,15 @@
 ## Adaptation note
 
 This version is derived from the upstream `skill-forge` skill and has been
-modified for this repository's workflow, packaging, and quality gates.
+materially rewritten for portable Agent Skills authoring.
+
+Material changes include:
+
+- treating the Agent Skills specification as the format authority;
+- supporting portable and repository-specific skills;
+- scaling workflows and evaluation to the change instead of requiring every
+  upstream technique; and
+- adding provenance, licensing, and local-policy validation.
 
 ## Upstream license
 
@@ -32,3 +40,18 @@ Verified against the primary source on 2026-08-27 — `gh api
 repos/sanyuan0704/sanyuan-skills/license` reported `MIT`, and the `LICENSE` blob
 itself was fetched and copied byte-for-byte. `gh repo view --json licenseInfo`
 was NOT used; it misreports repositories that do carry a licence.
+
+## Bundled Agent Skills Validator
+
+- Component: `scripts/skills-ref`
+- Project: <https://github.com/agentskills/agentskills>
+- Source path: `skills-ref`
+- Source commit: `69ef37e9424c0a7ea9dd2293b559e43ec8176379`
+- Upstream author: Keith Lazuka, as stated in upstream `pyproject.toml`
+- License: Apache-2.0; its license text is bundled at
+  `scripts/skills-ref/LICENSE` with the repository-required final newline
+- Modifications: upstream tests and development environment artifacts are
+  omitted from the deployed runtime copy; a Ruff configuration preserves the
+  upstream source unchanged under this repository's broader lint rules
+
+Upstream supplies no `NOTICE` file at the pinned revision.

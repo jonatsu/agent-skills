@@ -1,88 +1,34 @@
-# Writing Skill Descriptions
+# Skill Descriptions
 
-## Why Description Matters
+The description is an always-loaded routing pointer. It must satisfy the Agent Skills specification by stating what the
+skill does and when to use it, while remaining discriminating enough to avoid unrelated tasks.
 
-The `description` field in frontmatter is the ONLY thing the runtime sees before deciding to trigger your skill. The SKILL.md body loads AFTER triggering. So "When to Use This Skill" sections in the body are useless for triggering.
+## Method
 
-Two things the description controls:
-1. Whether the skill triggers automatically
-2. Whether users find it by search
+1. State the capability in concrete terms.
+2. Identify the distinct request branches the skill handles.
+3. Represent each branch once using language a user is likely to use.
+4. Add an exclusion only for a nearby skill or task that could plausibly be misrouted.
+5. Remove implementation details and instructions that matter only after activation.
 
-## Write it in the third person
-
-MUST describe the skill, NEVER address the reader and NEVER speak as the agent. The
-description is injected into the system prompt, where a mixed point of view degrades
-selection.
-
-- **Good:** "Processes Excel files and generates reports."
-- **NEVER:** "I can help you process Excel files." / "You can use this to…"
-
-**The one exception is a quoted user utterance.** A trigger list is supposed to contain the
-words a user literally types, so `'find me a skill that does Y'` and `'my CLAUDE.md is too
-long'` are correct despite the pronouns — they are quoted speech, not the description's own
-voice. A lexical checker cannot tell the difference and will flag them; measured 2026-08-27,
-a naive first/second-person check fired on 3 of 6 real skills, every one a false positive.
-Judge by whether the pronoun sits inside quotes.
-
-## Naming
-
-MUST be 1–64 characters, lowercase letters, digits and single hyphens — no consecutive
-hyphens, none at either end — and MUST exactly match the parent directory name, since a
-mismatch makes the skill unreachable under the name it advertises. SHOULD prefer gerund
-form: `processing-pdfs`, `analyzing-spreadsheets`. AVOID `helper`, `utils`, `tools`, `data`.
-
-**`anthropic` and `claude` are reserved — but only where the skill is distributed.**
-claude.ai uploads and the Skills API reject a name containing either; Claude Code loads one
-without complaint. So a locally deployed skill named `claude-automation-recommender` works
-today and cannot be published tomorrow. SHOULD avoid them in a new name; treat an existing
-one as a distribution blocker rather than a defect.
-
-## The Keyword Bombing Technique
-
-MUST list every possible trigger scenario: actions, objects, synonyms, and natural language phrases a user would literally say.
-
-### Four Dimensions of a Great Description
-
-1. **Core capability** - what it does (first sentence)
-2. **Action verbs** - what users ask to do
-3. **Object nouns** - what users mention
-4. **Natural phrases** - what users would literally type
-
-### Good Example
+Distinct branches earn separate trigger language. Synonyms for the same branch usually do not. Lists of every related
+verb and noun consume permanent context, blur boundaries, and attract false positives.
 
 ```yaml
-description: "Create beautiful, elegant Excalidraw diagrams based on
-user intent. Use when user asks to draw, visualize, diagram, sketch,
-illustrate concepts, create flowcharts, architecture diagrams, mind maps,
-process flows, or any visual representation. Triggers on keywords like
-'draw', 'diagram', 'visualize', 'sketch', 'flowchart', 'architecture',
-'mind map', 'illustrate'."
+# Too vague
+description: Helps with PDFs.
+
+# Too broad
+description: Creates, reads, writes, edits, changes, fixes, processes, analyzes, and manages documents and files.
+
+# Discriminating
+description: Extracts text and tables from PDFs, fills PDF forms, and merges PDF files. Use when the task concerns PDF extraction, forms, or document assembly.
 ```
 
-### Bad vs Good
+## Checks
 
-```yaml
-# Bad - too vague, will not trigger reliably
-description: "Code review tool"
-
-# Good - covers natural language triggers
-description: "Code review and quality analysis. Use when user says
-'review this', 'check my code', 'audit this PR', 'does this code have
-problems'. Supports Python, JavaScript, TypeScript, Go, Rust. Actions:
-review, check, audit, inspect, analyze code quality, find bugs,
-security review."
-```
-
-## Checklist
-
-- [ ] First sentence states core capability
-- [ ] 5+ action verbs listed
-- [ ] 5+ object nouns or project types listed
-- [ ] Natural language trigger phrases included
-- [ ] Under 1024 characters
-- [ ] MUST NOT contain angle brackets (`<` or `>`)
-- [ ] All "when to use" info MUST be HERE, not in SKILL.md body
-
-## Key Rule
-
-NEVER put "When to Use This Skill" in the SKILL.md body. All trigger information belongs in the `description` field.
+- The description names both capability and activation conditions.
+- Every trigger phrase represents a distinct supported branch.
+- A representative unrelated request does not appear to match.
+- The body contains no routing guidance that arrived too late to affect activation.
+- The value meets the current Agent Skills specification.

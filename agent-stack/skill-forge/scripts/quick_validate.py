@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
-"""Quick validation script for skills.
+"""Check Skill Forge policies outside the Agent Skills specification.
 
-Fails only on structural defects — things that are wrong regardless of which agent
-loads the skill. Unrecognised frontmatter keys are reported as warnings, NEVER as
-failures: skills here deploy to Claude Code, OpenCode and Copilot CLI, whose
-frontmatter schemas are owned by those vendors and move independently. An allowlist
-that fails closed would be a transcribed schema, which SKILL.md forbids, and it would
-reject a valid skill every time a harness ships a new field.
+Run ``skills-ref validate`` separately for specification compliance. This script does
+not duplicate that external schema and must not be reported as an equivalent check.
 """
 
 import re
@@ -15,133 +11,99 @@ from pathlib import Path
 
 import yaml
 
-# Advisory only. Union of the surfaces this repo deploys to, verified 2026-08-27
-# against https://code.claude.com/docs/en/skills. Being absent from this set is a
-# prompt to check, NEVER evidence of a defect.
-# Lowercase, digits, single hyphens; no leading, trailing or consecutive hyphens.
-NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
-
-# Rejected in a skill name by claude.ai uploads and the Skills API. Verified 2026-08-27
-# against https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
-# Warned rather than failed: Claude Code loads such a skill fine -- this repo's own
-# claude-automation-recommender is deployed and working -- so the constraint bounds
-# distribution, not local use.
-RESERVED_WORDS = ("anthropic", "claude")
-
-KNOWN_KEYS = {
-    # Claude Code skill frontmatter
-    "name",
-    "description",
-    "when_to_use",
-    "argument-hint",
-    "arguments",
-    "disable-model-invocation",
-    "user-invocable",
-    "allowed-tools",
-    "disallowed-tools",
-    "model",
-    "effort",
-    "context",
-    "agent",
-    "background",
-    "hooks",
-    # Accepted additionally by claude.ai uploads and the Skills API
-    "license",
-    "compatibility",
-    "metadata",
-}
+FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---(?:\n|$)", re.DOTALL)
+PLACEHOLDERS = ("[TODO", "FIXME", "<skill-name>", "<upstream-")
 
 
 def validate_skill(skill_path):
-    """Return (valid, message, warnings). Only structural defects set valid=False."""
+    """Return local-policy errors and warnings for a skill directory."""
+    errors = []
     warnings = []
     skill_path = Path(skill_path)
     skill_md = skill_path / "SKILL.md"
-    if not skill_md.exists():
-        return False, "SKILL.md not found", warnings
+
+    if not skill_md.is_file():
+        return ["SKILL.md not found"], warnings
+
     content = skill_md.read_text()
-    if not content.startswith("---"):
-        return False, "No YAML frontmatter found", warnings
-    match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
+    match = FRONTMATTER_RE.match(content)
     if not match:
-        return False, "Invalid frontmatter format", warnings
+        return [
+            "cannot inspect local policy because YAML frontmatter is invalid"
+        ], warnings
+
     try:
         frontmatter = yaml.safe_load(match.group(1))
-        if not isinstance(frontmatter, dict):
-            return False, "Frontmatter must be a YAML dictionary", warnings
-    except yaml.YAMLError as e:
-        return False, f"Invalid YAML in frontmatter: {e}", warnings
-
-    unknown = set(frontmatter.keys()) - KNOWN_KEYS
-    if unknown:
-        warnings.append(
-            f"unrecognised frontmatter key(s): {', '.join(sorted(unknown))}. "
-            "Harness schemas move; verify against the target agent's docs before "
-            "treating this as a defect."
-        )
-
-    if "name" not in frontmatter or "description" not in frontmatter:
-        return False, "Missing required frontmatter fields", warnings
+    except yaml.YAMLError as error:
+        return [f"cannot inspect local policy: {error}"], warnings
+    if not isinstance(frontmatter, dict):
+        return [
+            "cannot inspect local policy because frontmatter is not a mapping"
+        ], warnings
 
     metadata = frontmatter.get("metadata")
-    if metadata is not None and not isinstance(metadata, dict):
-        return False, "metadata must be a YAML dictionary", warnings
-    for key in ("author", "license"):
-        value = (metadata or {}).get(key)
-        if value is None:
-            warnings.append(
-                f"metadata.{key} is not set. Required for a skill authored here; "
-                "expected to be absent on a third-party skill under evaluation."
-            )
-        elif not str(value).strip():
-            return False, f"metadata.{key} cannot be empty", warnings
+    if not isinstance(metadata, dict):
+        errors.append("metadata must contain the current author")
+        metadata = {}
+    elif not str(metadata.get("author", "")).strip():
+        errors.append("metadata.author must name the current author")
 
-    name = str(frontmatter.get("name", "")).strip()
-    if not 1 <= len(name) <= 64:
-        return False, f"Name '{name}' is {len(name)} characters; must be 1-64", warnings
-    if not NAME_RE.match(name):
-        return (
-            False,
-            f"Name '{name}' must be lowercase letters, digits and single hyphens, "
-            "with no leading, trailing or consecutive hyphens",
-            warnings,
-        )
-    for word in RESERVED_WORDS:
-        if word in name:
-            warnings.append(
-                f"name contains '{word}', which claude.ai uploads and the Skills API "
-                "reject. Claude Code loads such a skill without complaint, so this "
-                "blocks distribution rather than local use."
-            )
-    if name != skill_path.resolve().name:
-        return (
-            False,
-            f"Name '{name}' does not match its directory "
-            f"'{skill_path.resolve().name}'; the skill is unreachable under the "
-            "name it advertises",
-            warnings,
+    if not str(frontmatter.get("license", "")).strip():
+        errors.append("top-level license must identify the applicable license")
+    if "license" in metadata:
+        errors.append(
+            "move metadata.license to the Agent Skills top-level license field"
         )
 
-    description = str(frontmatter.get("description", "")).strip()
-    if not description:
-        return False, "Description cannot be empty", warnings
-    if "<" in description or ">" in description:
-        return False, "Description cannot contain angle brackets", warnings
-    if len(description) > 1024:
-        return False, f"Description too long ({len(description)} chars)", warnings
+    scope = metadata.get("scope")
+    if scope not in (None, "repo-local"):
+        errors.append(
+            "metadata.scope must be absent for portable skills or 'repo-local'"
+        )
+    if scope == "repo-local":
+        body = content[match.end() :]
+        if "repository" not in "\n".join(body.splitlines()[:12]).lower():
+            errors.append("repo-local skill must name its repository near the start")
 
-    return True, "Skill is structurally valid.", warnings
+    attribution = skill_path / "ATTRIBUTIONS.md"
+    upstream_license = skill_path / "LICENSE.upstream"
+    if attribution.exists() != upstream_license.exists():
+        errors.append(
+            "adapted skills must ship both ATTRIBUTIONS.md and LICENSE.upstream"
+        )
+    if attribution.exists():
+        attribution_text = attribution.read_text()
+        for placeholder in PLACEHOLDERS:
+            if placeholder in attribution_text:
+                errors.append(
+                    f"ATTRIBUTIONS.md contains scaffold placeholder {placeholder!r}"
+                )
+
+    for placeholder in PLACEHOLDERS:
+        if placeholder in content:
+            errors.append(f"SKILL.md contains scaffold placeholder {placeholder!r}")
+
+    if not attribution.exists():
+        warnings.append(
+            "upstream derivation cannot be inferred; confirm provenance during review"
+        )
+
+    return errors, warnings
 
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python quick_validate.py <skill_directory>")
-        sys.exit(1)
-    valid, message, warnings = validate_skill(sys.argv[1])
+        print("Usage: python3 quick_validate.py <skill-directory>", file=sys.stderr)
+        sys.exit(2)
+
+    errors, warnings = validate_skill(sys.argv[1])
     for warning in warnings:
         print(f"warning: {warning}")
-    print(message)
-    sys.exit(0 if valid else 1)
+    for error in errors:
+        print(f"error: {error}")
+    if errors:
+        sys.exit(1)
+    print("Skill Forge local policy is valid.")
 
 
 if __name__ == "__main__":

@@ -1,84 +1,37 @@
-# Writing Techniques for Skills
+# Conditional Writing Techniques
 
-## Technique 1: The Iron Law
+These techniques address specific failure modes. Apply one when its condition exists; omit it otherwise.
 
-MUST set one unbreakable rule at the top of SKILL.md, immediately after the H1 title and before any other prose. This prevents the agent from taking shortcuts.
+## Dominant Failure and Iron Laws
 
-### Examples
+Identify the most consequential likely failure. Use an Iron Law when one falsifiable absolute constraint prevents it and
+reasonable exceptions do not exist.
 
 ```text
-IRON LAW: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.
-IRON LAW: NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST.
-IRON LAW: Every migration MUST have a rollback script. No rollback = no execution.
+IRON LAW: Never apply a migration that has no tested rollback path.
 ```
 
-### How to Write an Iron Law
+Do not manufacture a slogan for a skill whose risks require contextual judgment. State those decisions and criteria
+directly.
 
-Ask: "What is the ONE mistake the agent will most likely make with this skill?"
+## Questions
 
-Then write a rule that prevents it:
-- ALL CAPS for emphasis
-- Absolute language (`NEVER`, `ALWAYS`, `MUST`)
-- No wiggle room
-
-### Red Flag Signals
-
-Pair the Iron Law with red flags that force backtracking:
+Use a question when it directs attention to evidence or a boundary more precisely than a general instruction.
 
 ```markdown
-Red Flags (return to Step 1 if any appear):
-- "I think the problem might be..." (guessing, not analyzing)
-- Making changes without understanding root cause
-- Fix works but you cannot explain why
+Ask: Could the state change between this authorization check and the operation it guards?
 ```
 
-## Technique 2: Question-Style Instructions
+Include the consequence of each possible answer when it is not obvious.
 
-Give the agent specific questions to answer, not vague directives.
+## Anti-Patterns
 
-### Examples
+Name an anti-pattern when the target models commonly choose it and the choice harms the task. Keep it concrete and place
+it beside the positive behavior that should replace it.
 
 ```markdown
-# Bad - vague directive
-Check if the code violates SRP.
-
-# Good - specific question
-Ask: How many distinct reasons could this module need to change?
-If more than one, it likely violates SRP.
+Parameterize user-controlled SQL values. Never concatenate them into a query string because escaping mistakes become SQL injection.
 ```
 
-```markdown
-# Bad
-Watch out for race conditions.
-
-# Good
-Ask: What happens if two requests hit this code simultaneously?
-```
-
-```markdown
-# Bad
-Handle edge cases properly.
-
-# Good
-Ask: What happens if this value is null? Is 0? Is an empty array? Is negative?
-```
-
-## Technique 3: Anti-Pattern Documentation
-
-MUST explicitly list what the agent MUST NOT do.
-
-### How to Find Anti-Patterns
-
-Ask: "What would the agent's lazy default look like for this task?" Then MUST explicitly forbid it.
-
-### Examples
-
-```markdown
-Anti-Patterns to Avoid:
-- Direct SQL string concatenation
-- User input inserted into HTML without escaping
-- Add unnecessary try-catch blocks with console.log
-- Over-abstract one-time operations into utility functions
-- Add comments that restate the code
-```
-MUST keep anti-patterns concrete and specific - not "do not write bad code" but "do not concatenate SQL strings".
+Avoid generic prohibitions, exhaustive catalogs, and rules derived from a single anecdote without evidence that the
+failure is likely to recur.

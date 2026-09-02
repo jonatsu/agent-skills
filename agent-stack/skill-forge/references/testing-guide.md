@@ -1,97 +1,36 @@
-# Skill Testing Guide
+# Behavioral Evaluation
 
-- [Evaluations, written first](#evaluations-written-first) — format, baseline, model matrix
-- [Four Testing Areas](#four-testing-areas) — triggering, functional, comparison, claim verification
-- [Quality Metrics](#quality-metrics) · [Iteration Signals](#iteration-signals) · [Test Inventory](#test-inventory-requirements)
+Evaluation answers whether a skill improves agent behavior, rather than whether its Markdown looks complete. Scale the
+work to the change and the uncertainty.
 
-## Evaluations, written first
+## When Evaluation Pays
 
-MUST exist before any body text. Three minimum. Each is a realistic request plus the
-behaviour that counts as success — not an assertion that the skill "works".
+Behavioral evaluation is especially useful for:
 
-```json
-{
-  "skill": "pdf-processing",
-  "query": "Extract all text from this PDF and save it to output.txt",
-  "files": ["fixtures/document.pdf"],
-  "expected_behavior": [
-    "Reads the PDF with an appropriate library or CLI tool",
-    "Extracts text from every page, missing none",
-    "Writes output.txt in a readable form"
-  ]
-}
-```
+- new skills;
+- substantial rewrites;
+- unreliable triggering;
+- repeated workflow failures;
+- skills deployed across materially different model classes; and
+- instructions whose benefit is uncertain relative to their context cost.
 
-**Baseline first, with no skill loaded.** Run all three unaided and record what the agent
-actually did. Without that number, "the skill helps" is an impression. With it, the claim
-is "unaided the agent missed the auth step in 3 of 5 runs; with the skill, 0 of 5".
+A focused correction usually needs only a regression case for the changed behavior and nearby negative cases.
 
-**MUST run the matrix, not one model.** A skill is an addition to a model, so its behaviour
-is the model's behaviour plus the skill:
+## Evaluation Shape
 
-| Model class | What it tests |
-|---|---|
-| Smallest deployed | Is there ENOUGH guidance? Compression a strong model reconstructs, a weak one drops |
-| Mid | Is it clear and efficient? |
-| Strongest deployed | Does it over-explain what this model already knows? |
+Record a realistic request, required inputs, observable success conditions, model or agent used, date, and result. Prefer
+outcome checks over expected wording or heading names.
 
-MUST cover every model class the skill actually deploys to, including the ones running
-delegated or subagent contexts, and MUST state which classes went untested. A skill tuned
-on a frontier model routinely underspecifies for a small one, and that failure is invisible
-from the model you tuned on.
+When useful, run the same case without the skill to establish what guidance the model actually lacks. A baseline is most
+valuable before writing a new skill, but it is a recommendation rather than a delivery gate.
 
-**Keep the evaluations in the repository, not in a chat.** A baseline nobody can re-run is
-not a baseline. Retain the request, the expected behaviour, the models, the date and the
-result, so a regression reproduces.
+Test the dimensions relevant to the change:
 
-## Four Testing Areas
+- **Discovery:** representative positive, negative, and ambiguous requests.
+- **Behavior:** successful outcomes, consequential edge cases, and recovery from expected failures.
+- **Comparison:** whether the skill improves correctness, consistency, effort, or user control over the baseline.
+- **Portability:** supported environments and deployed model classes where differences could change behavior.
+- **Claims:** assertions about external tools exercised against an authoritative source or real tool version.
 
-### 1. Triggering Tests
-Does the skill activate at the right times?
-- MUST test 5-10 queries that SHOULD trigger the skill
-- MUST test 5-10 queries that SHOULD NOT trigger the skill
-- SHOULD test 3-5 edge cases: ambiguous inputs, multi-domain queries, partial matches
-
-### 2. Functional Tests
-Does the skill produce correct outputs?
-- MUST test each workflow using Given/When/Then format
-- MUST test error handling: invalid inputs, missing dependencies, boundary conditions
-- MUST verify output structure matches expected schema
-- SHOULD verify the skill degrades gracefully when upstream resources are unavailable
-
-### 3. Performance Comparison
-Is the skill better than no skill?
-- Baseline without skill: measure messages to completion, error rate, token usage, output quality
-- With skill: SHOULD reduce messages, errors, and token consumption
-- With skill: SHOULD improve output consistency and correctness
-
-### 4. Claim Verification
-Where the skill asserts how a tool or system behaves, is that assertion true of the real thing?
-- MUST exercise each such claim against the tool itself. Reading the claim back and finding it
-  plausible is NOT verification, and it is how a documented warning that never fires survives review
-- MUST record the tool version and the date the claim was checked
-- MUST name which claims were checked and which were not, so a reader can tell what to distrust
-- MUST state what to re-run first after an upgrade
-- A reference skill has no workflow to test functionally, so without this area it ships unexercised
-
-## Quality Metrics
-
-| Metric | Target |
-|---|---|
-| Trigger accuracy | 90%+ |
-| False positive rate | <5% |
-| Workflow completion | 95%+ without user correction |
-| Error recovery | 80%+ handled gracefully |
-
-## Iteration Signals
-
-| Symptom | Adjustment |
-|---|---|
-| Under-triggering | Add trigger phrases, domain keywords, common paraphrases |
-| Over-triggering | Narrow description scope, add disambiguation logic |
-| Execution failures | Add validation gates, error paths, and recovery scripts for fragile operations |
-
-## Test Inventory Requirements
-- MUST maintain a test corpus of representative queries (positive, negative, edge)
-- SHOULD automate triggering tests in CI to catch regressions
-- MUST record metric baselines before and after skill changes
+Preserve cases that catch likely regressions. Report untested environments or model classes instead of implying complete
+coverage.

@@ -1,62 +1,41 @@
 # Portability
 
-A skill runs on machines nobody configured for it, months after it was written. It MUST NOT
-depend on any environmental fact it did not verify at run time.
+Check frontmatter portability and runtime portability independently. A skill can satisfy either while failing the other.
 
-- [Tools](#tools) · [Project-local entry points](#a-project-local-entry-point-is-not-a-tool)
-- [The two exceptions](#exception-repo-scoped-skills) · [Paths](#paths)
+## Frontmatter Portability
 
-## Tools
+Use fields defined by the Agent Skills specification for new portable skills. Store extension data as string-valued
+entries under `metadata` when that representation is appropriate. Add vendor-specific top-level fields only when the user
+explicitly targets that vendor and accepts the compatibility boundary.
 
-Tool availability MUST be established by a `PATH` probe (`command -v <tool>`) and nothing
-else. NEVER assume a tool is installed, and NEVER hardcode an install path
-(`/usr/local/bin/x`, `~/.local/share/mise/installs/...`, `/opt/homebrew/...`).
+Validate the result with `skills-ref`. Do not maintain a second copy of the external schema in the skill.
 
-When a tool is absent, the skill MUST degrade to a reported skip or a named alternative,
-NEVER fail and NEVER silently continue as though the step ran.
+## Runtime Portability
 
-Where several tools do the job, list them in preference order and accept any one. A single
-hardcoded tool rots the moment the ecosystem moves.
+Portable is the default when `metadata.scope` is absent. Portable skills:
 
-## A project-local entry point is NOT a tool
+- may require a tool intrinsic to their purpose;
+- declare material runtime requirements in `compatibility`;
+- refer to bundled files with relative paths from the skill root;
+- avoid authoring-machine paths, usernames, package-manager assumptions, and repository-local commands;
+- check optional surrounding tools before using them; and
+- report unavailable required dependencies clearly.
 
-**And no `PATH` probe validates one.** `just check`, `npm run lint`, `make test`,
-`mise run ci`, `pre-commit run`, `nox -s tests` and `./scripts/gate.sh` are contracts of one
-REPOSITORY, not of a machine.
+A named dependency is legitimate when the skill is about that tool or cannot perform its stated capability without it.
+Do not force a misleading fallback merely to appear tool-agnostic.
 
-`command -v just` succeeds on any machine that has `just`, while that repo's `check` recipe
-does not exist — so the probe passes and the command still fails. That is worse than no
-probe, because it reads as verification. A portable skill MUST NOT name one.
+## Repository-Specific Skills
 
-Instead, DISCOVER the repo's entry point at run time, and state the detection order: a
-pre-commit config, then a task runner (`justfile`, `Makefile`, `mise.toml`, `package.json`
-scripts, `pyproject` scripts), then a `scripts/`/`bin/` entry. Run what is found. When
-nothing is found, report that and skip — NEVER invent a command, and NEVER assume the
-conventional name is present.
+A repository-specific skill sets:
 
-## Exception: repo-scoped skills
+```yaml
+metadata:
+  scope: repo-local
+```
 
-A skill that ships inside the repository it serves MAY, and SHOULD, name that repo's
-commands directly — they are its contract rather than an assumption. It MUST declare
-`metadata.scope: repo-local` and name that repository near the top, so the next reader knows
-the naming is deliberate and does not lift the skill somewhere it cannot work.
+It names the repository near the start of its body. It may then rely on that repository's commands, paths, conventions,
+and checked-in tools because those bindings are part of its purpose. It still declares external environment requirements
+and avoids assumptions about the author's machine.
 
-## Exception: a skill ABOUT a tool
-
-Such a skill may bind to that tool, **and to nothing else.** Naming `pytest` inside a pytest
-skill is its subject, not an assumption, and demanding tool-agnosticism there is incoherent.
-
-The carve-out covers the subject ONLY: that same skill MUST still discover the repo's runner
-rather than naming `just test`, MUST still probe for any tool beyond its subject, and MUST
-still state what happens when its own subject is absent. Assuming a SECOND tool is the
-ordinary defect wearing the subject's clothes, and it is harder to see precisely because the
-first binding was legitimate.
-
-## Paths
-
-Paths to a skill's own bundled files MUST be relative to the skill directory, with forward
-slashes. NEVER write `~/.claude/skills/<name>/...`: it breaks under `CLAUDE_CONFIG_DIR` and
-for project-scoped installs alike. NEVER use backslashes, which fail on Unix.
-
-NEVER reference the authoring machine — its absolute paths, its usernames, its specific
-package manager, or a tool version only it has.
+Before changing scope, check whether consumers expect the current portability boundary. Narrowing a portable skill to one
+repository is a behavioral change, not a documentation cleanup.
