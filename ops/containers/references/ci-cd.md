@@ -1,6 +1,7 @@
 # CI/CD for Containers — GitHub Actions
 
-Production-shaped GitHub Actions workflow for containers: SHA-pinned steps, BuildKit, multi-platform, layer caching, Cosign signing, SBOM attestation, and SARIF upload to the GitHub Security tab.
+Production-shaped GitHub Actions workflow for containers: SHA-pinned steps, BuildKit, multi-platform, layer
+caching, Cosign signing, SBOM attestation, and SARIF upload to the GitHub Security tab.
 
 See also:
 
@@ -124,7 +125,8 @@ jobs:
 
 ## 2. Pinning GitHub Actions
 
-MUST pin all third-party actions to a full commit SHA and record the version in a trailing comment (Renovate/Dependabot picks up both):
+MUST pin all third-party actions to a full commit SHA and record the version in a trailing comment
+(Renovate/Dependabot picks up both):
 
 ```yaml
 uses: docker/build-push-action@4f58ea79222b3b9dc2c8bbdd6debcef730109a75   # v6.9.0
@@ -228,21 +230,22 @@ cosign verify-attestation \
   ghcr.io/org/myapp@sha256:<digest>
 ```
 
-The `docker/build-push-action@v6` already supports `provenance: true` and `sbom: true` — use those to get SLSA provenance + SBOM attached automatically. `cosign sign` still adds the Sigstore signature on top.
+The `docker/build-push-action@v6` already supports `provenance: true` and `sbom: true` — use those to get SLSA
+provenance + SBOM attached automatically. `cosign sign` still adds the Sigstore signature on top.
 
 ---
 
 ## 6. Common CI Anti-Patterns
 
-| Anti-pattern | Fix |
-|---|---|
-| Docker Hub credentials as long-lived PATs | Use GHCR + `GITHUB_TOKEN`, or OIDC-based token exchange for other registries |
-| Actions pinned to `@main` or `@v3` | Pin to full commit SHA with trailing `# vX.Y.Z` |
-| Building on every push with no cache | Add `cache-from` / `cache-to` (GHA cache is one line) |
-| No scan gate before push | Trivy `exit-code: 1` on HIGH/CRITICAL |
-| No lint before build | Add Hadolint step |
-| Building `latest` tag from every branch | Use `docker/metadata-action` semver / SHA / branch tags |
-| No SBOM | Add `sbom: true` to build-push-action, plus `cosign attest` |
-| No signature verification at deploy | Add `cosign verify` in the deploy step or Kyverno `verifyImages` at admission |
-| Pushing on pull_request | Guard with `if: github.event_name != 'pull_request'` |
-| Missing `permissions:` block | Add explicit least-privilege permissions per job |
+| Anti-pattern                              | Fix                                                                           |
+| ----------------------------------------- | ----------------------------------------------------------------------------- |
+| Docker Hub credentials as long-lived PATs | Use GHCR + `GITHUB_TOKEN`, or OIDC-based token exchange for other registries  |
+| Actions pinned to `@main` or `@v3`        | Pin to full commit SHA with trailing `# vX.Y.Z`                               |
+| Building on every push with no cache      | Add `cache-from` / `cache-to` (GHA cache is one line)                         |
+| No scan gate before push                  | Trivy `exit-code: 1` on HIGH/CRITICAL                                         |
+| No lint before build                      | Add Hadolint step                                                             |
+| Building `latest` tag from every branch   | Use `docker/metadata-action` semver / SHA / branch tags                       |
+| No SBOM                                   | Add `sbom: true` to build-push-action, plus `cosign attest`                   |
+| No signature verification at deploy       | Add `cosign verify` in the deploy step or Kyverno `verifyImages` at admission |
+| Pushing on pull_request                   | Guard with `if: github.event_name != 'pull_request'`                          |
+| Missing `permissions:` block              | Add explicit least-privilege permissions per job                              |

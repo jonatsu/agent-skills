@@ -1,12 +1,12 @@
 <!-- Internal README template — team codebases, services, internal tools. Focus
 on onboarding a new teammate and operational knowledge. Replace placeholders;
 drop unused sections. Do not invent contact details or URLs. -->
+
 # {{SERVICE_NAME}}
 
 {{ONE_SENTENCE_DESCRIPTION}}
 
-**Team**: {{TEAM_OR_CHANNEL}}
-**On-call**: {{ROTATION_OR_CONTACT}}
+**Team**: {{TEAM_OR_CHANNEL}} **On-call**: {{ROTATION_OR_CONTACT}}
 
 ## Overview
 
@@ -26,9 +26,9 @@ drop unused sections. Do not invent contact details or URLs. -->
 
 ### Environment variables
 
-| Variable | Description | Where to get it |
-|----------|-------------|-----------------|
-| `{{VAR}}` | {{DESCRIPTION}} | {{SOURCE}} |
+| Variable  | Description     | Where to get it |
+| --------- | --------------- | --------------- |
+| `{{VAR}}` | {{DESCRIPTION}} | {{SOURCE}}      |
 
 ### Running locally
 
@@ -42,8 +42,8 @@ drop unused sections. Do not invent contact details or URLs. -->
 
 ### Key files
 
-| Path | Purpose |
-|------|---------|
+| Path       | Purpose          |
+| ---------- | ---------------- |
 | `{{PATH}}` | {{WHAT_IT_DOES}} |
 
 ## Deployment
@@ -60,9 +60,7 @@ drop unused sections. Do not invent contact details or URLs. -->
 
 ### {{COMMON_PROBLEM}}
 
-**Symptom**: {{SYMPTOM}}
-**Cause**: {{CAUSE}}
-**Fix**: {{FIX}}
+**Symptom**: {{SYMPTOM}} **Cause**: {{CAUSE}} **Fix**: {{FIX}}
 
 ## Related docs
 

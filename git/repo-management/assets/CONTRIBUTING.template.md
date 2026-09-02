@@ -1,4 +1,5 @@
 <!-- CONTRIBUTING template. Docs: GitHub contributing guidelines docs. Match real workflow. -->
+
 # Contributing
 
 Contributions are welcome.
@@ -26,5 +27,5 @@ Contributions are welcome.
 
 ## Communication
 
-Be respectful, specific, and constructive. If this repository has a code of
-conduct, it applies to all project spaces.
+Be respectful, specific, and constructive. If this repository has a code of conduct, it applies to all project
+spaces.

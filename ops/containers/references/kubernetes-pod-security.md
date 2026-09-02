@@ -1,12 +1,13 @@
 # Kubernetes Pod Security Reference
 
-Full reference for hardening workloads in Kubernetes — NetworkPolicy, RBAC, Pod Security Admission, admission controllers (Kyverno/OPA), and service account hardening.
+Full reference for hardening workloads in Kubernetes — NetworkPolicy, RBAC, Pod Security Admission, admission
+controllers (Kyverno/OPA), and service account hardening.
 
 ## Table of Contents
 
 1. [Pod Security Admission (PSA)](#pod-security-admission)
-2. [NetworkPolicy — Zero-Trust Networking](#networkpolicy)
-3. [RBAC — Least Privilege](#rbac)
+2. [NetworkPolicy — Zero-Trust Networking](#networkpolicy--zero-trust-networking)
+3. [RBAC — Least Privilege](#rbac--least-privilege)
 4. [Admission Controllers (Kyverno / OPA Gatekeeper)](#admission-controllers)
 5. [Service Account Hardening](#service-account-hardening)
 6. [Runtime Security — Falco](#runtime-security--falco)
@@ -20,19 +21,19 @@ Built-in K8s 1.25+ policy engine (replaces deprecated PodSecurityPolicy).
 
 ### Three Built-In Policy Levels
 
-| Level | What It Blocks |
-|---|---|
-| `privileged` | No restrictions (cluster default) |
-| `baseline` | Blocks hostNetwork, hostPID, hostIPC, privileged containers, dangerous volume types, hostPath |
+| Level        | What It Blocks                                                                                 |
+| ------------ | ---------------------------------------------------------------------------------------------- |
+| `privileged` | No restrictions (cluster default)                                                              |
+| `baseline`   | Blocks hostNetwork, hostPID, hostIPC, privileged containers, dangerous volume types, hostPath  |
 | `restricted` | Everything in baseline + requires non-root, read-only FS, drops capabilities, requires seccomp |
 
 ### Three Modes Per Level
 
-| Mode | Behavior |
-|---|---|
-| `enforce` | Reject pods that violate the policy |
-| `audit` | Allow but log a violation in audit log |
-| `warn` | Allow but return a warning to the user |
+| Mode      | Behavior                               |
+| --------- | -------------------------------------- |
+| `enforce` | Reject pods that violate the policy    |
+| `audit`   | Allow but log a violation in audit log |
+| `warn`    | Allow but return a warning to the user |
 
 ### Applying PSA Labels
 
@@ -96,7 +97,8 @@ spec:
 
 By default all pods in a cluster can reach all other pods on any port. Lock down with NetworkPolicy.
 
-> **Prerequisite:** Your CNI plugin must support NetworkPolicy (Calico, Cilium, Weave Net — but NOT Flannel by default).
+> **Prerequisite:** Your CNI plugin must support NetworkPolicy (Calico, Cilium, Weave Net — but NOT Flannel by
+> default).
 
 ### Step 1: Default Deny All
 
@@ -469,6 +471,7 @@ spec:
 ```
 
 **Why use Workload Identity instead of K8s Secrets for cloud credentials?**
+
 - Credentials are short-lived (1h) and auto-rotated
 - No secret to leak, rotate, or store
 - Audit trail tied to workload identity, not a shared key
@@ -521,12 +524,12 @@ helm install falco falcosecurity/falco \
 
 **Kubernetes Secrets are base64-encoded, not encrypted by default.** Use one of these:
 
-| Solution | Mechanism | Best For |
-|---|---|---|
+| Solution                      | Mechanism                                                  | Best For                                |
+| ----------------------------- | ---------------------------------------------------------- | --------------------------------------- |
 | **External Secrets Operator** | Sync from AWS Secrets Manager / GCP Secret Manager / Vault | Production — secrets never live in etcd |
-| **Sealed Secrets (Bitnami)** | Asymmetric encryption of secrets in Git | GitOps workflows |
-| **HashiCorp Vault** | Dynamic secrets, PKI, lease management | Complex multi-cloud setups |
-| **SOPS + Age/GPG** | Encrypted secret files in Git | Small teams, simple workflows |
+| **Sealed Secrets (Bitnami)**  | Asymmetric encryption of secrets in Git                    | GitOps workflows                        |
+| **HashiCorp Vault**           | Dynamic secrets, PKI, lease management                     | Complex multi-cloud setups              |
+| **SOPS + Age/GPG**            | Encrypted secret files in Git                              | Small teams, simple workflows           |
 
 ```yaml
 # External Secrets Operator — sync from AWS Secrets Manager

@@ -1,17 +1,20 @@
 # docker-compose — Dev and Prod Examples
 
-Compose files diverge sharply between dev and prod. See the SKILL.md decision table for the summary of differences; this file gives full examples with hardening applied where required.
+Compose files diverge sharply between dev and prod. See the SKILL.md decision table for the summary of
+differences; this file gives full examples with hardening applied where required.
 
 See also:
 
 - `dockerfile-patterns.md` for building the image the compose service runs
-- `runtime-security.md` for the underlying `docker run` hardening flags that translate into `security_opt` / `cap_drop` / etc.
+- `runtime-security.md` for the underlying `docker run` hardening flags that translate into `security_opt` /
+  `cap_drop` / etc.
 
 ---
 
 ## 1. Development Compose
 
-For local development. Optimizes for fast feedback: source mounted, hot reload, plaintext env, permissive access.
+For local development. Optimizes for fast feedback: source mounted, hot reload, plaintext env, permissive
+access.
 
 ```yaml
 # compose.dev.yml
@@ -66,7 +69,8 @@ volumes:
 
 ## 2. Production Compose — Hardened
 
-For prod. No source mount, credentials from env / secrets store, resource limits, read-only fs, dropped capabilities.
+For prod. No source mount, credentials from env / secrets store, resource limits, read-only fs, dropped
+capabilities.
 
 ```yaml
 # compose.prod.yml
@@ -221,18 +225,18 @@ docker stats
 
 ## 4. Compose Anti-Patterns
 
-| Anti-pattern | Why it's wrong | Fix |
-|---|---|---|
-| Same file for dev and prod | Dev conveniences leak to prod (source mount, plaintext secrets) | Split `compose.dev.yml` / `compose.prod.yml` |
-| Passwords in `environment:` | Persist in inspect output, logs, `.env` files in Git | Use `secrets:` with `_FILE` env var pattern |
-| `build:` in prod | Prod runs unpinned code | Use `image: ghcr.io/org/app@sha256:...` |
-| No `depends_on.condition` | Web starts before db is ready → connection errors | `condition: service_healthy` with a proper healthcheck |
-| `restart: always` for one-shot jobs | Restart loop on legitimate exit | `restart: on-failure` or omit |
-| Missing `healthcheck` in prod | Compose can't tell healthy from broken | Add `healthcheck` and use it in `depends_on` |
-| Exposing DB port in prod | Database reachable from outside host | Remove `ports:`; use `expose:` or internal network only |
-| No `mem_limit` / `cpus` in prod | One runaway service crashes the host | Set per-service limits |
-| Root user by default | Container escape hits host as root | `user: "<non-root-uid>:<gid>"` |
-| Writable filesystem where not needed | Persistence you didn't intend, tampering surface | `read_only: true` + `tmpfs` for `/tmp` |
+| Anti-pattern                         | Why it's wrong                                                  | Fix                                                     |
+| ------------------------------------ | --------------------------------------------------------------- | ------------------------------------------------------- |
+| Same file for dev and prod           | Dev conveniences leak to prod (source mount, plaintext secrets) | Split `compose.dev.yml` / `compose.prod.yml`            |
+| Passwords in `environment:`          | Persist in inspect output, logs, `.env` files in Git            | Use `secrets:` with `_FILE` env var pattern             |
+| `build:` in prod                     | Prod runs unpinned code                                         | Use `image: ghcr.io/org/app@sha256:...`                 |
+| No `depends_on.condition`            | Web starts before db is ready → connection errors               | `condition: service_healthy` with a proper healthcheck  |
+| `restart: always` for one-shot jobs  | Restart loop on legitimate exit                                 | `restart: on-failure` or omit                           |
+| Missing `healthcheck` in prod        | Compose can't tell healthy from broken                          | Add `healthcheck` and use it in `depends_on`            |
+| Exposing DB port in prod             | Database reachable from outside host                            | Remove `ports:`; use `expose:` or internal network only |
+| No `mem_limit` / `cpus` in prod      | One runaway service crashes the host                            | Set per-service limits                                  |
+| Root user by default                 | Container escape hits host as root                              | `user: "<non-root-uid>:<gid>"`                          |
+| Writable filesystem where not needed | Persistence you didn't intend, tampering surface                | `read_only: true` + `tmpfs` for `/tmp`                  |
 
 ---
 
@@ -259,4 +263,5 @@ services:
       - DEBUG=1
 ```
 
-`docker compose up` picks both up automatically. In CI, use `docker compose -f compose.yml up` (no override) to run the prod-shaped config.
+`docker compose up` picks both up automatically. In CI, use `docker compose -f compose.yml up` (no override)
+to run the prod-shaped config.

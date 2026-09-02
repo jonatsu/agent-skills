@@ -1,6 +1,7 @@
 <!-- Config README template — XDG config dirs, dotfiles, script folders. The
 audience is future-you, probably confused. Replace placeholders; drop unused
 sections. -->
+
 # {{TOOL_OR_DIRECTORY_NAME}} Config
 
 > Last reviewed: {{YYYY-MM-DD}}
@@ -9,8 +10,8 @@ sections. -->
 
 ## What's here
 
-| Path | Purpose |
-|------|---------|
+| Path              | Purpose          |
+| ----------------- | ---------------- |
 | `{{FILE_OR_DIR}}` | {{WHAT_IT_DOES}} |
 
 ## Why this setup

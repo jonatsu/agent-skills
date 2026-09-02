@@ -10,61 +10,52 @@
 ## Original author and source
 
 - Original author: Leonardo Flores
-- Copyright holder: `Copyright (c) 2026 Leonardo Flores`, as stated in upstream's
-  `LICENSE`
-- Upstream project:
-  [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit)
+- Copyright holder: `Copyright (c) 2026 Leonardo Flores`, as stated in upstream's `LICENSE`
+- Upstream project: [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit)
 - Source path: `skills/skill-judge`
-- Source commit: `3027f20f3181758385a1bb8c022d4041dfb4de84`. **Not recorded at
-  adaptation time** — this is upstream's HEAD as of 2026-08-27, dated
-  2026-03-05, which predates the 2026-07-27 commit that added this skill here.
-  It is therefore the commit adapted from unless upstream rewrote history.
+- Source commit: `3027f20f3181758385a1bb8c022d4041dfb4de84`. **Not recorded at adaptation time** — this is
+  upstream's HEAD as of 2026-08-27, dated 2026-03-05, which predates the 2026-07-27 commit that added this
+  skill here. It is therefore the commit adapted from unless upstream rewrote history.
 
 ## Adaptation note
 
-Retained the upstream skill's purpose and its concern for actionable review, progressive
-disclosure, workflow fit, and concrete evidence. Replaced its fixed structural rubric with a
-contract-based review that separates validity, design judgment, and behavioral evidence.
+Retained the upstream skill's purpose and its concern for actionable review, progressive disclosure, workflow
+fit, and concrete evidence. Replaced its fixed structural rubric with a contract-based review that separates
+validity, design judgment, and behavioral evidence.
 
 Material changes from the upstream skill:
 
-- Cut the ~40-line philosophy preamble ("what is a Skill", training-cost tables,
-  hot-swappable-LoRA analogy) as material the model already holds. Replaced with a
-  two-line statement of intent. This originally cross-referenced a sibling skill for
-  vocabulary; those pointers were removed on 2026-08-27, because that skill sets
-  `disable-model-invocation: true` and so cannot be reached from here. Every term is
-  now defined in place.
-- Removed the ASCII-art boxes (activation-flow diagram, quick-check panel),
-  folding their content into tables and prose.
-- Neutralized provider-specific framing ("Claude" → "the agent/model") so the
-  skill is agent-agnostic.
-- Consolidated the useful failure-pattern diagnoses into `references/review-lenses.md`,
-  expressed as consequence-based questions rather than score deductions.
-- Rewrote frontmatter to the Agent Skills specification's top-level `license` field and
-  retained `metadata.author`.
-- Retained Expert/Activation/Recoverable/Redundant as qualitative diagnoses, cross-file
-  consistency checks, freedom calibration, the acts-now/acts-safely/still-works questions,
-  evidence legibility, and the detailed portability distinctions.
-- Removed the eight-dimension 120-point grade, line-weighted knowledge ratios, structural
-  quotas, portability score caps, and mandatory praise. These measures conflicted with the
-  current `skill-forge` contract by rewarding techniques that authoring now treats as
-  conditional.
-- Added separate hard gates, consequence-based findings, readiness verdicts, proportional
-  behavioral evaluation, and decision-specific metrics.
+- Cut the ~40-line philosophy preamble ("what is a Skill", training-cost tables, hot-swappable-LoRA analogy)
+  as material the model already holds. Replaced with a two-line statement of intent. This originally
+  cross-referenced a sibling skill for vocabulary; those pointers were removed on 2026-08-27, because that
+  skill sets `disable-model-invocation: true` and so cannot be reached from here. Every term is now defined in
+  place.
+- Removed the ASCII-art boxes (activation-flow diagram, quick-check panel), folding their content into tables
+  and prose.
+- Neutralized provider-specific framing ("Claude" → "the agent/model") so the skill is agent-agnostic.
+- Consolidated the useful failure-pattern diagnoses into `references/review-lenses.md`, expressed as
+  consequence-based questions rather than score deductions.
+- Rewrote frontmatter to the Agent Skills specification's top-level `license` field and retained
+  `metadata.author`.
+- Retained Expert/Activation/Recoverable/Redundant as qualitative diagnoses, cross-file consistency checks,
+  freedom calibration, the acts-now/acts-safely/still-works questions, evidence legibility, and the detailed
+  portability distinctions.
+- Removed the eight-dimension 120-point grade, line-weighted knowledge ratios, structural quotas, portability
+  score caps, and mandatory praise. These measures conflicted with the current `skill-forge` contract by
+  rewarding techniques that authoring now treats as conditional.
+- Added separate hard gates, consequence-based findings, readiness verdicts, proportional behavioral
+  evaluation, and decision-specific metrics.
 
 ## Upstream license
 
-MIT. The verbatim upstream `LICENSE` ships beside this file as
-`LICENSE.upstream` and MUST travel with the skill when it is redistributed or
-re-deployed. Upstream publishes no `NOTICE` file, so there is no
+MIT. The verbatim upstream `LICENSE` ships beside this file as `LICENSE.upstream` and MUST travel with the
+skill when it is redistributed or re-deployed. Upstream publishes no `NOTICE` file, so there is no
 `NOTICE.upstream`.
 
-The licence text was previously inlined here **without its copyright line**,
-which made it neither a verbatim reproduction nor compliant with MIT's own
-requirement that the copyright notice travel with the software. Replaced on
-2026-08-27 with the byte-for-byte file.
+The licence text was previously inlined here **without its copyright line**, which made it neither a verbatim
+reproduction nor compliant with MIT's own requirement that the copyright notice travel with the software.
+Replaced on 2026-08-27 with the byte-for-byte file.
 
-Verified against the primary source on 2026-08-27 — `gh api
-repos/softaworks/agent-toolkit/license` reported `MIT`, and the `LICENSE` blob
-itself was fetched and copied byte-for-byte. `gh repo view --json licenseInfo`
+Verified against the primary source on 2026-08-27 — `gh api repos/softaworks/agent-toolkit/license` reported
+`MIT`, and the `LICENSE` blob itself was fetched and copied byte-for-byte. `gh repo view --json licenseInfo`
 was NOT used; it misreports repositories that do carry a licence.

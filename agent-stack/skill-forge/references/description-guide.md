@@ -1,7 +1,7 @@
 # Skill Descriptions
 
-The description is an always-loaded routing pointer. It must satisfy the Agent Skills specification by stating what the
-skill does and when to use it, while remaining discriminating enough to avoid unrelated tasks.
+The description is an always-loaded routing pointer. It must satisfy the Agent Skills specification by stating
+what the skill does and when to use it, while remaining discriminating enough to avoid unrelated tasks.
 
 ## Method
 
@@ -11,8 +11,8 @@ skill does and when to use it, while remaining discriminating enough to avoid un
 4. Add an exclusion only for a nearby skill or task that could plausibly be misrouted.
 5. Remove implementation details and instructions that matter only after activation.
 
-Distinct branches earn separate trigger language. Synonyms for the same branch usually do not. Lists of every related
-verb and noun consume permanent context, blur boundaries, and attract false positives.
+Distinct branches earn separate trigger language. Synonyms for the same branch usually do not. Lists of every
+related verb and noun consume permanent context, blur boundaries, and attract false positives.
 
 ```yaml
 # Too vague

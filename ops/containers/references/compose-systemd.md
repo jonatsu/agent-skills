@@ -2,16 +2,20 @@
 
 ## Purpose
 
-Defines operating model for managing multi-service Docker Compose stack as single systemd unit when splitting services into separate systemd units is not possible.
+Defines operating model for managing multi-service Docker Compose stack as single systemd unit when splitting
+services into separate systemd units is not possible.
 
 Recommended architecture:
 
-- **systemd** manages host boot ordering, config validation, deployment, admin start/stop/reload, bounded startup retries.
+- **systemd** manages host boot ordering, config validation, deployment, admin start/stop/reload, bounded
+  startup retries.
 - **Docker** supervises individual containers through restart policies.
-- **Docker Compose** defines service relationships, health checks, startup dependencies, resource constraints, graceful shutdown.
+- **Docker Compose** defines service relationships, health checks, startup dependencies, resource constraints,
+  graceful shutdown.
 - **External monitoring** detects services that remain running but become unhealthy or degraded.
 
-Do not make systemd continuously supervise attached `docker compose up` process. Docker supervises container lifecycle after deployment.
+Do not make systemd continuously supervise attached `docker compose up` process. Docker supervises container
+lifecycle after deployment.
 
 ## Minimum Requirements
 
@@ -187,7 +191,8 @@ ExecStop=/usr/bin/docker compose ... stop
 - Preserves deployment metadata.
 - Allows next `compose up` to start or reconcile existing deployment.
 
-Do not pass `--timeout` to `compose stop` — it overrides every service's `stop_grace_period`, cutting graceful shutdown short. Let per-service `stop_grace_period` settings govern each container individually.
+Do not pass `--timeout` to `compose stop` — it overrides every service's `stop_grace_period`, cutting graceful
+shutdown short. Let per-service `stop_grace_period` settings govern each container individually.
 
 Avoid in normal unit lifecycle:
 
@@ -219,11 +224,10 @@ docker compose \
 
 ## Docker Restart Policies
 
-Every long-running service MUST have explicit `restart:` policy. Prefer
-`unless-stopped` for persistent services, `on-failure` for retryable jobs,
-`"no"` for one-shot containers. Never rely on systemd `Restart=` for runtime
-container failures — after oneshot unit completes, systemd no longer observes
-individual container processes.
+Every long-running service MUST have explicit `restart:` policy. Prefer `unless-stopped` for persistent
+services, `on-failure` for retryable jobs, `"no"` for one-shot containers. Never rely on systemd `Restart=`
+for runtime container failures — after oneshot unit completes, systemd no longer observes individual container
+processes.
 
 ## Health Checks
 
@@ -270,11 +274,11 @@ services:
 
 Ensure container image contains command used by health check.
 
-Health check MUST test actual service role, not merely process existence.
-Set `start_period` >= 60s for slow cold starts (model loading, large cache
-warmup). Ensure container image contains the health-check command.
+Health check MUST test actual service role, not merely process existence. Set `start_period` >= 60s for slow
+cold starts (model loading, large cache warmup). Ensure container image contains the health-check command.
 
-For services with slow cold starts (model loading, large cache warmup), set generous `start_period` — 60s or more.
+For services with slow cold starts (model loading, large cache warmup), set generous `start_period` — 60s or
+more.
 
 ## Dependency Readiness
 
@@ -325,7 +329,8 @@ required: false
 
 ### One-Shot Initialization Containers
 
-For tasks like model pulling, schema setup, or data seeding, use a dedicated one-shot container that exits successfully when done.
+For tasks like model pulling, schema setup, or data seeding, use a dedicated one-shot container that exits
+successfully when done.
 
 Example — pulling a model before serving:
 
@@ -348,7 +353,8 @@ services:
     restart: unless-stopped
 ```
 
-This separates init from serve. `--wait` blocks until `model-pull` completes successfully before starting `model-serve`. For multi-GB pulls, raise `--wait-timeout` or pull out-of-band before enabling unit.
+This separates init from serve. `--wait` blocks until `model-pull` completes successfully before starting
+`model-serve`. For multi-GB pulls, raise `--wait-timeout` or pull out-of-band before enabling unit.
 
 Compose dependency conditions control initial startup only. They do not guarantee runtime resilience.
 
@@ -376,7 +382,10 @@ services:
     stop_grace_period: 30s
 ```
 
-Use `init: true` to run a lightweight init process (tini) as PID 1. Recommended for images with shell wrappers or PID1 reaping issues — without it, SIGTERM may not reach the real workload, making `stop_grace_period` ineffective. Verify the workload handles SIGTERM correctly regardless; well-built images with exec-form entrypoints may not need it.
+Use `init: true` to run a lightweight init process (tini) as PID 1. Recommended for images with shell wrappers
+or PID1 reaping issues — without it, SIGTERM may not reach the real workload, making `stop_grace_period`
+ineffective. Verify the workload handles SIGTERM correctly regardless; well-built images with exec-form
+entrypoints may not need it.
 
 Applications should:
 
@@ -392,7 +401,10 @@ systemd setting:
 TimeoutStopSec=
 ```
 
-must cover the entire stack shutdown worst case — not just the longest single `stop_grace_period`. `compose stop` may stop containers sequentially (respecting dependency order), so total shutdown time can be the sum of sequential grace periods plus Docker overhead. Calculate: sum of sequential `stop_grace_period` values + Docker per-container overhead (~5-10s each).
+must cover the entire stack shutdown worst case — not just the longest single `stop_grace_period`.
+`compose stop` may stop containers sequentially (respecting dependency order), so total shutdown time can be
+the sum of sequential grace periods plus Docker overhead. Calculate: sum of sequential `stop_grace_period`
+values + Docker per-container overhead (~5-10s each).
 
 Example:
 
@@ -406,7 +418,9 @@ with container grace period of:
 stop_grace_period: 30s
 ```
 
-provides enough headroom for a single-service stack. For multi-service stacks with sequential shutdown, raise `TimeoutStopSec` to cover the cumulative worst case. If systemd kills `compose stop` mid-shutdown, containers receive SIGKILL — defeating the purpose of graceful shutdown.
+provides enough headroom for a single-service stack. For multi-service stacks with sequential shutdown, raise
+`TimeoutStopSec` to cover the cumulative worst case. If systemd kills `compose stop` mid-shutdown, containers
+receive SIGKILL — defeating the purpose of graceful shutdown.
 
 ## Resource Constraints
 
@@ -444,7 +458,9 @@ Important considerations:
 
 ## GPU and Device Passthrough
 
-Some services require access to host devices (GPUs, accelerators, serial ports, USB devices). These requirements conflict with full hardening — device access needs relaxed `cap_drop`, `read_only`, and `security_opt`.
+Some services require access to host devices (GPUs, accelerators, serial ports, USB devices). These
+requirements conflict with full hardening — device access needs relaxed `cap_drop`, `read_only`, and
+`security_opt`.
 
 ### NVIDIA GPUs
 
@@ -464,7 +480,8 @@ services:
     restart: unless-stopped
 ```
 
-`capabilities` is required. Values: `gpu` (graphics accelerator), `tpu` (AI accelerator), or driver-specific (e.g., `nvidia-compute`). `count` and `device_ids` are mutually exclusive.
+`capabilities` is required. Values: `gpu` (graphics accelerator), `tpu` (AI accelerator), or driver-specific
+(e.g., `nvidia-compute`). `count` and `device_ids` are mutually exclusive.
 
 ### AMD GPUs
 
@@ -507,7 +524,9 @@ Document why each hardening relaxation is necessary per service.
 
 ### Reboot Race with Device-Dependent Containers
 
-With `restart: unless-stopped`, Docker daemon may restart containers before systemd unit runs `compose up -d` on host reboot. For GPU containers, device may not be ready when Docker's policy fires → restart loop before systemd intervenes.
+With `restart: unless-stopped`, Docker daemon may restart containers before systemd unit runs `compose up -d`
+on host reboot. For GPU containers, device may not be ready when Docker's policy fires → restart loop before
+systemd intervenes.
 
 Mitigations:
 
@@ -525,11 +544,14 @@ Two separate log streams are governed by different settings:
 - **Container stdout/stderr** → Docker logging driver (`local`, `journald`, `json-file`).
 - **Compose CLI process output** → systemd `StandardOutput=journal`.
 
-These are independent. `StandardOutput=journal` in the systemd unit captures the Compose CLI process output (config validation, pull progress, startup messages). The Docker logging driver governs what each container writes to stdout/stderr.
+These are independent. `StandardOutput=journal` in the systemd unit captures the Compose CLI process output
+(config validation, pull progress, startup messages). The Docker logging driver governs what each container
+writes to stdout/stderr.
 
 ### Docker Daemon Configuration
 
-Prefer `local` driver with rotation, or configure explicitly. Avoid `json-file` without rotation — it has no rotation by default and will exhaust disk. `local` driver includes rotation by default.
+Prefer `local` driver with rotation, or configure explicitly. Avoid `json-file` without rotation — it has no
+rotation by default and will exhaust disk. `local` driver includes rotation by default.
 
 ```json
 {
@@ -541,7 +563,8 @@ Prefer `local` driver with rotation, or configure explicitly. Avoid `json-file` 
 }
 ```
 
-Enable `live-restore` to keep containers running across Docker daemon restarts — directly supports "Docker supervises lifecycle" model:
+Enable `live-restore` to keep containers running across Docker daemon restarts — directly supports "Docker
+supervises lifecycle" model:
 
 ```json
 {
@@ -768,12 +791,14 @@ secrets:
     file: /opt/example-stack/secrets/db-password.txt
 ```
 
-Secret is mounted at `/run/secrets/db-password` inside container. File permissions on host control access. Secret content never appears in image layers or `docker history`.
+Secret is mounted at `/run/secrets/db-password` inside container. File permissions on host control access.
+Secret content never appears in image layers or `docker history`.
 
 ### Secret Sources
 
 - `file` — content read from file path on host.
-- `environment` — value read from host environment variable (Compose only; not supported with `docker stack deploy`).
+- `environment` — value read from host environment variable (Compose only; not supported with
+  `docker stack deploy`).
 
 ```yaml
 secrets:
@@ -820,7 +845,8 @@ It does not know whether container later becomes:
 - Unable to reach dependency.
 - Functionally degraded.
 
-Docker health status alone does not automatically restart container. Restart policies react to process exit, not merely to `unhealthy` state.
+Docker health status alone does not automatically restart container. Restart policies react to process exit,
+not merely to `unhealthy` state.
 
 Use this recovery hierarchy:
 
@@ -830,7 +856,8 @@ Use this recovery hierarchy:
 4. Monitoring detects persistent failure.
 5. Administrator or carefully designed remediation process intervenes.
 
-Avoid blindly restarting entire stack whenever one container becomes unhealthy. That can turn localized failure into full-stack outage.
+Avoid blindly restarting entire stack whenever one container becomes unhealthy. That can turn localized
+failure into full-stack outage.
 
 ## Example Health Check Script
 
@@ -862,7 +889,10 @@ if [[ -n "$unhealthy" ]]; then
 fi
 ```
 
-Requires `jq` installed on host. `ps --format json` outputs NDJSON (one JSON object per line, not a JSON array). jq reads NDJSON as a stream of objects by default, so `select(...)` works directly. The `.[]? // .` filter also handles the array case for older Compose versions that may emit a JSON array. Fields: `ID`, `Name`, `Command`, `Project`, `Service`, `State`, `Health`, `ExitCode`, `Publishers`.
+Requires `jq` installed on host. `ps --format json` outputs NDJSON (one JSON object per line, not a JSON
+array). jq reads NDJSON as a stream of objects by default, so `select(...)` works directly. The `.[]? // .`
+filter also handles the array case for older Compose versions that may emit a JSON array. Fields: `ID`,
+`Name`, `Command`, `Project`, `Service`, `State`, `Health`, `ExitCode`, `Publishers`.
 
 Use script from:
 
@@ -889,7 +919,8 @@ User with Docker daemon access can typically:
 
 Do not assume running systemd service as non-root member of `docker` group provides strong isolation.
 
-For rootful Docker, running system service as root is often clearer and more honest than using nominally unprivileged account with Docker socket access.
+For rootful Docker, running system service as root is often clearer and more honest than using nominally
+unprivileged account with Docker socket access.
 
 For stronger isolation, consider rootless Docker mode or user namespace remapping.
 
@@ -966,9 +997,11 @@ for filesystems containing:
 - Certificates.
 - Configuration files.
 
-Do not assume `network-online.target` guarantees every external dependency is reachable. Applications must still implement retries.
+Do not assume `network-online.target` guarantees every external dependency is reachable. Applications must
+still implement retries.
 
-For device-dependent services (GPUs, accelerators), `network-online.target` does not guarantee device driver readiness. See Reboot Race section under GPU and Device Passthrough.
+For device-dependent services (GPUs, accelerators), `network-online.target` does not guarantee device driver
+readiness. See Reboot Race section under GPU and Device Passthrough.
 
 ## Bounded Startup Retries
 
@@ -1012,7 +1045,10 @@ ExecReload=/usr/bin/docker compose \
     up --detach --wait --wait-timeout 180 --remove-orphans
 ```
 
-This reconciles running deployment with current Compose configuration. Note: this is a **redeploy**, not an in-process reload. It may recreate changed containers, remove orphans, and cause brief outages. Do not use `systemctl reload` expecting zero-downtime config refresh — it runs `compose up` which recreates containers whose definitions changed.
+This reconciles running deployment with current Compose configuration. Note: this is a **redeploy**, not an
+in-process reload. It may recreate changed containers, remove orphans, and cause brief outages. Do not use
+`systemctl reload` expecting zero-downtime config refresh — it runs `compose up` which recreates containers
+whose definitions changed.
 
 Use:
 
@@ -1028,7 +1064,8 @@ after changing:
 - Mounted configuration.
 - Service definitions.
 
-Not every application reloads mounted configuration automatically. Compose may need to recreate affected container.
+Not every application reloads mounted configuration automatically. Compose may need to recreate affected
+container.
 
 ## Administrative Commands
 
@@ -1134,15 +1171,15 @@ docker compose \
 
 ## Operational Rules
 
-1. Treat Compose project as one systemd-managed deployment unit.
-2. Let Docker restart individual containers.
-3. Use `Type=oneshot`.
-4. Use `RemainAfterExit=yes`.
-5. Start stack with `docker compose up -d --wait`.
-6. Bound startup with `--wait-timeout`.
-7. Validate with `docker compose config --quiet`.
-8. Pull images in `ExecStartPre` before deployment (skip for air-gapped/pinned-digest stacks).
-9. Use explicit project names and paths.
+01. Treat Compose project as one systemd-managed deployment unit.
+02. Let Docker restart individual containers.
+03. Use `Type=oneshot`.
+04. Use `RemainAfterExit=yes`.
+05. Start stack with `docker compose up -d --wait`.
+06. Bound startup with `--wait-timeout`.
+07. Validate with `docker compose config --quiet`.
+08. Pull images in `ExecStartPre` before deployment (skip for air-gapped/pinned-digest stacks).
+09. Use explicit project names and paths.
 10. Use `compose stop` for normal shutdown.
 11. Do not pass `--timeout` to `compose stop` — let `stop_grace_period` govern.
 12. Reserve `compose down` for deliberate teardown.

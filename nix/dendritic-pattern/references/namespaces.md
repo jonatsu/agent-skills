@@ -1,6 +1,7 @@
 # Namespaces
 
-Namespaces create scoped aspect libraries under `den.ful.<name>`. They can be local, exported, or imported from upstream flakes.
+Namespaces create scoped aspect libraries under `den.ful.<name>`. They can be local, exported, or imported
+from upstream flakes.
 
 ## Creating a Namespace
 
@@ -16,6 +17,7 @@ Namespaces create scoped aspect libraries under `den.ful.<name>`. They can be lo
 ```
 
 This creates:
+
 - `den.ful.eg` — the namespace attrset (aspects type)
 - `eg` — a module argument alias to `den.ful.eg`
 - `flake.denful.eg` — flake output (if exported)

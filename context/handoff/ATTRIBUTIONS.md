@@ -18,33 +18,34 @@
 
 ## Adaptation
 
-Upstream supplied the core no-duplication discipline, redaction rule, focus tailoring, suggested-skills concept, and
-temporary save-location guidance.
+Upstream supplied the core no-duplication discipline, redaction rule, focus tailoring, suggested-skills
+concept, and temporary save-location guidance.
 
 The current skill adds:
 
 - pointer and stateful handoff branches so routine transfers remain short;
-- a mandatory scan for undocumented preferences, agreements, nuances, rejected approaches, scope, and unfinished
-  reasoning;
+- a mandatory scan for undocumented preferences, agreements, nuances, rejected approaches, scope, and
+  unfinished reasoning;
 - paste-ready `PRIME` and saved `DOCUMENT` delivery modes;
 - verification requirements for factual state included in a handoff; and
 - conditional sections for complex work without imposing a fixed template.
 
-The repository owner's session-priming workflow informed these additions. A successful multi-item priming brief supplied
-the initial stateful shape, and later routine skill-review handoffs exposed the need for a separate pointer form.
+The repository owner's session-priming workflow informed these additions. A successful multi-item priming
+brief supplied the initial stateful shape, and later routine skill-review handoffs exposed the need for a
+separate pointer form.
 
 ## Related Work Not Used as the Base
 
-The `handoff-engineering` skill in `alirezarezvani/claude-skills` is an intermediate MIT-licensed derivative of Matt
-Pocock's skill. It was evaluated but was not used as the base because its recommender hardcodes skills from its own
-publisher's repository. Two ideas were adopted independently and remain credited here: scaling length to the work and
-avoiding handoffs that merely summarize an earlier handoff.
+The `handoff-engineering` skill in `alirezarezvani/claude-skills` is an intermediate MIT-licensed derivative
+of Matt Pocock's skill. It was evaluated but was not used as the base because its recommender hardcodes skills
+from its own publisher's repository. Two ideas were adopted independently and remain credited here: scaling
+length to the work and avoiding handoffs that merely summarize an earlier handoff.
 
 ## Upstream License
 
-The upstream source is used under the MIT License. The verbatim license text ships as `LICENSE.upstream`; preserve it and
-this attribution file when redistributing the skill.
+The upstream source is used under the MIT License. The verbatim license text ships as `LICENSE.upstream`;
+preserve it and this attribution file when redistributing the skill.
 
 The license and copyright holder were verified against the pinned source on 2026-09-02 with
-`gh api repos/mattpocock/skills/contents/LICENSE?ref=d28dfdc39beadc3142a33359b5cfa4765dcbd0bc`. The upstream repository root
-at that revision contains no `NOTICE` file.
+`gh api repos/mattpocock/skills/contents/LICENSE?ref=d28dfdc39beadc3142a33359b5cfa4765dcbd0bc`. The upstream
+repository root at that revision contains no `NOTICE` file.

@@ -8,20 +8,22 @@ metadata:
 
 # Agents Management
 
-Build and maintain the smallest repository-local context system that gives each intended agent accurate, useful guidance.
+Build and maintain the smallest repository-local context system that gives each intended agent accurate,
+useful guidance.
 
-Repository facts are the authority for commands, paths, architecture, and conventions. Verify each claim against the
-repository or label it unverified. Do not infer an ecosystem for a greenfield repository or choose between conflicting
-manifests without evidence.
+Repository facts are the authority for commands, paths, architecture, and conventions. Verify each claim
+against the repository or label it unverified. Do not infer an ecosystem for a greenfield repository or choose
+between conflicting manifests without evidence.
 
 ## Scope
 
-This skill covers repository-local context such as root and nested `AGENTS.md` or `CLAUDE.md` files, vendor-specific
-instruction files, and `llms.txt`. A tracked file that this repository merely deploys into another environment is a
-payload, not this repository's context.
+This skill covers repository-local context such as root and nested `AGENTS.md` or `CLAUDE.md` files,
+vendor-specific instruction files, and `llms.txt`. A tracked file that this repository merely deploys into
+another environment is a payload, not this repository's context.
 
-Instruction files provide guidance. Hooks, permissions, and continuous integration provide deterministic enforcement.
-When a rule must hold every time, propose or identify the enforcement mechanism and use prose only to orient the agent.
+Instruction files provide guidance. Hooks, permissions, and continuous integration provide deterministic
+enforcement. When a rule must hold every time, propose or identify the enforcement mechanism and use prose
+only to orient the agent.
 
 ## Choose the Branch
 
@@ -29,38 +31,41 @@ When a rule must hold every time, propose or identify the enforcement mechanism 
   [references/initialize.md](references/initialize.md), then load templates only if needed.
 - **Maintain:** make a focused or broad update, repair drift, reconcile files, or migrate topology. Read
   [references/maintain.md](references/maintain.md).
-- **Audit:** assess validity, loading, usefulness, coherence, or behavioral evidence without assuming edits are wanted.
-  Read [references/audit.md](references/audit.md).
+- **Audit:** assess validity, loading, usefulness, coherence, or behavioral evidence without assuming edits
+  are wanted. Read [references/audit.md](references/audit.md).
 
-Read [references/loading-model.md](references/loading-model.md) when the branch must determine filenames, precedence,
-includes, nesting, reload behavior, or symlink support. Load only the relevant client adapters.
+Read [references/loading-model.md](references/loading-model.md) when the branch must determine filenames,
+precedence, includes, nesting, reload behavior, or symlink support. Load only the relevant client adapters.
 
 ## Shared Invariants
 
 - Establish the target agents and repository boundary before judging topology.
-- Preserve useful non-obvious knowledge, rationale, ordering constraints, failure modes, and generated-content boundaries.
-- Never overwrite or automatically reconcile two divergent real context files. Show their unique and conflicting content,
-  explain which clients receive each file, and ask which content should survive.
-- Reuse authorization in the user's request. Ask only when an unresolved choice changes topology, public behavior,
-  compatibility, data preservation, cost, or scope.
-- Do not create vendor-specific files merely because the skill recognizes them. Every file must serve a target client or
-  a verified repository need.
+- Preserve useful non-obvious knowledge, rationale, ordering constraints, failure modes, and generated-content
+  boundaries.
+- Never overwrite or automatically reconcile two divergent real context files. Show their unique and
+  conflicting content, explain which clients receive each file, and ask which content should survive.
+- Reuse authorization in the user's request. Ask only when an unresolved choice changes topology, public
+  behavior, compatibility, data preservation, cost, or scope.
+- Do not create vendor-specific files merely because the skill recognizes them. Every file must serve a target
+  client or a verified repository need.
 - Keep `llms.txt` conditional. It indexes documentation for language models; it is not an instruction file.
-- Report unknown loading behavior and unavailable evidence without blocking useful work for recognized capabilities.
+- Report unknown loading behavior and unavailable evidence without blocking useful work for recognized
+  capabilities.
 
-For additions, apply two tests. The **cache test** asks whether the agent can recover the fact cheaply from the repository
-or authoritative runtime help. The **behavior test** asks whether the instruction changes likely agent behavior. Retain a
-derivable fact only when it adds a reason, constraint, ordering dependency, or failure mode that the source does not show.
+For additions, apply two tests. The **cache test** asks whether the agent can recover the fact cheaply from
+the repository or authoritative runtime help. The **behavior test** asks whether the instruction changes
+likely agent behavior. Retain a derivable fact only when it adds a reason, constraint, ordering dependency, or
+failure mode that the source does not show.
 
 ## Completion
 
-For an edit, inspect every changed path and its removed lines. Restore any convention, reason, or gotcha that was not
-deliberately superseded. Verify referenced paths and commands, link targets, intended client coverage, generated-content
-boundaries, and the absence of placeholders. Use a fresh or reload-capable session when live loading verification is
-available; otherwise state the limitation.
+For an edit, inspect every changed path and its removed lines. Restore any convention, reason, or gotcha that
+was not deliberately superseded. Verify referenced paths and commands, link targets, intended client coverage,
+generated-content boundaries, and the absence of placeholders. Use a fresh or reload-capable session when live
+loading verification is available; otherwise state the limitation.
 
-For an audit, deliver findings by severity with evidence, affected clients, and consequences. Keep mechanical validity,
-loading and topology, content quality, whole-ruleset coherence, maintenance safety, and behavioral evidence as separate
-judgments. Do not collapse them into an aggregate score or letter grade.
+For an audit, deliver findings by severity with evidence, affected clients, and consequences. Keep mechanical
+validity, loading and topology, content quality, whole-ruleset coherence, maintenance safety, and behavioral
+evidence as separate judgments. Do not collapse them into an aggregate score or letter grade.
 
 Preserve `ATTRIBUTIONS.md` and `LICENSE.upstream` during every update.

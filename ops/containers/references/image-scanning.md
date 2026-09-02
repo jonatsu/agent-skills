@@ -1,6 +1,7 @@
 # Image Scanning, SBOM, and Signing
 
-Trivy, Grype, Hadolint, Syft, and Cosign — the standard OSS toolchain for finding CVEs, generating SBOMs, and signing container images. Includes CI integration, ignore files, and admission control policies.
+Trivy, Grype, Hadolint, Syft, and Cosign — the standard OSS toolchain for finding CVEs, generating SBOMs, and
+signing container images. Includes CI integration, ignore files, and admission control policies.
 
 See also:
 
@@ -235,14 +236,14 @@ cosign verify-attestation \
 
 ## 7. Registry Scanning Comparison
 
-| Registry | Built-in Scanning | Notes |
-|---|---|---|
-| GHCR (GitHub Container Registry) | No — run Trivy in CI | Best for OSS, OIDC auth |
-| AWS ECR | Yes (enhanced scanning via Inspector) | Enable per-repo |
-| GCP Artifact Registry | Yes (Container Analysis) | Enabled by default |
-| Azure ACR | Yes (Defender for Containers) | Premium tier |
-| Docker Hub | Yes (limited on free tier) | Avoid for private images |
-| Harbor | Yes (via Trivy/Clair) | Self-hosted |
+| Registry                         | Built-in Scanning                     | Notes                    |
+| -------------------------------- | ------------------------------------- | ------------------------ |
+| GHCR (GitHub Container Registry) | No — run Trivy in CI                  | Best for OSS, OIDC auth  |
+| AWS ECR                          | Yes (enhanced scanning via Inspector) | Enable per-repo          |
+| GCP Artifact Registry            | Yes (Container Analysis)              | Enabled by default       |
+| Azure ACR                        | Yes (Defender for Containers)         | Premium tier             |
+| Docker Hub                       | Yes (limited on free tier)            | Avoid for private images |
+| Harbor                           | Yes (via Trivy/Clair)                 | Self-hosted              |
 
 Enable ECR enhanced scanning:
 
@@ -309,11 +310,11 @@ spec:
 
 ## 9. Scanner Selection Guide
 
-| Use case | Recommended tool |
-|---|---|
-| One tool that does most things (CVE + secret + misconfig + SBOM) | Trivy |
-| Deep supply chain integration with SBOM-first workflow | Syft + Grype |
-| Dockerfile static analysis before build | Hadolint |
-| Filesystem / IaC / K8s manifest scanning | Trivy `config`, `fs` |
-| Runtime container behaviour anomalies | Falco (see `kubernetes-pod-security.md`) |
-| Commercial support & policy management | Snyk, Prisma Cloud, Aqua |
+| Use case                                                         | Recommended tool                         |
+| ---------------------------------------------------------------- | ---------------------------------------- |
+| One tool that does most things (CVE + secret + misconfig + SBOM) | Trivy                                    |
+| Deep supply chain integration with SBOM-first workflow           | Syft + Grype                             |
+| Dockerfile static analysis before build                          | Hadolint                                 |
+| Filesystem / IaC / K8s manifest scanning                         | Trivy `config`, `fs`                     |
+| Runtime container behaviour anomalies                            | Falco (see `kubernetes-pod-security.md`) |
+| Commercial support & policy management                           | Snyk, Prisma Cloud, Aqua                 |

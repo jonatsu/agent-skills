@@ -4,7 +4,7 @@
 
 - [Run Scripts](#run-scripts)
 - [OS-Scoped Script Directories](#os-scoped-script-directories)
-- [Reset run_once_ Scripts](#reset-run_once_-scripts)
+- [Reset run_once\_ Scripts](#reset-run_once_-scripts)
 - [Ignore Rules](#ignore-rules)
 
 ## Run Scripts
@@ -24,11 +24,10 @@ run_onchange_before_10-install-pkgs.sh.tmpl  # runs second
 run_onchange_after_00-rehash.sh.tmpl
 ```
 
-Every script chezmoi runs gets `CHEZMOI_EXECUTABLE` in its environment — the
-absolute path of the running chezmoi binary. Use it instead of a bare
-`chezmoi` PATH lookup when a script needs to invoke chezmoi itself (e.g.
-`chezmoi age decrypt`); a non-interactive invocation may not have a
-version-manager's shim dir (mise, asdf) on `PATH`.
+Every script chezmoi runs gets `CHEZMOI_EXECUTABLE` in its environment — the absolute path of the running
+chezmoi binary. Use it instead of a bare `chezmoi` PATH lookup when a script needs to invoke chezmoi itself
+(e.g. `chezmoi age decrypt`); a non-interactive invocation may not have a version-manager's shim dir (mise,
+asdf) on `PATH`.
 
 ```bash
 _chezmoi="${CHEZMOI_EXECUTABLE:-chezmoi}"
@@ -47,7 +46,8 @@ Place scripts under `.chezmoiscripts/<os>/` to limit execution to a platform:
 └── run_always_after_99-reload.sh.tmpl   # all platforms
 ```
 
-`<os>` matches `.chezmoi.os`: `linux`, `darwin`, `windows`. Scripts outside a subdirectory run on all platforms.
+`<os>` matches `.chezmoi.os`: `linux`, `darwin`, `windows`. Scripts outside a subdirectory run on all
+platforms.
 
 Example `run_once_install-packages.sh.tmpl`:
 
@@ -60,7 +60,7 @@ sudo apt-get install -y ripgrep fd-find bat
 {{ end -}}
 ```
 
-## Reset run_once_ Scripts
+## Reset run_once\_ Scripts
 
 Force re-execution on next apply:
 
@@ -68,13 +68,12 @@ Force re-execution on next apply:
 chezmoi state delete-bucket --bucket=scriptState
 ```
 
-Reference: https://www.chezmoi.io/reference/special-directories/chezmoi-scripts/
+Reference: <https://www.chezmoi.io/reference/special-directories/chezmoi-scripts/>
 
 ## Ignore Rules
 
-`.chezmoiignore` lists paths chezmoi should not manage, matched against the
-**target-stripped name** — not the raw source filename. Supports `.tmpl`
-suffix, making ignore rules platform-conditional:
+`.chezmoiignore` lists paths chezmoi should not manage, matched against the **target-stripped name** — not the
+raw source filename. Supports `.tmpl` suffix, making ignore rules platform-conditional:
 
 ```
 # Always ignore
@@ -92,17 +91,16 @@ dot_config/nvim/
 {{ end -}}
 ```
 
-`lookPath "binary"` returns path if found in `$PATH`, empty string otherwise. Use `| not | not` to coerce to bool, or wrap in `if` directly (empty string is falsy).
+`lookPath "binary"` returns path if found in `$PATH`, empty string otherwise. Use `| not | not` to coerce to
+bool, or wrap in `if` directly (empty string is falsy).
 
-**Gotcha — patterns match the target-stripped name, not the source filename.**
-A `run_once_before_migrate.sh` script is matched by the pattern `migrate.sh`
-(prefix and any `.tmpl` suffix stripped), not by the literal source name
-`run_once_before_migrate.sh`. A pattern using the raw source name doesn't
-error — it silently never matches, so the "ignored" script keeps running on
-every apply. Verify a pattern actually took effect:
+**Gotcha — patterns match the target-stripped name, not the source filename.** A `run_once_before_migrate.sh`
+script is matched by the pattern `migrate.sh` (prefix and any `.tmpl` suffix stripped), not by the literal
+source name `run_once_before_migrate.sh`. A pattern using the raw source name doesn't error — it silently
+never matches, so the "ignored" script keeps running on every apply. Verify a pattern actually took effect:
 
 ```bash
 chezmoi --no-tty ignored   # --no-tty avoids hanging on an age-passphrase prompt during source-state evaluation
 ```
 
-Reference: https://www.chezmoi.io/reference/special-files/chezmoiignore/
+Reference: <https://www.chezmoi.io/reference/special-files/chezmoiignore/>

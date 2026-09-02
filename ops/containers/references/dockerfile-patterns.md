@@ -1,6 +1,7 @@
 # Dockerfile Patterns
 
-Multi-stage builds, base image selection, non-root user setup, secrets handling, and full hardened examples for common language runtimes.
+Multi-stage builds, base image selection, non-root user setup, secrets handling, and full hardened examples
+for common language runtimes.
 
 See also:
 
@@ -256,7 +257,8 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD ["node", "-e", "require('http').get('http://localhost:3000/health', r => process.exit(r.statusCode===200?0:1))"]
 ```
 
-For distroless / scratch images that don't have `curl`, use the language runtime for the healthcheck (as above) or ship a static healthcheck binary from the builder stage.
+For distroless / scratch images that don't have `curl`, use the language runtime for the healthcheck (as
+above) or ship a static healthcheck binary from the builder stage.
 
 ---
 
@@ -341,7 +343,8 @@ CMD ["dist/server.js"]
 
 ## 9. BuildKit Cache Mounts
 
-BuildKit `--mount=type=cache` avoids re-downloading dependencies between builds without persisting them into image layers.
+BuildKit `--mount=type=cache` avoids re-downloading dependencies between builds without persisting them into
+image layers.
 
 ```dockerfile
 # npm
@@ -373,15 +376,15 @@ docker buildx build ...
 
 ## 10. Common Dockerfile Anti-Patterns
 
-| Anti-pattern | Why it's wrong | Fix |
-|---|---|---|
-| `FROM ubuntu:latest` | Massive attack surface, mutable tag | Use `distroless` / `slim`, pin digest |
-| Running as root | Container escapes reach host as root | `USER <non-root>` before `CMD` |
-| `apt-get install` without cleanup | Bloats image with apt cache | `&& rm -rf /var/lib/apt/lists/*` in same layer |
-| `COPY . .` before `RUN npm ci` | Cache-busts dep install on every code change | Copy lock files first, install deps, then `COPY . .` |
-| `ENV SECRET=xxx` | Secret baked into layer | `RUN --mount=type=secret,id=...` |
-| Single-stage build with build tools | Compiler / dev deps ship to prod | Multi-stage: build in stage 1, copy artifacts to minimal stage 2 |
-| `ENTRYPOINT bash -c "..."` (shell form) | Extra process, signals broken | Exec form: `ENTRYPOINT ["bash", "-c", "..."]` — or better, no shell at all |
-| No `HEALTHCHECK` | Orchestrator can't tell healthy from broken | Add `HEALTHCHECK` |
-| `USER 0` or missing `USER` | Runs as root | Set explicit non-root UID/GID |
-| Pinning to floating tag (`node:20`) | Image drifts silently | Pin to `@sha256:` digest; automate with Renovate |
+| Anti-pattern                            | Why it's wrong                               | Fix                                                                        |
+| --------------------------------------- | -------------------------------------------- | -------------------------------------------------------------------------- |
+| `FROM ubuntu:latest`                    | Massive attack surface, mutable tag          | Use `distroless` / `slim`, pin digest                                      |
+| Running as root                         | Container escapes reach host as root         | `USER <non-root>` before `CMD`                                             |
+| `apt-get install` without cleanup       | Bloats image with apt cache                  | `&& rm -rf /var/lib/apt/lists/*` in same layer                             |
+| `COPY . .` before `RUN npm ci`          | Cache-busts dep install on every code change | Copy lock files first, install deps, then `COPY . .`                       |
+| `ENV SECRET=xxx`                        | Secret baked into layer                      | `RUN --mount=type=secret,id=...`                                           |
+| Single-stage build with build tools     | Compiler / dev deps ship to prod             | Multi-stage: build in stage 1, copy artifacts to minimal stage 2           |
+| `ENTRYPOINT bash -c "..."` (shell form) | Extra process, signals broken                | Exec form: `ENTRYPOINT ["bash", "-c", "..."]` — or better, no shell at all |
+| No `HEALTHCHECK`                        | Orchestrator can't tell healthy from broken  | Add `HEALTHCHECK`                                                          |
+| `USER 0` or missing `USER`              | Runs as root                                 | Set explicit non-root UID/GID                                              |
+| Pinning to floating tag (`node:20`)     | Image drifts silently                        | Pin to `@sha256:` digest; automate with Renovate                           |

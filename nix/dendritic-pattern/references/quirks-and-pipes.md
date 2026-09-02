@@ -1,6 +1,7 @@
 # Quirks & Pipes
 
-Quirks solve structured data aggregation between aspects without coupling. Producers emit data on named keys; consumers receive assembled data via function arguments.
+Quirks solve structured data aggregation between aspects without coupling. Producers emit data on named keys;
+consumers receive assembled data via function arguments.
 
 ## Quick Start: Firewall Ports
 
@@ -27,11 +28,16 @@ den.aspects.networking = {
 };
 ```
 
-No pipe policy needed — same-scope aggregation works out of the box. If no producers emit data, consumer receives `[]`.
+No pipe policy needed — same-scope aggregation works out of the box. If no producers emit data, consumer
+receives `[]`.
 
 ## Quirk Names Shadow Nested Aspects — Silently
 
-**A registered quirk name wins over every other interpretation of that key.** den classifies an aspect's keys in a fixed order: **pipe (quirk) keys first**, then class keys, then nested aspects. Because quirk keys are filtered out of the candidate set before nested-aspect classification runs, a nested aspect whose key collides with a registered `den.quirks` name is read as pipe data and **never registers as an aspect**. No error, no warning.
+**A registered quirk name wins over every other interpretation of that key.** den classifies an aspect's keys
+in a fixed order: **pipe (quirk) keys first**, then class keys, then nested aspects. Because quirk keys are
+filtered out of the candidate set before nested-aspect classification runs, a nested aspect whose key collides
+with a registered `den.quirks` name is read as pipe data and **never registers as an aspect**. No error, no
+warning.
 
 ```nix
 den.quirks.firewall = { description = "Firewall port declarations"; };
@@ -42,27 +48,29 @@ den.aspects.edge.firewall = {
 };
 ```
 
-Pick quirk names you would never use as an aspect key, and check `den.quirks` before naming a nested aspect. Verified against den `2040b613` (`nix/lib/aspects/fx/key-classification.nix`).
+Pick quirk names you would never use as an aspect key, and check `den.quirks` before naming a nested aspect.
+Verified against den `2040b613` (`nix/lib/aspects/fx/key-classification.nix`).
 
-**Related:** sub-aspects are never auto-walked. den's classifier relies on this — nested aspects activate only via an explicit `includes`, which is why depth-1 key detection suffices.
+**Related:** sub-aspects are never auto-walked. den's classifier relies on this — nested aspects activate only
+via an explicit `includes`, which is why depth-1 key detection suffices.
 
 ## Pipe Builder API
 
 All pipe stages accessed via `den.lib.policy.pipe`:
 
-| Stage | Purpose |
-|-------|---------|
-| `pipe.from "quirk-name" [ stages ]` | Start a pipe from a quirk |
-| `pipe.filter (e: predicate)` | Remove entries not matching predicate |
-| `pipe.transform (e: newShape)` | Map each entry to a new shape |
-| `pipe.fold (acc: n: acc + n) initial` | Reduce all entries to a single value |
-| `pipe.append { name = "default"; }` | Add a synthetic entry |
+| Stage                                   | Purpose                                          |
+| --------------------------------------- | ------------------------------------------------ |
+| `pipe.from "quirk-name" [ stages ]`     | Start a pipe from a quirk                        |
+| `pipe.filter (e: predicate)`            | Remove entries not matching predicate            |
+| `pipe.transform (e: newShape)`          | Map each entry to a new shape                    |
+| `pipe.fold (acc: n: acc + n) initial`   | Reduce all entries to a single value             |
+| `pipe.append { name = "default"; }`     | Add a synthetic entry                            |
 | `pipe.for (vals: lib.reverseList vals)` | Replace entire list (max one per pipe per scope) |
-| `pipe.expose` | Push child-scope data to parent scope |
-| `pipe.collect ({ host, ... }: true)` | Harvest data from sibling scopes (cross-host) |
-| `pipe.withProvenance` | Track source scope of collected data |
-| `pipe.as "new-quirk-name"` | Rename pipe output (creates derived quirks) |
-| `pipe.to [ den.aspects.target ]` | Route pipe data to specific aspects only |
+| `pipe.expose`                           | Push child-scope data to parent scope            |
+| `pipe.collect ({ host, ... }: true)`    | Harvest data from sibling scopes (cross-host)    |
+| `pipe.withProvenance`                   | Track source scope of collected data             |
+| `pipe.as "new-quirk-name"`              | Rename pipe output (creates derived quirks)      |
+| `pipe.to [ den.aspects.target ]`        | Route pipe data to specific aspects only         |
 
 ## Cross-Scope Flow
 
@@ -93,7 +101,8 @@ den.policies.backends-to-monitoring = { host, ... }:
   ];
 ```
 
-Consumers of `monitoring-targets` receive transformed data. Consumers of `backends` are unaffected. `pipe.as` must target a different quirk than its source.
+Consumers of `monitoring-targets` receive transformed data. Consumers of `backends` are unaffected. `pipe.as`
+must target a different quirk than its source.
 
 ## Config-Dependent Thunks
 

@@ -1,6 +1,7 @@
 # Runtime Security — `docker run` Hardening
 
-Runtime hardening for Docker and Compose: read-only filesystem, Linux capability drops, seccomp, AppArmor, `no-new-privileges`, resource limits, and how to audit which syscalls your app actually uses.
+Runtime hardening for Docker and Compose: read-only filesystem, Linux capability drops, seccomp, AppArmor,
+`no-new-privileges`, resource limits, and how to audit which syscalls your app actually uses.
 
 See also:
 
@@ -39,28 +40,30 @@ docker run \
 
 Drop ALL capabilities, then explicitly re-add only what your app requires.
 
-| Capability | Purpose | Keep? |
-|---|---|---|
-| `NET_BIND_SERVICE` | Bind ports < 1024 | Only if binding a privileged port |
-| `CHOWN` | Change file ownership | No — set ownership at build time |
-| `SETUID` / `SETGID` | Switch user identity | No — always drop |
-| `SYS_ADMIN` | Broad privileged operations | No — most dangerous capability |
-| `NET_ADMIN` | Configure network interfaces | No (only network tools) |
-| `SYS_PTRACE` | Debug / trace processes | No (only debugger containers) |
-| `DAC_OVERRIDE` | Override file permissions | No — run as correct user instead |
-| `NET_RAW` | Raw sockets (ping) | No (blocked by default seccomp anyway) |
-| `MKNOD` | Create device nodes | No |
-| `SYS_TIME` | Set system clock | No |
+| Capability          | Purpose                      | Keep?                                  |
+| ------------------- | ---------------------------- | -------------------------------------- |
+| `NET_BIND_SERVICE`  | Bind ports < 1024            | Only if binding a privileged port      |
+| `CHOWN`             | Change file ownership        | No — set ownership at build time       |
+| `SETUID` / `SETGID` | Switch user identity         | No — always drop                       |
+| `SYS_ADMIN`         | Broad privileged operations  | No — most dangerous capability         |
+| `NET_ADMIN`         | Configure network interfaces | No (only network tools)                |
+| `SYS_PTRACE`        | Debug / trace processes      | No (only debugger containers)          |
+| `DAC_OVERRIDE`      | Override file permissions    | No — run as correct user instead       |
+| `NET_RAW`           | Raw sockets (ping)           | No (blocked by default seccomp anyway) |
+| `MKNOD`             | Create device nodes          | No                                     |
+| `SYS_TIME`          | Set system clock             | No                                     |
 
 **Most web apps need ZERO capabilities.** `--cap-drop ALL` alone is often sufficient.
 
-Investigate before adding a capability back. `SYS_ADMIN` in particular is almost always avoidable — it grants powers roughly equivalent to root.
+Investigate before adding a capability back. `SYS_ADMIN` in particular is almost always avoidable — it grants
+powers roughly equivalent to root.
 
 ---
 
 ## 3. Read-Only Root Filesystem
 
-Prevents attackers who compromise a process from modifying the running application, dropping persistent backdoors, or writing to `/etc/passwd`.
+Prevents attackers who compromise a process from modifying the running application, dropping persistent
+backdoors, or writing to `/etc/passwd`.
 
 ```bash
 docker run \
@@ -87,7 +90,8 @@ If the app writes elsewhere (`/var/lib/<app>`, `/data`), mount a named volume fo
 
 ## 4. `no-new-privileges`
 
-Blocks `setuid` and `setgid` binaries inside the container from gaining elevated privileges. Blocks a whole family of container escapes.
+Blocks `setuid` and `setgid` binaries inside the container from gaining elevated privileges. Blocks a whole
+family of container escapes.
 
 ```bash
 --security-opt no-new-privileges:true
@@ -99,7 +103,8 @@ MUST enable for every production container. Zero downside for the vast majority 
 
 ## 5. Seccomp — Syscall Filtering
 
-The Docker default seccomp profile blocks ~44 dangerous syscalls (`kexec_load`, `mount`, `setns`, `reboot`, etc.). For stricter allowlist-based filtering, use a custom profile.
+The Docker default seccomp profile blocks ~44 dangerous syscalls (`kexec_load`, `mount`, `setns`, `reboot`,
+etc.). For stricter allowlist-based filtering, use a custom profile.
 
 ### Workflow: build a custom seccomp profile
 
@@ -233,15 +238,15 @@ falco -pk                                          # Alerts on runtime anomalies
 
 ## 10. Runtime Hardening Anti-Patterns
 
-| Anti-pattern | Fix |
-|---|---|
-| `--privileged` | Almost never needed. Use targeted `--cap-add` and `--device` instead. |
-| `--cap-add SYS_ADMIN` | Investigate — this is close to root. Usually a symptom of a poor image (mount attempt, container-in-container). |
-| `-v /:/host` | Full host filesystem exposed. Never. |
-| `-v /var/run/docker.sock:/var/run/docker.sock` | Container can control the Docker daemon → root on host. Use socket proxy or rootless. |
-| `--net=host` | Bypasses network namespace isolation. Only for host-level tooling. |
-| `--pid=host` or `--ipc=host` | Breaks process / IPC isolation. Only for host-level tooling. |
-| `--user root` (or missing `--user` and image has no `USER`) | Runs as root inside the container. Always set `--user <non-root>`. |
-| No seccomp / `seccomp=unconfined` | Lets every syscall through, including `kexec_load`, `mount`, etc. Use default or custom profile. |
-| No resource limits | One runaway container OOM-kills the host. Always set `--memory`, `--cpus`, `--pids-limit`. |
-| Publishing DB / cache ports to `0.0.0.0` | Externally reachable database. Bind to `127.0.0.1` or use an internal network. |
+| Anti-pattern                                                | Fix                                                                                                             |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `--privileged`                                              | Almost never needed. Use targeted `--cap-add` and `--device` instead.                                           |
+| `--cap-add SYS_ADMIN`                                       | Investigate — this is close to root. Usually a symptom of a poor image (mount attempt, container-in-container). |
+| `-v /:/host`                                                | Full host filesystem exposed. Never.                                                                            |
+| `-v /var/run/docker.sock:/var/run/docker.sock`              | Container can control the Docker daemon → root on host. Use socket proxy or rootless.                           |
+| `--net=host`                                                | Bypasses network namespace isolation. Only for host-level tooling.                                              |
+| `--pid=host` or `--ipc=host`                                | Breaks process / IPC isolation. Only for host-level tooling.                                                    |
+| `--user root` (or missing `--user` and image has no `USER`) | Runs as root inside the container. Always set `--user <non-root>`.                                              |
+| No seccomp / `seccomp=unconfined`                           | Lets every syscall through, including `kexec_load`, `mount`, etc. Use default or custom profile.                |
+| No resource limits                                          | One runaway container OOM-kills the host. Always set `--memory`, `--cpus`, `--pids-limit`.                      |
+| Publishing DB / cache ports to `0.0.0.0`                    | Externally reachable database. Bind to `127.0.0.1` or use an internal network.                                  |

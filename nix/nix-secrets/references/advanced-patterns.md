@@ -35,6 +35,7 @@ secrets/*.yaml diff=sopsdiffer
 ```
 
 Then in `.git/config`:
+
 ```ini
 [diff "sopsdiffer"]
     textconv = "sops -d"

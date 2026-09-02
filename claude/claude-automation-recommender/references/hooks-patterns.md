@@ -1,9 +1,10 @@
 # Hooks Recommendations
 
-Hooks run commands in response to Claude Code events. Ideal for enforcement and
-automation that must happen consistently.
+Hooks run commands in response to Claude Code events. Ideal for enforcement and automation that must happen
+consistently.
 
-**Contents**
+Contents:
+
 - [The hook contract](#the-hook-contract) — read before writing any hook
 - [Cost model](#cost-model)
 - [Formatting and lint hooks](#formatting-and-lint-hooks)
@@ -19,12 +20,11 @@ automation that must happen consistently.
 
 ## The Hook Contract
 
-A hook recommendation that omits this contract gets implemented wrong. Include
-the relevant parts in any hook the report recommends.
+A hook recommendation that omits this contract gets implemented wrong. Include the relevant parts in any hook
+the report recommends.
 
-**Placement.** User and project hooks go in `.claude/settings.json` (or
-`settings.local.json`, or the user-level settings file) under a top-level
-`hooks` key:
+**Placement.** User and project hooks go in `.claude/settings.json` (or `settings.local.json`, or the
+user-level settings file) under a top-level `hooks` key:
 
 ```json
 {
@@ -39,30 +39,28 @@ the relevant parts in any hook the report recommends.
 }
 ```
 
-Plugin hooks live in `hooks/hooks.json` and use a `{"description": …, "hooks":
-{…}}` wrapper.
+Plugin hooks live in `hooks/hooks.json` and use a `{"description": …, "hooks": {…}}` wrapper.
 
-**Input.** Every command hook receives a JSON object on **stdin** — nothing is
-passed as an argument. Common fields: `session_id`, `cwd`, `hook_event_name`.
-For `PreToolUse`/`PostToolUse`: `tool_name`, `tool_input`, and (PostToolUse)
-`tool_response`. The edited path is `.tool_input.file_path`, so every
-file-scoped hook starts by extracting it:
+**Input.** Every command hook receives a JSON object on **stdin** — nothing is passed as an argument. Common
+fields: `session_id`, `cwd`, `hook_event_name`. For `PreToolUse`/`PostToolUse`: `tool_name`, `tool_input`, and
+(PostToolUse) `tool_response`. The edited path is `.tool_input.file_path`, so every file-scoped hook starts by
+extracting it:
 
 ```bash
 file_path=$(jq -r '.tool_input.file_path // empty')
 [ -n "$file_path" ] || exit 0
 ```
 
-The `// empty` guard matters: a matcher that also catches `Bash` yields no
-`file_path`, and an unguarded hook then runs against the literal string `null`.
+The `// empty` guard matters: a matcher that also catches `Bash` yields no `file_path`, and an unguarded hook
+then runs against the literal string `null`.
 
 **Output and exit codes.**
 
-| Exit | Meaning |
-|------|---------|
-| `0` | Success; stdout shown in the transcript |
-| `2` | Blocking error; **stderr is fed back to Claude** |
-| other | Non-blocking error; execution continues |
+| Exit  | Meaning                                          |
+| ----- | ------------------------------------------------ |
+| `0`   | Success; stdout shown in the transcript          |
+| `2`   | Blocking error; **stderr is fed back to Claude** |
+| other | Non-blocking error; execution continues          |
 
 `PreToolUse` may instead print JSON to stdout to decide explicitly:
 
@@ -72,37 +70,33 @@ The `// empty` guard matters: a matcher that also catches `Bash` yields no
 
 `permissionDecision` is `allow`, `deny`, or `ask`.
 
-**Matchers** filter by tool name, are case-sensitive, and accept regex:
-`"Edit|Write"`, `"Bash"`, `"*"`, `"mcp__.*"`.
+**Matchers** filter by tool name, are case-sensitive, and accept regex: `"Edit|Write"`, `"Bash"`, `"*"`,
+`"mcp__.*"`.
 
-**Timeouts** default to 60s for command hooks, 30s for prompt hooks; set
-`"timeout": <seconds>` per hook.
+**Timeouts** default to 60s for command hooks, 30s for prompt hooks; set `"timeout": <seconds>` per hook.
 
-**Hooks load at session start.** Editing `settings.json` does not affect the
-running session — Claude Code must be restarted. Say this whenever recommending
-a hook. Use `/hooks` to inspect what is loaded and `claude --debug` to trace
-execution.
+**Hooks load at session start.** Editing `settings.json` does not affect the running session — Claude Code
+must be restarted. Say this whenever recommending a hook. Use `/hooks` to inspect what is loaded and
+`claude --debug` to trace execution.
 
-**Hooks run in parallel** and cannot see each other's output. Design them
-independently.
+**Hooks run in parallel** and cannot see each other's output. Design them independently.
 
 ---
 
 ## Cost Model
 
-Every `PostToolUse` hook adds latency to every matching edit. State the cost
-when recommending one.
+Every `PostToolUse` hook adds latency to every matching edit. State the cost when recommending one.
 
-| Pattern | Typical cost per edit | Notes |
-|---------|----------------------|-------|
-| Format one file | 50-300 ms | Safe default |
-| Lint one file | 100-500 ms | Safe default |
-| Type-check whole project | **1-30 s** | `tsc --noEmit` and `mypy` have no cheap single-file mode; recommend only on small projects, or move to a `Stop` hook |
-| Run one related test file | 0.5-5 s | Acceptable when the mapping is reliable |
-| Run the full test suite | **Minutes** | NEVER recommend on `PostToolUse` |
+| Pattern                   | Typical cost per edit | Notes                                                                                                                |
+| ------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Format one file           | 50-300 ms             | Safe default                                                                                                         |
+| Lint one file             | 100-500 ms            | Safe default                                                                                                         |
+| Type-check whole project  | **1-30 s**            | `tsc --noEmit` and `mypy` have no cheap single-file mode; recommend only on small projects, or move to a `Stop` hook |
+| Run one related test file | 0.5-5 s               | Acceptable when the mapping is reliable                                                                              |
+| Run the full test suite   | **Minutes**           | NEVER recommend on `PostToolUse`                                                                                     |
 
-Cheaper placements for expensive checks: a `Stop` hook (runs once when Claude
-finishes) or the existing pre-commit framework.
+Cheaper placements for expensive checks: a `Stop` hook (runs once when Claude finishes) or the existing
+pre-commit framework.
 
 ---
 
@@ -131,15 +125,14 @@ finishes) or the existing pre-commit framework.
 }
 ```
 
-`--ignore-unknown` makes Prettier skip files it does not handle, so the hook can
-match every edit without erroring on `.py` or `.rs`.
+`--ignore-unknown` makes Prettier skip files it does not handle, so the hook can match every edit without
+erroring on `.py` or `.rs`.
 
 ### ESLint (JavaScript/TypeScript)
 
 **Detect**: `.eslintrc*`, `eslint.config.js`
 
-Same shape, with `npx eslint --fix "$f"`. Guard the extension so the hook stays
-quiet on non-JS files:
+Same shape, with `npx eslint --fix "$f"`. Guard the extension so the hook stays quiet on non-JS files:
 
 ```bash
 case "$f" in *.js|*.jsx|*.ts|*.tsx) npx eslint --fix "$f" ;; esac
@@ -184,9 +177,8 @@ Same shape: `black "$f" && isort "$f"` inside the `*.py` case.
 
 ### Already have pre-commit?
 
-If `.pre-commit-config.yaml`, Husky, or lefthook is configured, these hooks
-duplicate checks that already run at commit time. Recommend a single
-`Stop`-event `pre-commit run --files …` instead, or nothing at all.
+If `.pre-commit-config.yaml`, Husky, or lefthook is configured, these hooks duplicate checks that already run
+at commit time. Recommend a single `Stop`-event `pre-commit run --files …` instead, or nothing at all.
 
 ---
 
@@ -194,8 +186,8 @@ duplicate checks that already run at commit time. Recommend a single
 
 **Detect**: `tsconfig.json`, `mypy.ini`, `pyrightconfig.json`
 
-Whole-project type checks are expensive (see [Cost model](#cost-model)).
-Recommend on the `Stop` event rather than per edit:
+Whole-project type checks are expensive (see [Cost model](#cost-model)). Recommend on the `Stop` event rather
+than per edit:
 
 ```json
 {
@@ -212,8 +204,7 @@ Recommend on the `Stop` event rather than per edit:
 }
 ```
 
-Exit 2 with the errors on stderr to push them back to Claude for a fix; exit 0
-to report without blocking.
+Exit 2 with the errors on stderr to push them back to Claude for a fix; exit 0 to report without blocking.
 
 ---
 
@@ -221,8 +212,8 @@ to report without blocking.
 
 **Detect**: `jest.config.*`, `vitest.config.*`, `pytest.ini`, `tests/`
 
-Only worth recommending when a source file maps predictably to a test file.
-Jest and Vitest can do the mapping themselves:
+Only worth recommending when a source file maps predictably to a test file. Jest and Vitest can do the mapping
+themselves:
 
 ```json
 {
@@ -243,8 +234,8 @@ Jest and Vitest can do the mapping themselves:
 }
 ```
 
-For pytest, map `src/foo/bar.py` → `tests/foo/test_bar.py` and skip when the
-file does not exist. NEVER recommend a bare `pytest` or `npm test`.
+For pytest, map `src/foo/bar.py` → `tests/foo/test_bar.py` and skip when the file does not exist. NEVER
+recommend a bare `pytest` or `npm test`.
 
 ---
 
@@ -254,8 +245,8 @@ Cheap (no subprocess beyond `jq`) and the highest-value category.
 
 ### Block edits to secrets and lock files
 
-**Detect**: `.env*`, `credentials.json`, `secrets.yaml`, `*.lock`,
-`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `Cargo.lock`, `poetry.lock`
+**Detect**: `.env*`, `credentials.json`, `secrets.yaml`, `*.lock`, `package-lock.json`, `yarn.lock`,
+`pnpm-lock.yaml`, `Cargo.lock`, `poetry.lock`
 
 ```json
 {
@@ -275,13 +266,13 @@ Cheap (no subprocess beyond `jq`) and the highest-value category.
 }
 ```
 
-Exit 2 blocks the tool call and shows the stderr message to Claude, which then
-explains the block rather than retrying.
+Exit 2 blocks the tool call and shows the stderr message to Claude, which then explains the block rather than
+retrying.
 
 ### Require confirmation instead of blocking
 
-Swap the `exit 2` for a stdout JSON payload with
-`"permissionDecision": "ask"` when the path should be editable with approval.
+Swap the `exit 2` for a stdout JSON payload with `"permissionDecision": "ask"` when the path should be
+editable with approval.
 
 ---
 
@@ -289,21 +280,21 @@ Swap the `exit 2` for a stdout JSON payload with
 
 Fire when Claude Code notifies the user. Matchers filter by notification type.
 
-| Matcher | Triggers when |
-|---------|---------------|
-| `permission_prompt` | Claude needs permission for a tool |
-| `idle_prompt` | Claude is waiting for input (60+ seconds) |
-| `auth_success` | Authentication succeeds |
-| `elicitation_dialog` | An MCP tool needs input |
+| Matcher              | Triggers when                             |
+| -------------------- | ----------------------------------------- |
+| `permission_prompt`  | Claude needs permission for a tool        |
+| `idle_prompt`        | Claude is waiting for input (60+ seconds) |
+| `auth_success`       | Authentication succeeds                   |
+| `elicitation_dialog` | An MCP tool needs input                   |
 
-Pick the command for the platform — the macOS-only examples that circulate for
-this are silent no-ops on Linux:
+Pick the command for the platform — the macOS-only examples that circulate for this are silent no-ops on
+Linux:
 
-| Platform | Sound | Desktop notification |
-|----------|-------|---------------------|
-| macOS | `afplay /System/Library/Sounds/Ping.aiff` | `osascript -e 'display notification "Claude is waiting" with title "Claude Code"'` |
-| Linux | `paplay /usr/share/sounds/freedesktop/stereo/message.oga` | `notify-send "Claude Code" "Claude is waiting"` |
-| WSL2 | `powershell.exe -c '[console]::beep(880,200)'` | `powershell.exe -c "New-BurntToastNotification -Text 'Claude Code'"` (needs BurntToast), or `notify-send` under WSLg |
+| Platform | Sound                                                     | Desktop notification                                                                                                 |
+| -------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| macOS    | `afplay /System/Library/Sounds/Ping.aiff`                 | `osascript -e 'display notification "Claude is waiting" with title "Claude Code"'`                                   |
+| Linux    | `paplay /usr/share/sounds/freedesktop/stereo/message.oga` | `notify-send "Claude Code" "Claude is waiting"`                                                                      |
+| WSL2     | `powershell.exe -c '[console]::beep(880,200)'`            | `powershell.exe -c "New-BurntToastNotification -Text 'Claude Code'"` (needs BurntToast), or `notify-send` under WSLg |
 
 ```json
 {
@@ -327,16 +318,16 @@ this are silent no-ops on Linux:
 
 ## Detection → Recommendation
 
-| If you see | Recommend | Cost |
-|------------|-----------|------|
-| Prettier config | Format edited file on Edit/Write | Low |
-| ESLint config | Lint-fix edited file on Edit/Write | Low |
-| Ruff / Black config | Format edited Python file | Low |
-| `go.mod` | gofmt on edited file | Low |
-| `Cargo.toml` | rustfmt on edited file | Low |
-| `tsconfig.json` | `tsc --noEmit` on **Stop**, not per edit | High |
-| Test config with reliable mapping | Related tests on edited file | Medium |
-| `.env` / secrets files | PreToolUse block | None |
-| Lock files | PreToolUse block | None |
-| `.pre-commit-config.yaml` | Nothing — already covered at commit time | — |
-| Long unattended sessions | Notification hooks | None |
+| If you see                        | Recommend                                | Cost   |
+| --------------------------------- | ---------------------------------------- | ------ |
+| Prettier config                   | Format edited file on Edit/Write         | Low    |
+| ESLint config                     | Lint-fix edited file on Edit/Write       | Low    |
+| Ruff / Black config               | Format edited Python file                | Low    |
+| `go.mod`                          | gofmt on edited file                     | Low    |
+| `Cargo.toml`                      | rustfmt on edited file                   | Low    |
+| `tsconfig.json`                   | `tsc --noEmit` on **Stop**, not per edit | High   |
+| Test config with reliable mapping | Related tests on edited file             | Medium |
+| `.env` / secrets files            | PreToolUse block                         | None   |
+| Lock files                        | PreToolUse block                         | None   |
+| `.pre-commit-config.yaml`         | Nothing — already covered at commit time | —      |
+| Long unattended sessions          | Notification hooks                       | None   |

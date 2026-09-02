@@ -43,7 +43,9 @@ Prevent accidental plaintext secrets in source:
   secrets = "error"
 ```
 
-When `secrets = "error"`, `chezmoi add` scans for high-entropy strings and refuses to commit detected secrets. Resolution paths:
+When `secrets = "error"`, `chezmoi add` scans for high-entropy strings and refuses to commit detected secrets.
+Resolution paths:
+
 1. Remove the secret from the file — source it at apply time via template function
 2. Encrypt the file: `chezmoi add --encrypt <file>`
 3. Use a password manager template function (see below)

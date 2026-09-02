@@ -1,6 +1,7 @@
 <!-- Personal README template — side projects, portfolio pieces, experiments.
 Balance documenting for future-you with showcasing. Replace placeholders; drop
 unused sections. -->
+
 # {{PROJECT_NAME}}
 
 {{ONE_SENTENCE_DESCRIPTION}}

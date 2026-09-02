@@ -52,17 +52,17 @@ chezmoi apply <target-path>
 
 ## Troubleshooting Table
 
-| Issue                     | Cause                             | Solution                                                          |
-| ------------------------- | --------------------------------- | ----------------------------------------------------------------- |
-| `chezmoi` not found       | Not installed                     | `sh -c "$(curl -fsLS get.chezmoi.io)"` or `brew install chezmoi` |
-| Source path empty         | Not initialized                   | `chezmoi init`                                                    |
-| Git remote not set        | Missing repo                      | `chezmoi git -- remote add origin <url>`                          |
-| Apply fails               | Template error                    | `chezmoi diff` or `chezmoi execute-template` to inspect           |
-| Merge conflicts           | Diverged source and target        | `chezmoi merge <file>` for 3-way merge                            |
-| Secrets in diff           | Plaintext credentials in source   | Use encryption or password manager template functions             |
-| `forget` needs TTY        | Interactive confirmation           | Use `chezmoi forget --force <path>`                               |
-| Template not found        | Missing `.tmpl` suffix            | `chezmoi add --template` or `chezmoi chattr +template`            |
-| `re-add` clobbers `.tmpl` | Expands rendered dest → source    | Check `chezmoi source-path <file>` before re-adding               |
-| `MM` in status output     | Both source and dest changed      | Use `chezmoi merge <file>` for 3-way merge                        |
-| `run_once_` won't re-run  | Already recorded in state         | `chezmoi state delete-bucket --bucket=scriptState`                |
-| Flood of `DA` in status   | Untracked dirs (e.g. node_modules)| Add patterns to `.chezmoiignore`                                  |
+| Issue                     | Cause                              | Solution                                                         |
+| ------------------------- | ---------------------------------- | ---------------------------------------------------------------- |
+| `chezmoi` not found       | Not installed                      | `sh -c "$(curl -fsLS get.chezmoi.io)"` or `brew install chezmoi` |
+| Source path empty         | Not initialized                    | `chezmoi init`                                                   |
+| Git remote not set        | Missing repo                       | `chezmoi git -- remote add origin <url>`                         |
+| Apply fails               | Template error                     | `chezmoi diff` or `chezmoi execute-template` to inspect          |
+| Merge conflicts           | Diverged source and target         | `chezmoi merge <file>` for 3-way merge                           |
+| Secrets in diff           | Plaintext credentials in source    | Use encryption or password manager template functions            |
+| `forget` needs TTY        | Interactive confirmation           | Use `chezmoi forget --force <path>`                              |
+| Template not found        | Missing `.tmpl` suffix             | `chezmoi add --template` or `chezmoi chattr +template`           |
+| `re-add` clobbers `.tmpl` | Expands rendered dest → source     | Check `chezmoi source-path <file>` before re-adding              |
+| `MM` in status output     | Both source and dest changed       | Use `chezmoi merge <file>` for 3-way merge                       |
+| `run_once_` won't re-run  | Already recorded in state          | `chezmoi state delete-bucket --bucket=scriptState`               |
+| Flood of `DA` in status   | Untracked dirs (e.g. node_modules) | Add patterns to `.chezmoiignore`                                 |

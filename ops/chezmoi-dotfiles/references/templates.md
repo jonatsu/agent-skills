@@ -67,7 +67,7 @@ chezmoi execute-template '{{ .chezmoi.os }}'   # test a snippet inline
 chezmoi cat ~/.config/app/config.toml          # rendered output without applying
 ```
 
-Built-in variables: https://www.chezmoi.io/reference/templates/variables/
+Built-in variables: <https://www.chezmoi.io/reference/templates/variables/>
 
 ## Template Partials
 
@@ -77,9 +77,10 @@ Reusable template fragments live in `.chezmoitemplates/` inside source directory
 {{- template "fragment-name.tmpl" . }}
 ```
 
-`.` passes full template data context through. Partials useful for shared shell env setup, common aliases, repeated config blocks.
+`.` passes full template data context through. Partials useful for shared shell env setup, common aliases,
+repeated config blocks.
 
-Reference: https://www.chezmoi.io/reference/special-directories/chezmoitemplates/
+Reference: <https://www.chezmoi.io/reference/special-directories/chezmoitemplates/>
 
 ## Caution: re-adding template-managed files
 

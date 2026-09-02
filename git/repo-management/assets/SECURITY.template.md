@@ -1,4 +1,5 @@
 <!-- SECURITY template. Docs: GitHub security policy docs. Replace contact and response window. -->
+
 # Security Policy
 
 ## Reporting a vulnerability
@@ -18,5 +19,5 @@ Include:
 
 ## Response expectations
 
-The maintainers will acknowledge valid reports within {{RESPONSE_WINDOW}} when
-possible and coordinate disclosure after a fix or mitigation is available.
+The maintainers will acknowledge valid reports within {{RESPONSE_WINDOW}} when possible and coordinate
+disclosure after a fix or mitigation is available.

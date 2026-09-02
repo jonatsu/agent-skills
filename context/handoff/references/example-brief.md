@@ -1,7 +1,7 @@
 # Stateful Handoff Example
 
-Read this example only when a substantial handoff needs more than a task pointer. The repository, paths, branch, and
-commit are invented.
+Read this example only when a substantial handoff needs more than a task pointer. The repository, paths,
+branch, and commit are invented.
 
 ```markdown
 NEXT. Finish the retry-path conversion on `feat/backpressure`. Done means `retry_saturates` and the full pipeline unit

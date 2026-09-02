@@ -27,7 +27,8 @@ metadata:
 
 # Containers
 
-IRON LAW: Every production container MUST be non-root, use minimal base image, scanned for CVEs before deployment. Missing any of three → skill not done.
+IRON LAW: Every production container MUST be non-root, use minimal base image, scanned for CVEs before
+deployment. Missing any of three → skill not done.
 
 Build, run, scan, harden, deploy OCI containers with Docker, docker-compose, BuildKit, Kubernetes.
 
@@ -55,34 +56,29 @@ Build, run, scan, harden, deploy OCI containers with Docker, docker-compose, Bui
 
 ## Agent Guardrail: Destructive Actions Require Confirmation
 
-Before executing any command that destroys or irreversibly modifies containers,
-images, volumes, networks, or persistent data, ask for explicit user
-confirmation. This includes but is not limited to:
+Before executing any command that destroys or irreversibly modifies containers, images, volumes, networks, or
+persistent data, ask for explicit user confirmation. This includes but is not limited to:
 
 - `docker rm`, `docker rmi`, `docker system prune`, `docker volume rm`
 - `docker compose down` (with or without `--volumes`, `--remove-orphans`)
 - `docker builder prune`
 - Any command that deletes or overwrites existing container artifacts
 
-Read-only operations (inspect, logs, ps, config validation, scan) do not
-require confirmation.
+Read-only operations (inspect, logs, ps, config validation, scan) do not require confirmation.
 
 ## Agent Guardrail: Model and Runtime Safety
 
-- **Secrets**: Never echo, log, or persist secrets (tokens, passwords, keys) in
-  prompts, command output, or generated files. Use BuildKit
-  `--mount=type=secret` for Dockerfile secrets; use Compose `secrets:` for
+- **Secrets**: Never echo, log, or persist secrets (tokens, passwords, keys) in prompts, command output, or
+  generated files. Use BuildKit `--mount=type=secret` for Dockerfile secrets; use Compose `secrets:` for
   runtime. Prefer ephemeral credential helpers over env vars.
-- **Least privilege**: Every container MUST run as non-root with
-  `--cap-drop ALL`. Re-add capabilities only with documented justification.
-  Never suggest `--privileged` or host-network mode without explicit user
+- **Least privilege**: Every container MUST run as non-root with `--cap-drop ALL`. Re-add capabilities only
+  with documented justification. Never suggest `--privileged` or host-network mode without explicit user
   request and warning.
-- **Immutable references**: Always pin images to `@sha256:` digest in
-  production contexts. Never recommend `:latest` for deployments. Use
-  `pull_policy: never` for air-gapped or pinned-digest stacks.
-- **Validation**: Scan images (Trivy/Grype) and lint Dockerfiles (Hadolint)
-  before suggesting deployment. Validate Compose config with `config --quiet`
-  before any `up` command. Never skip scan gates for production images.
+- **Immutable references**: Always pin images to `@sha256:` digest in production contexts. Never recommend
+  `:latest` for deployments. Use `pull_policy: never` for air-gapped or pinned-digest stacks.
+- **Validation**: Scan images (Trivy/Grype) and lint Dockerfiles (Hadolint) before suggesting deployment.
+  Validate Compose config with `config --quiet` before any `up` command. Never skip scan gates for production
+  images.
 
 ---
 
@@ -113,19 +109,20 @@ Adapt recommendations to:
 - Distance of current base images from best practice
 
 ---
+
 ## Decision Tree: What Task Am I On?
 
-| Task | Primary reference | Key output |
-|---|---|---|
-| Write / edit Dockerfile | `references/dockerfile-patterns.md`, `references/base-image-comparison.md` | Multi-stage, non-root, pinned digest, healthcheck |
-| Compose for dev or prod | `references/docker-compose.md` | Compose file with hardening at prod tier |
-| Compose systemd deployment | `references/compose-systemd.md` | Type=oneshot unit, restart policies, graceful shutdown, GPU passthrough |
-| Set up build in CI | `references/ci-cd.md` | GHA workflow with buildx + cache + SHA-pinned actions |
-| Scan image for CVEs | `references/image-scanning.md` | Trivy/Grype scan, SBOM, `.trivyignore` with justifications |
-| Sign / verify images | `references/image-scanning.md` (Cosign section) | Cosign keyless via OIDC, SBOM attestation |
-| Harden `docker run` / compose | `references/runtime-security.md` | `--read-only`, `--cap-drop ALL`, seccomp, no-new-privs |
-| Kubernetes workload security | `references/kubernetes-pod-security.md` | PSA `restricted`, NetworkPolicy default-deny, minimal RBAC |
-| Choose base image | `references/base-image-comparison.md` | Distroless > slim > alpine > full; scratch for static |
+| Task                          | Primary reference                                                          | Key output                                                              |
+| ----------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Write / edit Dockerfile       | `references/dockerfile-patterns.md`, `references/base-image-comparison.md` | Multi-stage, non-root, pinned digest, healthcheck                       |
+| Compose for dev or prod       | `references/docker-compose.md`                                             | Compose file with hardening at prod tier                                |
+| Compose systemd deployment    | `references/compose-systemd.md`                                            | Type=oneshot unit, restart policies, graceful shutdown, GPU passthrough |
+| Set up build in CI            | `references/ci-cd.md`                                                      | GHA workflow with buildx + cache + SHA-pinned actions                   |
+| Scan image for CVEs           | `references/image-scanning.md`                                             | Trivy/Grype scan, SBOM, `.trivyignore` with justifications              |
+| Sign / verify images          | `references/image-scanning.md` (Cosign section)                            | Cosign keyless via OIDC, SBOM attestation                               |
+| Harden `docker run` / compose | `references/runtime-security.md`                                           | `--read-only`, `--cap-drop ALL`, seccomp, no-new-privs                  |
+| Kubernetes workload security  | `references/kubernetes-pod-security.md`                                    | PSA `restricted`, NetworkPolicy default-deny, minimal RBAC              |
+| Choose base image             | `references/base-image-comparison.md`                                      | Distroless > slim > alpine > full; scratch for static                   |
 
 ---
 
@@ -145,7 +142,8 @@ Work through layers in order — hardening image gives most leverage.
 
 ## Layer 1: Dockerfile — Minimum Bar
 
-Every production Dockerfile MUST have all of the following. See `references/dockerfile-patterns.md` for full examples.
+Every production Dockerfile MUST have all of the following. See `references/dockerfile-patterns.md` for full
+examples.
 
 - [ ] `# syntax=docker/dockerfile:1` at top (enables BuildKit features)
 - [ ] Multi-stage build — build tools and dev dependencies excluded from runtime
@@ -158,15 +156,18 @@ Every production Dockerfile MUST have all of the following. See `references/dock
 - [ ] OCI labels (`org.opencontainers.image.source`, `.revision`, `.licenses`)
 - [ ] `.dockerignore` excludes `.git`, `.env`, secrets, tests, docs, `node_modules`
 
-Full hardened Dockerfile example, secrets mount pattern, non-root user setup for debian/alpine/distroless: `references/dockerfile-patterns.md`.
+Full hardened Dockerfile example, secrets mount pattern, non-root user setup for debian/alpine/distroless:
+`references/dockerfile-patterns.md`.
 
-Base image trade-offs (scratch vs distroless vs alpine vs slim, sizes, CVE counts, musl vs glibc): `references/base-image-comparison.md`.
+Base image trade-offs (scratch vs distroless vs alpine vs slim, sizes, CVE counts, musl vs glibc):
+`references/base-image-comparison.md`.
 
 ---
 
 ## Layer 2: Image Scanning — Fail CI on HIGH/CRITICAL
 
-Every production image MUST be scanned in CI. Use Trivy (recommended), Grype, or Snyk. Add Hadolint for Dockerfile linting.
+Every production image MUST be scanned in CI. Use Trivy (recommended), Grype, or Snyk. Add Hadolint for
+Dockerfile linting.
 
 Minimum CI checks:
 
@@ -184,7 +185,9 @@ trivy image --scanners secret myapp:${SHA}
 syft myapp:${SHA} -o cyclonedx-json > sbom.json
 ```
 
-Full scanner setup (Trivy, Grype, Hadolint, `.trivyignore`, `.hadolint.yaml`), CI integration (GitHub Actions with SHA-pinned action versions and SARIF upload), SBOM generation, cosign keyless signing/attestation, admission control policies: `references/image-scanning.md`.
+Full scanner setup (Trivy, Grype, Hadolint, `.trivyignore`, `.hadolint.yaml`), CI integration (GitHub Actions
+with SHA-pinned action versions and SARIF upload), SBOM generation, cosign keyless signing/attestation,
+admission control policies: `references/image-scanning.md`.
 
 ---
 
@@ -205,7 +208,9 @@ docker run \
   myapp:latest
 ```
 
-Most web apps need ZERO Linux capabilities — `--cap-drop ALL` alone often enough. Only re-add specific caps with documented justification. Full docker-compose hardened service definition, seccomp profile authoring workflow, AppArmor setup, capability trade-off table: `references/runtime-security.md`.
+Most web apps need ZERO Linux capabilities — `--cap-drop ALL` alone often enough. Only re-add specific caps
+with documented justification. Full docker-compose hardened service definition, seccomp profile authoring
+workflow, AppArmor setup, capability trade-off table: `references/runtime-security.md`.
 
 Ready-to-use minimal seccomp allowlist for web servers: `references/seccomp-profile-template.json`.
 
@@ -219,7 +224,8 @@ Ready-to-use minimal seccomp allowlist for web servers: `references/seccomp-prof
 - Use registries with built-in scanning (ECR enhanced, GCP Artifact Registry, ACR)
 - Verify signatures at admission (Kyverno `verifyImages`)
 
-Full pipeline (GHA workflow signing + SBOM attestation + Kyverno verification policy): `references/image-scanning.md`.
+Full pipeline (GHA workflow signing + SBOM attestation + Kyverno verification policy):
+`references/image-scanning.md`.
 
 ---
 
@@ -246,9 +252,13 @@ spec:
         limits:   { memory: 512Mi, cpu: 500m }
 ```
 
-Enforce with Pod Security Admission at `restricted` level per namespace. Apply default-deny NetworkPolicy, allow only required traffic. Use narrowly-scoped RBAC (specific `resourceNames`, never `verbs: ["*"]`). Use Workload Identity (EKS IRSA / GKE WI) instead of long-lived cloud credentials in Secrets.
+Enforce with Pod Security Admission at `restricted` level per namespace. Apply default-deny NetworkPolicy,
+allow only required traffic. Use narrowly-scoped RBAC (specific `resourceNames`, never `verbs: ["*"]`). Use
+Workload Identity (EKS IRSA / GKE WI) instead of long-lived cloud credentials in Secrets.
 
-Full manifests, PSA rollout (audit → warn → enforce), NetworkPolicy examples, RBAC audit commands, Kyverno / OPA Gatekeeper policy templates, secrets management options (External Secrets Operator, Sealed Secrets, Vault, SOPS), Falco runtime detection: `references/kubernetes-pod-security.md`.
+Full manifests, PSA rollout (audit → warn → enforce), NetworkPolicy examples, RBAC audit commands, Kyverno /
+OPA Gatekeeper policy templates, secrets management options (External Secrets Operator, Sealed Secrets, Vault,
+SOPS), Falco runtime detection: `references/kubernetes-pod-security.md`.
 
 ---
 
@@ -256,18 +266,18 @@ Full manifests, PSA rollout (audit → warn → enforce), NetworkPolicy examples
 
 Compose files diverge sharply between dev and prod:
 
-| Concern | Dev | Prod |
-|---|---|---|
-| Source mount | `volumes: [.:/app]` | No — image is self-contained |
-| Env / debug | `DEBUG=1`, plaintext passwords | env from secrets store; `DEBUG=0` |
-| Build context | `build: .` | `image: ghcr.io/org/app@sha256:...` |
-| User | root ok for hot-reload tooling | `user: "10001:10001"`, non-root always |
-| Filesystem | rw | `read_only: true` + `tmpfs` for writable paths |
-| Caps | default | `cap_drop: [ALL]`, add back per-service |
-| Resources | unbounded | `mem_limit`, `cpus`, `pids_limit` |
-| Ports | exposed | published only where required |
-| Healthcheck | optional | required |
-| Networks | default | explicit, `internal: true` for backend |
+| Concern       | Dev                            | Prod                                           |
+| ------------- | ------------------------------ | ---------------------------------------------- |
+| Source mount  | `volumes: [.:/app]`            | No — image is self-contained                   |
+| Env / debug   | `DEBUG=1`, plaintext passwords | env from secrets store; `DEBUG=0`              |
+| Build context | `build: .`                     | `image: ghcr.io/org/app@sha256:...`            |
+| User          | root ok for hot-reload tooling | `user: "10001:10001"`, non-root always         |
+| Filesystem    | rw                             | `read_only: true` + `tmpfs` for writable paths |
+| Caps          | default                        | `cap_drop: [ALL]`, add back per-service        |
+| Resources     | unbounded                      | `mem_limit`, `cpus`, `pids_limit`              |
+| Ports         | exposed                        | published only where required                  |
+| Healthcheck   | optional                       | required                                       |
+| Networks      | default                        | explicit, `internal: true` for backend         |
 
 Both examples with full hardening applied at prod tier: `references/docker-compose.md`.
 
@@ -292,20 +302,20 @@ Full workflow, cache strategies, multi-platform buildx setup: `references/ci-cd.
 
 ## Common Pitfalls & Fixes
 
-| Problem | Root Cause | Fix |
-|---|---|---|
-| Image runs as root | No `USER` directive | Add `RUN useradd ...` + `USER appuser` before CMD |
-| Secret in `docker history` | `ENV` or `RUN curl -H "Bearer $TOKEN"` | Use `RUN --mount=type=secret,id=...` |
-| Large image, many CVEs | Full base (`node:20`, `ubuntu`) | Switch to `node:20-slim` or distroless |
-| App crashes with `--read-only` | Writes to `/tmp` or app dir | Add `--tmpfs /tmp:noexec,nosuid,size=100m` |
-| Trivy blocks CI on unfixable CVEs | No ignore file | Add `.trivyignore` with justified entries + issue link |
-| Container needs `SYS_ADMIN` | Missing `--cap-drop` investigation | Almost always avoidable — audit what syscall actually needed |
-| Tags drift over time | Mutable tags | Pin to `@sha256:`; Renovate/Dependabot auto-PRs |
-| K8s pod rejected by PSA | Missing security context fields | Add `runAsNonRoot`, `readOnlyRootFilesystem`, `allowPrivilegeEscalation: false` |
-| App can't write to filesystem in K8s | `readOnlyRootFilesystem: true` | Mount `emptyDir` for writable paths |
-| Musl compatibility issues on alpine | native modules (`bcrypt`, `sharp`, numpy) | Switch to `*-slim` (glibc) |
-| `.env` accidentally in image | Missing `.dockerignore` | Add `.env`, `.env.*`, `*.pem`, `*.key`, `.git` |
-| Compose runs as root by default | No `user:` field | Set `user: "10001:10001"` + build with matching UID |
+| Problem                              | Root Cause                                | Fix                                                                             |
+| ------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------- |
+| Image runs as root                   | No `USER` directive                       | Add `RUN useradd ...` + `USER appuser` before CMD                               |
+| Secret in `docker history`           | `ENV` or `RUN curl -H "Bearer $TOKEN"`    | Use `RUN --mount=type=secret,id=...`                                            |
+| Large image, many CVEs               | Full base (`node:20`, `ubuntu`)           | Switch to `node:20-slim` or distroless                                          |
+| App crashes with `--read-only`       | Writes to `/tmp` or app dir               | Add `--tmpfs /tmp:noexec,nosuid,size=100m`                                      |
+| Trivy blocks CI on unfixable CVEs    | No ignore file                            | Add `.trivyignore` with justified entries + issue link                          |
+| Container needs `SYS_ADMIN`          | Missing `--cap-drop` investigation        | Almost always avoidable — audit what syscall actually needed                    |
+| Tags drift over time                 | Mutable tags                              | Pin to `@sha256:`; Renovate/Dependabot auto-PRs                                 |
+| K8s pod rejected by PSA              | Missing security context fields           | Add `runAsNonRoot`, `readOnlyRootFilesystem`, `allowPrivilegeEscalation: false` |
+| App can't write to filesystem in K8s | `readOnlyRootFilesystem: true`            | Mount `emptyDir` for writable paths                                             |
+| Musl compatibility issues on alpine  | native modules (`bcrypt`, `sharp`, numpy) | Switch to `*-slim` (glibc)                                                      |
+| `.env` accidentally in image         | Missing `.dockerignore`                   | Add `.env`, `.env.*`, `*.pem`, `*.key`, `.git`                                  |
+| Compose runs as root by default      | No `user:` field                          | Set `user: "10001:10001"` + build with matching UID                             |
 
 ---
 
@@ -363,15 +373,23 @@ Full workflow, cache strategies, multi-platform buildx setup: `references/ci-cd.
 
 ## Reference Files
 
-- `references/dockerfile-patterns.md` — Multi-stage patterns, non-root user setup, secrets via BuildKit, hardened Dockerfile example for Node/Python/Go/Rust
-- `references/docker-compose.md` — Dev + prod compose examples; hardened service definition; healthchecks; networks
-- `references/compose-systemd.md` — systemd unit design for Compose stacks (Type=oneshot), restart policies, graceful shutdown, GPU passthrough, pull policies, air-gapped deployments
+- `references/dockerfile-patterns.md` — Multi-stage patterns, non-root user setup, secrets via BuildKit,
+  hardened Dockerfile example for Node/Python/Go/Rust
+- `references/docker-compose.md` — Dev + prod compose examples; hardened service definition; healthchecks;
+  networks
+- `references/compose-systemd.md` — systemd unit design for Compose stacks (Type=oneshot), restart policies,
+  graceful shutdown, GPU passthrough, pull policies, air-gapped deployments
 - `references/ci-cd.md` — GitHub Actions with SHA-pinned steps, buildx, multi-platform, cache, signing, SARIF
-- `references/image-scanning.md` — Trivy, Grype, Hadolint, Syft, cosign; ignore files; CI integration; SBOM + attestation; admission control
-- `references/runtime-security.md` — `docker run` hardening flags, Linux capabilities table, seccomp workflow, AppArmor
-- `references/base-image-comparison.md` — Size, CVE count, shell / package-manager trade-offs across distroless, alpine, slim, scratch, full
-- `references/kubernetes-pod-security.md` — PSA, NetworkPolicy, RBAC, Kyverno/OPA policies, service accounts, Falco, secrets management
-- `references/seccomp-profile-template.json` — Minimal syscall allowlist for typical web servers; extend as needed
+- `references/image-scanning.md` — Trivy, Grype, Hadolint, Syft, cosign; ignore files; CI integration; SBOM +
+  attestation; admission control
+- `references/runtime-security.md` — `docker run` hardening flags, Linux capabilities table, seccomp workflow,
+  AppArmor
+- `references/base-image-comparison.md` — Size, CVE count, shell / package-manager trade-offs across
+  distroless, alpine, slim, scratch, full
+- `references/kubernetes-pod-security.md` — PSA, NetworkPolicy, RBAC, Kyverno/OPA policies, service accounts,
+  Falco, secrets management
+- `references/seccomp-profile-template.json` — Minimal syscall allowlist for typical web servers; extend as
+  needed
 
 ---
 
@@ -384,10 +402,13 @@ Full workflow, cache strategies, multi-platform buildx setup: `references/ci-cd.
 
 ## Limitations
 
-- Seccomp and AppArmor are Linux-only. Docker Desktop on macOS / Windows uses different mechanisms (Hyper-V VM, WSL2); some hardening flags advisory there.
+- Seccomp and AppArmor are Linux-only. Docker Desktop on macOS / Windows uses different mechanisms (Hyper-V
+  VM, WSL2); some hardening flags advisory there.
 - Not substitute for penetration testing or formal security audit.
-- Kyverno / OPA Gatekeeper snippets are starting points; production policies MUST be reviewed against actual workload requirements.
-- Base image size and CVE counts drift over time — verify current values with `trivy image <name>` before decisions.
+- Kyverno / OPA Gatekeeper snippets are starting points; production policies MUST be reviewed against actual
+  workload requirements.
+- Base image size and CVE counts drift over time — verify current values with `trivy image <name>` before
+  decisions.
 
 ## Attribution
 

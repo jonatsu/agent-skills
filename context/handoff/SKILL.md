@@ -8,24 +8,25 @@ metadata:
 
 # Handoff
 
-A handoff transfers what the recipient needs to continue. Its most valuable content is session-only knowledge that cannot
-be recovered from the repository, issue tracker, plans, or current machine state.
+A handoff transfers what the recipient needs to continue. Its most valuable content is session-only knowledge
+that cannot be recovered from the repository, issue tracker, plans, or current machine state.
 
-Do not recap the conversation or inventory everything inspected. Cite durable artifacts and let the recipient read them.
+Do not recap the conversation or inventory everything inspected. Cite durable artifacts and let the recipient
+read them.
 
 ## Choose the Smallest Sufficient Handoff
 
-Use a **pointer handoff** when the recipient can recover the work state and only needs a clear next task. This is the
-default for a new task in an established workflow, such as naming the next skill to review.
+Use a **pointer handoff** when the recipient can recover the work state and only needs a clear next task. This
+is the default for a new task in an established workflow, such as naming the next skill to review.
 
-Use a **stateful handoff** when continuity depends on unfinished work, multiple connected tasks, decisions, deviations,
-blocked paths, or substantial session-only context.
+Use a **stateful handoff** when continuity depends on unfinished work, multiple connected tasks, decisions,
+deviations, blocked paths, or substantial session-only context.
 
-Length follows continuity risk. A pointer may be two or three sentences. A stateful handoff may need several sections.
-Do not promote a pointer into a stateful brief merely because more repository facts are available.
+Length follows continuity risk. A pointer may be two or three sentences. A stateful handoff may need several
+sections. Do not promote a pointer into a stateful brief merely because more repository facts are available.
 
-Apply brevity to recoverable context first. Never omit material session-only context to keep a pointer short; switch to a
-stateful handoff when that context no longer fits clearly in the pointer form.
+Apply brevity to recoverable context first. Never omit material session-only context to keep a pointer short;
+switch to a stateful handoff when that context no longer fits clearly in the pointer form.
 
 ## Preserve Session-Only Context
 
@@ -39,27 +40,28 @@ Before writing either form, deliberately check what would disappear with this se
 - an unfinished line of reasoning or current lean that the recipient must continue.
 
 Include an item only when it changes the recipient's action, decision, or interpretation, or prevents costly
-re-derivation. Preserve the operative detail and its reason. Omit conversational chronology and incidental preferences
-that do not affect the work.
+re-derivation. Preserve the operative detail and its reason. Omit conversational chronology and incidental
+preferences that do not affect the work.
 
-This check is mandatory even for a pointer handoff. If it finds nothing relevant, keep the pointer short; do not add a
-placeholder saying that no context exists.
+This check is mandatory even for a pointer handoff. If it finds nothing relevant, keep the pointer short; do
+not add a placeholder saying that no context exists.
 
 ## Verify Only What You Pass
 
-Confirm every path, branch, commit, command result, or other factual state included in the handoff during the current
-turn. Mark unverified claims as unverified.
+Confirm every path, branch, commit, command result, or other factual state included in the handoff during the
+current turn. Mark unverified claims as unverified.
 
-Do not gather a standard Git inventory unless the handoff needs those facts. Volatile state is usually better expressed
-as an instruction to inspect it, such as `run git status -sb`, than as a snapshot that will become stale.
+Do not gather a standard Git inventory unless the handoff needs those facts. Volatile state is usually better
+expressed as an instruction to inspect it, such as `run git status -sb`, than as a snapshot that will become
+stale.
 
-Name the command behind a verification claim and state what the check did not cover when that limit matters. Never write
-"should work" as completed state.
+Name the command behind a verification claim and state what the check did not cover when that limit matters.
+Never write "should work" as completed state.
 
 ## Pointer Handoff
 
-Lead with the next task and its completion condition. Then cite the workflow or artifact the recipient should read. Add
-session-only context only when the context-loss check found something material.
+Lead with the next task and its completion condition. Then cite the workflow or artifact the recipient should
+read. Add session-only context only when the context-loss check found something material.
 
 Example:
 
@@ -75,16 +77,17 @@ Review `github-operations` next. Read `skills/skills-review-notes.md` and follow
 review to focus on silent success paths in `gh`; broad command coverage is out of scope.
 ```
 
-A pointer handoff normally needs no headings, repository summary, Git history, file inventory, or list of checks already
-defined by the cited workflow.
+A pointer handoff normally needs no headings, repository summary, Git history, file inventory, or list of
+checks already defined by the cited workflow.
 
 ## Stateful Handoff
 
-Lead with `NEXT`: the immediate task and a concrete completion condition. Add only the sections that carry material
-content:
+Lead with `NEXT`: the immediate task and a concrete completion condition. Add only the sections that carry
+material content:
 
 - `CONTEXT`: session-only preferences, decisions, nuances, rejected options, and unfinished reasoning.
-- `STATE`: unfinished or completed work whose exact status affects the next action, with verification evidence.
+- `STATE`: unfinished or completed work whose exact status affects the next action, with verification
+  evidence.
 - `READ`: durable artifacts required to act, in reading order, with a stable section or symbol when useful.
 - `LOCKED`: settled decisions and the reason that settled each one.
 - `SCOPE`: deliberately parked or excluded work and why it remains out of bounds.
@@ -92,31 +95,31 @@ content:
 - `DEVIATIONS`: intentional departures from the written plan and their reasons.
 - `PROCESS`: environment or workflow traps already encountered and worth avoiding.
 
-Merge or omit sections when that makes the brief clearer. A human or agent consumes the output, so stable headings are
-not a formal interface.
+Merge or omit sections when that makes the brief clearer. A human or agent consumes the output, so stable
+headings are not a formal interface.
 
-Point to plans, specifications, issues, ADRs, commits, and code instead of reproducing them. Record a file inspected and
-left unchanged only when the conclusion prevents a likely or expensive repeated investigation.
+Point to plans, specifications, issues, ADRs, commits, and code instead of reproducing them. Record a file
+inspected and left unchanged only when the conclusion prevents a likely or expensive repeated investigation.
 
 Read `references/example-brief.md` only when a substantial stateful handoff needs a worked shape.
 
 ## Delivery Mode
 
-Use `PRIME` when the same work continues in a fresh context. Return one fenced block that the user can paste as the first
-message. Do not save it to disk.
+Use `PRIME` when the same work continues in a fresh context. Return one fenced block that the user can paste
+as the first message. Do not save it to disk.
 
-Use `DOCUMENT` when the user asks for a file or the work passes to another machine or person. Save the Markdown under the
-operating system's temporary directory unless the user names another path. Probe for `mktemp`; if unavailable, use the
-platform's temporary-directory mechanism. Read an existing target before writing and do not overwrite it without
-authorization. Use repository-relative paths when the document may travel to another machine, and identify the repository
-once.
+Use `DOCUMENT` when the user asks for a file or the work passes to another machine or person. Save the
+Markdown under the operating system's temporary directory unless the user names another path. Probe for
+`mktemp`; if unavailable, use the platform's temporary-directory mechanism. Read an existing target before
+writing and do not overwrite it without authorization. Use repository-relative paths when the document may
+travel to another machine, and identify the repository once.
 
 Infer the delivery mode from the request. Ask only when the destination is genuinely ambiguous.
 
 ## Safety and Completion
 
-Never include secrets, credentials, private URLs, or unnecessary personal data. Name the secret's location rather than
-its value.
+Never include secrets, credentials, private URLs, or unnecessary personal data. Name the secret's location
+rather than its value.
 
 Before delivery, confirm:
 

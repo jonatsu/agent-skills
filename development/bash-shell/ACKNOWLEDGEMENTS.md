@@ -10,13 +10,13 @@ The design was informed by review of Yudhi Armyndharis'
 - `skills/bash-defensive-patterns/SKILL.md`
 - `skills/bash-defensive-patterns/resources/implementation-playbook.md`
 
-Useful ideas considered from those references included the Bash-versus-POSIX boundary, input and failure-mode discovery,
-arrays, NUL-safe traversal, temporary-resource cleanup, idempotency, dependency checks, signal handling, replacement
-writes, and ShellCheck/shfmt/test validation.
+Useful ideas considered from those references included the Bash-versus-POSIX boundary, input and failure-mode
+discovery, arrays, NUL-safe traversal, temporary-resource cleanup, idempotency, dependency checks, signal
+handling, replacement writes, and ShellCheck/shfmt/test validation.
 
-The implementation here was written independently after rejecting the reviewed skills' blanket strict-mode rules, unsafe
-deletion guidance, broken version predicates, hidden producer failures, incomplete cleanup examples, portability claims,
-and scope-expanding output catalogues.
+The implementation here was written independently after rejecting the reviewed skills' blanket strict-mode
+rules, unsafe deletion guidance, broken version predicates, hidden producer failures, incomplete cleanup
+examples, portability claims, and scope-expanding output catalogues.
 
 The immediate reference repository states that its collection was ported from
 [`wshobson/agents`](https://github.com/wshobson/agents), also MIT-licensed.

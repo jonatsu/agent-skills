@@ -1,21 +1,22 @@
 # Base Image Comparison Reference
 
-Quick decision guide for choosing the right container base image — balancing security, compatibility, size, and debuggability.
+Quick decision guide for choosing the right container base image — balancing security, compatibility, size,
+and debuggability.
 
 ---
 
 ## Quick Decision Matrix
 
-| Runtime / Need | Best Choice | Fallback |
-|---|---|---|
-| Go / Rust — fully static binary | `scratch` | `gcr.io/distroless/static-debian12` |
-| Go / Rust — with CGO or dynamic libs | `gcr.io/distroless/base-debian12` | `alpine:3.20` |
-| Node.js app (production) | `gcr.io/distroless/nodejs20-debian12` | `node:20-slim` |
-| Python app (production) | `gcr.io/distroless/python3-debian12` | `python:3.12-slim` |
-| Java app (production) | `gcr.io/distroless/java21-debian12` | `eclipse-temurin:21-jre-alpine` |
-| Shell scripts required | `alpine:3.20` | `debian:12-slim` |
-| musl compatibility issue | `node:20-slim` (glibc) | `debian:12-slim` |
-| Debugging in staging | distroless `:debug` variant | `ubuntu:24.04` (temporary) |
+| Runtime / Need                       | Best Choice                           | Fallback                            |
+| ------------------------------------ | ------------------------------------- | ----------------------------------- |
+| Go / Rust — fully static binary      | `scratch`                             | `gcr.io/distroless/static-debian12` |
+| Go / Rust — with CGO or dynamic libs | `gcr.io/distroless/base-debian12`     | `alpine:3.20`                       |
+| Node.js app (production)             | `gcr.io/distroless/nodejs20-debian12` | `node:20-slim`                      |
+| Python app (production)              | `gcr.io/distroless/python3-debian12`  | `python:3.12-slim`                  |
+| Java app (production)                | `gcr.io/distroless/java21-debian12`   | `eclipse-temurin:21-jre-alpine`     |
+| Shell scripts required               | `alpine:3.20`                         | `debian:12-slim`                    |
+| musl compatibility issue             | `node:20-slim` (glibc)                | `debian:12-slim`                    |
+| Debugging in staging                 | distroless `:debug` variant           | `ubuntu:24.04` (temporary)          |
 
 ---
 
@@ -23,29 +24,30 @@ Quick decision guide for choosing the right container base image — balancing s
 
 > Approximate values as of mid-2025. Run `trivy image <name>` for current counts.
 
-| Image | Compressed Size | Typical CVE Count | Shell | Package Manager | libc |
-|---|---|---|---|---|---|
-| `scratch` | 0 MB | 0 | No | No | None |
-| `gcr.io/distroless/static-debian12` | ~2 MB | 0–2 | No | No | None |
-| `gcr.io/distroless/base-debian12` | ~20 MB | 0–3 | No | No | glibc |
-| `gcr.io/distroless/nodejs20-debian12` | ~55 MB | 0–5 | No | No | glibc |
-| `gcr.io/distroless/python3-debian12` | ~50 MB | 0–5 | No | No | glibc |
-| `gcr.io/distroless/java21-debian12` | ~220 MB | 0–5 | No | No | glibc |
-| `alpine:3.20` | ~3.5 MB | 0–5 | Yes (ash) | Yes (apk) | musl |
-| `node:20-alpine` | ~65 MB | 5–20 | Yes | Yes | musl |
-| `python:3.12-alpine` | ~55 MB | 5–20 | Yes | Yes | musl |
-| `node:20-slim` | ~90 MB | 15–40 | Yes | Yes (minimal apt) | glibc |
-| `python:3.12-slim` | ~60 MB | 15–40 | Yes | Yes (minimal apt) | glibc |
-| `eclipse-temurin:21-jre-alpine` | ~180 MB | 5–20 | Yes | Yes | musl |
-| `node:20` (full) | ~370 MB | 80–200 | Yes | Yes (full apt) | glibc |
-| `ubuntu:24.04` | ~30 MB | 20–60 | Yes | Yes (full apt) | glibc |
-| `ubuntu:24.04` (full packages) | ~200 MB+ | 50–150 | Yes | Yes | glibc |
+| Image                                 | Compressed Size | Typical CVE Count | Shell     | Package Manager   | libc  |
+| ------------------------------------- | --------------- | ----------------- | --------- | ----------------- | ----- |
+| `scratch`                             | 0 MB            | 0                 | No        | No                | None  |
+| `gcr.io/distroless/static-debian12`   | ~2 MB           | 0–2               | No        | No                | None  |
+| `gcr.io/distroless/base-debian12`     | ~20 MB          | 0–3               | No        | No                | glibc |
+| `gcr.io/distroless/nodejs20-debian12` | ~55 MB          | 0–5               | No        | No                | glibc |
+| `gcr.io/distroless/python3-debian12`  | ~50 MB          | 0–5               | No        | No                | glibc |
+| `gcr.io/distroless/java21-debian12`   | ~220 MB         | 0–5               | No        | No                | glibc |
+| `alpine:3.20`                         | ~3.5 MB         | 0–5               | Yes (ash) | Yes (apk)         | musl  |
+| `node:20-alpine`                      | ~65 MB          | 5–20              | Yes       | Yes               | musl  |
+| `python:3.12-alpine`                  | ~55 MB          | 5–20              | Yes       | Yes               | musl  |
+| `node:20-slim`                        | ~90 MB          | 15–40             | Yes       | Yes (minimal apt) | glibc |
+| `python:3.12-slim`                    | ~60 MB          | 15–40             | Yes       | Yes (minimal apt) | glibc |
+| `eclipse-temurin:21-jre-alpine`       | ~180 MB         | 5–20              | Yes       | Yes               | musl  |
+| `node:20` (full)                      | ~370 MB         | 80–200            | Yes       | Yes (full apt)    | glibc |
+| `ubuntu:24.04`                        | ~30 MB          | 20–60             | Yes       | Yes (full apt)    | glibc |
+| `ubuntu:24.04` (full packages)        | ~200 MB+        | 50–150            | Yes       | Yes               | glibc |
 
 ---
 
 ## Detailed Trade-offs
 
 ### `scratch`
+
 **Best for:** Go, Rust, or any fully static binary with `CGO_ENABLED=0`
 
 - ✅ Zero attack surface — literally empty
@@ -77,6 +79,7 @@ ENTRYPOINT ["/app"]
 ---
 
 ### `gcr.io/distroless` (Google)
+
 **Best for:** Production Node.js, Python, Java, Go (with CGO)
 
 - ✅ No shell, no package manager — dramatically reduced attack surface
@@ -102,6 +105,7 @@ gcr.io/distroless/python3-debian12:debug
 ```
 
 **Debugging a distroless container (staging only):**
+
 ```bash
 # Use a sidecar debug container instead of modifying the production image
 kubectl debug -it deploy/myapp \
@@ -113,21 +117,25 @@ kubectl debug -it deploy/myapp \
 ---
 
 ### `alpine`
+
 **Best for:** Images where a shell is required, or when image size is a primary concern
 
 - ✅ Very small (~3.5 MB)
 - ✅ Has shell (ash) and package manager (apk) — great for debugging
 - ✅ Regularly patched, active community
-- ⚠️ Uses **musl libc** — some Python C extensions, Node.js native modules, or glibc-dependent binaries may fail
+- ⚠️ Uses **musl libc** — some Python C extensions, Node.js native modules, or glibc-dependent binaries may
+  fail
 - ❌ More CVEs than distroless (more packages)
 
 **musl compatibility check:**
+
 ```bash
 # Test your app on alpine before committing
 docker run -it --rm -v $(pwd):/app node:20-alpine sh -c "cd /app && npm ci && npm test"
 ```
 
 **Common musl issues:**
+
 - `bcrypt`, `node-gyp`, `sharp`, `canvas` native modules → may need build tools
 - Python with `numpy`, `scipy`, `pandas` → use `python:3.12-slim` instead
 - Java apps → generally fine, but test thoroughly
@@ -135,6 +143,7 @@ docker run -it --rm -v $(pwd):/app node:20-alpine sh -c "cd /app && npm ci && np
 ---
 
 ### `slim` variants (Debian-based)
+
 **Best for:** Apps with glibc dependencies that can't use distroless
 
 - ✅ glibc compatibility — no musl issues
@@ -155,6 +164,7 @@ RUN apt-get update && \
 ---
 
 ### Full Images (`node:20`, `ubuntu:24.04`, `python:3.12`)
+
 **Only for:** Development, CI build stages, or debugging — NEVER as production runtime
 
 - ❌ Massive attack surface (50–200+ CVEs)
@@ -162,6 +172,7 @@ RUN apt-get update && \
 - ❌ Huge size increases pull time and storage costs
 
 Use as a build stage only:
+
 ```dockerfile
 FROM node:20 AS builder     # Full image for building
 FROM node:20-slim AS runtime  # Slim image for production
@@ -174,6 +185,7 @@ FROM node:20-slim AS runtime  # Slim image for production
 **The most common source of container CVEs is outdated base images.**
 
 ### Manual Check
+
 ```bash
 # Pull latest and check digest
 docker pull node:20-slim
@@ -184,6 +196,7 @@ trivy image node:20-slim --severity HIGH,CRITICAL
 ```
 
 ### Automate with Renovate (Recommended)
+
 ```json
 // .renovaterc.json
 {
@@ -204,6 +217,7 @@ trivy image node:20-slim --severity HIGH,CRITICAL
 ```
 
 ### Automate with Dependabot
+
 ```yaml
 # .github/dependabot.yml
 version: 2
@@ -220,8 +234,16 @@ updates:
 ## Distroless Digest Pinning Reference
 
 Always pin to digest. Check current digests at:
-- `gcr.io/distroless/nodejs20-debian12` → `docker pull gcr.io/distroless/nodejs20-debian12 && docker inspect gcr.io/distroless/nodejs20-debian12 --format='{{index .RepoDigests 0}}'`
-- Use [Google's distroless tags page](https://github.com/GoogleContainerTools/distroless/blob/main/README.md) for latest releases
+
+- `gcr.io/distroless/nodejs20-debian12`:
+
+  ```bash
+  docker pull gcr.io/distroless/nodejs20-debian12
+  docker inspect gcr.io/distroless/nodejs20-debian12 --format='{{index .RepoDigests 0}}'
+  ```
+
+- Use [Google's distroless tags page](https://github.com/GoogleContainerTools/distroless/blob/main/README.md)
+  for latest releases
 
 ---
 

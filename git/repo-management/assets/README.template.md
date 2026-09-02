@@ -1,4 +1,5 @@
 <!-- README template. Docs: GitHub README docs. Replace placeholders; drop unused sections. -->
+
 # {{PROJECT_NAME}}
 
 {{ONE_SENTENCE_DESCRIPTION}}

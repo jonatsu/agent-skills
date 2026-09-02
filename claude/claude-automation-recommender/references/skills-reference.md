@@ -1,22 +1,25 @@
 # Skills Recommendations
 
-Skills are packaged expertise with workflows, reference materials, and best practices. Create them in `.claude/skills/<name>/SKILL.md`. Skills can be invoked by Claude automatically when relevant, or by users directly with `/skill-name`.
+Skills are packaged expertise with workflows, reference materials, and best practices. Create them in
+`.claude/skills/<name>/SKILL.md`. Skills can be invoked by Claude automatically when relevant, or by users
+directly with `/skill-name`.
 
-Some pre-built skills ship inside official plugins — see
-[plugins-reference.md](plugins-reference.md) for the install contract
-(`claude plugin marketplace add` first, then `claude plugin install
-plugin@marketplace`).
+Some pre-built skills ship inside official plugins — see [plugins-reference.md](plugins-reference.md) for the
+install contract (`claude plugin marketplace add` first, then `claude plugin install plugin@marketplace`).
 
-**Note**: These are common patterns. Use web search to find skill ideas specific to the codebase's tools and frameworks.
+**Note**: These are common patterns. Use web search to find skill ideas specific to the codebase's tools and
+frameworks.
 
-**Contents**
-- [Available from official plugins](#available-from-official-plugins) — do not duplicate these with a custom skill
+Contents:
+
+- [Available from official plugins](#available-from-official-plugins) — do not duplicate these with a custom
+  skill
 - [Custom project skills](#custom-project-skills) — structure, frontmatter, invocation control
 - [Custom skill examples](#custom-skill-examples) — eight worked examples; read one, not all
 - [Arguments](#arguments) and [Dynamic context injection](#dynamic-context-injection)
 
-Jump to the section the recommendation needs. The worked examples are
-illustrative templates, not a list to recommend wholesale.
+Jump to the section the recommendation needs. The worked examples are illustrative templates, not a list to
+recommend wholesale.
 
 ---
 
@@ -24,53 +27,53 @@ illustrative templates, not a list to recommend wholesale.
 
 ### Plugin Development (plugin-dev)
 
-| Skill | Best For |
-|-------|----------|
-| **skill-development** | Creating new skills with proper structure |
-| **hook-development** | Building hooks for automation |
-| **command-development** | Creating slash commands |
-| **agent-development** | Building specialized subagents |
-| **mcp-integration** | Integrating MCP servers into plugins |
-| **plugin-structure** | Understanding plugin architecture |
+| Skill                   | Best For                                  |
+| ----------------------- | ----------------------------------------- |
+| **skill-development**   | Creating new skills with proper structure |
+| **hook-development**    | Building hooks for automation             |
+| **command-development** | Creating slash commands                   |
+| **agent-development**   | Building specialized subagents            |
+| **mcp-integration**     | Integrating MCP servers into plugins      |
+| **plugin-structure**    | Understanding plugin architecture         |
 
 ### Git Workflows (commit-commands)
 
-| Skill | Best For |
-|-------|----------|
-| **commit** | Creating git commits with proper messages |
-| **commit-push-pr** | Full commit, push, and PR workflow |
+| Skill              | Best For                                  |
+| ------------------ | ----------------------------------------- |
+| **commit**         | Creating git commits with proper messages |
+| **commit-push-pr** | Full commit, push, and PR workflow        |
 
 ### Frontend (frontend-design)
 
-| Skill | Best For |
-|-------|----------|
+| Skill               | Best For                        |
+| ------------------- | ------------------------------- |
 | **frontend-design** | Creating polished UI components |
 
 **Value**: Creates distinctive, high-quality UI instead of generic AI aesthetics.
 
 ### Automation Rules (hookify)
 
-| Skill | Best For |
-|-------|----------|
+| Skill             | Best For                              |
+| ----------------- | ------------------------------------- |
 | **writing-rules** | Creating hookify rules for automation |
 
 ### Feature Development (feature-dev)
 
-| Skill | Best For |
-|-------|----------|
+| Skill           | Best For                                |
+| --------------- | --------------------------------------- |
 | **feature-dev** | End-to-end feature development workflow |
 
 ---
 
 ## Quick Reference: Official Plugin Skills
 
-| Codebase Signal | Skill | Plugin |
-|-----------------|-------|--------|
-| Building plugins | skill-development | plugin-dev |
-| Git commits | commit | commit-commands |
-| React/Vue/Angular | frontend-design | frontend-design |
-| Automation rules | writing-rules | hookify |
-| Feature planning | feature-dev | feature-dev |
+| Codebase Signal   | Skill             | Plugin          |
+| ----------------- | ----------------- | --------------- |
+| Building plugins  | skill-development | plugin-dev      |
+| Git commits       | commit            | commit-commands |
+| React/Vue/Angular | frontend-design   | frontend-design |
+| Automation rules  | writing-rules     | hookify         |
+| Feature planning  | feature-dev       | feature-dev     |
 
 ---
 
@@ -106,11 +109,11 @@ agent: Explore                  # Which agent type when forked
 
 ### Invocation Control
 
-| Setting | User | Claude | Use for |
-|---------|------|--------|---------|
-| (default) | ✓ | ✓ | General-purpose skills |
-| `disable-model-invocation: true` | ✓ | ✗ | Side effects (deploy, send) |
-| `user-invocable: false` | ✗ | ✓ | Background knowledge |
+| Setting                          | User | Claude | Use for                     |
+| -------------------------------- | ---- | ------ | --------------------------- |
+| (default)                        | ✓    | ✓      | General-purpose skills      |
+| `disable-model-invocation: true` | ✓    | ✗      | Side effects (deploy, send) |
+| `user-invocable: false`          | ✗    | ✓      | Background knowledge        |
 
 ---
 
@@ -127,6 +130,7 @@ Apply a YAML template to generate consistent API docs:
 ```
 
 **SKILL.md:**
+
 ```yaml
 ---
 name: api-doc
@@ -144,6 +148,7 @@ Use the template in [openapi-template.yaml](openapi-template.yaml) as the struct
 ```
 
 **openapi-template.yaml:**
+
 ```yaml
 paths:
   /{path}:
@@ -177,6 +182,7 @@ Generate and validate migrations using a bundled script:
 ```
 
 **SKILL.md:**
+
 ```yaml
 ---
 name: create-migration
@@ -194,6 +200,7 @@ Create a migration for: $ARGUMENTS
 ```
 
 **scripts/validate-migration.sh:**
+
 ```bash
 #!/usr/bin/env bash
 # Validate migration syntax. Probe PATH rather than assuming the toolchain:
@@ -205,11 +212,9 @@ fi
 npx prisma validate 2>&1 || echo "Validation failed"
 ```
 
-NEVER reference a bundled file by an absolute or `~`-rooted path
-(`~/.claude/skills/<name>/...`). It breaks wherever `CLAUDE_CONFIG_DIR` moves the
-config directory, and breaks outright for a project-scoped skill under
-`.claude/skills/`. Relative paths resolve against the skill directory in both
-scopes.
+NEVER reference a bundled file by an absolute or `~`-rooted path (`~/.claude/skills/<name>/...`). It breaks
+wherever `CLAUDE_CONFIG_DIR` moves the config directory, and breaks outright for a project-scoped skill under
+`.claude/skills/`. Relative paths resolve against the skill directory in both scopes.
 
 ---
 
@@ -226,6 +231,7 @@ Generate tests following project patterns:
 ```
 
 **SKILL.md:**
+
 ```yaml
 ---
 name: gen-test
@@ -261,6 +267,7 @@ Scaffold new components from a template:
 ```
 
 **SKILL.md:**
+
 ```yaml
 ---
 name: new-component
@@ -292,6 +299,7 @@ Review PRs against a project-specific checklist:
 ```
 
 **SKILL.md:**
+
 ```yaml
 ---
 name: pr-check
@@ -310,6 +318,7 @@ For each item, mark ✅ or ❌ with explanation.
 ```
 
 **checklist.md:**
+
 ```markdown
 ## PR Checklist
 
@@ -327,6 +336,7 @@ For each item, mark ✅ or ❌ with explanation.
 Generate release notes from git history:
 
 **SKILL.md:**
+
 ```yaml
 ---
 name: release-notes
@@ -352,6 +362,7 @@ Generate release notes:
 Background knowledge Claude applies automatically:
 
 **SKILL.md:**
+
 ```yaml
 ---
 name: project-conventions
@@ -390,6 +401,7 @@ Onboard new developers with setup script:
 ```
 
 **SKILL.md:**
+
 ```yaml
 ---
 name: setup-dev
@@ -412,18 +424,16 @@ Report any issues encountered.
 
 ## Arguments
 
-`$ARGUMENTS` expands to everything the user typed after the skill name:
-`/deploy staging prod` → `staging prod`. If the skill body never mentions
-`$ARGUMENTS`, the input is appended as a trailing `ARGUMENTS: <value>` line
-instead, so a skill that ignores the placeholder still receives the input.
+`$ARGUMENTS` expands to everything the user typed after the skill name: `/deploy staging prod` →
+`staging prod`. If the skill body never mentions `$ARGUMENTS`, the input is appended as a trailing
+`ARGUMENTS: <value>` line instead, so a skill that ignores the placeholder still receives the input.
 
-Place `$ARGUMENTS` where the value belongs in the instruction — "Create a
-migration for: $ARGUMENTS" — rather than restating it, and describe the
-expected shape in the `description` so the user knows what to pass.
+Place `$ARGUMENTS` where the value belongs in the instruction — "Create a migration for: $ARGUMENTS" — rather
+than restating it, and describe the expected shape in the `description` so the user knows what to pass.
 
 ## Dynamic Context Injection
 
-Use `!`command`` to inject live data before the skill runs:
+Use `!`command\`\` to inject live data before the skill runs:
 
 ```yaml
 ## Current State

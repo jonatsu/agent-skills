@@ -1,6 +1,6 @@
 # AGENTS.md: <project>
 
-<One or two lines: what this repo is, from an agent's perspective. Not a README rehash.>
+\<One or two lines: what this repo is, from an agent's perspective. Not a README rehash.>
 
 <!--
   Keep CLAUDE.md as a symlink to this file:  ln -s AGENTS.md CLAUDE.md
@@ -20,9 +20,8 @@
 
 ## Commands
 
-<Only invocations carrying something the runner does not state. The agent can
-read the runner's own recipe list, so do not transcribe it here.
-Delete this section entirely if the repo has no runner yet.>
+\<Only invocations carrying something the runner does not state. The agent can read the runner's own recipe
+list, so do not transcribe it here. Delete this section entirely if the repo has no runner yet.>
 
 - `<command>`: `<the constraint or reason that is not in the runner>`
 
@@ -36,8 +35,8 @@ pasting a tree the agent can produce with one listing command.>
 
 ## Conventions
 
-<Only what is evidenced in the repo: commit history, a contributing guide, an
-editorconfig. Concrete enough that a diff shows whether it was followed.>
+\<Only what is evidenced in the repo: commit history, a contributing guide, an editorconfig. Concrete enough
+that a diff shows whether it was followed.>
 
 - `<convention>`, never `<the alternative it replaces>`
 
@@ -47,21 +46,19 @@ editorconfig. Concrete enough that a diff shows whether it was followed.>
 
 ## Gotchas
 
-<The highest-value section. Each line should be something that cost someone a
-debugging session: generated files, ordering dependencies, things that fail
-silently, restart requirements.>
+\<The highest-value section. Each line should be something that cost someone a debugging session: generated
+files, ordering dependencies, things that fail silently, restart requirements.>
 
 - `<non-obvious behavior>`: `<what it looks like when it bites>`
 
 ## Pointers
 
-<Delete if the repo has no auxiliary instruction files. Otherwise: this table is
-the only mechanism that works on every agent, including those that do not parse
-includes and those that do not discover nested files.>
+\<Delete if the repo has no auxiliary instruction files. Otherwise: this table is the only mechanism that
+works on every agent, including those that do not parse includes and those that do not discover nested files.>
 
-Open the matching file yourself before working in its area. Treat this table as
-the instruction rather than a description of automatic loading.
+Open the matching file yourself before working in its area. Treat this table as the instruction rather than a
+description of automatic loading.
 
-| Read before you touch | File | Holds |
-|---|---|---|
-| `<path or glob>` | `<file>` | `<what is in it>` |
+| Read before you touch | File     | Holds             |
+| --------------------- | -------- | ----------------- |
+| `<path or glob>`      | `<file>` | `<what is in it>` |

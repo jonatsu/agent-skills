@@ -8,9 +8,14 @@ metadata:
 
 # Nix Flakes
 
-IRON LAW: NEVER edit `flake.lock` by hand. Use `nix flake update` or `nix flake lock`. Manual edits break reproducibility and cause silent evaluation failures.
+IRON LAW: NEVER edit `flake.lock` by hand. Use `nix flake update` or `nix flake lock`. Manual edits break
+reproducibility and cause silent evaluation failures.
 
-IRON LAW 2: New or moved files MUST be `git add`ed (or already tracked) before any flake evaluation can see them. `nix build`/`nix eval`/`nix flake check` against a git-backed flake (`.`/`path:.`) only operate on the git index, not the raw working directory. An untracked new file is silently invisible — no error at the file itself, just a confusing "attribute ... missing" error at whatever *references* it. If a brand-new file/module isn't resolving, run `git status` before debugging the Nix logic.
+IRON LAW 2: New or moved files MUST be `git add`ed (or already tracked) before any flake evaluation can see
+them. `nix build`/`nix eval`/`nix flake check` against a git-backed flake (`.`/`path:.`) only operate on the
+git index, not the raw working directory. An untracked new file is silently invisible — no error at the file
+itself, just a confusing "attribute ... missing" error at whatever *references* it. If a brand-new file/module
+isn't resolving, run `git status` before debugging the Nix logic.
 
 ## Prerequisites
 
@@ -26,7 +31,8 @@ Or set via NixOS configuration:
 nix.settings.experimental-features = [ "nix-command" "flakes" ];
 ```
 
-Without this, all `nix flake *` and `nix build .#` commands fail with "error: experimental Nix feature 'flakes' is disabled".
+Without this, all `nix flake *` and `nix build .#` commands fail with "error: experimental Nix feature
+'flakes' is disabled".
 
 ## Workflow
 
@@ -52,7 +58,8 @@ Ask: Is this a new flake or an existing one?
 - Check for `flake-parts` → look for `flake-parts.lib.mkFlake` in outputs
 - Check for `import-tree` → look for `inputs.import-tree` (dendritic pattern indicator)
 
-If the project uses the Denful dendritic pattern, load the `dendritic-pattern` skill instead — flake.nix is minimal there; all logic lives in `modules/`.
+If the project uses the Denful dendritic pattern, load the `dendritic-pattern` skill instead — flake.nix is
+minimal there; all logic lives in `modules/`.
 
 ## Step 2: Work with Inputs
 
@@ -131,9 +138,12 @@ Set Nix settings scoped to the flake (restricted — only a subset of nix.conf o
 }
 ```
 
-**Allowed nixConfig keys** (restricted set): `bash-prompt`, `extra-substituters`, `extra-trusted-public-keys`, `max-jobs`, `narinfo-cache-positive-ttl`, `narinfo-cache-negative-ttl`, `netrc-file`, `post-build-hook`, `substituters`, `system-features`, `trusted-public-keys`, `trusted-substituters`, `warn-dirty`.
+**Allowed nixConfig keys** (restricted set): `bash-prompt`, `extra-substituters`, `extra-trusted-public-keys`,
+`max-jobs`, `narinfo-cache-positive-ttl`, `narinfo-cache-negative-ttl`, `netrc-file`, `post-build-hook`,
+`substituters`, `system-features`, `trusted-public-keys`, `trusted-substituters`, `warn-dirty`.
 
-Settings from `nixConfig` are only applied with `--accept-flake-config` or when the user confirms interactively.
+Settings from `nixConfig` are only applied with `--accept-flake-config` or when the user confirms
+interactively.
 
 ## Step 3: Work with Outputs
 
@@ -175,28 +185,29 @@ outputs = inputs@{ flake-parts, ... }:
 
 ### Output reference table
 
-| Output | Used by | Structure |
-|--------|---------|-----------|
-| `packages.<sys>.<name>` | `nix build` | Derivation |
-| `devShells.<sys>.<name>` | `nix develop` | Derivation |
-| `apps.<sys>.<name>` | `nix run` | `{ type, program }` |
-| `nixosConfigurations.<name>` | `nixos-rebuild` | `nixosSystem { ... }` |
-| `homeConfigurations.<name>` | `home-manager` | `homeManagerConfiguration { ... }` |
-| `overlays.default` | nixpkgs overlay | `final: prev: { ... }` |
-| `checks.<sys>.<name>` | `nix flake check` | Derivation |
-| `formatter.<sys>` | `nix fmt` | Formatter derivation |
-| `templates.<name>` | `nix flake init` | `{ path, description }` |
-| `legacyPackages.<sys>` | `nixpkgs.legacyPackages` | Pre-flake compatibility |
-| `hydraJobs.<sys>` | Hydra CI | Build jobs for Hydra |
-| `nixosModules.<name>` | NixOS module import | Reusable NixOS module |
-| `homeManagerModules.<name>` | home-manager import | Reusable HM module |
-| `bundlers.<sys>.<name>` | `nix bundle` | Bundle into portable format |
-| `darwinConfigurations.<name>` | nix-darwin | macOS system config |
-| `darwinModules.<name>` | nix-darwin module | Reusable darwin module |
+| Output                        | Used by                  | Structure                          |
+| ----------------------------- | ------------------------ | ---------------------------------- |
+| `packages.<sys>.<name>`       | `nix build`              | Derivation                         |
+| `devShells.<sys>.<name>`      | `nix develop`            | Derivation                         |
+| `apps.<sys>.<name>`           | `nix run`                | `{ type, program }`                |
+| `nixosConfigurations.<name>`  | `nixos-rebuild`          | `nixosSystem { ... }`              |
+| `homeConfigurations.<name>`   | `home-manager`           | `homeManagerConfiguration { ... }` |
+| `overlays.default`            | nixpkgs overlay          | `final: prev: { ... }`             |
+| `checks.<sys>.<name>`         | `nix flake check`        | Derivation                         |
+| `formatter.<sys>`             | `nix fmt`                | Formatter derivation               |
+| `templates.<name>`            | `nix flake init`         | `{ path, description }`            |
+| `legacyPackages.<sys>`        | `nixpkgs.legacyPackages` | Pre-flake compatibility            |
+| `hydraJobs.<sys>`             | Hydra CI                 | Build jobs for Hydra               |
+| `nixosModules.<name>`         | NixOS module import      | Reusable NixOS module              |
+| `homeManagerModules.<name>`   | home-manager import      | Reusable HM module                 |
+| `bundlers.<sys>.<name>`       | `nix bundle`             | Bundle into portable format        |
+| `darwinConfigurations.<name>` | nix-darwin               | macOS system config                |
+| `darwinModules.<name>`        | nix-darwin module        | Reusable darwin module             |
 
 ### meta.mainProgram
 
-`nix run .#name` resolves the binary to run via `meta.mainProgram`. If a package has multiple binaries, set this to avoid ambiguity:
+`nix run .#name` resolves the binary to run via `meta.mainProgram`. If a package has multiple binaries, set
+this to avoid ambiguity:
 
 ```nix
 meta = {
@@ -242,17 +253,19 @@ nix profile rollback
 
 ### Key flags
 
-| Flag | Effect |
-|------|--------|
-| `--impure` | Allow mutable paths, `$NIX_PATH` |
-| `--override-input path url` | Override input at eval time |
-| `--no-write-lock-file` | Don't write lock |
-| `--commit-lock-file` | Auto-commit lock changes |
-| `-L` | Show full build output |
+| Flag                        | Effect                           |
+| --------------------------- | -------------------------------- |
+| `--impure`                  | Allow mutable paths, `$NIX_PATH` |
+| `--override-input path url` | Override input at eval time      |
+| `--no-write-lock-file`      | Don't write lock                 |
+| `--commit-lock-file`        | Auto-commit lock changes         |
+| `-L`                        | Show full build output           |
 
 ### Advanced Commands
 
-See [references/advanced-commands.md](references/advanced-commands.md) for: `nix flake prefetch/archive/clone`, `nix profile history/diff-closures/wipe-history`, `nix develop` phase shortcuts, installable resolution, output selection syntax, and additional key flags.
+See [references/advanced-commands.md](references/advanced-commands.md) for:
+`nix flake prefetch/archive/clone`, `nix profile history/diff-closures/wipe-history`, `nix develop` phase
+shortcuts, installable resolution, output selection syntax, and additional key flags.
 
 ## Step 5: Verify ⚠️ REQUIRED
 
@@ -273,15 +286,18 @@ See [references/advanced-commands.md](references/advanced-commands.md) for: `nix
 - Running `nix flake update` when you only need one input updated — use `nix flake update <input>`
 - **Mixing `nix profile` and `nix-env`** — incompatible internal formats, pick one.
 - **Forgetting `experimental-features`** — all flake commands fail without `nix-command flakes` enabled.
-- **Using deprecated `--recreate-lock-file` or `--update-input`** — replaced by `nix flake update` and `nix flake update <input>`.
+- **Using deprecated `--recreate-lock-file` or `--update-input`** — replaced by `nix flake update` and
+  `nix flake update <input>`.
 - **Not setting `meta.mainProgram` for multi-binary packages** — `nix run` may fail or run the wrong binary.
-- **Debugging a "missing attribute" eval error by rewriting Nix logic before checking `git status`** — an untracked new file is invisible to flake evaluation and produces exactly this symptom.
+- **Debugging a "missing attribute" eval error by rewriting Nix logic before checking `git status`** — an
+  untracked new file is invisible to flake evaluation and produces exactly this symptom.
 
 ## Recommended Tools
 
 ### mcp-nixos
 
-MCP server for real-time NixOS ecosystem queries. See [references/mcp-nixos.md](references/mcp-nixos.md) for installation and usage examples.
+MCP server for real-time NixOS ecosystem queries. See [references/mcp-nixos.md](references/mcp-nixos.md) for
+installation and usage examples.
 
 ## Pre-Delivery Checklist
 

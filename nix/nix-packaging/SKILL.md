@@ -8,7 +8,9 @@ metadata:
 
 # Nix Packaging
 
-IRON LAW: ALWAYS SOURCE FROM THE ORIGINAL ARCHIVE — NEVER FROM PRE-EXTRACTED DIRECTORIES. PRE-EXTRACTED DIRS LOSE METADATA, CHECKSUMS, AND REPRODUCIBILITY. THE `src` ATTRIBUTE MUST POINT TO A FETCHED ARCHIVE, NOT A LOCAL DIRECTORY.
+IRON LAW: ALWAYS SOURCE FROM THE ORIGINAL ARCHIVE — NEVER FROM PRE-EXTRACTED DIRECTORIES. PRE-EXTRACTED DIRS
+LOSE METADATA, CHECKSUMS, AND REPRODUCIBILITY. THE `src` ATTRIBUTE MUST POINT TO A FETCHED ARCHIVE, NOT A
+LOCAL DIRECTORY.
 
 ## Workflow
 
@@ -28,10 +30,13 @@ Nix Packaging Progress:
 
 Determine whether the software is distributed as a pre-compiled binary or as source code.
 
-- **Binary packaging**: `.deb`, `.rpm`, `.AppImage`, tarball with pre-built binaries, or a single statically-linked binary. Use `autoPatchelfHook` to fix library paths.
-- **Source packaging**: Source tarball or git repository. Use the project's build system (meson, cmake, cargo, go, etc.).
+- **Binary packaging**: `.deb`, `.rpm`, `.AppImage`, tarball with pre-built binaries, or a single
+  statically-linked binary. Use `autoPatchelfHook` to fix library paths.
+- **Source packaging**: Source tarball or git repository. Use the project's build system (meson, cmake, cargo,
+  go, etc.).
 
-⛔ BLOCKING: Do NOT proceed without confirming the packaging type. Binary and source derivations have fundamentally different structures.
+⛔ BLOCKING: Do NOT proceed without confirming the packaging type. Binary and source derivations have
+fundamentally different structures.
 
 ## Step 2: Gather Source
 
@@ -214,19 +219,21 @@ stdenv.mkDerivation rec {
 
 ### Electron Apps
 
-See [references/electron-dependencies.md](references/electron-dependencies.md) for the complete Electron runtime dependency list.
+See [references/electron-dependencies.md](references/electron-dependencies.md) for the complete Electron
+runtime dependency list.
 
 ## Step 4: Handle Dependencies
 
 ### Dependency Categories
 
-| Attribute | When to use |
-|-----------|-------------|
-| `nativeBuildInputs` | Tools needed at BUILD time only: compilers, code generators, `pkg-config`, `cmake`, `meson`, `makeWrapper` |
-| `buildInputs` | Libraries needed at BUILD and RUN time: `gtk3`, `glib`, `mesa`, `openssl` |
+| Attribute               | When to use                                                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `nativeBuildInputs`     | Tools needed at BUILD time only: compilers, code generators, `pkg-config`, `cmake`, `meson`, `makeWrapper`                                       |
+| `buildInputs`           | Libraries needed at BUILD and RUN time: `gtk3`, `glib`, `mesa`, `openssl`                                                                        |
 | `propagatedBuildInputs` | Libraries needed by consumers of this package at their build time. Use sparingly — only when headers or pkg-config files are required downstream |
 
-See [references/library-mapping.md](references/library-mapping.md) for the complete library→package mapping and debugging commands.
+See [references/library-mapping.md](references/library-mapping.md) for the complete library→package mapping
+and debugging commands.
 
 ### makeWrapper Pattern
 
@@ -293,7 +300,8 @@ overlays.default = final: prev: {
 
 ## Binary Overlay Pattern
 
-See [references/binary-overlay-pattern.md](references/binary-overlay-pattern.md) for the full platform-specific binary overlay pattern with hash conversion.
+See [references/binary-overlay-pattern.md](references/binary-overlay-pattern.md) for the full
+platform-specific binary overlay pattern with hash conversion.
 
 ## Step 7: Verify ⚠️ REQUIRED
 
@@ -312,7 +320,8 @@ nix flake check
 
 ## FHS Escape Hatch (Last Resort)
 
-Use `buildFHSUserEnv` ONLY when `autoPatchelfHook` cannot resolve dependencies (e.g., binaries that hardcode `/usr/lib` paths or dlopen libraries at runtime):
+Use `buildFHSUserEnv` ONLY when `autoPatchelfHook` cannot resolve dependencies (e.g., binaries that hardcode
+`/usr/lib` paths or dlopen libraries at runtime):
 
 ```nix
 { buildFHSUserEnv }:
@@ -328,13 +337,17 @@ NEVER use FHS as the first approach. Always attempt `autoPatchelfHook` first.
 
 ## Module-System Wrappers (nix-wrapper-modules)
 
-For a **configured** executable (baked-in flags/env/generated config) that stays portable across NixOS, home-manager, nix-darwin, devshells, and plain shells, use BirdeeHub's [nix-wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules) instead of a hand-rolled wrapper. Full workflow and API live in the dedicated **`nix-wrapper-modules` skill** — reach for it once wrapping needs generated config or cross-environment portability rather than a one-off `makeWrapper`.
+For a **configured** executable (baked-in flags/env/generated config) that stays portable across NixOS,
+home-manager, nix-darwin, devshells, and plain shells, use BirdeeHub's
+[nix-wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules) instead of a hand-rolled wrapper. Full
+workflow and API live in the dedicated **`nix-wrapper-modules` skill** — reach for it once wrapping needs
+generated config or cross-environment portability rather than a one-off `makeWrapper`.
 
-| Approach | Scope | Portability |
-|----------|-------|-------------|
-| `makeWrapper` + `symlinkJoin` | Single derivation | NixOS/HM only |
-| `nix-wrapper-modules` | Module system | NixOS, HM, nix-darwin, devshell, shell |
-| `buildFHSUserEnv` | FHS sandbox | Anywhere (heavy) |
+| Approach                      | Scope             | Portability                            |
+| ----------------------------- | ----------------- | -------------------------------------- |
+| `makeWrapper` + `symlinkJoin` | Single derivation | NixOS/HM only                          |
+| `nix-wrapper-modules`         | Module system     | NixOS, HM, nix-darwin, devshell, shell |
+| `buildFHSUserEnv`             | FHS sandbox       | Anywhere (heavy)                       |
 
 ## Unfree Packages
 
@@ -348,18 +361,28 @@ Users MUST enable unfree packages in their configuration to build.
 
 ## Anti-Patterns
 
-- **Sourcing from pre-extracted directories** instead of original archives. Violates the IRON LAW. Always use `fetchurl`/`fetchFromGitHub`.
-- **Using `autoPatchelfHook` without putting libraries in `buildInputs`**. `autoPatchelfHook` can only find libraries that are in `buildInputs`.
-- **Mixing up `nativeBuildInputs` and `buildInputs`**. Build tools go in `nativeBuildInputs`; runtime libraries go in `buildInputs`.
-- **Using `lib.fakeSha256` in final derivation**. Only for initial scaffolding. Replace with real hash before delivery.
-- **Creating FHS environments when `autoPatchelfHook` would work**. FHS is a heavy escape hatch; try `autoPatchelfHook` first.
-- **Hardcoding absolute store paths** instead of using package references (e.g., `${gtk3}/lib` not `/nix/store/abc-gtk3/lib`).
-- **Forgetting to test with `ldd` for missing libraries**. A successful build does not guarantee a runnable binary.
-- **Using `propagatedBuildInputs` when `buildInputs` suffices**. Only propagate when downstream consumers need the library at their build time.
+- **Sourcing from pre-extracted directories** instead of original archives. Violates the IRON LAW. Always use
+  `fetchurl`/`fetchFromGitHub`.
+- **Using `autoPatchelfHook` without putting libraries in `buildInputs`**. `autoPatchelfHook` can only find
+  libraries that are in `buildInputs`.
+- **Mixing up `nativeBuildInputs` and `buildInputs`**. Build tools go in `nativeBuildInputs`; runtime
+  libraries go in `buildInputs`.
+- **Using `lib.fakeSha256` in final derivation**. Only for initial scaffolding. Replace with real hash before
+  delivery.
+- **Creating FHS environments when `autoPatchelfHook` would work**. FHS is a heavy escape hatch; try
+  `autoPatchelfHook` first.
+- **Hardcoding absolute store paths** instead of using package references (e.g., `${gtk3}/lib` not
+  `/nix/store/abc-gtk3/lib`).
+- **Forgetting to test with `ldd` for missing libraries**. A successful build does not guarantee a runnable
+  binary.
+- **Using `propagatedBuildInputs` when `buildInputs` suffices**. Only propagate when downstream consumers need
+  the library at their build time.
 - **Skipping `nix flake check`**. Broken flakes block users.
 - **Not pinning `rev` in `fetchFromGitHub`**. Unpinned revisions break reproducibility.
-- **Using `xorg.libxkbcommon` instead of `libxkbcommon`** — the correct package is `libxkbcommon`, not `xorg.libxkbcommon`.
-- **Not using `rec` when version appears in `src`** — without `rec`, `version` is not in scope for `src` attribute.
+- **Using `xorg.libxkbcommon` instead of `libxkbcommon`** — the correct package is `libxkbcommon`, not
+  `xorg.libxkbcommon`.
+- **Not using `rec` when version appears in `src`** — without `rec`, `version` is not in scope for `src`
+  attribute.
 
 ## Pre-Delivery Checklist
 

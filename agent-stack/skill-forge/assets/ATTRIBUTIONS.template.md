@@ -16,8 +16,8 @@
 
 ## Adaptation note
 
-This version is derived from the upstream `<upstream-skill-name>` skill and has
-been modified for this repository.
+This version is derived from the upstream `<upstream-skill-name>` skill and has been modified for this
+repository.
 
 Material changes include:
 

@@ -5,7 +5,8 @@ description: Generic chezmoi dotfiles management across machines. Use for init, 
 
 # Chezmoi Dotfiles Management
 
-IRON LAW: NEVER run `chezmoi apply` without `chezmoi diff` first. Blind apply overwrites uncommitted home dir changes.
+IRON LAW: NEVER run `chezmoi apply` without `chezmoi diff` first. Blind apply overwrites uncommitted home dir
+changes.
 
 ## Workflow
 
@@ -49,18 +50,18 @@ chezmoi unmanaged ~                   # list untracked files in home dir
 
 Chezmoi encodes metadata in source filenames — no separate config database.
 
-| Prefix / Suffix   | Effect on target                        | Example                              |
-| ----------------- | --------------------------------------- | ------------------------------------ |
-| `dot_`            | Leading `.` in target name              | `dot_zshrc` → `.zshrc`              |
-| `private_`        | 0600 (files) / 0700 (dirs) permissions  | `private_dot_ssh/`                   |
-| `executable_`     | +x (755) permissions                    | `executable_setup.sh`                |
-| `encrypted_`      | Decrypted transparently on apply        | `encrypted_private_key.age`          |
-| `.tmpl` suffix    | Rendered as Go template before writing  | `dot_gitconfig.tmpl`                 |
-| `run_once_`       | Run only on first apply (state-tracked) | `run_once_install-pkgs.sh`           |
-| `run_onchange_`   | Run when script content changes         | `run_onchange_setup.sh`              |
-| `run_always_`     | Run on every apply                      | `run_always_reload.sh`               |
-| `run_before_`     | Run before files are written            | `run_before_decrypt.sh`              |
-| `run_after_`      | Run after files are written             | `run_after_rehash.sh`                |
+| Prefix / Suffix | Effect on target                        | Example                     |
+| --------------- | --------------------------------------- | --------------------------- |
+| `dot_`          | Leading `.` in target name              | `dot_zshrc` → `.zshrc`      |
+| `private_`      | 0600 (files) / 0700 (dirs) permissions  | `private_dot_ssh/`          |
+| `executable_`   | +x (755) permissions                    | `executable_setup.sh`       |
+| `encrypted_`    | Decrypted transparently on apply        | `encrypted_private_key.age` |
+| `.tmpl` suffix  | Rendered as Go template before writing  | `dot_gitconfig.tmpl`        |
+| `run_once_`     | Run only on first apply (state-tracked) | `run_once_install-pkgs.sh`  |
+| `run_onchange_` | Run when script content changes         | `run_onchange_setup.sh`     |
+| `run_always_`   | Run on every apply                      | `run_always_reload.sh`      |
+| `run_before_`   | Run before files are written            | `run_before_decrypt.sh`     |
+| `run_after_`    | Run after files are written             | `run_after_rehash.sh`       |
 
 Prefixes compose: `private_dot_ssh/private_executable_deploy-key` → `~/.ssh/deploy-key` (0600, +x).
 
@@ -144,13 +145,22 @@ chezmoi git -- log --oneline -5        # recent commit history
 
 ## Key Gotchas
 
-- `chezmoi re-add` on `.tmpl` files: expands rendered dest → source, overwrites `.tmpl` syntax. Check `chezmoi source-path <file>` first — if ends in `.tmpl`, use `chezmoi edit` instead.
-- `chezmoi status` columns: `[source][dest]` format — `MM` = both changed, ` M` = dest only changed, `DA` = deleted in source but exists in dest (often junk like `node_modules/`). Read both columns to understand drift direction.
-- `chezmoi diff` direction: `-` lines = current dest (will be removed), `+` lines = target after apply (will be added). Not a standard git diff — the "from" is your live home dir, the "to" is the rendered source state.
-- `run_once_` scripts won't re-run: already recorded in state. Reset with `chezmoi state delete-bucket --bucket=scriptState`.
+- `chezmoi re-add` on `.tmpl` files: expands rendered dest → source, overwrites `.tmpl` syntax. Check
+  `chezmoi source-path <file>` first — if ends in `.tmpl`, use `chezmoi edit` instead.
+- `chezmoi status` columns: `[source][dest]` format — `MM` = both changed, ` M` = dest only changed, `DA` =
+  deleted in source but exists in dest (often junk like `node_modules/`). Read both columns to understand
+  drift direction.
+- `chezmoi diff` direction: `-` lines = current dest (will be removed), `+` lines = target after apply (will
+  be added). Not a standard git diff — the "from" is your live home dir, the "to" is the rendered source
+  state.
+- `run_once_` scripts won't re-run: already recorded in state. Reset with
+  `chezmoi state delete-bucket --bucket=scriptState`.
 - `forget` needs TTY: use `chezmoi forget --force <path>`.
 - Flood of `DA` in status: untracked dirs (e.g. node_modules). Add patterns to `.chezmoiignore`.
-- `.chezmoiignore` patterns match the **target-stripped name** (`run_once_`/`dot_`/`private_` prefixes and `.tmpl` suffix removed), not the raw source filename. A rule using the raw name silently never matches — no error, the "ignored" script just keeps running. Verify with `chezmoi --no-tty ignored`. Detail: `references/scripts-ignores.md`.
+- `.chezmoiignore` patterns match the **target-stripped name** (`run_once_`/`dot_`/`private_` prefixes and
+  `.tmpl` suffix removed), not the raw source filename. A rule using the raw name silently never matches — no
+  error, the "ignored" script just keeps running. Verify with `chezmoi --no-tty ignored`. Detail:
+  `references/scripts-ignores.md`.
 
 ## Pre-Delivery Checklist
 
@@ -163,10 +173,10 @@ chezmoi git -- log --oneline -5        # recent commit history
 
 Load these when workflow needs deeper detail:
 
-| Topic | File |
-|-------|------|
-| Templates, variables, partials | `references/templates.md` |
-| Encryption, password managers | `references/encryption-secrets.md` |
-| Run scripts, ignore rules | `references/scripts-ignores.md` |
-| Troubleshooting, conflicts, validation | `references/troubleshooting.md` |
-| External docs URL index | `references/external-docs.md` |
+| Topic                                  | File                               |
+| -------------------------------------- | ---------------------------------- |
+| Templates, variables, partials         | `references/templates.md`          |
+| Encryption, password managers          | `references/encryption-secrets.md` |
+| Run scripts, ignore rules              | `references/scripts-ignores.md`    |
+| Troubleshooting, conflicts, validation | `references/troubleshooting.md`    |
+| External docs URL index                | `references/external-docs.md`      |
