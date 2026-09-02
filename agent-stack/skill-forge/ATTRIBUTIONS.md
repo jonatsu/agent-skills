@@ -51,3 +51,17 @@ was NOT used; it misreports repositories that do carry a licence.
   bundled runtime source and project files are unmodified
 
 Upstream supplies no `NOTICE` file at the pinned revision.
+
+## Official Agent Skills Authoring Guidance
+
+The 2026-09-02 revision incorporated independently condensed guidance from these official Agent Skills pages:
+
+- [Best practices for skill creators](https://agentskills.io/skill-creation/best-practices)
+- [Optimizing skill descriptions](https://agentskills.io/skill-creation/optimizing-descriptions)
+- [Evaluating skill output quality](https://agentskills.io/skill-creation/evaluating-skills)
+- [Using scripts in skills](https://agentskills.io/skill-creation/using-scripts)
+
+The source files are under `docs/skill-creation/` at Agent Skills repository commit
+`69ef37e9424c0a7ea9dd2293b559e43ec8176379`. That documentation is licensed under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). This skill reorganizes, condenses, and adapts the
+guidance to its existing workflow and terminology; it does not reproduce the pages verbatim.

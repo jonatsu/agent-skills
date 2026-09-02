@@ -1,6 +1,6 @@
 ---
 name: skill-forge
-description: Creates and updates Agent Skills that follow the agentskills.io specification. Use for authoring SKILL.md, improving skill instructions, designing progressive disclosure, adding scripts or references, repairing skill discovery, making a skill portable or repository-specific, and recording provenance for adapted skills. Excludes qualitative scoring of completed skills, global agent instructions, tool descriptions, and third-party skill installation.
+description: "Use to create or repair Agent Skills: discovery, resources, evaluation, portability, and provenance."
 license: MIT
 compatibility: The bundled specification validator requires Python 3.11+, uv, and dependency access on its first run.
 metadata:
@@ -26,6 +26,28 @@ Read the existing skill and all bundled resources when updating one. For new ski
 - whether the work is a new skill, substantial revision, or focused update;
 - whether the skill is portable or repository-specific; and
 - whether any material derives from another source.
+
+Define one coherent unit of work that composes with other skills. Inventory every subject, tool, language,
+workflow, and output the skill would cover. Keep multiple aspects together only when one shared task or
+decision boundary requires them. Shared popularity, one author's environment, possible integration, or
+occasional co-use is insufficient. Split unrelated guidance into separate skills or omit it.
+
+When the relationship between retained aspects is not obvious, state the shared job in the description or
+body so later reviewers do not have to invent the justification.
+
+Ground domain guidance in real execution, authoritative documentation, or existing project artifacts. Do not
+ask a model to invent a skill solely from its general training knowledge. When extracting a skill from
+completed work, capture:
+
+- the procedure that produced the successful result;
+- every user correction or steering decision;
+- required input and output forms;
+- project conventions, constraints, and failure modes the agent initially missed; and
+- successful behavior worth preserving, not only failures.
+
+Useful project evidence includes runbooks, API specifications, schemas, configuration, review comments,
+issue history, version-control fixes, and recorded failures with their resolutions. Label unsupported guidance
+as uncertain or omit it; do not turn plausible generic advice into asserted expertise.
 
 Ask the user only when a missing answer would change behavior, scope, portability, provenance, compatibility,
 or cost. Proceed directly when the repository and request settle those choices.
@@ -85,6 +107,15 @@ belongs in a script.
 
 Write instructions that change decisions or outcomes. Match specificity to risk: constrain fragile operations
 closely and leave room for judgment where several approaches are valid.
+
+Teach a reusable procedure for a class of tasks rather than the answer to one example. Preserve specific
+commands, formats, constraints, and templates when correct execution depends on them.
+
+Choose a recommended default when one approach usually fits. Mention exceptions with the condition that
+selects them instead of presenting an undifferentiated menu of alternatives.
+
+Keep a non-obvious prerequisite or gotcha in `SKILL.md` when the agent must know it before it can recognize the
+condition for loading a reference. Move later branch detail behind a conditional pointer.
 
 Descriptions state what the skill does and when it applies. Cover each distinct trigger branch once. Add an
 exclusion only when it prevents likely misrouting. Read
