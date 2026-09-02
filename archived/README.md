@@ -19,9 +19,11 @@ whole mechanism; there is no separate opt-out to remember.
 | `brooks-lint-maintainability-review` | 2026-09-02 | Temporarily removed with the intact `review/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `brooks-lint-test-review` | 2026-09-02 | Temporarily removed with the intact `review/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `buildroot-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `design-forge` | 2026-09-02 | Temporarily removed from deployment. Its corpus contract and checker remain archived as reference material. Review is deferred. See its `ARCHIVED.md`. |
 | `embedded-linux-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `find-skills` | 2026-09-02 | Retired at the user's direction. Its cross-agent source catalogue, trust model and installation workflow require continuing maintenance against external services and agent interfaces; Codex's system `skill-installer` now covers its narrower installation lane. The security and provenance material remains useful as a reference. See its `ARCHIVED.md`. |
 | `headroom-management` | 2026-08-26 | The Headroom proxy it manages was rejected, so the skill governs a tool this setup no longer runs. See its `ARCHIVED.md`. |
+| `idea-forge` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `lean-ctx` | 2026-08-27 | lean-ctx was removed from this setup, so every `ctx_*` trigger in the skill names a tool that no longer exists. Its three locally-measured reference files are why this is an archive rather than a deletion, and its Apache-2.0 `LICENSE.upstream`/`NOTICE.upstream` must stay with the directory. See its `ARCHIVED.md`. |
 | `kas-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `prompt-optimizer` | 2026-08-27 | Merged into `system-prompts`, now also archived, as its REPAIR branch — same subject, opposite direction, and the two collided on "write a system prompt" and "fix this prompt". Nothing was dropped; `ARCHIVED.md` maps every section to its new home. Archived rather than deleted because its diagnostic table was written against real failures. |
@@ -31,7 +33,6 @@ whole mechanism; there is no separate opt-out to remember.
 | `technical-writing` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `token-optimiser` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `uboot-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
-| `writing-great-skills` | 2026-08-27 | Unreachable and unconsumed: `disable-model-invocation: true` meant no skill could invoke it and Claude Code could not preload it, and its only dependents were removed from `skill-judge` in `7704d3e`. It was also a second authority on skill authoring that contradicted `skill-forge` on prohibitions without acknowledging it. Preserved verbatim from upstream, which is why it was never brought up to repo conventions — and why bringing it up would have destroyed the property it was kept for. `ARCHIVED.md` names the four concepts `skill-forge` does not carry. |
 | `yocto-oe-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 
 ## Archiving a skill
