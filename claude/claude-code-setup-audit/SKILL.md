@@ -23,7 +23,9 @@ emitting it. NEVER invent a flag, subcommand, or service endpoint.
 
 **Names of plugins, MCP servers, and their install commands MUST be discovered, never recalled.** They belong
 to projects on their own release schedules, so a name that was correct when this skill was written can be
-wrong today. The commands for discovering each are in the matching Phase 2 section.
+wrong today. The commands for discovering each are in the matching Phase 2 section. When no local command can
+answer — a third-party server's current install syntax, endpoint, or auth requirement — read the vendor's own
+documentation with `WebFetch` or `WebSearch` rather than reconstructing it.
 
 ## Workflow
 
@@ -54,8 +56,11 @@ MUST run before Phase 1. Recommending what is already installed is the single mo
 skill.
 
 ```bash
-# Project-level config
-ls -la .claude/ .mcp.json CLAUDE.md AGENTS.md 2>/dev/null
+# Project-level config. Read `.mcp.json`, never just list it: it is the only
+# record of project MCP servers when the CLI is unavailable, and an unread one
+# is how already-configured servers get recommended back to the user.
+ls -la .claude/ CLAUDE.md AGENTS.md 2>/dev/null
+cat .mcp.json 2>/dev/null
 cat .claude/settings.json .claude/settings.local.json 2>/dev/null
 ls .claude/skills/ .claude/agents/ .claude/commands/ 2>/dev/null
 
@@ -152,22 +157,13 @@ Reference files load on demand — read only the ones a category actually needs.
 
 See [references/mcp-servers.md](references/mcp-servers.md).
 
-| Codebase Signal                    | Recommended MCP Server                                                       |
-| ---------------------------------- | ---------------------------------------------------------------------------- |
-| Frontend with UI testing needs     | **Playwright** — browser automation/testing                                  |
-| Uses Supabase                      | **Supabase MCP** — direct database operations                                |
-| Uses Convex                        | **Convex MCP** — deployment introspection, queries/mutations, env vars, logs |
-| PostgreSQL/MySQL database          | **Database MCP** — query and schema tools                                    |
-| GitHub repository                  | **GitHub MCP** — issues, PRs, actions                                        |
-| Uses Linear for issues             | **Linear MCP** — issue management                                            |
-| AWS infrastructure                 | **AWS MCP** — cloud resource management                                      |
-| Sentry error tracking              | **Sentry MCP** — error investigation                                         |
-| Docker containers                  | **Docker MCP** — container management                                        |
-| Heavy use of fast-moving libraries | **Docs-lookup MCP** — see the reference for self-hosted vs hosted            |
+**Derive the candidate from the dependency; do not read it off a list.** The mapping is mechanical — a project
+using a vendor wants that vendor's server — so a vendor SDK in the manifest, a database driver, or a
+configured hosted service each names its own candidate. A fixed table here would be a snapshot of other
+people's release schedules, which is the thing this skill is not allowed to recall.
 
-**This table is a starting set, not the boundary.** The mapping is mechanical — a project using a vendor wants
-that vendor's server — so derive a candidate from the dependency when the vendor is absent here, rather than
-forcing the project onto a row that fits badly.
+Three signals are not mechanical and are in the reference: what makes a documentation server the answer,
+when browser automation is worth its context, and how Convex is detected.
 
 MUST flag, for every hosted MCP server recommended: it receives your queries, and it needs credentials. State
 both in the report. Prefer a self-hosted equivalent when one exists. MUST verify an install command against
@@ -332,8 +328,12 @@ scoped to the changed file.
 
 - [ ] Phase 0 ran, and its findings appear in the report (as omissions or an "Already covered" section)
 - [ ] Every recommendation names the file or dependency that triggered it
-- [ ] Every command was verified against `--help` or a reference file
-- [ ] Every hook config is complete, scoped to the edited file, and carries a cost note
+- [ ] Every command was verified this session against `--help`, a discovery command, or the vendor's own
+  documentation. A reference file in this skill does not count — it is a starting point, and a stale
+  command in one is exactly how an unrunnable line reaches a report
+- [ ] Every plugin and MCP server name came from a discovery command, not from recall
+- [ ] Every hook config is complete, carries a cost note, and is scoped to the edited file wherever the
+  toolchain supports it. A whole-project check that cannot be scoped belongs on `Stop`, not `PostToolUse`
 - [ ] Every hosted MCP server carries a data-flow and credentials note
 - [ ] No category padded past its surviving candidates
 - [ ] Any inventory gap from Phase 0 is stated, with the affected categories marked unverified

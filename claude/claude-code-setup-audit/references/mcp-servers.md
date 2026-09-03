@@ -23,7 +23,8 @@ not reliably at `~/.claude.json`: verified 2026-09-03 on a machine with `CLAUDE_
 `~/.claude.json` does not exist and the real file sits under the configured directory. Resolve the path from
 the environment rather than printing a literal `~/.claude.json` into a report.
 
-Debug a misbehaving server with `claude --mcp-debug`.
+Debug a misbehaving server with `claude --debug mcp`. There is no `--mcp-debug` flag; `-d, --debug [filter]`
+takes a category filter. Confirmed against `claude --help` on 2.1.239, 2026-09-03.
 
 ## Data Flow and Credentials — Decide Before Recommending
 

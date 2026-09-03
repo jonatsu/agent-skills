@@ -71,6 +71,13 @@ then runs against the literal string `null`.
 
 `permissionDecision` is `allow`, `deny`, or `ask`.
 
+**UNVERIFIED, 2026-09-03.** A review reported that Claude Code's hooks documentation also requires
+`hookEventName` inside `hookSpecificOutput` and pairs the decision with `permissionDecisionReason` rather than
+`systemMessage`. Nobody has written this hook into settings and tripped it, so the block above is what this
+file has always claimed rather than a measured result. Confirm against the current hooks documentation before
+printing it — a blocking hook that is malformed fails open, which is the worst way for this to be wrong. The
+same review reported the command-hook timeout default as 600s, not the 60s stated below; also unverified.
+
 **Matchers** filter by tool name, are case-sensitive, and accept regex: `"Edit|Write"`, `"Bash"`, `"*"`,
 `"mcp__.*"`.
 
@@ -152,7 +159,7 @@ case "$f" in *.js|*.jsx|*.ts|*.tsx) npx eslint --fix "$f" ;; esac
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path // empty' | { read -r f; case \"$f\" in *.py) ruff format \"$f\" && ruff check --fix \"$f\" ;; esac; } || true",
+            "command": "jq -r '.tool_input.file_path // empty' | { read -r f; case \"$f\" in *.py) ruff format \"$f\"; ruff check --fix \"$f\" || exit 2 ;; esac; }",
             "timeout": 30
           }
         ]
@@ -161,6 +168,12 @@ case "$f" in *.js|*.jsx|*.ts|*.tsx) npx eslint --fix "$f" ;; esac
   }
 }
 ```
+
+**A formatter may swallow its exit status; a linter MUST NOT.** `|| true` is right on `prettier --write`,
+which either rewrites the file or has nothing to do. It is wrong on a lint hook: `ruff check --fix` leaves
+every violation it cannot fix, and discarding the status makes a hook advertised as "lint the edited file"
+report success on failing code. Exit 2 instead, which feeds stderr back to Claude for a fix. Check this
+whenever recommending a hook whose value is its verdict rather than its side effect.
 
 ### Black / isort (Python)
 
@@ -289,6 +302,10 @@ Fire when Claude Code notifies the user. Matchers filter by notification type.
 | `idle_prompt`        | Claude is waiting for input (60+ seconds) |
 | `auth_success`       | Authentication succeeds                   |
 | `elicitation_dialog` | An MCP tool needs input                   |
+
+**These four are the common ones, not the set.** Claude Code defines more, and the list grows between
+releases. Confirm a matcher against the current hooks documentation before printing it, rather than assuming
+anything absent here does not exist.
 
 Pick the command for the platform — the macOS-only examples that circulate for this are silent no-ops on
 Linux:

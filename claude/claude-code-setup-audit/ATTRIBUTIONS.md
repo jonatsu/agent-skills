@@ -36,8 +36,7 @@ Material changes, in the order they matter:
   subtracts what it finds. "Already covered" is now a valid answer instead of a quota to fill.
 - **Fixed the frontmatter key.** Upstream declared `tools:`, which is *agent* frontmatter and is ignored on a
   skill — so a skill documented as read-only ran with Edit and Write in scope. Now `allowed-tools:`, extended
-  with WebSearch and WebFetch, which the body instructs the agent to use three times but upstream never
-  granted.
+  with WebSearch and WebFetch, which upstream never granted despite the body directing the agent to the web.
 - **Removed the hardcoded context7 recommendation.** Replaced with a provider-neutral docs-lookup category
   that recommends a self-hosted indexer first, and requires any hosted server to be flagged for external data
   flow and credentials.
