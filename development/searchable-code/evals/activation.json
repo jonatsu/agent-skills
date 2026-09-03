@@ -1,0 +1,77 @@
+{
+  "skill_name": "searchable-code",
+  "mode": "client-selected activation",
+  "purpose": "Settle whether always-applicable authoring guidance can be reached by skill discovery at all. The skill's own subject is a moment users rarely verbalize -- nobody says 'I am naming an export' -- so its description was aimed at the diagnostic and review moments instead. These cases test whether that aim was enough, and whether the authoring path needs a routing line from the always-loaded global rules.",
+  "run_contract": {
+    "supply_skill_path": false,
+    "runs_per_case": 3,
+    "observe": "Whether the client loads searchable-code/SKILL.md",
+    "record": ["client", "model", "date", "raw_result", "trace_location", "global_routing_line_present"]
+  },
+  "decision_rule": {
+    "authoring-no-cue": "The case that decides the skill's shape. If it fails without a routing line in the global workflow rules and passes with one, that line earns its always-loaded cost. If it fails with the line present too, discovery cannot reach this content and it belongs in a rules file rather than a skill.",
+    "near_miss_threshold": "Any near-miss case triggering in 2 of 3 runs means the description is over-broad and claims work that belongs to another skill."
+  },
+  "cases": [
+    {
+      "id": "cannot-find-implementation",
+      "prompt": "I keep grepping for where we send the webhook and finding nothing useful. Help me sort this out.",
+      "should_trigger": true,
+      "reason": "A navigation failure is the loudest symptom of the problem this skill prevents."
+    },
+    {
+      "id": "rename-request",
+      "prompt": "This function does something different from what it used to. What should it be called now?",
+      "should_trigger": true,
+      "reason": "Renaming on a behavior change is a rule the skill states directly."
+    },
+    {
+      "id": "review-names-only",
+      "prompt": "Review the naming in this pull request.",
+      "should_trigger": true,
+      "reason": "Reviewing names is the skill's subject stated in the user's own words."
+    },
+    {
+      "id": "authoring-no-cue",
+      "prompt": "Add a function that validates the SMTP config.",
+      "should_trigger": true,
+      "reason": "The authoring moment, with no naming or search vocabulary in the request. This is the case the skill is expected to fail without a routing line from the always-loaded global rules, and it is the reason this eval exists."
+    },
+    {
+      "id": "unsearchable-event-name",
+      "prompt": "We build our analytics event names by interpolating the entity and the action. Is that a problem?",
+      "should_trigger": true,
+      "reason": "Directly the whole-literals rule, phrased as a question rather than a naming task."
+    },
+    {
+      "id": "near-miss-formatting",
+      "prompt": "Reformat this file to match the project style.",
+      "should_trigger": false,
+      "reason": "Formatting is not findability, and a formatter already owns it."
+    },
+    {
+      "id": "near-miss-decomposition",
+      "prompt": "Split this 400-line module into smaller functions.",
+      "should_trigger": false,
+      "reason": "Module structure, governed by the global workflow rules rather than this skill."
+    },
+    {
+      "id": "near-miss-prose",
+      "prompt": "Improve the wording in this README.",
+      "should_trigger": false,
+      "reason": "Prose belongs to writing-for-humans; this skill covers code identifiers and literals."
+    },
+    {
+      "id": "near-miss-type-design",
+      "prompt": "Should this state be a discriminated union or a struct with nullable fields?",
+      "should_trigger": false,
+      "reason": "Type design was deliberately excluded from the skill; triggering here would mean the description overclaims."
+    },
+    {
+      "id": "ambiguous-hard-to-read",
+      "prompt": "This codebase is really hard to work with. Where would you start?",
+      "expected_behavior": ["activate", "clarify before acting"],
+      "reason": "Findability is one plausible reading among several, so either loading the skill or asking what makes it hard is defensible."
+    }
+  ]
+}
