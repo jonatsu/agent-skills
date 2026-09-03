@@ -42,7 +42,8 @@ signals. Never kill processes identified only by a reused or unvalidated PID.
 
 ## Version Checks
 
-Compare version components lexicographically. A test for Bash 4.4 or newer must accept Bash 5.0:
+Compare version components numerically, starting with the major version. Compare the minor version only when
+the major versions match. A test for Bash 4.4 or newer must accept Bash 5.0:
 
 ```bash
 if ((BASH_VERSINFO[0] < 4 ||

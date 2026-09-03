@@ -1,6 +1,6 @@
 ---
 name: bash-shell
-description: Write, review, debug, and harden Bash scripts and Bash-based CI or automation. Use for .sh files and shell workflows that intentionally require Bash; use posix-shell-pro when the target must run under POSIX sh.
+description: Write, review, debug, and harden Bash scripts and automation; use posix-shell-pro for POSIX sh portability.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -66,7 +66,8 @@ minimum:
 
 - parse with the declared Bash version or `bash -n`;
 - run the repository's ShellCheck and formatter configuration when present; and
-- exercise success, expected failure, cleanup, and hostile-input paths in an isolated temporary directory.
+- exercise ordinary success and applicable failure paths in an isolated temporary directory, including
+  cleanup and hostile inputs when consequential.
 
 Tests must cover the behavior that makes the script risky or useful. A small script does not automatically
 need a new test framework, help generator, packaging, logging subsystem, portability layer, or dry-run mode.
