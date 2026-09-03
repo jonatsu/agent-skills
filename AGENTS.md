@@ -14,6 +14,8 @@ Read the focused source before acting:
 - Use `skill-forge` when creating, editing, restructuring, or replacing a skill.
 - Use both `skill-review` and `skill-forge` for every skill review. `skill-review` governs assessment and
   evidence; `skill-forge` governs proposed repair shape and any separately authorized edits.
+- Load `kasetto` before adding, editing, moving, archiving, restoring, removing, deploying, or verifying a
+  skill. Its portable tool guidance complements this file's repository-specific hook and lock workflow.
 - A review request does not authorize changing the skill. Report first unless the user also requested
   implementation.
 - Update `skills-review-notes.md` in the same work. Move every completed skill to **Reviewed**, including a
