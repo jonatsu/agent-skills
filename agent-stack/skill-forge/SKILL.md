@@ -26,7 +26,8 @@ Read the existing skill and all bundled resources when updating one. For new ski
 - the current author and applicable license;
 - whether the work is a new skill, substantial revision, or focused update;
 - whether the skill is portable or repository-specific; and
-- whether any material derives from another source.
+- whether reading any external source changed the skill's guidance, workflow, structure, examples,
+  terminology, or failure modes, even when every retained idea was expressed independently.
 
 Define one coherent unit of work that composes with other skills. Inventory every subject, tool, language,
 workflow, and output the skill would cover. Keep multiple aspects together only when one shared task or
@@ -83,12 +84,19 @@ Every newly authored skill records its current author in `metadata.author` and i
 specification's top-level `license` field. Discover both from authoritative repository or upstream sources;
 never guess them.
 
-An upstream-derived skill must also ship `ATTRIBUTIONS.md`, the upstream license text as `LICENSE.upstream`,
-and the upstream `NOTICE` as `NOTICE.upstream` when the upstream project supplies or requires one. Preserve
-these files during updates.
+Treat an external source as attribution-bearing when reading it changes what the skill contains. This includes
+adopted ideas, mechanisms, structure, examples, terminology, or failure modes, even when no wording or code is
+copied. Record each such source in `ATTRIBUTIONS.md`; do not reserve attribution for ports or close
+adaptations. Name the exact influence and distinguish independently expressed ideas from copied or adapted
+material.
 
-Read [references/provenance.md](references/provenance.md) when creating or updating an adapted or vendored
-skill.
+Copied, adapted, translated, or vendored material also requires the upstream license text as
+`LICENSE.upstream` and the upstream `NOTICE` as `NOTICE.upstream` when the project supplies or requires one.
+A source used only to verify public facts or runtime behavior does not require package attribution; cite it
+near the affected claim when useful. Preserve all existing provenance files during updates.
+
+Read [references/provenance.md](references/provenance.md) whenever an external source influenced the skill or
+supplied adapted or vendored material.
 
 ### 4. Design the Package
 

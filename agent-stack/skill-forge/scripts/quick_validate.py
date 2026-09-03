@@ -72,10 +72,8 @@ def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
 
     attribution = skill_path / "ATTRIBUTIONS.md"
     upstream_license = skill_path / "LICENSE.upstream"
-    if attribution.exists() != upstream_license.exists():
-        errors.append(
-            "adapted skills must ship both ATTRIBUTIONS.md and LICENSE.upstream"
-        )
+    if upstream_license.exists() and not attribution.exists():
+        errors.append("LICENSE.upstream requires a corresponding ATTRIBUTIONS.md")
     if attribution.exists():
         attribution_text = attribution.read_text()
         for placeholder in PLACEHOLDERS:
@@ -90,7 +88,8 @@ def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
 
     if not attribution.exists():
         warnings.append(
-            "upstream derivation cannot be inferred; confirm provenance during review"
+            "source influence cannot be inferred; confirm whether external ideas or "
+            "expression require ATTRIBUTIONS.md"
         )
 
     return errors, warnings

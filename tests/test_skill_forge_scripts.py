@@ -150,6 +150,28 @@ class QuickValidateTests(unittest.TestCase):
             self.assertEqual(result.returncode, 1)
             self.assertIn("cannot inspect local policy", result.stdout)
 
+    def test_idea_source_attribution_does_not_require_upstream_license(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            skill_directory = Path(temporary_directory)
+            (skill_directory / "SKILL.md").write_text(
+                "---\n"
+                "name: sample-skill\n"
+                "description: Use for a sample task.\n"
+                "license: MIT\n"
+                "metadata:\n"
+                "  author: Test Author\n"
+                "---\n"
+            )
+            (skill_directory / "ATTRIBUTIONS.md").write_text(
+                "# Attributions\n\n"
+                "An external source influenced one independently expressed idea.\n"
+            )
+
+            result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
+
+            self.assertEqual(result.returncode, 0, result.stdout)
+            self.assertIn("Skill Forge local policy is valid", result.stdout)
+
     def test_missing_argument_returns_usage_failure(self) -> None:
         result = _run_python(VALIDATE_SCRIPT)
 
