@@ -36,6 +36,18 @@ contradict this skill's own "never invent facts or numbers" guardrail. Only
 its documentation-type taxonomy and a couple of non-duplicate review-checklist
 ideas were mined from it.
 
+## Additional idea-level influences
+
+The following sources informed the independently written 2026-09-03 rewrite's
+reader-outcome framing, document-mode distinctions, tutorial checkpoints, and
+implementation placement guidance. No text was copied or adapted. Their
+licenses were not established during review, so this record does not claim a
+license grant.
+
+- [Cursor pstack technical-writing](https://github.com/cursor/plugins/blob/7314f723a487ec406b6369fe5865ba034cfed166/pstack/skills/technical-writing/SKILL.md)
+- [awesomekoder technical_writer](https://github.com/awesomekoder/awesome-llm-apps/blob/1fcfb4fab8e20f8b543189059de2fac6d0e71720/awesome_agent_skills/writing/technical_writer.md)
+- [Mindrally technical-writing](https://github.com/Mindrally/skills/blob/main/technical-writing/SKILL.md)
+
 Material changes from peizh/tech-writing include:
 
 - Folded a short documentation-type taxonomy into the "choose the right
