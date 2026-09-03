@@ -1,17 +1,17 @@
 ---
 name: reflect
-description: End-of-session (or on-demand) self-improvement sweep. Reviews the current conversation for uncaptured learnings — user corrections, stated preferences, avoidable mistakes, repeated command sequences, reusable patterns, and repo-specific operational discoveries — and routes each to its durable home (global memory, CLAUDE.md/rules, a repo's AGENTS.md/CLAUDE.md, an in-repo script, or a skill/agent). Also runs a periodic memory-maintenance pass that flags stale, superseded, duplicate, or self-invalidated memories for pruning, and drains the compaction backlog of sessions whose detail was summarized away before capture. Use when the user runs /reflect, says "capture learnings", "write this down", "update your rules/skills", "prune/review memories", "process the compaction backlog", "check pending captures", or at the end of a substantive session. Creates light artifacts directly; proposes heavy ones (skills, agents, global rules) and any memory deletion before acting.
+description: On-demand or end-of-session self-improvement sweep. Captures session learnings, prunes stale memories, drains the compaction backlog.
+license: MIT
+compatibility: Requires Claude Code. Section 8 additionally requires the PreCompact capture hook.
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # Reflect — Self-Improvement Sweep
 
 Distill the current session into durable improvements so the same corrections, feedback, and manual work are
-never re-derived. This skill operationalizes the `## Self-Improvement` section of
-`~/.config/claude/rules/WORKFLOW.md`, which owns routing by scope and the autonomy boundary. The graduated
-ladder in §3 below is the authoritative copy; that file points here for it rather than restating it.
+never re-derived. Routing by scope, the graduated ladder, and the autonomy boundary are defined here; this
+skill is their authoritative source.
 
 **Iron law: capture only what actually happened in this session.** Never invent a learning to fill the sweep.
 Every candidate must cite the turn or action it came from. If nothing qualifies, say so plainly and stop.
@@ -54,14 +54,14 @@ captured it.
 
 ## 2. Route each candidate by scope
 
-| Candidate                                     | Destination                                |
-| --------------------------------------------- | ------------------------------------------ |
-| Cross-repo behavior / preference / correction | Global memory (`feedback`/`user`)          |
-| Standing behavioral rule                      | `~/.config/claude/CLAUDE.md` (or `rules/`) |
-| Repo-specific operational fact                | Current repo's `AGENTS.md` / `CLAUDE.md`   |
-| Repeated command sequence                     | In-repo script / justfile recipe           |
-| Cross-repo reusable method or role            | Global `~/.config/claude/{skills,agents}`  |
-| Repo-specific reusable method or role         | Repo's `.claude/{skills,agents}`           |
+| Candidate                                     | Destination                                                   |
+| --------------------------------------------- | ------------------------------------------------------------- |
+| Cross-repo behavior / preference / correction | Global memory (`feedback`/`user`)                             |
+| Standing behavioral rule                      | The user-level `CLAUDE.md`, or an instruction file it imports |
+| Repo-specific operational fact                | Current repo's `AGENTS.md` / `CLAUDE.md`                      |
+| Repeated command sequence                     | In-repo script / justfile recipe                              |
+| Cross-repo reusable method or role            | The user-level `skills/` or `agents/` directory               |
+| Repo-specific reusable method or role         | Repo's `.claude/{skills,agents}`                              |
 
 Don't mix scopes: repo trivia never goes to global memory; global preferences never get buried in one repo.
 
@@ -97,8 +97,9 @@ Reach for the higher level only when the failure keeps recurring after the lower
 filter is how an instruction corpus grows by accretion: every annoyance becomes a line, and nothing is ever
 the wrong size.
 
-Threshold is necessary, not sufficient. Anything written to `CLAUDE.md` or `rules/` is re-read at every
-session start and applied to sessions it was never written for. Before codifying one, state what it costs when
+Threshold is necessary, not sufficient. Anything written to the user-level `CLAUDE.md` or a file it imports
+at launch is re-read at every session start and applied to sessions it was never written for. Before
+codifying one, state what it costs when
 it fires on the wrong session: a rule that makes the agent more eager, more expensive, or more invasive needs
 a benefit that clearly outweighs that. Narrow the wording to the case actually observed.
 
@@ -110,21 +111,14 @@ a benefit that clearly outweighs that. Narrow the wording to the case actually o
 
 ## 5. Write the captures
 
-- **Global memory**: one fact per file with frontmatter (`type: user | feedback | project | reference`), plus
-  a one-line pointer in `MEMORY.md`. Check for an existing file that already covers it and update it rather
-  than duplicating; delete memories proven wrong.
-- **Set `scope:`** — `repo:<name>` (default), `machine`, or `global`. Silos are per-project, so a fact true
-  everywhere has no silo that fits and drifts into always-loaded instruction files instead. The field records
-  the intent.
-- **Set `valid_until:`** when the fact has a foreseeable expiry — a version, a migration, a pending fix.
-  `null` (or omitted) means "true until disproved". Retire an expired fact by setting the field, NEVER by
-  deleting the file: invalidate but do not discard, because the history is what stops the same wrong
-  conclusion being re-derived.
-- **Both fields are advisory, so put what must reach retrieval in the `description`.** Recall matches against
-  the description text; nothing filters on frontmatter. A `machine`- or `global`-scoped fact MUST therefore
-  say so in its description, and a fact with a known expiry MUST name the condition there ("until lean-ctx
-  3.10", "while the vendored hook is in use"). The fields serve the maintenance sweep and the human reader;
-  the description serves the search.
+- **Global memory**: one fact per file with `name`, `description`, and `metadata.type`
+  (`user | feedback | project | reference`), plus a one-line pointer in `MEMORY.md`. Check for an existing
+  file that already covers it and update it rather than duplicating; delete memories proven wrong.
+- **Everything that must reach retrieval goes in the `description`.** Recall matches against the description
+  text; nothing filters on frontmatter. A fact that is machine-wide or true across every repository MUST say
+  so there, because the silos are per-project and no silo fits such a fact. A fact with a foreseeable expiry
+  MUST name the condition there too ("while the vendored hook is in use"), since nothing else will surface it
+  when the condition is met.
 - **Update by delta, never by wholesale rewrite.** When revising an existing memory or an instruction file,
   change the lines that are wrong and leave the rest untouched. A model asked to regenerate an accumulated
   document drops what it judges low-priority, and the measured failure is severe — a rewritten context
@@ -152,10 +146,9 @@ reject them individually.
 ## 7. Memory maintenance (periodic)
 
 Global memory grows and goes stale. When invoked with a maintenance intent ("prune memories", "review
-memories") or roughly every ~10 captures, sweep `~/.config/claude/projects/<project>/memory/` for entries to
-retire:
+memories") or roughly every ~10 captures, sweep the current project's memory silo for entries to retire:
 
-- **Expired** — `valid_until` has passed, or the condition it names has been met. Mark it and correct the
+- **Expired** — the expiry condition named in the memory's description has been met. Mark it and correct the
   pointer; do not silently leave it recallable, because an expired memory is worse than a missing one. A
   missing fact produces a question, a stale one produces confident wrong action.
 - **Self-invalidated** — the memory names a condition for its own removal ("update or remove once X") and X
@@ -224,8 +217,8 @@ sed -i '/"session_id":"<id>"/d' \
   "${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/hooks/capture-pending.jsonl"
 ```
 
-Use the in-place form. A `>` redirect into a temp file is rejected outside `/tmp` by lean-ctx's write
-doctrine, so the read-filter-rewrite shape fails here even though it is the more familiar idiom.
+Use the in-place form. The hook may append while the sweep runs, and the familiar read-filter-rewrite shape
+would overwrite the file with a snapshot taken before those appends, silently dropping them.
 
 NEVER truncate or clear the file wholesale — an unprocessed line deleted that way loses its transcript pointer
 permanently. The hook may append while the sweep runs, so re-check the count afterwards and leave anything new
