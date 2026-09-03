@@ -63,6 +63,8 @@ Never write "should work" as completed state.
 Lead with the next task and its completion condition. Then cite the workflow or artifact the recipient should
 read. Add session-only context only when the context-loss check found something material.
 
+The repository, paths, and artifacts in the examples below are invented.
+
 Example:
 
 ```text
@@ -108,11 +110,16 @@ Read `references/example-brief.md` only when a substantial stateful handoff need
 Use `PRIME` when the same work continues in a fresh context. Return one fenced block that the user can paste
 as the first message. Do not save it to disk.
 
-Use `DOCUMENT` when the user asks for a file or the work passes to another machine or person. Save the
-Markdown under the operating system's temporary directory unless the user names another path. Probe for
-`mktemp`; if unavailable, use the platform's temporary-directory mechanism. Read an existing target before
-writing and do not overwrite it without authorization. Use repository-relative paths when the document may
-travel to another machine, and identify the repository once.
+Use `DOCUMENT` when the user asks for a file or the work passes to another machine or person.
+
+Save the Markdown under the operating system's temporary directory when the file is a short-lived convenience
+on this machine. Probe for `mktemp`; if unavailable, use the platform's temporary-directory mechanism. When
+the work passes to another machine or person, a temporary directory is the wrong destination: the platform
+reclaims it on reboot or by cleanup, so the handoff can disappear before its recipient opens it. Write to the
+path the user names, and ask for one when the user has named none.
+
+Read an existing target before writing and do not overwrite it without authorization. Use repository-relative
+paths when the document may travel to another machine, and identify the repository once.
 
 Infer the delivery mode from the request. Ask only when the destination is genuinely ambiguous.
 
