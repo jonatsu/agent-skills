@@ -12,6 +12,15 @@ technique is a finding only when its absence harms the skill's declared job.
 - Could a nearby but unsupported request activate it? Would an intended request fail to activate it?
 - Is routing information trapped in the body, where it arrives after activation?
 - If invocation is explicitly user-only, is the human-facing description suitable for that mode?
+- Is the description an inline scalar? A folded (`>-`) or literal (`|`) block is a defect wherever the
+  deployment tooling mishandles it, and a repository that has hit that defect says so in its own
+  instructions. Neither the reference validator nor a Markdown linter catches it: linters commonly treat
+  frontmatter as non-content and never inspect it.
+- Is the description's length justified by the branches it carries? Judge length in characters against the
+  specification cap and any repository budget, never against a prose line-width rule such as markdownlint's
+  MD013. A description cannot wrap, so a column ceiling applied to it is a length budget in the wrong units.
+  Length is charged to every request in the collection, so treat an unjustified long description as a real
+  cost rather than a style preference.
 
 Test discovery with realistic positive requests, near-miss negatives, and ambiguous cases when triggering
 matters. Do not infer activation quality from keywords alone.
