@@ -107,3 +107,33 @@ Verify the fix in a scratch commit for these cases:
 - all four shared destinations: Claude, OpenCode, Copilot, and Codex.
 
 Keep the manual deployment and destination checks in `AGENTS.md` until this is implemented and measured.
+
+## Two-Tier Memory Scoping
+
+Investigate whether the memory store should gain a global tier alongside the per-project silos. Today every
+silo is per project, so a fact true everywhere lands in whichever silo happened to be open and only that
+project's sweeps and recalls will ever see it. `reflect` works around this in prose: a fact that escapes its
+silo MUST say so in its own `description`, because nothing filters on frontmatter. `metadata.scope:` marks
+the exception for a human reader and the maintenance sweep, but it routes nothing.
+
+`microsoft/skills`' `continual-learning` reached a two-tier split independently — a global store for tool
+patterns and cross-project conventions, a repo-local one for project conventions and team preferences. Read
+at HEAD `25d6f9c81ebd1c51da6c5f4fc585658610dfdc4b` on 2026-09-03. **Treat it as convergent evidence that the
+gap is structural, not as a component to adopt**: its storage is a SQLite database under `~/.copilot/` and
+`.copilot-memory/`, driven by a Copilot hook schema that is not Claude Code's. Nothing was used, and the
+provenance note in `skills-review-notes.md` records that.
+
+Its compaction policy is the second idea worth weighing, because `reflect` prunes by judgment and this does
+not: entries older than 60 days with a low hit count are pruned, frequently-referenced ones persist
+indefinitely, and tool logs go after 7 days. A hit count implies recording reads, which the current memory
+files do not do — decide whether that bookkeeping is worth its cost before copying the policy.
+
+Open questions:
+
+- Does a global tier belong in the memory silos at all, or does silo consolidation solve the same problem
+  differently? The repository TODO's silo-consolidation entry would change what `scope:` means, and settling
+  that first may make this moot.
+- If a global tier is added, what routes a capture to it — an agent judgment at write time, or a filter that
+  actually reads `metadata.scope:` rather than leaving it advisory?
+- Is decay wanted here? These memories are hand-curated and few; automatic pruning suits an
+  automatically-populated store better than a deliberate one.
