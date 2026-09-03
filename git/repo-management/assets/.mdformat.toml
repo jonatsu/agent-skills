@@ -1,7 +1,8 @@
 # .mdformat.toml
 #
-# Default values are equal to having no configuration file at all.
-# Change the values for non-default behavior.
+# Preferred Markdown formatting profile. `wrap = "keep"` matches mdformat's
+# default; consecutive numbering does not. LF agrees with `.editorconfig`.
 
-end_of_line = "keep"
+end_of_line = "lf"
 number      = true
+wrap        = "keep"

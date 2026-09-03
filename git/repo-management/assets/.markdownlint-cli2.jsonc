@@ -4,44 +4,48 @@
  */
 {
   // Enable schema + autocompletion in editors
-  "$schema": "https://github.com/DavidAnson/markdownlint-cli2/raw/refs/heads/main/schema/markdownlint-cli2-config-schema.json",
+  "$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/v0.23.2/schema/markdownlint-cli2-config-schema.json",
 
   // Only fix on demand (override with --fix)
   "fix": false,
 
-  // Treat YAML front matter as non-content
-  "frontMatter": "(^---\\s*$[^]*?^---\\s*$)(\\r\\n|\\r|\\n|$)",
+  // Use markdownlint's built-in YAML frontmatter handling. A custom regex without
+  // multiline anchors causes the closing delimiter to be linted as a heading.
 
   // For full information on the options and defaults, see:
-  // https://github.com/DavidAnson/markdownlint/tree/main#rules--aliases
-  // https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml
+  // https://github.com/DavidAnson/markdownlint/blob/v0.41.1/README.md#rules--aliases
+  // https://github.com/DavidAnson/markdownlint/blob/v0.41.1/schema/.markdownlint.yaml
   "config": {
     "default": true,
 
-    // Use only ATX-style headings (e.g., # Heading 1)
-    "heading-style": "atx",
+    // MD003: Use only ATX-style headings (e.g., # Heading 1)
+    "heading-style": {
+      "style": "atx",
+    },
 
-    // Every level uses the same unordered-list marker.
-    "ul-style": "consistent",
+    // MD004: mdformat owns list-marker rewriting and emits one marker style.
+    "ul-style": {
+      "style": "consistent",
+    },
 
-    // Nested unordered list indentation width
+    // MD007: Nested unordered-list indentation width
     "ul-indent": {
       "indent": 2,
       "start_indented": false,
     },
 
-    // Disallow hard tabs, except inside code blocks
+    // MD010: Disallow hard tabs, except inside code blocks
     "no-hard-tabs": {
       "code_blocks": false,
       "spaces_per_tab": 1,
     },
 
-    // Allow at most 2 consecutive blank lines
+    // MD012: Allow at most 2 consecutive blank lines
     "no-multiple-blanks": {
       "maximum": 2,
     },
 
-    // Enforce a max line length, but not inside code blocks/tables
+    // MD013: Enforce a max line length, but not inside code blocks/tables
     "line-length": {
       "code_block_line_length": 80,
       "code_blocks": false,
@@ -53,24 +57,24 @@
       "tables": false,
     },
 
-    // Don't require fenced code blocks to show example command output
+    // MD014: Don't require fenced code blocks to show example command output
     "commands-show-output": false,
 
-    // Don't require blank lines around headings
+    // MD022: Don't require blank lines around headings
     "blanks-around-headings": false,
 
-    // Duplicate headings: allow when in different sections
+    // MD024: Allow duplicate headings when they are in different sections
     "no-duplicate-heading": {
       "siblings_only": true,
     },
 
-    // Require exactly one top-level heading per document
+    // MD025: Require exactly one top-level heading per document
     "single-title": true,
 
-    // Don't require blank lines around fenced code blocks
+    // MD031: Don't require blank lines around fenced code blocks
     "blanks-around-fences": false,
 
-    // Permit safe inline HTML elements often used in docs
+    // MD033: Permit safe inline HTML elements often used in docs
     "no-inline-html": {
       "allowed_elements": [
         "p",
@@ -85,37 +89,39 @@
       ],
     },
 
-    // Allow bare URLs (not just <angle-bracket> or [link]() form)
+    // MD034: Allow bare URLs (not just <angle-bracket> or [link]() form)
     "no-bare-urls": false,
 
-    // Allow emphasis/strong text that reads like a heading
+    // MD036: Allow emphasis/strong text that reads like a heading
     "no-emphasis-as-heading": false,
 
-    // Don't require a language tag on fenced code blocks
+    // MD040: Don't require a language tag on fenced code blocks
     "fenced-code-language": false,
 
-    // Don't require the document to start with a top-level heading
+    // MD041: Don't require the document to start with a top-level heading
     "first-line-heading": false,
 
-    // Enforce fenced code blocks
+    // MD046: Enforce fenced code blocks
     "code-block-style": {
       "style": "fenced",
     },
 
-    // Enforce consistent emphasis/strong markers
+    // MD049: Enforce consistent emphasis markers
     "emphasis-style": {
       "style": "consistent",
     },
+    // MD050: Enforce consistent strong markers
     "strong-style": {
       "style": "consistent",
     },
 
-    // Ordered list markers must actually increment (1, 2, 3, ...)
+    // MD029: Ordered-list markers must actually increment (1, 2, 3, ...)
     "ol-prefix": {
       "style": "ordered",
     },
 
-    // Require consistent table column count/style across rows
+    // MD060: Disabled after markdownlint 0.41.0 autofix destroyed table cells.
+    // A basic 0.41.1 compact/aligned probe preserved content, but broader evidence is still required.
     "table-column-style": false,
   },
 

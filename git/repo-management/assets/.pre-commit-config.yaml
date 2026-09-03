@@ -1,12 +1,12 @@
 ---
-# Generic pre-commit baseline.
+# Opinionated pre-commit baseline based on the author's preferred repository profile.
 # See https://pre-commit.com for more information.
 # See https://pre-commit.com/hooks.html for more hooks.
 # ALWAYS check for hook version updates, and update hook versions before use,
 # unless a reason to pin the hook versions is specified or user explicitly
 # requests to pin the hook versions.
 #
-# Add repo exclusions and stack-specific hooks only when confirmed.
+# Preserve established repository conventions when adapting this profile.
 # files/exclude use Python regex; prefer `types` `types_or` for file selection first,
 # extension/regex matching last.
 
@@ -35,7 +35,9 @@ repos:
         args: [--allow-multiple-documents]
       - id: detect-private-key
       - id: destroyed-symlinks
+        stages: [pre-commit]
       - id: end-of-file-fixer
+        stages: [pre-commit]
         exclude_types: [svg]
         exclude: |
           (?ix)^(
@@ -43,11 +45,15 @@ repos:
             .*\.diff
           )$
       - id: fix-byte-order-marker
+        stages: [pre-commit]
       - id: mixed-line-ending
         args: ["--fix=no"]
       - id: pretty-format-json
         args: ["--autofix", "--no-sort-keys"]
+        stages: [pre-commit]
       - id: trailing-whitespace
+        args: ["--markdown-linebreak-ext=md,mkd,mkdn,markdown,mdx"]
+        stages: [pre-commit]
         exclude: |
           (?ix)^(
             .*\.patch|
@@ -98,6 +104,7 @@ repos:
     hooks:
       - id: yamlfmt
         args: ["-conf", ".yamlfmt.yaml"]
+        stages: [pre-commit]
 
   # CommonMark compliant Markdown formatter:
   # https://mdformat.readthedocs.io/en/stable/
@@ -106,18 +113,22 @@ repos:
     hooks:
       - id: mdformat
         additional_dependencies:
-          - mdformat-frontmatter # Support YAML frontmatter
-          - mdformat-gfm # GitHub-Flavored Markdown support
-          - mdformat-gfm-alerts # Extend GFM with "Alerts"
-          - mdformat-config
+          - mdformat-footnote==0.1.3
+          - mdformat-frontmatter==2.1.2
+          - mdformat-gfm==1.0.0
+          - mdformat-gfm-alerts==2.1.0
+          - mdformat-simple-breaks==0.1.0
+          - mdformat-toc==0.5.0
+          - mdformat-config==0.2.1
+        stages: [pre-commit]
 
   # Check Markdown documents with Markdownlint:
   # https://github.com/DavidAnson/markdownlint-cli2
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: "v0.23.0"
+    rev: "v0.23.2"
     hooks:
+      # Report only. mdformat is the sole Markdown writer.
       - id: markdownlint-cli2
-        args: ["--config", ".markdownlint-cli2.jsonc"]
 
   # Check shell scripts with ShellCheck (Python wrapper for cross-platform support):
   # https://www.shellcheck.net/
@@ -137,3 +148,4 @@ repos:
         # shfmt reads .editorconfig for indent/style when no -i flag is passed;
         # add -i/-ci/-sr to match the repo's shell conventions if it sets them.
         args: ["-w"]
+        stages: [pre-commit]
