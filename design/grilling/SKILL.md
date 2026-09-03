@@ -1,6 +1,6 @@
 ---
 name: grilling
-description: One-question-at-a-time grilling interview that stress-tests a proposed design before implementation. Walks each branch of the design tree, recommends an answer per question, forces vague answers to a decision, and closes with a written decision record. Use when the user explicitly asks to be grilled, or to pressure-test, poke holes in, interrogate, or challenge a plan - "grill me", "grill this plan", "pressure-test this", "poke holes in this", "challenge my design", "interrogate this before I build it". NOT for shaping an unformed idea, which is idea-forge, and NOT for reviewing code that already exists.
+description: One-question-at-a-time grilling interview that stress-tests a proposed design before implementation. Walks each branch of the design tree, recommends an answer per question, forces vague answers to a decision, and closes with a written decision record. Use when the user explicitly asks to be grilled, or to pressure-test, poke holes in, interrogate, or challenge a plan - "grill me", "grill this plan", "pressure-test this", "poke holes in this", "challenge my design", "interrogate this before I build it". NOT for shaping an unformed idea, which is brainstorming, and NOT for reviewing code that already exists.
 license: MIT
 metadata:
   author: Joonas Onatsu
