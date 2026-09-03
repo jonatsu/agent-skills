@@ -136,7 +136,8 @@
       "conversation": [
         "The governing overview aims to make neighbourhood borrowing practical for people without smartphones.",
         "We considered an app-first service and a lightweight reservation queue with volunteer pickup. The user chose the latter.",
-        "The current scope is tool reservations and pickup coordination. A marketplace is parked. Technical notification and identity details remain open."
+        "The current scope is tool reservations and pickup coordination. A marketplace is parked. Technical notification and identity details remain open.",
+        "The user confirms that this captures the desired technical-design handoff."
       ],
       "behavior": "Save a design-ready but explicitly incomplete handoff draft.",
       "outcomes": [
