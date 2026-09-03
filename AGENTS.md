@@ -26,6 +26,10 @@ Read the focused source before acting:
 - Keep `description` as an inline YAML scalar within the 120-column ceiling. Kasetto 3.8.0 records a folded
   scalar's `>-` marker as the lock description instead of its text; reproduced on 2026-09-02 across all four
   shared locks. Both skill validators accepted the folded scalar, so they do not catch this failure.
+- For `uv`-based skill validation in a sandbox, set `UV_CACHE_DIR` to a writable directory under `/tmp`.
+  A cold cache needs pinned dependencies from PyPI. If validation then fails on dependency download or DNS,
+  request network-enabled execution for the same command; report the failure as an environment limit, not a
+  package defect.
 
 ## Archive Without Losing Structure
 
