@@ -68,15 +68,15 @@ The repository, paths, and artifacts in the examples below are invented.
 Example:
 
 ```text
-Review `github-ops` next. Read `skills/skills-review-notes.md`, follow its review workflow, and start from the skill
-package.
+Review `payments-api` next. Read `docs/review-process.md`, follow its review workflow, and start from the
+service package.
 ```
 
 If the session established a relevant preference, add it directly:
 
 ```text
-Review `github-ops` next. Read `skills/skills-review-notes.md` and follow its review workflow. The user wants the
-review to focus on silent success paths in `gh`; broad command coverage is out of scope.
+Review `payments-api` next. Read `docs/review-process.md` and follow its review workflow. The user wants the
+review to focus on silent retry paths in the payment client; broad endpoint coverage is out of scope.
 ```
 
 A pointer handoff normally needs no headings, repository summary, Git history, file inventory, or list of
@@ -112,16 +112,20 @@ as the first message. Do not save it to disk.
 
 Use `DOCUMENT` when the user asks for a file or the work passes to another machine or person.
 
-Save the Markdown under the operating system's temporary directory when the file is a short-lived convenience
-on this machine. Probe for `mktemp`; if unavailable, use the platform's temporary-directory mechanism. When
-the work passes to another machine or person, a temporary directory is the wrong destination: the platform
-reclaims it on reboot or by cleanup, so the handoff can disappear before its recipient opens it. Write to the
-path the user names, and ask for one when the user has named none.
+Write to the path the user names. When the work passes to another machine or person and no path was named,
+ask for one: a temporary directory is the wrong destination there, because the platform reclaims it on reboot
+or by cleanup and the handoff can disappear before its recipient opens it.
+
+A temporary directory suits one narrow case, a short-lived convenience on this machine. Save the Markdown
+under the operating system's temporary directory then. Probe for `mktemp`; if unavailable, use the platform's
+temporary-directory mechanism.
 
 Read an existing target before writing and do not overwrite it without authorization. Use repository-relative
 paths when the document may travel to another machine, and identify the repository once.
 
-Infer the delivery mode from the request. Ask only when the destination is genuinely ambiguous.
+Infer the delivery mode from the request. `PRIME` is the default: use it when the request names no file and no
+other machine or person. The mode is genuinely ambiguous only when the request sends the work outside this
+session without saying where, and that is the case to ask about.
 
 ## Safety and Completion
 

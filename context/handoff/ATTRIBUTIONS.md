@@ -18,8 +18,7 @@
 
 ## Adaptation
 
-Upstream supplied the core no-duplication discipline, redaction rule, focus tailoring, suggested-skills
-concept, and temporary save-location guidance.
+Upstream supplied the core no-duplication discipline, redaction rule, and temporary save-location guidance.
 
 The current skill adds:
 
@@ -38,8 +37,9 @@ separate pointer form.
 
 The `handoff-engineering` skill in `alirezarezvani/claude-skills` is an intermediate MIT-licensed derivative
 of Matt Pocock's skill. It was evaluated but was not used as the base because its recommender hardcodes skills
-from its own publisher's repository. Two ideas were adopted independently and remain credited here: scaling
-length to the work and avoiding handoffs that merely summarize an earlier handoff.
+from its own publisher's repository. Two ideas were evaluated. Scaling length to the work was adopted
+independently and remains credited here. Avoiding handoffs that merely summarize an earlier handoff was not
+carried into this skill.
 
 ## Upstream License
 
