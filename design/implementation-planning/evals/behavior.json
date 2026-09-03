@@ -1,0 +1,105 @@
+{
+  "skill_name": "implementation-planning",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "record": [
+      "client",
+      "model",
+      "date",
+      "source_revision",
+      "prompt",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "material_cost",
+      "result"
+    ],
+    "grading": "Grade outcomes from the response, written artifacts, and trace. Do not require exact wording or headings."
+  },
+  "cases": [
+    {
+      "id": "06-accepted-design",
+      "prompt": "Write the implementation plan for the accepted webhook-retry design supplied with this request. Inspect the repository first and preserve every design obligation.",
+      "required_inputs": [
+        "An accepted design defining behavior, interfaces, failure handling, compatibility, and operational obligations.",
+        "A temporary repository fixture with implementation, tests, and configured validation commands."
+      ],
+      "behavior": "Turn an accepted design into dependency-ordered, verifiable work.",
+      "outcomes": [
+        "Links the plan to its governing design and traces every unit to a settled obligation.",
+        "Verifies affected paths and symbols through repository inspection.",
+        "Orders independently verifiable outcomes by dependency and risk.",
+        "Places claim-matched verification and expected observations beside each unit."
+      ]
+    },
+    {
+      "id": "07-requirements-with-design-gap",
+      "prompt": "Plan implementation from these requirements: add tenant-level audit-log export; support JSON and CSV; exports must be resumable and encrypted; administrators can request and download them; retain exports according to policy. The requirements do not decide whether export generation is synchronous or queued, where resumable state lives, how download authorization works, or what happens when retention expires during a resume. Produce the implementation plan now.",
+      "behavior": "Reject architecture invention when requirements do not supply an accepted design.",
+      "outcomes": [
+        "Identifies the unresolved execution model, state ownership, authorization, and retention-race behavior as design gaps.",
+        "Explains the downstream planning consequence and returns those decisions to technical design.",
+        "Does not invent architecture, exact files, interfaces, or an implementation sequence to satisfy the demand for a plan.",
+        "May continue only an independent branch whose design is already settled and clearly identifies that boundary."
+      ]
+    },
+    {
+      "id": "08-discovered-design-gap",
+      "prompt": "While planning the accepted client-library upgrade, you discover the design says nothing about compatibility with stored version-1 payloads or failure behavior during mixed-version rollout. Continue planning.",
+      "behavior": "Return a consequential compatibility and failure gap to technical design.",
+      "outcomes": [
+        "Records the missing compatibility and mixed-version failure decisions and their downstream consequence.",
+        "Stops the affected planning branch without silently selecting a policy.",
+        "Continues only independent, already-designed work if any exists."
+      ]
+    },
+    {
+      "id": "09-small-change-without-universal-tdd",
+      "prompt": "Plan a small repository change: add a documented `request_timeout_seconds` setting beside the existing `connect_timeout_seconds` setting. Repository convention keeps both in `config/defaults.yaml`, validates positive integer settings with `config/schema.json`, and documents every setting in `docs/configuration.md`. No runtime behavior consumes the new setting yet. Do not implement it.",
+      "behavior": "Use settled repository convention as design authority and avoid wasteful universal TDD.",
+      "outcomes": [
+        "States that the existing implementation and repository convention are sufficient design authority for this bounded change.",
+        "Produces a small independently verifiable work unit covering the default, schema, and documentation surfaces without inventing a separate design artifact.",
+        "Uses direct schema or configuration validation and documentation checks suited to the claim.",
+        "Does not require a red-green unit-test cycle, per-file tasks, arbitrary micro-steps, or a commit after every step.",
+        "Does not claim runtime timeout behavior because no consumer exists."
+      ]
+    },
+    {
+      "id": "10-compatible-migration",
+      "prompt": "Plan the accepted migration from integer account IDs to opaque string IDs. The design requires old and new readers to coexist for one release, an incumbent regression gate, staged rollout, measurable rollback, and removal only after stored data and consumers have migrated.",
+      "behavior": "Order a migration around its compatibility seam, rollout, and rollback obligations.",
+      "outcomes": [
+        "Places the compatibility seam and incumbent regression evidence before migration or rollout.",
+        "Orders producers, consumers, data migration, rollout observations, rollback, and cleanup by dependency.",
+        "Keeps removal after migration evidence and consumer cutover.",
+        "Names behavioral and operational evidence for rollout and rollback."
+      ]
+    },
+    {
+      "id": "11-mixed-design-and-plan",
+      "prompt": "Design and plan a bounded idempotency-key feature for a JSON HTTP API. The final design synthesis has been reviewed: keys are scoped to account plus route, retained for 24 hours, reuse with a different request hash returns 409, concurrent duplicates share one result, and operators can inspect conflicts. The user confirms this is the system to plan. Preserve separate design and implementation-plan artifacts and do not implement the feature.",
+      "behavior": "Plan only after a confirmed design handoff and preserve separate artifact authority.",
+      "outcomes": [
+        "Uses a separate technical-design artifact as the authority for behavior and a separate implementation-plan artifact for execution order.",
+        "Treats the supplied final confirmation as the shared-understanding handoff and does not collapse approval states.",
+        "Traces plan units and final verification to the settled design without weakening or changing it.",
+        "Does not implement the feature."
+      ]
+    },
+    {
+      "id": "12-verification-theater",
+      "prompt": "The draft plan says to verify request deduplication by grepping for `idempotency_key` and checking that the tree is clean. Repair the plan's verification without implementing anything.",
+      "behavior": "Reject syntax-only evidence for a behavioral outcome.",
+      "outcomes": [
+        "Explains that substring presence and clean version-control state do not exercise deduplication behavior.",
+        "Specifies behavioral evidence for same-key retries, conflicting payloads, concurrency, expiry, and persisted results as required by the governing design.",
+        "Keeps static checks as supplemental evidence only where they prove a separate claim."
+      ]
+    }
+  ]
+}

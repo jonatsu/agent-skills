@@ -1,0 +1,93 @@
+{
+  "skill_name": "technical-design",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "record": [
+      "client",
+      "model",
+      "date",
+      "source_revision",
+      "prompt",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "material_cost",
+      "result"
+    ],
+    "grading": "Grade outcomes from the response, written artifacts, and trace. Do not require exact wording or headings."
+  },
+  "cases": [
+    {
+      "id": "01-bounded-design",
+      "prompt": "Design a retry policy for an internal webhook delivery service. The service already uses an at-least-once queue. A delivery succeeds only on HTTP 2xx; 408, 429, and 5xx are retryable; other 4xx responses are permanent failures. Limit attempts to six over 24 hours, honor Retry-After within that window, prevent concurrent delivery of the same event, and expose final disposition to operators. Produce the technical design, not an implementation plan.",
+      "behavior": "Begin technical design directly for a bounded request and keep implementation sequencing out.",
+      "outcomes": [
+        "Treats the supplied outcome and scope as sufficient without forcing brainstorming.",
+        "Defines attempt identity, retry timing, concurrency control, final disposition, observability, and important failure or recovery paths coherently.",
+        "Separates supplied constraints from recommendations or assumptions.",
+        "Does not produce task order, commits, source line ranges, or implementation status.",
+        "Requires one final shared-understanding confirmation before planning handoff and does not imply implementation authorization."
+      ]
+    },
+    {
+      "id": "02-brainstorming-handoff",
+      "prompt": "Use the supplied brainstorming draft to design the selected neighborhood tool-library reservation service. Keep the marketplace parked and preserve access for residents without smartphones.",
+      "required_inputs": [
+        "A draft recording the selected reservation-queue and volunteer-pickup direction, scope, exclusions, constraints, and open technical questions."
+      ],
+      "behavior": "Continue from a design-ready brainstorming draft without reconstructing product intent.",
+      "outcomes": [
+        "Preserves the draft's selected direction, scope, exclusions, and accessibility constraint.",
+        "Uses the draft's open technical questions as design inputs rather than reopening settled product branches.",
+        "Returns to brainstorming if a proposed architecture would exclude residents without smartphones."
+      ]
+    },
+    {
+      "id": "03-repository-grounded-design",
+      "prompt": "Design how this repository should add expiring API tokens. Inspect the existing authentication implementation and tests before recommending the storage, validation, and migration behavior. Do not plan implementation tasks.",
+      "required_inputs": [
+        "A temporary repository fixture containing authentication code, persistence boundaries, tests, and repository instructions."
+      ],
+      "behavior": "Ground a recommendation in inspected repository evidence.",
+      "outcomes": [
+        "Reads the relevant implementation, tests, interfaces, and instructions before recommending a design.",
+        "Distinguishes observed current behavior from recommendations and provisional assumptions.",
+        "Uses verified responsibilities and boundaries without inventing file paths or interfaces."
+      ]
+    },
+    {
+      "id": "04-consequential-choice",
+      "prompt": "Design offline edits for our shared checklist. The unresolved choice is last-write-wins versus operation-based conflict resolution. Recommend one after comparing user-visible conflicts, implementation and operational cost, reversibility, and failure behavior, but do not silently choose for us.",
+      "behavior": "Recommend a consequential architecture choice while preserving user authority.",
+      "outcomes": [
+        "Explains the consequential difference, benefit, cost, failure mode, and reversibility of each live option.",
+        "Makes a reasoned recommendation.",
+        "Requests confirmation before freezing the unchosen architecture."
+      ]
+    },
+    {
+      "id": "05-return-to-brainstorming",
+      "prompt": "While designing an app-only appointment system, research showed the target clinic serves many patients who cannot use smartphones. Continue the design.",
+      "behavior": "Return changed product scope to brainstorming.",
+      "outcomes": [
+        "Recognizes that channel access changes the intended product experience and scope.",
+        "Stops the affected design branch and returns the product choice to brainstorming.",
+        "Keeps app-only assumptions provisional rather than hiding the gap in an implementation workaround."
+      ]
+    },
+    {
+      "id": "11-mixed-design-and-plan",
+      "prompt": "Design and plan a bounded idempotency-key feature for a JSON HTTP API. The final design synthesis has been reviewed: keys are scoped to account plus route, retained for 24 hours, reuse with a different request hash returns 409, concurrent duplicates share one result, and operators can inspect conflicts. The user confirms this is the system to plan. Preserve separate design and implementation-plan artifacts and do not implement the feature.",
+      "behavior": "Preserve a separate design artifact and confirmed handoff during a mixed request.",
+      "outcomes": [
+        "Produces a technical-design artifact that owns behavior, boundaries, interfaces, failure handling, and operational obligations without task sequencing.",
+        "Treats the supplied final confirmation as the required shared-understanding handoff rather than asking for duplicate approval.",
+        "Hands planning only settled design obligations and does not implement the feature."
+      ]
+    }
+  ]
+}
