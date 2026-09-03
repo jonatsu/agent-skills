@@ -29,6 +29,34 @@ Write independently from primary sources. The previously inspected `netresearch/
 CC-BY-SA-4.0 for prose despite MIT licensing for scripts and assets, so its prose cannot be lifted or lightly
 edited into this MIT repository.
 
+## Harness Switches for Commit Attribution Trailers
+
+`shared/git/git-ops` forbids an unrequested `Co-Authored-By` or `Signed-off-by` trailer, and the same rule is
+mirrored into the global instruction files. Prose is the weakest available lever: a harness that injects the
+trailer does so from its system prompt, which outranks both a skill and a memory file. Where a harness exposes
+a configuration switch, setting it removes the conflict instead of arguing with it. Those switches are
+agent-level configuration and MUST NOT be named inside the skill, which stays portable across all four agents.
+
+Measured 2026-09-03 by scanning the installed binaries, since the published settings documentation no longer
+carries an attribution section. `rg` skips binaries by default, so `-a` is required; without it the Claude
+Code scan reports a false negative.
+
+| Agent                     | Key                                              | Effect                                                                                                                      |
+| ------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Claude Code 2.1.239       | `attribution.commit` (string)                    | Attribution text for commits, including any trailers. An empty string hides attribution                                     |
+| Claude Code 2.1.239       | `attribution.pr` (string)                        | The same for pull request descriptions                                                                                      |
+| Claude Code 2.1.239       | `attribution.sessionUrl` (boolean, default true) | Appends the `Claude-Session` trailer and PR-body link for web and Remote Control sessions                                   |
+| Claude Code 2.1.239       | `includeCoAuthoredBy` (boolean, default true)    | Deprecated by the binary's own description in favour of `attribution`. Prefer `attribution.commit: ""`                      |
+| Claude Code 2.1.239       | `includeGitInstructions` (boolean, default true) | Includes the built-in commit and PR workflow instructions in the system prompt. This is the injection the skill argues with |
+| GitHub Copilot CLI 1.0.80 | `includeCoAuthoredBy` (boolean)                  | Declared in `sdk/index.d.ts` alongside other terminal settings. The config file was not located under `~/.copilot`          |
+
+Open work:
+
+- Decide whether to set `attribution.commit: ""` in this repository's deployed Claude Code settings, and
+  whether `includeGitInstructions: false` removes wanted behavior along with the trailer.
+- Locate the Copilot CLI configuration file and record its path before setting anything there.
+- Check OpenCode and Codex for equivalent switches. Neither was scanned.
+
 ## Pin Third-Party Sources
 
 Third-party entries in `kasetto/base.yaml` currently track moving default branches. If unexpected upstream
