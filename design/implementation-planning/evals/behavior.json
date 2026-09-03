@@ -59,7 +59,14 @@
     },
     {
       "id": "09-small-change-without-universal-tdd",
-      "prompt": "Plan a small repository change: add a documented `request_timeout_seconds` setting beside the existing `connect_timeout_seconds` setting. Repository convention keeps both in `config/defaults.yaml`, validates positive integer settings with `config/schema.json`, and documents every setting in `docs/configuration.md`. No runtime behavior consumes the new setting yet. Do not implement it.",
+      "prompt": "Plan a small repository change: add a documented `request_timeout_seconds` setting with a default of `30` beside the existing `connect_timeout_seconds` setting. Repository convention keeps both in `config/defaults.yaml`, validates positive integer settings with `config/schema.json`, and documents every setting in `docs/configuration.md`. No runtime behavior consumes the new setting yet. Do not implement it.",
+      "fixture": "fixtures/small-config-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Use settled repository convention as design authority and avoid wasteful universal TDD.",
       "outcomes": [
         "States that the existing implementation and repository convention are sufficient design authority for this bounded change.",
@@ -82,11 +89,24 @@
     },
     {
       "id": "11-mixed-design-and-plan",
-      "prompt": "Design and plan a bounded idempotency-key feature for a JSON HTTP API. The final design synthesis has been reviewed: keys are scoped to account plus route, retained for 24 hours, reuse with a different request hash returns 409, concurrent duplicates share one result, and operators can inspect conflicts. The user confirms this is the system to plan. Preserve separate design and implementation-plan artifacts and do not implement the feature.",
-      "behavior": "Plan only after a confirmed design handoff and preserve separate artifact authority.",
+      "prompt": "Design and then plan a bounded idempotency-key feature for a JSON HTTP API. Keys are scoped to account plus route, retained for 24 hours, reuse with a different request hash returns 409, concurrent duplicates share one result, and operators can inspect conflicts. Write the design to `docs/plans/idempotency-key-design.md` and, after the confirmed handoff, the plan to `docs/plans/idempotency-key-implementation-plan.md`. Do not implement the feature.",
+      "conversation": [
+        {
+          "turn": 1,
+          "user": "The initial mixed request above.",
+          "expected": "Write or present the complete design, ask for final shared-understanding confirmation, and stop without creating the implementation plan."
+        },
+        {
+          "turn": 2,
+          "user": "I reviewed the complete design and confirm that it matches the system I want planned. Continue with the separate implementation plan.",
+          "expected": "Create the separate implementation plan from the now-accepted design without asking for duplicate confirmation or implementing it."
+        }
+      ],
+      "behavior": "Plan only after confirmation of the complete design and preserve separate artifact authority.",
       "outcomes": [
         "Uses a separate technical-design artifact as the authority for behavior and a separate implementation-plan artifact for execution order.",
-        "Treats the supplied final confirmation as the shared-understanding handoff and does not collapse approval states.",
+        "Does not create or begin the implementation plan during turn 1.",
+        "Treats the turn-2 confirmation as the shared-understanding handoff and does not ask for duplicate approval.",
         "Traces plan units and final verification to the settled design without weakening or changing it.",
         "Does not implement the feature."
       ]

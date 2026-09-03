@@ -1,0 +1,3 @@
+# Validate the default configuration against its schema.
+check-config:
+    python3 scripts/check_config.py config/defaults.yaml config/schema.json

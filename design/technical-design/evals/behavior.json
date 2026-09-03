@@ -81,11 +81,24 @@
     },
     {
       "id": "11-mixed-design-and-plan",
-      "prompt": "Design and plan a bounded idempotency-key feature for a JSON HTTP API. The final design synthesis has been reviewed: keys are scoped to account plus route, retained for 24 hours, reuse with a different request hash returns 409, concurrent duplicates share one result, and operators can inspect conflicts. The user confirms this is the system to plan. Preserve separate design and implementation-plan artifacts and do not implement the feature.",
-      "behavior": "Preserve a separate design artifact and confirmed handoff during a mixed request.",
+      "prompt": "Design and then plan a bounded idempotency-key feature for a JSON HTTP API. Keys are scoped to account plus route, retained for 24 hours, reuse with a different request hash returns 409, concurrent duplicates share one result, and operators can inspect conflicts. Write the design to `docs/plans/idempotency-key-design.md` and, after the confirmed handoff, the plan to `docs/plans/idempotency-key-implementation-plan.md`. Do not implement the feature.",
+      "conversation": [
+        {
+          "turn": 1,
+          "user": "The initial mixed request above.",
+          "expected": "Write or present the complete design, ask for final shared-understanding confirmation, and stop without creating the implementation plan."
+        },
+        {
+          "turn": 2,
+          "user": "I reviewed the complete design and confirm that it matches the system I want planned. Continue with the separate implementation plan.",
+          "expected": "Create the separate implementation plan from the now-accepted design without asking for duplicate confirmation or implementing it."
+        }
+      ],
+      "behavior": "Preserve a separate design artifact and a confirmation that follows its complete synthesis.",
       "outcomes": [
         "Produces a technical-design artifact that owns behavior, boundaries, interfaces, failure handling, and operational obligations without task sequencing.",
-        "Treats the supplied final confirmation as the required shared-understanding handoff rather than asking for duplicate approval.",
+        "Does not create or begin the implementation plan during turn 1.",
+        "Treats the turn-2 confirmation as the required shared-understanding handoff rather than asking for duplicate approval.",
         "Hands planning only settled design obligations and does not implement the feature."
       ]
     }

@@ -102,5 +102,10 @@ Then ask for one final confirmation that the design matches the user's understan
 confirmation of individual choices does not replace this shared-understanding check. A clear response to that final
 design synthesis already supplies the confirmation; do not ask the user to repeat it.
 
+The confirmation must follow the complete design synthesis and cover every consequential decision introduced during
+design. A confirmation given before those decisions cannot confirm them. For a request to design and plan in one
+conversation, finish the separate design, present its final synthesis, and stop for this confirmation. Begin the separate
+implementation plan only after the user's next clear response accepts that synthesis.
+
 If the check exposes a design gap, continue designing or record the blocker. If it exposes a changed outcome or scope,
 return to brainstorming. Do not hand unresolved architecture to planning merely to keep the workflow moving.

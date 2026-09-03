@@ -23,6 +23,11 @@ architecture, interfaces, failure handling, compatibility, or migration choices 
 existing implementation or settled repository convention as design authority when no consequential design decision
 remains; state that basis instead of manufacturing a design document.
 
+**If unresolved consequential design controls all remaining work, stop after reporting the gaps.** Do not emit a
+conditional implementation plan, turn design decisions into implementation units, or sketch the work that would follow
+each possible answer. Resume planning after the design is settled. When only one branch is blocked, plan only genuinely
+independent, already-designed branches and state the limit.
+
 When the design is incomplete, record the exact gap, its downstream consequence, and the design section or owner that
 must resolve it. Stop only the blocked branch; independent, already-designed work may continue. Return missing behavior,
 architecture, interfaces, failure policy, compatibility, or migration strategy to technical design. Return changed
@@ -31,6 +36,10 @@ purpose or product scope to brainstorming.
 Repository inspection may settle implementation-local facts and ordinary techniques already constrained by the design
 and local conventions. Do not use that allowance to hide a public-behavior, compatibility, material-cost, or
 architecture decision.
+
+Check acceptance from the design's substance, not its status label. A document is not accepted for planning when it
+contains consequential recommendations awaiting confirmation, unresolved behavioral or safety obligations, or
+architecture added after the user's latest confirmation. Return those gaps to technical design before decomposing work.
 
 ## Map Dependencies Before Ordering
 
