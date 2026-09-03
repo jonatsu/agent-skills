@@ -1,0 +1,144 @@
+{
+  "skill_name": "brainstorming",
+  "mode": "explicit behavioral comparison",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "baselines": [
+      {
+        "id": "no-skill",
+        "skill_path": null
+      },
+      {
+        "id": "archived-idea-forge",
+        "skill_path": "../../../../archived/idea-forge"
+      },
+      {
+        "id": "superpowers-b36e0829",
+        "source": "https://github.com/obra/superpowers",
+        "revision": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797",
+        "skill_path": "skills/brainstorming"
+      }
+    ],
+    "record": [
+      "client",
+      "model",
+      "date",
+      "baseline",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use"
+    ],
+    "grading": "Grade each outcome from the response and execution trace. Do not require headings or exact wording."
+  },
+  "cases": [
+    {
+      "id": "vague-single-outcome",
+      "prompt": "I want to make it easier for people in our neighbourhood to borrow tools. Help me think it through.",
+      "behavior": "Widen a vague, single outcome before narrowing.",
+      "outcomes": [
+        "Offers relevant branches that differ on a consequential dimension before asking the user to choose a direction.",
+        "Explains what each live branch changes, its main benefit, and its main cost.",
+        "Names at least one useful direction beyond the seed without proposing implementation architecture.",
+        "Asks one question that helps narrow the live branches."
+      ]
+    },
+    {
+      "id": "composable-branches",
+      "prompt": "I am considering a community garden app with a plot waitlist and a way to share surplus produce. Help me explore it.",
+      "behavior": "Recognize compatible branches instead of forcing an artificial choice.",
+      "outcomes": [
+        "Identifies whether the waitlist and surplus-sharing ideas can compose.",
+        "Separates the shared purpose from any independently valuable outcomes.",
+        "Keeps compatible ideas visible while asking one consequential question about their relationship."
+      ]
+    },
+    {
+      "id": "ambiguous-seed",
+      "prompt": "I have an idea for a better handoff.",
+      "behavior": "Anchor an ambiguous seed before inventing branches.",
+      "outcomes": [
+        "Asks one anchoring question that distinguishes materially different interpretations.",
+        "Does not fabricate a specific problem, user, or solution.",
+        "Does not ask a checklist of questions in one turn."
+      ]
+    },
+    {
+      "id": "already-narrow-request",
+      "prompt": "Help me refine a draft for a password-reset email that reduces support tickets while keeping the existing recovery flow.",
+      "behavior": "Refine a narrow request without performative widening.",
+      "outcomes": [
+        "Treats the stated outcome and existing-flow constraint as the starting direction.",
+        "Avoids inventing unrelated product alternatives merely to show brainstorming.",
+        "Asks at most one consequential refinement question or offers a bounded recommendation with its reason."
+      ]
+    },
+    {
+      "id": "tempting-tangent",
+      "prompt": "I want a simple shared shopping-list app for my household. It would be nice if it could also become a local marketplace.",
+      "behavior": "Keep an attractive tangent from replacing the original purpose.",
+      "outcomes": [
+        "Keeps the shared household-list outcome as the current purpose.",
+        "Parks or explicitly scopes the marketplace idea rather than silently expanding the work.",
+        "Explains the consequence of including the tangent now and asks one question that preserves user control."
+      ]
+    },
+    {
+      "id": "multi-outcome-scope",
+      "prompt": "Help me think through an app for booking lessons, selling recordings, running a member community, and tracking instructor payroll.",
+      "behavior": "Decompose several independently valuable outcomes before detailed exploration.",
+      "outcomes": [
+        "Names distinct outcomes without speculating through all of them.",
+        "Asks the user which outcome to explore first.",
+        "Preserves the other outcomes as visible stubs or parked work."
+      ]
+    },
+    {
+      "id": "research-changing-premise",
+      "prompt": "I want a product that reminds people to drink water using their smartwatch. Can you help shape it? I am not sure what notifications smartwatches permit.",
+      "behavior": "Research a factual uncertainty when it can change the branch set or recommendation.",
+      "required_inputs": [
+        "Authoritative smartwatch notification documentation or an explicit statement that it is unavailable."
+      ],
+      "outcomes": [
+        "Identifies notification capability as a premise that may change the product shape.",
+        "Uses or proposes proportionate authoritative research before treating the capability as settled.",
+        "Labels any remaining capability assumption and keeps the user decision separate from the factual result."
+      ]
+    },
+    {
+      "id": "product-judgment",
+      "prompt": "For a paid meal-planning service, should we target busy families or serious home cooks first? Help me decide.",
+      "behavior": "Recommend on product judgment without silently choosing for the user.",
+      "outcomes": [
+        "Presents the meaningful tradeoff between the target audiences.",
+        "Makes a reasoned recommendation or identifies evidence needed for one.",
+        "Leaves the consequential audience decision with the user rather than treating the recommendation as confirmed."
+      ]
+    },
+    {
+      "id": "handoff-fidelity",
+      "prompt": "We chose a lightweight neighbourhood tool library with a reservation queue and volunteer pickup. Save the brainstorm so a technical designer can continue.",
+      "repository_context": "The repository has a documented docs/plans convention and no existing draft for this idea.",
+      "behavior": "Save a design-ready but explicitly incomplete handoff draft.",
+      "outcomes": [
+        "Resolves the documented draft location and uses a descriptive two- or three-word kebab-case fallback filename ending in -draft.md.",
+        "Records purpose, desired outcome, considered branches and current direction, scope, exclusions or parked ideas, constraints or assumptions, bounded design questions, and decision status.",
+        "Avoids unearned architecture, interfaces, schemas, file layouts, and task sequencing.",
+        "Asks one handoff-fidelity confirmation before handing the draft to technical design, unless a clear user response already supplies it."
+      ]
+    },
+    {
+      "id": "backward-refinement",
+      "prompt": "While designing the tool-library reservation flow, we learned most users do not have smartphones. The earlier brainstorm assumed an app-only service. What should happen next?",
+      "behavior": "Return an intent or scope change to brainstorming.",
+      "outcomes": [
+        "Recognizes that the discovery changes product scope or intended experience rather than only technical design.",
+        "Returns to brainstorming to revisit branches and fidelity instead of forcing an implementation workaround.",
+        "Keeps the app-only direction provisional until the user confirms the revised intent."
+      ]
+    }
+  ]
+}
