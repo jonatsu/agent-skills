@@ -41,8 +41,9 @@ acceptable only as a thin re-export entry point.
 limit", "session expired" — and `RateLimiter` contains neither phrase as written. The doc comment is where
 you repair that: put the phrase in spaced-out words so the grep lands on the definition.
 
-```ts
-/** Checks whether the user session has expired. Uses source time, not insert time. */
+```python
+def check_session_expiry(session):
+    """Checks whether the user session has expired. Uses source time, not insert time."""
 ```
 
 One line on every export, stating what the signature cannot: units, timezone, ownership, ordering. The
@@ -53,9 +54,9 @@ definition is where a name search lands, so that line is the whole message.
 **Never assemble a string that someone will later search for.** Interpolation destroys the thing being looked
 for — `github.pr.merged` appears nowhere in the source of the first line below:
 
-```ts
-emit(`github.${entity}.${action}`); // unsearchable
-emit("github.pr.merged"); // greppable
+```go
+emit(fmt.Sprintf("github.%s.%s", entity, action)) // unsearchable
+emit("github.pr.merged")                          // greppable
 ```
 
 This covers event names, feature flags, error codes, log keys, and metric names. Write the full literal even
@@ -77,14 +78,12 @@ throw new Error(`${prefix}: mismatch`); // not
 
 Interpolate the variable part, never the identifying part.
 
-## Keep one answer in one place
+## Keep the name true to what the code does
 
-**One definition site per symbol.** Moving a function means deleting the original in the same change. Two
-definitions make every search ambiguous, and one of them will rot.
-
-**Rename in the same commit that changes behavior or audience.** A stale name is misinformation with a high
-open rate, and that includes visibility markers: a `_private` helper other modules now import needs a public
-name.
+**Rename in the same commit that changes behavior or audience.** A name describing the old behavior cannot be
+found by anyone searching for the new one, so the code goes missing without moving: a function that now
+handles subscriptions but is still called `handleTrial` is invisible to every search for "subscription". That
+includes visibility markers — a `_private` helper other modules now import needs a public name.
 
 ## When a search comes up empty
 
