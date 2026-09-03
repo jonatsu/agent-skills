@@ -70,3 +70,9 @@ the archive. Fix them if it is ever restored.
 - `nix-flakes`, `nixos-config`, `home-manager` and `nix-secrets` each carried a pointer telling the agent to
   load this skill. All four were rewritten in the archiving commit to point at the configuration repository
   instead, because a pointer to an undeployed skill is a dead instruction.
+
+**Later the same day the rest of the `nix` domain followed**, for the reason this review found, and this
+package moved from `skills/archived/nix-dendritic-pattern/` to `skills/archived/nix/nix-dendritic-pattern/`
+so the domain is archived in one restorable piece. Those four rewritten pointers are therefore archived too;
+they are still correct, and they are what a restore should keep. See the `nix` domain entry in
+`skills/skills-review-notes.md`.

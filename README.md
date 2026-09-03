@@ -68,13 +68,16 @@ forty-three skills in one directory had stopped being a list anyone could read.
 | `context/`     | Context and token economy: handoffs, compression, token budgets       |
 | `design/`      | Shaping and recording a design before it is built                     |
 | `development/` | Doing the work: debugging, testing, dev-environment tooling           |
-| `nix/`         | Nix, NixOS, home-manager, and the flake ecosystem                     |
 | `git/`         | Git, GitHub, and repository hygiene                                   |
 | `ops/`         | Machines and runtimes: containers, systemd, dotfiles                  |
 | `writing/`     | Human-facing prose                                                    |
 
 **The domain level exists only in this repository.** Kasetto deploys flat, so every agent still reads
 `<skills-dir>/<skill>/` and no skill needs to know where its source lives.
+
+An eighth domain, `nix/`, was archived whole on 2026-09-03 pending consolidation with the repo-local skills in
+`~/src/nix-config`. It survives intact as `archived/nix/`, which is the shape a restore needs; see
+`archived/README.md`.
 
 Three consequences worth knowing before you move anything:
 
