@@ -1,5 +1,5 @@
 ---
-name: claude-automation-recommender
+name: claude-code-setup-audit
 description: Audit a codebase and its existing Claude Code configuration, then report which automations are missing — hooks, subagents, skills, plugins, MCP servers. Use to set up Claude Code for a project, review or improve an existing setup, or answer what hooks or MCP servers a project should have. Reports only; for writing a hook, skill, agent, or settings change, use the relevant authoring skill.
 license: Apache-2.0
 compatibility: Requires Claude Code. The inventory phase reports reduced coverage rather than failing when the `claude` CLI is unavailable.
@@ -8,7 +8,7 @@ metadata:
   author: Joonas Onatsu
 ---
 
-# Claude Automation Recommender
+# Claude Code Setup Audit
 
 IRON LAW: Inventory the existing configuration before recommending anything. NEVER recommend an automation the
 setup already has, and NEVER pad a category to hit a quota — "already covered" is a valid, useful answer.
@@ -30,7 +30,7 @@ wrong today. The commands for discovering each are in the matching Phase 2 secti
 Copy this checklist and check items off:
 
 ```text
-Automation Recommender Progress:
+Setup Audit Progress:
 - [ ] Phase 0: Inventory the existing setup ⛔ BLOCKING
 - [ ] Phase 1: Analyze the codebase ⚠️ REQUIRED
 - [ ] Phase 2: Match signals to automations (subtract what Phase 0 found)

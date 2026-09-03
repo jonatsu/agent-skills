@@ -2,10 +2,16 @@
 
 ## Current skill
 
-- Skill: `claude-automation-recommender`
+- Skill: `claude-code-setup-audit`, renamed from `claude-automation-recommender` on 2026-09-03
 - Current author: Joonas Onatsu
 - Current license: Apache License 2.0 (inherited from upstream; not relicensed)
 - Status: adapted from upstream and materially modified
+
+The rename is deliberate and not a claim of separate origin. "Recommender" named the output while hiding the
+discipline that makes the output trustworthy — the skill's defining behavior is inventorying an existing
+configuration and subtracting it, with "already covered" as a valid result. The new name resembles the
+upstream *plugin* name `claude-code-setup` because both describe the same subject; this remains a skill, and
+"audit" is what distinguishes it.
 
 ## Original authors and source
 
@@ -18,7 +24,7 @@
 
 ## Adaptation note
 
-This version is derived from the upstream `claude-automation-recommender` skill shipped in the
+This skill is derived from the upstream `claude-automation-recommender` skill shipped in the
 `claude-code-setup` plugin, and has been modified for this repository. The upstream plugin is no longer
 installed here; this copy replaces it.
 

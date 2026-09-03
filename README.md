@@ -94,7 +94,7 @@ and listed in `kasetto/base.yaml`, so they stay upstream-updatable.
 A skill is vendored into a group only when it is **forked**: materially modified and no longer tracking
 upstream. A fork keeps the upstream license in the top-level frontmatter `license` field and records
 provenance plus the list of changes in `ATTRIBUTIONS.md` (see `shared/agent-stack/agents-management`,
-`claude/claude-automation-recommender`). Forking trades upstream updates for the right to fix the skill, so
+`claude/claude-code-setup-audit`). Forking trades upstream updates for the right to fix the skill, so
 take that route only when the upstream cannot be used unmodified.
 
 ## The Kasetto config (`kasetto/`)
@@ -278,7 +278,9 @@ any first- or second-person pronoun in a description; measured against this repo
 fired on three, **every one a false positive**, because the pronouns sat inside quoted user utterances
 (`'my CLAUDE.md is too long'`) — which is exactly what a trigger list should contain. And Anthropic's ban on
 `anthropic`/`claude` in a skill name binds claude.ai uploads and the Skills API, not Claude Code: this repo's
-own `claude-automation-recommender` is deployed and working, so `quick_validate.py` warns rather than fails.
+own `claude-code-setup-audit` is deployed and working under that prefix, so `quick_validate.py` warns rather
+than fails. **The warning was not observed on 2026-09-03** during the rename, but the validator was being
+reworked in a concurrent session at the time, so treat the behavior as unconfirmed rather than as changed.
 
 ## Future work / TODOs
 
