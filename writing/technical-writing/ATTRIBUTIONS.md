@@ -5,7 +5,7 @@
 - Skill: `technical-writing`
 - Current author: Joonas Onatsu
 - Current license: MIT
-- Status: adapted from upstream and materially modified
+- Status: adapted from upstream and materially narrowed
 
 ## Original authors and sources
 
@@ -24,11 +24,9 @@
 
 ## Adaptation note
 
-This skill keeps peizh/tech-writing's workflow, default output pattern,
-rewrite heuristics, review checklist, response modes, and style guardrails
-as its backbone, trimmed of the Chinese-technical-prose branch (not relevant
-to this repo's usage) and rewritten to this repo's frontmatter conventions
-(`metadata.author` / `metadata.license` instead of a bare `license` field).
+This skill retains the upstream's document-composition job, task taxonomy,
+examples, accessibility, error-recovery guidance, and response modes. It no
+longer carries a general prose style or rewriting discipline.
 
 The VoltAgent `technical-writer.md` source was deliberately NOT used for
 structure or tone: it is a generic multi-agent "persona" template containing
@@ -40,15 +38,11 @@ ideas were mined from it.
 
 Material changes from peizh/tech-writing include:
 
-- Added an explicit Iron Law statement at the top (per this repo's skill
-  conventions).
 - Folded a short documentation-type taxonomy into the "choose the right
   document shape" workflow step.
-- Added conditional steps wiring in this repo's `writing-for-humans` skill for
-  prose-level discipline and a final AI-tell pass, when it is available in the
-  current session. Until 2026-08-24 these steps named `stop-slop` and
-  `humanize-writing`; the former was merged into `writing-for-humans` and the
-  latter never existed on this machine.
+- Removed generic prose rules, rewrite heuristics, style guardrails, and the
+  `writing-for-humans` delegation. Global and repository writing policy govern
+  prose; `writing-for-humans` is an optional, separate copy-editing pass.
 - Dropped the Chinese-technical-prose reference branch.
 
 ## Upstream license (MIT, both sources)

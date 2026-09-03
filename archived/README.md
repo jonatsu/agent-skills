@@ -30,7 +30,6 @@ whole mechanism; there is no separate opt-out to remember.
 | `security-audit` | 2026-09-02 | Temporarily removed with the intact `review/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `semantic-compression` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `system-prompts` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
-| `technical-writing` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `token-optimiser` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `uboot-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `yocto-oe-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
