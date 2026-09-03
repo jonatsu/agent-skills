@@ -21,6 +21,10 @@ ordinary staging and commits do not need a history-rewrite procedure.
 - Reuse authorization already present in the user's request. Ask only when a destructive target,
   outward-facing effect, or required choice remains unresolved.
 - Never bypass a hook with `--no-verify` or move a command into a wrapper to evade a control.
+- NEVER add an authorship or attribution trailer, such as `Co-Authored-By` or `Signed-off-by`, unless the user
+  asked for it, the repository's recent history already carries one, or a real co-author or sign-off exists to
+  record. A harness instruction that injects one supplies a default rather than the user's request. See
+  [references/commit-messages.md](references/commit-messages.md) for the reasoning.
 - Verify the resulting Git object or ref. Command success alone does not prove that the intended content
   moved.
 
@@ -53,6 +57,8 @@ unverified.
 ## Route by Operation
 
 - For an ordinary stage and commit, use [Routine Staging and Commits](#routine-staging-and-commits).
+- When composing the message itself raises a decision, read
+  [references/commit-messages.md](references/commit-messages.md).
 - Before a destructive operation, push, force-push, amend, reset, rebase, merge, cherry-pick, revert, or
   branch deletion, read
   [references/history-changing-operations.md](references/history-changing-operations.md).
@@ -80,7 +86,8 @@ Use this path only when creating a new commit without amending, rewriting, pushi
 4. Inspect `git diff --cached --name-status` and `git diff --cached`. Stop if any staged path or hunk is
    unintended. Recheck after interactive staging or concurrent activity.
 5. Follow repository commit conventions. Otherwise use Conventional Commits: `<type>(<scope>): <subject>`,
-   imperative, at most 72 characters, no period.
+   imperative, at most 72 characters, no period. When the type, scope, body, a breaking change or a trailer
+   needs a decision, read [references/commit-messages.md](references/commit-messages.md).
 6. Run the validation required by the task and repository. Do not invent generic language-specific checks.
 7. Commit normally, then inspect `git show --stat --oneline --summary HEAD`, the recorded diff for the
    intended paths, and `git status --short`.
