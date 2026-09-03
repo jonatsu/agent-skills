@@ -45,6 +45,11 @@ Recommend with reasons but do not silently make a consequential product decision
 would change an established purpose, intent, desired outcome, or scope; select an unchosen consequential branch; accept
 material cost, risk, compatibility loss, or an irreversible direction; or hand a draft to technical design.
 
+When the user asks which consequential product direction to choose, give a conditional recommendation and its reason
+before asking for their decision. If the available evidence cannot support a recommendation, identify the smallest
+decision-changing evidence to gather instead. Do not substitute a comparison or follow-up question for the
+recommendation.
+
 A clear choice in the user's ordinary response is already confirmation. Do not ask them to repeat it. Facts established
 through research, labeled recommendations, reversible provisional assumptions, and parked tangents do not need a
 separate confirmation.
