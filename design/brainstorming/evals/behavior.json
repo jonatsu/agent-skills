@@ -91,7 +91,7 @@
       "behavior": "Decompose several independently valuable outcomes before detailed exploration.",
       "outcomes": [
         "Names distinct outcomes without speculating through all of them.",
-        "Asks the user which outcome to explore first.",
+        "Asks exactly one question about which outcome to explore first.",
         "Preserves the other outcomes as visible stubs or parked work."
       ]
     },
@@ -121,12 +121,28 @@
     {
       "id": "handoff-fidelity",
       "prompt": "We chose a lightweight neighbourhood tool library with a reservation queue and volunteer pickup. Save the brainstorm so a technical designer can continue.",
-      "repository_context": "The repository has a documented docs/plans convention and no existing draft for this idea.",
+      "fixture": "fixtures/handoff-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory for each candidate and baseline run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/tool-library-draft.md"
+        ],
+        "expected_artifact": "docs/plans/tool-library-draft.md",
+        "cleanup": "Inspect the artifact and trace, then delete the temporary workspace."
+      },
+      "conversation": [
+        "The governing overview aims to make neighbourhood borrowing practical for people without smartphones.",
+        "We considered an app-first service and a lightweight reservation queue with volunteer pickup. The user chose the latter.",
+        "The current scope is tool reservations and pickup coordination. A marketplace is parked. Technical notification and identity details remain open."
+      ],
       "behavior": "Save a design-ready but explicitly incomplete handoff draft.",
       "outcomes": [
         "Resolves the documented draft location and uses a descriptive two- or three-word kebab-case fallback filename ending in -draft.md.",
+        "References the governing overview near the beginning, states how the direction advances its intent, and does not hand off a direction that weakens that intent.",
         "Records purpose, desired outcome, considered branches and current direction, scope, exclusions or parked ideas, constraints or assumptions, bounded design questions, and decision status.",
         "Avoids unearned architecture, interfaces, schemas, file layouts, and task sequencing.",
+        "Writes only the declared artifact in the copied workspace, so the saved draft can be inspected before cleanup.",
         "Asks one handoff-fidelity confirmation before handing the draft to technical design, unless a clear user response already supplies it."
       ]
     },

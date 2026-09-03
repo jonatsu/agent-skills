@@ -26,11 +26,13 @@ When the seed is too ambiguous for relevant branches, ask one anchoring question
 an already narrow or explicitly decided request merely to demonstrate brainstorming.
 
 Ask one consequential question at a time. Use bounded options when they reveal the decision; use an open question when
-options would constrain the idea. Do not ask questions to complete a checklist.
+options would constrain the idea. A response that asks for user input ends with exactly one question. Keep any other
+uncertainties as observations or parked questions for a later turn. Do not ask questions to complete a checklist.
 
 Decompose a request with several independently valuable outcomes before exploring details. Ask which outcome the user
-wants to consider first, and keep the others as named stubs. Combine compatible ideas. Park an attractive tangent when
-it would expand or displace the current purpose; explain why it is deferred.
+wants to consider first as the first question after naming them; do not substitute a cross-cutting question. Keep the
+others as named stubs. Do not ask any cross-cutting or secondary question in that response. Combine compatible ideas.
+Park an attractive tangent when it would expand or displace the current purpose; explain why it is deferred.
 
 Research facts or prior art when they could change the premise, branch set, or recommendation. Keep factual findings,
 agent recommendations, provisional assumptions, and user decisions distinguishable. Challenge weak premises,
@@ -60,6 +62,10 @@ Record the original idea, purpose, intent, desired outcome, branches considered,
 parked ideas, consequential constraints and assumptions, bounded questions for technical design, and whether each item
 is a user decision, recommendation, or provisional idea. Add actors, prior art, success measures, or rejected
 alternatives only when they help the later reader.
+
+When the work advances a larger initiative, reference its governing overview near the beginning of the saved draft and
+state how the selected direction advances that intent. Do not hand a draft to technical design when its direction weakens
+the governing intent. Return to brainstorming to revise the direction with the user instead.
 
 Keep the draft free of unearned architecture, interfaces, schemas, file layouts, and task breakdowns. An early technical
 direction is allowed only when it is marked provisional.
