@@ -23,8 +23,9 @@ Read the repository and machine instructions before changing files. Determine:
 - whether the actual file contains changes that chezmoi did not write.
 
 Inspect automatic Git behavior with `chezmoi dump-config` before changing source state. If `git.autoPush` is
-enabled and the user has not authorized publishing, stop before a source-changing command. Disclose an
-enabled `git.autoCommit` when the requested edit did not already authorize a commit.
+enabled and the user has not authorized publishing, stop before a source-changing command. If
+`git.autoCommit` is enabled and the user has not authorized a commit, stop before a source-changing command.
+Do not treat automatic Git configuration as authorization.
 
 Inspect `chezmoi status [target]...` before choosing a direction. Its columns are:
 
@@ -50,8 +51,9 @@ chezmoi verify <target>
 ```
 
 For a deliberately narrow edit, `chezmoi edit --apply <target>` can combine the edit and apply. Before a
-broad apply, `update`, or `init --apply`, review `chezmoi diff` and use
-`chezmoi apply --dry-run --verbose` when scripts, removals, permissions, or many targets are involved.
+broad apply or `init --apply`, review `chezmoi diff` and use `chezmoi apply --dry-run --verbose` when scripts,
+removals, permissions, or many targets are involved. Chezmoi runs configured hooks even under `--dry-run`, so
+understand and authorize their side effects before running the preview.
 
 Current chezmoi prompts before overwriting a target modified since chezmoi last wrote it. Preserve that
 protection. Do not add `--force`, suppress interaction, or rely on an unavailable prompt without confirming
@@ -71,8 +73,13 @@ older chezmoi version.
 
 ### Reconcile Divergence
 
-Use `chezmoi merge <target>` when both actual and source-derived states contain changes worth keeping. Review
-the merged source, run `chezmoi diff <target>`, and apply only after the rendered target is correct.
+Use `chezmoi merge <target>` when both actual and source-derived states contain changes worth keeping. Inspect
+`merge.command` and `merge.args` in `chezmoi dump-config` first: chezmoi supplies destination, source, and
+rendered-target files, while the configured merge tool determines which file receives the result.
+
+After the merge, inspect the actual file, `chezmoi source-path <target>`, and the source repository diff.
+Ensure the reconciled content is stored in source state, editing the source or template when necessary. Run
+`chezmoi diff <target>` and apply only after the rendered target contains the complete result.
 
 For Git conflicts, published rollback, or history repair, use the available Git operations guidance. Preserve
 dirty work before changing history. Revert published commits with `git revert`; do not prescribe destructive
@@ -89,6 +96,12 @@ chezmoi git -- diff
 
 Preserve unresolved or unrelated work before pulling. After a safe pull, review `chezmoi diff`, run a dry-run
 when the change is broad or includes scripts, apply, and verify.
+
+Treat `chezmoi update` as pull plus apply, not as a preview. Inspect `update.command`, `update.args`, and
+`update.apply` in `chezmoi dump-config`. The default Git path uses `git pull --autostash --rebase`, so do not
+run it with dirty source work. Use `chezmoi update --apply=false` to pull without applying, then inspect
+`chezmoi diff`, run an authorized dry-run if useful, apply, and verify. A custom update command may have
+different side effects; inspect it before execution.
 
 Before committing, inspect the index and source diff. Stage explicit source paths only. Push only when the
 user has authorized publishing to the resolved remote and branch. Automatic `git.autoCommit` or
