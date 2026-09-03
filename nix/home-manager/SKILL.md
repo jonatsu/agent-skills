@@ -12,8 +12,9 @@ IRON LAW: NEVER PUT SYSTEM-LEVEL CONFIGURATION (`services.*`, `hardware.*`, `boo
 `fileSystems.*`) IN HOME-MANAGER. Home-manager owns user space only. System configuration belongs to NixOS
 modules; crossing the line yields evaluation failures or config that silently does nothing.
 
-> **Using Denful?** Entity declaration and aspect wiring live in the `dendritic-pattern` skill. The
-> option-level guidance below applies either way.
+> **Using Denful (den)?** Entity declaration and aspect wiring belong to den rather than to this skill; look
+> for a dendritic skill in the configuration repository itself. The option-level guidance below applies
+> either way.
 
 ## What this skill is for
 

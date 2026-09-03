@@ -1,6 +1,6 @@
 ---
 name: dendritic-pattern
-description: "Denful dendritic pattern for Nix Flakes — aspect-oriented, context-driven configuration composition. Use when setting up Denful, writing aspects, declaring hosts/users/homes, using policies, quirks, namespaces, custom classes, migrating from traditional Nix layout, or debugging why an aspect/policy/entity isn't resolving as expected. Triggers on: denful, den, dendritic, aspect, den.aspects, den.hosts, den.homes, den.batteries, import-tree, flake-parts module, provides, includes, context dispatch, debug den, resolve aspect, policyInspect, den.lib."
+description: "Denful (den) dendritic pattern for Nix flakes, where one feature is one aspect module spanning the nixos, darwin and homeManager classes. Use when setting up den, writing aspects, declaring hosts/users/homes, using policies, quirks, namespaces or custom classes, migrating a traditional Nix layout, or debugging why an aspect, policy or entity does not resolve. Triggers on: denful, dendritic pattern, den.aspects, den.hosts, den.homes, den.batteries, den.policies, den.schema, den.lib, policyInspect."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -14,14 +14,29 @@ darwin, homeManager) it touches.
 
 ## Revision Pinning ⚠️ REQUIRED
 
-Every den API claim in this skill was read from den's source at **`2040b613`** (2026-08-10). **den is pre-1.0
-— minor bumps carry breaking API changes**, and the consuming repo pins its own revision.
+den is pre-1.0, so minor bumps carry breaking API changes, and the consuming repository pins its own revision.
+Every den API claim in this skill was read from den's source at **`e8e8de1e`** (2026-08-11) and re-verified
+against that revision on 2026-09-03.
 
-**First, check the gap.** `nix flake metadata --json | jq -r '.locks.nodes.den.locked.rev'` gives the repo's
-pin. If it differs from `2040b613`, treat the four dated claim sets below as unverified until re-checked, and
-verify anything you are about to write by reading the declaration in the pinned den — never by reading den's
-docs, which were found materially wrong at this revision (`batteries.mdx` omits `flake-scope`; the example
-template references `oneOfAspects` and `nix/lib/aspects/adapters.nix`, neither of which exists).
+**First, check the gap.** `nix flake metadata --json | jq -r '.locks.nodes.den.locked.rev'` gives the
+repository's pin, assuming its input is named `den`. If the pin differs from `e8e8de1e`, treat the four claim
+sets below as unverified until re-checked.
+
+**Verify against den's source, never against den's published docs.** The docs were materially wrong at
+`e8e8de1e`. `docs/src/content/docs/reference/batteries.mdx` documents `den.batteries.os-class`, `os-user`,
+`wsl`, `home-manager`, `hjem` and `maid`, none of which exist, and omits `flake-scope`, which does.
+`modules/context/has-aspect.nix` and `templates/example/modules/aspects/hasAspect-examples.nix` still name
+`oneOfAspects` and `meta.adapter`, neither of which has an implementation.
+
+To read den at a given revision, make a shallow blobless scratch clone in a temporary directory and remove it
+when the work is done:
+
+```bash
+tmp="$(mktemp -d)"
+git clone --filter=blob:none --no-checkout https://github.com/denful/den "$tmp/den"
+git -C "$tmp/den" fetch --filter=blob:none origin <rev>
+git -C "$tmp/den" checkout <rev>
+```
 
 **Re-check after any `nix flake update den`:**
 
@@ -31,9 +46,6 @@ template references `oneOfAspects` and `nix/lib/aspects/adapters.nix`, neither o
 | Removed vs deprecated APIs                                   | Anti-Patterns, references/migration.md               | `modules/removed-stages.nix`, `modules/compat/`, `nix/lib/take.nix`, `nix/lib/parametric.nix` |
 | Silent-failure rules                                         | Silent Failures                                      | `nix/lib/aspects/fx/arg-class.nix`, `nix/lib/synthesize-policies.nix`                         |
 | `forward` / `route` / `deliver` signatures                   | references/custom-classes.md, references/policies.md | `nix/lib/forward.nix`, `nix/lib/policy-effects.nix`                                           |
-
-Read a remote den with `ctx_git_read` against `github.com/denful/den` at the pinned rev. Do NOT clone it
-locally and do NOT point a subagent at a local clone.
 
 ## Workflow
 
@@ -250,6 +262,11 @@ modules/
 Any `.nix` file in `modules/` is auto-loaded by `import-tree`. Multiple files can contribute to the same
 aspect (incremental features).
 
+**That last sentence holds only from den `e8e8de1e` onward for a NESTED aspect key.** Before it, a nested key
+defined as a parametric function in one file and as a plain attrset in another silently lost one of the two
+sides, with no error and no warning (fixed in `e8e8de1e`). Top-level aspect names were never affected. On an
+older pin, give each contribution its own aspect name and compose them with `includes`.
+
 ### Aspect with includes (DAG composition)
 
 ```nix
@@ -371,8 +388,9 @@ den.homes.x86_64-linux."tux@igloo" = { };
 
 ## Built-in Batteries
 
-Verified against den `2040b613` (2026-08-10). den is pre-1.0 and minor bumps carry breaking API changes —
-re-check this table if your `flake.lock` pins a different revision.
+Verified against den `e8e8de1e` on 2026-09-03, by enumerating every `den.batteries.<name> =` assignment site
+under `modules/`. den is pre-1.0 and minor bumps carry breaking API changes, so re-check this table if your
+`flake.lock` pins a different revision.
 
 **Exactly 15 attributes exist under `den.batteries.*`.** All are opt-in: a battery does nothing until it
 appears in an `includes` list.
@@ -454,8 +472,10 @@ den.aspects.igloo = { config, ... }: {
 
 ## Silent Failures
 
-These produce NO error, NO warning, and NO output. Each one gets misread as "den cannot do this." Verified
-against den `2040b613`.
+These produce NO error, NO warning, and NO output. Each one gets misread as "den cannot do this." Written
+against den `2040b613`. At `e8e8de1e` the cited source files all still exist and the classification rules
+below were re-read, but the individual dispatch mechanisms were not re-traced, so treat the five bullets as
+carried forward rather than freshly measured.
 
 - **A misplaced entity argument makes the aspect inert.** den classifies each entity-kind arg against the
   schema entity DAG: bindable from the current context, a descendant (fan-out), or **misplaced — and misplaced
@@ -492,9 +512,11 @@ against den `2040b613`.
   `den.schema.<kind>.includes`.
 - **Writing `den.lib.take.*` or `den.lib.parametric.*`** — both fully deprecated and warn. Use plain functions
   coerced to `{ includes = [ fn ]; }`.
-- **Writing `meta.adapter`, `den.lib.ctxApply`, or `oneOfAspects`** — removed with no shim, or never existed.
-  den's own example template still references `oneOfAspects` and `nix/lib/aspects/adapters.nix`; neither
-  exists. The real API is `den.lib.aspects.fx.constraints.{exclude,substitute,filterBy}`.
+- **Writing `meta.adapter`, `den.lib.ctxApply`, or `oneOfAspects`** — none of the three has an implementation
+  at `e8e8de1e`. `meta.adapter` and `oneOfAspects` survive only in a docstring at
+  `modules/context/has-aspect.nix` and in `templates/example/modules/aspects/hasAspect-examples.nix`, which is
+  why they keep getting recommended. The real API is
+  `den.lib.aspects.fx.constraints.{exclude,substitute,filterBy}`.
 - **Forgetting `...` in flat-form class modules** — the module system passes extra args that cause eval errors
   without it.
 - **Using `pipe.as` with the same quirk name as source** — throws an error. Must target a different quirk.

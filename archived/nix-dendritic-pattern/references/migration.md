@@ -7,10 +7,10 @@
 - **From `den.ctx` to new API**: `den.ctx` forwards to `den.aspects` and `den.schema.<kind>.includes` with
   deprecation warnings. Split into three concerns: `den.aspects` for definitions, `den.policies` for topology,
   `den.schema.<kind>.includes` for activation.
-- **Removed outright, no shim** (verified at den `2040b613`): `den.stages` hard-throws with a migration
-  message pointing at `den.schema.<kind>.includes`; `meta.adapter` and `den.lib.ctxApply` are gone;
-  `oneOfAspects` and `nix/lib/aspects/adapters.nix` never existed in this revision despite den's own example
-  template referencing them — use `den.lib.aspects.fx.constraints.{exclude,substitute,filterBy}`.
+- **Removed outright, no shim** (verified at den `e8e8de1e` on 2026-09-03): `den.stages` hard-throws from an
+  `apply` on a hidden option, with a migration message pointing at `den.schema.<kind>.includes`;
+  `den.lib.ctxApply` is gone; `meta.adapter` and `oneOfAspects` have no implementation and survive only in a
+  docstring and an example template. Use `den.lib.aspects.fx.constraints.{exclude,substitute,filterBy}`.
 - **Deprecated but still evaluating** (they warn): `den.ctx.<name>`, `den.lib.perHost`/`perUser`/`perHome`
   (semantics also changed), `den.lib.take.*`, and `den.lib.parametric.*`. Replace the last two with plain
   functions coerced to `{ includes = [ fn ]; }`.

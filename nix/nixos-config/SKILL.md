@@ -13,8 +13,9 @@ IRON LAW: SYSTEM CONFIGURATION AND USER CONFIGURATION LIVE IN DIFFERENT MODULE S
 `programs.*` user config belong to home-manager. Crossing that line produces evaluation failures and config
 that silently does nothing.
 
-> **Using Denful?** Entity declaration and aspect wiring live in the `dendritic-pattern` skill. The
-> option-level guidance below applies either way.
+> **Using Denful (den)?** Entity declaration and aspect wiring belong to den rather than to this skill; look
+> for a dendritic skill in the configuration repository itself. The option-level guidance below applies
+> either way.
 
 ## What this skill is for
 

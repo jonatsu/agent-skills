@@ -49,7 +49,9 @@ den.aspects.edge.firewall = {
 ```
 
 Pick quirk names you would never use as an aspect key, and check `den.quirks` before naming a nested aspect.
-Verified against den `2040b613` (`nix/lib/aspects/fx/key-classification.nix`).
+Verified against den `e8e8de1e` on 2026-09-03, by reading `classifyKeys` in
+`nix/lib/aspects/fx/key-classification.nix`: it filters `pipeKeys` out of the candidate set first, derives
+`classKeys` from what remains, and only then partitions the rest into nested aspects.
 
 **Related:** sub-aspects are never auto-walked. den's classifier relies on this — nested aspects activate only
 via an explicit `includes`, which is why depth-1 key detection suffices.

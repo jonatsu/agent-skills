@@ -58,8 +58,9 @@ Ask: Is this a new flake or an existing one?
 - Check for `flake-parts` → look for `flake-parts.lib.mkFlake` in outputs
 - Check for `import-tree` → look for `inputs.import-tree` (dendritic pattern indicator)
 
-If the project uses the Denful dendritic pattern, load the `dendritic-pattern` skill instead — flake.nix is
-minimal there; all logic lives in `modules/`.
+If the project uses the Denful (den) dendritic pattern, `flake.nix` is a minimal dependency manifest and all
+logic lives in `modules/`. Look for a dendritic skill in the configuration repository itself before working
+there.
 
 ## Step 2: Work with Inputs
 

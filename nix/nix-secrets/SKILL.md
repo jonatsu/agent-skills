@@ -12,8 +12,9 @@ IRON LAW: NEVER use `builtins.readFile` on secret file paths — this copies sec
 world-readable Nix store. ALWAYS reference secrets via `config.age.secrets.<name>.path` or
 `config.sops.secrets.<name>.path` so they stay in tmpfs.
 
-> **Using Denful?** Aspect and entity wiring lives in the `dendritic-pattern` skill. Secrets are ordinary
-> NixOS/home-manager modules there, so everything below applies unchanged.
+> **Using Denful (den)?** Aspect and entity wiring belongs to den rather than to this skill; look for a
+> dendritic skill in the configuration repository itself. Secrets are ordinary NixOS/home-manager modules
+> there, so everything below applies unchanged.
 
 ## Workflow
 

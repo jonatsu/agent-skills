@@ -129,8 +129,8 @@ The argument pattern IS the scope selector. There is no separate predicate to co
 ## Enforcing Entity Invariants
 
 **den ships no entity validator and no assertion primitive.** `validators` appears nowhere in den's source at
-`2040b613`, so a `den.schema.<kind>.validators` key is silently accepted by the freeform schema and never
-read. A **throwing policy is the only way** to enforce an entity invariant:
+`e8e8de1e` (re-checked 2026-09-03), so a `den.schema.<kind>.validators` key is silently accepted by the
+freeform schema and never read. A **throwing policy is the only way** to enforce an entity invariant:
 
 ```nix
 den.policies.require-timezone = { host, ... }:
