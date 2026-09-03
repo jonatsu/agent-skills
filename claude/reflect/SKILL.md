@@ -1,6 +1,6 @@
 ---
 name: reflect
-description: On-demand or end-of-session self-improvement sweep. Captures session learnings, prunes stale memories, drains the compaction backlog.
+description: On-demand or end-of-session self-improvement sweep. Reviews the session for uncaptured learnings (corrections, stated preferences, avoidable mistakes, repeated commands, reusable patterns, repo-specific discoveries) and routes each to a durable home. Also prunes stale, superseded or duplicate memories, and drains the compaction backlog. Use for /reflect, "capture learnings", "update your rules/skills", "prune memories", or "check pending captures".
 license: MIT
 compatibility: Requires Claude Code. Section 8 additionally requires the PreCompact capture hook.
 metadata:
