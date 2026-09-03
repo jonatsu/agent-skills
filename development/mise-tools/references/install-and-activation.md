@@ -15,7 +15,8 @@ Prefer:
 
 - local developer shell → regular install plus `mise activate <shell>`
 - CI or agents → install mise, then use `mise exec --` or shims
-- reproducible automation → vendored bootstrap (`mise generate bootstrap -l -w`)
+- reproducible automation → vendored installer
+  (`mise generate install-script --localize --write <path>`)
 - containers with mounted home dirs → system installs with `mise install --system`
 
 ## Activation model guide

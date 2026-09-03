@@ -7,6 +7,8 @@ or containers behave differently than local shells.
 
 Start with read-only evidence and select only the commands relevant to the symptom:
 
+Apply the trust, safe-mode, and auto-install gates in `SKILL.md` before any command that loads project config.
+
 1. `mise --version`
 2. `mise doctor`
 3. `mise cfg`
@@ -15,7 +17,8 @@ Start with read-only evidence and select only the commands relevant to the sympt
 6. `mise ls`
 7. `mise tasks` if tasks are involved
 
-Reproduce through `mise exec -- <tool> --version` or `mise run <task>` only when running that target is safe.
+Reproduce through `mise exec -- <tool> --version` or `mise run <task>` only when the target, config behavior,
+trust transition, and possible installation are authorized.
 Do not run `mise install` during diagnosis. If evidence identifies missing tools and the user authorized repair,
 preview with `mise install --dry-run` when useful, install the required scope, and repeat the original
 reproduction.

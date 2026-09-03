@@ -32,7 +32,7 @@ Use committed `mise.toml` plus `mise.lock`.
 
 ### Local override layer
 
-Use `mise.local.toml` for local env or secrets.
+Use `mise.local.toml` for local env or secrets after confirming its config and lock files are ignored.
 
 ### Command-scoped automation
 

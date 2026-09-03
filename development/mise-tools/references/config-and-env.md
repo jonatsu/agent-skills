@@ -10,7 +10,7 @@ platform-environment rollout details, also load `references/templating-and-early
 Important files:
 
 - `mise.toml` for shared project config
-- `mise.local.toml` for local overrides and secrets
+- `mise.local.toml` for local overrides and secrets after confirming the local config and lock are ignored
 - `mise.<env>.toml` for named environment overlays
 - `.miserc.toml` for early-init behavior
 - `~/.config/mise/config.toml` for global defaults
@@ -25,7 +25,7 @@ Key behavior from upstream docs:
 ## Safe config-scope choices
 
 - shared repo behavior → `mise.toml`
-- local secrets or machine overrides → `mise.local.toml`
+- local secrets or machine overrides → an ignored `mise.local.toml`
 - environment-specific overlay → `mise.<env>.toml`
 - machine-wide policy only when explicitly requested → global config
 
@@ -102,6 +102,7 @@ reaches tools installed through the `go:` backend.
 ## Footguns
 
 - putting secrets into committed `mise.toml`
+- storing secrets in `mise.local.toml` before confirming local config and lock patterns are ignored
 - using global config when a project-local file would work
 - forgetting that parent configs can leak in
 - treating fuzzy versions as exact unless lockfile or pins enforce it

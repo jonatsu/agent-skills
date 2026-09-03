@@ -1,13 +1,13 @@
 ---
-name: mise-expert
-description: Configure and operate mise toolchains, environments, tasks, activation, and lockfiles. Use when a request explicitly involves mise, mise.toml, .miserc.toml, mise tasks or backends, or migration from asdf or direnv to mise.
+name: mise-tools
+description: Configure mise tools, environments, tasks, activation, and locks; migrate projects from asdf or direnv.
 license: MIT
-compatibility: Mise is required for runtime inspection and verification; installation guidance can be used before it is available.
+compatibility: Mise is required for runtime inspection and verification.
 metadata:
   author: Joonas Onatsu
 ---
 
-# Mise Expert
+# Mise Tools
 
 Use the narrowest mise scope and activation model that satisfies the request. For a new project setup, default
 to project-local configuration and command-scoped execution. Do not edit shell startup files or global mise
@@ -44,7 +44,7 @@ request requires a different one.
 Prefer:
 
 - `mise.toml` for shared project configuration;
-- `mise.local.toml` for developer-specific values and secrets;
+- `mise.local.toml` for developer-specific values and secrets after confirming it is ignored;
 - `mise.<env>.toml` for named environment overlays;
 - `.miserc.toml` only for early environment selection or config-search boundaries;
 - `mise exec -- <command>` for scripts, CI, and agent-run commands;
@@ -58,11 +58,28 @@ replacing unresolved user changes or adding a lockfile when the request does not
 Keep secrets out of committed configuration. Prefer explicit tasks to automatic hooks. Label experimental
 features and verify that the installed mise version supports them.
 
+Before storing secrets locally, confirm that version control ignores `mise.local.toml`,
+`mise.*.local.toml`, `mise.local.lock`, and `mise.*.local.lock`. Add the applicable patterns when the request
+authorizes repository ignore changes. If mise is unavailable, installation guidance still applies, but report
+runtime validation as omitted.
+
 ## Trust and State Changes
 
-Start with `mise trust --show` when trust may explain a failure. Normal execution commands automatically trust
-active config in normal mode, and safe configs need no trust. Run `mise trust <config>` only when the selected
-mode requires explicit trust and the user authorized that persistent state change.
+Inspect unfamiliar project configuration and task files as plain text before running a mise command that loads
+them. Config can execute Tera `exec()` or `read_file()`, environment source directives, hooks, and tasks. When
+the config is outside the user's trust boundary, use `MISE_SAFE=1` for compatible inspection and resolution.
+Safe mode refuses executable behavior and project environment injection; do not bypass that refusal. Treat
+ignored project environment values as reduced capability and report that limitation.
+
+Start with `mise trust --show` when trust may explain a failure. In normal mode, `mise exec`, `mise run`, naked
+task invocations, `mise install`, and `mise watch` automatically trust active config. Run them only when the
+user's authority covers the config behavior and persistent trust transition. Run `mise trust <config>` only
+when the selected mode requires explicit trust and the user authorized that persistent state change.
+
+`mise exec` defaults `exec_auto_install` to true. Before using it for diagnosis or verification, inspect
+installed tools with `mise ls`. When installation is not authorized, set `MISE_EXEC_AUTO_INSTALL=false` for
+that process and stop if the required tool is absent. This control does not make config safe; combine it with
+safe mode when the config is untrusted.
 
 Installation, lock updates, shell edits, global config changes, and task execution can change state. Diagnosis
 alone does not authorize them. Inspect first, then perform the smallest state change supported by evidence when
@@ -74,10 +91,12 @@ publishes according to their actual impact and the host agent's authorization ru
 Begin with read-only evidence appropriate to the symptom:
 
 1. Record `mise --version` and relevant environment or execution context.
-2. Inspect `mise doctor`, `mise cfg`, `mise env`, and `mise trust --show` as applicable.
-3. Inspect installed and configured tools with `mise ls`; inspect tasks with `mise tasks` when relevant.
-4. Reproduce through the intended path, such as `mise exec -- <tool> --version`, only when running that command
-   is safe.
+2. Inspect applicable config and task files as text, including active ancestor files, then check
+   `mise trust --show`.
+3. Inspect `mise doctor`, `mise cfg`, and `mise env` as applicable, using safe mode outside the trust boundary.
+4. Inspect installed and configured tools with `mise ls`; inspect tasks with `mise tasks` when relevant.
+5. Reproduce through the intended path, such as `mise exec -- <tool> --version`, only after applying the trust
+   and auto-install controls above.
 
 Do not run `mise install` merely to diagnose activation or config resolution. When missing tools are the
 supported cause and installation is authorized, preview with `mise install --dry-run` when useful, install the
@@ -87,7 +106,7 @@ required scope, and repeat the original reproduction.
 
 Verify the same path the user will use:
 
-- command-scoped automation: `mise exec -- <command>`;
+- command-scoped automation: `mise exec -- <command>` with the applicable trust and installation authority;
 - interactive activation: a fresh or re-sourced target shell;
 - shims: tool lookup from the intended non-interactive context;
 - tasks: the affected task and any relevant dependency view;

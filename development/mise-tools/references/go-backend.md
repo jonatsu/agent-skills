@@ -80,6 +80,10 @@ is deprecated, not inert.
 
 ## Verification
 
+Confirm that the selected Go toolchain is already installed before these checks. If installation is not
+authorized, set `MISE_EXEC_AUTO_INSTALL=false` in the process environment and stop when Go is absent. Apply
+the safe-mode gate from `SKILL.md` when project config is outside the user's trust boundary.
+
 ```bash
 mise exec -- go env GOPATH GOMODCACHE GOBIN
 ```
