@@ -20,6 +20,9 @@ independently.
   converging-signals threshold and writing-sample override. MIT, Copyright (c) 2025 Siqi Chen.
 - [jpeggdev/humanize-writing](https://github.com/jpeggdev/humanize-writing) informed the warning that
   specificity rules can pressure a writer to invent details. MIT, Copyright (c) 2025 jpeggdev.
+- [mohitagw15856/pm-claude-skills house-style-enforcer](https://github.com/mohitagw15856/pm-claude-skills/blob/main/skills/house-style-enforcer/SKILL.md)
+  informed the 2026-09-03 exemplar-evidence style-adaptation branch. No text was copied or adapted. The source
+  license was not established during review, so this record does not claim a license grant.
 
 The MIT license texts fetched on 2026-08-24 remain in `LICENSE.upstream`.
 

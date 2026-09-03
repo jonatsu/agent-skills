@@ -1,6 +1,6 @@
 ---
 name: writing-for-humans
-description: "Copy-edit supplied prose without changing claims or voice. Use for AI-style diagnosis and rewrites."
+description: "Copy-edit supplied prose, match an established style, or diagnose AI-style patterns."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -30,6 +30,26 @@ degree of personality.
 
 Do not flatten a distinctive voice into generic prose. Do not add a viewpoint, familiarity, humor, or personal
 stance the source does not contain.
+
+## Adapt to an Established Style
+
+Use this branch when the user asks to match a supplied author or house style.
+
+Require representative exemplars from the same document type. One sample supports voice matching; use two or
+more before inferring repeatable conventions. Do not treat an isolated preference as a rule.
+
+Extract a compact style profile:
+
+- scope: the document types and audience it covers;
+- observed conventions: repeated structure, register, formatting, and terminology choices;
+- evidence: the exemplar passages supporting each convention; and
+- boundaries: voice, rhythm, humor, and choices the profile does not govern.
+
+Apply only conventions supported by the profile. For each material change, identify the convention it follows.
+Leave a preference alone when no exemplar supports it.
+
+Global and repository writing policy still applies. A style profile may refine those rules, but cannot override
+them. Preserve the source author's voice wherever the profile is silent.
 
 ## Diagnose Before Rewriting
 
