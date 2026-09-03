@@ -86,12 +86,6 @@ Open work:
 - Locate the Copilot CLI configuration file and record its path before setting anything there.
 - Check OpenCode and Codex for equivalent switches. Neither was scanned.
 
-## Remove writing-great-skills from the Archive
-
-Delete `archived/writing-great-skills` in a dedicated cleanup. The reviewed `skill-forge` and `skill-review`
-already incorporate Matt Pocock's later `writing-for-agents` material, and the user has judged the archived
-predecessor no longer worth preserving.
-
 ## Detect Renames Out of Deployed Groups
 
 Fix `scripts/sync-skills-kasetto.sh` so a 100% rename out of `skills/shared/`, `skills/claude/`, or
