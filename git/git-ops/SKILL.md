@@ -1,6 +1,6 @@
 ---
 name: git-ops
-description: Perform Git changes safely and investigate or recover Git history. Use when staging or committing changes; pushing, rebasing, merging, or resolving conflicts; working with branches, worktrees, or stashes; investigating history; recovering lost work; or diagnosing commit signatures. Excludes GitHub pull requests and repository settings, which belong to github-operations, and repository scaffolding or hygiene, which belongs to repo-management.
+description: Stage, commit, push, rewrite, investigate Git history, and recover repositories without losing other work.
 license: MIT
 compatibility: Requires Git. Force-push protection with --force-if-includes requires Git 2.30 or newer.
 metadata:
@@ -24,6 +24,28 @@ ordinary staging and commits do not need a history-rewrite procedure.
 - Verify the resulting Git object or ref. Command success alone does not prove that the intended content
   moved.
 
+## Concurrent Work
+
+Assume unrecognized changes belong to another contributor. Commit only changes you own.
+
+- Record `HEAD`, worktree state, and index state before editing or staging.
+- Stop if the index contains changes you did not stage. Wait or ask; do not unstage, commit, or rewrite them.
+- Stage a whole path only when every changed hunk is yours. Use `git add -p` for mixed-ownership files, then
+  inspect the staged and unstaged versions separately.
+- If overlapping edits cannot be separated confidently, stop and coordinate. Do not overwrite either version
+  to make staging easier.
+- Do not run formatters or generators across files containing foreign changes unless their output can be
+  isolated. Required tooling does not authorize rewriting another contributor's work.
+- For generated files with mixed changes, stage only the intended hunks and verify the generated invariant
+  separately. Do not weaken the check to make a partial artifact pass.
+- Immediately before committing, confirm `HEAD` has not moved and inspect both staged names and the complete
+  staged diff. A concurrent commit invalidates the earlier base, diff, and validation evidence.
+- After committing, inspect the recorded commit and report every remaining dirty path.
+
+Use a separate linked worktree when independent lanes need different branches or checkouts. A linked worktree
+isolates its `HEAD`, index, and files, but repository objects, refs, and stashes remain shared. Do not use the
+shared stash as automatic concurrency isolation.
+
 Claims marked `Verified on git <version>, <date>` were reproduced in a scratch repository on that date.
 Recheck them after a material Git upgrade. Claims marked *reported, not measured here* remain explicitly
 unverified.
@@ -40,7 +62,7 @@ unverified.
   is uncertain, read [references/rewriting-hooks.md](references/rewriting-hooks.md).
 - When work is already missing or Git state was damaged, read [references/recovery.md](references/recovery.md)
   before attempting repair.
-- For blame, pickaxe searches, bisect, or other history questions, read
+- For Git archaeology, blame, pickaxe searches, bisect, or other history questions, read
   [references/history-investigation.md](references/history-investigation.md).
 - For missing or unverifiable commit signatures, read
   [references/signed-commits.md](references/signed-commits.md).
@@ -55,10 +77,12 @@ Use this path only when creating a new commit without amending, rewriting, pushi
    index that you did not create is a stop condition.
 3. Stage only the intended paths with explicit pathspecs. Do not use `git add -A`, `git add .`, or
    `git commit -a`.
-4. Follow repository commit conventions. Otherwise use Conventional Commits: `<type>(<scope>): <subject>`,
+4. Inspect `git diff --cached --name-status` and `git diff --cached`. Stop if any staged path or hunk is
+   unintended. Recheck after interactive staging or concurrent activity.
+5. Follow repository commit conventions. Otherwise use Conventional Commits: `<type>(<scope>): <subject>`,
    imperative, at most 72 characters, no period.
-5. Run the validation required by the task and repository. Do not invent generic language-specific checks.
-6. Commit normally, then inspect `git show --stat --oneline --summary HEAD`, the recorded diff for the
+6. Run the validation required by the task and repository. Do not invent generic language-specific checks.
+7. Commit normally, then inspect `git show --stat --oneline --summary HEAD`, the recorded diff for the
    intended paths, and `git status --short`.
 
 A commit records the index, not the worktree. After a reset-based rebuild, a file removed only from disk can

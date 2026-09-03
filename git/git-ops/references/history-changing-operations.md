@@ -11,7 +11,7 @@ Inspect only the facts the operation needs:
 - `git diff --cached --name-only` and the relevant diffs for affected content;
 - `git log -1 --format='%h %an %s'` before amending, resetting, or rebasing, to confirm `HEAD` is the intended
   commit;
-- `git remote -v` and the configured upstream before pushing; and
+- remote names from `git remote` and the configured upstream before pushing; and
 - `git rev-parse HEAD` before an operation that can move or orphan commits.
 
 Name the recovery path before a destructive or history-rewriting operation. When no recovery exists, proceed
@@ -21,19 +21,19 @@ history.
 
 ## Reversibility
 
-| Operation                                        | Recovery                                                 | Cost           |
-| ------------------------------------------------ | -------------------------------------------------------- | -------------- |
-| Amend or local branch move                       | Reflog                                                   | Cheap          |
-| `git reset --soft` or `--mixed`                  | Reflog; the worktree remains                             | Cheap          |
-| Rebase                                           | `git rebase --abort` while active; otherwise `ORIG_HEAD` | Cheap          |
-| Merge                                            | `git merge --abort` while active; otherwise `ORIG_HEAD`  | Cheap          |
-| Cherry-pick                                      | `git cherry-pick --abort` while active; otherwise reflog | Cheap          |
-| `git branch -D`                                  | Reflog while the commit remains retained                 | Partial        |
-| `git reset --hard` with a dirty tree             | Reflog for commits; none for uncommitted edits           | None for edits |
-| `git restore <path>` or `git checkout -- <path>` | None for overwritten edits                               | None           |
-| Force-push over work never fetched               | Nothing under local control                              | None           |
-| `git worktree remove --force` on a dirty tree    | None for uncommitted content                             | None           |
-| `git clean -f`, `-fd`, or `-fdx`                 | None                                                     | None           |
+| Operation                                 | Recovery                        | Cost           |
+| ----------------------------------------- | ------------------------------- | -------------- |
+| Amend or local branch move                | Reflog                          | Cheap          |
+| `git reset --soft` or `--mixed`           | Reflog; worktree remains        | Cheap          |
+| Rebase                                    | Abort; otherwise `ORIG_HEAD`    | Cheap          |
+| Merge                                     | Abort; otherwise `ORIG_HEAD`    | Conditional    |
+| Cherry-pick                               | Abort; otherwise reflog         | Cheap          |
+| `git branch -D`                           | Reflog while commit is retained | Partial        |
+| `git reset --hard` with a dirty tree      | Reflog for commits              | None for edits |
+| `git restore` or `git checkout -- <path>` | None for overwritten edits      | None           |
+| Force-push over work never fetched        | Nothing under local control     | None           |
+| `git worktree remove --force` (dirty)     | None for uncommitted content    | None           |
+| `git clean -f`, `-fd`, or `-fdx`          | None                            | None           |
 
 Each active operation has its own abort. A rebase and merge set `ORIG_HEAD`; a cherry-pick does not. After a
 rebase, `HEAD@{1}` is not reliably the pre-rebase tip because the operation writes several reflog entries.
@@ -59,24 +59,45 @@ destructive action and target; otherwise ask for authorization.
 
 ## Pushing
 
-Determine what will leave and where it will go:
+Determine what will leave and where it will go. List remote names with `git remote`. Remote URLs can contain
+embedded credentials, so retrieve a URL only when required and never print or report it without redacting
+user information.
+
+When an upstream is configured, inspect its outgoing range:
 
 ```bash
 git log @{upstream}..HEAD --oneline
-git remote -v
 ```
 
-An absent upstream is ordinary. Select a remote from repository configuration and context; do not assume
-`origin`. If one remote is configured and its default branch is recorded, inspect it with:
+Resolve and inspect a configured push ref separately because it can differ from the upstream:
 
 ```bash
-git symbolic-ref --short refs/remotes/<remote>/HEAD
-git log refs/remotes/<remote>/HEAD..HEAD --oneline
-git push -u <remote> HEAD
+git rev-parse --abbrev-ref --symbolic-full-name @{push}
+git log @{push}..HEAD --oneline
 ```
 
-If several remotes are plausible or the default ref is unavailable, stop for the missing choice. Also stop
-when the outgoing range contains unexpected commits.
+An absent upstream or push ref is ordinary. Resolve the push remote from `branch.<name>.pushRemote`,
+`remote.pushDefault`, the branch's upstream remote, or an unambiguous single remote, in that order. Do not
+assume `origin`. If several remotes remain plausible, stop for the missing choice.
+
+Resolve the destination branch explicitly. If it already exists, fetch that branch and compare the exact
+remote tip with `HEAD`:
+
+```bash
+git ls-remote --exit-code --heads <remote> refs/heads/<branch>
+git fetch --no-tags <remote> refs/heads/<branch>
+git log FETCH_HEAD..HEAD --oneline
+git push --dry-run --porcelain <remote> HEAD:refs/heads/<branch>
+```
+
+If the destination does not exist, use the remote default branch only to establish the new branch's base.
+Push with an explicit destination after inspecting the outgoing commits:
+
+```bash
+git push -u <remote> HEAD:refs/heads/<branch>
+```
+
+Stop when the outgoing range or dry-run mapping contains unexpected commits or refs.
 
 For an authorized force-push on Git 2.30 or newer, use `--force-with-lease --force-if-includes`. A background
 fetch can refresh the remote-tracking ref and weaken a lease used alone; `--force-if-includes` checks that the

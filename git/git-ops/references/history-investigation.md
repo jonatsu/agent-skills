@@ -1,11 +1,12 @@
 # History Investigation
 
-Load this when the question is who changed something, when it changed, or which commit broke it. All of it is
-read-only.
+Load this when the question is who changed something, when it changed, where deleted code went, or which
+commit changed behavior. Most archaeology commands are read-only. `git bisect` changes the checkout unless
+run with `--no-checkout`, so isolate or authorize that branch explicitly.
 
-This file deliberately does NOT restate flags or command syntax: `git help log`, `git help blame` and
-`git help bisect` are reachable and correct whenever a history question is being asked, and a copy here would
-drift. What follows is what those pages do not tell you.
+Use `git help log`, `git help blame`, and `git help bisect` for complete syntax on the installed version. The
+examples below preserve non-obvious search sequences and interpretation rules that individual manual pages do
+not provide as one workflow.
 
 ## Pick the Cheapest Tool That Can Answer It
 
@@ -21,6 +22,71 @@ drift. What follows is what those pages do not tell you.
 Order matters: `bisect` costs one build or test run per step, and `log -S` frequently answers the same
 question in one command. Reach for `bisect` when you have a deterministic check and no idea where to look, not
 as a first move.
+
+## Git Archaeology
+
+Start with a falsifiable question: the symbol's introduction, a deleted file, a behavior change, a merge
+resolution, or the origin of a specific line. Record the repository root, current commit, refs in scope, path,
+and exact search term. Do not narrow by date or author until evidence supports that boundary.
+
+Check whether the available history is complete:
+
+```bash
+git rev-parse --is-shallow-repository
+git log --all --graph --decorate --oneline --date-order
+```
+
+A shallow repository cannot answer questions about commits it does not contain. Fetching more history changes
+local repository state and contacts a remote, so reuse existing authorization or ask before deepening the
+clone. `--all` searches current refs; it does not recover expired reflogs or missing objects.
+
+### Find a File or Artifact
+
+Use the current path first, then widen deliberately:
+
+```bash
+git log --all --name-status -- <path>
+git log --all --follow -- <path>
+git log --all --diff-filter=D --summary -- <path>
+git ls-tree -r --name-only <revision>
+git show <revision>:<path>
+```
+
+`--follow` applies to one path and is heuristic across renames, especially through non-linear history. Confirm
+each rename with the commit's name-status output, then continue from the old path when necessary. Search
+deleted paths from a revision that still contained them; a current filesystem search cannot find their names.
+
+### Trace a Change
+
+Use `-S` for a literal whose occurrence count changed and `-G` for added or removed diff lines matching a
+regular expression. Start with `--all` when the relevant branch is unknown, then inspect each candidate with
+`git show`. A match identifies a textual change, not necessarily the commit that caused the reported behavior.
+
+For a merge commit, inspect its parents and compare each parent with the merge result:
+
+```bash
+git show --format=raw --no-patch <merge>
+git diff <merge>^1 <merge>
+git diff <merge>^2 <merge>
+```
+
+Combined merge diffs can omit changes that are not interesting relative to every parent. Parent-by-parent
+diffs expose conflict resolutions and changes introduced only by the merge result. Enumerate every parent for
+an octopus merge.
+
+### Build a Chain of Evidence
+
+Corroborate the candidate with the surrounding commits, affected paths, tests, and call sites. Distinguish
+four claims that often diverge:
+
+- a commit introduced the text;
+- a commit introduced the latent defect;
+- a later change exposed the defect; and
+- a commit made the observed check fail.
+
+Use `git blame` to obtain a candidate commit, then inspect that commit and its parent. Use pickaxe or path
+history to move past formatting, copying, and renames. Stop when the evidence supports the requested claim;
+do not turn archaeology into an exhaustive history survey.
 
 ## The Pickaxe Silently Misses a Pure Rename
 
@@ -75,6 +141,10 @@ Mark untestable commits skipped rather than guessing at good or bad, and always 
 finished. An abandoned bisect leaves the repository on an arbitrary detached commit that will be mistaken for
 a real state later.
 
+Bisect changes refs and normally checks out candidate commits. Require a clean dedicated worktree when tests
+need a checkout, or start with `git bisect start --no-checkout` when the check can operate on `BISECT_HEAD`.
+Record the starting commit and run `git bisect reset` on every exit path.
+
 Bisect finds where the check *started failing*, which is not always where the defect was introduced: a latent
 bug can be exposed by an unrelated change.
 
@@ -87,3 +157,11 @@ Where several commits touch the same lines, or blame lands on a reformat, say wh
 naming the most plausible commit. Where the conclusion rests on a name-matched text search rather than a
 reference-resolving tool, say that too. A claim of "no other callers" from a text search misses dynamic
 dispatch, names built from strings, and callers in languages the search never covered.
+
+## Primary References
+
+- [Git log](https://git-scm.com/docs/git-log)
+- [Git show](https://git-scm.com/docs/git-show)
+- [Git blame](https://git-scm.com/docs/git-blame)
+- [Git bisect](https://git-scm.com/docs/git-bisect)
+- [Git revision syntax](https://git-scm.com/docs/gitrevisions)

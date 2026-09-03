@@ -16,8 +16,8 @@ Load this when something has already gone wrong. For deciding whether an operati
 
 ## First Move, Always
 
-STOP writing. Every additional command is another reflog entry between you and the state you want, and a
-second bad guess can bury the first.
+STOP state-changing commands. Read-only inspection does not add reflog entries; further commits, resets,
+checkouts, rebases, merges, or cleanup can overwrite evidence or shorten the recovery path.
 
 ```bash
 git reflog --date=iso | head -30
@@ -52,9 +52,11 @@ pre-rebase tip either, because a rebase writes several reflog entries (both veri
 Then **branch, do not reset.** A branch is additive and costs nothing if the hash was wrong; a reset moves the
 very thing you are trying to save.
 
-An amended commit's original is `HEAD@{1}` immediately after the amend, before anything else moves HEAD. An
-operation still in progress is better abandoned than repaired. Each has its own abort (`git rebase --abort`,
-`git merge --abort`, `git cherry-pick --abort`), which restores the prior state exactly.
+An amended commit's original is `HEAD@{1}` immediately after the amend, before anything else moves HEAD.
+Prefer an active operation's own abort command before attempting recovery. Abort usually restores changes
+owned by the operation, but it is not an unconditional rollback. In particular, `git merge --abort` may be
+unable to reconstruct uncommitted changes that existed before the merge. Inspect and preserve dirty state
+before starting a merge.
 
 For a commit that is in no reflog because it was never on a branch you moved to, `git fsck --lost-found` lists
 dangling objects. Read them with `git show <hash>` before assuming which one is wanted.
