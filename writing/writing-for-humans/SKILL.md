@@ -1,9 +1,9 @@
 ---
 name: writing-for-humans
-description: "Write and edit human-facing prose so it reads clear, skimmable and free of AI tells. Covers topic sentences, one idea per paragraph, register and person, active voice, positive form, parallel structure, specificity, named actors, deferred provenance, and a budget for em dashes and '--'. Use when drafting, editing, condensing, rewriting or reviewing anything a person reads: READMEs, design docs, ADRs, specs, guides, tutorials, release notes, changelogs, PR descriptions, working notes, essays, posts, commit messages, long-form comments. Triggers on 'make this read better', 'edit this prose', 'tighten this prose', 'remove the AI tells', 'this sounds like ChatGPT', 'stop the slop', 'de-slop this', 'humanize this', 'too many em dashes', 'cut the filler', 'make it skimmable', 'proofread this', 'rewrite this paragraph'. NOT for deciding a document's structure, scope or audience, which is technical-writing."
+description: "Edit human-facing prose: clear, skimmable, natural writing and reviews. Not for document structure."
+license: MIT
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # Writing for Humans
