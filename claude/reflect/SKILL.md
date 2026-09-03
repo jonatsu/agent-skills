@@ -56,14 +56,27 @@ captured it.
 
 | Candidate                                     | Destination                                                   |
 | --------------------------------------------- | ------------------------------------------------------------- |
-| Cross-repo behavior / preference / correction | Global memory (`feedback`/`user`)                             |
+| Cross-repo behavior / preference / correction | The current project's memory silo (`feedback`/`user`)         |
 | Standing behavioral rule                      | The user-level `CLAUDE.md`, or an instruction file it imports |
 | Repo-specific operational fact                | Current repo's `AGENTS.md` / `CLAUDE.md`                      |
 | Repeated command sequence                     | In-repo script / justfile recipe                              |
-| Cross-repo reusable method or role            | The user-level `skills/` or `agents/` directory               |
+| Cross-repo reusable method or role            | Whatever source owns the user-level skills or agents          |
 | Repo-specific reusable method or role         | Repo's `.claude/{skills,agents}`                              |
 
-Don't mix scopes: repo trivia never goes to global memory; global preferences never get buried in one repo.
+Don't mix scopes: repo trivia never goes to memory; a preference that spans repositories never gets buried in
+one repo.
+
+**There is no global memory store.** Silos are per project, so a fact true everywhere still lands in whichever
+silo is open, and only that project's sweeps and recalls will ever see it. Nothing filters on frontmatter, so
+such a fact MUST carry its scope in its own description or it is unreachable from anywhere else.
+
+**Establish what owns a destination before writing to it.** A user-level skills or agents directory may be a
+deployment artifact rather than a source: a sync tool installs real copies into it and overwrites them on the
+next run, so a capture written there is destroyed without any error. Determine the owner from the environment
+at the time of the capture. Look for a manifest, lock file, or tracked source that claims the directory, and
+check whether the deployed copy is under version control at all. When something owns it, the durable home is
+the source that deploys it and the capture goes there; when nothing claims it, the directory is itself the
+home. NEVER assume either answer from a remembered path or a previous session.
 
 **Check the destination before proposing a new artifact.** Read what already lives there — the memory silo,
 the rules file, the repo's `AGENTS.md`, the deployed skills and agents. When something already covers the
@@ -99,9 +112,9 @@ the wrong size.
 
 Threshold is necessary, not sufficient. Anything written to the user-level `CLAUDE.md` or a file it imports
 at launch is re-read at every session start and applied to sessions it was never written for. Before
-codifying one, state what it costs when
-it fires on the wrong session: a rule that makes the agent more eager, more expensive, or more invasive needs
-a benefit that clearly outweighs that. Narrow the wording to the case actually observed.
+codifying one, state what it costs when it fires on the wrong session: a rule that makes the agent more eager,
+more expensive, or more invasive needs a benefit that clearly outweighs that. Narrow the wording to the case
+actually observed.
 
 ## 4. Respect the autonomy boundary
 
@@ -111,9 +124,17 @@ a benefit that clearly outweighs that. Narrow the wording to the case actually o
 
 ## 5. Write the captures
 
-- **Global memory**: one fact per file with `name`, `description`, and `metadata.type`
-  (`user | feedback | project | reference`), plus a one-line pointer in `MEMORY.md`. Check for an existing
-  file that already covers it and update it rather than duplicating; delete memories proven wrong.
+- **Memory**: one fact per file with `name`, `description`, and `metadata.type`
+  (`user | feedback | project | reference`), plus a one-line pointer in `MEMORY.md`. Read a neighbouring file
+  in the same silo and match its frontmatter rather than a remembered schema — some fields are written by
+  tooling and MUST NOT be hand-typed, and a hand-written file that omits them is structurally unlike its
+  neighbours. Check for an existing file that already covers the fact and update it rather than duplicating;
+  delete memories proven wrong.
+- **Set `metadata.scope:`** when the fact does not belong to the silo holding it — `machine` for a fact about
+  this machine, `global` for one true in every repository. Omit it for an ordinary repo-scoped fact, which is
+  the default and needs no marker. The field is advisory and nothing filters on it, so a fact that escapes
+  its silo MUST also say so in its `description`; the field serves the maintenance sweep and the human
+  reader, the description serves recall.
 - **Everything that must reach retrieval goes in the `description`.** Recall matches against the description
   text; nothing filters on frontmatter. A fact that is machine-wide or true across every repository MUST say
   so there, because the silos are per-project and no silo fits such a fact. A fact with a foreseeable expiry
@@ -175,7 +196,7 @@ surviving pointer back to it. Nothing else reads this file.
 **Always report the count. Drain it on request or once it grows past ~20.**
 
 ```bash
-wc -l < "${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/hooks/capture-pending.jsonl"
+wc -l < "${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/hooks/capture-pending.jsonl" 2>/dev/null || echo 0
 ```
 
 Include the count in the §6 report even when not draining, so the backlog stays visible instead of
