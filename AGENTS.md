@@ -12,22 +12,29 @@ Read the focused source before acting:
 ## Authoring and Review
 
 - Use `skill-forge` when creating, editing, restructuring, or replacing a skill.
+
 - Use both `skill-review` and `skill-forge` for every skill review. `skill-review` governs assessment and
   evidence; `skill-forge` governs proposed repair shape and any separately authorized edits.
+
 - Load `kasetto` before adding, editing, moving, archiving, restoring, removing, deploying, or verifying a
   skill. Its portable tool guidance complements this file's repository-specific hook and lock workflow.
+
 - A review request does not authorize changing the skill. Report first unless the user also requested
   implementation.
+
 - Update `skills-review-notes.md` in the same work. Move every completed skill to **Reviewed**, including a
   skill that is replaced or removed. Move a restored archived skill out of the deferred list when its review
   begins.
+
 - Archived skills marked as deferred remain unreviewed. Do not spend time validating or repairing them unless
   their review is explicitly resumed.
+
 - Keep `description` as an inline YAML scalar. **This constraint belongs to Kasetto, not to YAML or to the
   Agent Skills specification**, and it dissolves if the deployment tool is replaced. Kasetto 3.8.0 records a
   folded scalar's `>-` marker as the lock description instead of its text; reproduced on 2026-09-02 across
   all four shared locks, and again on 2026-09-03 on `claude/reflect`. Both skill validators accept the folded
   scalar, so neither catches the failure. `scripts/check-skill-descriptions.sh` does.
+
 - **The 120-column ceiling governs prose and body text, never the `description`.** It is markdownlint's
   MD013, a line-width rule for wrapped prose, and a description cannot wrap while the constraint above holds.
   Frontmatter is already excluded mechanically: `.markdownlint-cli2.jsonc` sets a `frontMatter` regex that
@@ -35,10 +42,24 @@ Read the focused source before acting:
   hooks. Budget a description by length instead. The Agent Skills specification caps it at 1024 characters
   and `skills-ref` enforces that; this repository warns above 512, which is a local judgment about discovery
   cost rather than an upstream limit.
-- For `uv`-based skill validation in a sandbox, set `UV_CACHE_DIR` to a writable directory under `/tmp`.
-  A cold cache needs pinned dependencies from PyPI. If validation then fails on dependency download or DNS,
-  request network-enabled execution for the same command; report the failure as an environment limit, not a
-  package defect.
+
+- Run skill validators through `mise exec -C skills --`. `skills/mise.toml` supplies Python and uv and directs
+  uv's cache to the ignored `skills/.cache/uv`. Set Mise's cache and state paths under `skills/.cache/` before
+  invoking it, so sandboxed validation needs no `/tmp` override. `scripts/check-skill-policy.sh` already uses
+  this path. For direct specification validation from the repository root, run:
+
+  ```bash
+  skills_root="$(git rev-parse --show-toplevel)/skills"
+  MISE_CACHE_DIR="$skills_root/.cache/mise/cache" \
+    MISE_STATE_DIR="$skills_root/.cache/mise/state" \
+    mise exec -C "$skills_root" -- uv run --isolated --no-dev \
+    --project shared/agent-stack/skill-forge/scripts/skills-ref \
+    skills-ref validate shared/<domain>/<skill>
+  ```
+
+  A cold cache needs pinned dependencies from PyPI. If it fails on dependency download or DNS, request
+  network-enabled execution for the same command; report the failure as an environment limit, not a package
+  defect.
 
 ## Archive Without Losing Structure
 

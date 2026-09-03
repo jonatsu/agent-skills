@@ -20,9 +20,9 @@ def _repository_root() -> Path:
     return Path(result.stdout.strip())
 
 
-SCRIPT_ROOT = (
-    _repository_root() / "skills" / "shared" / "agent-stack" / "skill-forge" / "scripts"
-)
+REPOSITORY_ROOT = _repository_root()
+SKILLS_ROOT = REPOSITORY_ROOT / "skills"
+SCRIPT_ROOT = SKILLS_ROOT / "shared" / "agent-stack" / "skill-forge" / "scripts"
 INIT_SCRIPT = SCRIPT_ROOT / "init_skill.py"
 VALIDATE_SCRIPT = SCRIPT_ROOT / "quick_validate.py"
 
@@ -108,7 +108,7 @@ class QuickValidateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("usage:", result.stdout)
 
-    def test_isolated_uv_run_resolves_declared_dependency(self) -> None:
+    def test_mise_managed_uv_run_resolves_declared_dependency(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             skill_directory = Path(temporary_directory) / "sample-skill"
             skill_directory.mkdir()
@@ -123,11 +123,26 @@ class QuickValidateTests(unittest.TestCase):
             )
 
             result = subprocess.run(
-                ["uv", "run", "--isolated", str(VALIDATE_SCRIPT), str(skill_directory)],
+                [
+                    "mise",
+                    "exec",
+                    "-C",
+                    str(SKILLS_ROOT),
+                    "--",
+                    "uv",
+                    "run",
+                    "--script",
+                    str(VALIDATE_SCRIPT),
+                    str(skill_directory),
+                ],
                 check=False,
                 capture_output=True,
                 text=True,
-                env={**os.environ, "UV_CACHE_DIR": "/tmp/skill-forge-test-uv-cache"},
+                env={
+                    **os.environ,
+                    "MISE_CACHE_DIR": str(SKILLS_ROOT / ".cache" / "mise" / "cache"),
+                    "MISE_STATE_DIR": str(SKILLS_ROOT / ".cache" / "mise" / "state"),
+                },
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)
