@@ -57,12 +57,6 @@ Open work:
 - Locate the Copilot CLI configuration file and record its path before setting anything there.
 - Check OpenCode and Codex for equivalent switches. Neither was scanned.
 
-## Pin Third-Party Sources
-
-Third-party entries in `kasetto/base.yaml` currently track moving default branches. If unexpected upstream
-changes become a practical problem, add explicit `ref:` pins and define a deliberate update procedure. A bare
-`kst sync --update` also re-resolves those moving sources.
-
 ## Remove writing-great-skills from the Archive
 
 Delete `archived/writing-great-skills` in a dedicated cleanup. The reviewed `skill-forge` and `skill-review`
