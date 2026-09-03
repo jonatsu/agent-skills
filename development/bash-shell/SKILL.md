@@ -1,6 +1,6 @@
 ---
 name: bash-shell
-description: Write, review, debug, and harden Bash scripts and automation; use posix-shell-pro for POSIX sh portability.
+description: Write, review, debug, and harden Bash scripts and automation; use posix-shell for POSIX sh portability.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -20,7 +20,7 @@ Before editing, determine:
 - the minimum Bash version and supported operating systems;
 - inputs, outputs, exit statuses, side effects, and destructive targets;
 - existing formatters, linters, tests, and repository instructions; and
-- whether Bash features are required. Route strict POSIX work to `posix-shell-pro`.
+- whether Bash features are required. Route strict POSIX work to `posix-shell`.
 
 Do not add Bash to a task better expressed as one direct command or a clearer existing language. Do not
 silently raise the minimum Bash version.
