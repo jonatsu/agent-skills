@@ -21,7 +21,7 @@ repository copy to OpenCode on top of a directory Kasetto does not own.
 ## Dedicated GitHub Actions Skill
 
 Create a separate GitHub Actions skill if recurring work exceeds the short orientation in
-`shared/git/github-operations/references/actions-basics.md`. Its intended scope is matrix and cache design,
+`shared/git/github-ops/references/actions-basics.md`. Its intended scope is matrix and cache design,
 self-hosted runners, reusable workflows, composite actions, environments and deployment gates, artifact
 retention, and the expression language. Do not keep expanding the orientation file into a reference manual.
 

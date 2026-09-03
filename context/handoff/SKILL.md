@@ -66,14 +66,14 @@ read. Add session-only context only when the context-loss check found something 
 Example:
 
 ```text
-Review `github-operations` next. Read `skills/skills-review-notes.md`, follow its review workflow, and start from the skill
+Review `github-ops` next. Read `skills/skills-review-notes.md`, follow its review workflow, and start from the skill
 package.
 ```
 
 If the session established a relevant preference, add it directly:
 
 ```text
-Review `github-operations` next. Read `skills/skills-review-notes.md` and follow its review workflow. The user wants the
+Review `github-ops` next. Read `skills/skills-review-notes.md` and follow its review workflow. The user wants the
 review to focus on silent success paths in `gh`; broad command coverage is out of scope.
 ```
 
