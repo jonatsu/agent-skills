@@ -1,41 +1,56 @@
 # Attributions
 
-This skill is original work. Nothing here is copied, adapted, or translated from another project, and
-`metadata.license` is the repository default (MIT). This file is a courtesy ledger, not a licence obligation.
+## Current Skill
 
-## Idea sources
+- Skill: `test-engineer`
+- Current author: Joonas Onatsu
+- Current license: MIT
+- Status: original expression informed by external idea sources
 
-- [fugazi/test-automation-skills-agents](https://github.com/fugazi/test-automation-skills-agents) (MIT),
-  `references/testing-anti-patterns.md`, read 2026-08-24 at `HEAD`. Reading it prompted five additions, each
-  written from scratch and generalized well past that file's Playwright and Selenium framing: testing
-  framework code rather than your own (`SKILL.md`); and, in `references/test-strategy.md`, that a status code
-  is not an oracle, that synchronization belongs on the condition rather than the clock, that tests should
-  bind to the contract rather than the incidental representation, and that a suite must run where it will be
-  judged. No code, prose, identifiers, or examples were carried over.
+## Idea Sources
 
-  The same repository's `skills/qa-manual-istqb/`, read 2026-08-25 at `HEAD`, prompted one further addition:
-  the exploratory-charter shape in `references/test-strategy.md`, which makes the level table's "Manual or
-  exploratory" row actionable. Upstream ships a charter as a fill-in template; the version here is a
-  written-from-scratch four-line form plus the rule that a charter reports notes and NEVER a verdict. Its
-  ISTQB estimation, monitoring-metrics, entry/exit-criteria and traceability-matrix material was evaluated and
-  deliberately rejected as process machinery this lane does not want. Again, no text travelled.
+### fugazi/test-automation-skills-agents
 
-- [sarathsomana/tech-skills](https://github.com/sarathsomana/tech-skills) (MIT), `skills/test-engineer/`, read
-  2026-08-24 at rev `3595ee02`. Prompted two rules, both rewritten from the idea: that exit status rather than
-  parsed output settles pass/fail, and that a bounded retry loop must escalate with what it tried. Its own
-  architecture, personas and artifact schema were not adopted, and its per-layer coverage targets are rejected
-  here as an anti-pattern.
+- Source: <https://github.com/fugazi/test-automation-skills-agents>
+- Revision: `db514b5536e1621cded9dee3e430c9ddd72d5913`
+- Paths: `references/testing-anti-patterns.md`, `skills/qa-manual-istqb/`
+- License: MIT
 
-- [0King0P/Claude-Skills](https://github.com/0King0P/Claude-Skills) `test-engineer/SKILL.md` and
-  [grasberg/sofia-workspace](https://github.com/grasberg/sofia-workspace) `skills/test-engineer/SKILL.md`,
-  both read 2026-08-24. **Neither repository carries a licence** (verified: `/license` returns 404 and the
-  `license` field is null on both), so both are all-rights-reserved and nothing was copied from either in any
-  form. Reading them prompted two additions written entirely from scratch: mutation testing as the measure of
-  what a suite would catch, and the tautological-assertion anti-pattern. Ideas are not protectable; text is,
-  and none travelled.
+The first path informed rules about testing owned behavior, meaningful response assertions, condition-based
+synchronization, contract-focused tests, and running where the suite is judged. The second informed the
+chartered exploratory-testing format. All expression is original; no upstream code, prose, examples, or assets
+were carried over.
 
-- [kui04/nix-config](https://github.com/kui04/nix-config) `users/.config/pi/skills/test-engineer/`, read
-  2026-08-24 at rev `e8e53963`. **Also carries no licence** (same verification), so again nothing was copied.
-  Reading it prompted the stale-expectation triage rule, the framework-identification gate, and the test-size
-  axis. For the last of these the underlying source is *Software Engineering at Google* ch. 11, cited directly
-  in `references/test-strategy.md` in preference to this repository.
+### sarathsomana/tech-skills
+
+- Source: <https://github.com/sarathsomana/tech-skills>
+- Revision: `3595ee021eafceaff0a0e8678306721a073a1c2c`
+- Path: `skills/test-engineer/`
+- License: MIT
+
+This source informed the exit-status rule and bounded rerun escalation. All expression is original.
+
+### 0King0P/Claude-Skills and grasberg/sofia-workspace
+
+- Sources: <https://github.com/0King0P/Claude-Skills>, <https://github.com/grasberg/sofia-workspace>
+- Revisions: `9e83f7e3b3586557e44f90bde7d54c6537448cb8`, `d5f9553305d1397cdec69d1e098edd43dd88fe2b`
+- Paths: `test-engineer/SKILL.md`, `skills/test-engineer/SKILL.md`
+- License: neither repository declared one at the recorded revisions
+
+These sources informed the tautological-assertion anti-pattern. No expression was copied.
+
+### kui04/nix-config
+
+- Source: <https://github.com/kui04/nix-config>
+- Revision: `e8e5396334d5c559fc82aa684d366df927224b14`
+- Path: `users/.config/pi/skills/test-engineer/`
+- License: no declared repository license at the recorded revision
+
+This source informed stale-expectation triage and the framework-identification gate. No expression was copied.
+
+### Software Engineering at Google
+
+- Source: Titus Winters, Tom Manshreck, and Hyrum Wright, *Software Engineering at Google* (O'Reilly, 2020),
+  chapter 11, "Testing Overview".
+
+This book informed the test-size axis in `references/test-strategy.md`.

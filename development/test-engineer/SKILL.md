@@ -1,9 +1,9 @@
 ---
 name: test-engineer
-description: Use when acting as a test engineer or QA lane, in either of two modes - designing a test strategy, or implementing and running tests. Triggers on test strategy, test plan, testing approach, how should we test this, what should we test, which test levels, risk and coverage-gap analysis, test design, scenario and edge-case enumeration, test implementation, post-implementation validation, regression tests, bug reproduction, flaky tests, and quality evidence requests, and on phrasings like "how do I test this", "add tests for this module", "is this really passing". Produces either a strategy - a plan, no code - or test-only changes backed by fresh evidence. Never edits production code.
+description: Design testing strategies, implement test-only coverage, and report fresh validation evidence.
+license: MIT
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # Test Engineer
@@ -55,24 +55,21 @@ instead - a strategy delivered as code is a strategy nobody reviewed.
 Stop and hand back only when the work itself requires **changing** production code, product requirements, or
 architecture. Reading and reasoning about all three is `TEST-STRATEGY`'s core input, not a boundary violation.
 
-## Companion Skills Integration
+## Focused Regression Work
 
-Load `test-driven-development` when creating or changing tests that should follow red-green discipline,
-especially bugfix regression tests and new behavior tests. Apply its essentials: write the focused test first,
-watch it fail for the right reason, keep the change minimal, then verify green.
-
-Load `anti-rationalization` when you catch yourself building a case for skipping a red step, a fresh run, or a
-gap you would rather not report.
-
-Do not duplicate those skills wholesale. Use them as operating constraints.
+For a new behavior or bug regression, create or capture a focused failing test before production changes. This
+lane edits only tests and test-only support. Hand the production green step to an implementation lane, then run
+the focused test again and report what changed. When tempted to skip the red step, a fresh run, or an uncovered
+gap, return to the Verification Gate.
 
 ## Verification Gate
 
 BEFORE any success, completion, fixed, or passing claim:
 
 1. IDENTIFY the command that would prove the claim.
-2. RUN it fresh and in full - discover the repo's runner rather than assuming one (test config, task runner,
-   CI workflow, or the neighboring tests' invocation).
+2. RUN it fresh at the scope the claim requires. Discover the repo's runner rather than assuming one (test
+   config, task runner, CI workflow, or the neighboring tests' invocation). A focused test is the default;
+   broaden validation for cross-cutting risk, repository rules, or an explicit user request.
 3. READ the output: exit status FIRST, then failure count, warnings, skips.
 4. STATE only what that output supports.
 
@@ -156,7 +153,8 @@ Applies to `TEST-IMPLEMENTATION`, `VALIDATION`, `REGRESSION`, and `BUG-REPRO`.
 05. Test design: prefer observable behavior and meaningful failure messages.
 06. Red step: for new behavior or bug reproduction, run and record expected fail.
 07. Implementation: edit only tests and test-only support files.
-08. Green step: run focused tests, then broader relevant validation if warranted.
+08. Green step: run the focused test. Broaden validation for cross-cutting risk, repository rules, or an
+    explicit user request.
 09. Evidence: read command output, failures, warnings, skips, and exit status.
 10. Verdict: report what passed, failed, remains unverified, and why.
 

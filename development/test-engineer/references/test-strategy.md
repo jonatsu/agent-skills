@@ -104,10 +104,9 @@ The session's output is notes, NEVER a verdict: what was covered, what was NOT r
 raised. MUST NOT report a charter as a gate - it is not repeatable, so nothing regressed when it stops
 passing, and treating it as one launders judgment into evidence.
 
-Charter rather than skip, because exploratory testing is the only row in the table that can find a problem
-nobody thought to specify. Every other row confirms or denies something already named in step 1. A plan that
-allocates no exploratory time has silently assumed its own behavior list is complete - the same failure as
-omitting non-goals, one level up.
+Allocate exploratory time when novelty, ambiguity, or residual high risk makes it valuable. Charter it rather
+than browsing: exploratory testing can find a problem nobody thought to specify, but it is not required for a
+fully specified, low-risk change.
 
 ## Step 4: Choose an oracle for each
 
@@ -159,8 +158,8 @@ whole categories; a sweep makes the misses deliberate. Most entries will not app
 
 ## Step 6: Record testability blockers
 
-When a behavior cannot be tested at the level its risk demands, that is a finding for the implementation lane
-\- MUST report it, MUST NOT fix it here. Name the blocker, the change that would unblock it, and who owns it.
+When a behavior cannot be tested at the level its risk demands, that is a finding for the implementation lane.
+MUST report it and MUST NOT fix it here. Name the blocker, the change that would unblock it, and who owns it.
 
 Usual suspects: a clock read inline instead of injected, randomness with no seed, global or static mutable
 state, network or filesystem calls buried in a constructor, no seam between decision and side effect, a
@@ -180,11 +179,10 @@ Carry these into the plan, because they decide whether the suite is still truste
 
 - A flaky test is a failing test. Quarantine with a deadline and an owner, or delete it. Retry-until-green
   destroys the signal the suite exists for.
-- Ask what the suite would CATCH, not what it covers. Break the production code deliberately - flip a
-  comparison, drop a guard, return a constant - and see whether anything goes red. A mutation nothing kills is
-  the finding, and it is the only evidence that separates tests which assert from tests which merely execute.
-  Mutation tooling (Stryker, PIT, mutmut, cargo-mutants) automates the sweep; by hand, three deliberate breaks
-  in the riskiest function tell you most of what a coverage report will not.
+- Ask what the suite would CATCH, not what it covers. Use an existing mutation tool only in an isolated
+  environment when the task authorizes it. If mutation requires manual production edits or unavailable tooling,
+  report it as a handoff. A mutation nothing kills is a finding, and it separates tests which assert from tests
+  which merely execute.
 - Synchronize on the condition, never on the clock. A fixed sleep is simultaneously too long on the machine
   that is fast and too short on the one that is loaded, and it is the largest single source of flake. Wait for
   the state you actually need - the element, the row, the log line, the exit.
