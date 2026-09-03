@@ -29,6 +29,35 @@ Write independently from primary sources. The previously inspected `netresearch/
 CC-BY-SA-4.0 for prose despite MIT licensing for scripts and assets, so its prose cannot be lifted or lightly
 edited into this MIT repository.
 
+## Changelog Skill Deferred
+
+Do not port `examples/skills/changelog` from `MuhammadUsmanGM/claude-code-best-practices`. Reviewed and
+rejected 2026-09-03. Nothing under `~/src` cuts versioned releases, and the single `CHANGELOG.md` is
+`nix-config`'s, which uses date headings, keeps each commit subject verbatim as the entry heading, and expands
+entries into maintainer-facing prose. Keep a Changelog condenses many commits into one terse consumer bullet
+under a version, so the skill would push a format the one repository with a changelog has deliberately
+rejected, and that repository already documents its convention in its own `CLAUDE.md`.
+
+Reconsider when a project here starts cutting versioned releases for consumers and adopts Keep a Changelog for
+it, most plausibly `knowledge-vault` or `services`.
+
+Three findings worth keeping, so the review is not repeated:
+
+- **A changelog entry maps to many commits, not one.** Keep a Changelog 1.1.0 names commit-log-derived
+  changelogs an antipattern for exactly this reason. A procedure that enumerates commits and then filters them
+  per commit cannot merge one feature's ten commits into one bullet.
+- **A fix for a bug that never shipped must not be listed.** Deciding that needs the previous release boundary
+  rather than the commit, so no per-commit rule can reach it. This is the clearest evidence that curation has
+  to precede grouping rather than follow it.
+- **The two authoritative sources carry different licenses.** keepachangelog.com is MIT, Olivier Lacan, so its
+  material may be adapted with attribution. semver.org is CC BY 3.0, so state the version-bump rules as facts
+  in our own words with a citation rather than adapting its prose. Both verified 2026-09-03.
+
+Traps for whoever eventually writes it: `git describe --tags --abbrev=0` exits 128 when no tag exists rather
+than returning empty, and matches lightweight non-release tags; the format requires the
+`[x.y.z]: <compare-url>` link footer, without which every version heading is a dead link; deprecations,
+removals and breaking changes come first, per the specification's own emphasis.
+
 ## Harness Switches for Commit Attribution Trailers
 
 `shared/git/git-ops` forbids an unrequested `Co-Authored-By` or `Signed-off-by` trailer, and the same rule is
