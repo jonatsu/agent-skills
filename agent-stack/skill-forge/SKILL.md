@@ -34,6 +34,16 @@ workflow, and output the skill would cover. Keep multiple aspects together only 
 decision boundary requires them. Shared popularity, one author's environment, possible integration, or
 occasional co-use is insufficient. Split unrelated guidance into separate skills or omit it.
 
+**Then ask what a user would have to say for the skill to load. When the honest answer is "nothing they would
+say", the content is not skill-shaped and no description repairs it.** Discovery matches a request's intent,
+so guidance that applies whenever someone writes code, commits, or edits prose has no moment to match: nobody
+announces that they are about to name a function. Such guidance belongs in whatever the target agent always
+loads, or in a rules file a reader opens deliberately. Measured 2026-09-03 on Claude Code 2.1.239: a
+code-naming skill activated in 0 of 13 runs across authoring, review, and diagnostic requests, and an
+always-loaded pointer naming it for the exact moment changed nothing — while explicit invocation produced the
+intended behavior, so the content was never at fault. Write the skill anyway when a real trigger exists and
+only the wording is weak; abandon the skill form when the trigger is the problem.
+
 When the relationship between retained aspects is not obvious, state the shared job in the description or
 body so later reviewers do not have to invent the justification.
 

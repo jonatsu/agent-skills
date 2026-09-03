@@ -22,8 +22,39 @@ Preserve cases that catch likely regressions; do not grow a suite merely to reac
 
 Use positive requests where the skill should activate, near-miss requests where similar language should not
 activate it, and ambiguous requests where activation or clarification depends on context. Vary phrasing and
-realism without stuffing prompts with the description's exact words. Observe whether the client loaded the
-skill rather than inferring activation from the final answer.
+realism without stuffing prompts with the description's exact words.
+
+**Prefer a load signal, but do not assume one exists.** Some clients expose no observable trace when a skill
+activates: measured on Claude Code 2.1.239 on 2026-09-03, print mode emitted no skill tool call, no read of
+`SKILL.md`, and nothing in the debug log beyond the skills directory being scanned — including under an
+explicit `/skill-name` invocation, because the content is injected server-side. Where that holds, grade
+activation from behavior instead. NEVER report "the skill did not load" when what was observed is "no signal
+was available".
+
+### Grading Activation Without a Load Signal
+
+Build a fixture the skill's rules bite on, then check whether the output shows decisions the agent would not
+otherwise make.
+
+- **Choose a fixture that forces the skill's distinctive choice.** A naming skill needs code carrying a bad
+  name already; a migration skill needs a schema to migrate. A fixture with nothing to correct cannot
+  distinguish an activated skill from an idle one.
+- **Grade on several independent fingerprints and set a threshold.** A single marker turns one phrasing
+  choice into the whole measurement.
+- **Validate the grader against a known positive before trusting any negative.** Invoke the skill explicitly,
+  grade that output, and confirm the grader fires. A detector that never fires positive reports every run as
+  a failure. This step is what separates `0 of 5` as evidence from `0 of 5` as a broken harness.
+- **Prefer evidence that the anti-pattern appeared** over evidence that a fingerprint was absent. An agent
+  that produced exactly what the skill forbids is a far stronger negative than output that merely lacked the
+  skill's vocabulary.
+
+**Vary always-loaded context with an instruction file inside the fixture directory** rather than editing the
+user's real configuration. Where a client discovers project-level instructions, that gives a controlled
+condition touching nothing durable. Disabling global instructions wholesale may also disable the client's
+authentication path, so verify that before depending on it.
+
+When no phrasing reaches the content at all, the finding is about the skill's form rather than its
+description; `skill-forge`'s job-establishment step covers what to do instead.
 
 ### Execution
 
