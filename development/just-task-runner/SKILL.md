@@ -1,6 +1,6 @@
 ---
 name: just-task-runner
-description: Build and maintain justfiles. Use when a project uses Just or needs a command runner for repeatable tasks.
+description: Build and maintain Just command-runner files for repeatable project tasks.
 license: MIT
 compatibility: Just is required for local parsing, formatting, and runtime verification.
 metadata:
@@ -33,12 +33,15 @@ Use the narrowest command that answers the question:
 - `just --list` or `just --summary` for discovery;
 - `just --show <recipe>` to inspect one recipe and its dependencies;
 - `just --dump` to parse and inspect the complete resolved justfile;
-- `just --evaluate` to inspect variables; and
+- `just --evaluate` to inspect variables after reviewing their definitions; and
 - `just --dry-run <recipe> [arguments]` to preview the selected command lines.
 
-A recipe can run arbitrary commands. Inspect its body and dependencies before execution, and judge authority
-from the resulting effects rather than from the recipe name. A dry run does not grant permission or prove
-that the real command will succeed.
+Variable evaluation can execute backticks and `shell(...)`. Inspect definitions with `just --dump` before
+running `just --evaluate`, then confirm that any command effects are within the user's authority.
+
+A recipe can also run arbitrary commands. Inspect its body and dependencies before execution, and judge
+authority from the resulting effects rather than from the recipe name. A dry run does not grant permission
+or prove that the real command will succeed.
 
 ## Author Recipes Deliberately
 
@@ -50,10 +53,10 @@ that the real command will succeed.
   when working-directory changes, variables, traps, or shell state must persist across commands.
 - Use recipe dependencies for fixed task relationships. Use recursive `just` calls only when runtime selection,
   iteration, or another dynamic relationship requires them.
-- Treat `{{ ... }}` as text inserted before the recipe shell parses the command. Quote scalar parameters with
-  `quote()` when they must remain one shell argument. For arbitrary argument forwarding, prefer a mechanism
-  that preserves argument boundaries, such as positional arguments with `"$@"`, after checking target-shell
-  and platform behavior.
+- Treat `{{ ... }}` as text inserted before the recipe shell parses the command. For Bourne-compatible shells,
+  use `quote()` when a scalar parameter must remain one shell argument. For other shells, use that shell's
+  argument-safe mechanism. Preserve arbitrary argument boundaries with a target-shell mechanism such as
+  positional arguments with `"$@"` in a Bourne-compatible shell.
 - Use an import when definitions should share a namespace. Use a module when recipes need a separate namespace.
   Split files only when ownership or size makes the boundary useful.
 - Add file-wide settings such as dotenv loading, environment export, shell replacement, or working-directory
