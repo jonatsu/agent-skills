@@ -34,6 +34,9 @@ wants to consider first as the first question after naming them; do not substitu
 others as named stubs. Do not ask any cross-cutting or secondary question in that response. Combine compatible ideas.
 Park an attractive tangent when it would expand or displace the current purpose; explain why it is deferred.
 
+Before the user chooses an outcome, do not propose product shapes, architecture, implementation approaches, or a
+recommended direction for a multi-outcome request. Those comparisons speculate across work that has not been selected.
+
 Research facts or prior art when they could change the premise, branch set, or recommendation. Keep factual findings,
 agent recommendations, provisional assumptions, and user decisions distinguishable. Challenge weak premises,
 unnecessary complexity, dependencies, omissions, and difficult-to-reverse choices proportionately. Brainstorming is
