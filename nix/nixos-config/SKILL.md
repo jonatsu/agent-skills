@@ -1,6 +1,6 @@
 ---
 name: nixos-config
-description: "Configure a NixOS system: host wiring in a flake, hardware-configuration, bootloader, users, system packages, stateVersion, overlay scope, nixos-rebuild, and generation rollback. Use when adding or changing a NixOS host, debugging why an option has no effect, recovering an unbootable or failed build, or running non-Nix binaries. Triggers on: nixos, nixosSystem, nixosConfigurations, configuration.nix, nixos-rebuild, nixos-install, nixos-generate-config, hardware-configuration, boot.loader, systemd-boot, GRUB, stateVersion, nixpkgs.overlays, useGlobalPkgs, nix-ld, rollback, generations."
+description: "Configure and recover NixOS hosts: flake host wiring, hardware modules, rebuild modes, stateVersion, boot, rollback, and nix-ld. Use when changing a host, diagnosing ignored options or failed builds, recovering boot, or enabling a downloaded binary."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -20,6 +20,16 @@ that silently does nothing.
 
 NixOS option syntax is well known; the failures below are not. Reach for this when an option is set but has no
 effect, when a rebuild or boot fails, or when standing up a host from scratch.
+
+## System Mutation Boundary
+
+`nixos-rebuild build` evaluates and builds without changing the running host. `dry-activate` shows what an
+activation would do without activating it. `switch`, `test`, `boot`, `--rollback`, `nixos-install`, and garbage
+collection change host state, activate services, change the boot default, or remove recovery material.
+
+Before any state-changing command, identify the target host and action, explain its effect, and obtain the user's
+explicit approval. Prefer `build` or `dry-activate` while validating a change. On a remote host, use `test` only
+after approval and keep a recovery path available.
 
 ## Workflow
 
@@ -74,9 +84,10 @@ nixos-generate-config --root /mnt      # during install
 nixos-generate-config --show-hardware-config > hardware-configuration.nix
 ```
 
-NEVER edit the result by hand. It carries filesystem UUIDs, kernel modules, and partition layout that MUST
-match the machine; hand edits produce systems that do not boot. Regenerate instead, and keep machine-specific
-facts (UUIDs, `boot.initrd.availableKernelModules`) out of shared modules.
+Treat the generated file as a machine-specific, replaceable baseline. Do not casually edit detected filesystem
+UUIDs, mounts, or boot modules: regenerate after hardware changes and compare the result. Put deliberate
+hardware policy or overrides in a separate host-specific module where possible. If a machine-specific correction
+must stay in the generated file, document it so regeneration does not silently erase it.
 
 Bootloader choice, LUKS/LVM/impermanence layouts, and cross-compilation notes:
 [references/hardware-and-boot.md](references/hardware-and-boot.md).
@@ -110,13 +121,13 @@ session.
 ## Step 4: stateVersion
 
 ```nix
-{ system.stateVersion = "25.11"; }   # NixOS release at FIRST install
+{ system.stateVersion = "<release-at-first-install>"; }
 ```
 
 NEVER raise it to match a newer NixOS release. It selects migration behaviour for stateful services
 (databases, `/var` layouts); changing it retroactively tells NixOS that migrations already happened when they
-did not. It is not a "current version" field. home-manager has an independent `home.stateVersion` with the
-same rule.
+did not. Set it to the release used at the host's first installation. It is not a "current version" field.
+home-manager has an independent `home.stateVersion` with the same rule.
 
 ## Step 5: Build, Deploy, Verify ⛔ BLOCKING
 
@@ -145,8 +156,8 @@ working host** — the body covers that.
 
 ## Anti-Patterns
 
-- **Editing `hardware-configuration.nix` by hand** — it is generated and machine-specific; hand edits produce
-  unbootable systems.
+- **Casually editing generated hardware facts** — regeneration can overwrite filesystem UUIDs, mounts, and boot
+  modules. Keep deliberate overrides separately or document why they must remain in the generated file.
 - **Bumping `stateVersion` on an existing host** — it is not a version marker; changing it skips migrations
   that never ran.
 - **Overlays in home-manager config under `useGlobalPkgs = true`** — silently ignored. Define them in a NixOS

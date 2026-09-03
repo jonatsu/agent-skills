@@ -3,6 +3,13 @@
 Load when deploying, rolling back, diagnosing a failed build, recovering an unbootable system, or running a
 downloaded binary.
 
+## Activation Boundary
+
+`nixos-rebuild build` evaluates and builds a configuration without changing the running host. `dry-activate`
+shows the activation plan without activating it. `switch`, `test`, `boot`, rollback, installation, and garbage
+collection change host state or recovery material. Before running one, name the target host and action, explain
+its effect, and obtain the user's explicit approval.
+
 ## Rebuild modes
 
 | Command                      | Activates now | Boot default | Use when                                                         |
@@ -33,7 +40,7 @@ nixos-install --flake /mnt/etc/nixos#host1
 ```
 
 Run from the installer with the target mounted at `/mnt`. The flake path must be reachable from the installer
-environment.
+environment. Installation changes the target disk and boot configuration; confirm the target before running it.
 
 ## Generations and rollback
 

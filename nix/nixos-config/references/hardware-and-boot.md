@@ -12,9 +12,10 @@ nixos-generate-config --root /mnt
 nixos-generate-config --show-hardware-config > hosts/<host>/hardware-configuration.nix
 ```
 
-The generated file is machine-specific: filesystem UUIDs, `boot.initrd.availableKernelModules`, CPU microcode,
-and swap devices. Keep it per-host and never share it between machines — two hosts with the same UUIDs is a
-boot failure waiting for the first disk swap.
+The generated file is machine-specific: filesystem UUIDs, `boot.initrd.availableKernelModules`, and swap
+devices. Keep it per-host and never share it between machines — two hosts with the same UUIDs are a boot
+failure waiting for the first disk swap. Treat it as a generated baseline: regenerate after hardware changes,
+and keep deliberate hardware policy in a separate host-specific module where possible.
 
 `--show-hardware-config` writes only the hardware half, which is what you want when refreshing an existing
 host; the plain form also rewrites `configuration.nix`.
