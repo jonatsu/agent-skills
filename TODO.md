@@ -12,6 +12,45 @@ Start a fresh Codex session and record whether the warning remains. If it does, 
 with a curated Codex overlay before changing deployment policy. Skill count alone does not establish which
 descriptions consume the budget.
 
+## Technical Design and Planning Evaluation Follow-Up
+
+The bounded 2026-09-04 repair evaluation was accepted as sufficient to deploy `technical-design` and
+`implementation-planning` with `ready with risks` verdicts. Keep the following as future evidence work rather than a
+release gate:
+
+- Complete Codex case 11's confirmed second turn with a workspace-write resume configuration that does not require a
+  full approvals-and-sandbox bypass. Assert that it writes only the separate implementation plan from the accepted
+  design. The first turn already proved that Codex writes only the design and waits for confirmation.
+- Run cases 2, 3, 5, 6, 10, and 12 against the repaired revision when broader regression coverage is warranted. Cases 1,
+  4, 7, 8, 9, and the two-turn handoff already have bounded evidence across Claude Code and Codex, subject to the Codex
+  turn-2 limit above.
+- Evaluate discovery without supplying skill paths: positive design-only and planning-only requests, near-miss
+  brainstorming and review requests, requirements with unresolved architecture, and mixed design-and-plan requests.
+- Add repetitions only when measuring variance would change a decision. The first two rounds consumed an unexpectedly
+  large share of the Codex weekly subscription allowance, so future runs should report the live allowance before
+  expanding coverage.
+- Consider OpenCode and Copilot only when their behavior could change the portable-package decision. Deployment alone
+  does not establish behavioral portability.
+
+## Portable Skill-Fixture Harness
+
+Evaluate and design a portable runner for package-local skill fixtures before the next multi-client suite. The manual
+setup exposed harness failures that should become deterministic preflight checks:
+
+- Resolve candidate and fixture paths from the package identity rather than author-machine absolute paths.
+- Copy each fixture into a fresh workspace and initialize only the repository state the case declares.
+- Keep future conversation turns outside the active workspace until they are sent. Codex correctly found a staged
+  confirmation file during one invalid case 11 attempt.
+- Validate fixture prerequisites and advertised commands before starting a model. Case 9 initially named an unavailable
+  validator; its replacement now bundles and tests the required operation.
+- Apply the narrowest read and write permissions needed by the case. Verify that resumed sessions retain those
+  permissions without resorting to a full sandbox bypass.
+- Persist prompts, outputs, full traces, durations, token use, client and model identity, source revision, and result.
+  Avoid ephemeral sessions when the trace is evidence.
+- Distinguish command-line validation, permission failures, missing dependencies, and malformed fixtures from candidate
+  behavior. Do not count a harness failure as a model repetition or skill failure.
+- Add a preflight mode that proves the fixture and trace destinations are ready without invoking a model.
+
 ## OpenCode Reflect Ownership
 
 Keep `reflect` under `claude/` while `oh-my-opencode-slim` installs and replaces OpenCode's separate copy.
