@@ -53,6 +53,29 @@ Material changes, in the order they matter:
 - **Restructured to this repository's skill conventions**: Iron Law, trackable workflow checklist with
   blocking markers, anti-pattern list, and pre-delivery checklist.
 
+Further changes on 2026-09-03, following a `skill-review` pass:
+
+- **Replaced the frozen catalogues with live discovery.** The plugin and MCP-server lists named third-party
+  artifacts on other projects' release schedules, and nothing in this repository could detect them going
+  stale. `plugins-reference.md` now names no plugin at all and teaches enumeration instead; `mcp-servers.md`
+  keeps the data-flow doctrine, the exclusions, and the non-obvious detection signals, and drops the
+  twenty per-vendor entries whose content was the vendor's name. Upstream's plugin table sampled four of the
+  thirty-nine plugins the official marketplace held on that date, with no stated criterion for the four.
+- **Corrected three factual errors.** `subagent-templates.md` marked `model` and `color` as required agent
+  frontmatter; `color` is not, verified against six working agents that all omit it. `SKILL.md` recommended
+  `tsc --noEmit` on `PostToolUse` while its own reference and its own anti-pattern list said otherwise. The
+  `Stop` hook example carried a `matcher`, which is a tool-name filter and is inert on a non-tool event.
+- **Fixed the Phase 0 probe.** `command -v claude && claude mcp list || echo "CLI unavailable"` reported the
+  CLI as missing whenever the subcommand merely failed, contradicting the skill's own rule that a failed
+  inventory is not an empty one.
+- **Corrected the global config path.** `~/.claude.json` is wrong wherever `CLAUDE_CONFIG_DIR` is set; the
+  file lives inside the configured directory. Verified on such a machine.
+- **Cut the references by roughly a third**, removing detection tables that restated `SKILL.md` and eight
+  worked skill examples that restated each other. The hook contract, cost model, and runnable configurations
+  were kept intact — they are the content that is unavailable elsewhere.
+- **Added `compatibility`** and moved `license` to the specification's top-level field, where the Apache-2.0
+  obligation is visible to a consumer.
+
 ## Upstream license
 
 The upstream source is used under the Apache License, Version 2.0. A verbatim copy is kept alongside this file

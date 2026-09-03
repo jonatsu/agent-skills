@@ -1,30 +1,45 @@
-# Subagent Recommendations
+# Subagent File Format
 
-Subagents are specialized Claude instances that run in parallel, each with their own context window and tool
-access. They're ideal for focused reviews, analysis, or generation tasks.
+Read this when recommending a subagent. `SKILL.md` carries the signal-to-agent mapping; this file carries the
+file format and the two facts that make a recommendation runnable rather than plausible.
 
-**Note**: These are common patterns. Design custom subagents based on the codebase's specific review and
-analysis needs.
+Subagents are Markdown files in `.claude/agents/<name>.md` (project) or the user-level `agents/` directory.
+Each runs with its own context window and tool access, which is why they suit focused review and analysis.
 
-## Agent File Format
+## Frontmatter
 
-Subagents are markdown files in `.claude/agents/<name>.md` (project) or the user-level `agents/` directory.
-Frontmatter fields:
+| Field         | Required    | Format                                                                              |
+| ------------- | ----------- | ----------------------------------------------------------------------------------- |
+| `name`        | Yes         | lowercase-hyphens, matches the filename                                             |
+| `description` | Yes         | Prose naming 2-4 concrete trigger scenarios — this is what routes work to the agent |
+| `model`       | Recommended | `inherit`, `sonnet`, `opus`, or `haiku`                                             |
+| `tools`       | No          | Comma-separated; omit to inherit all. Least privilege — a reviewer gets no Edit     |
+| `color`       | No          | Cosmetic only                                                                       |
 
-| Field         | Required | Format                                                                               |
-| ------------- | -------- | ------------------------------------------------------------------------------------ |
-| `name`        | Yes      | lowercase-hyphens, matches the filename                                              |
-| `description` | Yes      | Prose naming 2-4 concrete trigger scenarios — this is what routes work to the agent  |
-| `model`       | Yes      | `inherit`, `sonnet`, `opus`, or `haiku`; prefer `inherit`                            |
-| `color`       | Yes      | Color name                                                                           |
-| `tools`       | No       | Comma-separated list; omit to inherit all. Least privilege — a reviewer gets no Edit |
+Verified 2026-09-03 against six working agents in the authoring environment's user-level `agents/` directory:
+all six omit `color` and load correctly, and one omits `tools` and correctly inherits the full set. Do not
+recommend a field as mandatory without checking a loaded agent that omits it — an unnecessary required field
+is the kind of claim that survives review because it looks like documentation.
+
+`model` is marked Recommended rather than optional because every agent checked declared one, so its absence
+was not observed. State that limit if a recommendation depends on omitting it.
+
+The `description` is the routing signal — a vague one means the agent is never invoked. The body is the
+system prompt the agent actually reads.
+
+## The Key That Is Silently Ignored
+
+**An agent's tool restriction uses `tools`. A skill uses `allowed-tools`.** They are not interchangeable and
+the wrong key is dropped without an error, so a file documented as read-only runs with full tool access. Check
+which artifact is being written before writing the key.
+
+## Worked Template
 
 ```markdown
 ---
 name: security-reviewer
 description: Use when reviewing code that touches authentication, authorization, secrets, user input, or payment flows. Typical triggers include a diff adding a login route, a change to token handling, or a new file-upload endpoint. Does not modify code — reports findings only.
 model: inherit
-color: red
 tools: Read, Grep, Glob
 ---
 
@@ -43,183 +58,16 @@ Findings ordered by severity. State explicitly when a category was checked and
 found clean. NEVER pad the report with generic advice.
 ```
 
-The `description` is the routing signal — a vague one means the agent is never invoked. The system prompt body
-is what the agent actually reads.
+## Choosing a Model and Tool Set
 
-**Note**: an agent's tool restriction uses `tools`. A *skill* uses `allowed-tools`. The two are not
-interchangeable, and the wrong key is silently ignored.
+| Model    | Fits                             | Trade-off                        |
+| -------- | -------------------------------- | -------------------------------- |
+| `haiku`  | Simple, repetitive checks        | Fast, cheap, less thorough       |
+| `sonnet` | Most review and analysis         | Balanced; the usual default      |
+| `opus`   | Complex migrations, architecture | Thorough, slower, more expensive |
 
-## Code Review Agents
+Prefer `inherit` when the agent should track whatever the session is running rather than pin a tier.
 
-### code-reviewer
-
-**Best for**: Automated code quality checks on large codebases
-
-| Recommend When               | Detection          |
-| ---------------------------- | ------------------ |
-| Large codebase (>500 files)  | File count         |
-| Frequent code changes        | Active development |
-| Team wants consistent review | Quality focus      |
-
-**Value**: Runs code review in parallel while you continue working **Model**: sonnet (balanced quality/speed)
-**Tools**: Read, Grep, Glob, Bash
-
----
-
-### security-reviewer
-
-**Best for**: Security-focused code review
-
-| Recommend When     | Detection                               |
-| ------------------ | --------------------------------------- |
-| Auth code present  | `auth/`, `login`, `session` patterns    |
-| Payment processing | `stripe`, `payment`, `billing` patterns |
-| User data handling | `user`, `profile`, `pii` patterns       |
-| API keys in code   | Environment variable patterns           |
-
-**Value**: Catches OWASP vulnerabilities, auth issues, data exposure **Model**: sonnet **Tools**: Read, Grep,
-Glob (read-only for safety)
-
----
-
-### test-writer
-
-**Best for**: Generating comprehensive test coverage
-
-| Recommend When               | Detection                      |
-| ---------------------------- | ------------------------------ |
-| Low test coverage            | Few test files vs source files |
-| Test suite exists            | `tests/`, `__tests__/` present |
-| Testing framework configured | jest, pytest, vitest in deps   |
-
-**Value**: Generates tests matching project conventions **Model**: sonnet **Tools**: Read, Write, Grep, Glob
-
----
-
-## Specialized Agents
-
-### api-documenter
-
-**Best for**: API documentation generation
-
-| Recommend When    | Detection                      |
-| ----------------- | ------------------------------ |
-| REST endpoints    | Express routes, FastAPI paths  |
-| GraphQL schema    | `.graphql` files               |
-| OpenAPI exists    | `openapi.yaml`, `swagger.json` |
-| Undocumented APIs | Routes without docs            |
-
-**Value**: Generates OpenAPI specs, endpoint documentation **Model**: sonnet **Tools**: Read, Write, Grep,
-Glob
-
----
-
-### performance-analyzer
-
-**Best for**: Finding performance bottlenecks
-
-| Recommend When         | Detection                |
-| ---------------------- | ------------------------ |
-| Database queries       | ORM usage, raw SQL       |
-| High-traffic code      | API endpoints, hot paths |
-| Performance complaints | User reports slowness    |
-| Complex algorithms     | Nested loops, recursion  |
-
-**Value**: Finds N+1 queries, O(n²) algorithms, memory leaks **Model**: sonnet **Tools**: Read, Grep, Glob,
-Bash
-
----
-
-### ui-reviewer
-
-**Best for**: Frontend accessibility and UX review
-
-| Recommend When    | Detection                   |
-| ----------------- | --------------------------- |
-| React/Vue/Angular | Frontend framework detected |
-| Component library | `components/` directory     |
-| User-facing UI    | Not just API project        |
-
-**Value**: Catches accessibility issues, UX problems, responsive design gaps **Model**: sonnet **Tools**:
-Read, Grep, Glob
-
----
-
-## Utility Agents
-
-### dependency-updater
-
-**Best for**: Safe dependency updates
-
-| Recommend When       | Detection                  |
-| -------------------- | -------------------------- |
-| Outdated deps        | `npm outdated` has results |
-| Security advisories  | `npm audit` warnings       |
-| Major version behind | Significant version gaps   |
-
-**Value**: Updates dependencies incrementally with testing **Model**: sonnet **Tools**: Read, Write, Bash,
-Grep
-
----
-
-### migration-helper
-
-**Best for**: Framework/version migrations
-
-| Recommend When          | Detection                  |
-| ----------------------- | -------------------------- |
-| Major upgrade needed    | Framework version very old |
-| Breaking changes coming | Deprecation warnings       |
-| Refactoring planned     | Architectural changes      |
-
-**Value**: Plans and executes migrations incrementally **Model**: opus (complex reasoning needed) **Tools**:
-Read, Write, Grep, Glob, Bash
-
----
-
-## Quick Reference: Detection → Recommendation
-
-| If You See            | Recommend Subagent   |
-| --------------------- | -------------------- |
-| Large codebase        | code-reviewer        |
-| Auth/payment code     | security-reviewer    |
-| Few tests             | test-writer          |
-| API routes            | api-documenter       |
-| Database heavy        | performance-analyzer |
-| Frontend components   | ui-reviewer          |
-| Outdated packages     | dependency-updater   |
-| Old framework version | migration-helper     |
-
----
-
-## Subagent Placement
-
-Subagents go in `.claude/agents/`:
-
-```
-.claude/
-└── agents/
-    ├── code-reviewer.md
-    ├── security-reviewer.md
-    └── test-writer.md
-```
-
----
-
-## Model Selection Guide
-
-| Model      | Best For                         | Trade-off                        |
-| ---------- | -------------------------------- | -------------------------------- |
-| **haiku**  | Simple, repetitive checks        | Fast, cheap, less thorough       |
-| **sonnet** | Most review/analysis tasks       | Balanced (recommended default)   |
-| **opus**   | Complex migrations, architecture | Thorough, slower, more expensive |
-
----
-
-## Tool Access Guide
-
-| Access Level | Tools            | Use Case              |
-| ------------ | ---------------- | --------------------- |
-| Read-only    | Read, Grep, Glob | Reviews, analysis     |
-| Writing      | + Write          | Code generation, docs |
-| Full         | + Bash           | Migrations, testing   |
+Grant tools by what the agent must do, not by what it might want: `Read, Grep, Glob` for anything that only
+reports, plus `Write` when it generates files, plus `Bash` only when it runs commands. A reviewer that can
+edit will eventually edit.

@@ -1,431 +1,114 @@
-# Skills Recommendations
+# Skill Recommendations
 
-Skills are packaged expertise with workflows, reference materials, and best practices. Create them in
-`.claude/skills/<name>/SKILL.md`. Skills can be invoked by Claude automatically when relevant, or by users
-directly with `/skill-name`.
+Read this when recommending that the user create a skill. `SKILL.md` carries the signal-to-skill mapping; this
+file carries the file format, the invocation-control decision, and the traps that make a recommended skill
+fail silently.
 
-Some pre-built skills ship inside official plugins — see [plugins-reference.md](plugins-reference.md) for the
-install contract (`claude plugin marketplace add` first, then `claude plugin install plugin@marketplace`).
+Create project skills in `.claude/skills/<name>/SKILL.md`. A skill may be invoked by Claude automatically when
+relevant, by the user with `/skill-name`, or both.
 
-**Note**: These are common patterns. Use web search to find skill ideas specific to the codebase's tools and
-frameworks.
+**Do not recommend a custom skill that an installed plugin already provides.** Enumerate what is available
+rather than reciting a list from memory — plugin contents change independently of this file:
 
-Contents:
-
-- [Available from official plugins](#available-from-official-plugins) — do not duplicate these with a custom
-  skill
-- [Custom project skills](#custom-project-skills) — structure, frontmatter, invocation control
-- [Custom skill examples](#custom-skill-examples) — eight worked examples; read one, not all
-- [Arguments](#arguments) and [Dynamic context injection](#dynamic-context-injection)
-
-Jump to the section the recommendation needs. The worked examples are illustrative templates, not a list to
-recommend wholesale.
-
----
-
-## Available from Official Plugins
-
-### Plugin Development (plugin-dev)
-
-| Skill                   | Best For                                  |
-| ----------------------- | ----------------------------------------- |
-| **skill-development**   | Creating new skills with proper structure |
-| **hook-development**    | Building hooks for automation             |
-| **command-development** | Creating slash commands                   |
-| **agent-development**   | Building specialized subagents            |
-| **mcp-integration**     | Integrating MCP servers into plugins      |
-| **plugin-structure**    | Understanding plugin architecture         |
-
-### Git Workflows (commit-commands)
-
-| Skill              | Best For                                  |
-| ------------------ | ----------------------------------------- |
-| **commit**         | Creating git commits with proper messages |
-| **commit-push-pr** | Full commit, push, and PR workflow        |
-
-### Frontend (frontend-design)
-
-| Skill               | Best For                        |
-| ------------------- | ------------------------------- |
-| **frontend-design** | Creating polished UI components |
-
-**Value**: Creates distinctive, high-quality UI instead of generic AI aesthetics.
-
-### Automation Rules (hookify)
-
-| Skill             | Best For                              |
-| ----------------- | ------------------------------------- |
-| **writing-rules** | Creating hookify rules for automation |
-
-### Feature Development (feature-dev)
-
-| Skill           | Best For                                |
-| --------------- | --------------------------------------- |
-| **feature-dev** | End-to-end feature development workflow |
-
----
-
-## Quick Reference: Official Plugin Skills
-
-| Codebase Signal   | Skill             | Plugin          |
-| ----------------- | ----------------- | --------------- |
-| Building plugins  | skill-development | plugin-dev      |
-| Git commits       | commit            | commit-commands |
-| React/Vue/Angular | frontend-design   | frontend-design |
-| Automation rules  | writing-rules     | hookify         |
-| Feature planning  | feature-dev       | feature-dev     |
-
----
-
-## Custom Project Skills
-
-Create project-specific skills in `.claude/skills/<name>/SKILL.md`.
-
-### Skill Structure
-
+```bash
+claude plugin list                 # installed plugins
+claude plugin details <plugin>     # that plugin's skills, commands, agents, and token cost
 ```
+
+See [plugins-reference.md](plugins-reference.md) for the install contract and for when a plugin beats a custom
+skill.
+
+## Structure
+
+```text
 .claude/skills/
 └── my-skill/
-    ├── SKILL.md           # Main instructions (required)
-    ├── template.yaml      # Template to apply
+    ├── SKILL.md           # instructions (required)
+    ├── template.yaml      # a template the skill applies
     ├── scripts/
-    │   └── validate.sh    # Script to run
-    └── examples/          # Reference examples
+    │   └── validate.sh    # a script the skill runs
+    └── examples/          # reference material
 ```
 
-### Frontmatter Reference
+Add a bundled file only when it carries something `SKILL.md` cannot: a template consumed as output, a script
+whose exact behavior matters, or branch detail that would bloat the shared instructions.
+
+## Frontmatter
 
 ```yaml
 ---
 name: skill-name
 description: What this skill does and when to use it
-disable-model-invocation: true  # Only user can invoke (for side effects)
-user-invocable: false           # Only Claude can invoke (for background knowledge)
-allowed-tools: Read, Grep, Glob # Restrict tool access
-context: fork                   # Run in isolated subagent
-agent: Explore                  # Which agent type when forked
+disable-model-invocation: true  # only the user can invoke (for side effects)
+user-invocable: false           # only Claude can invoke (background knowledge)
+allowed-tools: Read, Grep, Glob # restrict tool access
+context: fork                   # run in an isolated subagent
+agent: Explore                  # which agent type when forked
 ---
 ```
 
-### Invocation Control
+A skill restricts tools with `allowed-tools`. An *agent* uses `tools`. The wrong key is silently ignored, so
+a skill documented as read-only runs with full access.
 
-| Setting                          | User | Claude | Use for                     |
+### Invocation control
+
+| Setting                          | User | Claude | Recommend for               |
 | -------------------------------- | ---- | ------ | --------------------------- |
-| (default)                        | ✓    | ✓      | General-purpose skills      |
-| `disable-model-invocation: true` | ✓    | ✗      | Side effects (deploy, send) |
-| `user-invocable: false`          | ✗    | ✓      | Background knowledge        |
+| (omit both)                      | ✓    | ✓      | general-purpose skills      |
+| `disable-model-invocation: true` | ✓    | ✗      | side effects (deploy, send) |
+| `user-invocable: false`          | ✗    | ✓      | background knowledge        |
 
----
+Recommend `disable-model-invocation: true` only when the skill's action is genuinely irreversible or
+outward-facing. The flag withholds the guidance at the moment it is needed without preventing the underlying
+command, so it is a poor substitute for a confirmation gate written into the skill itself.
 
-## Custom Skill Examples
+## Two Traps Worth Naming in a Recommendation
 
-### API Documentation with OpenAPI Template
+**Never reference a bundled file by an absolute or `~`-rooted path** such as `~/.claude/skills/<name>/...`. It
+breaks wherever `CLAUDE_CONFIG_DIR` moves the config directory, and breaks outright for a project-scoped skill
+under `.claude/skills/`. Relative paths resolve against the skill directory in both scopes.
 
-Apply a YAML template to generate consistent API docs:
+**A bundled script must probe for its toolchain rather than assume it**, and must fail loudly when a check
+fails. `npx prisma validate || echo "Validation failed"` always exits 0, so the validation step it advertises
+can never fail — a shape worth flagging whenever a recommendation bundles a script.
 
-```
-.claude/skills/api-doc/
-├── SKILL.md
-└── openapi-template.yaml
-```
+## Worked Example
 
-**SKILL.md:**
-
-```yaml
----
-name: api-doc
-description: Generate OpenAPI documentation for an endpoint. Use when documenting API routes.
----
-
-Generate OpenAPI documentation for the endpoint at $ARGUMENTS.
-
-Use the template in [openapi-template.yaml](openapi-template.yaml) as the structure.
-
-1. Read the endpoint code
-2. Extract path, method, parameters, request/response schemas
-3. Fill in the template with actual values
-4. Output the completed YAML
-```
-
-**openapi-template.yaml:**
-
-```yaml
-paths:
-  /{path}:
-    {method}:
-      summary: ""
-      description: ""
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema: {}
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema: {}
-```
-
----
-
-### Database Migration Generator with Script
-
-Generate and validate migrations using a bundled script:
-
-```
-.claude/skills/create-migration/
-├── SKILL.md
-└── scripts/
-    └── validate-migration.sh
-```
-
-**SKILL.md:**
+One example rather than a catalogue; the shape generalises, the specific skill does not.
 
 ```yaml
 ---
 name: create-migration
-description: Create a database migration file
+description: Create a database migration file. Use when adding or altering a table.
 disable-model-invocation: true
 allowed-tools: Read, Write, Bash
 ---
 
 Create a migration for: $ARGUMENTS
 
-1. Generate migration file in `migrations/` with timestamp prefix
+1. Generate a migration file in `migrations/` with a timestamp prefix
 2. Include up and down functions
 3. Run validation: `bash scripts/validate-migration.sh`
 4. Report any issues found
 ```
 
-**scripts/validate-migration.sh:**
-
 ```bash
 #!/usr/bin/env bash
-# Validate migration syntax. Probe PATH rather than assuming the toolchain:
-# a skill runs on machines you did not set up.
+# scripts/validate-migration.sh
+# Probe PATH rather than assuming the toolchain: a skill runs on machines you
+# did not set up. Fail on a real validation failure; skip only when absent.
+set -euo pipefail
 if ! command -v npx > /dev/null 2>&1; then
   echo "skipped: npx not on PATH" >&2
   exit 0
 fi
-npx prisma validate 2>&1 || echo "Validation failed"
+npx prisma validate
 ```
-
-NEVER reference a bundled file by an absolute or `~`-rooted path (`~/.claude/skills/<name>/...`). It breaks
-wherever `CLAUDE_CONFIG_DIR` moves the config directory, and breaks outright for a project-scoped skill under
-`.claude/skills/`. Relative paths resolve against the skill directory in both scopes.
-
----
-
-### Test Generator with Examples
-
-Generate tests following project patterns:
-
-```
-.claude/skills/gen-test/
-├── SKILL.md
-└── examples/
-    ├── unit-test.ts
-    └── integration-test.ts
-```
-
-**SKILL.md:**
-
-```yaml
----
-name: gen-test
-description: Generate tests for a file following project conventions
-disable-model-invocation: true
----
-
-Generate tests for: $ARGUMENTS
-
-Reference these examples for the expected patterns:
-- Unit tests: [examples/unit-test.ts](examples/unit-test.ts)
-- Integration tests: [examples/integration-test.ts](examples/integration-test.ts)
-
-1. Analyze the source file
-2. Identify functions/methods to test
-3. Generate tests matching project conventions
-4. Place in appropriate test directory
-```
-
----
-
-### Component Generator with Template
-
-Scaffold new components from a template:
-
-```
-.claude/skills/new-component/
-├── SKILL.md
-└── templates/
-    ├── component.tsx.template
-    ├── component.test.tsx.template
-    └── component.stories.tsx.template
-```
-
-**SKILL.md:**
-
-```yaml
----
-name: new-component
-description: Scaffold a new React component with tests and stories
-disable-model-invocation: true
----
-
-Create component: $ARGUMENTS
-
-Use templates in [templates/](templates/) directory:
-1. Generate component from component.tsx.template
-2. Generate tests from component.test.tsx.template
-3. Generate Storybook story from component.stories.tsx.template
-
-Replace {{ComponentName}} with the PascalCase name.
-Replace {{component-name}} with the kebab-case name.
-```
-
----
-
-### PR Review with Checklist
-
-Review PRs against a project-specific checklist:
-
-```
-.claude/skills/pr-check/
-├── SKILL.md
-└── checklist.md
-```
-
-**SKILL.md:**
-
-```yaml
----
-name: pr-check
-description: Review PR against project checklist
-disable-model-invocation: true
-context: fork
----
-
-## PR Context
-- Diff: !`gh pr diff`
-- Description: !`gh pr view`
-
-Review against [checklist.md](checklist.md).
-
-For each item, mark ✅ or ❌ with explanation.
-```
-
-**checklist.md:**
-
-```markdown
-## PR Checklist
-
-- [ ] Tests added for new functionality
-- [ ] No console.log statements
-- [ ] Error handling includes user-facing messages
-- [ ] API changes are backwards compatible
-- [ ] Database migrations are reversible
-```
-
----
-
-### Release Notes Generator
-
-Generate release notes from git history:
-
-**SKILL.md:**
-
-```yaml
----
-name: release-notes
-description: Generate release notes from commits since last tag
-disable-model-invocation: true
----
-
-## Recent Changes
-- Commits since last tag: !`git log $(git describe --tags --abbrev=0)..HEAD --oneline`
-- Last tag: !`git describe --tags --abbrev=0`
-
-Generate release notes:
-1. Group commits by type (feat, fix, docs, etc.)
-2. Write user-friendly descriptions
-3. Highlight breaking changes
-4. Format as markdown
-```
-
----
-
-### Project Conventions (Claude-only)
-
-Background knowledge Claude applies automatically:
-
-**SKILL.md:**
-
-```yaml
----
-name: project-conventions
-description: Code style and patterns for this project. Apply when writing or reviewing code.
-user-invocable: false
----
-
-## Naming Conventions
-- React components: PascalCase
-- Utilities: camelCase
-- Constants: UPPER_SNAKE_CASE
-- Files: kebab-case
-
-## Patterns
-- Use `Result<T, E>` for fallible operations, not exceptions
-- Prefer composition over inheritance
-- All API responses use `{ data, error, meta }` shape
-
-## Forbidden
-- No `any` types
-- No `console.log` in production code
-- No synchronous file I/O
-```
-
----
-
-### Environment Setup
-
-Onboard new developers with setup script:
-
-```
-.claude/skills/setup-dev/
-├── SKILL.md
-└── scripts/
-    └── check-prerequisites.sh
-```
-
-**SKILL.md:**
-
-```yaml
----
-name: setup-dev
-description: Set up development environment for new contributors
-disable-model-invocation: true
----
-
-Set up development environment:
-
-1. Check prerequisites: `bash scripts/check-prerequisites.sh`
-2. Install dependencies: `npm install`
-3. Copy environment template: `cp .env.example .env`
-4. Set up database: `npm run db:setup`
-5. Verify setup: `npm test`
-
-Report any issues encountered.
-```
-
----
 
 ## Arguments
 
-`$ARGUMENTS` expands to everything the user typed after the skill name: `/deploy staging prod` →
-`staging prod`. If the skill body never mentions `$ARGUMENTS`, the input is appended as a trailing
+`$ARGUMENTS` expands to everything the user typed after the skill name: `/deploy staging prod` becomes
+`staging prod`. If the body never mentions `$ARGUMENTS`, the input is appended as a trailing
 `ARGUMENTS: <value>` line instead, so a skill that ignores the placeholder still receives the input.
 
 Place `$ARGUMENTS` where the value belongs in the instruction — "Create a migration for: $ARGUMENTS" — rather
@@ -433,7 +116,8 @@ than restating it, and describe the expected shape in the `description` so the u
 
 ## Dynamic Context Injection
 
-Use `!`command\`\` to inject live data before the skill runs:
+A backtick-quoted command prefixed with `!` runs before the skill content reaches Claude, and its output
+replaces the placeholder:
 
 ```yaml
 ## Current State
@@ -441,4 +125,5 @@ Use `!`command\`\` to inject live data before the skill runs:
 - Status: !`git status --short`
 ```
 
-The command output replaces the placeholder before Claude sees the skill content.
+Recommend this instead of instructing Claude to gather the same state itself: it is one deterministic
+substitution rather than a tool call the model may skip.

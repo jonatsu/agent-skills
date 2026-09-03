@@ -2,8 +2,11 @@
 
 Plugins are installable bundles of skills, commands, agents, and hooks.
 
-**Any plugin list in this file is a snapshot and rots.** MUST verify a plugin still exists before recommending
-it — see [Verify before recommending](#verify-before-recommending).
+**This file deliberately names no plugins.** A plugin catalogue rots on someone else's release schedule, and
+the CLI answers the question authoritatively at the moment it is asked. What is here instead is the install
+contract, the way to enumerate candidates, and the judgment about when a plugin is the wrong recommendation.
+MUST resolve every plugin against [Verify before recommending](#verify-before-recommending) before it reaches
+the report.
 
 ---
 
@@ -47,64 +50,30 @@ enabled plugin's skill descriptions and commands occupy context in every session
 
 ---
 
-## Official Plugins (`claude-plugins-official`)
+## Finding Candidates
 
-Snapshot — confirm with `claude plugin details` before recommending.
+**Enumerate the marketplace rather than reciting plugin names.** A catalogue written into this file is a
+snapshot of something that changes on someone else's schedule, and a plugin name is exactly the kind of fact
+the CLI answers authoritatively and for free. Anthropic's own marketplace held 39 plugins when this section
+was written on 2026-09-03; any fixed list here would be a silent sample of it.
 
-### Development and Code Quality
+```bash
+claude plugin marketplace add anthropics/claude-plugins-official  # if not already configured
+claude plugin marketplace list                                    # what is configured
+```
 
-| Plugin                 | Best For                                                                      |
-| ---------------------- | ----------------------------------------------------------------------------- |
-| **plugin-dev**         | Building plugins: skills for skill, hook, command, agent, and MCP development |
-| **skill-creator**      | Authoring individual skills                                                   |
-| **pr-review-toolkit**  | PR review workflows with specialized review agents                            |
-| **code-review**        | Multi-agent automated code review                                             |
-| **code-simplifier**    | Refactoring while preserving behavior                                         |
-| **code-modernization** | Migrating legacy patterns                                                     |
-| **feature-dev**        | End-to-end feature workflow                                                   |
+Then browse interactively with `/plugin`, or resolve a specific candidate with `claude plugin details <name>`.
+Match the plugin to the signals Phase 1 found, and drop anything Phase 0 shows as already installed.
 
-### Git and Workflow
+Two families recur often enough to name as *categories*, not as fixed ids:
 
-| Plugin              | Best For                                    |
-| ------------------- | ------------------------------------------- |
-| **commit-commands** | `/commit`, `/commit-push-pr`                |
-| **hookify**         | Generating hooks from conversation patterns |
+- **Language servers.** The marketplace carries one `*-lsp` plugin per major language. Recommend at most the
+  one matching the project's primary language, and only when no symbol-aware tooling is configured already —
+  an LSP-backed MCP server covers the same ground and the two together are waste.
+- **Output styles.** These change how Claude writes rather than what it can do. Recommend one only when the
+  user has asked about explanation or teaching behavior; it is not a codebase-driven recommendation.
 
-### Frontend
-
-| Plugin              | Best For                                          |
-| ------------------- | ------------------------------------------------- |
-| **frontend-design** | Production-grade UI, avoids generic AI aesthetics |
-
-### Guidance and Output Styles
-
-| Plugin                       | Best For                                  |
-| ---------------------------- | ----------------------------------------- |
-| **security-guidance**        | Warns about security issues while editing |
-| **explanatory-output-style** | Educational commentary on code choices    |
-| **learning-output-style**    | Requests user input at decision points    |
-
-### Language Servers
-
-One per language: `typescript-lsp`, `pyright-lsp`, `gopls-lsp`, `rust-analyzer-lsp`, `clangd-lsp`,
-`jdtls-lsp`, `kotlin-lsp`, `swift-lsp`, `csharp-lsp`, `php-lsp`, `lua-lsp`, `ruby-lsp`.
-
-Recommend at most the one matching the project's primary language, and only when no symbol-aware tooling is
-already configured — an LSP-backed MCP server such as Serena covers the same ground.
-
----
-
-## Detection → Plugin
-
-| Codebase Signal                         | Recommended Plugin        |
-| --------------------------------------- | ------------------------- |
-| Building plugins or skills              | plugin-dev, skill-creator |
-| PR-based workflow                       | pr-review-toolkit         |
-| Git commits without a convention        | commit-commands           |
-| React/Vue/Angular                       | frontend-design           |
-| Repeated manual review rules            | hookify                   |
-| Auth, payments, or secrets handling     | security-guidance         |
-| Primary language with no symbol tooling | the matching `*-lsp`      |
+Every other recommendation should come from what `claude plugin details` actually reports today.
 
 ---
 

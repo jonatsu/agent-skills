@@ -12,9 +12,10 @@ Contents:
 - [Test runner hooks](#test-runner-hooks)
 - [Protection hooks](#protection-hooks)
 - [Notification hooks](#notification-hooks)
-- [Detection → recommendation](#detection--recommendation)
 
-**Note**: These are common patterns. Use web search for tools not listed here.
+`SKILL.md` carries the signal-to-hook mapping and the cost column; this file carries the contract and the
+runnable configurations. These are common patterns rather than a complete list — search for a toolchain that
+is not here rather than forcing the project onto one that is.
 
 ---
 
@@ -194,7 +195,6 @@ than per edit:
   "hooks": {
     "Stop": [
       {
-        "matcher": "*",
         "hooks": [
           { "type": "command", "command": "npx tsc --noEmit", "timeout": 120 }
         ]
@@ -203,6 +203,9 @@ than per edit:
   }
 }
 ```
+
+`Stop` carries no `matcher`. A matcher filters by tool name, and `Stop` is not a tool event — the key is
+inert there, and copying it from a `PostToolUse` example suggests a filtering that is not happening.
 
 Exit 2 with the errors on stderr to push them back to Claude for a fix; exit 0 to report without blocking.
 
@@ -313,21 +316,3 @@ Linux:
   }
 }
 ```
-
----
-
-## Detection → Recommendation
-
-| If you see                        | Recommend                                | Cost   |
-| --------------------------------- | ---------------------------------------- | ------ |
-| Prettier config                   | Format edited file on Edit/Write         | Low    |
-| ESLint config                     | Lint-fix edited file on Edit/Write       | Low    |
-| Ruff / Black config               | Format edited Python file                | Low    |
-| `go.mod`                          | gofmt on edited file                     | Low    |
-| `Cargo.toml`                      | rustfmt on edited file                   | Low    |
-| `tsconfig.json`                   | `tsc --noEmit` on **Stop**, not per edit | High   |
-| Test config with reliable mapping | Related tests on edited file             | Medium |
-| `.env` / secrets files            | PreToolUse block                         | None   |
-| Lock files                        | PreToolUse block                         | None   |
-| `.pre-commit-config.yaml`         | Nothing — already covered at commit time | —      |
-| Long unattended sessions          | Notification hooks                       | None   |

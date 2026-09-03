@@ -1,7 +1,8 @@
 ---
 name: claude-automation-recommender
-description: Analyze a codebase and recommend Claude Code automations (hooks, subagents, skills, plugins, MCP servers). Use when user asks for automation recommendations, wants to optimize or audit their Claude Code setup, mentions improving Claude Code workflows, asks how to first set up Claude Code for a project, asks what hooks or MCP servers this project should have, or wants to know what Claude Code features they should use. Read-only and report-only — for actually writing a hook, skill, agent, or settings change, use the relevant authoring skill instead.
+description: Audit a codebase and its existing Claude Code configuration, then report which automations are missing — hooks, subagents, skills, plugins, MCP servers. Use to set up Claude Code for a project, review or improve an existing setup, or answer what hooks or MCP servers a project should have. Reports only; for writing a hook, skill, agent, or settings change, use the relevant authoring skill.
 license: Apache-2.0
+compatibility: Requires Claude Code. The inventory phase reports reduced coverage rather than failing when the `claude` CLI is unavailable.
 allowed-tools: Read, Glob, Grep, Bash, WebSearch, WebFetch
 metadata:
   author: Joonas Onatsu
@@ -13,10 +14,16 @@ IRON LAW: Inventory the existing configuration before recommending anything. NEV
 setup already has, and NEVER pad a category to hit a quota — "already covered" is a valid, useful answer.
 
 **This skill is read-only.** It analyzes and reports. It MUST NOT create or modify files, install MCP servers,
-or install plugins. The user implements the recommendations, or asks separately for help building them.
+or install plugins. The user implements the recommendations, or asks separately for help building them. Bash
+is granted for the inventory and discovery commands below and for nothing else — the tool grant cannot
+enforce this, so the constraint rests here.
 
 **Every command in the report MUST be runnable as printed.** Verify a command's syntax with `--help` before
 emitting it. NEVER invent a flag, subcommand, or service endpoint.
+
+**Names of plugins, MCP servers, and their install commands MUST be discovered, never recalled.** They belong
+to projects on their own release schedules, so a name that was correct when this skill was written can be
+wrong today. The commands for discovering each are in the matching Phase 2 section.
 
 ## Workflow
 
@@ -52,14 +59,24 @@ ls -la .claude/ .mcp.json CLAUDE.md AGENTS.md 2>/dev/null
 cat .claude/settings.json .claude/settings.local.json 2>/dev/null
 ls .claude/skills/ .claude/agents/ .claude/commands/ 2>/dev/null
 
-# User-level config (CLAUDE_CONFIG_DIR overrides ~/.claude)
+# User-level config. CLAUDE_CONFIG_DIR relocates the whole directory, including
+# the global `.claude.json` that holds MCP servers -- resolve it, never assume
+# `~/.claude.json`, which does not exist when the variable is set.
 CFG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 cat "$CFG/settings.json" 2>/dev/null
 ls "$CFG/skills/" "$CFG/agents/" 2>/dev/null
+ls -la "$CFG/.claude.json" 2>/dev/null
 
-# Live runtime state — MUST NOT be silenced; a failure here is a finding
-command -v claude >/dev/null && claude mcp list || echo "INVENTORY GAP: claude CLI unavailable"
-command -v claude >/dev/null && claude plugin list || echo "INVENTORY GAP: claude CLI unavailable"
+# Live runtime state — MUST NOT be silenced; a failure here is a finding.
+# Report the CLI being absent and a subcommand failing as different gaps: they
+# have different causes and only one of them means "nothing is configured".
+if ! command -v claude > /dev/null; then
+  echo "INVENTORY GAP: claude CLI not on PATH; MCP and plugin state unknown"
+else
+  claude mcp list || echo "INVENTORY GAP: 'claude mcp list' failed"
+  claude plugin list || echo "INVENTORY GAP: 'claude plugin list' failed"
+  claude plugin marketplace list || echo "INVENTORY GAP: 'marketplace list' failed"
+fi
 ```
 
 **A failed inventory is not an empty inventory.** If any probe above could not run — no `claude` on PATH, an
@@ -148,8 +165,14 @@ See [references/mcp-servers.md](references/mcp-servers.md).
 | Docker containers                  | **Docker MCP** — container management                                        |
 | Heavy use of fast-moving libraries | **Docs-lookup MCP** — see the reference for self-hosted vs hosted            |
 
+**This table is a starting set, not the boundary.** The mapping is mechanical — a project using a vendor wants
+that vendor's server — so derive a candidate from the dependency when the vendor is absent here, rather than
+forcing the project onto a row that fits badly.
+
 MUST flag, for every hosted MCP server recommended: it receives your queries, and it needs credentials. State
-both in the report. Prefer a self-hosted equivalent when one exists.
+both in the report. Prefer a self-hosted equivalent when one exists. MUST verify an install command against
+`claude mcp add --help` and the server's own documentation before printing it; a bare `claude mcp add <name>`
+omits the required transport and does not run.
 
 #### B. Skills
 
@@ -177,7 +200,7 @@ stdin/exit-code contract, and per-hook latency costs.
 | ----------------------- | -------------------------------------- | ----------------------- |
 | Prettier configured     | PostToolUse: format the edited file    | Low                     |
 | ESLint/Ruff configured  | PostToolUse: lint the edited file      | Low                     |
-| TypeScript project      | PostToolUse: `tsc --noEmit`            | **High on large repos** |
+| TypeScript project      | Stop: `tsc --noEmit` — never per edit  | **High on large repos** |
 | Tests directory exists  | PostToolUse: run the related test file | **Medium-high**         |
 | `.env` files present    | PreToolUse: block `.env` edits         | None                    |
 | Lock files present      | PreToolUse: block lock file edits      | None                    |
@@ -204,12 +227,16 @@ See [references/subagent-templates.md](references/subagent-templates.md).
 See [references/plugins-reference.md](references/plugins-reference.md) for the install contract — a
 marketplace MUST be added before any plugin installs, and ids take the form `plugin@marketplace`.
 
-| Codebase Signal                       | Recommended Plugin    |
-| ------------------------------------- | --------------------- |
-| Building plugins or skills            | **plugin-dev**        |
-| PR-based workflow                     | **pr-review-toolkit** |
-| Frontend development                  | **frontend-design**   |
-| Wants hooks written from conversation | **hookify**           |
+**NEVER recommend a plugin by a name recalled from training or from this skill.** Marketplace contents change
+on the publisher's schedule, and a name that no longer resolves is exactly the unverified command the Iron Law
+forbids. Enumerate first, then match against the Phase 1 signals:
+
+```bash
+claude plugin marketplace list          # what is configured
+claude plugin details <candidate>       # does it resolve, what does it contain, what does it cost
+```
+
+Add `anthropics/claude-plugins-official` when no marketplace is configured and the user wants plugins at all.
 
 ### Phase 3: Output Recommendations Report
 
@@ -291,8 +318,11 @@ scoped to the changed file.
   edited file.
 - **Recommending a toolchain the repo does not use.** No `ruff.toml`, no Ruff hook — regardless of what the
   reference tables list.
-- **Emitting an unverified command.** Every install line MUST come from `--help` output or a reference file in
-  this skill.
+- **Emitting an unverified command.** Every install line MUST come from `--help` output, a live discovery
+  command, or the vendor's own documentation. A reference file in this skill is a starting point, not a
+  source of truth for a third party's current syntax.
+- **Recalling a plugin or server name.** A name from training data is a guess wearing a fact's clothes. Run
+  the discovery command.
 - **Silent third-party data flow.** NEVER recommend a hosted MCP server without stating that queries leave the
   machine and credentials are required.
 - **Generic justification.** "Improves productivity" is not a reason. Cite the file or dependency that
