@@ -23,9 +23,18 @@ Read the focused source before acting:
   begins.
 - Archived skills marked as deferred remain unreviewed. Do not spend time validating or repairing them unless
   their review is explicitly resumed.
-- Keep `description` as an inline YAML scalar within the 120-column ceiling. Kasetto 3.8.0 records a folded
-  scalar's `>-` marker as the lock description instead of its text; reproduced on 2026-09-02 across all four
-  shared locks. Both skill validators accepted the folded scalar, so they do not catch this failure.
+- Keep `description` as an inline YAML scalar. **This constraint belongs to Kasetto, not to YAML or to the
+  Agent Skills specification**, and it dissolves if the deployment tool is replaced. Kasetto 3.8.0 records a
+  folded scalar's `>-` marker as the lock description instead of its text; reproduced on 2026-09-02 across
+  all four shared locks, and again on 2026-09-03 on `claude/reflect`. Both skill validators accept the folded
+  scalar, so neither catches the failure. `scripts/check-skill-descriptions.sh` does.
+- **The 120-column ceiling governs prose and body text, never the `description`.** It is markdownlint's
+  MD013, a line-width rule for wrapped prose, and a description cannot wrap while the constraint above holds.
+  Frontmatter is already excluded mechanically: `.markdownlint-cli2.jsonc` sets a `frontMatter` regex that
+  treats it as non-content, verified on 2026-09-03 when an 862-character description passed both Markdown
+  hooks. Budget a description by length instead. The Agent Skills specification caps it at 1024 characters
+  and `skills-ref` enforces that; this repository warns above 512, which is a local judgment about discovery
+  cost rather than an upstream limit.
 - For `uv`-based skill validation in a sandbox, set `UV_CACHE_DIR` to a writable directory under `/tmp`.
   A cold cache needs pinned dependencies from PyPI. If validation then fails on dependency download or DNS,
   request network-enabled execution for the same command; report the failure as an environment limit, not a
