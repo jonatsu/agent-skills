@@ -17,7 +17,8 @@
       "id": "cannot-find-implementation",
       "prompt": "I keep grepping for where we send the webhook and finding nothing useful. Help me sort this out.",
       "should_trigger": true,
-      "reason": "A navigation failure is the loudest symptom of the problem this skill prevents."
+      "reason": "A failed search is the loudest symptom of the problem this skill prevents, and the skill now carries the recovery steps that serve it. A first review found this case dishonest: the description advertised the diagnostic moment while the body held only authoring rules, so loading it here answered a question it could not address. The 'When a search comes up empty' section was added in response.",
+      "also_observe": "Whether the agent applies the recovery steps rather than only restating naming rules. Activation without recovery behavior means the section is present but not doing the work."
     },
     {
       "id": "rename-request",
