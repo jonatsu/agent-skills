@@ -1,10 +1,10 @@
 ---
 name: claude-automation-recommender
 description: Analyze a codebase and recommend Claude Code automations (hooks, subagents, skills, plugins, MCP servers). Use when user asks for automation recommendations, wants to optimize or audit their Claude Code setup, mentions improving Claude Code workflows, asks how to first set up Claude Code for a project, asks what hooks or MCP servers this project should have, or wants to know what Claude Code features they should use. Read-only and report-only — for actually writing a hook, skill, agent, or settings change, use the relevant authoring skill instead.
+license: Apache-2.0
 allowed-tools: Read, Glob, Grep, Bash, WebSearch, WebFetch
 metadata:
   author: Joonas Onatsu
-  license: Apache-2.0
 ---
 
 # Claude Automation Recommender

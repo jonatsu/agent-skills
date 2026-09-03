@@ -1,9 +1,9 @@
 ---
 name: dendritic-pattern
 description: "Denful dendritic pattern for Nix Flakes — aspect-oriented, context-driven configuration composition. Use when setting up Denful, writing aspects, declaring hosts/users/homes, using policies, quirks, namespaces, custom classes, migrating from traditional Nix layout, or debugging why an aspect/policy/entity isn't resolving as expected. Triggers on: denful, den, dendritic, aspect, den.aspects, den.hosts, den.homes, den.batteries, import-tree, flake-parts module, provides, includes, context dispatch, debug den, resolve aspect, policyInspect, den.lib."
+license: MIT
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # Denful Dendritic Pattern

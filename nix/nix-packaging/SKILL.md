@@ -1,9 +1,9 @@
 ---
 name: nix-packaging
 description: "Nix packaging — create derivations for source or binary packages, handle library dependencies, autoPatchelfHook, overlays, and flake outputs. Use when packaging .deb/.rpm/.tar.gz/AppImage, writing mkDerivation, finding missing libraries, or creating overlays. Triggers on: nix package, derivation, mkDerivation, autoPatchelf, buildInputs, nativeBuildInputs, fetchurl, fetchFromGitHub, overlay, devShell, FHS, makeWrapper, nix-prefetch."
+license: MIT
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # Nix Packaging

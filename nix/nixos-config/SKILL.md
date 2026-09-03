@@ -1,9 +1,9 @@
 ---
 name: nixos-config
 description: "Configure a NixOS system: host wiring in a flake, hardware-configuration, bootloader, users, system packages, stateVersion, overlay scope, nixos-rebuild, and generation rollback. Use when adding or changing a NixOS host, debugging why an option has no effect, recovering an unbootable or failed build, or running non-Nix binaries. Triggers on: nixos, nixosSystem, nixosConfigurations, configuration.nix, nixos-rebuild, nixos-install, nixos-generate-config, hardware-configuration, boot.loader, systemd-boot, GRUB, stateVersion, nixpkgs.overlays, useGlobalPkgs, nix-ld, rollback, generations."
+license: MIT
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # NixOS Config

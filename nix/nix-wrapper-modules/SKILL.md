@@ -1,9 +1,9 @@
 ---
 name: nix-wrapper-modules
 description: "Create portable wrapped executables with BirdeeHub's nix-wrapper-modules — express a program's flags, env, prefix/suffix, and generated config as a nixpkgs module instead of makeWrapper/symlinkJoin/writeShellScriptBin, then install the resulting derivation across NixOS, home-manager, nix-darwin, flake-parts, devshells, or bare shells. Use when wrapping a tool with baked-in config/flags/env, generating a program's config file from Nix, exposing multiple wrapped binaries, or building a reusable configured-binary module. Triggers on: nix-wrapper-modules, wrappers.wrap, wlib, wrapPackage, evalPackage, evalModule, wrapped executable, configured binary, wrap a program, makeWrapper alternative, symlinkJoin wrapper, subWrapperModuleWith, constructFiles, wrapper backend, wrapperImplementation."
+license: MIT
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # nix-wrapper-modules

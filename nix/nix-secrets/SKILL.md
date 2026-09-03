@@ -1,9 +1,9 @@
 ---
 name: nix-secrets
 description: "Nix secrets management with agenix and sops-nix for NixOS and home-manager. Use when setting up secrets, encrypting secret files, configuring agenix or sops-nix, managing age/SSH keys, rekeying, or wiring a secret into a service or user account. Triggers on: agenix, sops-nix, sops, secrets, age encryption, secret file, rekey, age.secrets, sops.secrets, .sops.yaml, hashedPasswordFile, secret management."
+license: MIT
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # Nix Secrets Management

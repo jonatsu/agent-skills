@@ -1,9 +1,9 @@
 ---
 name: home-manager
 description: "Configure home-manager user environments: NixOS-module vs standalone mode, home.packages vs programs.*, dotfile management, overlay scope under useGlobalPkgs, osConfig access, home.stateVersion, and home-manager switch. Use when adding user packages or dotfiles, when a home-manager setting has no effect, when an overlay is ignored, when a setting evaluates fine but is missing from the generated config file, or when choosing between standalone and integrated home-manager. Triggers on: home-manager, home.nix, home.packages, programs.*, homeConfigurations, home-manager switch, useGlobalPkgs, useUserPackages, osConfig, mkOutOfStoreSymlink, xdg.configFile, home.stateVersion, standalone home-manager, programs.*.settings, configFile, plasma-manager, cosmic-manager, lib.optionalAttrs, lib.recursiveUpdate, freeform submodule, emptyValue, has no value defined."
+license: MIT
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # Home Manager

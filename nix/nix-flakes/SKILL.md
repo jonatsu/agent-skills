@@ -1,9 +1,9 @@
 ---
 name: nix-flakes
 description: "Nix Flakes foundational reference for creating, managing, and debugging flake-based Nix configurations. Use when creating a flake, adding inputs, managing flake.lock, using nix build/develop/run/profile, setting up devShells, configuring flake outputs, or troubleshooting flake evaluation. Triggers on: flake.nix, flake.lock, nix build, nix develop, nix flake, flake-parts, inputs, outputs, devShell, nixpkgs, overlays, nix profile."
+license: MIT
 metadata:
   author: Joonas Onatsu
-  license: MIT
 ---
 
 # Nix Flakes
