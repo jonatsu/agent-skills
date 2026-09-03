@@ -4,13 +4,39 @@
   "purpose": "Settle whether always-applicable authoring guidance can be reached by skill discovery at all. The skill's own subject is a moment users rarely verbalize -- nobody says 'I am naming an export' -- so its description was aimed at the diagnostic and review moments instead. These cases test whether that aim was enough, and whether the authoring path needs a routing line from the always-loaded global rules.",
   "run_contract": {
     "supply_skill_path": false,
-    "runs_per_case": 3,
+    "runs_per_case": 5,
     "observe": "Whether the client loads searchable-code/SKILL.md",
-    "record": ["client", "model", "date", "raw_result", "trace_location", "global_routing_line_present"]
+    "record": ["client", "model", "date", "condition", "raw_result", "trace_location"],
+    "installed_collection": "Discovery is a contest, not a test in isolation. Every case MUST run with the full deployed skill collection installed, because a negative result may mean another skill won rather than that this one failed. Record which skill loaded instead, never just that this one did not.",
+    "known_competitors": {
+      "python-code-style": "Deployed third-party skill whose description covers naming conventions and triggers on writing new code. It is a broader-triggering competitor for exactly the authoring moment authoring-no-cue probes, and its naming advice is PEP 8 style rather than findability. A Python authoring case is included to measure this directly.",
+      "writing-for-humans": "Owns prose; near-miss-prose measures whether it wins.",
+      "global WORKFLOW.md": "Its Structure section carries the abstract version of this skill's naming rule and is always loaded, so it may satisfy the model without any skill loading at all."
+    },
+    "clients": {
+      "in_scope": ["Claude Code"],
+      "reason": "Only Claude Code exposes a reliable skill-load trace. The skill deploys to OpenCode, Copilot CLI and Codex as well, but activation there cannot be observed with the same confidence, so a result from those clients would not be comparable.",
+      "if_extended": "Record the client per run and do not pool results across clients."
+    }
   },
+  "conditions": [
+    {
+      "id": "A-no-routing-line",
+      "setup": "The user-level workflow instructions carry no pointer to this skill. This is the shipped state as of 2026-09-03.",
+      "runs_per_case": 5
+    },
+    {
+      "id": "B-routing-line",
+      "setup": "The Structure section of the user-level workflow instructions carries a clause naming this skill for the authoring moment. Add it for the duration of the run and remove it afterwards unless the result argues for keeping it.",
+      "runs_per_case": 5,
+      "scope": "Run condition B for authoring-no-cue and python-authoring only. The other cases do not depend on it, and running them twice buys nothing."
+    }
+  ],
   "decision_rule": {
-    "authoring-no-cue": "The case that decides the skill's shape. If it fails without a routing line in the global workflow rules and passes with one, that line earns its always-loaded cost. If it fails with the line present too, discovery cannot reach this content and it belongs in a rules file rather than a skill.",
-    "near_miss_threshold": "Any near-miss case triggering in 2 of 3 runs means the description is over-broad and claims work that belongs to another skill."
+    "authoring-no-cue": "The case that decides the skill's shape, and the reason this file exists. Compare condition A against condition B. A fails and B passes: the routing line earns its always-loaded cost, so keep it and keep the skill. Both fail: discovery cannot reach this content by any available means, and it belongs in a rules file rather than a skill -- this is a real possible outcome, not a formality. Both pass: the routing line is unnecessary and should not be added.",
+    "reading_predictions": "Each case carries should_trigger, the desired outcome, separately from predicted_A, what I expect to observe under condition A. Where they disagree the case is an open question, not a defect -- do not score a matching prediction as a pass or a matching desire as a success.",
+    "near_miss_threshold": "A near-miss case triggering in 3 of 5 runs means the description is over-broad. At 1 or 2 of 5, treat it as noise rather than signal; this sample cannot distinguish a weak tendency from chance.",
+    "sample_size_caveat": "Five runs per case per condition is enough to separate never from usually. It cannot measure a small difference, so do not report a percentage."
   },
   "cases": [
     {
@@ -36,7 +62,19 @@
       "id": "authoring-no-cue",
       "prompt": "Add a function that validates the SMTP config.",
       "should_trigger": true,
-      "reason": "The authoring moment, with no naming or search vocabulary in the request. This is the case the skill is expected to fail without a routing line from the always-loaded global rules, and it is the reason this eval exists."
+      "predicted_A": false,
+      "predicted_B": true,
+      "reason": "The authoring moment, with no naming or search vocabulary in the request. Desired and predicted deliberately disagree under condition A: this is the open question the eval exists to settle, not a defect to be scored as failure.",
+      "also_observe": "Whether the resulting function is named as this skill would advise even when the skill did not load. The always-loaded workflow rules already say to use clear names, so a good name here is not evidence that discovery worked."
+    },
+    {
+      "id": "python-authoring",
+      "prompt": "Write a helper in this Python module that reads the retry settings.",
+      "should_trigger": true,
+      "predicted_A": false,
+      "predicted_B": null,
+      "reason": "The same authoring moment in a language where a deployed competitor exists. python-code-style triggers on writing new code and covers naming conventions, so it may win the slot with PEP 8 advice that says nothing about findability. Prediction under B is left open because the routing line is language-neutral and its effect against a language-specific competitor is genuinely unknown.",
+      "also_observe": "Which skill loaded instead, if any. A loss to python-code-style is a different finding from no skill loading at all: the first is a routing contest this skill can lose on wording, the second is the reachability problem."
     },
     {
       "id": "unsearchable-event-name",
