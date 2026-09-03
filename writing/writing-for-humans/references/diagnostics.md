@@ -1,7 +1,10 @@
 # Copy-Editing Diagnostics
 
-Use this reference only after a passage has more than one independent style symptom. It is a diagnostic aid,
-not a blocklist or a substitute for the global writing policy.
+Use this reference for a long draft, a difficult diagnosis, or the final AI-mark cleanup scan. It is a
+diagnostic aid, not a blocklist.
+
+Remove definitive production residue when found. Treat ordinary stylistic features as weak signals that need
+supporting evidence from the surrounding passage.
 
 ## Chat Residue
 
@@ -47,3 +50,12 @@ Do not invent the missing actor. Ask the author or state the gap.
 
 One contrast or rhetorical question may be deliberate. Inspect a passage when several sentences stage a reveal,
 announce insight, or end in a manufactured payoff instead of making the claim directly.
+
+## Invisible Marks and Metadata
+
+Inspect formats that can carry invisible text or metadata when cleaning AI-produced output. Remove a character
+or field only when its purpose as an AI-origin marker is established. Preserve legitimate Unicode needed for
+language, accessibility, bidirectional text, typography, or emoji composition. Preserve authorship,
+interoperability, and application metadata unless the user included it in scope or it is a confirmed AI mark.
+
+When removing a confirmed invisible mark, verify that the rendered text and intended semantics did not change.

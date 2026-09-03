@@ -13,8 +13,8 @@ how-to guides, README and setup guides, references, explanations, design and dec
 notes.
 
 The goal is a document that lets its intended reader understand the relevant system or complete the relevant
-task on the first pass. Follow active global and repository writing requirements for prose. Use
-`writing-for-humans` only for a separate copy-editing pass over supplied prose.
+task on the first pass. Use `writing-for-humans` for prose-level drafting, editing, and review. This skill owns
+the document's purpose, organization, examples, and document type.
 
 ## Establish the Reader and Outcome
 

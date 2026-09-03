@@ -52,9 +52,9 @@ Material changes from peizh/tech-writing include:
 
 - Folded a short documentation-type taxonomy into the "choose the right
   document shape" workflow step.
-- Removed generic prose rules, rewrite heuristics, style guardrails, and the
-  `writing-for-humans` delegation. Global and repository writing policy govern
-  prose; `writing-for-humans` is an optional, separate copy-editing pass.
+- Removed generic prose rules, rewrite heuristics, and style guardrails. The
+  `writing-for-humans` skill governs prose-level drafting, editing, and review;
+  this skill retains document-level decisions.
 - Dropped the Chinese-technical-prose reference branch.
 
 ## Upstream license (MIT, both sources)
