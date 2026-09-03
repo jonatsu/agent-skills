@@ -61,6 +61,7 @@
       "behavior": "Anchor an ambiguous seed before inventing branches.",
       "outcomes": [
         "Asks one anchoring question that distinguishes materially different interpretations.",
+        "Does not offer interpretations, branches, examples, or recommendations before the anchoring answer.",
         "Does not fabricate a specific problem, user, or solution.",
         "Does not ask a checklist of questions in one turn."
       ]
@@ -82,6 +83,7 @@
       "outcomes": [
         "Keeps the shared household-list outcome as the current purpose.",
         "Parks or explicitly scopes the marketplace idea rather than silently expanding the work.",
+        "Does not present the optional marketplace as an equal current choice.",
         "Explains the consequence of including the tangent now and asks one question that preserves user control."
       ]
     },
@@ -143,6 +145,7 @@
         "Records purpose, desired outcome, considered branches and current direction, scope, exclusions or parked ideas, constraints or assumptions, bounded design questions, and decision status.",
         "Avoids unearned architecture, interfaces, schemas, file layouts, and task sequencing.",
         "Writes exactly one descriptive fallback draft under docs/plans in the copied workspace, so it can be inspected before cleanup.",
+        "Uses brainstorming rather than a generic handoff workflow to save an active product brainstorm.",
         "Asks one handoff-fidelity confirmation before handing the draft to technical design, unless a clear user response already supplies it."
       ]
     },

@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Collaborate on an unformed idea by widening useful possibilities, narrowing a direction, and producing an explicitly incomplete design or plan draft. Use for ideation, shaping an early concept, scoping an opportunity, or deciding what an idea could become; not for technical design, implementation planning, or criticism of a settled plan.
+description: Collaborate on an unformed idea by widening useful possibilities, narrowing a direction, or saving an active brainstorm as an explicitly incomplete design or plan draft. Use for ideation, shaping an early concept, scoping an opportunity, or preparing its design handoff; not for technical design, implementation planning, criticism of a settled plan, or a generic session handoff.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -22,8 +22,9 @@ adjacent ideas before committing to an interpretation. Each branch should state 
 main cost. Say whether branches conflict or can compose. Recommend a direction when useful, but keep live alternatives
 visible until the user narrows them.
 
-When the seed is too ambiguous for relevant branches, ask one anchoring question first. Do not invent alternatives for
-an already narrow or explicitly decided request merely to demonstrate brainstorming.
+When the seed is too ambiguous for relevant branches, make the first substantive response only one anchoring question.
+Do not list interpretations, branches, examples, or recommendations before the user answers it. Do not invent
+alternatives for an already narrow or explicitly decided request merely to demonstrate brainstorming.
 
 Ask one consequential question at a time. Use bounded options when they reveal the decision; use an open question when
 options would constrain the idea. A response that asks for user input ends with exactly one question. Keep any other
@@ -33,6 +34,9 @@ Decompose a request with several independently valuable outcomes before explorin
 wants to consider first as the first question after naming them; do not substitute a cross-cutting question. Keep the
 others as named stubs. Do not ask any cross-cutting or secondary question in that response. Combine compatible ideas.
 Park an attractive tangent when it would expand or displace the current purpose; explain why it is deferred.
+
+When the user states a current purpose and mentions another idea as optional or future work, keep the current purpose
+selected and park the optional idea. Do not present it as an equal choice unless the user explicitly asks to expand scope.
 
 Before the user chooses an outcome, do not propose product shapes, architecture, implementation approaches, or a
 recommended direction for a multi-outcome request. Those comparisons speculate across work that has not been selected.
