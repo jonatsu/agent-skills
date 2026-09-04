@@ -5,8 +5,12 @@
 - Skill: `security-review`
 - Current author: Joonas Onatsu
 - Current license: MIT
-- Status: original skill. Its predecessor is this repository's own `security-audit`, and two external skills
-  influenced its structure and several of its rules. No text, example, or code was copied from either.
+- Status: original skill containing four adapted passages in `SKILL.md`. Its predecessor is this repository's
+  own `security-audit`. Two external skills influenced it, and one of them supplied material that was adapted
+  rather than merely read.
+
+The six reference files, the procedure, the STRIDE section, the false-positive list, the rules, and the fix
+phase were written for this skill. Four passages in `SKILL.md` are adaptations and are named below.
 
 The skill descends from `security-audit`, previously deployed from this repository and now under
 `skills/archived/review/security-audit/`. That skill was written by the same author under MIT, so its
@@ -25,18 +29,32 @@ requirement to record working controls carry forward without an external attribu
 - License status: the repository is Apache-2.0. The skill's reference material is derived from the OWASP Cheat
   Sheet Series under CC BY-SA 4.0, and the package carries that license text.
 
-Ideas retained, each expressed independently here:
+**Material adapted from the upstream `SKILL.md`.** Four passages in this skill's `SKILL.md` follow the
+upstream's structure and wording closely enough that they are adaptations rather than independent expression:
 
-- gating a finding on confidence before severity, and suppressing the lowest tier rather than reporting it;
+- the severity table, whose Critical and Low definitions remain close to the upstream sentences and whose High
+  and Medium rows are paraphrases. The required-action column is new;
+- the confidence table, which keeps the upstream's three tiers, their order, and their criteria, with the
+  lowest tier suppressed rather than reported;
+- the attacker-controlled against operator-controlled table, whose two-column form and row selection follow
+  the upstream. The rows were de-Pythonised, four were added, and the qualification that operator-controlled
+  is not the same as safe is new; and
+- the output contract, which keeps the upstream's field set and order with renamed fields and identifiers.
+
+The bolded `Report on` and `Research` labels in the scope contract also come from the upstream.
+
+Ideas retained and expressed independently:
+
+- gating a finding on confidence before severity;
 - separating the scope reported on from the scope researched, so reading beyond the diff is required while
-  reporting beyond it is not;
-- classifying a value as attacker-controlled or operator-controlled as the decisive step before flagging; and
+  reporting beyond it is not; and
 - routing to a topic reference chosen by the surface under review.
 
-The classification table, the confidence criteria, the severity definitions, the reference topics, and every
-sentence of the reference files were written for this skill. CC BY-SA 4.0 governs the upstream expression and
-does not reach independently written expression, so nothing here is redistributed under it. The upstream
-material was read, not adapted, and this package therefore ships no `LICENSE.upstream`.
+**Licensing.** The adapted material is from the upstream `SKILL.md`, which the repository licenses under
+Apache-2.0. Its text is preserved verbatim in `LICENSE.upstream`, and the upstream project supplies no
+`NOTICE` file. CC BY-SA 4.0 attaches to the upstream's `references/` tree, derived from the OWASP Cheat Sheet
+Series; no material from that tree was read into this skill's reference files, which were written from the
+domain. The package's top-level `license: MIT` governs the independently written material.
 
 Two upstream defects were deliberately not carried over. Its reference router names seven files that the
 package does not contain, and its general guidance is written around specific Python and JavaScript
@@ -62,7 +80,7 @@ Ideas retained, each expressed independently here:
 - fix hygiene after approval: one finding per change, awareness that insecure code usually has a dependent,
   and use of the repository's own test and commit conventions.
 
-No wording, example, or reference file was taken from the upstream package. Its language and framework
+No wording, example, or reference file was taken from this upstream package. Its language and framework
 reference set was deliberately excluded, because this skill is language-agnostic by design.
 
 ## Coverage Note

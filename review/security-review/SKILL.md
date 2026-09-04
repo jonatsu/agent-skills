@@ -2,6 +2,7 @@
 name: security-review
 description: Review code, configuration, and infrastructure for exploitable security defects. Use for a security review, vulnerability hunt, threat model, OWASP assessment, or hardening pass over a diff, a component, or a whole repository, and whenever a change touches authentication, authorization, secrets, input parsing, deserialization, file uploads, outbound requests, or agent tool-use surfaces. Language- and framework-agnostic. Reports findings first and changes no file until the user approves specific fixes.
 license: MIT
+compatibility: Requires `rg` and `fd` for discovery. Uses the project's own audit tooling where it is configured, and prefers `betterleaks` over `gitleaks` for secret scanning; both are optional.
 metadata:
   author: Joonas Onatsu
 ---
@@ -92,6 +93,7 @@ Load the reference that matches the surface in front of you. Do not load all of 
 | Surface in the code                                             | Read                                      |
 | --------------------------------------------------------------- | ----------------------------------------- |
 | Queries, commands, templates, parsers, paths, outbound requests | `references/injection-and-parsing.md`     |
+| Uploads, stored files, archives, and served content             | `references/injection-and-parsing.md`     |
 | Login, sessions, tokens, permission checks, tenancy, CSRF       | `references/identity-and-access.md`       |
 | Secrets, keys, hashing, randomness, personal data, logs         | `references/secrets-and-crypto.md`        |
 | Config, headers, CORS, containers, IaC, CI, dependencies        | `references/platform-and-supply-chain.md` |
@@ -108,7 +110,7 @@ for a lockfile audit (`pip-audit`, `npm audit`, `cargo audit`, `govulncheck`, `b
 secrets scanner, a SAST job in CI, and container or IaC scanning. Run what is configured and present, then
 read the output critically rather than pasting it.
 
-Prefer `betterleaks` over `gitleaks` for secret scanning where both are available. Never write a real-looking
+For secret scanning, prefer `betterleaks` over `gitleaks` where both are available. Never write a real-looking
 credential into the tree to prove that a scanner fires; a scanner that is silent on a planted key has told you
 nothing useful, and the planted key outlives the test.
 
@@ -144,7 +146,9 @@ Verify each of these before flagging it:
 - Credentials scoped to test fixtures, seeds, and local compose files.
 - Keys the vendor intends to be public, such as client-side analytics or publishable API keys. Confirm
   against the vendor's documentation rather than the name of the variable.
-- MD5 or SHA-1 used for a checksum, a cache key, or a shard, rather than for a password or a signature.
+- MD5 or SHA-1 over operator-controlled or non-adversarial input, for a cache key or a shard. Over
+  attacker-supplied content, where the digest decides deduplication, uniqueness, or integrity, a chosen-prefix
+  collision is practical against both and the fast hash is the finding.
 - Non-cryptographic randomness used for jitter, sampling, or a UI value.
 - Missing TLS, `Secure` cookie flags, and HSTS in code that only ever runs locally or behind a terminating
   proxy. Report the missing production configuration, not the local default. Do not recommend HSTS without

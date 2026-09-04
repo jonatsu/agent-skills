@@ -19,8 +19,10 @@ control, content-type sniffing control, and a restrictive referrer policy are ch
 missing header as low severity unless you can name the attack it would have stopped.
 
 Review CORS against the credential setting. Reflecting the request origin while allowing credentials is
-equivalent to trusting every origin. A wildcard origin without credentials is usually intentional on a public
-API and is not a finding.
+equivalent to trusting every origin, and allowing the null origin is reachable from a sandboxed frame. A
+wildcard origin without credentials is usually intentional on a public API and is not a finding. Where the
+session rides on a cookie, a permissive origin policy also undoes the CSRF controls in
+`identity-and-access.md`.
 
 ## Network Exposure and Service Boundaries
 

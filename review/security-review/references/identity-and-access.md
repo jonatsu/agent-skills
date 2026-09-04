@@ -86,9 +86,9 @@ that the origin or referrer check, if present, treats a missing header as a fail
 state-changing action is reachable by `GET`, including logout, and that a login flow cannot be forged to fix
 the victim's session to the attacker's account.
 
-For browser-invoked APIs, review the CORS configuration as part of this: reflecting the request origin while
-allowing credentials is equivalent to allowing every origin, and a null origin allowance is reachable from a
-sandboxed frame.
+For browser-invoked APIs, review the CORS configuration as part of this. It is covered in
+`platform-and-supply-chain.md`, and the point that matters here is that a permissive origin policy undoes the
+cookie protections above.
 
 ## What to Verify Before Reporting
 

@@ -19,9 +19,7 @@ obvious dummy values are not findings. Vendor keys intended to be public are not
 against the vendor's documentation rather than against the variable name, because a publishable key and a
 secret key often differ by one word.
 
-Where a secrets scanner is configured, run it. Prefer `betterleaks` over `gitleaks` where both are available.
-Never plant a real-looking credential in the tree to prove that a scanner fires. The test tells you nothing
-when the scanner is silent, and the planted value outlives the test.
+Run the secrets scanner the project configures, under the tooling rules in step 6 of `SKILL.md`.
 
 ## Secret Handling at Runtime
 
@@ -87,9 +85,7 @@ government identifiers, and request bodies that carry any of these are redacted 
 Redaction has to happen at the logging boundary. A rule that depends on every call site remembering will be
 wrong somewhere.
 
-Errors are the other leak. A stack trace, a database error, or an internal hostname returned to a client hands
-an attacker the system's shape. Return a generic message with a correlation identifier, and keep the detail
-server-side.
+Errors are the other leak, and `logic-and-availability.md` covers the failure path itself.
 
 Also check what the system sends outward: crash reporters, analytics, error trackers, and support tooling all
 receive whatever the request context carried unless something strips it.

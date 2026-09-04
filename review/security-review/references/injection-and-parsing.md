@@ -75,6 +75,46 @@ For archives, apply the same containment check to every member before extraction
 absolute, that traverse upward, that are symbolic or hard links, or that expand far beyond their compressed
 size.
 
+## Uploads and Stored Files
+
+An upload is untrusted content and an untrusted name, and the two fail differently.
+
+The name must never become the storage path. Generate the stored name server-side, keep the submitted name as
+a display label only, and apply the containment check above if any part of the submitted name reaches the
+filesystem. A name can also carry a traversal sequence, a null byte, a leading dash, a reserved device name,
+or a right-to-left override that disguises the extension.
+
+The content must be identified by inspection rather than by declaration. The submitted content type and the
+extension are both attacker-supplied. Determine the type from the bytes, then check it against an allowlist of
+permitted types, and reject anything else rather than trying to repair it. A file that passes as one type and
+parses as another is the polyglot case, and the defence is to re-encode or transform the file rather than to
+store what arrived.
+
+Then check where the file lands and what reads it:
+
+- storage inside a directory the web server serves and executes, which turns an upload into code execution.
+  Store outside the document root, or in object storage, and serve through a handler;
+- serving with the submitted content type, without `Content-Disposition` and without a nosniff header, so the
+  browser renders attacker markup on the application's origin. Prefer a separate origin for user content;
+- media, document, and image processors invoked on the uploaded bytes. These are large native parsers with a
+  long history of memory-safety defects, and some resolve external references, which is SSRF. Sandbox them,
+  cap their time and memory, and keep them current;
+- size, count, and total quota limits, absent which upload is a denial-of-service endpoint; and
+- authorization on the download path, which is commonly missing because the upload path has it and the stored
+  identifier is assumed unguessable.
+
+Antivirus scanning is worth noting when the files are redistributed to other users, and it is not a substitute
+for any of the above.
+
+## Mass Assignment
+
+Binding a request body straight onto a persisted object lets the caller set fields the form never showed:
+a role, an owner, a tenant, a price, a verified flag, an identifier. The defect is the binding, not the field.
+
+Bind to an explicit allowlist of the fields the operation may change, and prefer a separate input type over
+the persistence type so that adding a column cannot silently widen the interface. A denylist of protected
+fields fails on the next field somebody adds.
+
 ## Server-Side Request Forgery
 
 A defect exists when the destination of an outbound request is influenced by untrusted input. The reachable
