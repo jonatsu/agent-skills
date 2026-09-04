@@ -18,6 +18,42 @@ from primary sources, record provenance, and decide whether the source overlaps 
   compare with archived `design-forge` and its deliberate rejection of a universal atomic `FR-` and `NFR-`
   schema.
 
+## Revisit `searchable-code` as an Engineering-Patterns Skill
+
+Raised by [../docs/plans/python-skill-set-draft.md](../docs/plans/python-skill-set-draft.md), which folds the
+Python expression of these rules into the proposed `python-idioms` and leaves the general version with no home.
+Do this after that skill set exists, not before.
+
+`searchable-code` was deleted 2026-09-03 because its subject was a moment nobody verbalizes, so it never
+activated; `../docs/findings/skill-discovery-limits.md` holds the measurement. Only its authoring rules
+survived, condensed, in `agents/rules/instructions/workflow.md`. Its diagnostic half was lost entirely: the
+recovery procedure for a search that came up empty, and the rule that whichever recovery worked names the
+defect to fix in the same change. Recover the original before rewriting anything:
+`git show aa34532^:skills/shared/development/searchable-code/SKILL.md`. That commit also carries the package's
+`ATTRIBUTIONS.md`, `LICENSE.upstream`, and its `evals/activation.json` fixture, which is the measurement's
+reusable baseline.
+
+The question is whether a broader skill about engineering patterns and principles has a trigger that
+findability alone did not. Candidate material beyond findability: naming, module boundaries, duplication
+versus abstraction, error-message shape, and the same empty-search recovery generalized. Settle discovery
+before writing it. If the honest answer is that a user says nothing that would load it, the answer is a rules
+file or a deliberately opened reference, not a second attempt at the same skill.
+
+## Where the Global Workflow's Patterns Should Live
+
+The user intends to lean up `agents/rules/instructions/workflow.md`, keeping global instructions generic and
+language-agnostic. That file currently carries language-specific and pattern-specific material, including the
+condensed `searchable-code` naming rules and the testing-level policy, which the proposed `python-idioms`
+copies deliberately in case the rules file loses them.
+
+Decide, for each pattern that file establishes, whether its home is the global rules, a skill, or a repository
+instruction file. Load-bearing constraints: an always-loaded rule fires at moments no skill can reach, and a
+skill only fires when a request matches it, so moving a rule into a skill can silently stop it applying.
+Weigh discovery across every agent, not only Claude Code.
+
+Note the accepted duplication this creates in the meantime. `python-idioms` and the global rules will both
+carry the naming and test-writing preferences, with nothing detecting divergence.
+
 ## Codex Skill-Description Budget
 
 Recheck the warning that Codex shortened skill descriptions to fit its context budget. The 2026-09-02 archival
