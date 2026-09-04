@@ -34,5 +34,5 @@ actually verbalizes. None of that is proven.
 
 **The acceptance test is behavioral.** Measure activation on a review request, a refactor request, and a
 failed-grep report. If it does not fire on those three, delete it rather than reword it — that is what the
-predecessor's measurement established. `docs/plans/python-skill-set-draft.md` records this as the set's
-largest open risk.
+predecessor's measurement established. `docs/plans/archived/python-skill-set-draft.md` records this as the
+set's largest open risk, and `skills/TODO.md` owns the evaluation that would settle it.

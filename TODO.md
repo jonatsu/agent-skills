@@ -20,9 +20,10 @@ from primary sources, record provenance, and decide whether the source overlaps 
 
 ## Revisit `searchable-code` as an Engineering-Patterns Skill
 
-Raised by [../docs/plans/python-skill-set-draft.md](../docs/plans/python-skill-set-draft.md), which folds the
-Python expression of these rules into the proposed `python-idioms` and leaves the general version with no home.
-Do this after that skill set exists, not before.
+Raised by
+[../docs/plans/archived/python-skill-set-draft.md](../docs/plans/archived/python-skill-set-draft.md), which
+folds the Python expression of these rules into `python-idioms` and leaves the general version with no home.
+That skill set now exists, so this is unblocked.
 
 `searchable-code` was deleted 2026-09-03 because its subject was a moment nobody verbalizes, so it never
 activated; `../docs/findings/skill-discovery-limits.md` holds the measurement. Only its authoring rules
@@ -139,6 +140,30 @@ When allowance and decision need justify it:
   as proxies.
 - Add the second client only if the first run supports deployment confidence or exposes a model-specific uncertainty.
   Report live allowance before repetitions or a wider matrix.
+
+## Python Skill Set Behavioral Evaluation
+
+The six `python-` skills were built, validated and deployed on 2026-09-04, and no behavioral evidence exists for
+any of them. The design is in
+[../docs/plans/archived/python-skill-set-draft.md](../docs/plans/archived/python-skill-set-draft.md), which
+carries the full reasoning behind each item here.
+
+- **`python-idioms` activation is the one that decides something.** Its predecessor `searchable-code` activated
+  in 0 of 13 runs, and explicit invocation produced the intended behavior, so wording was never the fault.
+  Measure a review request, a refactor request, and a failed-grep report. If it does not fire on those three,
+  delete the skill rather than reword it. `../docs/findings/skill-discovery-limits.md` holds the predecessor's
+  measurement, and its `evals/activation.json` fixture is the reusable baseline.
+- **Discovery among six sibling descriptions is unmeasured.** All six share a prefix and a subject, and the two
+  deliberate boundaries exist only as prose: `python-async-patterns` versus `python-testing` for async tests,
+  and `python-typing` versus `python-project-management` for mypy configuration. Measure positive requests per
+  skill, near-miss requests across both boundaries, and requests that legitimately need two.
+- **The claim that the superseded wshobson material was largely model recall is inference from its text**, not
+  measurement. Nothing depends on settling it.
+
+Two costs the set carries until then. Six descriptions are charged to every session in every repository,
+including sessions that touch no Python, so recheck this against the Codex description-budget item above. The
+naming and test-writing preferences are duplicated in `python-idioms` and
+`agents/rules/instructions/workflow.md` by the user's decision, and nothing detects divergence.
 
 ## OpenCode Reflect Ownership
 
