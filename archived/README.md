@@ -34,7 +34,7 @@ whole mechanism; there is no separate opt-out to remember.
 | `nix/nix-wrapper-modules` | 2026-09-03 | Archived with the intact `nix/` domain pending consolidation with the repo-local skills in `~/src/nix-config`. Review is deferred. See its `ARCHIVED.md`. |
 | `nix/nixos-config` | 2026-09-03 | Archived with the intact `nix/` domain pending consolidation with the repo-local skills in `~/src/nix-config`. **Its review is COMPLETE** (2026-09-03, `ready with risks`); do not move it to the deferred list. See its `ARCHIVED.md`. |
 | `security-audit` | 2026-09-02 | Temporarily removed with the intact `review/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
-| `semantic-compression` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
+| `semantic-compression` | 2026-09-02 | Reviewed and replaced by the independently written `shared/context/context-compression` skill. The archived package remains the historical behavior and provenance baseline. See its `ARCHIVED.md`. |
 | `system-prompts` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `token-optimiser` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `uboot-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |

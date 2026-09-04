@@ -70,6 +70,26 @@ When allowance and decision need justify it:
 - Rerun the closest boundary after any repair. Do not expand to a full client matrix or repetitions until a first run
   measures token and allowance use.
 
+## Context Compression Behavioral Evaluation
+
+The independently written `context-compression` replacement has durable package fixtures and static validation. Its
+behavioral model evaluation is deferred to protect the current weekly subscription allowance.
+
+When allowance and decision need justify it:
+
+- Run the six package cases first on one client, comparing the new skill with no skill and the archived
+  `semantic-compression` behavior where that baseline applies.
+- Treat any changed negation, authority, alternative, condition, quantity, chronology, attribution, uncertainty, or
+  exact identifier as a fatal failure regardless of aggregate quality.
+- Require visible deletion of safe grammatical scaffolding in `safe-grammar-deletion`; a faithful but ordinary prose
+  summary does not establish that the skill changes compression behavior.
+- Inspect `superseded-state` for additive-summary failure: only one decision may remain current, while the rejected
+  alternative and its useful rationale remain legible.
+- Measure the target model's actual input tokens when the client exposes them. Otherwise label word or character counts
+  as proxies.
+- Add the second client only if the first run supports deployment confidence or exposes a model-specific uncertainty.
+  Report live allowance before repetitions or a wider matrix.
+
 ## OpenCode Reflect Ownership
 
 Keep `reflect` under `claude/` while `oh-my-opencode-slim` installs and replaces OpenCode's separate copy.
