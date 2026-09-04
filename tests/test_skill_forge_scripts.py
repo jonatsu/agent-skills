@@ -194,5 +194,123 @@ class QuickValidateTests(unittest.TestCase):
         self.assertIn("usage:", result.stderr.lower())
 
 
+def _write_skill(skill_directory: Path, body: str) -> None:
+    """Write a policy-clean SKILL.md whose only variable part is its body."""
+    skill_directory.mkdir(parents=True, exist_ok=True)
+    (skill_directory / "SKILL.md").write_text(
+        "---\n"
+        "name: sample-skill\n"
+        "description: Use for a sample task.\n"
+        "license: MIT\n"
+        "metadata:\n"
+        "  author: Test Author\n"
+        "---\n"
+        f"\n# Sample Skill\n\n{body}\n",
+        encoding="utf-8",
+    )
+    (skill_directory / "ATTRIBUTIONS.md").write_text(
+        "# Attributions\n\nIndependently written.\n", encoding="utf-8"
+    )
+
+
+class BundledReferenceTests(unittest.TestCase):
+    """A deployed skill is copied alone, so every path it names must ship with it."""
+
+    def test_missing_markdown_link_target_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            skill_directory = Path(temporary_directory) / "sample-skill"
+            _write_skill(skill_directory, "Read [the guide](references/guide.md).")
+
+            result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
+
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("references/guide.md", result.stdout)
+            self.assertIn("no such file ships with the skill", result.stdout)
+
+    def test_missing_bare_path_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            skill_directory = Path(temporary_directory) / "sample-skill"
+            _write_skill(skill_directory, "Run scripts/verify.sh before delivery.")
+
+            result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
+
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("scripts/verify.sh", result.stdout)
+
+    def test_existing_reference_passes(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            skill_directory = Path(temporary_directory) / "sample-skill"
+            _write_skill(skill_directory, "Read [the guide](references/guide.md).")
+            (skill_directory / "references").mkdir()
+            (skill_directory / "references" / "guide.md").write_text(
+                "# Guide\n", encoding="utf-8"
+            )
+
+            result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
+
+            self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_anchor_resolves_to_the_file_it_points_into(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            skill_directory = Path(temporary_directory) / "sample-skill"
+            _write_skill(skill_directory, "Read [part two](references/guide.md#two).")
+            (skill_directory / "references").mkdir()
+            (skill_directory / "references" / "guide.md").write_text(
+                "# Guide\n", encoding="utf-8"
+            )
+
+            result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
+
+            self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_fenced_example_path_is_not_a_promise(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            skill_directory = Path(temporary_directory) / "sample-skill"
+            _write_skill(
+                skill_directory, "```bash\ncat references/example-output.md\n```"
+            )
+
+            result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
+
+            self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_reference_outside_the_skill_directory_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            skill_directory = Path(temporary_directory) / "sample-skill"
+            _write_skill(skill_directory, "Read [shared](../shared/references/x.md).")
+            sibling = Path(temporary_directory) / "shared" / "references"
+            sibling.mkdir(parents=True)
+            (sibling / "x.md").write_text("# X\n", encoding="utf-8")
+
+            result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
+
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("leaves the skill directory", result.stdout)
+
+    def test_external_url_is_not_checked(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            skill_directory = Path(temporary_directory) / "sample-skill"
+            _write_skill(
+                skill_directory,
+                "See the [specification](https://agentskills.io/specification) "
+                "and the [heading](#sample-skill).",
+            )
+
+            result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
+
+            self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_unreadable_skill_md_reports_a_policy_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            skill_directory = Path(temporary_directory) / "sample-skill"
+            skill_directory.mkdir()
+            (skill_directory / "SKILL.md").write_bytes(b"---\nname: \xff\n---\n")
+
+            result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
+
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("cannot read SKILL.md", result.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()

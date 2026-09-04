@@ -52,6 +52,21 @@ was NOT used; it misreports repositories that do carry a licence.
 
 Upstream supplies no `NOTICE` file at the pinned revision.
 
+## Bundled-Reference Check in `scripts/quick_validate.py`
+
+The 2026-09-04 revision added a check that every relative path `SKILL.md` promises must exist inside the skill
+directory. Reading `agent_skills/evals/tools/skill_lint.py` from
+<https://github.com/Shubhamsaboo/awesome-llm-apps> (Apache-2.0, commit
+`ca8e5b3c56e51e336449a99d79b42b45ea690b86`) supplied two ideas the check adopts: collecting both Markdown link
+targets and bare paths under the specification's bundled resource directories, and stripping fenced code
+blocks first because a fenced path is an illustration rather than a promise.
+
+The implementation is independently written against this skill's existing structure and its own portability
+rule, and no code, wording, or message text was copied. The evaluation that preceded it rejected the rest of
+that script — it duplicates `skills-ref` with a hand-rolled YAML parser, and its remaining heuristics encode a
+different project's house conventions. The escaping-path error and the anchor handling have no upstream
+counterpart. No upstream license file is required, because nothing was copied or adapted.
+
 ## Official Agent Skills Authoring Guidance
 
 The 2026-09-02 revision incorporated independently condensed guidance from these official Agent Skills pages:

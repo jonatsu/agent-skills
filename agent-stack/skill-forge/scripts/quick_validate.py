@@ -7,6 +7,11 @@
 
 Run ``skills-ref validate`` separately for specification compliance. This script does
 not duplicate that external schema and must not be reported as an equivalent check.
+
+The policies checked here are provenance (top-level ``license``, ``metadata.author``,
+attribution files), portability scope (``metadata.scope``), scaffold placeholders, and
+bundled-reference reachability -- every relative path ``SKILL.md`` promises must exist
+inside the skill directory, because a deployed skill has no context outside it.
 """
 
 import argparse
@@ -19,9 +24,86 @@ import yaml
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---(?:\n|$)", re.DOTALL)
 PLACEHOLDERS = ("[TODO", "FIXME", "<skill-name>", "<upstream-")
 
+# Directories the Agent Skills specification defines for bundled resources. A path
+# under one of these is a promise that the file ships with the skill.
+BUNDLED_DIRECTORIES = ("references", "scripts", "assets", "evals")
+
+# Fenced blocks hold illustrative paths -- example output, scaffold templates, a
+# command shown for another repository -- so only prose and links promise real files.
+FENCED_BLOCK_RE = re.compile(r"^```.*?^```", re.DOTALL | re.MULTILINE)
+MARKDOWN_LINK_RE = re.compile(r"\]\(([^)\s]+)")
+BUNDLED_PATH_RE = re.compile(
+    r"(?<![\w./-])((?:"
+    + "|".join(BUNDLED_DIRECTORIES)
+    + r")/[\w.:@+-]+(?:/[\w.:@+-]+)*)"
+)
+EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "ftp://", "#", "/", "<")
+
+
+def find_bundled_references(body: str) -> list[str]:
+    """Return the relative paths a SKILL.md body promises ship with the skill.
+
+    Collects Markdown link targets and bare paths under the specification's bundled
+    resource directories, ignoring fenced code blocks, external URLs, and anchors.
+
+    Args:
+        body: The SKILL.md text after the YAML frontmatter block.
+
+    Returns:
+        Sorted, deduplicated relative paths, each stripped of any ``#`` fragment.
+    """
+    prose = FENCED_BLOCK_RE.sub("", body)
+    candidates = set(MARKDOWN_LINK_RE.findall(prose))
+    candidates.update(BUNDLED_PATH_RE.findall(prose))
+
+    references: set[str] = set()
+    for candidate in candidates:
+        # Prose punctuation attaches to a bare path at the end of a sentence.
+        reference = candidate.split("#", 1)[0].rstrip(".,:;)`'\"")
+        if not reference or reference.startswith(EXTERNAL_PREFIXES):
+            continue
+        references.add(reference)
+    return sorted(references)
+
+
+def check_bundled_references(skill_path: Path, body: str) -> list[str]:
+    """Return errors for bundled references that are missing or escape the skill.
+
+    A deployed skill is copied without its surrounding repository, so a reference
+    that leaves the skill directory cannot resolve wherever the skill is installed.
+
+    Args:
+        skill_path: The skill directory holding SKILL.md.
+        body: The SKILL.md text after the YAML frontmatter block.
+
+    Returns:
+        One error message per unresolvable reference, in path order.
+    """
+    errors: list[str] = []
+    for reference in find_bundled_references(body):
+        if ".." in Path(reference).parts:
+            errors.append(
+                f"SKILL.md reference {reference!r} leaves the skill directory; a "
+                "deployed skill cannot reach its surrounding repository"
+            )
+        elif not (skill_path / reference).exists():
+            errors.append(
+                f"SKILL.md references {reference!r} but no such file ships with "
+                "the skill"
+            )
+    return errors
+
 
 def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
-    """Return local-policy errors and warnings for a skill directory."""
+    """Return local-policy errors and warnings for a skill directory.
+
+    Args:
+        skill_path: The skill directory expected to contain SKILL.md.
+
+    Returns:
+        A ``(errors, warnings)`` pair. Errors fail the check; warnings never do.
+        Both are empty when the skill satisfies every Skill Forge policy.
+    """
     errors: list[str] = []
     warnings: list[str] = []
     skill_path = Path(skill_path)
@@ -30,7 +112,13 @@ def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
     if not skill_md.is_file():
         return ["SKILL.md not found"], warnings
 
-    content = skill_md.read_text()
+    # An unreadable or non-UTF-8 SKILL.md is a policy failure to report, not a
+    # traceback: the caller is a repository gate that reports one line per skill.
+    try:
+        content = skill_md.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as error:
+        return [f"cannot read SKILL.md: {error}"], warnings
+
     match = FRONTMATTER_RE.match(content)
     if not match:
         return [
@@ -60,22 +148,25 @@ def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
             "move metadata.license to the Agent Skills top-level license field"
         )
 
+    body = content[match.end() :]
+
     scope = metadata.get("scope")
     if scope not in (None, "repo-local"):
         errors.append(
             "metadata.scope must be absent for portable skills or 'repo-local'"
         )
     if scope == "repo-local":
-        body = content[match.end() :]
         if "repository" not in "\n".join(body.splitlines()[:12]).lower():
             errors.append("repo-local skill must name its repository near the start")
+
+    errors.extend(check_bundled_references(skill_path, body))
 
     attribution = skill_path / "ATTRIBUTIONS.md"
     upstream_license = skill_path / "LICENSE.upstream"
     if upstream_license.exists() and not attribution.exists():
         errors.append("LICENSE.upstream requires a corresponding ATTRIBUTIONS.md")
     if attribution.exists():
-        attribution_text = attribution.read_text()
+        attribution_text = attribution.read_text(encoding="utf-8")
         for placeholder in PLACEHOLDERS:
             if placeholder in attribution_text:
                 errors.append(

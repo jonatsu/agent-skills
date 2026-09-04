@@ -10,8 +10,13 @@ from pathlib import Path
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
-def discover_author():
-    """Return the Git-configured author without inventing a fallback identity."""
+def discover_author() -> str | None:
+    """Return the Git-configured author without inventing a fallback identity.
+
+    Returns:
+        The ``git config user.name`` value, or None when Git is unavailable or
+        the name is unset. A missing author is the caller's decision to report.
+    """
     try:
         result = subprocess.run(
             ["git", "config", "user.name"],
@@ -25,8 +30,25 @@ def discover_author():
     return result.stdout.strip() or None
 
 
-def render_skill(skill_name, author, license_id, scope, repository):
-    """Return a minimal scaffold for the selected portability scope."""
+def render_skill(
+    skill_name: str,
+    author: str,
+    license_id: str,
+    scope: str,
+    repository: str | None,
+) -> str:
+    """Return a minimal scaffold for the selected portability scope.
+
+    Args:
+        skill_name: Validated skill name, used as both directory and title source.
+        author: Current author recorded in ``metadata.author``.
+        license_id: Identifier for the specification's top-level ``license`` field.
+        scope: Either ``portable`` or ``repo-local``.
+        repository: Repository the skill serves; required when scope is repo-local.
+
+    Returns:
+        The SKILL.md text, still carrying its scaffold placeholders.
+    """
     metadata = f"  author: {author}\n"
     opening = "[TODO: State the skill's purpose and essential instructions.]"
     if scope == "repo-local":
@@ -55,8 +77,29 @@ metadata:
 """
 
 
-def init_skill(skill_name, path, author, license_id, scope, repository=None):
-    """Create the skill directory and SKILL.md, returning its path on success."""
+def init_skill(
+    skill_name: str,
+    path: str | Path,
+    author: str,
+    license_id: str,
+    scope: str,
+    repository: str | None = None,
+) -> Path | None:
+    """Create the skill directory and SKILL.md.
+
+    Args:
+        skill_name: Requested skill name; rejected unless it matches the
+            specification's lowercase, single-hyphen form within 64 characters.
+        path: Parent directory that will receive the new skill directory.
+        author: Current author recorded in ``metadata.author``.
+        license_id: Identifier for the specification's top-level ``license`` field.
+        scope: Either ``portable`` or ``repo-local``.
+        repository: Repository the skill serves; required when scope is repo-local.
+
+    Returns:
+        The created skill directory, or None after reporting the failure on stderr.
+        An existing directory is never overwritten.
+    """
     if not NAME_RE.fullmatch(skill_name) or len(skill_name) > 64:
         print(
             "Error: skill name must be 1-64 lowercase letters, digits, and single "
@@ -77,12 +120,12 @@ def init_skill(skill_name, path, author, license_id, scope, repository=None):
 
     skill_dir.mkdir(parents=True)
     content = render_skill(skill_name, author, license_id, scope, repository)
-    (skill_dir / "SKILL.md").write_text(content)
+    (skill_dir / "SKILL.md").write_text(content, encoding="utf-8")
     print(f"Skill '{skill_name}' initialized at {skill_dir}")
     return skill_dir
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("skill_name")
     parser.add_argument("--path", required=True)
