@@ -73,7 +73,8 @@ The standard's remaining rules are sentence-level and belong to `writing-for-hum
 records them and the rules deliberately declined.
 
 No rule text and no dictionary entry is reproduced here or in `SKILL.md`. The standard is free to obtain and not
-free to redistribute. `docs/plans/ste-adoption.md` records the decisions, including the rejected alternatives.
+free to redistribute. `docs/plans/archived/ste-adoption.md` records the decisions, including the rejected
+alternatives.
 
 Material changes from peizh/tech-writing include:
 

@@ -45,7 +45,7 @@ punctuation rules.
 No rule text and no dictionary entry is reproduced here or in `SKILL.md`. The standard is free to obtain and not
 free to redistribute: its copyright notice grants reproduction rights to eight listed categories of ASD, AIA and
 AIAC members, defence ministries, airworthiness authorities and universities, and this project is in none of
-them. `docs/plans/ste-adoption.md` records the decisions, including the rejected alternatives.
+them. `docs/plans/archived/ste-adoption.md` records the decisions, including the rejected alternatives.
 
 The `mohitagw15856/pm-claude-skills house-style-enforcer` influence on the 2026-09-03 exemplar-evidence
 style-adaptation branch moved to `writing-documentation` on 2026-09-04 together with the section it informed.
