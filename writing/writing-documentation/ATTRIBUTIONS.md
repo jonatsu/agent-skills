@@ -58,6 +58,23 @@ approach was informed by
 No text was copied or adapted. The source license was not established during review, so this record does not
 claim a license grant.
 
+## ASD-STE100 as an Inspirational Source
+
+ASD-STE100 Simplified Technical English, Issue 9 (2025-01-15), was read directly on 2026-09-04 and informed the
+"Write Notes and Safety Instructions" section. The standard is an inspirational source, not a dependency: this
+skill does not implement it, does not cite its rule numbers, and makes no claim of conformance.
+
+It informed three things specifically: the rule that a note carries information only, together with the
+delete-every-note verification test; the distinction between a warning for risk of injury and a caution for risk
+of damage, with a warning taking precedence where both apply; and the required order of a safety instruction,
+signal word before command or condition before consequence.
+
+The standard's remaining rules are sentence-level and belong to `writing-for-humans`, whose `ATTRIBUTIONS.md`
+records them and the rules deliberately declined.
+
+No rule text and no dictionary entry is reproduced here or in `SKILL.md`. The standard is free to obtain and not
+free to redistribute. `docs/plans/ste-adoption.md` records the decisions, including the rejected alternatives.
+
 Material changes from peizh/tech-writing include:
 
 - Folded a short documentation-type taxonomy into the "choose the right

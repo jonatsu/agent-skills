@@ -110,6 +110,24 @@ A README or setup guide may begin with orientation, then link to the mode-specif
   diagrams that readers need to act on.
 - Surface missing facts rather than inventing examples, commands, limits, or recovery steps.
 
+## Write Notes and Safety Instructions
+
+These two elements carry their own rules, because a reader who misreads either one acts wrongly or gets hurt.
+
+**A note carries information only.** It must not contain an instruction, a requirement, a limit, a tolerance,
+or the result of a step. Those belong in the step itself, next to the action they govern. Verify by deleting
+every note and confirming a reader can still complete the procedure correctly. Anything that fails that test
+was never a note, and becomes a step.
+
+**Match the signal word to the risk.** A warning signals a risk of injury or death. A caution signals a risk of
+damage to equipment, data, or systems. Where both risks apply at once, use a warning.
+
+**Order a safety instruction in three parts:** the signal word, then the command or the condition the reader
+must satisfy, then the consequence of not obeying. Never open with the explanation. A reader who stops after
+the first line must still have the instruction, not the rationale.
+
+Put a safety instruction before the step it protects, never after.
+
 ## Review
 
 Check:
@@ -123,6 +141,7 @@ Check:
 - Do references mirror what they describe and cover its important limits and failures?
 - Do explanations and decision records make the relevant reasoning and consequences visible?
 - Does the document provide the accessibility information and recovery guidance its reader needs?
+- Does the procedure still work with every note deleted, and does each warning or caution match its risk level?
 
 Flag missing context or structural defects before proposing prose-only edits.
 

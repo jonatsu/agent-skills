@@ -34,6 +34,10 @@ concepts before relying on them, and define unfamiliar terms and abbreviations b
 When editing supplied prose, preserve every supported claim, distinction, qualification, and normative
 requirement. Do not invent facts, actors, dates, numbers, causes, citations, opinions, or personality.
 
+Write inclusively. Do not use a gender-specific pronoun for a person whose pronouns the text does not state,
+and do not infer them from a name. Use "they". Use a gendered term for a role or person only where the subject
+genuinely requires it.
+
 Flag unsupported assertions and ambiguity rather than resolving them silently.
 
 When editing a file, change prose only. Preserve code blocks, inline code, frontmatter, link targets, table
@@ -54,15 +58,54 @@ conflict. Rewrite the passage and keep the author's register; do not defend an a
 Matching the conventions of an existing documentation set is a document-level job. Use `writing-documentation`
 for that.
 
+## Classify the Passage First
+
+Every passage is procedural or descriptive, and the distinction sets the sentence-length limit. Decide before
+you edit.
+
+|           | Procedural                   | Descriptive                        |
+| --------- | ---------------------------- | ---------------------------------- |
+| Job       | Tells the reader what to do  | Explains what something is or does |
+| Verb form | Imperative                   | Simple present, past, or future    |
+| Limit     | **20 words per sentence**    | **25 words per sentence**          |
+| Unit      | One instruction per sentence | One topic per paragraph            |
+
+This is a property of the passage, not of the document. A how-to guide still contains descriptive explanation,
+and a commit message still contains instructions. Classify what is in front of you.
+
+Do not mix the two inside one vertical list.
+
+**Counting words.** A code span, an identifier, quoted text, a heading, and a title each count as one word,
+however long. In a vertical list, the lead-in and each item carry their own limit rather than summing: the
+colon closes the lead-in as a period would.
+
+The limits bind everywhere this skill applies, commit bodies and error messages included. A tighter external
+constraint governs instead where one exists, such as the 72-character Conventional Commits subject. Verbatim
+text is never edited to fit a limit; the rule against altering quotations already protects it.
+
 ## Write Clear Technical Prose
 
 Prefer active voice when the actor is known and relevant. Use concrete, specific terms and plain language.
 Remove needless words, hedges, clichés, prefabricated phrases, and empty promotion.
 
+Express an action with a verb rather than a noun built from one. Write "analyze the log", not "perform an
+analysis of the log".
+
 Use one consistent term per concept. Do not rotate synonyms or redefine abbreviations.
 
 State affirmative claims directly. Avoid rhetorical forms such as “X, not Y” and “not just X, but Y,” and
 their equivalents in the target language.
+
+Prefer simple tenses. **Keep a compound tense where it carries information the simple form cannot.** "The job
+has finished" asserts a current relevance that "the job finished" drops, and losing that changes the claim
+rather than the style. Drop the compound form only when the simple one says the same thing.
+
+Do not use an "-ing" form as a verb. The common case is a participial clause hung off a comma, as in "…, making
+it easy to configure", which becomes its own sentence. An "-ing" word is fine as a noun or inside a compound
+noun: "logging", "the mounting bracket".
+
+Keep a noun cluster to three words, breaking a longer one with a preposition: "the timeout value for the
+connection pool", not "the connection pool timeout configuration value".
 
 Do not use em or en dashes. The only exception is a construct whose grammar requires the character itself,
 such as an en dash in a numeric or date range. A dash that joins, separates, or dramatizes two statements is
@@ -75,12 +118,22 @@ In sentences and paragraphs:
 - use parallel grammatical form for coordinate ideas;
 - keep subjects near verbs and modifiers near their referents;
 - place new or important information last when that improves emphasis;
-- split sentences over 30 words unless splitting reduces clarity;
+- split a sentence over its limit unless splitting reduces clarity;
 - vary sentence length;
-- keep one clear topic per paragraph;
+- give a paragraph one topic, open it with the sentence that states that topic, and keep it to six sentences;
 - change paragraphs when the topic, purpose, speaker, or argumentative stage changes;
 - keep tense consistent unless the time relationship changes; and
 - use paragraphs for connected ideas and bullets for genuine lists.
+
+In procedural text, write one instruction per sentence. Two actions share a sentence only when they happen at
+the same time, or when the second is the immediate result of the first.
+
+**State a required condition before the command it governs, separated by a comma.** Write "If the build fails,
+read the log", never "Read the log if the build fails". A reader who meets the condition after the instruction
+has already acted on it.
+
+Do not drop a noun, verb, subject, or article to shorten a sentence. "Rotary switch to INPUT" is shorter and
+ambiguous. Meet the limits above by splitting sentences, never by compressing grammar out of them.
 
 Avoid repeated sentence openings, formulaic transitions, manufactured revelations, and routine concluding
 sentences that merely restate the paragraph.
