@@ -54,6 +54,25 @@ is reachable and accurate, and remove genuinely redundant content. Do not turn t
 ratios. Whether guidance is a no-op depends on the target models and is best settled through behavior when
 reviewers disagree.
 
+Weigh the useful outcome against the cost the skill induces: context, reasoning, tool calls, latency,
+distraction, and maintenance. Size and complexity are screening signals for that weighing. They do not justify
+removing a specific instruction without examining its purpose and consequences.
+
+## Collection Fit
+
+Review the skill against the other skills deployed beside it and against the always-loaded instructions. A skill
+that is sound on its own can still duplicate a neighbor, contradict a global rule, or activate in place of a
+better-suited neighbor.
+
+- Does another deployed skill already own this job, or a large part of it?
+- Does the description overlap a neighbor's trigger surface in a way that makes selection arbitrary?
+- Does the guidance repeat, or conflict with, an always-loaded rule the agent already follows?
+- Does a repository-local skill in the consuming repository already cover the subject against its actual code?
+  A globally deployed copy then costs discovery budget in every session for no reader.
+
+Overlap is acceptable when it is deliberate and the boundary is stated where an agent reads it. Duplication with
+two homes that can drift apart is a finding.
+
 ## Information Hierarchy
 
 - Is material needed by every execution available in `SKILL.md`?
@@ -163,3 +182,19 @@ Treat missing required provenance and unauthorized behavior as hard failures. Sc
 consequence and freshness of the claim rather than requiring citations on every sentence. Do not infer
 authoring order from a finished package; consult history only when the order matters and the repository can
 establish it.
+
+Keep observed behavior, textual evidence, inference, and project preference distinct in the report. Predicted
+behavior is not a measurement, and presenting it as one makes the review unauditable.
+
+## Choosing the Repair
+
+Match the repair to what the material is failing at:
+
+- **Removal** for guidance whose marginal value does not cover its cost.
+- **Revision** for guidance that is useful but unclear, unscoped, or wrongly placed.
+- **Narrower loading** for specialized material that only some executions need.
+- **Deterministic enforcement**, a script or a gate, for a mechanically decidable requirement whose failure is
+  unacceptable.
+
+Whichever applies, preserve the skill's intended outcome, authority boundaries, safety constraints, triggers,
+exceptions, and completion conditions. A simplification that drops one of those is a regression, not a repair.

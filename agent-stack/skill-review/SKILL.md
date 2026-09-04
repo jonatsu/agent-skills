@@ -79,6 +79,8 @@ Always inspect discovery and scope coherence. Review the other lenses relevant t
 - **Clarity and completion:** Requirements are distinguishable from recommendations, and consequential work
   has observable completion criteria.
 - **Consistency:** Metadata, instructions, references, scripts, examples, and the skill's own conduct agree.
+- **Collection fit:** The skill does not duplicate a deployed neighbor, an always-loaded rule, or a
+  repository-local skill in the repository that consumes it.
 - **Recoverability:** Facts available from a reliable runtime source are pointed to rather than copied, unless
   that source is unavailable, unreliable, or omits necessary judgment.
 - **Portability:** Frontmatter portability and runtime portability are assessed independently against the
