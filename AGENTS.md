@@ -75,6 +75,19 @@ Read the focused source before acting:
 
 ## Verify Moves and Removals Explicitly
 
+**A user-level `diff.relative = true` silently disabled the hook entirely, for every kind of change.** The hook
+pins its diff with `git -C "$SCRIPT_DIR"`, and `SCRIPT_DIR` is `scripts/` rather than the repository root, so
+that setting made `git diff --name-only` report only paths under `scripts/` and relative to it. No changed path
+could start with `skills/`, so no scope was ever selected: the hook exited 0 in 0.01s and pre-commit reported
+`Passed`. Diagnosed and fixed on 2026-09-04 by passing `--no-relative`; before that, every skill commit relied
+on someone running `./scripts/kasetto-deploy.sh` by hand. `git diff-tree` ignores `diff.relative`, so the
+root-commit branch was never affected. **The lesson generalizes past this one flag: a `-C` into a subdirectory
+plus root-relative pattern matching is a latent defect that any path-relative Git setting can trigger.**
+
+That failure also masks the rename case below — you cannot observe which side of a rename the hook sees while
+it is selecting nothing at all. Treat the rename findings as recorded on the dates given and re-measure before
+relying on them.
+
 The post-commit hook maps changed paths with `git diff --name-only HEAD~1 HEAD`. Git rename detection normally
 reports only the destination of a 100% rename. A move from `skills/shared/` to `skills/archived/` therefore
 hides the source path, and an archive-only commit selects no shared deployment scope. This was reproduced on

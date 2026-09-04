@@ -141,6 +141,11 @@ Verify the fix in a scratch commit for these cases:
 
 Keep the manual deployment and destination checks in `AGENTS.md` until this is implemented and measured.
 
+**Re-measure before starting.** A separate defect in the same diff — `git -C "$SCRIPT_DIR"` pointing at
+`scripts/` while `diff.relative = true` is set in `~/.gitconfig` — meant the hook selected no scope for any
+change at all, so the rename behaviour recorded above was never observable. Fixed on 2026-09-04 with
+`--no-relative`. Confirm the rename case still fails before writing a second fix for it.
+
 ## Two-Tier Memory Scoping
 
 Investigate whether the memory store should gain a global tier alongside the per-project silos. Today every
