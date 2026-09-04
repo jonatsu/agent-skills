@@ -33,6 +33,9 @@ uncovers something severe, say so in one clearly separated section rather than f
 
 ### 1. Establish the scope and the deployment context
 
+Use `fd` to discover files and `rg` to search them, throughout the review. Treat truncated or filtered output
+as unknown rather than as absence.
+
 Ask what the code is: a production service, a library, a local development tool, a build script, an example.
 The same construct carries different risk in each. Determine which parts of the tree are test fixtures,
 samples, generated output, or vendored third-party code, and treat them accordingly.
@@ -88,7 +91,10 @@ line?
 
 ### 5. Sweep the vulnerability classes
 
-Load the reference that matches the surface in front of you. Do not load all of them.
+Read the reference for every surface the scope actually contains, before writing any finding about that
+surface. Do not load the ones the scope does not contain, and do not skip this step because the defect looks
+familiar. The references carry the exceptions that separate a finding from a false positive, and a review that
+never opens one is working from recall.
 
 | Surface in the code                                             | Read                                      |
 | --------------------------------------------------------------- | ----------------------------------------- |
@@ -114,7 +120,8 @@ For secret scanning, prefer `betterleaks` over `gitleaks` where both are availab
 credential into the tree to prove that a scanner fires; a scanner that is silent on a planted key has told you
 nothing useful, and the planted key outlives the test.
 
-Use `rg` and `fd` for discovery. Treat truncated or filtered output as unknown, not as absence.
+Where you cannot run a configured check, say which one and why under Coverage Limits. Do not present a review
+as complete when this step was skipped.
 
 ### 7. Gate on confidence, then on severity
 
