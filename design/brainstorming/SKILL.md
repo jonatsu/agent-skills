@@ -22,9 +22,20 @@ adjacent ideas before committing to an interpretation. Each branch should state 
 main cost. Say whether branches conflict or can compose. Recommend a direction when useful, but keep live alternatives
 visible until the user narrows them.
 
+When a seed proposes a solution before establishing its purpose, surface the affected actor and desired outcome before
+widening. Keep the proposed solution as a live branch unless the user already made it a constraint or decision. Treat a
+changed framing as a recommendation until the user confirms it.
+
 When the seed is too ambiguous for relevant branches, make the first substantive response only one anchoring question.
 Do not list interpretations, branches, examples, or recommendations before the user answers it. Do not invent
 alternatives for an already narrow or explicitly decided request merely to demonstrate brainstorming.
+
+After a direction starts to narrow, check whether its goal describes an observable outcome or only an activity. Sharpen
+an activity from available context when the interpretation is well supported and reversible. Ask one consequential
+question when the missing outcome could change the product direction.
+
+Identify one observable success signal before technical-design handoff. Use a binary observation or human judgment when
+honest measurement is unavailable. Quantify only when the metric, method, and threshold represent genuine success.
 
 Ask one consequential question at a time. Use bounded options when they reveal the decision; use an open question when
 options would constrain the idea. A response that asks for user input ends with exactly one question. Keep any other
@@ -45,6 +56,15 @@ Research facts or prior art when they could change the premise, branch set, or r
 agent recommendations, provisional assumptions, and user decisions distinguishable. Challenge weak premises,
 unnecessary complexity, dependencies, omissions, and difficult-to-reverse choices proportionately. Brainstorming is
 exploratory, so do not turn this into formal plan criticism.
+
+Order unresolved assumptions by their effect on the direction. Identify which failures would invalidate it, which would
+change it materially, and which can wait. For the most consequential unknown, seek or name the smallest evidence that
+could change the decision. Keep the affected direction provisional until the evidence settles it or the user accepts
+the risk.
+
+Repository evidence establishes current technical behavior and constraints. It does not establish desired product or
+business policy. Treat unsupported target users, priorities, entitlements, service levels, retention rules, and
+compliance duties as user-supplied constraints or provisional assumptions.
 
 ## Preserve User Control
 
@@ -67,13 +87,14 @@ way, return to brainstorming. Keep the former direction provisional until the us
 ## Draft and Handoff
 
 Synthesize an explicitly incomplete draft when the intended outcome, promising direction, scope, consequential
-constraints, and open questions are legible. It should let a technical designer continue without reconstructing the
-conversation or inventing purpose or scope.
+constraints, observable success signal, and open questions are legible. It should let a technical designer continue
+without reconstructing the conversation or inventing purpose or scope.
 
 Record the original idea, purpose, intent, desired outcome, branches considered, current direction, scope, exclusions,
-parked ideas, consequential constraints and assumptions, bounded questions for technical design, and whether each item
-is a user decision, recommendation, or provisional idea. Add actors, prior art, success measures, or rejected
-alternatives only when they help the later reader.
+parked ideas, consequential constraints and assumptions, observable success signal, bounded questions for technical
+design, and whether each item is a user decision, recommendation, or provisional idea. Record consequential prohibited
+outcomes when they define success. Add actors, prior art, detailed measurements, or rejected alternatives only when they
+help the later reader.
 
 When the work advances a larger initiative, reference its governing overview near the beginning of the saved draft and
 state how the selected direction advances that intent. Do not hand a draft to technical design when its direction weakens

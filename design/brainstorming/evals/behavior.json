@@ -159,6 +159,76 @@
         "Returns to brainstorming to revisit branches and fidelity instead of forcing an implementation workaround.",
         "Keeps the app-only direction provisional until the user confirms the revised intent."
       ]
+    },
+    {
+      "id": "activity-goal-repair",
+      "prompt": "We have decided to focus on first-time setup, but the goal is still 'improve onboarding.' Prepare this direction for technical design without inventing implementation details.",
+      "behavior": "Turn an activity statement into an observable outcome before design handoff.",
+      "outcomes": [
+        "Identifies 'improve onboarding' as an activity or aspiration rather than a verifiable outcome.",
+        "Proposes or elicits an observable user or system result before handoff.",
+        "Preserves the established first-time setup scope.",
+        "Avoids architecture, implementation tasks, and arbitrary numerical targets.",
+        "Leaves a consequential product choice with the user when context cannot settle it."
+      ]
+    },
+    {
+      "id": "qualitative-success-signal",
+      "prompt": "Help shape a small peer-support ritual whose purpose is to make new maintainers feel safe asking basic questions. We do not have enough participants for meaningful statistical targets.",
+      "behavior": "Define an observable qualitative success signal without decorative precision.",
+      "outcomes": [
+        "Records an observable qualitative success signal suitable for review or user confirmation.",
+        "Does not invent percentages, sample sizes, survey thresholds, deadlines, or adoption targets.",
+        "Distinguishes the desired human outcome from a proposed mechanism.",
+        "Keeps detailed measurement design conditional."
+      ]
+    },
+    {
+      "id": "product-level-must-not",
+      "prompt": "Shape a dashboard export feature. Administrators need the filtered records, and the export must never expose another tenant's data. Leave technical authorization design for the next phase.",
+      "behavior": "Preserve a consequential prohibited outcome without designing its mechanism.",
+      "outcomes": [
+        "Records cross-tenant disclosure as a consequential prohibited outcome.",
+        "Keeps the guarantee visible in the design handoff.",
+        "Does not invent authorization architecture or test procedures.",
+        "Distinguishes the required product guarantee from a technical recommendation."
+      ]
+    },
+    {
+      "id": "no-premature-acceptance-brief",
+      "prompt": "I have an early idea for helping households coordinate emergency supplies. Brainstorm what it could become and write all acceptance criteria with IDs, priorities, verification methods, and a revision log.",
+      "behavior": "Keep an early idea at brainstorming altitude despite a request for premature specification ceremony.",
+      "outcomes": [
+        "Performs useful widening and narrowing at brainstorming altitude.",
+        "Records the requested outcome, scope, constraints, and useful success signals when known.",
+        "Declines or defers architecture-dependent acceptance detail.",
+        "Does not create a fixed acceptance-brief template merely because the prompt requests one.",
+        "Explains that detailed requirements or design evidence needs a later, appropriately scoped activity."
+      ]
+    },
+    {
+      "id": "solution-anchored-seed",
+      "prompt": "I want to brainstorm an AI chatbot that handles customer support questions. We have not decided which support outcome matters most.",
+      "behavior": "Recover the desired outcome from a solution-anchored seed without silently rejecting the proposed mechanism.",
+      "outcomes": [
+        "Distinguishes the proposed chatbot from the unresolved customer or support outcome.",
+        "Surfaces relevant outcome framings before treating the chatbot as the selected direction.",
+        "Keeps the chatbot visible as a possible branch rather than silently discarding it.",
+        "Asks exactly one question that resolves the consequential outcome choice.",
+        "Does not invent chatbot architecture or implementation tasks."
+      ]
+    },
+    {
+      "id": "direction-critical-assumption",
+      "prompt": "We chose volunteer pickup for the neighbourhood tool library, but we have no evidence that anyone will volunteer reliably. Prepare the brainstorm for technical design.",
+      "behavior": "Keep a selected direction provisional while a critical assumption lacks decision-changing evidence.",
+      "outcomes": [
+        "Identifies reliable volunteer participation as an assumption whose failure could invalidate the direction.",
+        "Distinguishes that critical assumption from uncertainties that can safely wait.",
+        "Keeps the volunteer-pickup direction provisional instead of handing it to design as settled.",
+        "Names the smallest evidence that could resolve the assumption before design handoff.",
+        "Does not turn the evidence request into MVP architecture or an implementation plan."
+      ]
     }
   ]
 }

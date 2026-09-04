@@ -33,6 +33,15 @@ Inspect the surfaces that could change the recommendation. Depending on the subj
 public and internal interfaces, state and data flow, dependencies, tests, operational behavior, compatibility obligations,
 and relevant prior decisions.
 
+Use the smallest design depth that settles the consequential system choices. Expand the relevant analysis for security,
+authorization, persistent data, migrations, compatibility, external dependencies, material cost, or difficult recovery.
+Do not add sections for risks that do not apply.
+
+Implementation and tests establish current technical behavior, not desired product or business policy. Treat target
+users, priorities, pricing, retention rules, compliance duties, and service levels as intended policy only when the user
+or an authoritative product artifact supplies them. Keep unsupported policy provisional or return a changed outcome to
+brainstorming.
+
 Keep evidence and judgment distinct:
 
 - state current behavior and constraints supported by repository inspection or authoritative research;
@@ -52,10 +61,14 @@ Settle the parts relevant to the requested outcome:
 - externally visible and internal behavior;
 - component responsibilities and boundaries;
 - interfaces, contracts, states, transitions, and data flow;
+- invariants and prohibited behavior, including access and disclosure boundaries;
 - validation, errors, degraded operation, recovery, and idempotency;
 - security, privacy, accessibility, performance, and operational consequences;
 - compatibility and migration behavior; and
 - observability, rollout, and rollback when the change requires them.
+
+Translate accepted product harms into system guarantees. Define relevant denial, disclosure, failure, and recovery
+behavior without prescribing verification commands or implementation order.
 
 Technical design decides whether rollout and rollback are required and defines their behavioral and safety obligations.
 Implementation planning later orders the work and checks that implement those decisions.
@@ -93,6 +106,7 @@ Before handing the design to implementation planning, check that:
 - purpose and scope still match the governing intent;
 - consequential behavior and architecture no longer require invention;
 - responsibilities, interfaces, and state or data flows agree;
+- consequential invariants and prohibited behavior are settled;
 - important success, error, degraded, and recovery paths are defined;
 - relevant compatibility, migration, security, privacy, accessibility, and operational obligations are settled;
 - assumptions are verified or have a named validation owner; and

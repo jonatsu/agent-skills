@@ -35,3 +35,18 @@ commits, worktree setup, and harness-specific execution handoff.
 The source informed dependency mapping before ordering, independently verifiable slices, risk-aware ordering, explicit
 acceptance and verification beside each unit, and parallel work only after shared contracts stabilize. This skill does
 not copy its prose, examples, fixed paths, size thresholds, tracker workflow, or approval protocol.
+
+## ECC `intent-driven-development`
+
+- Original author: Affaan Mustafa
+- Upstream project: [affaan-m/ECC](https://github.com/affaan-m/ECC)
+- Source path:
+  [`skills/intent-driven-development/SKILL.md`](https://github.com/affaan-m/ECC/blob/e04ea0b9cc8248686edf5ac751cadff550e162b8/skills/intent-driven-development/SKILL.md)
+- Source revision: `e04ea0b9cc8248686edf5ac751cadff550e162b8`, inspected 2026-09-04
+- Source license:
+  [MIT](https://github.com/affaan-m/ECC/blob/e04ea0b9cc8248686edf5ac751cadff550e162b8/LICENSE)
+- Relationship: idea-level influence, independently expressed
+
+The source informed safe verification environments, evidence for prohibited side effects, and non-bijective mappings
+between obligations and checks. This skill retains no source prose, acceptance-brief template, criterion identifiers,
+revision protocol, fixed criterion count, or implementation continuation behavior.

@@ -120,6 +120,19 @@
         "Specifies behavioral evidence for same-key retries, conflicting payloads, concurrency, expiry, and persisted results as required by the governing design.",
         "Keeps static checks as supplemental evidence only where they prove a separate claim."
       ]
+    },
+    {
+      "id": "negative-guarantee-verification",
+      "prompt": "Plan implementation from an accepted tenant-export design. Administrators may export filtered records from their own tenant, and exports must never disclose another tenant's data. A real isolated integration environment with synthetic tenant data is available. Production contains sensitive data and is not authorized for probing. Several authorization and disclosure obligations may share integration coverage.",
+      "behavior": "Plan safe behavioral evidence for a negative guarantee without forcing one-to-one test mapping.",
+      "outcomes": [
+        "Traces the negative guarantee to one or more implementation units.",
+        "Requires behavioral evidence for allowed and denied tenant combinations.",
+        "Names the isolated integration environment and synthetic data requirements.",
+        "Does not authorize production probes or real sensitive data.",
+        "Permits one integration check to support several related obligations.",
+        "Does not force one test per criterion or one criterion per test."
+      ]
     }
   ]
 }

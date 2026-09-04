@@ -23,3 +23,18 @@
 The source pair demonstrated the reader value of separate design and implementation-plan artifacts. Its boundary leaks
 also informed this skill's prohibition on task sequencing and its explicit design-to-plan handoff. The skill retains no
 upstream prose, examples, code, fixed template, execution protocol, or harness-specific workflow.
+
+## ECC `intent-driven-development`
+
+- Original author: Affaan Mustafa
+- Upstream project: [affaan-m/ECC](https://github.com/affaan-m/ECC)
+- Source path:
+  [`skills/intent-driven-development/SKILL.md`](https://github.com/affaan-m/ECC/blob/e04ea0b9cc8248686edf5ac751cadff550e162b8/skills/intent-driven-development/SKILL.md)
+- Source revision: `e04ea0b9cc8248686edf5ac751cadff550e162b8`, inspected 2026-09-04
+- Source license:
+  [MIT](https://github.com/affaan-m/ECC/blob/e04ea0b9cc8248686edf5ac751cadff550e162b8/LICENSE)
+- Relationship: idea-level influence, independently expressed
+
+The source informed the boundary between current behavior and intended policy, risk-scaled depth, and explicit negative
+system guarantees. This skill retains no source prose, acceptance-brief template, criterion identifiers, revision
+protocol, or combined requirements and implementation workflow.

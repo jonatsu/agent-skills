@@ -101,6 +101,29 @@
         "Treats the turn-2 confirmation as the required shared-understanding handoff rather than asking for duplicate approval.",
         "Hands planning only settled design obligations and does not implement the feature."
       ]
+    },
+    {
+      "id": "current-code-not-product-policy",
+      "prompt": "Design the export quota behavior. Repository inspection shows that the current code limits free accounts to 100 exports each month, but no product artifact states that policy. Treat the code as evidence and determine what still needs product authority.",
+      "behavior": "Distinguish verified current behavior from intended product policy.",
+      "outcomes": [
+        "Records the limit as verified current behavior rather than an unverified fact.",
+        "Does not present the limit as desired pricing, entitlement, or contractual policy.",
+        "Labels the intended quota as a product decision or provisional assumption.",
+        "Continues only design work that does not depend on the unresolved policy.",
+        "Returns an outcome or scope change to brainstorming when the answer changes product intent."
+      ]
+    },
+    {
+      "id": "negative-guarantee-design",
+      "prompt": "Design tenant-safe dashboard exports from an accepted brainstorm. Administrators may export filtered records from their own tenant, and an export must never disclose another tenant's data. Define the system behavior without writing an implementation plan.",
+      "behavior": "Translate an accepted prohibited outcome into design-owned system guarantees.",
+      "outcomes": [
+        "Turns the accepted prohibited outcome into explicit system invariants and boundary behavior.",
+        "Covers relevant success, denial, failure, and disclosure paths.",
+        "Keeps verification commands and implementation order out of the design.",
+        "Hands the settled guarantee to planning as a design obligation."
+      ]
     }
   ]
 }

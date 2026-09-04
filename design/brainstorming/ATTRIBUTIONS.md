@@ -33,6 +33,50 @@ explicit exclusions, bounded open questions, and selective diagnostics for omiss
 dependencies, and irreversible choices. Its seven-phase workflow, repeated gates, fixed verdict vocabulary, line
 budget, and `grilling`-only handoff are not retained.
 
+## OpenAI `define-goal`
+
+- Upstream project: [openai/skills](https://github.com/openai/skills)
+- Source path:
+  [`skills/.curated/define-goal/SKILL.md`](https://github.com/openai/skills/blob/49f948faa9258a0c61caceaf225e179651397431/skills/.curated/define-goal/SKILL.md)
+- Source revision: `49f948faa9258a0c61caceaf225e179651397431`, inspected 2026-09-04
+- Source license:
+  [Apache-2.0](https://github.com/openai/skills/blob/49f948faa9258a0c61caceaf225e179651397431/skills/.curated/define-goal/LICENSE.txt)
+- Relationship: idea-level influence, independently expressed
+
+The source informed the distinction between activities and observable outcomes, evidence-bearing success signals, and
+honest quantification. This skill retains no upstream prose, examples, goal-tool workflow, active-goal state, or token
+budget behavior.
+
+## ECC `intent-driven-development`
+
+- Original author: Affaan Mustafa
+- Upstream project: [affaan-m/ECC](https://github.com/affaan-m/ECC)
+- Source path:
+  [`skills/intent-driven-development/SKILL.md`](https://github.com/affaan-m/ECC/blob/e04ea0b9cc8248686edf5ac751cadff550e162b8/skills/intent-driven-development/SKILL.md)
+- Source revision: `e04ea0b9cc8248686edf5ac751cadff550e162b8`, inspected 2026-09-04
+- Source license:
+  [MIT](https://github.com/affaan-m/ECC/blob/e04ea0b9cc8248686edf5ac751cadff550e162b8/LICENSE)
+- Relationship: idea-level influence, independently expressed
+
+The source informed the boundary between current technical evidence and desired product policy, plus explicit
+product-level prohibited outcomes. This skill excludes its acceptance-brief template, criterion identifiers, revision
+protocol, fixed counts, implementation continuation, and combined requirements workflow.
+
+## Addy Osmani `idea-refine`
+
+- Original author: Addy Osmani
+- Upstream project: [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)
+- Source package:
+  [`skills/idea-refine/`](https://github.com/addyosmani/agent-skills/tree/1c760d643497e9da289300e5eb2f5aca861503f7/skills/idea-refine)
+- Source revision: `1c760d643497e9da289300e5eb2f5aca861503f7`, inspected 2026-09-04
+- Source license:
+  [MIT](https://github.com/addyosmani/agent-skills/blob/1c760d643497e9da289300e5eb2f5aca861503f7/LICENSE)
+- Relationship: idea-level influence, independently expressed
+
+The source informed outcome-first reframing for solution-anchored seeds and consequence-ranked assumptions. This skill
+retains no source prose, fixed phases, framework catalogue, question or idea counts, scoring matrix, MVP template,
+mandatory artifact, save path, script, or tone instructions.
+
 ## Upstream License
 
 The Superpowers source is used under the MIT License. `LICENSE.upstream` preserves the verified upstream license text.

@@ -63,7 +63,8 @@ For every unit, make these facts recoverable without forcing one rigid template:
 - **Affected surfaces:** verified files, symbols, configuration, data, documentation, or operational assets;
 - **Dependencies:** prerequisites, consumed and produced interfaces, and downstream unlocks;
 - **Implementation guidance:** the smallest useful explanation of the change and local constraints;
-- **Verification:** commands or observations, expected results, and the claim each check proves;
+- **Verification:** commands or observations, expected results, the claim each check proves, and relevant negative
+  guarantees;
 - **Failure and recovery:** expected failure interpretation, cleanup, rollback, or next action when relevant; and
 - **Completion:** the evidence that makes the unit reviewable and safe to hand onward.
 
@@ -79,6 +80,13 @@ outcome requires them. Do not allow tools to modify unlisted surfaces by implica
 
 Place verification beside the work it proves. State the command, input, or observation; expected success; relevant
 failure result; environment or dependency; check level; and any obligation left unverified.
+
+Map evidence according to the claim rather than forcing one test for each acceptance condition. One obligation may need
+several checks across different boundaries. One check may support several obligations when its evidence genuinely
+overlaps.
+
+Name the environment and safe data when verification can mutate state, contact services, expose secrets, or incur cost.
+Report unavailable safe evidence instead of substituting an unauthorized live check.
 
 Behavioral outcomes require behavioral tests or real-system observations. Formatting, linting, typing, builds, syntax
 checks, substring searches, and clean version-control state may be necessary, but they do not prove behavior.
