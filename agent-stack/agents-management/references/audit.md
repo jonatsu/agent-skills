@@ -22,7 +22,7 @@ Report each dimension independently when relevant:
 - **Loading and topology:** intended clients receive the right effective context without conflicts, silent
   gaps, or unsupported assumptions.
 - **Content quality:** instructions are verified, specific, actionable, non-duplicative, and
-  behavior-changing.
+  behavior-changing, and each earns the cost of being loaded on every session rather than on demand.
 - **Whole-ruleset coherence:** precedence, nested scope, examples, templates, and enforcement do not
   contradict the rules.
 - **Maintenance safety:** generated boundaries and update practices preserve hand-written knowledge and avoid
@@ -45,6 +45,8 @@ and smallest credible correction. Report strengths after risks so the preservati
 
 Always flag:
 
+- an instruction file that has accumulated incident narrative, dated measurements, commit identifiers, or
+  superseded-state history in place of imperative rules, and the always-loaded cost that imposes;
 - divergent real files that different clients load;
 - instructions placed at filenames or scopes no target client reads;
 - contradictions among effective rules, examples, templates, or gates;

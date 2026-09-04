@@ -24,7 +24,15 @@ repository knowledge earns the recurring context cost.
 
 ## Gotchas
 
-- `<non-obvious behavior>`: `<failure symptom or consequence>`
+- `<what to do, or never do>`: `<failure symptom or consequence>`
+
+## Findings
+
+Open the matching file when the symptom appears.
+
+| Symptom | Read |
+|---|---|
+| `<what the agent observes going wrong>` | `<findings file>` |
 
 ## Pointers
 
@@ -37,6 +45,11 @@ Open the matching file before working in its area.
 
 Delete sections that would contain a runner transcription, directory listing, generic advice, or README
 summary. The fillable version is `../assets/AGENTS.template.md`.
+
+`Gotchas` holds one imperative line per entry. Its supporting evidence, meaning dates, commit identifiers,
+tool-version measurements, and superseded arrangements, goes to a findings file instead, indexed by symptom.
+`Findings` and `Pointers` route differently and both can apply: `Pointers` sends an agent to a scope before it
+starts work, while `Findings` sends it to evidence after something has already gone wrong.
 
 ## Package File
 
@@ -60,6 +73,9 @@ beside it and an imperative pointer in the root file.
 
 - `<package-specific failure mode>`
 ```
+
+The same split applies here. A package file inherits the root file's findings directory rather than starting
+its own.
 
 ## llms.txt
 

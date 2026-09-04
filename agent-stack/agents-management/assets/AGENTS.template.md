@@ -46,10 +46,29 @@ that a diff shows whether it was followed.>
 
 ## Gotchas
 
-\<The highest-value section. Each line should be something that cost someone a debugging session: generated
-files, ordering dependencies, things that fail silently, restart requirements.>
+\<One imperative line per gotcha: what to do, and the symptom that reveals it. Generated files, ordering
+dependencies, silent failures, restart requirements.
 
-- `<non-obvious behavior>`: `<what it looks like when it bites>`
+Keep the evidence out of this file. No dates, commit identifiers, tool-version measurements, or accounts of
+arrangements that have since been replaced. That material is read once a symptom appears, so it belongs in a
+findings file below rather than in every session's context. Relocate it; never delete it to save room.>
+
+- `<what to do, or never do>`: `<what it looks like when it bites>`
+
+## Findings
+
+\<Delete unless a gotcha above has evidence worth keeping. Otherwise put one file per subject under a
+directory this repository chooses, each holding the measurements, superseded arrangements, and reasoning
+behind the rules above.
+
+Index them by symptom rather than by subject. An agent that recognizes what it is looking at will open the
+file; an agent reading a list of topics has no reason to.>
+
+Open the matching file when the symptom appears. Every rule above stands without it; these hold the evidence.
+
+| Symptom                                 | Read                          |
+| --------------------------------------- | ----------------------------- |
+| `<what the agent observes going wrong>` | `<path to the findings file>` |
 
 ## Pointers
 

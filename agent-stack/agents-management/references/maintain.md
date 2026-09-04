@@ -40,6 +40,17 @@ Retain content that provides a verified constraint, rationale, ordering dependen
 mode, or source-of-truth distinction. Remove generic advice, obvious code descriptions, runner transcriptions,
 review-date theatre, and duplicated README content.
 
+Retaining content decides only that it survives, not where it lives. Split each retained item by the moment the
+agent needs it. An obligation it must satisfy before it can recognize that anything is wrong stays in the
+instruction file as one imperative line. The evidence behind that obligation, meaning dates, commit
+identifiers, tool-version measurements, reproduction accounts, and the arrangements that failed before this
+one, moves to a findings file indexed by symptom. Both halves are preserved; only their loading cost differs.
+
+This split is the correction for the common failure of an instruction file that has grown into an incident log.
+Each incident entered it as a justified addition, so no per-addition test rejects any of them, and the file
+reaches a size at which its own rules stop being read. When an update would append another incident, relocate
+the evidence and leave the rule.
+
 Treat autonomy grants, unconditional completion demands, and self-approval of risky actions as high-risk
 findings. An instruction file cannot replace a required user decision. Treat safety prose without a real gate
 as an enforcement gap, then identify the appropriate hook, permission, or continuous-integration boundary.
@@ -56,3 +67,13 @@ only when no change was expected.
 Verify effective client coverage, link resolution, command and path currency, pointer targets, generated
 boundaries, and placeholder removal. Test loading in a fresh or reload-capable client session when the
 topology changed and a suitable client is available. Report what was not exercised.
+
+Check the resulting file as a whole, not only the lines the edit touched:
+
+- Runnable commands appear early enough to be found, and carry the flags and constraints their runner does not
+  state.
+- Boundaries are collected rather than scattered, so an agent can find what it must never do without reading
+  the file end to end.
+- The file is no longer than before the edit, or the delivery names what moved and where it went.
+- No symptom index entry points at a missing file, and no findings file has been orphaned by a rule that was
+  removed.

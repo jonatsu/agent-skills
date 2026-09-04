@@ -41,7 +41,10 @@ precedence, includes, nesting, reload behavior, or symlink support. Load only th
 
 - Establish the target agents and repository boundary before judging topology.
 - Preserve useful non-obvious knowledge, rationale, ordering constraints, failure modes, and generated-content
-  boundaries.
+  boundaries, routed by when the agent needs them. An obligation the agent must satisfy before it can know it
+  has a problem belongs in the instruction file, as one imperative line. Evidence needed only after a symptom
+  appears belongs in a separate findings file that a symptom index points to. Never delete preserved evidence
+  to shorten an instruction file; relocate it.
 - Never overwrite or automatically reconcile two divergent real context files. Show their unique and
   conflicting content, explain which clients receive each file, and ask which content should survive.
 - Reuse authorization in the user's request. Ask only when an unresolved choice changes topology, public
@@ -56,6 +59,12 @@ For additions, apply two tests. The **cache test** asks whether the agent can re
 the repository or authoritative runtime help. The **behavior test** asks whether the instruction changes
 likely agent behavior. Retain a derivable fact only when it adds a reason, constraint, ordering dependency, or
 failure mode that the source does not show.
+
+Those two tests judge a single addition. The **accretion test** judges the file: an edit that adds an
+obligation must leave the instruction file no longer than it found it, or state what it relocated and where.
+Every passage in a bloated instruction file passed the other two tests on the day it arrived, so neither one
+can detect accumulation. A file that only grows becomes an incident log whose rules compete for attention with
+narrative that no longer changes any decision.
 
 ## Completion
 
