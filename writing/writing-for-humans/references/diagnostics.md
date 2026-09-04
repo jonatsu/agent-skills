@@ -3,6 +3,10 @@
 Use this reference for a long draft, a difficult diagnosis, or the final AI-mark cleanup scan. It is a
 diagnostic aid, not a blocklist.
 
+The category headings below apply to prose in any language. The example strings under them are English. For
+another language, match the category and derive its signatures from the text itself; a translated English
+example is not that language's tell, and the absence of the English strings does not make a passage clean.
+
 Remove definitive production residue when found. Treat ordinary stylistic features as weak signals that need
 supporting evidence from the surrounding passage.
 

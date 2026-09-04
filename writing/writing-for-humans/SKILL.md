@@ -1,6 +1,6 @@
 ---
 name: writing-for-humans
-description: "Write, edit, or review English technical prose; preserve claims and voice, match an established style, and actively remove AI-writing artifacts. Use for documentation, reports, issues, commits, and user-facing errors. Not for document structure, fiction, poetry, marketing, or ordinary chat."
+description: "Write, edit, or review technical prose at the sentence and paragraph level in any language, defaulting to English; preserve claims and the author's voice, and actively remove AI-writing artifacts. Use for documentation, reports, issues, commits, agent instructions, and user-facing errors. Not for document structure or house style, which is writing-documentation, and not for fiction, poetry, marketing, or ordinary chat."
 license: MIT AND CC-BY-4.0
 metadata:
   author: Joonas Onatsu
@@ -8,54 +8,67 @@ metadata:
 
 # Writing for Humans
 
-Use this skill for prose-level decisions in English technical writing. Use `technical-writing` as well when the
-task includes document purpose, organization, examples, or document type.
+Use this skill for prose-level decisions in technical writing. Its unit is the sentence and the paragraph, and
+it applies to any prose: documentation, reports, issues, commits, agent instructions, rule files, and
+user-facing errors.
+
+Write in the language the request, the surrounding text, or the audience establishes. English is the default
+when nothing establishes another, and it is the language this skill's examples and diagnostics are drawn from.
+
+Most rules here are language-general: one term per concept, one topic per paragraph, lead with the point,
+preserve the claim, cut what carries no meaning. Some are English conventions, and they are marked where they
+appear. **In another language, that language's own conventions govern typography, punctuation, capitalization,
+heading style, and register.** Do not carry an English convention into a language that does not share it, and
+say which convention you applied when the choice is not obvious.
+
+Use `writing-documentation` as well when the task includes a document's purpose, organization, examples,
+document type, or the house style of a documentation set it joins.
 
 This skill does not govern fiction, poetry, marketing, narrative nonfiction, quotations, or ordinary chat.
 
 ## Establish the Constraints
 
-Identify the audience, artifact, repository conventions, and requested voice before drafting or editing.
-Introduce concepts before relying on them, and define unfamiliar terms and abbreviations before use.
+Identify the artifact, repository conventions, and requested voice before drafting or editing. Introduce
+concepts before relying on them, and define unfamiliar terms and abbreviations before use.
 
 When editing supplied prose, preserve every supported claim, distinction, qualification, and normative
 requirement. Do not invent facts, actors, dates, numbers, causes, citations, opinions, or personality.
 
-Flag unsupported assertions, ambiguity, missing prerequisites, and factual gaps. Do not silently remove them.
+Flag unsupported assertions and ambiguity rather than resolving them silently.
 
 When editing a file, change prose only. Preserve code blocks, inline code, frontmatter, link targets, table
 syntax, identifiers, commands, and quotations unless the user explicitly includes them in scope. AI-writing
 artifacts are production residue and are the exception: remove confirmed marks without changing the surrounding
 content.
 
-## Preserve Voice and Established Style
+## Preserve the Author's Voice
 
 Use a supplied writing sample as the voice target. Preserve its appropriate formality, person, terminology,
 and degree of personality. Do not flatten a distinctive voice or introduce a viewpoint, humor, or familiarity
 the source does not contain.
 
-For a requested author or house style, use representative exemplars from the same document type. One exemplar
-supports voice matching; require two or more before inferring repeatable conventions.
+Voice preservation constrains editing; it does not protect everything in the source. AI-writing artifacts are
+production residue rather than voice, so artifact removal outranks voice preservation wherever the two
+conflict. Rewrite the passage and keep the author's register; do not defend an artifact as a stylistic choice.
 
-Record a compact style profile:
-
-- the covered document types and audience;
-- repeated structure, register, formatting, and terminology conventions;
-- exemplar evidence for each convention; and
-- aspects the profile does not govern.
-
-Apply only supported conventions. Repository requirements outrank the profile, and the source author's voice
-governs wherever the profile is silent.
+Matching the conventions of an existing documentation set is a document-level job. Use `writing-documentation`
+for that.
 
 ## Write Clear Technical Prose
 
-Prefer active voice when the actor is known and relevant. Use concrete, specific terms and plain English.
+Prefer active voice when the actor is known and relevant. Use concrete, specific terms and plain language.
 Remove needless words, hedges, clichés, prefabricated phrases, and empty promotion.
 
 Use one consistent term per concept. Do not rotate synonyms or redefine abbreviations.
 
-State affirmative claims directly. Avoid rhetorical forms such as “X, not Y” and “not just X, but Y.” Do not
-use em or en dashes unless a language construct requires them.
+State affirmative claims directly. Avoid rhetorical forms such as “X, not Y” and “not just X, but Y,” and
+their equivalents in the target language.
+
+Do not use em or en dashes. The only exception is a construct whose grammar requires the character itself,
+such as an en dash in a numeric or date range. A dash that joins, separates, or dramatizes two statements is
+not such a construct: name the relation or write two sentences. This holds in every language. Where a language
+uses a dash for a purpose English does not, such as marking dialogue, that use is a required construct and is
+permitted; wanting the effect is not.
 
 In sentences and paragraphs:
 
@@ -74,16 +87,18 @@ sentences that merely restate the paragraph.
 
 ## Apply Artifact-Specific Rules
 
-For requests, handoffs, operational notices, executive summaries, and decision summaries, lead with the
-action, result, decision, or state. Name the owner and deadline when relevant.
+For requests, handoffs, and short operational messages, lead with the action, result, decision, or state.
+Name the owner and deadline when relevant. `writing-documentation` carries the same rule for decision records,
+change notes, and executive summaries.
 
-Follow the repository's heading convention. Otherwise, use title case.
+Follow the repository's heading convention and Markdown line-length rules. When a repository sets neither,
+wrap prose at phrase or clause boundaries without orphaning a sentence's final word, and use title case for
+English headings. Title case is an English convention: in another language use that language's heading
+convention, which is usually sentence case.
 
-Follow the repository's Markdown line-length rules. Otherwise, wrap prose near 120 characters at phrase or
-clause boundaries without orphaning a sentence's final word.
-
-In formal documents, prefer full forms such as “it is,” “does not,” and “cannot.” Terse commits and error
-messages may use shorter forms.
+In formal English documents, prefer full forms such as “it is,” “does not,” and “cannot.” Terse commits and
+error messages may use shorter forms. In another language, apply the equivalent register distinction that
+language draws between formal and terse writing rather than looking for contractions it may not have.
 
 Formal factual claims require verifiable evidence or citations. Label unverifiable claims as unverified and
 disclose them when delivering the work.
@@ -111,8 +126,16 @@ application metadata.
 Treat weak signals such as one dash, adverb, transition, or rhetorical question as prompts to inspect the
 surrounding passage. A weak signal alone does not establish an AI-writing artifact.
 
-Load `references/diagnostics.md` for a long draft, difficult diagnosis, or final cleanup scan. Use its patterns
-as evidence, not as a mechanical word blocklist.
+**The categories of AI-writing artifact carry across languages; the words that signal them do not.** Chat
+residue, meta-commentary, empty promotion, canned transitions, manufactured revelation, and false agency all
+appear in any language a model generates. Their lexical signatures are specific to each one, and a model's
+tells in one language are not translations of its tells in another. Outside English, diagnose by category and
+derive the signatures from the text in front of you. Do not translate an English tell and search for the
+result, and do not report a passage as clean merely because the English markers are absent.
+
+Load `references/diagnostics.md` for a long draft, difficult diagnosis, or final cleanup scan. Its categories
+apply to any language; its example strings are English. Use its patterns as evidence, not as a mechanical word
+blocklist.
 
 ## Deliver the Result
 

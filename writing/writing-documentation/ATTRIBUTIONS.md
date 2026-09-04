@@ -2,10 +2,10 @@
 
 ## Current skill
 
-- Skill: `technical-writing`
+- Skill: `writing-documentation`
 - Current author: Joonas Onatsu
 - Current license: MIT
-- Status: adapted from upstream and materially narrowed
+- Status: adapted from upstream and materially narrowed; renamed from `technical-writing` on 2026-09-04
 
 ## Original authors and sources
 
@@ -48,13 +48,24 @@ license grant.
 - [awesomekoder technical_writer](https://github.com/awesomekoder/awesome-llm-apps/blob/1fcfb4fab8e20f8b543189059de2fac6d0e71720/awesome_agent_skills/writing/technical_writer.md)
 - [Mindrally technical-writing](https://github.com/Mindrally/skills/blob/main/technical-writing/SKILL.md)
 
+## House-Style Section, Received From `writing-for-humans`
+
+The "Match an Established House Style" section moved here from `writing-for-humans` on 2026-09-04, when the
+boundary between the two skills was redrawn: that skill preserves an individual author's voice at the sentence
+level, and this one owns conventions repeated across a documentation set. The section's exemplar-evidence
+approach was informed by
+[mohitagw15856/pm-claude-skills house-style-enforcer](https://github.com/mohitagw15856/pm-claude-skills/blob/main/skills/house-style-enforcer/SKILL.md).
+No text was copied or adapted. The source license was not established during review, so this record does not
+claim a license grant.
+
 Material changes from peizh/tech-writing include:
 
 - Folded a short documentation-type taxonomy into the "choose the right
   document shape" workflow step.
 - Removed generic prose rules, rewrite heuristics, and style guardrails. The
   `writing-for-humans` skill governs prose-level drafting, editing, and review;
-  this skill retains document-level decisions.
+  this skill retains document-level decisions, including the house style of a
+  documentation set.
 - Dropped the Chinese-technical-prose reference branch.
 
 ## Upstream license (MIT, both sources)
