@@ -75,35 +75,24 @@ Read the focused source before acting:
 
 ## Verify Moves and Removals Explicitly
 
-**A user-level `diff.relative = true` silently disabled the hook entirely, for every kind of change.** The hook
-pins its diff with `git -C "$SCRIPT_DIR"`, and `SCRIPT_DIR` is `scripts/` rather than the repository root, so
-that setting made `git diff --name-only` report only paths under `scripts/` and relative to it. No changed path
-could start with `skills/`, so no scope was ever selected: the hook exited 0 in 0.01s and pre-commit reported
-`Passed`. Diagnosed and fixed on 2026-09-04 by passing `--no-relative`; before that, every skill commit relied
-on someone running `./scripts/kasetto-deploy.sh` by hand. `git diff-tree` ignores `diff.relative`, so the
-root-commit branch was never affected. **The lesson generalizes past this one flag: a `-C` into a subdirectory
-plus root-relative pattern matching is a latent defect that any path-relative Git setting can trigger.**
+**Do not trust the post-commit redeploy hook to have deployed anything.** It reports `Passed` whether it
+selected a scope or not, so its success tells you nothing about the destinations. Verify by inspecting them.
 
-That failure also masks the rename case below — you cannot observe which side of a rename the hook sees while
-it is selecting nothing at all. Treat the rename findings as recorded on the dates given and re-measure before
-relying on them.
+The hook maps the commit's changed paths — `git diff --no-relative --name-only HEAD~1 HEAD` — onto Kasetto
+scopes. Only one row below has been observed since the hook was repaired on 2026-09-04, so treat the rest as
+what the code is meant to do rather than as measurements. Re-measure a row before relying on it.
 
-The post-commit hook maps changed paths with `git diff --name-only HEAD~1 HEAD`. Git rename detection normally
-reports only the destination of a 100% rename. A move from `skills/shared/` to `skills/archived/` therefore
-hides the source path, and an archive-only commit selects no shared deployment scope. This was reproduced on
-`84cd615` on 2026-08-27.
+| Change                                                            | Expected behavior                                          | Verified   |
+| ----------------------------------------------------------------- | ---------------------------------------------------------- | ---------- |
+| Edit, add, or delete within a deployed group                      | Selects that group                                         | 2026-09-04 |
+| Move between domains inside `shared/`                             | Selects all shared destinations                            | never      |
+| Move from `shared/` to `archived/` with no recognized config edit | Reported as selecting nothing                              | pre-fix    |
+| Move between deployment groups                                    | Reported as selecting the destination, possibly not source | pre-fix    |
+| Edit `kasetto/base.yaml`                                          | Selects Claude, OpenCode, Copilot, and Codex shared scopes | never      |
 
-An accompanying `skills/kasetto/base.yaml` edit does select all shared scopes. That happened on `ab8baac` on
-2026-09-02 when two domains were emptied. Do not rely on that incidental trigger: the generated lock rewrite
-was then rolled back when pre-commit restored already-dirty lock files.
-
-| Change                                                            | Hook behavior                                              |
-| ----------------------------------------------------------------- | ---------------------------------------------------------- |
-| Edit, add, or delete within a deployed group                      | Selects that group                                         |
-| Move between domains inside `shared/`                             | Selects all shared destinations                            |
-| Move from `shared/` to `archived/` with no recognized config edit | Silently selects nothing                                   |
-| Move between deployment groups                                    | Selects the destination but can miss the source            |
-| Edit `kasetto/base.yaml`                                          | Selects Claude, OpenCode, Copilot, and Codex shared scopes |
+The two `pre-fix` rows were reproduced on `84cd615` (2026-08-27) and around `ab8baac` (2026-09-02), both while
+the hook was selecting nothing for any change at all. Their stated cause — Git rename detection reporting only
+the destination of a 100% rename — is therefore unconfirmed. `TODO.md` tracks the re-measurement.
 
 Kasetto 3.8.0 does not prune a deployed directory when a source edit removes its last file. Reproduced on
 2026-09-02 by deleting every file under `chezmoi-dotfiles/references/`: redeployment reported the skill
@@ -120,5 +109,13 @@ After any move, archive, or removal:
 4. Run `just skills-sync` for the required lock-only follow-up commit.
 5. Run `just skills-deployed`; require zero drift, pending files, stray backups, and unresolved entries.
 
-The hook defect remains tracked in `TODO.md`. The candidate repair is `--no-renames` or `-M0` on the
-changed-path diff; do not apply that runtime change as unrelated cleanup.
+### Why the hook cannot be trusted on its exit status
+
+A user-level `diff.relative = true` disabled it completely, for every kind of change, until 2026-09-04. The
+hook pins its diff with `git -C "$SCRIPT_DIR"`, and `SCRIPT_DIR` is `scripts/` rather than the repository root,
+so that setting made `git diff --name-only` report only paths under `scripts/`, relative to it. No changed path
+could start with `skills/`, no scope was ever selected, and the hook exited 0 in 0.01s while pre-commit
+reported `Passed` — so every skill commit silently depended on someone running `./scripts/kasetto-deploy.sh` by
+hand. Repaired with `--no-relative`; `git diff-tree` ignores `diff.relative`, so the root-commit branch was
+never affected. **The lesson outlives this one flag: a `-C` into a subdirectory combined with root-relative
+pattern matching is a latent defect that any path-relative Git setting can trigger.**

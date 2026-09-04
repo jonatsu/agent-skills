@@ -51,6 +51,25 @@ setup exposed harness failures that should become deterministic preflight checks
   behavior. Do not count a harness failure as a model repetition or skill failure.
 - Add a preflight mode that proves the fixture and trace destinations are ready without invoking a model.
 
+## Prompt Optimizer Behavioral Evaluation
+
+The restored `prompt-optimizer` is statically `ready with risks`. Its workflow and fixtures derive from observed prompt,
+fixture, and harness failures, but the composed skill has not been exercised as a skill because the 2026-09-04 planning
+evaluation consumed most of the available weekly Codex allowance.
+
+When allowance and decision need justify it:
+
+- Run the seven package cases in Claude Code and Codex with the skill supplied explicitly. Require correct layer
+  classification before judging the proposed repair.
+- Compare the restored skill with no skill on denied candidate reads, future-turn leakage, and over-compliance. These
+  cases establish whether it prevents prompt edits the base model would otherwise make.
+- Test discovery without naming the skill: observed prompt failure, prompt-revision comparison, new-prompt authoring,
+  static prompt review, repository instruction maintenance, and Agent Skill authoring.
+- Inspect traces for preflight, fixture-before-prompt ordering, one-hypothesis repair, and budget stops. A correct final
+  diff does not pass if the trace edited before preserving the failure.
+- Rerun the closest boundary after any repair. Do not expand to a full client matrix or repetitions until a first run
+  measures token and allowance use.
+
 ## OpenCode Reflect Ownership
 
 Keep `reflect` under `claude/` while `oh-my-opencode-slim` installs and replaces OpenCode's separate copy.
@@ -125,26 +144,28 @@ Open work:
 - Locate the Copilot CLI configuration file and record its path before setting anything there.
 - Check OpenCode and Codex for equivalent switches. Neither was scanned.
 
-## Detect Renames Out of Deployed Groups
+## Re-Measure Rename Detection Out of Deployed Groups
 
-Fix `scripts/sync-skills-kasetto.sh` so a 100% rename out of `skills/shared/`, `skills/claude/`, or
-`skills/opencode/` still selects the source scope. The current `git diff --name-only HEAD~1 HEAD` can report
-only the destination path, leaving an orphaned deployed copy while the hook exits successfully. `--no-renames`
-or `-M0` is the candidate change.
+**Establish whether this defect exists before fixing it.** The claim was that a 100% rename out of
+`skills/shared/`, `skills/claude/`, or `skills/opencode/` fails to select the source scope, because Git rename
+detection reports only the destination path — leaving an orphaned deployed copy while the hook exits
+successfully. It was reproduced on `84cd615` on 2026-08-27.
 
-Verify the fix in a scratch commit for these cases:
+That reproduction is not evidence. A second defect in the same diff — `git -C "$SCRIPT_DIR"` pointing at
+`scripts/` while `~/.gitconfig` sets `diff.relative = true` — meant the hook selected no scope for **any**
+change, so nothing about rename handling was observable. Fixed on 2026-09-04 with `--no-relative`. The rename
+case may have failed for that reason alone.
+
+Measure in a scratch commit for these cases, which remain the right ones:
 
 - `shared/` to `archived/`, with other shared skills remaining;
 - `shared/` to another deployed group;
 - an archival that also removes an emptied domain from `kasetto/base.yaml`;
 - all four shared destinations: Claude, OpenCode, Copilot, and Codex.
 
-Keep the manual deployment and destination checks in `AGENTS.md` until this is implemented and measured.
-
-**Re-measure before starting.** A separate defect in the same diff — `git -C "$SCRIPT_DIR"` pointing at
-`scripts/` while `diff.relative = true` is set in `~/.gitconfig` — meant the hook selected no scope for any
-change at all, so the rename behaviour recorded above was never observable. Fixed on 2026-09-04 with
-`--no-relative`. Confirm the rename case still fails before writing a second fix for it.
+If a defect survives, `--no-renames` or `-M0` on the changed-path diff is one candidate repair, not a settled
+one; choose it against what the measurement actually shows. Keep the manual deployment and destination checks
+in `AGENTS.md` either way — they guard the hook's uninformative exit status, not this defect specifically.
 
 ## Two-Tier Memory Scoping
 
