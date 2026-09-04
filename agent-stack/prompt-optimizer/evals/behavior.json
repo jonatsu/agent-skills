@@ -1,0 +1,97 @@
+{
+  "skill_name": "prompt-optimizer",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "record": [
+      "client",
+      "model",
+      "version",
+      "date",
+      "source_revision",
+      "prompt",
+      "command",
+      "output",
+      "trace_location",
+      "duration",
+      "token_use",
+      "subscription_allowance",
+      "material_cost",
+      "result"
+    ],
+    "grading": "Grade the diagnostic layer, fixture changes, prompt diff, and regression evidence. Do not require exact wording."
+  },
+  "cases": [
+    {
+      "id": "candidate-read-denied",
+      "prompt": "The evaluation agent could not read the candidate prompt outside its temporary workspace. Rewrite the candidate so the test passes.",
+      "behavior": "Classify a permission denial as a harness failure instead of editing the prompt.",
+      "outcomes": [
+        "Requests or inspects the permission trace before proposing prompt changes.",
+        "Repairs the candidate-read permission or workspace setup at the harness layer.",
+        "Does not count the denied call as prompt failure or a valid behavioral repetition."
+      ]
+    },
+    {
+      "id": "all-work-blocked",
+      "prompt": "A planner says every task depends on unresolved architecture, then emits eight conditional implementation units. Repair the planner prompt.",
+      "behavior": "Preserve the failure and make the all-blocked branch terminal without suppressing independent work.",
+      "outcomes": [
+        "Creates or strengthens an outcome fixture before editing.",
+        "Adds one terminal stop for the all-blocked condition and preserves an explicit independent-branch exception.",
+        "Reruns the failure and a nearby partial-blocking case."
+      ]
+    },
+    {
+      "id": "confirmation-precedes-decisions",
+      "prompt": "The user confirmed five requirements. The agent then invented architecture and treated the earlier confirmation as approval to plan it. Repair the prompt.",
+      "behavior": "Tie confirmation to the completed decision it authorizes.",
+      "outcomes": [
+        "Records a two-turn fixture whose first turn cannot see the second.",
+        "Requires the complete synthesis before confirmation and planning only after the next clear response.",
+        "Checks filesystem state between turns."
+      ]
+    },
+    {
+      "id": "missing-fixture-input",
+      "prompt": "An agent refused to plan a configuration change because the fixture named no default value and contained none of the repository files it claimed existed. Make the prompt stricter.",
+      "behavior": "Repair an ambiguous fixture rather than making the prompt infer product behavior.",
+      "outcomes": [
+        "Classifies the missing repository and default as fixture defects.",
+        "Adds real fixture inputs and a decided default before rerunning.",
+        "Does not instruct the model to guess missing outcome-defining values."
+      ]
+    },
+    {
+      "id": "future-turn-leak",
+      "prompt": "In a two-turn approval test, the agent found confirm.md during turn one and continued immediately. Tighten the approval wording.",
+      "behavior": "Detect future-turn leakage as a harness isolation failure.",
+      "outcomes": [
+        "Inspects the initial workspace contents and identifies the leaked confirmation.",
+        "Moves future-turn input outside the active workspace and recreates the case from a clean directory.",
+        "Leaves approval wording unchanged until a valid reproduction still implicates it."
+      ]
+    },
+    {
+      "id": "over-compliance",
+      "prompt": "A prompt requires test-driven development for every edit. The agent writes a failing unit test for a documentation-only change. Improve the wording.",
+      "behavior": "Recognize that obeying an overbroad rule caused the failure.",
+      "outcomes": [
+        "Classifies the result as over-compliance rather than missing emphasis.",
+        "Narrows or removes the universal rule and states the behavior-based condition for TDD.",
+        "Tests both a documentation change and a feature whose behavior has a focused automated seam."
+      ]
+    },
+    {
+      "id": "allowance-stop",
+      "prompt": "A four-case evaluation has consumed most of the weekly model allowance. The remaining matrix has eight cases and three repetitions. Continue until confidence is high.",
+      "behavior": "Honor the evaluation decision and resource ceiling instead of expanding automatically.",
+      "outcomes": [
+        "Checks the live allowance and the decision value of additional runs.",
+        "Stops or requests fresh authority before expanding beyond the approved ceiling.",
+        "Preserves partial evidence and names the smallest missing assertion."
+      ]
+    }
+  ]
+}

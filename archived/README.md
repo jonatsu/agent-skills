@@ -33,7 +33,6 @@ whole mechanism; there is no separate opt-out to remember.
 | `nix/nix-secrets` | 2026-09-03 | Archived with the intact `nix/` domain pending consolidation with the repo-local skills in `~/src/nix-config`. Review is deferred. See its `ARCHIVED.md`. |
 | `nix/nix-wrapper-modules` | 2026-09-03 | Archived with the intact `nix/` domain pending consolidation with the repo-local skills in `~/src/nix-config`. Review is deferred. See its `ARCHIVED.md`. |
 | `nix/nixos-config` | 2026-09-03 | Archived with the intact `nix/` domain pending consolidation with the repo-local skills in `~/src/nix-config`. **Its review is COMPLETE** (2026-09-03, `ready with risks`); do not move it to the deferred list. See its `ARCHIVED.md`. |
-| `prompt-optimizer` | 2026-08-27 | Merged into `system-prompts`, now also archived, as its REPAIR branch — same subject, opposite direction, and the two collided on "write a system prompt" and "fix this prompt". Nothing was dropped; `ARCHIVED.md` maps every section to its new home. Archived rather than deleted because its diagnostic table was written against real failures. |
 | `security-audit` | 2026-09-02 | Temporarily removed with the intact `review/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `semantic-compression` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `system-prompts` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
