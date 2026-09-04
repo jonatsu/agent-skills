@@ -1,13 +1,16 @@
 # Provenance and Licensing
 
-Every skill authored under this workflow records:
+This workflow requires every authored skill to record:
 
 - the current author in `metadata.author`; and
 - the applicable license in the Agent Skills top-level `license` field.
 
+These are conservative authoring policies, not claims about the minimum the law requires. Determine legal
+obligations from the exact source license, the relationship to the source, and the intended distribution.
+
 Use the target repository's license for original work. Use the upstream license for derived work unless its
 terms permit and the author deliberately applies a compatible alternative. Verify licenses from the license
-text at a pinned upstream revision; repository metadata alone is insufficient evidence.
+text at a pinned upstream revision. Repository metadata alone is insufficient evidence.
 
 ## Classify Every Source
 
@@ -22,13 +25,14 @@ Classify each source read during authoring by what changed after reading it:
 
 Reading a source creates an idea-influence obligation when it changes the skill's guidance, workflow,
 structure, examples, terminology, or failure modes. This trigger applies when every sentence and example is
-written from scratch. Do not classify the result as uninfluenced merely because no expression was copied.
+written from scratch. This is a conservative traceability policy. Do not present it as a universal legal rule.
 
 For idea influence, `ATTRIBUTIONS.md` names the original author, project and exact path, pinned commit or tag,
 the ideas retained, and the fact that the expression is independent. Record the source's license status, but
 do not claim that its license governs independently written expression.
 
-For copied, adapted, translated, or vendored material, the package also ships:
+For copied, adapted, translated, or vendored material, determine the source license's actual obligations. This
+workflow also requires the package to ship:
 
 - `LICENSE.upstream` containing the upstream license text verbatim; and
 - `NOTICE.upstream` when the upstream project supplies one or its license requires preservation.

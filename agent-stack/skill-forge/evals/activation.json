@@ -1,0 +1,98 @@
+{
+  "skill_name": "skill-forge",
+  "mode": "client-selected activation",
+  "run_contract": {
+    "supply_skill_path": false,
+    "execution": "Run only during an authorized full evaluation; review lite starts no model runs.",
+    "observe": "Whether the client selects skill-forge through its verified discovery mechanism.",
+    "record": [
+      "client",
+      "client_version",
+      "model",
+      "date",
+      "source_revision",
+      "command",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "subscription_allowance",
+      "material_cost",
+      "harness_result",
+      "activation_result"
+    ],
+    "run_ceiling": "Before execution, obtain a user-approved ceiling for clients, cases, repetitions, and model allowance."
+  },
+  "cases": [
+    {
+      "id": "create-from-completed-work",
+      "prompt": "Turn the workflow we just completed into a reusable Agent Skill and preserve the corrections I made.",
+      "should_trigger": true,
+      "reason": "The user asks to create a skill from completed work."
+    },
+    {
+      "id": "restructure-skill-package",
+      "prompt": "Restructure this SKILL.md so the shared workflow stays concise and provider-specific details load only when needed.",
+      "should_trigger": true,
+      "reason": "The user asks to change skill instructions and bundled-resource routing."
+    },
+    {
+      "id": "repair-cross-client-portability",
+      "prompt": "This Agent Skill works in Claude Code but assumes Claude-specific commands. Make its core usable by Codex and OpenCode too.",
+      "should_trigger": true,
+      "reason": "The user asks to repair a skill's client portability."
+    },
+    {
+      "id": "repair-skill-discovery",
+      "prompt": "Fix this Agent Skill description; intended requests do not select it, while unrelated requests do.",
+      "should_trigger": true,
+      "reason": "The user asks to repair a skill's routing metadata."
+    },
+    {
+      "id": "record-skill-provenance",
+      "prompt": "We used an idea from this Apache-2.0 Agent Skill. Update our independently written skill with accurate provenance.",
+      "should_trigger": true,
+      "reason": "The user asks to update provenance within a skill package."
+    },
+    {
+      "id": "near-miss-readiness-review",
+      "prompt": "Review this finished Agent Skill and tell me whether it is ready for routine deployment.",
+      "should_trigger": false,
+      "reason": "A finished-skill readiness review belongs to the independent review process."
+    },
+    {
+      "id": "near-miss-compare-revisions",
+      "prompt": "Compare these two Agent Skill revisions and determine which performs better across models.",
+      "should_trigger": false,
+      "reason": "Comparative evaluation belongs to the independent review process."
+    },
+    {
+      "id": "near-miss-prompt-repair",
+      "prompt": "This system prompt makes the model ignore valid requests. Diagnose the failures and repair the prompt.",
+      "should_trigger": false,
+      "reason": "The artifact is an ordinary LLM prompt rather than an Agent Skill."
+    },
+    {
+      "id": "near-miss-skill-installation",
+      "prompt": "Install the spreadsheet skill from this GitHub repository into my agent configuration.",
+      "should_trigger": false,
+      "reason": "Installing a third-party skill is package management rather than authoring."
+    },
+    {
+      "id": "near-miss-global-instructions",
+      "prompt": "Add a global rule that every coding task must run the repository formatter before completion.",
+      "should_trigger": false,
+      "reason": "The user asks to maintain always-loaded instructions, not create a skill."
+    },
+    {
+      "id": "ambiguous-skill-help",
+      "prompt": "Can you help me with this Agent Skill?",
+      "expected_behavior": [
+        "activate",
+        "clarify whether the user wants authoring or independent review"
+      ],
+      "reason": "The request names a skill but does not establish the needed job."
+    }
+  ]
+}

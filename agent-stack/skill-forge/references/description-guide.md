@@ -1,7 +1,7 @@
 # Skill Descriptions
 
-The description is an always-loaded routing pointer. It must satisfy the Agent Skills specification by stating
-what the skill does and when to use it, while remaining discriminating enough to avoid unrelated tasks.
+The description is the specification-defined routing pointer. It states what the skill does and when to use it.
+Clients may preload, rank, display, or ignore it differently, so verify each declared client's behavior.
 
 ## Method
 
@@ -14,8 +14,11 @@ what the skill does and when to use it, while remaining discriminating enough to
 5. Add an exclusion only for a nearby skill or task that could plausibly be misrouted.
 6. Remove implementation details and instructions that matter only after activation.
 
-Distinct branches earn separate trigger language. Synonyms for the same branch usually do not. Lists of every
-related verb and noun consume permanent context, blur boundaries, and attract false positives.
+Distinct branches earn separate trigger language. Synonyms for the same branch usually do not. Long lists blur
+boundaries and attract false positives. They also consume shared routing context in clients that preload descriptions.
+
+Record whether each target supports automatic selection, explicit invocation, or both. An automatic path needs
+realistic user intent. An explicit path needs the invocation form that the client actually accepts.
 
 ## Form and Length
 
@@ -28,10 +31,9 @@ wrapped prose; a description cannot wrap while it stays an inline scalar, and Ma
 frontmatter as non-content and never inspects it. The Agent Skills specification caps a description at 1024
 characters, which the reference validator enforces.
 
-Staying under the cap is not the same as being affordable. Every description in a collection is loaded for
-every request, so its length is charged against the discovery context that all other skills share. Spend it on
-distinct branches and necessary exclusions; a repository MAY set a tighter budget than the specification and
-enforce it separately.
+Staying under the cap is not the same as being affordable. Where a client preloads every description, the
+collection pays that cost on every request. Spend it on distinct branches and necessary exclusions. A repository
+MAY set a tighter budget than the specification and enforce it separately.
 
 ```yaml
 # Too vague
@@ -58,9 +60,10 @@ description: Build and maintain Just command-runner files for repeatable project
 - Every trigger phrase represents a distinct supported branch.
 - A representative unrelated request does not appear to match.
 - A request phrased by user outcome can activate the skill without requiring the tool or artifact name.
+- Every declared client has a verified automatic or explicit path for intended use.
 - Specialized names carry enough context for routing without unnecessary definitions.
 - The body contains no routing guidance that arrived too late to affect activation.
 - The value meets the current Agent Skills specification.
 
-Static wording checks do not establish activation. Read [testing-guide.md](testing-guide.md) when creating or
-repairing discovery behavior, and test through the target client's actual skill-selection mechanism.
+Static wording checks do not establish activation. Read [testing-guide.md](testing-guide.md) to prepare
+author-side discovery cases. Use the target client's actual mechanism only during an authorized full evaluation.

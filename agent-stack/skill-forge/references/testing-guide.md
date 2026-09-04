@@ -1,89 +1,87 @@
-# Behavioral Evaluation
+# Author-Side Skill Testing and Review Lite
 
-Evaluation answers whether a skill improves agent behavior, rather than whether its Markdown looks complete.
-Scale the work to the change and the uncertainty.
+Test whether the draft executes its intended paths before independent review. Then perform review lite by
+default. These checks support provisional use but do not establish comparative value.
 
-## When Evaluation Pays
+## Define the Cases
 
-Behavioral evaluation is especially useful for:
+Start with the smallest set that exercises the draft's important decisions. Record:
 
-- new skills;
-- substantial rewrites;
-- unreliable triggering;
-- repeated workflow failures;
-- skills deployed across materially different model classes; and
-- instructions whose benefit is uncertain relative to their context cost.
+- a realistic request and required inputs;
+- the behavior under test;
+- observable success conditions;
+- consequential failure paths;
+- the target client and relevant environment; and
+- the output, result, and known limits.
 
-A focused correction usually needs only a regression case for the changed behavior and nearby negative cases.
+A focused update usually needs the changed behavior and its nearest failure boundary. Preserve cases that an
+independent review can reuse.
 
-## Evaluation Shape
+## Preflight Without a Model
 
-Record a realistic request, required inputs, observable success conditions, model or agent used, date, and
-result. Prefer outcome checks over expected wording or heading names.
+Run this preflight before review lite. Repeat it before a later model-based test when the package or fixture changed:
 
-When useful, run the same case without the skill to establish what guidance the model actually lacks. A
-baseline is most valuable before writing a new skill, but it is a recommendation rather than a delivery gate.
+1. Run the specification and applicable policy validators.
+2. Confirm the candidate and every promised resource are readable.
+3. Run advertised commands and representative script failure paths.
+4. Use safe temporary inputs and outputs for stateful script checks.
 
-Test the dimensions relevant to the change:
+A preflight failure is not skill behavior. Repair the package or fixture before starting the test.
 
-- **Discovery:** representative positive, negative, and ambiguous requests.
-- **Behavior:** successful outcomes, consequential edge cases, and recovery from expected failures.
-- **Comparison:** whether the skill improves correctness, consistency, effort, or user control over the
-  baseline.
-- **Portability:** supported environments and deployed model classes where differences could change behavior.
-- **Claims:** assertions about external tools exercised against an authoritative source or real tool version.
+## Walk Cases Heuristically
 
-Preserve cases that catch likely regressions. Report untested environments or model classes instead of
-implying complete coverage.
+Trace each representative request through the package without making a model call. Check whether the main file
+routes every required decision and resource before its point of use. Inspect outcomes instead of exact wording
+or heading names.
 
-## Evaluate Discovery
+Use deterministic checks for files, schemas, calculations, and other mechanical facts. Use human inspection
+for coherence, usefulness, unstated decisions, and unforeseen defects.
 
-Test discovery through a client where the agent chooses among registered skills. Do not provide the target
-skill path or instruct the agent to load it. Observe whether the client actually loads `SKILL.md`; the final
-answer alone does not prove activation.
+If earlier real use produced a trace, inspect it. A final artifact can hide ignored instructions, unnecessary
+work, tool failures, or unauthorized writes.
+
+## Prepare Discovery Cases When Routing Changed
+
+Prepare cases for a client where the agent chooses among registered skills. The later full evaluation must not
+provide the target skill path or instruct the agent to load it. Prefer an observable load signal when the
+client exposes one.
 
 Use realistic positive requests, close negative requests, and ambiguous cases. Positive cases should include
 requests stated by outcome without the skill's exact terminology. Negative cases should share nearby terms or
 artifacts while requiring another capability.
 
-Repeat runs when nondeterministic activation could affect the decision and report raw activation counts. For
-systematic description optimization, start near the official recommendation of 8–10 positive and 8–10
-negative queries with three runs each. Keep focused repairs proportional by retaining the failed case and
-nearby positive and negative regressions.
+Some clients expose no trustworthy load signal. Record that limitation for independent behavioral review. Do
+not infer non-activation from the final answer alone.
 
-For repeated description optimization, keep a fixed training and validation split with similar positive and
-negative proportions. Use training failures to revise the description, keep validation results out of the
-revision process, and select the iteration with the best validation result. Finish with fresh cases that did
-not influence any revision.
+## Review Lite and Handoff
 
-Generalize from failure categories. Do not copy words from individual prompts into the description merely to
-make those cases pass. If several incremental revisions stop improving results, try a structurally different
-description or reassess whether cases are realistic and correctly labeled.
+### Perform Review Lite by Default
 
-## Run and Grade Output Evaluations
+Review the settled package heuristically without starting subagents or model evaluations. Inspect:
 
-Start with two or three realistic cases. Give each case a prompt, optional inputs, and a human-readable
-expected result. Include a consequential boundary or ambiguous case.
+- whether one coherent job owns every instruction and resource;
+- whether the description covers intended requests and excludes nearby work;
+- whether instructions, examples, scripts, references, and assets agree;
+- whether format, runtime, and client claims match available evidence;
+- whether provenance, licensing, safety, and authority boundaries are complete; and
+- whether the package and author-side checks satisfy their stated completion conditions.
 
-Run each case in a clean context with the skill and against a baseline:
+Report hard or material defects and leave the skill unavailable for provisional use. When no material defect
+remains, report `ready with risks`. This status means the package passed author-side inspection while
+behavioral effectiveness remains unproven. Name untested clients and missing discovery evidence as risks. Do
+not claim `ready` from review lite.
 
-- use no skill to measure value beyond default behavior; or
-- use a snapshot of the previous version when evaluating a revision.
+Review lite is the default because it is quick and avoids unnecessary model cost. Provisional real use can
+expose failures that become durable cases. It does not replace a controlled comparison.
 
-Keep prompts, inputs, environment, and output locations equivalent. Record outputs, duration, and token use
-when the client exposes them.
+### Recommend Full Evaluation
 
-After inspecting the first outputs, add specific and observable assertions. Avoid vague quality claims and
-brittle exact-wording checks. Grade every assertion as pass or fail with concrete evidence; never award a pass
-on benefit of the doubt. Use deterministic scripts for mechanical properties and human review for holistic
-quality or unforeseen defects.
+Strongly recommend full independent evaluation for new skills, substantial rewrites, cross-client claims, or
+recurring failures. Let the user defer it when time or model allowance is limited. Deferral does not block
+provisional use when review lite finds no material defect.
 
-Inspect individual assertions and execution traces as well as aggregate results:
+Provide the candidate, cases, observed results, environment, and limits to an independent skill review or the
+target repository's review process. Let that process choose isolation, permissions, baselines, graders,
+repetitions, client coverage, and readiness criteria.
 
-- assertions passing with and without the skill do not establish added value;
-- assertions failing in both configurations may indicate a broken test or unsupported requirement;
-- inconsistent results may indicate model variance or ambiguous instructions; and
-- time or token outliers may expose unnecessary work.
-
-Generalize repairs from the underlying failure, rerun every case after changes, and stop when further
-iterations no longer produce meaningful improvement.
+Only the full process can support `ready`. Report untested clients and failed setup truthfully.

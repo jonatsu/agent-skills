@@ -1,6 +1,6 @@
 ---
 name: skill-forge
-description: "Create, update, and repair Agent Skills: discovery, resources, evaluation, portability, and provenance."
+description: "Create and update Agent Skills for one or more AI agents. Use when turning completed work into a skill, writing or restructuring SKILL.md and bundled resources, repairing discovery or portability, or recording licensing and provenance. Not for reviewing a finished skill or running comparative skill evaluations."
 license: MIT
 compatibility: The bundled validators require Python 3.11+, uv, and dependency access on their first run.
 metadata:
@@ -11,6 +11,9 @@ metadata:
 
 Create or update the smallest skill that reliably changes agent behavior for the requested task.
 
+Produce a reviewable candidate with author-side evidence. Perform review lite by default. Without full
+independent evaluation, report at most `ready with risks` and name the unmeasured behavior.
+
 Use the [Agent Skills specification](https://agentskills.io/specification) as the authority for package
 structure and frontmatter. Do not substitute remembered vendor conventions for the specification.
 
@@ -18,11 +21,15 @@ structure and frontmatter. Do not substitute remembered vendor conventions for t
 
 ### 1. Establish the Job
 
-Read the existing skill and all bundled resources when updating one. For new skills, establish:
+When updating a skill, inventory the complete package before editing. Read `SKILL.md` and affected instruction
+resources. Inspect scripts, assets, binaries, generated files, and large references at the depth the change requires.
+
+Establish:
 
 - the concrete task the skill enables;
 - representative requests and successful outcomes;
 - the decisions or knowledge a capable agent lacks without the skill;
+- the declared target clients and their automatic or explicit invocation paths;
 - the current author and applicable license;
 - whether the work is a new skill, substantial revision, or focused update;
 - whether the skill is portable or repository-specific; and
@@ -34,15 +41,13 @@ workflow, and output the skill would cover. Keep multiple aspects together only 
 decision boundary requires them. Shared popularity, one author's environment, possible integration, or
 occasional co-use is insufficient. Split unrelated guidance into separate skills or omit it.
 
-**Then ask what a user would have to say for the skill to load. When the honest answer is "nothing they would
-say", the content is not skill-shaped and no description repairs it.** Discovery matches a request's intent,
-so guidance that applies whenever someone writes code, commits, or edits prose has no moment to match: nobody
-announces that they are about to name a function. Such guidance belongs in whatever the target agent always
-loads, or in a rules file a reader opens deliberately. Measured 2026-09-03 on Claude Code 2.1.239: a
-code-naming skill activated in 0 of 13 runs across authoring, review, and diagnostic requests, and an
-always-loaded pointer naming it for the exact moment changed nothing — while explicit invocation produced the
-intended behavior, so the content was never at fault. Write the skill anyway when a real trigger exists and
-only the wording is weak; abandon the skill form when the trigger is the problem.
+Then identify how each target client can load the skill. An automatically selected skill needs a realistic
+request-time intent. An explicitly selected skill needs a reliable invocation path. A habit with neither path
+belongs in always-loaded instructions or another deliberately loaded artifact.
+
+Do not generalize one client's discovery result to another client. When a real invocation path exists, repair
+weak routing instead of abandoning the skill. When no declared client can load the behavior reliably, change
+the artifact form.
 
 When the relationship between retained aspects is not obvious, state the shared job in the description or
 body so later reviewers do not have to invent the justification.
@@ -61,9 +66,10 @@ Useful project evidence includes runbooks, API specifications, schemas, configur
 issue history, version-control fixes, and recorded failures with their resolutions. Label unsupported guidance
 as uncertain or omit it; do not turn plausible generic advice into asserted expertise.
 
-For a new skill, run `python3 scripts/init_skill.py --help`, then use the initializer when its minimal scaffold
-fits the requested package. Replace every generated placeholder before validation. Create files manually when
-the scaffold would require unnecessary cleanup.
+For a new skill, resolve `<skill-forge-root>` to this skill's directory. Run
+`python3 <skill-forge-root>/scripts/init_skill.py --help`. Use the initializer when its minimal scaffold fits
+the requested package. Replace every generated placeholder before validation. Create files manually when the
+scaffold would require unnecessary cleanup.
 
 Ask the user only when a missing answer would change behavior, scope, portability, provenance, compatibility,
 or cost. Proceed directly when the repository and request settle those choices.
@@ -72,7 +78,7 @@ Before adding guidance, ask whether the agent can recover it from an authoritati
 that source when it is accurate and available during use. Include the information when the source is
 unavailable, unreliable, or the skill must preserve non-obvious judgment that the source does not express.
 
-### 2. Choose the Scope
+### 2. Choose the Scope and Clients
 
 Portable is the default and needs no scope metadata. A portable skill may require tools intrinsic to its job,
 but it must declare relevant environment requirements in `compatibility` and must not assume authoring-machine
@@ -81,18 +87,24 @@ paths, repository commands, or undeclared surrounding tools.
 A repository-specific skill must set `metadata.scope: repo-local`, name the repository near the start of its
 body, and may rely on that repository's paths, commands, and conventions.
 
-Read [references/portability.md](references/portability.md) when the skill names tools, paths, environment
-requirements, or repository commands.
+Read [references/portability.md](references/portability.md) when the skill names clients, tools, paths,
+environment requirements, repository commands, or product metadata.
 
-Treat frontmatter portability separately from runtime portability. New skills use fields defined by the Agent
-Skills specification. Add vendor-specific extensions only when the user explicitly targets that vendor and
-accepts reduced portability.
+Assess format, runtime, and client portability separately. New portable skills use fields defined by the Agent
+Skills specification. Keep product metadata, invocation syntax, and runner commands in named adapters. Add an
+adapter only for an explicitly targeted client whose current contract is verified.
+
+When the user names no client, target the specification-defined core and make no client-behavior claim.
+An optional adapter must not make the portable core unusable elsewhere. Treat every untested client as a
+coverage limit, not a supported target.
 
 ### 3. Preserve Provenance
 
-Every newly authored skill records its current author in `metadata.author` and its license in the
-specification's top-level `license` field. Discover both from authoritative repository or upstream sources;
-never guess them.
+This workflow requires every new skill to record its current author in `metadata.author`. It also requires the
+applicable license in the specification's top-level `license` field. These conservative authoring policies may
+exceed a license's legal minimum.
+
+Discover authorship and licensing from authoritative repository or upstream sources. Never guess either.
 
 Treat an external source as attribution-bearing when reading it changes what the skill contains. This includes
 adopted ideas, mechanisms, structure, examples, terminology, or failure modes, even when no wording or code is
@@ -100,9 +112,11 @@ copied. Record each such source in `ATTRIBUTIONS.md`; do not reserve attribution
 adaptations. Name the exact influence and distinguish independently expressed ideas from copied or adapted
 material.
 
-Copied, adapted, translated, or vendored material also requires the upstream license text as
-`LICENSE.upstream` and the upstream `NOTICE` as `NOTICE.upstream` when the project supplies or requires one.
-A source used only to verify public facts or runtime behavior does not require package attribution; cite it
+Determine legal obligations from the exact source license and the intended distribution. This workflow also
+requires copied, adapted, translated, or vendored material to ship `LICENSE.upstream`. Preserve an upstream
+`NOTICE` as `NOTICE.upstream` when the project supplies it or its license requires preservation.
+
+A source used only to verify public facts or runtime behavior does not require package attribution. Cite it
 near the affected claim when useful. Preserve all existing provenance files during updates.
 
 Read [references/provenance.md](references/provenance.md) whenever an external source influenced the skill or
@@ -110,15 +124,41 @@ supplied adapted or vendored material.
 
 ### 4. Design the Package
 
-Start with `SKILL.md`. Add a resource only when it improves an actual execution path:
+Design for progressive loading without assuming every client loads skills identically. Keep routing in
+metadata, shared execution guidance in `SKILL.md`, and branch-specific material in resources. Verify the target
+client before making claims about what it preloads or defers.
+
+For each representative request, walk through execution from a capable agent's starting knowledge. Extract
+only resources that improve repeated execution:
 
 - Put essential shared instructions and decisions in `SKILL.md`.
 - Put branch-specific detail in a focused reference and link it where that branch becomes relevant.
-- Put reusable deterministic or fragile operations in scripts.
-- Put files consumed by the output, rather than as instructions, in assets.
+- Put repeated deterministic or fragile operations in scripts when an existing tool does not suffice.
+- Put files consumed by the output in assets.
+
+Suppose the user asks, "Turn our incident-triage workflow into a skill that reads service logs and fills our
+postmortem template." A capable agent can summarize logs, but it lacks the service event schema and the team's
+triage order. It would also repeat timestamp normalization.
+
+```text
+incident-summary/
+├── SKILL.md
+├── references/event-schema.md
+├── scripts/normalize-timestamps.py
+└── assets/postmortem-template.md
+```
+
+Keep triage and source ordering in `SKILL.md`. Put the stable event schema in the reference. Include the script
+only when an existing tool cannot normalize timestamps reliably. Include the asset because the consumer
+requires that exact template.
+
+Routing metadata may enter broad client context. The body and each reference add context when loaded. A client
+may execute a script without loading its source. Verify that behavior before relying on the context saving.
 
 Keep each meaning in one authoritative place. Do not copy facts that a reliable live source can provide
-cheaply. A short, self-contained skill is complete when it contains everything its task needs.
+cheaply. Keep authoring notes, run outputs, and traces outside the deployed package. Bundle reusable fixtures
+only when deployment is intentional. A short, self-contained skill is complete when it contains everything
+its task needs.
 
 Read [references/workflow-patterns.md](references/workflow-patterns.md) when real prerequisites, branching,
 iteration, gates, or strict output contracts make control flow consequential.
@@ -155,25 +195,58 @@ Use a checklist only when order or prerequisites matter. Rely on ordinary prose 
 judgment. Reuse the user's existing authorization; add a confirmation gate only when the eventual action
 requires information or approval the user has not already supplied.
 
-### 6. Evaluate Proportionately
+Ensure the package's described purpose matches its behavior. Disclose consequential network access, credential
+use, writes, destructive actions, and authority requirements. Inspect and test bundled executables and
+dependencies. Reject hidden behavior or an unexplained expansion of authority.
 
-For a new skill or substantial rewrite, behavioral evaluation is recommended. Compare realistic tasks with and
-without the skill when the benefit is uncertain or costly to infer. Test multiple deployed model classes when
-model differences could affect the result. Preserve useful evaluation cases so regressions can be reproduced.
+### 6. Preflight and Review the Draft
 
-For a focused update, test the changed behavior and nearby failure modes. Do not require a full baseline or
-model matrix when it would provide little additional evidence.
+Complete the substantive draft before treating mechanical checks as useful evidence. Then run a cheap
+structural preflight. It must complete before review lite or any model-based test. Preflight confirms:
 
-Read [references/testing-guide.md](references/testing-guide.md) when designing behavioral evaluations or
-diagnosing a skill that triggers or performs incorrectly.
+- the specification validator accepts the package;
+- local policy checks accept the package when they apply;
+- the candidate and promised resources are readable;
+- no scaffold placeholders remain; and
+- required commands and safe test destinations exist.
 
-### 7. Finish the Content, Then Validate
+Preflight proves loadability and fixture readiness. It does not prove that the skill improves behavior.
 
-Complete substantive writing, package design, resource routing, and behavioral evaluation before running
-mechanical validators. Do not use `skills-ref`, `quick_validate.py`, linters, or formatters as an early proxy
-for evaluating the content. Any content change after a mechanical check makes that result stale.
+Run the vendored specification validator, resolving `<skill-forge-root>` to this skill's directory:
 
-Before mechanical validation, verify at least:
+```bash
+uv run --isolated --no-dev --project <skill-forge-root>/scripts/skills-ref \
+  skills-ref validate <skill-directory>
+```
+
+Run this workflow's separate policy validator when its dependencies are available:
+
+```bash
+uv run <skill-forge-root>/scripts/quick_validate.py <skill-directory>
+```
+
+The policy validator exits 0 for a valid skill, 1 for policy failures, and 2 for invalid invocation. Neither
+validator establishes behavioral quality.
+
+Run every new or changed script with representative success, invalid-input, and dependency-failure cases.
+Use safe fixtures for stateful behavior.
+
+Walk through the smallest set of representative requests that exercises the draft's important decisions. For
+a focused update, inspect the changed behavior and its nearest failure boundary. When routing changed, prepare
+positive, near-miss, and ambiguous discovery cases.
+
+Review lite makes no model calls. Preserve useful cases, observed results, and untested clients for independent
+review. Do not select baselines or grade comparative performance during authoring.
+
+Read [references/testing-guide.md](references/testing-guide.md) when author-side testing needs discovery cases,
+review lite, behavior cases, or an evidence handoff.
+
+### 7. Finish and Validate
+
+Any content change makes earlier mechanical and behavioral results stale for the changed surface. Rerun the
+affected checks after the content settles.
+
+Before delivery, verify at least:
 
 - the result fulfills the requested use cases without unrelated behavior;
 - every instruction and resource earns its context or maintenance cost;
@@ -182,28 +255,16 @@ Before mechanical validation, verify at least:
 - provenance and license artifacts are complete and preserved; and
 - no scaffold placeholders remain.
 
-Run new or changed scripts with representative success and failure inputs before the final mechanical checks.
-
-After the content has settled, run the vendored specification validator, resolving `<skill-forge-root>` to
-this skill's directory:
-
-```bash
-uv run --isolated --no-dev --project <skill-forge-root>/scripts/skills-ref \
-  skills-ref validate <skill-directory>
-```
-
-The vendored source is pinned so validation does not depend on a moving upstream checkout. Its locked Python
-dependencies still require access on the first run. If `uv`, Python 3.11+, or initial dependency access is
-unavailable, report specification validation as unperformed. Do not claim that another validator is
-equivalent.
-
-Run this skill's local-policy validator when its dependencies are available:
-
-```bash
-uv run scripts/quick_validate.py <skill-directory>
-```
-
-The local-policy validator exits 0 for a valid skill, 1 for policy failures, and 2 for invalid invocation.
+Rerun both validators after the final content change. The vendored specification source is pinned. Its locked
+dependencies still require access on their first run. Report unavailable validation as unperformed, and do
+not claim that another validator is equivalent.
 
 Then follow the target repository's applicable mechanical checks and deployment workflow. Add further checks
 only when the skill's domain or risk requires them. Report performed and omitted validation accurately.
+
+If full evaluation is deferred, report at most `ready with risks`. State which behavior remains unmeasured.
+Recommend full evaluation without blocking provisional use when review lite finds no material defect. Preserve
+real-use failures and corrections as cases for that later evaluation.
+
+Provide the candidate, cases, observed results, and limits to an independent skill review or the target
+repository's review process when the user authorizes the full evaluation.

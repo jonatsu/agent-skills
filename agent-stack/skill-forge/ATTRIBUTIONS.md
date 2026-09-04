@@ -25,7 +25,7 @@ Material changes include:
 
 - treating the Agent Skills specification as the format authority;
 - supporting portable and repository-specific skills;
-- scaling workflows and evaluation to the change instead of requiring every upstream technique; and
+- scaling author-side checks and the independent-review handoff to the change; and
 - adding provenance, licensing, and local-policy validation.
 
 ## Upstream license
@@ -80,3 +80,25 @@ The source files are under `docs/skill-creation/` at Agent Skills repository com
 `69ef37e9424c0a7ea9dd2293b559e43ec8176379`. That documentation is licensed under
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). This skill reorganizes, condenses, and adapts the
 guidance to its existing workflow and terminology; it does not reproduce the pages verbatim.
+
+## OpenAI Skill Creator
+
+The 2026-09-04 revision consulted the
+[OpenAI `skill-creator` package](https://github.com/openai/skills/tree/49f948faa9258a0c61caceaf225e179651397431/skills/.system/skill-creator)
+at commit `49f948faa9258a0c61caceaf225e179651397431`. OpenAI publishes it under Apache-2.0. It influenced the
+independently written method that derives resources from concrete execution needs. It also influenced the
+explanation of context cost and the rule that instruction precision should follow task fragility.
+
+No OpenAI prose, code, examples, templates, or product metadata are copied or adapted. The OpenAI-specific
+`agents/openai.yaml` generator and its Codex assumptions are deliberately excluded from the portable core.
+
+## Anthropic Skill Creator
+
+The same revision consulted the
+[Anthropic `skill-creator` package](https://github.com/anthropics/skills/tree/41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f/skills/skill-creator)
+at commit `41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f`. Anthropic publishes it under Apache-2.0. It influenced the
+independently written package-safety rule that consequential behavior must match the described purpose. Its
+client-specific evaluation system also helped establish the core-versus-adapter portability boundary.
+
+No Anthropic prose, code, schemas, examples, evaluator prompts, or interface assets are copied or adapted.
+Its Claude-specific runner, viewer, subagent workflow, and package format are deliberately excluded.
