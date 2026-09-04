@@ -77,7 +77,7 @@ Put fixtures used by more than one file in `conftest.py`, at the directory level
 not need importing; pytest resolves them by name from the nearest `conftest.py` upward.
 
 Built-in fixtures worth knowing before writing your own: `tmp_path`, `tmp_path_factory`, `monkeypatch`,
-`capsys`, `caplog`, `recwarn`, `subtests`.
+`capsys`, `caplog`, `recwarn`.
 
 Details, cleanup with `yield`, factory fixtures, parametrized fixtures, and faking boundaries:
 [fixtures-and-doubles.md](references/fixtures-and-doubles.md).

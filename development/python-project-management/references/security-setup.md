@@ -58,14 +58,15 @@ page rather than copying them forward, or run `pre-commit autoupdate` and review
 The ruff hook id is `ruff-check`. A bare `ruff` id still exists as a deprecated alias, so a config copied from
 an older source keeps working and stops matching the documentation.
 
-Install with `uv run pre-commit install`, or `prek install` if the project chose prek.
+Install the hooks with `uvx pre-commit install`, or `prek install` if the project chose prek. Use `uv run`
+instead only when pre-commit is itself a declared dependency group member.
 
 ## mypy
 
 mypy is a command:
 
 ```bash
-uv run mypy src/
+uv run mypy src/          # use the project's own package path
 ```
 
 **If the project hooks it, use a local hook over a fixed path.** The obvious `repos:` entry passes only the
@@ -105,7 +106,7 @@ When the hook fires:
 detect-secrets audit --report .secrets.baseline
 ```
 
-A false positive updates the baseline with `detect-secrets scan --update .secrets.baseline`. A real secret is
+A false positive is re-baselined with `detect-secrets scan --baseline .secrets.baseline`. A real secret is
 removed from the code **and rotated** — a committed credential is compromised even after the commit is
 rewritten, because it existed in a working tree and possibly a push.
 
@@ -140,20 +141,20 @@ Other recurring findings: `template-injection` from interpolating `${{ github.ev
 
 ## CI
 
-Run the same commands a developer runs, with the frozen install:
+Run the same commands a developer runs, asserting the lock is current:
 
 ```yaml
-- run: uv sync --frozen --all-groups
+- run: uv sync --locked --all-groups
 - run: uv run ruff format --check .
 - run: uv run ruff check .
-- run: uv run mypy src/
+- run: uv run mypy src/     # use the project's own package path
 - run: uv run pytest
-- run: uv run pip-audit .
+- run: uv run pip-audit
 - run: uv lock --check
 ```
 
-`--frozen` fails rather than resolving something the lock does not describe, and `uv lock --check` catches a
-hand-edited `pyproject.toml`. Together they make "it worked locally" reproducible.
+`--locked` fails when the lock does not match `pyproject.toml`. `--frozen` does not: it installs the stale
+lock and exits 0. Verified against uv 0.12.5.
 
 ## Installing the Tools
 
@@ -162,5 +163,8 @@ Hooks fetch their own tools. For direct command-line use:
 ```bash
 uv tool install detect-secrets
 uv tool install zizmor
-brew install actionlint shellcheck     # or: go install github.com/rhysd/actionlint/cmd/actionlint@latest
+# whatever this platform uses; e.g. on macOS or Linuxbrew:
+brew install actionlint shellcheck
+# or, without a package manager:
+go install github.com/rhysd/actionlint/cmd/actionlint@latest
 ```

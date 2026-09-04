@@ -54,12 +54,13 @@ Validation that stops at the first failure makes the caller fix one thing, resub
 Collect and report together:
 
 ```python
-def validate_order(payload: Mapping[str, object]) -> list[str]:
+def validate_order(payload: Mapping[str, Any]) -> list[str]:
     problems = []
     if not payload.get("id"):
         problems.append("'id' is required")
-    if (quantity := payload.get("quantity", 0)) <= 0:
-        problems.append(f"'quantity' must be positive, got {quantity!r}")
+    quantity = payload.get("quantity")
+    if not isinstance(quantity, int) or quantity <= 0:
+        problems.append(f"'quantity' must be a positive integer, got {quantity!r}")
     return problems
 ```
 
@@ -181,8 +182,11 @@ From Python 3.11, `ExceptionGroup` reports several failures as one exception, an
 type:
 
 ```python
-    if failed:
-        raise ExceptionGroup("batch failed", [exc for _, exc in failed])
+def process_all_strict(items: Sequence[Item]) -> list[Item]:
+    result = process_all(items)
+    if result.failed:
+        raise ExceptionGroup("batch failed", [exc for _, exc in result.failed])
+    return result.succeeded
 ```
 
 Verified on 3.13.15: `except* ValueError` receives only the `ValueError` members of the group, and a separate
@@ -195,7 +199,7 @@ A good message names what failed, what was received, and what was expected.
 
 ```python
 raise ValueError(f"'page_size' must be between 1 and 100, got {page_size}")
-raise ConfigError(f"{path}: missing required key 'database.url'")
+raise ConfigError(f"config error in {path}: missing required key 'database.url'")
 ```
 
 Include the offending value with `!r`, so `""` and `" "` are distinguishable. Include the identifier a reader

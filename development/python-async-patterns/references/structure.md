@@ -85,9 +85,10 @@ async def consumer(queue: asyncio.Queue[Job]) -> None:
 async def main() -> None:
     queue: asyncio.Queue[Job] = asyncio.Queue(maxsize=100)
     async with asyncio.TaskGroup() as tg:
-        tg.create_task(producer(queue))
+        producing = tg.create_task(producer(queue))
         workers = [tg.create_task(consumer(queue)) for _ in range(10)]
-        await queue.join()            # wait until every queued job is done
+        await producing               # every job is now on the queue
+        await queue.join()            # every queued job is now done
         for worker in workers:
             worker.cancel()
 ```
@@ -95,8 +96,13 @@ async def main() -> None:
 **An unbounded queue is a memory leak waiting for a slow consumer.** Always set `maxsize` when the producer
 can outrun the consumer.
 
-`queue.join()` returns when `task_done()` has been called for every item. Consumers loop forever, so cancel
-them once the queue has drained; the `TaskGroup` then exits cleanly.
+**Await the producer before `queue.join()`.** `join()` returns as soon as the queue's unfinished count is
+zero, and immediately after `create_task` the producer has not run, so the count is still zero. Verified on
+CPython 3.13.15: without the `await producing` line the workers are cancelled before handling anything and the
+program silently processes no jobs at all.
+
+`queue.join()` then returns when `task_done()` has been called for every item. Consumers loop forever, so
+cancel them once the queue has drained; the `TaskGroup` exits cleanly afterwards.
 
 ## Background Tasks Need an Owner
 

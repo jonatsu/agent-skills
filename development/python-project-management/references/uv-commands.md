@@ -36,9 +36,13 @@ uv creates and manages the environment. Do not create one by hand.
 | `uv sync`              | Install what the lock describes, plus `default-groups` |
 | `uv sync --all-groups` | Install every dependency group                         |
 | `uv sync --group test` | Install one named group                                |
-| `uv sync --frozen`     | Install from the lock without re-resolving             |
+| `uv sync --frozen`     | Install from the lock without updating it              |
+| `uv sync --locked`     | Assert the lock is current, and fail if it is not      |
 
-`--frozen` is the CI form: it fails rather than silently resolving something new.
+**`--locked` is the CI form, not `--frozen`.** They sound alike and do different things. Verified against uv
+0.12.5: after hand-editing `pyproject.toml` so the lock no longer matches, `uv sync --frozen` **exits 0** and
+installs the stale lock, while `uv sync --locked` **exits 1**. Use `--locked` wherever a silent mismatch would
+be a problem.
 
 ## Running
 
@@ -127,12 +131,12 @@ uv add httpx rich
 uv add --group dev ruff mypy
 
 # Reproducible CI install
-uv sync --frozen --all-groups
+uv sync --locked --all-groups
 ```
 
 ## Notes
 
 - uv caches aggressively; the first resolve of a dependency set is the slow one.
 - `uv cache clean` when the cache grows past what you want to keep.
-- A nonzero exit from `uv sync --frozen` in CI usually means someone edited `pyproject.toml` without running
+- A nonzero exit from `uv sync --locked` in CI means someone edited `pyproject.toml` without running
   `uv add`, so the lock no longer matches.

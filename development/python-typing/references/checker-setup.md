@@ -18,7 +18,7 @@ sets of disagreements, so adopt a second one only deliberately.
 
 ```toml
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.12"   # set to the project's own floor
 strict = true
 warn_unreachable = true
 warn_unused_ignores = true
@@ -40,7 +40,7 @@ Start strict globally and exempt what does not pass yet, rather than starting le
 
 ```toml
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.12"   # set to the project's own floor
 strict = true
 
 [[tool.mypy.overrides]]
@@ -84,7 +84,7 @@ mypy --warn-unused-ignores src/ # find stale suppressions
 
 ```toml
 [tool.pyright]
-pythonVersion = "3.12"
+pythonVersion = "3.12"    # set to the project's own floor
 typeCheckingMode = "strict"
 include = ["src"]
 ```

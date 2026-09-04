@@ -112,8 +112,8 @@ audit = ["pip-audit"]
 default-groups = ["dev"]
 
 [tool.ruff]
-line-length = 100
-target-version = "py311"
+line-length = 100          # a choice, not a standard; ruff's own default is 88
+target-version = "py311"   # match requires-python above
 src = ["src"]
 
 [tool.ruff.lint]
@@ -156,7 +156,7 @@ These are the project's checks, and each is an ordinary command a developer can 
 ```bash
 uv run ruff format --check .
 uv run ruff check .
-uv run mypy src/
+uv run mypy src/          # use the project's own package path
 uv run pytest
 uv run pip-audit
 ```

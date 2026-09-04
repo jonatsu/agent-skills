@@ -5,8 +5,8 @@ Read this when setting up pytest in a project, adding coverage, or working out w
 ## Where Configuration Lives
 
 pytest reads the first of these it finds: `pytest.ini`, `pyproject.toml`, `tox.ini`, `setup.cfg`. A project
-with more than one can be reading a file you are not editing; `pytest --help` prints the resolved `rootdir`
-and `inifile` at the top of a run, and so does any failure banner.
+with more than one can be reading a file you are not editing. The run header prints the resolved `rootdir`
+and `inifile`, and `pytest --collect-only -q` shows them without running anything.
 
 In `pyproject.toml` the table is `[tool.pytest.ini_options]`.
 

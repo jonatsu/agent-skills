@@ -66,8 +66,8 @@ it picks up current versions. Verified against uv 0.12.5 on 2026-09-04.
 #!/usr/bin/env -S uv run --quiet --script          # suppress uv's own output
 ```
 
-`--quiet` matters when the script's stdout is consumed by something else; without it uv's resolution progress
-lands in the same stream.
+`--quiet` suppresses uv's resolution progress, which it writes to stderr. Use it when that noise would
+confuse a caller reading the script's output or logs.
 
 ## A Private Index
 

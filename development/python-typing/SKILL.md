@@ -1,6 +1,6 @@
 ---
 name: python-typing
-description: Add and fix Python type annotations, and run a type checker. Use when annotating existing code, writing generics or Protocols, narrowing a union the checker rejects, deciding where Any is acceptable, configuring mypy or pyright, or making strict mode pass on a codebase that does not yet.
+description: Resolve Python typing problems and run a type checker. Use when the checker rejects code that looks correct, writing generics or Protocols, narrowing a union it will not follow, deciding where Any is acceptable, configuring mypy or pyright, or making strict mode pass on a codebase that does not yet.
 license: MIT
 compatibility: Examples target Python 3.12+ for PEP 695 generic syntax, with the older TypeVar form shown where it differs. Verified against mypy 2.3.1.
 metadata:
@@ -60,11 +60,15 @@ Both forms are correct; use whichever the project's floor allows. Do not mix the
 **Bound a type parameter when the code calls methods on it**, or the checker has to assume `object`:
 
 ```python
-def largest[T: (int, float)](items: Sequence[T]) -> T: ...   # constrained to these
-def sorted_by_key[T: Comparable](items: Sequence[T]) -> list[T]: ...   # upper bound
+def largest[T: float](items: Sequence[T]) -> T: ...          # bound: T is float or a subtype
+def parse[T: (int, str)](raw: str, kind: type[T]) -> T: ...  # constraint: exactly int or exactly str
 ```
 
-Variance, `ParamSpec`, `TypeVarTuple` and overloads are in [generics.md](references/generics.md).
+Prefer a bound. A constraint solves to one of the listed types exactly, losing any subtype, so reach for it
+only when the implementation genuinely branches on which it received. Both forms, and a `Comparable` protocol
+to bind against, are in [generics.md](references/generics.md).
+
+Variance, `ParamSpec`, `TypeVarTuple` and overloads are also there.
 
 ## Protocols Over Inheritance
 
@@ -114,6 +118,8 @@ def is_str_list(value: list[object]) -> TypeIs[list[str]]:
 ```
 
 `TypeIs` narrows in both branches and is the better default; `TypeGuard` narrows only the positive branch.
+Both are available on older interpreters through `typing_extensions`, which is how a 3.11 or 3.12 project
+uses `TypeIs`.
 
 ## Exhaustiveness
 

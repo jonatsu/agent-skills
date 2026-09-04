@@ -45,17 +45,20 @@ async def fetch_all(urls: list[str]) -> list[Response]:
     return [t.result() for t in tasks]
 ```
 
+This shows the grouping only. A real `fetch` needs a timeout and the fan-out needs a bound; both are in the
+next section, and the checklist at the end requires them.
+
 Handle the failures with `except*`:
 
 ```python
-    try:
-        async with asyncio.TaskGroup() as tg:
-            tg.create_task(fetch(url))
-            tg.create_task(refresh_cache())
-    except* TimeoutError as eg:
-        log.warning("timed out: %s", eg.exceptions)
-    except* ValueError as eg:
-        log.error("bad response: %s", eg.exceptions)
+try:
+    async with asyncio.TaskGroup() as tg:
+        tg.create_task(fetch(url))
+        tg.create_task(refresh_cache())
+except* TimeoutError as eg:
+    log.warning("timed out: %s", eg.exceptions)
+except* ValueError as eg:
+    log.error("bad response: %s", eg.exceptions)
 ```
 
 ### Why Not gather
@@ -133,8 +136,9 @@ driver, `open().read()` on a slow disk, and any CPU-heavy loop all do it.
 ```python
 result = await asyncio.to_thread(blocking_call, arg)          # I/O-bound blocking library
 
-loop = asyncio.get_running_loop()
-result = await loop.run_in_executor(process_pool, cpu_heavy, arg)   # CPU-bound
+with ProcessPoolExecutor() as pool:                           # CPU-bound
+    loop = asyncio.get_running_loop()
+    result = await loop.run_in_executor(pool, cpu_heavy, arg)
 ```
 
 `asyncio.to_thread` (3.9+) suits a blocking I/O library with no async equivalent. CPU work needs a process

@@ -1,6 +1,6 @@
 ---
 name: python-idioms
-description: Review or refactor Python toward idiomatic, findable code. Use when asked to review Python, make code more idiomatic, clean a module up to conventions, choose between a value-type or test approach, or when a search for code you believe exists returns nothing.
+description: Review or refactor Python toward idiomatic, findable code. Use when asked to review Python, make code more idiomatic, clean a module up to conventions, choose between attrs and a stdlib dataclass, judge whether a test may mock something, or when a search for code you believe exists returns nothing.
 license: MIT
 compatibility: Portable. Judgement rules only; anything a linter can decide belongs in the project's ruff configuration.
 metadata:

@@ -50,8 +50,8 @@ docs = ["sphinx", "myst-parser"]
 default-groups = ["dev"]
 
 [tool.ruff]
-line-length = 100
-target-version = "py311"
+line-length = 100          # a choice, not a standard; ruff's own default is 88
+target-version = "py311"   # match requires-python above
 src = ["src"]
 
 [tool.ruff.lint]
@@ -74,20 +74,10 @@ quote-style = "double"
 indent-style = "space"
 docstring-code-format = true
 
-[tool.coverage.run]
-branch = true
-source = ["src/myproject"]
-
-[tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "if TYPE_CHECKING:",
-    "if __name__ == .__main__.:",
-]
 ```
 
-`[tool.pytest.ini_options]` is deliberately absent: `python-testing` owns it, along with the rest of the
-coverage decisions. `[tool.mypy]` is absent for the same reason and belongs to `python-typing`.
+`[tool.pytest.ini_options]` and `[tool.coverage.*]` are deliberately absent: `python-testing` owns both, and
+`[tool.mypy]` belongs to `python-typing`. Each table has exactly one home so the two cannot drift apart.
 
 ## Section Notes
 

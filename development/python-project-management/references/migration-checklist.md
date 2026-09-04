@@ -7,7 +7,8 @@ was not requested.
 
 - [ ] Commit or branch first, so the migration is one reviewable diff and is trivially abandonable.
 - [ ] Decide the layout: `src/` or flat. A flat layout needs `[tool.uv.build-backend] module-root = ""`.
-- [ ] Decide the lock policy: an application commits `uv.lock`, a library ignores it.
+- [ ] Decide the lock policy: an application commits `uv.lock`, a library usually ignores it. A library that
+  ignores it cannot use `uv sync --locked` or `uv lock --check` in CI, so choose the pair together.
 - [ ] Record the current interpreter floor. `requires-python` has to match what the code already assumes.
 
 ## Bring Dependencies Across
@@ -31,7 +32,7 @@ metadata moves into `[project]` unchanged.
 ## Replace the Linters
 
 ```bash
-uv remove flake8 black isort        # and pylint, pyupgrade, autoflake if present
+uv remove --group dev flake8 black isort   # name the group they live in; a bare remove fails
 uv add --group dev ruff
 uv run ruff check --fix .
 uv run ruff format .
@@ -48,7 +49,7 @@ that follows stays readable, and add that commit to `.git-blame-ignore-revs`.
 - [ ] `requirements.txt`, `requirements-dev.txt`, `constraints.txt`
 - [ ] `setup.py`, `setup.cfg`, `MANIFEST.in`
 - [ ] `Pipfile`, `Pipfile.lock`, `poetry.lock`
-- [ ] `.flake8`, `mypy.ini`, `pyrightconfig.json`
+- [ ] `.flake8`, and `mypy.ini` or `pyrightconfig.json` only if that checker is actually being replaced
 - [ ] `tox.ini`, unless it still drives a matrix that CI does not
 - [ ] Old environments: `venv/`, `.venv/`, `env/`
 
@@ -95,7 +96,7 @@ migration stalls. Start where it passes and tighten per module.
 
 ```toml
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.11"   # set to the project's own floor
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
@@ -108,9 +109,9 @@ progression; this is only the migration entry point.
 
 ## CI
 
-- [ ] Replace `pip install` steps with `uv sync --frozen --all-groups`.
+- [ ] Replace `pip install` steps with `uv sync --locked --all-groups`.
 - [ ] Run tools through `uv run` so local and CI invoke the same thing.
-- [ ] Pin actions to commit SHAs.
+- [ ] Pin actions to commit SHAs, if the project uses GitHub Actions. Adapt these to whatever CI it runs.
 - [ ] Add `uv lock --check`.
 - [ ] Drop scheduled triggers that no one reads.
 
@@ -120,7 +121,7 @@ progression; this is only the migration entry point.
 uv sync --all-groups
 uv run ruff format --check .
 uv run ruff check .
-uv run mypy src/
+uv run mypy src/          # use the project's own package path
 uv run pytest
 uv run pip-audit
 uv build          # only if the project is distributed

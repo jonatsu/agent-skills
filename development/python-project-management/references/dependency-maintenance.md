@@ -35,7 +35,7 @@ and the lock no longer describes it.
 
 ```bash
 uv run pip-audit          # audit the current environment
-uv run pip-audit .        # audit the project without installing, faster in CI
+uv run pip-audit --locked .   # audit from uv.lock rather than the installed environment
 uv run pip-audit --fix    # upgrade vulnerable packages where a fix exists
 ```
 
@@ -55,8 +55,8 @@ Dependabot opens pull requests for outdated dependencies on a schedule. `.github
 ```yaml
 version: 2
 updates:
-  # Covers pyproject.toml and uv.lock
-  - package-ecosystem: pip
+  # `uv`, not `pip`: only this ecosystem updates uv.lock
+  - package-ecosystem: uv
     directory: /
     schedule:
       interval: weekly
@@ -87,8 +87,10 @@ attacker who has published a malicious version is counting on. **Grouping** mino
 pull request keeps the review queue small enough that the updates actually get reviewed. Production
 dependencies group only patches, so a minor bump to something users run arrives as its own reviewable change.
 
-The `pip` ecosystem is what reads `pyproject.toml` and `uv.lock`. Check GitHub's current ecosystem list before
-assuming a different identifier exists.
+**Use `package-ecosystem: uv` for a uv project, not `pip`.** Dependabot lists them as separate ecosystems, and
+the `pip` one does not update `uv.lock` — so a project configured with `pip` keeps the very lock this skill
+insists on committing permanently stale. Confirmed against GitHub's Dependabot options reference on
+2026-09-04; check the current ecosystem list if the project uses a different package manager.
 
 Audit and automation cover different failures:
 
@@ -118,7 +120,8 @@ Dynamic versioning makes the built artifact depend on checkout state, which is a
 ```bash
 uv build                              # wheel and sdist into dist/
 uv publish --publish-url https://test.pypi.org/legacy/ --token $TEST_TOKEN
-uv publish --token $PYPI_TOKEN
+uv publish --trusted-publishing automatic   # preferred in CI
+uv publish --token $PYPI_TOKEN              # only where trusted publishing is unavailable
 ```
 
 The order that avoids a bad release:
@@ -141,7 +144,7 @@ uv lock --check
 uv sync --all-groups
 uv run ruff format --check .
 uv run ruff check .
-uv run mypy src/
+uv run mypy src/          # use the project's own package path
 uv run pytest
 uv run pip-audit
 ```
