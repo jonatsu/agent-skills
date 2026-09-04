@@ -2,6 +2,7 @@
 name: agents-management
 description: Create, maintain, and audit repo-local AGENTS.md, CLAUDE.md, scoped agent instructions, and llms.txt.
 license: Apache-2.0
+compatibility: Requires Python 3.9 or later on PATH for scripts/check_agent_context.py. Every other capability works without it.
 metadata:
   author: Joonas Onatsu
 ---
@@ -72,6 +73,16 @@ For an edit, inspect every changed path and its removed lines. Restore any conve
 was not deliberately superseded. Verify referenced paths and commands, link targets, intended client coverage,
 generated-content boundaries, and the absence of placeholders. Use a fresh or reload-capable session when live
 loading verification is available; otherwise state the limitation.
+
+Then run `scripts/check_agent_context.py <repository-root>` and resolve every finding. It answers the accretion
+test with a measurement rather than an impression, and it catches the two failures an edit cannot see from its
+own diff: an evidence link that no longer resolves, and an evidence file that nothing indexes. Pass `--budget`,
+`--budget-for`, `--evidence-dir` and `--exclude` when the repository's conventions differ from the defaults,
+and `--help` for the full contract. Report its result rather than only that it ran.
+
+A script the agent runs is weaker than a gate the repository runs. When the repository has a task runner,
+pre-commit configuration, or continuous integration, propose wiring this check into it, so the next edit is
+measured whether or not an agent loads this skill.
 
 For an audit, deliver findings by severity with evidence, affected clients, and consequences. Keep mechanical
 validity, loading and topology, content quality, whole-ruleset coherence, maintenance safety, and behavioral

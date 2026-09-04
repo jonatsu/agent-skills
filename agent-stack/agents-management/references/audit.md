@@ -18,7 +18,8 @@ complete-tree inspection.
 Report each dimension independently when relevant:
 
 - **Mechanical validity:** files parse where required, links and references resolve, and placeholders are
-  absent.
+  absent. `../scripts/check_agent_context.py` covers evidence-link resolution, orphaned evidence, and size
+  against budget; run it before assessing this dimension by hand.
 - **Loading and topology:** intended clients receive the right effective context without conflicts, silent
   gaps, or unsupported assumptions.
 - **Content quality:** instructions are verified, specific, actionable, non-duplicative, and
