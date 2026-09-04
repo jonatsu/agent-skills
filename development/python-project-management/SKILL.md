@@ -151,7 +151,7 @@ ruff can decide belongs in this configuration rather than in prose an agent has 
 
 ## Wire the Gates
 
-Local hooks and CI run the same commands as a developer:
+These are the project's checks, and each is an ordinary command a developer can run at any time:
 
 ```bash
 uv run ruff format --check .
@@ -161,7 +161,12 @@ uv run pytest
 uv run pip-audit
 ```
 
-Hook configuration, secret scanning, workflow auditing, and the CI shape are in
+**Where each one runs is a per-project decision, not a default.** Some belong in a pre-commit hook, some only
+in CI, some on demand. mypy in particular is frequently a command and a CI step rather than a hook, because
+hooking a whole-project type check costs time on every commit. Read what the repository already does before
+adding anything.
+
+Hook configuration, the placement trade-offs, secret scanning, workflow auditing, and the CI shape are in
 [security-setup.md](references/security-setup.md).
 
 ## Keep It Current
