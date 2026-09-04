@@ -61,3 +61,20 @@ Replaced on 2026-08-27 with the byte-for-byte file.
 Verified against the primary source on 2026-08-27 — `gh api repos/softaworks/agent-toolkit/license` reported
 `MIT`, and the `LICENSE` blob itself was fetched and copied byte-for-byte. `gh repo view --json licenseInfo`
 was NOT used; it misreports repositories that do carry a licence.
+
+## Full Evaluation Influences
+
+The 2026-09-04 revision consulted the
+[Anthropic `skill-creator` package](https://github.com/anthropics/skills/tree/41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f/skills/skill-creator)
+at commit `41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f`. Anthropic publishes it under Apache-2.0. It influenced the
+independently written guidance for paired baselines, qualitative artifact review, optional blind comparison,
+and causal analysis after comparison.
+
+No Anthropic prose, code, schemas, evaluator prompts, interface assets, or package conventions are copied or
+adapted. Its Claude-specific runner, viewer, fixed counts, subagent workflow, and `.skill` packaging remain
+excluded.
+
+The same revision incorporates lessons from this repository's `docs/plans/prompt-eval-harness.md` and
+`docs/evaluations/technical-design-planning-initial.md`. Those records supplied the preflight, permission,
+future-turn isolation, durable trace, failure classification, continuation, and model-allowance requirements.
+They are same-author project evidence rather than third-party material.

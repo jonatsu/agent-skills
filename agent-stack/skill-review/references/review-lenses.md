@@ -10,7 +10,7 @@ technique is a finding only when its absence harms the skill's declared job.
   specialized tool, product, or artifact?
 - Does each trigger phrase represent a distinct supported branch rather than a synonym quota?
 - Could a nearby but unsupported request activate it? Would an intended request fail to activate it?
-- Is routing information trapped in the body, where it arrives after activation?
+- Is routing information trapped in content the declared client exposes only after selection?
 - If invocation is explicitly user-only, is the human-facing description suitable for that mode?
 - Is the description an inline scalar? A folded (`>-`) or literal (`|`) block is a defect wherever the
   deployment tooling mishandles it, and a repository that has hit that defect says so in its own
@@ -19,11 +19,12 @@ technique is a finding only when its absence harms the skill's declared job.
 - Is the description's length justified by the branches it carries? Judge length in characters against the
   specification cap and any repository budget, never against a prose line-width rule such as markdownlint's
   MD013. A description cannot wrap, so a column ceiling applied to it is a length budget in the wrong units.
-  Length is charged to every request in the collection, so treat an unjustified long description as a real
-  cost rather than a style preference.
+  When a client preloads every description, length is charged to every request. Treat unjustified length as a
+  real cost under that client rather than a universal rule.
 
-Test discovery with realistic positive requests, near-miss negatives, and ambiguous cases when triggering
-matters. Do not infer activation quality from keywords alone.
+During review lite, prepare realistic positive requests, near-miss negatives, and ambiguous cases when
+triggering matters. Test them only during an authorized full evaluation. Do not infer activation quality from
+keywords alone.
 
 “Build and maintain justfiles” is incomplete because it assumes the router already knows what Just provides.
 “Build and maintain Just command-runner files for repeatable project tasks” supplies the missing capability
@@ -60,9 +61,8 @@ removing a specific instruction without examining its purpose and consequences.
 
 ## Collection Fit
 
-Review the skill against the other skills deployed beside it and against the always-loaded instructions. A skill
-that is sound on its own can still duplicate a neighbor, contradict a global rule, or activate in place of a
-better-suited neighbor.
+Review the skill against its declared collection and applicable always-loaded instructions. A sound standalone
+skill can still duplicate a neighbor, contradict a global rule, or activate in place of a better neighbor.
 
 - Does another deployed skill already own this job, or a large part of it?
 - Does the description overlap a neighbor's trigger surface in a way that makes selection arbitrary?
@@ -146,12 +146,14 @@ execution path, if any, still depends on the material.
 
 ## Portability and Scope
 
-Assess two independent questions:
+Assess three independent questions:
 
-1. **Frontmatter portability:** Are fields valid under the Agent Skills specification? Are vendor extensions
-   deliberate?
+1. **Format portability:** Are fields and package structure valid under the Agent Skills specification? Are
+   product extensions isolated?
 2. **Runtime portability:** Does the skill work within its declared tools, environment, and compatibility
    limits?
+3. **Client portability:** Do declared clients discover, invoke, load, resolve, and execute the package as
+   claimed?
 
 Portable is the default when no repository scope is declared. A portable skill may require a tool intrinsic to
 its job, but should declare material requirements in `compatibility`, avoid authoring-machine paths and
@@ -160,6 +162,12 @@ repository-local commands, and report unavailable dependencies truthfully.
 A repository-specific skill using `metadata.scope: repo-local` may rely on that repository's paths, commands,
 and conventions. It should name the repository and still declare external environment requirements. Do not
 infer repo-local scope merely because undeclared local bindings make that interpretation convenient.
+
+Treat `metadata.scope: repo-local` as an authoring convention unless the client documents that it enforces the
+field. Deployment proves file placement, not client behavior.
+
+Keep product metadata, UI configuration, invocation syntax, and runner commands in optional named adapters.
+An adapter must not make the specification-defined core unusable elsewhere.
 
 A tool-subject skill may depend on its subject without pretending to be tool-agnostic. That exception does not
 cover secondary tools, repository runners, or authoring-machine paths. Check each additional dependency

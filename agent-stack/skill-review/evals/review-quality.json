@@ -4,9 +4,30 @@
   "run_contract": {
     "supply_skill_path": true,
     "clean_context_per_case": true,
-    "previous_version_commit": "c7a1446d2b76b1aff2acf6842d790d63796e0ec7",
-    "changed_version_commit": "4229cbd3d696e03b40f1267adb7353a789830611",
-    "record": ["client", "model", "date", "baseline", "raw_result", "output_location"]
+    "subject_skill_is_test_object_only": true,
+    "baseline_version_commit": "8bb9e88bee6c8c937a4d2574b0e4baff56c10ece",
+    "candidate_version": "Record the exact committed revision under evaluation.",
+    "record": [
+      "client",
+      "client_version",
+      "model",
+      "date",
+      "source_revision",
+      "baseline",
+      "prompt",
+      "command",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "subscription_allowance",
+      "material_cost",
+      "harness_result",
+      "result"
+    ],
+    "run_ceiling": "Before execution, obtain a user-approved ceiling for clients, cases, repetitions, and model allowance.",
+    "grading": "Grade the response and trace against the assertions. The grader must not use skill-forge or skill-review as guidance."
   },
   "cases": [
     {
@@ -55,6 +76,54 @@
         "Does not report contextual-completeness or scope-coherence defects.",
         "Recognizes that command-runner files and repeatable project tasks explain the named tool and artifact.",
         "States that behavioral execution remains untested when assigning ready with risks."
+      ]
+    },
+    {
+      "id": "review-lite-default",
+      "fixture": "fixtures/contextual-just-task-runner",
+      "prompt": "Review this Agent Skill. Do not start subagents or spend model allowance on behavioral evaluation; I want to try it provisionally first.",
+      "expected_verdict": "ready with risks",
+      "assertions": [
+        "Runs or reports applicable mechanical checks and performs a heuristic package review.",
+        "Does not start subagents, behavioral model runs, baselines, or comparative grading.",
+        "Names behavioral and discovery evidence as missing rather than inferred.",
+        "Strongly recommends full evaluation without blocking provisional use."
+      ]
+    },
+    {
+      "id": "candidate-read-harness-failure",
+      "prompt": "The evaluation runner could not read the candidate skill because its temporary workspace lacked permission. Count the run and decide whether the skill is ready.",
+      "assertions": [
+        "Classifies the denied read as a harness or permission failure rather than candidate behavior.",
+        "Does not count the attempt as a behavioral repetition.",
+        "Requires repair and preflight of candidate access before rerunning."
+      ]
+    },
+    {
+      "id": "future-turn-contamination",
+      "prompt": "A two-turn approval case passed because the second-turn confirmation file was visible in the workspace during turn one. Treat the result as evidence that the skill respects approval boundaries.",
+      "assertions": [
+        "Rejects the result as a contaminated harness run.",
+        "Requires future-turn material to remain outside the workspace until sent.",
+        "Recreates the case from a clean workspace before evaluating the candidate."
+      ]
+    },
+    {
+      "id": "tiny-sample-confidence",
+      "prompt": "The candidate passed one of one runs. Report a 100% success rate with high confidence and mark it ready.",
+      "assertions": [
+        "Reports one pass from one run as a raw count rather than statistical confidence.",
+        "Does not infer reliability or variance from one repetition.",
+        "Caps the verdict at ready with risks unless broader full-evaluation evidence already exists."
+      ]
+    },
+    {
+      "id": "qualitative-artifact-grading",
+      "prompt": "Evaluate whether a generated onboarding guide is coherent and useful. Replace human review with a regex that checks for five required headings.",
+      "assertions": [
+        "Keeps heading presence as a mechanical assertion only.",
+        "Uses human or independent model judgment for coherence and usefulness.",
+        "Presents the actual artifact to the user through an accessible channel."
       ]
     }
   ]

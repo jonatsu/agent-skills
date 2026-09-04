@@ -1,6 +1,6 @@
 ---
 name: skill-review
-description: Review Agent Skills for defects and readiness. Use when reviewing, comparing, or repairing a skill.
+description: "Review Agent Skills for defects and readiness. Use for review lite, comparative behavioral evaluation, discovery diagnosis, or assessing a skill before an authorized repair. Not for creating a new skill or editing one during a review-only request."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -10,6 +10,16 @@ metadata:
 
 Review whether a skill reliably improves agent behavior for its intended job. Do not reward visible structure,
 length, polish, or optional techniques unless they produce a relevant benefit.
+
+Use two review tiers:
+
+1. **Review lite is the default.** Inspect heuristically and run mechanical checks. Do not start subagents or
+   model evaluations.
+2. **Full evaluation is optional and strongly recommended.** Run controlled behavioral comparisons when the
+   user authorizes their time, model allowance, and side effects.
+
+Without full evaluation, report at most `ready with risks`. This status permits provisional use while behavior
+remains unproven. Only full evaluation can support `ready`.
 
 Keep three judgments separate:
 
@@ -25,7 +35,11 @@ combine these into an aggregate score that hides the distinction.
 
 ### 1. Establish the Contract
 
-Read the user's request, the complete skill package, and applicable repository instructions. Identify:
+Read the user's request and applicable repository instructions. Inventory the complete package. Read
+`SKILL.md` and instruction resources relevant to its contract. Inspect scripts, assets, binaries, generated
+files, and large references at the depth the review requires.
+
+Identify:
 
 - the task the skill enables and representative requests;
 - the single coherent job that owns the skill's content;
@@ -35,7 +49,7 @@ Read the user's request, the complete skill package, and applicable repository i
 - declared clients, models, tools, environments, and compatibility limits;
 - portable or explicitly repository-specific scope;
 - safety, authorization, licensing, and provenance obligations; and
-- whether the review includes execution or is limited to static evidence.
+- whether the review is review lite or an authorized full evaluation.
 
 If these are not explicit, infer only what the package and its environment support. Mark consequential
 uncertainty rather than grading against an invented contract. Record unread files or unavailable environments
@@ -83,8 +97,8 @@ Always inspect discovery and scope coherence. Review the other lenses relevant t
   repository-local skill in the repository that consumes it.
 - **Recoverability:** Facts available from a reliable runtime source are pointed to rather than copied, unless
   that source is unavailable, unreliable, or omits necessary judgment.
-- **Portability:** Frontmatter portability and runtime portability are assessed independently against the
-  declared scope.
+- **Portability:** Format, runtime, and client portability are assessed independently against the declared
+  targets.
 - **Safety and authority:** The workflow preserves user intent, scope, confirmation boundaries, and truthful
   failure reporting.
 - **Maintenance:** Every resource earns its context and maintenance cost; duplication and fragile assumptions
@@ -95,23 +109,34 @@ checklist, anti-pattern section, script, reference, negative trigger, or strict 
 causes a concrete problem.
 
 Read [references/review-lenses.md](references/review-lenses.md) when a lens needs detailed diagnostic
-questions or when checking consistency with `skill-forge` conventions.
+questions or when checking consistency with applicable authoring conventions.
 
-### 4. Evaluate Behavior When Warranted
+### 4. Choose the Review Tier
 
-Static review identifies plausible effects; it does not prove them. Recommend or run behavioral evaluation for
-new skills, substantial rewrites, unreliable discovery, recurring execution failures, or uncertain
-context-cost tradeoffs. For a focused change, test the changed behavior and nearby regressions.
+Perform review lite unless the user authorizes full evaluation. Review lite combines contract inspection,
+relevant design lenses, package consistency, and mechanical validation. It starts no subagents or model runs.
 
-Use realistic isolated requests and observable success conditions. Compare against no skill or the previous
-version when the comparison would answer whether the skill adds value. Cover different clients or model
-classes only when their differences could materially affect the result.
+Strongly recommend full evaluation for new skills, substantial rewrites, cross-client claims, unreliable
+discovery, recurring failures, or uncertain context cost. State the likely case count, clients, repetitions,
+time, allowance, side effects, and evidence gain before requesting authority.
 
-Read [references/behavioral-evaluation.md](references/behavioral-evaluation.md) when designing, running, or
-interpreting an evaluation. Execution that changes external state, incurs material cost, or needs additional
-authority still requires the user's approval.
+The user may defer full evaluation. When review lite finds no material defect, return `ready with risks` for
+provisional use. Preserve observed real-use failures and corrections as cases for later evaluation.
 
-### 5. Form Findings
+### 5. Run Full Evaluation When Authorized
+
+Read [references/behavioral-evaluation.md](references/behavioral-evaluation.md) before designing or running the
+full process. Use realistic isolated requests and observable outcomes. Select baselines, clients, and models
+from the decision rather than a fixed matrix.
+
+Cover multiple realistic prompts, multiple relevant models, or both. Use enough variation to test the intended
+job without turning every review into an exhaustive matrix.
+
+Preflight the harness before any model call. Keep candidate, fixture, harness, dependency, permission, and
+inconclusive failures distinct. Execution that changes external state, consumes model allowance, or needs
+additional authority requires the user's approval.
+
+### 6. Form Findings
 
 Report a finding only when evidence supports a behavioral consequence, hard requirement, or material
 maintenance risk. For each material finding include:
@@ -126,7 +151,10 @@ maintenance risk. For each material finding include:
 Rank severity from consequence and likelihood, not textual prominence. Avoid duplicate findings for one root
 cause. Mention strengths only when they identify behavior worth preserving during revision.
 
-### 6. Deliver the Verdict
+Do not edit the reviewed package unless the user separately authorizes repair. When repair is authorized,
+preserve working behavior and rerun the affected review tier.
+
+### 7. Deliver the Verdict
 
 Lead with material findings. Then report:
 
@@ -136,9 +164,9 @@ Lead with material findings. Then report:
 - **Findings:** ordered by severity; and
 - **Preserve:** effective design choices that a repair should not regress, when any matter.
 
-Use `invalid` for a failed hard requirement, `not ready` for a material behavioral or safety defect,
-`ready with risks` for bounded weaknesses that do not defeat the intended job, and `ready` only when available
-evidence supports that job.
+Use `invalid` for a failed hard requirement and `not ready` for a material design, behavioral, or safety defect.
+Use `ready with risks` when review lite finds no material defect or when full evaluation leaves bounded risks.
+Use `ready` only when full evaluation supports the intended job without a material unresolved risk.
 
 A skill with unjustified scope mixing is `not ready`. A description that relies on an unexplained specialized
 name without communicating the underlying capability or user intent is a high-severity discovery defect and

@@ -3,9 +3,26 @@
   "mode": "client-selected activation",
   "run_contract": {
     "supply_skill_path": false,
-    "runs_per_case": 3,
+    "execution": "Run only during an authorized full evaluation; review lite prepares cases without model calls.",
     "observe": "Whether the client loads skill-review/SKILL.md",
-    "record": ["client", "model", "date", "raw_result", "trace_location"]
+    "record": [
+      "client",
+      "client_version",
+      "model",
+      "date",
+      "source_revision",
+      "command",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "subscription_allowance",
+      "material_cost",
+      "harness_result",
+      "activation_result"
+    ],
+    "run_ceiling": "Before execution, obtain a user-approved ceiling for clients, cases, repetitions, and model allowance."
   },
   "cases": [
     {
