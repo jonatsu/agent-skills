@@ -45,15 +45,26 @@ syntax, identifiers, commands, and quotations unless the user explicitly include
 artifacts are production residue and are the exception: remove confirmed marks without changing the surrounding
 content.
 
-## Preserve the Author's Voice
+## Set the Style
 
-Use a supplied writing sample as the voice target. Preserve its appropriate formality, person, terminology,
-and degree of personality. Do not flatten a distinctive voice or introduce a viewpoint, humor, or familiarity
-the source does not contain.
+**The default style is the rest of this skill, plus the repository's own conventions.** Apply it whenever
+nothing else is established, which is most of the time. Do not look for a voice to match before you write.
 
-Voice preservation constrains editing; it does not protect everything in the source. AI-writing artifacts are
-production residue rather than voice, so artifact removal outranks voice preservation wherever the two
-conflict. Rewrite the passage and keep the author's register; do not defend an artifact as a stylistic choice.
+When you edit prose someone else wrote, keep their register and their terminology, and add no personality the
+source does not contain. That is a limit on your edits, not a style target. A defect stays a defect, and a
+padded passage does not become correct because its author wrote it that way.
+
+**Voice matching is an override, and it needs two things: an explicit request, and at least one sample.**
+Without both, apply the default and say nothing about voice. If the request arrives without a sample, ask for
+one. Do not infer a voice target from the surrounding text, from the repository, or from what the author seems
+to prefer.
+
+Given both, use the sample as the target. Match its formality, person, terminology, and degree of personality.
+One sample supports matching a voice. Inferring a repeatable convention needs two or more.
+
+Voice never protects everything in the source. AI-writing artifacts are production residue rather than voice,
+so artifact removal outranks voice matching wherever the two conflict. Rewrite the passage and keep the
+author's register; do not defend an artifact as a stylistic choice.
 
 Matching the conventions of an existing documentation set is a document-level job. Use `writing-documentation`
 for that.
