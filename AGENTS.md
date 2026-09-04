@@ -19,6 +19,7 @@ just skills-spec               # Agent Skills specification, whole tree
 just skills-policy             # skill-forge's local policy, whole tree
 just skills-descriptions       # block scalars and length in every description
 just skills-deployed           # deployed skills that no longer match their committed source
+just skills-deployed --skill <name> --verbose   # one skill, itemised per destination
 just skills-sync               # the lock-only follow-up commit every skill commit needs
 ./scripts/kasetto-deploy.sh    # redeploy; run it even when the hook reported success
 ```
@@ -55,6 +56,10 @@ first fails, and accepts a path relative to wherever you are.
   resumed.
 - Trust the post-commit redeploy hook's exit status, a clean `git status`, or `kst`'s own report as evidence
   that a deployed copy changed or disappeared. All three answer from somewhere other than the destination.
+- Hand-write a `diff -rq` against each agent's skills directory.
+  `just skills-deployed --skill <name> --verbose` already reads the destination, covers every one of them,
+  and fails loudly on a name no lock carries. A hand-rolled loop silently checks whichever destinations you
+  remembered.
 - Edit a deployed copy directly.
 
 ## Archive Without Losing Structure
@@ -75,6 +80,17 @@ After any move, archive, or removal:
 3. Confirm the removed name is absent from the Claude, OpenCode, Copilot, and Codex skill directories.
 4. Run `just skills-sync` for the required lock-only follow-up commit.
 5. Run `just skills-deployed`; require zero drift, pending files, stray backups, and unresolved entries.
+
+Use `just skills-deployed --skill <name> --verbose` for step 3 rather than a hand-written diff, and read its
+exit code against what you are proving:
+
+- **A skill that should still be deployed:** expect one `ok` line per destination and exit 0. The evidence is
+  explicit rather than an absence of output.
+- **A name that should be gone:** expect exit 2, `no lock entry names the skill`. A removed skill leaves no
+  lock entry, so that failure is the confirmation.
+
+Neither answer is available from a hand-rolled loop, which checks only the destinations you remembered to
+list and cannot tell a pruned skill from a mistyped name.
 
 ## Findings
 
