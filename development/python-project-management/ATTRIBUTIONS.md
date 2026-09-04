@@ -1,0 +1,51 @@
+# Attributions
+
+## Current Skill
+
+- Skill: `python-project-management`
+- Current author: Joonas Onatsu
+- Current license: CC-BY-SA-4.0
+- Status: adaptation of an upstream skill, restructured and repaired, deployed to every agent
+
+## Upstream Source
+
+This skill is an adaptation of
+[`trailofbits/skills`](https://github.com/trailofbits/skills) `plugins/modern-python/skills/modern-python`,
+pinned at `d3323cefbcf645678b8dc481de204b02ad3d02dc` and read on 2026-09-04. Upstream author: William Tan,
+Trail of Bits. Upstream skill version 1.6.0, derived in turn from
+[`trailofbits/cookiecutter-python`](https://github.com/trailofbits/cookiecutter-python).
+
+**The upstream repository is licensed CC BY-SA 4.0, so this adaptation carries the same license.** Share-alike
+propagates: this package cannot be relicensed to the repository's MIT default, and any further adaptation of
+it must also be CC BY-SA 4.0 with attribution. The full license text is in `LICENSE.upstream`.
+
+Adapted material: the tool-and-replacement framing, the task-based routing between scripts, minimal projects,
+packages and migrations, the `pyproject.toml` shape including the PEP 735 dependency-group layout and the
+ruff `select = ["ALL"]` starting point, the uv command reference, the PEP 723 script guidance, the security
+tool matrix, and the migration checklist's structure.
+
+## Changes From Upstream
+
+Deliberate divergences, each with its reason:
+
+- **mypy is the default type checker; `ty` is named as a conditional alternative.** Upstream lists
+  `mypy / pyright → ty` as an anti-pattern. On 2026-09-04 `ty` was version 0.0.78 and classified Beta on PyPI,
+  which is not a dependency to put in a project's gate by default.
+- **pre-commit is the default hook runner; `prek` is named the same way.** Same reasoning, weaker stakes:
+  `prek` 0.5.2 is classified Production/Stable, so the choice is about startup time rather than maturity.
+- **`[tool.pytest]` corrected to `[tool.pytest.ini_options]`.** Measured 2026-09-04: pytest 9.1.1 honours the
+  bare table, pytest 8.3.5 silently ignores it, so a `--cov-fail-under` gate reports success while never
+  running. Upstream carries the bare form in three files.
+- **PEP 723 scripts can be locked.** Upstream lists "no lockfile" as a limitation; `uv lock --script` exists
+  and writes `<script>.py.lock`, verified against uv 0.12.5 on 2026-09-04.
+- **Test configuration removed.** `[tool.pytest.ini_options]` and coverage settings belong to
+  `python-testing`, and type-checker configuration to `python-typing`, so each has one home.
+- **Dropped:** the cookiecutter template recommendation, the Trail of Bits mark asset, the standalone `prek`
+  and Dependabot references, and the `templates/` directory whose contents are now inline where they are read.
+- **Added:** ongoing maintenance, which upstream does not cover — lock refreshes, `uv lock --check` drift
+  detection, `--upgrade-package`, advisory triage, `uv version --bump`, and the publishing sequence.
+- **Added:** the mypy pre-commit hook must run as a local hook with `pass_filenames: false`, because a
+  file-scoped invocation sees a different program than a full run.
+
+Every uv command in this package was verified against uv 0.12.5 on 2026-09-04. The pre-commit revisions were
+read from each project's latest release on the same date.
