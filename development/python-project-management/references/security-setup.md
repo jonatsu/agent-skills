@@ -1,27 +1,27 @@
 # Gates: Where Checks Run
 
-Read this when wiring a project's checks, or when deciding whether a given check belongs in a pre-commit hook,
-in CI, or in neither. Dependency auditing and update policy are in
-[dependency-maintenance.md](dependency-maintenance.md).
+Read this when wiring a project's checks or working out how an existing project runs them. Dependency auditing
+and update policy are in [dependency-maintenance.md](dependency-maintenance.md).
 
 ## What Each Tool Catches
 
-| Tool           | Usually runs as              | Catches                                               |
-| -------------- | ---------------------------- | ----------------------------------------------------- |
-| ruff           | pre-commit hook, CI          | Lint and format violations                            |
-| mypy           | direct command, CI, on merge | Type errors                                           |
-| shellcheck     | pre-commit hook              | Shell bugs: unquoted expansions, masked return values |
-| detect-secrets | pre-commit hook              | Committed API keys, passwords, tokens                 |
-| actionlint     | pre-commit hook, CI          | Workflow syntax, invalid action references            |
-| zizmor         | pre-commit hook, CI          | Workflow security: excessive permissions, injection   |
-| pip-audit      | CI, on demand                | Known advisories in dependencies                      |
+| Tool           | Catches                                               |
+| -------------- | ----------------------------------------------------- |
+| ruff           | Lint and format violations                            |
+| mypy           | Type errors                                           |
+| shellcheck     | Shell bugs: unquoted expansions, masked return values |
+| detect-secrets | Committed API keys, passwords, tokens                 |
+| actionlint     | Workflow syntax, invalid action references            |
+| zizmor         | Workflow security: excessive permissions, injection   |
+| pip-audit      | Known advisories in dependencies                      |
 
 Adopt ruff and mypy always. Add the shell and workflow tools when the repository actually contains shell
 scripts or GitHub Actions workflows; a hook over files that do not exist is noise.
 
-**This column says where each tool usually fits, not where it must go.** Every one of them is an ordinary
-command that runs on demand. A project is free to hook all of them, hook none and rely on CI, or anything
-between. Read the repository's existing configuration before assuming which arrangement is in force.
+**Check how the project already runs each tool before invoking or configuring it.** Look at
+`.pre-commit-config.yaml`, the CI workflows, and any `justfile`, `Makefile` or `tox.ini`. Each tool is an
+ordinary command, and a project may run it as a hook, in CI, through a task runner, on demand, or in several
+of those. Match what is there rather than assuming an arrangement.
 
 ## Hook Configuration
 
@@ -60,26 +60,17 @@ an older source keeps working and stops matching the documentation.
 
 Install with `uv run pre-commit install`, or `prek install` if the project chose prek.
 
-## Where to Run mypy
+## mypy
 
-**mypy does not have to be a hook, and often should not be.** It is a command:
+mypy is a command:
 
 ```bash
 uv run mypy src/
 ```
 
-Run it that way while working, in CI, or both. Whether it also runs before every commit is a project decision
-with a real trade-off, not a default to apply.
-
-| Placement               | Fits when                                               | Cost                                         |
-| ----------------------- | ------------------------------------------------------- | -------------------------------------------- |
-| Command only            | Small project, or the type surface is still moving      | Nothing stops a broken commit                |
-| CI only                 | Type checking is slow, or the codebase is mid-migration | Failure arrives after the push               |
-| CI plus pre-commit hook | The tree is already clean and must stay clean           | Every commit waits for a whole-project check |
-
-**If the project does hook it, use a local hook over a fixed path.** The obvious `repos:` entry passes only
-the staged files, so mypy analyses a different program than a full run does: it cannot see an unstaged caller,
-and it reports errors that disappear on the next full check.
+**If the project hooks it, use a local hook over a fixed path.** The obvious `repos:` entry passes only the
+staged files, so mypy analyses a different program than a full run does: it cannot see an unstaged caller, and
+it reports errors that disappear on the next full check.
 
 ```yaml
   - repo: local

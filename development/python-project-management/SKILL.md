@@ -161,12 +161,11 @@ uv run pytest
 uv run pip-audit
 ```
 
-**Where each one runs is a per-project decision, not a default.** Some belong in a pre-commit hook, some only
-in CI, some on demand. mypy in particular is frequently a command and a CI step rather than a hook, because
-hooking a whole-project type check costs time on every commit. Read what the repository already does before
-adding anything.
+**Check how the project already runs each one before invoking or configuring it.** Look at
+`.pre-commit-config.yaml`, the CI workflows, and any `justfile`, `Makefile` or `tox.ini`. A tool may be a
+hook, a CI step, a task-runner recipe, an on-demand command, or several of those. Match what is there.
 
-Hook configuration, the placement trade-offs, secret scanning, workflow auditing, and the CI shape are in
+Hook configuration, secret scanning, workflow auditing, and the CI shape are in
 [security-setup.md](references/security-setup.md).
 
 ## Keep It Current
