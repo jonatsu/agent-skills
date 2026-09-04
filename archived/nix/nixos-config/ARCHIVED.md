@@ -17,8 +17,8 @@ This is a deployment decision, not a quality judgment.
 ## Review status
 
 **Review complete.** Reviewed 2026-09-03 by Codex, verdict `ready with risks` after a `not ready` first pass;
-the entry is in `skills/skills-review-notes.md` and the skill stays in **Reviewed**. It does NOT belong on
-the deferred list, and must not be moved there by a later archive sweep.
+the record is in `docs/evaluations/2026-09-shared-skill-review.md`. Its review is NOT deferred
+and must not be recorded as such by a later archive sweep.
 
 That review shortened the description below the discovery budget, added a system-mutation boundary before
 every activation, rollback, installation and garbage-collection path, replaced a stale `stateVersion` literal

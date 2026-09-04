@@ -11,6 +11,10 @@ whole mechanism; there is no separate opt-out to remember.
 
 ## What lives here
 
+A row saying "Review is deferred" is the authoritative record that the package's review is still outstanding.
+The 2026-09 review campaign's own ledger is retired; its verdicts and evidence are in
+`../../docs/evaluations/2026-09-shared-skill-review.md`, which records no status.
+
 | Skill | Archived | Why |
 |---|---|---|
 | `anti-rationalization` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |

@@ -5,9 +5,11 @@ Instructions for agents working under `skills/`; `CLAUDE.md` is a symlink to thi
 Read the focused source before acting:
 
 - `README.md` describes the deployed stack and the normal add, edit, remove, and sync workflows.
-- `skills-review-notes.md` is the authoritative review ledger and explains why the review exists.
-- `archived/README.md` defines the archive procedure and recovery commands.
-- `TODO.md` holds operational and future-feature backlog only. It is not a skill-review ledger.
+- `archived/README.md` defines the archive procedure and recovery commands, and its "Review is deferred" rows
+  are the record of which reviews are still outstanding.
+- `TODO.md` holds operational and future-feature backlog and unevaluated candidate sources.
+- `../docs/evaluations/2026-09-shared-skill-review.md` holds the completed review's verdicts, evidence, and
+  coverage limits. It is a dated record, not a ledger; do not add status to it.
 
 ## Commands
 
@@ -37,10 +39,13 @@ first fails, and accepts a path relative to wherever you are.
   skill. Its portable tool guidance complements this file's hook and lock workflow.
 - Keep a skill's `description` an inline YAML scalar. Neither validator catches a folded one;
   `scripts/check-skill-descriptions.sh` does.
-- Update `skills-review-notes.md` in the same work. Move every completed skill to **Reviewed**, including one
-  that is replaced or removed. Move a restored archived skill out of the deferred list when its review begins.
+- Record a review's verdict, evidence, and coverage limits in a dated file under `../docs/evaluations/` in the
+  same work, and clear the "Review is deferred" note in `archived/README.md` when a deferred review completes.
 - Delete a domain's `kasetto/base.yaml` entry in the same source commit that empties it. Git cannot preserve an
   empty directory, and Kasetto rejects a configured domain that is absent on a fresh clone.
+- Ask what a user would have to say for a proposed skill to load, before writing it. Guidance that applies
+  whenever someone writes code, or at any other moment nobody verbalizes, belongs in `agents/rules/` instead.
+  A skill for such a moment does not activate, and no wording repairs it.
 
 **Never:**
 
@@ -58,7 +63,7 @@ first fails, and accepts a path relative to wherever you are.
   files byte-identical to the last deployed version.
 - Move an individual package to `archived/<skill>/`. When archiving an entire shared domain, preserve the
   domain as `archived/<domain>/<skill>/` rather than flattening its packages.
-- Add `ARCHIVED.md` inside each moved package and update `archived/README.md` and `skills-review-notes.md`.
+- Add `ARCHIVED.md` inside each moved package and update `archived/README.md`.
 - Prune deployed copies with `./scripts/kasetto-deploy.sh`, then inspect all four destinations.
 
 ## Verify Moves and Removals Explicitly
@@ -79,3 +84,4 @@ Open the matching file when the symptom appears. Every rule above stands without
 | --------------------------------------------------------------------------------------- | --------------------------------------------- |
 | A move, archive, or removal left the destination wrong, or a description broke the lock | `../docs/findings/skills-hook-and-pruning.md` |
 | A skill edit deployed nothing, `kst` reports `unchanged`, or a lock looks stale         | `../docs/findings/kasetto-deploy.md`          |
+| A validated skill never activates, or you need to measure whether one did               | `../docs/findings/skill-discovery-limits.md`  |

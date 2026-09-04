@@ -1,8 +1,22 @@
 # Skills Future Work
 
-Operational and future-feature backlog for the skills stack. Skill-review status, evidence, and candidate
-review inputs belong in [skills-review-notes.md](skills-review-notes.md). Repository-wide items live in
-[../TODO.md](../TODO.md).
+Operational and future-feature backlog for the skills stack, including candidate sources not yet evaluated.
+The completed 2026-09 review's verdicts and evidence are the record in
+[../docs/evaluations/2026-09-shared-skill-review.md](../docs/evaluations/2026-09-shared-skill-review.md), and
+reviews still deferred are the rows marked "Review is deferred" in
+[archived/README.md](archived/README.md). Repository-wide items live in [../TODO.md](../TODO.md).
+
+## Unevaluated Candidate Sources
+
+Recorded 2026-08-26 and never fetched, read, or license-checked. The descriptions are path-based inferences,
+not evidence. Before using any material, read the repository license and any separate prose or content license
+from primary sources, record provenance, and decide whether the source overlaps an existing skill.
+
+- [wshobson/conductor](https://github.com/wshobson/agents/tree/main/plugins/conductor): inspect as a plugin,
+  including agent definitions and commands that Kasetto would not deploy as skills.
+- [stellarlinkco requirements agents](https://github.com/stellarlinkco/myclaude/tree/master/agents/requirements):
+  compare with archived `design-forge` and its deliberate rejection of a universal atomic `FR-` and `NFR-`
+  schema.
 
 ## Codex Skill-Description Budget
 
@@ -200,7 +214,7 @@ patterns and cross-project conventions, a repo-local one for project conventions
 at HEAD `25d6f9c81ebd1c51da6c5f4fc585658610dfdc4b` on 2026-09-03. **Treat it as convergent evidence that the
 gap is structural, not as a component to adopt**: its storage is a SQLite database under `~/.copilot/` and
 `.copilot-memory/`, driven by a Copilot hook schema that is not Claude Code's. Nothing was used, and the
-provenance note in `skills-review-notes.md` records that.
+provenance note in `../docs/evaluations/2026-09-shared-skill-review.md` records that.
 
 Its compaction policy is the second idea worth weighing, because `reflect` prunes by judgment and this does
 not: entries older than 60 days with a low hit count are pruned, frequently-referenced ones persist

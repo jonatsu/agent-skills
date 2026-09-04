@@ -16,8 +16,8 @@ This is a deployment decision, not a quality judgment. Nothing here was found wr
 
 ## Review status
 
-**Unreviewed.** This skill sat in **Pending Review** in `skills/skills-review-notes.md` and moves to
-**Pending Review, Deferred via Archival**. Archival defers its review; it does not complete it.
+**Unreviewed.** Archival defers its review; it does not complete it. `skills/archived/README.md` carries
+the deferred record.
 
 Known before archiving, from the description gate rather than from a review of this package: the description
 is 795 characters against the 512 repository budget. That is a warning, not a failure, and it was left alone
@@ -26,5 +26,5 @@ the collection, so start there when the review resumes.
 
 ## Restoring it
 
-Restore the whole domain together, move this skill out of the deferred list, add a `nix` entry back to
-`skills/kasetto/base.yaml`, and run a full `skill-review` pass before trusting it.
+Restore the whole domain together, clear its deferred note in `skills/archived/README.md`, add a `nix`
+entry back to `skills/kasetto/base.yaml`, and run a full `skill-review` pass before trusting it.

@@ -75,4 +75,4 @@ the archive. Fix them if it is ever restored.
 package moved from `skills/archived/nix-dendritic-pattern/` to `skills/archived/nix/nix-dendritic-pattern/`
 so the domain is archived in one restorable piece. Those four rewritten pointers are therefore archived too;
 they are still correct, and they are what a restore should keep. See the `nix` domain entry in
-`skills/skills-review-notes.md`.
+`docs/evaluations/2026-09-shared-skill-review.md`.

@@ -16,8 +16,8 @@ This is a deployment decision, not a quality judgment. Nothing here was found wr
 
 ## Review status
 
-**Unreviewed.** This skill sat in **Pending Review** in `skills/skills-review-notes.md` and moves to
-**Pending Review, Deferred via Archival**. Archival defers its review; it does not complete it.
+**Unreviewed.** Archival defers its review; it does not complete it. `skills/archived/README.md` carries
+the deferred record.
 
 Known before archiving, from the `nix-dendritic-pattern` review rather than from a review of this package:
 its description was 862 characters against the 512 repository budget. That is a warning, not a failure, and
@@ -32,5 +32,5 @@ form is a live relative link across two skill directories, which resolved only b
 skill flat into one directory; it still resolves inside `archived/nix/`, and it would break the moment either
 skill were restored without the other.
 
-Then move it out of the deferred list, add a `nix` entry back to `skills/kasetto/base.yaml`, and run a fresh
-`skill-review` pass before trusting it.
+Then clear its deferred note in `skills/archived/README.md`, add a `nix` entry back to
+`skills/kasetto/base.yaml`, and run a fresh `skill-review` pass before trusting it.
