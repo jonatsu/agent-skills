@@ -43,19 +43,21 @@ Read the focused source before acting:
   and `skills-ref` enforces that; this repository warns above 512, which is a local judgment about discovery
   cost rather than an upstream limit.
 
-- Run skill validators through `mise exec -C skills --`. `skills/mise.toml` supplies Python and uv and directs
-  uv's cache to the ignored `skills/.cache/uv`. Set Mise's cache and state paths under `skills/.cache/` before
-  invoking it, so sandboxed validation needs no `/tmp` override. `scripts/check-skill-policy.sh` already uses
-  this path. For direct specification validation from the repository root, run:
+- **Validate one skill with `just skill-check <skill-directory>`, from the repository root.** It runs both
+  validators — the Agent Skills specification through the vendored `skills-ref`, then skill-forge's local
+  policy through `quick_validate.py` — labels each block, and fails if either does. Both run even when the
+  first fails. The path may be relative to wherever you are; the scripts resolve it.
 
-  ```bash
-  skills_root="$(git rev-parse --show-toplevel)/skills"
-  MISE_CACHE_DIR="$skills_root/.cache/mise/cache" \
-    MISE_STATE_DIR="$skills_root/.cache/mise/state" \
-    mise exec -C "$skills_root" -- uv run --isolated --no-dev \
-    --project shared/agent-stack/skill-forge/scripts/skills-ref \
-    skills-ref validate shared/<domain>/<skill>
-  ```
+  Do NOT hand-assemble the underlying invocation. It needs `MISE_CACHE_DIR` and `MISE_STATE_DIR` under
+  `skills/.cache/` so sandboxed validation needs no `/tmp` override, `mise exec -C skills` so
+  `skills/mise.toml` supplies Python and uv, and `uv run` against the vendored validator project — which is
+  why it was being retyped from memory and got parts wrong. `scripts/check-skill-spec.sh` and
+  `scripts/check-skill-policy.sh` own that dance; both also take no argument to check the whole tree, which is
+  how `just skills-spec`, `just skills-policy` and `just check` call them.
+
+  **Running only one validator is the mistake the pair exists to prevent.** The specification validator passes
+  a file that breaks every repository policy, and the policy validator does not check frontmatter shape at
+  all. Report them separately; never describe one as covering the other.
 
   A cold cache needs pinned dependencies from PyPI. If it fails on dependency download or DNS, request
   network-enabled execution for the same command; report the failure as an environment limit, not a package
