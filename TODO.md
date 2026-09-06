@@ -6,6 +6,84 @@ The completed 2026-09 review's verdicts and evidence are the record in
 reviews still deferred are the rows marked "Review is deferred" in
 [archived/README.md](archived/README.md). Repository-wide items live in [../TODO.md](../TODO.md).
 
+## Nix Domain Restore Verdicts and Fix Lists
+
+The consolidation the 2026-09-03 archival deferred to ran on 2026-09-06: a per-skill content-mapping pass over
+`archived/nix/` against `~/src/nix-config`'s repo-local skills and reference docs, with every fix item below
+verified by its mapping lane (wrong claims were tested, not inferred). Verdict: **six of the seven skills stay
+global and are worth restoring once fixed**; `nix-dendritic-pattern` stays archived. The harvest direction into
+nix-config is already applied there (its `CHANGELOG.md` 2026-09-06 entry lists the items), so restoring these
+skills is now purely an agent-setup job: fix, validate, restore the domain per `archived/README.md` (whole
+domain together, re-add `nix` to `kasetto/base.yaml`, clear the deferred rows), and run the deferred
+`skill-review` pass on each. The nixos-config/home-manager pair cross-link each other, so restore them
+together or inline the linked hazard.
+
+- **`nix-flakes` — restore after:** rewriting the "allowed `nixConfig` keys" paragraph (the 13-key "restricted
+  set" is wrong; per `NixOS/nix` `src/libflake/config.cc` the auto-applied whitelist is `bash-prompt`,
+  `bash-prompt-prefix`, `bash-prompt-suffix`, `flake-registry`, `commit-lock-file-summary`, everything else
+  needs `--accept-flake-config` or per-value trust); correcting IRON LAW 2 (tracked-but-dirty files ARE
+  visible to flake eval — only untracked/ignored files are invisible); fixing
+  `defaultPackage.<system>.package` → `defaultPackage.<system>` in references/advanced-commands.md; stripping
+  rot-prone token/package counts from references/mcp-nixos.md and re-verifying its `system=` param against the
+  live server schema.
+- **`nix-packaging` — restore after:** resolving the `nix-wrapper-modules` cross-reference to stand alone;
+  fixing the invalid Nix in the .deb example (`stdenv.cc.cc.lib` in a function argset is a syntax error);
+  removing the local-path `src` example that contradicts its own IRON LAW; `lib.fakeSha256` → `lib.fakeHash`
+  throughout; `buildFHSUserEnv` → `buildFHSEnv`; adding `appimageTools.wrapType2`/`.extract` as the canonical
+  AppImage route (the manual `--appimage-extract` unpackPhase fails on non-executable store files); rewriting
+  references/binary-overlay-pattern.md's non-evaluating example; modernizing `rec` toward the
+  `(finalAttrs: …)` pattern.
+- **`nix-secrets` — restore after:** correcting or cutting the agenix-rekey layer, whose option surface
+  drifted wrong (`hostIdentities` plural does not exist — `hostPubkey` is singular; `storageMode` has no
+  default and aborts unset; generators are `generator.script`, not `generator.generator`+`length`;
+  `masterKeyPath` is likely fabricated) — nix-config's source-verified `docs/reference/agenix-rekey.md` is the
+  correction source, and shrinking the section to a verified when-to-graduate pointer is the cheaper valid
+  shape; stripping den vocabulary ("host aspect nixos class", "per aspect"); fixing the invalid
+  `nix-store -qR .#…` verify command (`nix path-info -r` on the built toplevel); repairing the malformed
+  agenix-rekey decision-matrix row; replacing the `api-key: supersecretvalue` example that trips betterleaks.
+  Its sops-nix half is unique — no other asset covers it; spot-check `sops.useSystemdActivation` before
+  redeploy.
+- **`nixos-config` — restore after:** resolving its live link to
+  `../home-manager/references/settings-trees-and-merges.md` (restore the pair together or inline the hazard);
+  correcting the `nixos-generate-config` overstatement its lane flagged; optionally adding
+  `nixos-rebuild list-generations` and the `steam-run`-needs-unfree note. Its 2026-09-03 review verdict
+  (`ready with risks`) predates these edits, so it re-reviews with the rest despite the completed row.
+- **`home-manager` — restore after:** rewriting Step 2's wrong claim (`osConfig ? services` is NOT a type
+  error on null — tested on Nix 2.34.8: `null ? foo` → `false`, `null.foo or d` → `d`; plain selection is the
+  real hazard) and its echo in the anti-patterns; trimming the 862-char description to ≤512; adding the
+  mcp-nixos HM-index-often-empty weakness note; re-measuring the rev-pinned `emptyValue` type table on
+  restore.
+- **`nix-wrapper-modules` — restore after:** trimming the 795-char description; rewriting the `wrappedModules`
+  deprecation as completed (the alias is gone from upstream `main`, verified 2026-09-05); fixing the Mode C
+  example's `config.configFile.path` → `config.constructFiles.gitconfig.path`; re-verifying against current
+  upstream (pre-1.0, already moved — `inputs.pkgs` injection is undocumented in its api-reference). Contingent:
+  if nix-config's held wrapper inputs are dropped and no other repo adopts the library, this one has no
+  consumer — leave it archived instead.
+- **`nix-dendritic-pattern` — stays archived.** Its value is fully accounted for in nix-config (nine
+  `dendritic-*` skills, six `den-*.md` references, the pin-debt TODO entry), and its portable fragments were
+  harvested there 2026-09-06. One standing use: it is currently the only document verified at den rev
+  `e8e8de1e` (the rev nix-config's lock actually pins, while its live den docs still stamp `2040b613`), so
+  nix-config's pin-debt lane can cite it rather than re-reading den source.
+
+## Promote Three nix-config Skills to Global
+
+The same mapping pass judged three of nix-config's four non-dendritic repo-local skills genuinely portable
+(`colmena-deploy` stays local — its body is den-bound and colmena has one consumer repo). For each: **move,
+don't copy** — delete the nix-config copy in the same change the global one deploys, to avoid the two-copy
+drift the 2026-09-03 archival cites. Each needs the standard authoring pass (`skill-forge`, validators,
+kasetto) on arrival.
+
+- **`direnv-nix-direnv`** — near-verbatim: zero repo bindings found; fills a real gap (no global skill covers
+  direnv; `mise-tools` only covers migrating off it). Optionally refresh the `source_url` example pin from
+  nix-direnv 3.1.2 after verifying the 3.2.0 hash.
+- **`flake-manifest-sync`** — near-verbatim: written deliberately portable, and its reversion-detecting
+  full-diff step generalizes to any generated manifest. Generalize or drop the unverified "den's own flake.nix
+  is hand-maintained" sentence on the way.
+- **`generated-file-verify`** — with a strip list: remove or generalize the lean-ctx `ctx_*` warning at all
+  three sites (workflow step, anti-pattern, checklist); replace the repo-bound Step 1b example
+  (`files.file."README.md"` vs `write-diagrams`) with a schematic one and drop the `.agents/MEMORY.md`
+  pointer (the concrete case stays recorded in nix-config's memory, so nothing is lost).
+
 ## Unevaluated Candidate Sources
 
 Recorded 2026-08-26 and never fetched, read, or license-checked. The descriptions are path-based inferences,
