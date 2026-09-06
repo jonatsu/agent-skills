@@ -11,10 +11,12 @@ reviews still deferred are the rows marked "Review is deferred" in
 The consolidation the 2026-09-03 archival deferred to ran on 2026-09-06: a per-skill content-mapping pass over
 `archived/nix/` against `~/src/nix-config`'s repo-local skills and reference docs, with every fix item below
 verified by its mapping lane (wrong claims were tested, not inferred). Verdict: **six of the seven skills stay
-global and are worth restoring once fixed**; `nix-dendritic-pattern` stays archived. The harvest direction into
-nix-config is already applied there (its `CHANGELOG.md` 2026-09-06 entry lists the items), so restoring these
-skills is now purely an agent-setup job: fix, validate, restore the domain per `archived/README.md` (whole
-domain together, re-add `nix` to `kasetto/base.yaml`, clear the deferred rows), and run the deferred
+global and are worth restoring once fixed**; `nix-dendritic-pattern` was deleted from the archive on
+2026-09-06 (see its bullet below). The
+harvest direction into nix-config is already applied there (its `CHANGELOG.md` 2026-09-06 entry lists the
+items), so restoring these skills is now purely an agent-setup job: fix, validate, restore the domain per
+`archived/README.md` (the live `shared/nix/` domain and its `kasetto/base.yaml` entry already exist since the
+2026-09-06 promotions — move the fixed skills in and clear the deferred rows), and run the deferred
 `skill-review` pass on each. The nixos-config/home-manager pair cross-link each other, so restore them
 together or inline the linked hazard.
 
@@ -59,30 +61,18 @@ together or inline the linked hazard.
   upstream (pre-1.0, already moved — `inputs.pkgs` injection is undocumented in its api-reference). Contingent:
   if nix-config's held wrapper inputs are dropped and no other repo adopts the library, this one has no
   consumer — leave it archived instead.
-- **`nix-dendritic-pattern` — stays archived.** Its value is fully accounted for in nix-config (nine
-  `dendritic-*` skills, six `den-*.md` references, the pin-debt TODO entry), and its portable fragments were
-  harvested there 2026-09-06. One standing use: it is currently the only document verified at den rev
-  `e8e8de1e` (the rev nix-config's lock actually pins, while its live den docs still stamp `2040b613`), so
-  nix-config's pin-debt lane can cite it rather than re-reading den source.
+- **`nix-dendritic-pattern` — deleted from the archive 2026-09-06**; its value is fully accounted for in
+  nix-config (nine `dendritic-*` skills, six `den-*.md` references, the pin-debt TODO entry). It was the only
+  document verified at den rev `e8e8de1e` (the rev nix-config's lock actually pins, while its live den docs
+  still stamp `2040b613`); nix-config's pin-debt lane can recover it from git history
+  (`skills/archived/nix/nix-dendritic-pattern/`) if needed.
 
-## Promote Three nix-config Skills to Global
-
-The same mapping pass judged three of nix-config's four non-dendritic repo-local skills genuinely portable
-(`colmena-deploy` stays local — its body is den-bound and colmena has one consumer repo). For each: **move,
-don't copy** — delete the nix-config copy in the same change the global one deploys, to avoid the two-copy
-drift the 2026-09-03 archival cites. Each needs the standard authoring pass (`skill-forge`, validators,
-kasetto) on arrival.
-
-- **`direnv-nix-direnv`** — near-verbatim: zero repo bindings found; fills a real gap (no global skill covers
-  direnv; `mise-tools` only covers migrating off it). Optionally refresh the `source_url` example pin from
-  nix-direnv 3.1.2 after verifying the 3.2.0 hash.
-- **`flake-manifest-sync`** — near-verbatim: written deliberately portable, and its reversion-detecting
-  full-diff step generalizes to any generated manifest. Generalize or drop the unverified "den's own flake.nix
-  is hand-maintained" sentence on the way.
-- **`generated-file-verify`** — with a strip list: remove or generalize the lean-ctx `ctx_*` warning at all
-  three sites (workflow step, anti-pattern, checklist); replace the repo-bound Step 1b example
-  (`files.file."README.md"` vs `write-diagrams`) with a schematic one and drop the `.agents/MEMORY.md`
-  pointer (the concrete case stays recorded in nix-config's memory, so nothing is lost).
+The three promotions the same mapping pass approved (`direnv-nix-direnv`, `flake-manifest-sync` →
+`shared/nix/`; `generated-file-verify` → `shared/git/`) shipped move-don't-copy on 2026-09-06 with their strip
+lists applied; `colmena-deploy` stays repo-local in nix-config. One item deliberately skipped: the
+`direnv-nix-direnv` `source_url` example still pins nix-direnv 3.1.2 — refresh it only after verifying the
+newer tag's hash. Their review tier is review lite, so they join the restored nix skills' deferred
+`skill-review` pass.
 
 ## Unevaluated Candidate Sources
 
