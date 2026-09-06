@@ -47,8 +47,16 @@ the agent simply never saw them offered. They were loaded only after the user as
 **What the listing did offer, in a repository containing no Nix at all**, was eight Nix skills
 (`direnv-nix-direnv`, `flake-manifest-sync`, `generated-file-verify`, `home-manager`, `nix-flakes`,
 `nix-packaging`, `nix-secrets`, `nixos-config`) plus `writing-for-humans`, and later `agents-management` and
-`context-architecture`. That inversion is the finding: the surfaced set correlated with the 2026-09-06
-nix-domain consolidation rather than with the work in hand.
+`context-architecture`.
+
+**That inversion is explained and is not the finding.** The user confirmed on 2026-09-06 that the Nix entries
+came from a parallel session's updates to those skills, so their presence reflects a concurrent edit rather
+than ranking, truncation, or sampling. Do not re-derive a listing-behaviour theory from them. What remains
+unexplained is only the absence of the test skills, which makes their descriptions the live hypothesis rather
+than one of two competing ones.
+
+The skills that *did* surface on their merits share a shape the test skills lacked: `agents-management` names
+the literal artifacts `AGENTS.md` and `CLAUDE.md`, and it appeared once those files were being edited.
 
 Cost of the miss, measured rather than assumed. Loading the two skills afterwards found four defects in the
 already-committed tests, the material one being that **they were order-dependent** — the readiness poll lived
@@ -59,18 +67,25 @@ missing route. `test-engineer`'s "ask what the suite would CATCH" and "tests MUS
 self-seeding" rules each name one of these directly. Mutation testing happened at all only because of the
 `brief-the-test-engineer-to-mutation-test` memory; nothing prompted the order-independence check.
 
-Before treating this as a `test-engineer` frontmatter problem, establish which layer failed:
+**Descriptions edited 2026-09-06; activation deliberately NOT measured.** `test-engineer`'s description was
+`Design testing strategies, implement test-only coverage, and report fresh validation evidence.` — 106
+characters, which fails three of `skill-forge`'s own description checks independently of this incident: no
+activation condition, internal jargon (`test-only coverage`, `fresh validation evidence`) instead of language
+a user would type, and no path from a request phrased by outcome. It now carries a `Use when` clause, literal
+triggers, and an exclusion pointing at `test-driven-development`. `python-testing` gained a `Triggers on:`
+token list naming `conftest.py` and `test_*.py`, mirroring the shape that worked for `agents-management`.
 
-- **Whether the listing is truncated or ranked.** If Claude Code surfaces a bounded subset, this is a budget
-  problem and no description edit fixes it. `docs/findings/skill-discovery-limits.md` already holds the
-  evidence that a validated skill can simply never activate; check it before re-deriving.
-- **Whether the nix-domain consolidation changed what gets surfaced**, given those skills dominated a listing
-  in a repository with no Nix files. Correlation only so far; the deploy was the same day.
-- **Whether `test-engineer`'s description names the triggers that would have fired here.** The work was
-  "write integration tests for a new transport" and "verify a regression is caught", phrased in neither Nix
-  nor prose terms.
-- Only then consider a description edit, and measure activation before and after rather than assuming the
-  rewrite worked. This is the same trap the `python-` skills' evaluation section below records.
+The user chose to ship the edits and let the next real test-writing session be the observation, rather than
+spend a session on the controlled experiment. **So the edits are unmeasured, and that is the open item.**
+Treat the next session that writes tests as the datapoint, and record the outcome here either way — a
+non-trigger after the rewrite would be strong evidence that wording is not the lever, which is exactly the
+`searchable-code` result in `docs/findings/skill-discovery-limits.md`: repaired across five findings, every
+gate green, and it still never activated.
+
+**`test-driven-development` was deliberately left alone.** Its description already excludes "test-only
+strategy, coverage, or validation work", and this session wrote tests *after* a working implementation, so
+its non-trigger was correct behaviour. An earlier revision of this entry named all three skills; that was
+wrong, and broadening it would damage a correctly scoped package.
 
 Related: the repository-wide **Python Skill Set Behavioral Evaluation** section already notes that no
 behavioral evidence exists for `python-testing`. This is the first recorded instance of it failing to

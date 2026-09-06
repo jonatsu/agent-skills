@@ -1,6 +1,6 @@
 ---
 name: test-engineer
-description: Design testing strategies, implement test-only coverage, and report fresh validation evidence.
+description: "Decide what to test, write the tests, and report evidence they catch real failures. Use when writing or reviewing unit, integration, regression or bug-reproduction tests, when asked whether coverage is adequate or a suite would catch a bug, or when a test is flaky or order-dependent. Not test-first implementation, which is test-driven-development. Triggers on: write tests, regression test, test plan, coverage gap, is this tested, flaky test, mutation testing."
 license: MIT
 metadata:
   author: Joonas Onatsu

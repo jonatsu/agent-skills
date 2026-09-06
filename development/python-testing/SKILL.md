@@ -1,6 +1,6 @@
 ---
 name: python-testing
-description: Write Python tests with pytest and its ecosystem. Use when writing or fixing tests, choosing fixtures, parametrizing cases, faking a boundary, testing async code, configuring pytest or coverage, or working out why a test does not run.
+description: "Write Python tests with pytest and its ecosystem. Use when writing or fixing tests, choosing fixtures, parametrizing cases, faking a boundary, testing async code, configuring pytest or coverage, or working out why a test does not run. Triggers on: pytest, conftest.py, test_*.py, fixture, parametrize, monkeypatch, tmp_path, pytest.ini_options."
 license: MIT
 compatibility: Assumes pytest. Plugins named here are installed per project; check what the project already has before adding one.
 metadata:
