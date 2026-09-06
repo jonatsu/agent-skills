@@ -295,3 +295,10 @@ reworked in a concurrent session at the time, so treat the behavior as unconfirm
 ## Future work / TODOs
 
 Tracked separately in [TODO.md](TODO.md).
+
+## Repository Python Environment
+
+Skill validation and tests inherit the root `mise.toml`; `skills/` has no separate toolchain configuration.
+Use the existing `uv` on `PATH` and bootstrap the shared `.venv` with `mise exec -- uv sync --locked` at the root.
+`just test-skills` uses that environment. Portable bundled validators retain their declared script/project dependencies.
+Uv caches now live under root `.cache/uv`; validator wrapper caches also use root `.cache/`.
