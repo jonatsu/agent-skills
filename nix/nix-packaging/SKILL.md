@@ -351,7 +351,9 @@ meta = {
 };
 ```
 
-Users MUST enable unfree packages in their configuration to build.
+Users MUST enable unfree packages in their configuration to build. Under a flake, that means config passed to
+`import nixpkgs`, because pure evaluation ignores `NIXPKGS_ALLOW_UNFREE` and `~/.config/nixpkgs/config.nix`.
+See the `nix-flakes` skill for the mechanisms and the evaluation evidence.
 
 ## Anti-Patterns
 

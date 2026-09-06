@@ -126,6 +126,50 @@ inputs = {
 };
 ```
 
+### Unfree packages under pure evaluation
+
+Pure evaluation ignores `NIXPKGS_ALLOW_UNFREE` and `~/.config/nixpkgs/config.nix`. It does **not** ignore
+config passed to `nixpkgs` inside the flake, which is the fix in almost every case:
+
+```nix
+pkgs = import nixpkgs {
+  inherit system;
+  config.allowUnfree = true;
+};
+```
+
+To permit named packages instead of every unfree one (`lib` must be in scope):
+
+```nix
+config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "vscode" ];
+```
+
+Verified against nixpkgs `c043004` with `nix eval .#devShells.<system>.default.drvPath`:
+
+| Setup                                                        | Pure eval                                           |
+| ------------------------------------------------------------ | --------------------------------------------------- |
+| `config.allowUnfree` passed to `import nixpkgs` in the flake | Succeeds                                            |
+| No config                                                    | Fails: "has an unfree license, refused to evaluate" |
+| No config, `NIXPKGS_ALLOW_UNFREE=1`                          | Fails; the variable needs `--impure`                |
+| No config, `NIXPKGS_ALLOW_UNFREE=1 --impure`                 | Succeeds, identical `.drv` to the first row         |
+
+Rows one and four produce the same derivation path, so the widely repeated claim that in-flake
+`config.allowUnfree` does not apply to `nix develop` is wrong. Reach for `--impure` only when you cannot edit
+the flake.
+
+When several inputs each evaluate unfree packages,
+[numtide/nixpkgs-unfree](https://github.com/numtide/nixpkgs-unfree) publishes a pre-evaluated nixpkgs with
+unfree allowed. Point those inputs at it with `follows` instead of threading config through each one:
+
+```nix
+nixpkgs-unfree.url = "github:numtide/nixpkgs-unfree/nixos-unstable";
+nixpkgs-unfree.inputs.nixpkgs.follows = "nixpkgs";
+proprietary-tool.inputs.nixpkgs.follows = "nixpkgs-unfree";
+```
+
+This keeps one nixpkgs revision across the tree, so it does not reintroduce the version skew `follows` exists
+to prevent.
+
 ### nixConfig attribute
 
 Set Nix settings scoped to the flake. Any `nix.conf` option may appear here, but application is two-tier
