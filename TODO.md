@@ -91,6 +91,72 @@ Related: the repository-wide **Python Skill Set Behavioral Evaluation** section 
 behavioral evidence exists for `python-testing`. This is the first recorded instance of it failing to
 activate on work it names.
 
+### Outcome to record
+
+**The next session that writes or fixes tests without being told to load a skill is the datapoint.** Record
+here which of `test-engineer` and `python-testing` appeared in its available-skills listing, and whether it
+loaded them unprompted. Both results are worth writing down:
+
+- **They trigger** — wording was the lever; the audit below becomes worth executing on the same pattern.
+- **They still do not** — wording is not the lever, and that matches `searchable-code` in
+  `../docs/findings/skill-discovery-limits.md` (repaired across five findings, every gate green, never
+  activated). At that point stop editing descriptions and move the behavior into always-loaded instructions,
+  which is what that finding already concluded for a skill whose subject nobody verbalizes.
+
+Do not count a listing appearance that follows a deploy of that same skill as evidence. Both skills surfaced
+immediately after their 2026-09-06 redeploy, and the user confirmed the same effect explains the Nix entries
+above. A skill a session just edited surfaces for that reason alone.
+
+## Description Audit — 13 Skills Share the Shape That Failed
+
+Swept 2026-09-06 across all 45 deployed skills, prompted by the `test-engineer` non-trigger above. The
+distribution is bimodal, and the split is a repository era rather than a judgment: descriptions written under
+the old narrow limit are pure capability statements, while everything written since carries an activation
+clause.
+
+**No edits made. This is a review queue, not a defect list** — the hypothesis that wording drives activation
+is itself unmeasured, so executing this before the outcome above is recorded would be 13 more unverified
+rewrites.
+
+| Length band   | Count | Shape                                                  |
+| ------------- | ----- | ------------------------------------------------------ |
+| 74–107 chars  | 13    | capability only, **no `Use when` clause**, no triggers |
+| 221–350 chars | 11    | `Use when` present, no literal trigger tokens          |
+| 380–614 chars | 18    | `Use when`, most with `Triggers on:`                   |
+
+**Rank by whether the subject is a named artifact or an unspoken moment**, because the two fail differently:
+
+- **Highest risk — no artifact for a request to match.** `systematic-debugging` ("Debug non-obvious failures,
+  regressions, and flaky tests"), `repo-management` ("repository baseline files, hooks, community templates,
+  and read-only hygiene audits"). Both describe a *situation*, and a user in that situation does not name it.
+  This is the `searchable-code` failure mode, so treat rewriting them as unlikely to be sufficient on its own.
+  `AGENTS.md` in this directory already states the rule that settles them: guidance for "a moment nobody
+  verbalizes" belongs in `agents/rules/`, and "no wording repairs it". Apply that test to these two before
+  drafting any replacement description.
+- **Real cost if missed.** `git-ops` (106) carries the confirmation gates that stand in for
+  `disable-model-invocation`, so a non-trigger means the guidance is absent exactly when a destructive command
+  runs. That makes it the most valuable of the 13 to get right, independent of how easy it is.
+- **Lower risk — a strong literal tool token is present**, which is the property that demonstrably works for
+  `agents-management` (it names `AGENTS.md` and `CLAUDE.md`, and surfaced once those were edited):
+  `chezmoi-dotfiles`, `github-ops` (`gh`), `kasetto`, `mise-tools`, `containers` (`Dockerfiles`, `Compose`),
+  `just-task-runner`, `systemd`, `systemd-networking`, `bash-shell`, `posix-shell`. `bash-shell` and
+  `posix-shell` additionally cross-reference each other, which is the exclusion pattern the newer descriptions
+  use and worth preserving in any rewrite.
+
+**A routing collision was introduced on 2026-09-06 and needs resolving in the same pass.** `test-engineer`'s
+new description claims `flaky test` as a trigger, and `systematic-debugging` claims flaky tests as subject
+matter. They are genuinely different jobs — one asks whether the suite would catch a bug, the other finds a
+root cause — but neither description says so. Whichever is edited second should carry the exclusion.
+
+**Out of scope, deliberately:** `skills/shared/agent-stack/skill-review/evals/fixtures/*` also appear in the
+short band (`opaque-just-task-runner` at 29 chars, `contextual-just-task-runner`, `mixed-dotfiles-nix`,
+`database-reporting`). Those are eval fixtures whose descriptions are the thing under test —
+`opaque-just-task-runner` exists *because* its description is opaque. Never "fix" them.
+
+Two length outliers, unrelated to the above: `grilling` at 614 chars is the only skill over the repository's
+512 soft budget, and `agents-management` at 342 has no `Use when` clause but is the one skill with direct
+evidence of activating anyway.
+
 ## `agents-management` Rework Behind `context-architecture`
 
 Deferred by the 2026-09-06 grilling (decision record:
