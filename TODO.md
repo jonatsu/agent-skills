@@ -44,16 +44,20 @@ the session's available-skills listing at any point**. `test-engineer`, `python-
 `test-driven-development` are all deployed under `~/.config/claude/skills/`, so the packages were present and
 the agent simply never saw them offered. They were loaded only after the user asked directly, by name.
 
-**What the listing did offer, in a repository containing no Nix at all**, was five Nix skills
+**What the listing did offer, in a repository containing no Nix at all**, was eight Nix skills
 (`direnv-nix-direnv`, `flake-manifest-sync`, `generated-file-verify`, `home-manager`, `nix-flakes`,
-`nix-packaging`, `nix-secrets`, `nixos-config`) plus `writing-for-humans`. That inversion is the finding: the
-surfaced set correlated with the 2026-09-06 nix-domain consolidation rather than with the work in hand.
+`nix-packaging`, `nix-secrets`, `nixos-config`) plus `writing-for-humans`, and later `agents-management` and
+`context-architecture`. That inversion is the finding: the surfaced set correlated with the 2026-09-06
+nix-domain consolidation rather than with the work in hand.
 
-Cost of the miss, measured rather than assumed: the tests written without the skill carried a **false
-rationale** in a docstring — a regression test claiming to catch a `Mount`-for-`Route` swap that mutation
-testing showed it never caught. `test-engineer`'s "ask what the suite would CATCH" rule is exactly the check
-that finds this, and it was applied by hand only because
-[a memory note](../docs/findings/skill-discovery-limits.md) said to mutation-test.
+Cost of the miss, measured rather than assumed. Loading the two skills afterwards found four defects in the
+already-committed tests, the material one being that **they were order-dependent** — the readiness poll lived
+inside one test, so `pytest -m integration -k streamable` failed three tests on a boot race and had never
+been run. A second was a docstring carrying a **false rationale**, claiming to catch a `Mount`-for-`Route`
+swap that mutation testing showed it never caught. A third was an auth assertion that passed against a
+missing route. `test-engineer`'s "ask what the suite would CATCH" and "tests MUST be order-independent and
+self-seeding" rules each name one of these directly. Mutation testing happened at all only because of the
+`brief-the-test-engineer-to-mutation-test` memory; nothing prompted the order-independence check.
 
 Before treating this as a `test-engineer` frontmatter problem, establish which layer failed:
 
