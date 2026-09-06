@@ -1,6 +1,6 @@
 ---
 name: agents-management
-description: Create, maintain, and audit repo-local AGENTS.md, CLAUDE.md, scoped agent instructions, and llms.txt.
+description: Create, maintain, and audit repo-local AGENTS.md, CLAUDE.md, scoped agent instructions, and llms.txt. Owns instruction-file internals; the documentation layout above them — which documents exist and how they are organized and routed — belongs to context-architecture, which is also the entry point for repositories with no established layout.
 license: Apache-2.0
 compatibility: Requires Python 3.9 or later on PATH for scripts/check_agent_context.py. Every other capability works without it.
 metadata:
@@ -28,12 +28,16 @@ only to orient the agent.
 
 ## Choose the Branch
 
-- **Initialize:** create a context system or add support for a target agent. Read
-  [references/initialize.md](references/initialize.md), then load templates only if needed.
+- **Initialize:** create instruction files or add support for a target agent. When the repository has no
+  established documentation layout, the layout decision comes first and belongs to `context-architecture` —
+  start there; it invokes this branch as the executor. Then read
+  [references/initialize.md](references/initialize.md), and load templates only if needed.
 - **Maintain:** make a focused or broad update, repair drift, reconcile files, or migrate topology. Read
   [references/maintain.md](references/maintain.md).
 - **Audit:** assess validity, loading, usefulness, coherence, or behavioral evidence without assuming edits
-  are wanted. Read [references/audit.md](references/audit.md).
+  are wanted. Read [references/audit.md](references/audit.md). This branch's object is instruction files;
+  auditing the documentation system above them — genres, routing coverage, layout — belongs to
+  `context-architecture`, which delegates the instruction-file level back here.
 
 Read [references/loading-model.md](references/loading-model.md) when the branch must determine filenames,
 precedence, includes, nesting, reload behavior, or symlink support. Load only the relevant client adapters.

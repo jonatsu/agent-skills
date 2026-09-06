@@ -72,6 +72,16 @@ Related: the repository-wide **Python Skill Set Behavioral Evaluation** section 
 behavioral evidence exists for `python-testing`. This is the first recorded instance of it failing to
 activate on work it names.
 
+## `agents-management` Rework Behind `context-architecture`
+
+Deferred by the 2026-09-06 grilling (decision record:
+[../docs/plans/context-architecture-skill.md](../docs/plans/context-architecture-skill.md)): once
+`context-architecture` has survived first real use, align `agents-management`'s templates with the named
+default layout, refresh `references/loading-model.md`'s client adapters, and run both skills through the
+deferred `skill-review` pass together. The minimal routing edits (description ownership line, initialize and
+audit branch pointers) already shipped with the new skill; the templates deliberately did not, so they conform
+to an exercised layout rather than a new one.
+
 ## Unevaluated Candidate Sources
 
 Recorded 2026-08-26 and never fetched, read, or license-checked. The descriptions are path-based inferences,

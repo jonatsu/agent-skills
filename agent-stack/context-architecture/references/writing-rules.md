@@ -1,0 +1,78 @@
+# Writing Rules for Agent-Facing Documents
+
+How to write any document in the context system so a cold-started agent can use it. Most rules here are
+mechanically checkable; the checker enforces the subset it can, and an audit applies the rest by reading.
+
+## Write for the Cold-Start Reader
+
+The test for every sentence: does it work for an agent with zero session history? No debugging narratives, no
+"as discussed", no state-as-it-was. State the configuration or fact as it stands; provenance belongs to the
+changelog and git history. If understanding requires knowing what some earlier session did, the document has
+leaked session state and fails the test.
+
+## Read-When Lines Are Trigger Conditions
+
+Every routing entry, document header, and skill description answers "when should I load this" — not "what is
+this about". "Verification gates" fails; "which gate proves what — read before gating a change, not after a
+result surprises you" routes. Front-load the discriminating words. Cover each distinct trigger once; add an
+exclusion only when it prevents likely misrouting. One owner per trigger across the whole system: when two
+descriptions claim the same phrase, move the trigger to the document that carries the full treatment and cut
+it from the other.
+
+## Summary First, Fractally
+
+Progressive disclosure applies inside documents, not only between them. A document's first paragraph answers
+"should I keep reading"; a section's first sentence answers it for the section. The reader who stops early
+should leave with a correct, if shallow, model — never a wrong one.
+
+## Maximize the Search Surface
+
+Half of agent navigation is text search. Quote error messages verbatim rather than paraphrasing them; backtick
+every path, binary, option, and identifier; prefer distinctive literal names over generic descriptions. A
+symptom table that paraphrases its symptoms is invisible to the agent grepping the actual error.
+
+## Pointers in the Most Durable Form
+
+Mechanism > stable identity > file path > never a line number. Point at the option, command, or anchor that
+survives refactors; use a file path when nothing stabler exists; a line number is stale before it is read.
+Two exemptions: frozen genres (decisions, evaluations), where a line number is a dated snapshot coordinate;
+and a living document that declares, in its head, the pinned revision (the word "pinned" plus a backticked
+commit hash) its citations are valid at — that converts line references into stamped facts with a
+re-validation trigger.
+State predicates, never countable inventories: "every aspect gated on the desktop capability", not "the seven
+desktop aspects" — a count is wrong at the next addition and nothing flags it.
+
+## Stamp What Facts Were Verified Against
+
+A non-obvious claim carries the revision, schema version, or test run it was checked against. "Verified
+against nixpkgs `af8ad534`" ages honestly; "checked recently" does not. When re-verification happens, move the
+stamp; when it cannot happen, add a dated unverified-since caveat.
+
+## Declare Authority
+
+A document that could be mistaken for outranking something must say it does not. Frozen records state they are
+historical; findings state they are advisory and need re-verification; plans state that built code supersedes
+them. The two global rules — the user's current instruction outranks stored guidance, and the repository
+outranks its own documentation — hold everywhere and need not be restated per file, but nothing may contradict
+them.
+
+## Memory Is Fact Plus Rationale, Never Bare Imperative
+
+A stored note written as a command ("always delete X before Y") executes as an instruction in a later session
+with none of its original context. Write the fact, the why, and the condition: "X caches Y; deleting X before
+Y prevented Z on <date> — applies only when W." The reading agent decides; the note informs.
+
+## Every Claim Is Verified, Generated, or Flagged
+
+Confident prose from recall is the failure mode that fabricated configuration options and wrong defaults enter
+by. A claim about external behavior cites what verified it; a claim derivable from code should be generated or
+should point at the code; anything else is labelled unverified. When editing a document, the claims you did
+not check keep their existing status — do not silently launder them into verified.
+
+## Checkable Subset
+
+The package checker enforces: every living load-at-need document reachable from the routing roots (dated
+records are reached by browsing their genre directory and are exempt), read-when cells present and non-topical
+(heuristically: non-empty), and no line-number references in living unpinned documents. An audit additionally
+reads for: cold-start violations, genre mixing, missing stamps, missing authority lines, inventory counts, and
+paraphrased error messages.
