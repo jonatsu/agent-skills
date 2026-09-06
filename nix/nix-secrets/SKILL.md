@@ -12,9 +12,9 @@ IRON LAW: NEVER use `builtins.readFile` on secret file paths — this copies sec
 world-readable Nix store. ALWAYS reference secrets via `config.age.secrets.<name>.path` or
 `config.sops.secrets.<name>.path` so they stay in tmpfs.
 
-> **Using Denful (den)?** Aspect and entity wiring belongs to den rather than to this skill; look for a
-> dendritic skill in the configuration repository itself. Secrets are ordinary NixOS/home-manager modules
-> there, so everything below applies unchanged.
+> **Using a framework layer on top of flake-parts?** How modules get wired into hosts belongs to that
+> framework's own documentation or skills. Secrets are ordinary NixOS/home-manager module options underneath,
+> so everything below applies unchanged.
 
 ## Workflow
 
@@ -35,22 +35,20 @@ Nix Secrets Progress:
 
 ### Decision matrix
 
-| Criterion            | agenix                                                           | sops-nix                               |
-| -------------------- | ---------------------------------------------------------------- | -------------------------------------- |
-| Simplicity           | Simpler — one file per secret                                    | More complex — structured files        |
-| Encryption           | age (SSH keys)                                                   | age, GPG, AWS KMS, GCP KMS, Vault      |
-| Secret structure     | One secret per `.age` file                                       | Multiple secrets per YAML/JSON file    |
-| Templates            | No                                                               | Yes — embed secrets in config files    |
-| Eval-time validation | No                                                               | Yes — checks sops files against config |
-| Scalability          | Good for few secrets                                             | Better for many grouped secrets        |
-| Home-manager         | Supported                                                        | Supported (requires systemd/user)      |
-| agenix-rekey         | Eliminates `secrets.nix`, master key rekeying, secret generators | age (YubiKey/FIDO2/master age key)     |
+| Criterion            | agenix                        | sops-nix                               |
+| -------------------- | ----------------------------- | -------------------------------------- |
+| Simplicity           | Simpler — one file per secret | More complex — structured files        |
+| Encryption           | age (SSH keys)                | age, GPG, AWS KMS, GCP KMS, Vault      |
+| Secret structure     | One secret per `.age` file    | Multiple secrets per YAML/JSON file    |
+| Templates            | No                            | Yes — embed secrets in config files    |
+| Eval-time validation | No                            | Yes — checks sops files against config |
+| Scalability          | Good for few secrets          | Better for many grouped secrets        |
+| Home-manager         | Supported                     | Supported (requires systemd/user)      |
 
 **Recommendation**: Start with agenix. Graduate to sops-nix when one-file-per-secret becomes painful.
 
-**agenix-rekey**: Use when managing many hosts with agenix becomes painful (manual `secrets.nix` maintenance,
-per-host rekeying). Adds master key encryption, lazy cached rekeying, and secret generators (random passwords,
-SSH keys, DH params).
+**agenix-rekey** (an agenix extension, not a third column): graduate to it when managing many hosts with plain
+agenix becomes painful — see [agenix-rekey (When to Graduate)](#agenix-rekey-when-to-graduate).
 
 ## Step 2: Generate Keys
 
@@ -155,76 +153,33 @@ nix-shell -p sops --run "sops updatekeys secrets/example.yaml"
 Example `secrets/example.yaml`:
 
 ```yaml
-api-key: supersecretvalue
+api-key: <placeholder-replace-with-real-value>
 myservice:
-  db_password: anothersecret
+  db_password: <placeholder-replace-with-real-value>
 ```
 
-## agenix-rekey (Advanced Workflow)
+## agenix-rekey (When to Graduate)
 
-agenix-rekey (`oddlama/agenix-rekey`) extends agenix for multi-host setups. Eliminates `secrets.nix`, adds
-master-key encryption, lazy rekeying, and secret generators.
+[oddlama/agenix-rekey](https://github.com/oddlama/agenix-rekey) extends agenix for multi-host setups.
+Graduate to it when:
 
-### When to Use
+- Maintaining `secrets.nix` recipient lists across many hosts becomes painful — agenix-rekey eliminates
+  `secrets.nix` by deriving recipients from evaluated host configs. Each secret is encrypted only to master
+  identities (`age.secrets.<name>.rekeyFile` replaces `file`); per-host ciphertexts are derived at rekey time,
+  lazily and cached.
+- You want a hardware-backed (YubiKey/FIDO2 via `age-plugin-yubikey`) or other master age identity in
+  `age.rekey.masterIdentities`.
+- You need generated secrets — random passwords, SSH keypairs, DH params — declared via
+  `age.secrets.<name>.generator.script`.
 
-- Many hosts with different SSH keys
-- YubiKey/FIDO2 hardware key workflow
-- Need generated secrets (random passwords, SSH keypairs, DH params)
-- Want lazy rekeying (only re-encrypts when secrets/keys actually change)
+Verified gotchas before adopting:
 
-### Setup
+- `age.rekey.storageMode` (`"local"` or `"derivation"`) has **no default** — evaluation aborts if unset.
+- The per-host key option is `age.rekey.hostPubkey` (singular, set once per host).
+- The CLI ships under the `agenix` binary name (`agenix edit|view|rekey|generate`), not `agenix-rekey`.
 
-```nix
-# flake.nix inputs
-inputs.agenix-rekey.url = "github:oddlama/agenix-rekey";
-inputs.agenix-rekey.inputs.agenix.follows = "agenix";
-
-# In NixOS module (host aspect nixos class)
-{ inputs, ... }: {
-  imports = [ inputs.agenix-rekey.nixosModules.default ];
-  age.rekey.masterIdentities = [ "~/.config/sops/age/keys.txt" ];
-  # Or YubiKey: age.rekey.masterIdentities = [ "age-plugin-yubikey-..." ];
-}
-```
-
-### No secrets.nix Needed
-
-Host public keys are declared inline:
-
-```nix
-age.secrets.my-secret = {
-  rekeyFile = ./secrets/my-secret.age;  # encrypted with master key only
-  # No need to list host public keys — agenix-rekey infers from age.rekey.hostIdentities
-};
-
-age.rekey.hostIdentities = [ "ssh-ed25519 AAAA... host1" ];
-```
-
-### Secret Generators
-
-```nix
-age.secrets.db-password.generator = {
-  # Built-in generators: alnum, base64, hex, passphrase, dhparams, ssh-ed25519
-  generator = "alnum";
-  length = 32;
-};
-
-age.secrets.host-ssh-key.generator = {
-  generator = "ssh-ed25519";
-  name = "host_ssh_ed25519";
-};
-```
-
-### CLI
-
-```bash
-agenix edit secret-name.age     # Edit secret (encrypts with master key)
-agenix view secret-name.age    # View decrypted content
-agenix rekey -a                 # Rekey all secrets for all hosts (lazy, cached)
-agenix generate                # Generate all generated secrets
-```
-
-See [references/agenix-rekey.md](references/agenix-rekey.md) for complete option reference.
+The option surface shifts between releases; take exact option shapes from the upstream README and module
+source, not from cached tables.
 
 ## Step 4: Wire into Config
 
@@ -376,7 +331,10 @@ users.users.myuser = {
 
 - [ ] Secrets decrypt at activation (`nixos-rebuild switch` or `home-manager switch` succeeds)
 - [ ] Secret files exist at expected paths (`ls /run/agenix/` or `ls /run/secrets/`)
-- [ ] No secret contents in Nix store (`nix-store -qR .#nixosConfigurations.<host> | grep -i secret`)
+- [ ] No secrets leaked into the Nix store — build the system, then scan its closure:
+  `nix build .#nixosConfigurations.<host>.config.system.build.toplevel --print-out-paths --no-link`, then
+  `nix path-info -r <that-path> | grep -i secret`
+  (matches store path *names* only, not file contents — a clean result is necessary, not sufficient)
 - [ ] Services can read secret files (check owner/group/mode)
 - [ ] No `builtins.readFile` on secret paths anywhere in config
 - [ ] No plaintext secrets in repo
@@ -393,7 +351,7 @@ users.users.myuser = {
 - Forgetting to add host SSH key to recipients — secret won't decrypt on that host
 - Using `config.age.secrets.<name>.file` instead of `.path` in service config — `.file` is the encrypted path,
   `.path` is the decrypted path
-- Mixing agenix and sops-nix in the same config without clear separation — pick one per aspect
+- Mixing agenix and sops-nix in the same config without clear separation — pick one per module (or per host)
 - Forgetting `neededForUsers = true` for user password secrets — they need early decryption
 - Putting `.sops.yaml` creation rules with `-` before subsequent key types under `key_groups` — triggers
   Shamir secret sharing

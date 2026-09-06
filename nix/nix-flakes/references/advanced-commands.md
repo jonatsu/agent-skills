@@ -36,7 +36,9 @@ nix develop --install       # Run through installPhase
 
 1. `packages.<system>.package`
 2. `legacyPackages.<system>.package`
-3. `defaultPackage.<system>.package` (deprecated)
+
+For the bare default installable (`nix build .`), the deprecated fallback `defaultPackage.<system>` is still
+consulted after `packages.<system>.default`.
 
 ## Output selection syntax
 

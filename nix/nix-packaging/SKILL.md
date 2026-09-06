@@ -1,6 +1,6 @@
 ---
 name: nix-packaging
-description: "Nix packaging — create derivations for source or binary packages, handle library dependencies, autoPatchelfHook, overlays, and flake outputs. Use when packaging .deb/.rpm/.tar.gz/AppImage, writing mkDerivation, finding missing libraries, or creating overlays. Triggers on: nix package, derivation, mkDerivation, autoPatchelf, buildInputs, nativeBuildInputs, fetchurl, fetchFromGitHub, overlay, devShell, FHS, makeWrapper, nix-prefetch."
+description: "Nix packaging — create derivations for source or binary packages, handle library dependencies, autoPatchelfHook, overlays, and flake outputs. Use when packaging .deb/.rpm/.tar.gz/AppImage, writing mkDerivation, finding missing libraries, or creating overlays. Triggers on: nix package, derivation, mkDerivation, autoPatchelf, buildInputs, nativeBuildInputs, fetchurl, fetchFromGitHub, overlay, FHS, makeWrapper, nix-prefetch."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -57,7 +57,7 @@ Common fetchers:
 - `fetchzip` — zip archives. Auto-extracts.
 - `fetchgit` — raw git repos. Use sparingly; prefer `fetchFromGitHub`.
 
-MUST use `lib.fakeSha256` only during initial scaffolding. Replace with real hash before final delivery.
+MUST use `lib.fakeHash` only during initial scaffolding. Replace with the real hash before final delivery.
 
 ```nix
 # For .zip archives, add unzip to nativeBuildInputs
@@ -69,15 +69,15 @@ nativeBuildInputs = [ unzip ];
 ### Binary Packaging (.deb)
 
 ```nix
-{ stdenv, lib, autoPatchelfHook, dpkg, fetchurl, gtk3, glib, stdenv.cc.cc.lib }:
+{ stdenv, lib, autoPatchelfHook, dpkg, fetchurl, gtk3, glib }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   pname = "example";
   version = "1.0.0";
 
   src = fetchurl {
-    url = "https://example.com/example-${version}.deb";
-    hash = lib.fakeSha256;  # replace after first build
+    url = "https://example.com/example-${finalAttrs.version}.deb";
+    hash = lib.fakeHash;  # replace after first build
   };
 
   nativeBuildInputs = [ autoPatchelfHook dpkg ];
@@ -91,7 +91,7 @@ stdenv.mkDerivation {
     mkdir -p $out
     cp -r usr/* $out/
   '';
-}
+})
 ```
 
 ```nix
@@ -107,13 +107,13 @@ unpackPhase = ''
 ```nix
 { stdenv, lib, autoPatchelfHook, rpm, fetchurl, ... }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   pname = "example";
   version = "1.0.0";
 
   src = fetchurl {
-    url = "https://example.com/example-${version}.x86_64.rpm";
-    hash = lib.fakeSha256;
+    url = "https://example.com/example-${finalAttrs.version}.x86_64.rpm";
+    hash = lib.fakeHash;
   };
 
   nativeBuildInputs = [ autoPatchelfHook rpm ];
@@ -126,22 +126,21 @@ stdenv.mkDerivation {
     mkdir -p $out
     cp -r usr/* $out/
   '';
-}
+})
 ```
 
 ### Simple Binary (no extraction needed)
 
 ```nix
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "tool";
   version = "1.0.0";
 
   src = fetchurl {
-    url = "https://example.com/tool-${version}-linux-amd64";
-    hash = lib.fakeSha256;
+    url = "https://example.com/tool-${finalAttrs.version}-linux-amd64";
+    hash = lib.fakeHash;
   };
 
-  sourceRoot = ".";
   dontUnpack = true;
 
   installPhase = ''
@@ -149,7 +148,7 @@ stdenv.mkDerivation rec {
     cp $src $out/bin/tool
     chmod +x $out/bin/tool
   '';
-}
+})
 ```
 
 ### Source Packaging
@@ -157,65 +156,57 @@ stdenv.mkDerivation rec {
 ```nix
 { stdenv, lib, fetchFromGitHub, meson, ninja, pkg-config, gtk3 }:
 
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   pname = "example";
   version = "1.0.0";
 
   src = fetchFromGitHub {
     owner = "owner";
     repo = "example";
-    rev = "v${version}";
-    hash = lib.fakeSha256;
+    rev = "v${finalAttrs.version}";
+    hash = lib.fakeHash;
   };
 
   nativeBuildInputs = [ meson ninja pkg-config ];
   buildInputs = [ gtk3 ];
 
   mesonFlags = [ "-Dexample=true" ];
-}
+})
 ```
 
-```nix
-# Use rec to reference version in src URL/filename
-stdenv.mkDerivation rec {
-  pname = "app";
-  version = "1.0.0";
-  src = ./app-${version}.tar.gz;  # rec allows version reference
-}
-```
+The `(finalAttrs: { ... })` argument form is `mkDerivation`'s fixpoint: `finalAttrs.version` refers to the
+final attribute value, so it stays correct under `overrideAttrs`. Prefer it over `rec`, which binds early and
+silently keeps the old value when overridden.
 
 ### AppImage Packaging
 
-For AppImage files, prefer `appimage-run` for execution, or extract and patch:
+Use `appimageTools` — the canonical nixpkgs route. `wrapType2` handles extraction and bundles the common
+runtime libraries:
 
 ```nix
-# Option 1: Run with appimage-run (no packaging needed)
-nix-shell -p appimage-run --run "appimage-run ./app.AppImage"
+{ lib, appimageTools, fetchurl }:
 
-# Option 2: Extract and package
-stdenv.mkDerivation rec {
+appimageTools.wrapType2 rec {
   pname = "app";
   version = "1.0.0";
 
   src = fetchurl {
     url = "https://example.com/app-${version}.AppImage";
-    hash = lib.fakeSha256;
+    hash = lib.fakeHash;
   };
 
-  nativeBuildInputs = [ autoPatchelfHook ];
-
-  unpackPhase = ''
-    $src --appimage-extract
-    cd squashfs-root
-  '';
-
-  installPhase = ''
-    mkdir -p $out/bin $out/lib
-    cp AppRun $out/bin/app
-    cp -r usr/* $out/
-  '';
+  # Libraries the app loads at runtime beyond appimageTools' defaults
+  extraPkgs = pkgs: [ pkgs.libsecret ];
 }
 ```
+
+Need files from inside the image (`.desktop` entry, icons)? `appimageTools.extract { inherit pname version src; }`
+yields the unpacked squashfs tree; copy from it in `extraInstallCommands`.
+
+For a one-off run without packaging: `nix run nixpkgs#appimage-run -- ./app.AppImage`.
+
+Do NOT hand-write an `unpackPhase` that runs `$src --appimage-extract` — files in the Nix store are not
+executable, so it fails; let `appimageTools` do the extraction.
 
 ### Electron Apps
 
@@ -240,7 +231,7 @@ and debugging commands.
 Use `makeWrapper` to wrap binaries with environment variables or extra PATH entries:
 
 ```nix
-{ stdenv, lib, makeWrapper, gsettings-desktop-schemas, ... }:
+{ stdenv, lib, makeWrapper, coreutils, gsettings-desktop-schemas, ... }:
 
 stdenv.mkDerivation {
   # ...
@@ -250,7 +241,7 @@ stdenv.mkDerivation {
   installPhase = ''
     install -Dm755 $src/bin/app $out/bin/app
     wrapProgram $out/bin/app \
-      --prefix PATH : ${lib.makeBinPath [ pkgs.coreutils ]} \
+      --prefix PATH : ${lib.makeBinPath [ coreutils ]} \
       --set GSETTINGS_SCHEMA_DIR ${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}
   '';
 }
@@ -320,13 +311,13 @@ nix flake check
 
 ## FHS Escape Hatch (Last Resort)
 
-Use `buildFHSUserEnv` ONLY when `autoPatchelfHook` cannot resolve dependencies (e.g., binaries that hardcode
+Use `buildFHSEnv` ONLY when `autoPatchelfHook` cannot resolve dependencies (e.g., binaries that hardcode
 `/usr/lib` paths or dlopen libraries at runtime):
 
 ```nix
-{ buildFHSUserEnv }:
+{ buildFHSEnv }:
 
-buildFHSUserEnv {
+buildFHSEnv {
   name = "app-fhs";
   targetPkgs = pkgs: [ pkgs.app ];
   runScript = "app";
@@ -335,19 +326,22 @@ buildFHSUserEnv {
 
 NEVER use FHS as the first approach. Always attempt `autoPatchelfHook` first.
 
-## Module-System Wrappers (nix-wrapper-modules)
+## Module-System Wrappers
 
-For a **configured** executable (baked-in flags/env/generated config) that stays portable across NixOS,
-home-manager, nix-darwin, devshells, and plain shells, use BirdeeHub's
-[nix-wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules) instead of a hand-rolled wrapper. Full
-workflow and API live in the dedicated **`nix-wrapper-modules` skill** — reach for it once wrapping needs
-generated config or cross-environment portability rather than a one-off `makeWrapper`.
+`makeWrapper`/`symlinkJoin` wrap a single derivation, and the wrapping usually lives inside one NixOS or
+home-manager config. When a **configured** executable (baked-in flags, env vars, generated config files) must
+stay portable across NixOS, home-manager, nix-darwin, devshells, and plain `nix build`, a module-system
+wrapper library such as BirdeeHub's
+[nix-wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules) is the better fit: it evaluates a
+small module system per program and emits an ordinary derivation usable anywhere. Stay with `makeWrapper` for
+a one-off env-var or PATH tweak; reach for a wrapper-module library once the wrapping needs generated config
+or cross-environment reuse.
 
 | Approach                      | Scope             | Portability                            |
 | ----------------------------- | ----------------- | -------------------------------------- |
 | `makeWrapper` + `symlinkJoin` | Single derivation | NixOS/HM only                          |
 | `nix-wrapper-modules`         | Module system     | NixOS, HM, nix-darwin, devshell, shell |
-| `buildFHSUserEnv`             | FHS sandbox       | Anywhere (heavy)                       |
+| `buildFHSEnv`                 | FHS sandbox       | Anywhere (heavy)                       |
 
 ## Unfree Packages
 
@@ -367,7 +361,7 @@ Users MUST enable unfree packages in their configuration to build.
   libraries that are in `buildInputs`.
 - **Mixing up `nativeBuildInputs` and `buildInputs`**. Build tools go in `nativeBuildInputs`; runtime
   libraries go in `buildInputs`.
-- **Using `lib.fakeSha256` in final derivation**. Only for initial scaffolding. Replace with real hash before
+- **Using `lib.fakeHash` in final derivation**. Only for initial scaffolding. Replace with real hash before
   delivery.
 - **Creating FHS environments when `autoPatchelfHook` would work**. FHS is a heavy escape hatch; try
   `autoPatchelfHook` first.
@@ -381,13 +375,14 @@ Users MUST enable unfree packages in their configuration to build.
 - **Not pinning `rev` in `fetchFromGitHub`**. Unpinned revisions break reproducibility.
 - **Using `xorg.libxkbcommon` instead of `libxkbcommon`** — the correct package is `libxkbcommon`, not
   `xorg.libxkbcommon`.
-- **Not using `rec` when version appears in `src`** — without `rec`, `version` is not in scope for `src`
-  attribute.
+- **Referencing `version` in `src` from a plain attrset** — it is not in scope and fails to evaluate. Use the
+  `(finalAttrs: { ... })` argument to `mkDerivation` and write `finalAttrs.version`; prefer it over `rec`,
+  which binds early and keeps stale values under `overrideAttrs`.
 
 ## Pre-Delivery Checklist
 
 - [ ] Source fetched from original archive (not pre-extracted directory)
-- [ ] Hash is real (not `lib.fakeSha256`)
+- [ ] Hash is real (not `lib.fakeHash`)
 - [ ] Package added to flake outputs or overlay
 - [ ] No hardcoded store paths (all references use `${pkg}` interpolation)
 - [ ] `meta` block present with at minimum `license` and `description`

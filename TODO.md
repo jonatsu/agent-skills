@@ -6,73 +6,34 @@ The completed 2026-09 review's verdicts and evidence are the record in
 reviews still deferred are the rows marked "Review is deferred" in
 [archived/README.md](archived/README.md). Repository-wide items live in [../TODO.md](../TODO.md).
 
-## Nix Domain Restore Verdicts and Fix Lists
+## Nix Domain — Remaining Work
 
-The consolidation the 2026-09-03 archival deferred to ran on 2026-09-06: a per-skill content-mapping pass over
-`archived/nix/` against `~/src/nix-config`'s repo-local skills and reference docs, with every fix item below
-verified by its mapping lane (wrong claims were tested, not inferred). Verdict: **six of the seven skills stay
-global and are worth restoring once fixed**; `nix-dendritic-pattern` was deleted from the archive on
-2026-09-06 (see its bullet below). The
-harvest direction into nix-config is already applied there (its `CHANGELOG.md` 2026-09-06 entry lists the
-items), so restoring these skills is now purely an agent-setup job: fix, validate, restore the domain per
-`archived/README.md` (the live `shared/nix/` domain and its `kasetto/base.yaml` entry already exist since the
-2026-09-06 promotions — move the fixed skills in and clear the deferred rows), and run the deferred
-`skill-review` pass on each. The nixos-config/home-manager pair cross-link each other, so restore them
-together or inline the linked hazard.
+The 2026-09-06 nix-domain consolidation is complete except for the items below: three skills promoted from
+`~/src/nix-config` (`direnv-nix-direnv`, `flake-manifest-sync` → `shared/nix/`; `generated-file-verify` →
+`shared/git/`; `colmena-deploy` stays repo-local) and five archived originals fixed per their mapping-verified
+fix lists and restored to `shared/nix/`. Verdicts, evidence, and coverage limits:
+[../docs/evaluations/2026-09-06-nix-domain-restore.md](../docs/evaluations/2026-09-06-nix-domain-restore.md).
 
-- **`nix-flakes` — restore after:** rewriting the "allowed `nixConfig` keys" paragraph (the 13-key "restricted
-  set" is wrong; per `NixOS/nix` `src/libflake/config.cc` the auto-applied whitelist is `bash-prompt`,
-  `bash-prompt-prefix`, `bash-prompt-suffix`, `flake-registry`, `commit-lock-file-summary`, everything else
-  needs `--accept-flake-config` or per-value trust); correcting IRON LAW 2 (tracked-but-dirty files ARE
-  visible to flake eval — only untracked/ignored files are invisible); fixing
-  `defaultPackage.<system>.package` → `defaultPackage.<system>` in references/advanced-commands.md; stripping
-  rot-prone token/package counts from references/mcp-nixos.md and re-verifying its `system=` param against the
-  live server schema.
-- **`nix-packaging` — restore after:** resolving the `nix-wrapper-modules` cross-reference to stand alone;
-  fixing the invalid Nix in the .deb example (`stdenv.cc.cc.lib` in a function argset is a syntax error);
-  removing the local-path `src` example that contradicts its own IRON LAW; `lib.fakeSha256` → `lib.fakeHash`
-  throughout; `buildFHSUserEnv` → `buildFHSEnv`; adding `appimageTools.wrapType2`/`.extract` as the canonical
-  AppImage route (the manual `--appimage-extract` unpackPhase fails on non-executable store files); rewriting
-  references/binary-overlay-pattern.md's non-evaluating example; modernizing `rec` toward the
-  `(finalAttrs: …)` pattern.
-- **`nix-secrets` — restore after:** correcting or cutting the agenix-rekey layer, whose option surface
-  drifted wrong (`hostIdentities` plural does not exist — `hostPubkey` is singular; `storageMode` has no
-  default and aborts unset; generators are `generator.script`, not `generator.generator`+`length`;
-  `masterKeyPath` is likely fabricated) — nix-config's source-verified `docs/reference/agenix-rekey.md` is the
-  correction source, and shrinking the section to a verified when-to-graduate pointer is the cheaper valid
-  shape; stripping den vocabulary ("host aspect nixos class", "per aspect"); fixing the invalid
-  `nix-store -qR .#…` verify command (`nix path-info -r` on the built toplevel); repairing the malformed
-  agenix-rekey decision-matrix row; replacing the `api-key: supersecretvalue` example that trips betterleaks.
-  Its sops-nix half is unique — no other asset covers it; spot-check `sops.useSystemdActivation` before
-  redeploy.
-- **`nixos-config` — restore after:** resolving its live link to
-  `../home-manager/references/settings-trees-and-merges.md` (restore the pair together or inline the hazard);
-  correcting the `nixos-generate-config` overstatement its lane flagged; optionally adding
-  `nixos-rebuild list-generations` and the `steam-run`-needs-unfree note. Its 2026-09-03 review verdict
-  (`ready with risks`) predates these edits, so it re-reviews with the rest despite the completed row.
-- **`home-manager` — restore after:** rewriting Step 2's wrong claim (`osConfig ? services` is NOT a type
-  error on null — tested on Nix 2.34.8: `null ? foo` → `false`, `null.foo or d` → `d`; plain selection is the
-  real hazard) and its echo in the anti-patterns; trimming the 862-char description to ≤512; adding the
-  mcp-nixos HM-index-often-empty weakness note; re-measuring the rev-pinned `emptyValue` type table on
-  restore.
-- **`nix-wrapper-modules` — restore after:** trimming the 795-char description; rewriting the `wrappedModules`
-  deprecation as completed (the alias is gone from upstream `main`, verified 2026-09-05); fixing the Mode C
-  example's `config.configFile.path` → `config.constructFiles.gitconfig.path`; re-verifying against current
-  upstream (pre-1.0, already moved — `inputs.pkgs` injection is undocumented in its api-reference). Contingent:
-  if nix-config's held wrapper inputs are dropped and no other repo adopts the library, this one has no
-  consumer — leave it archived instead.
+- **`nix-wrapper-modules` — still archived; restore after:** trimming the 795-char description; rewriting the
+  `wrappedModules` deprecation as completed (the alias is gone from upstream `main`, verified 2026-09-05);
+  fixing the Mode C example's `config.configFile.path` → `config.constructFiles.gitconfig.path`; re-verifying
+  against current upstream (pre-1.0, already moved — `inputs.pkgs` injection is undocumented in its
+  api-reference). Contingent: nix-config still holds the wrapper inputs deliberately but with no consumer —
+  restore only once that decision lands in adoption; if the inputs are dropped and no other repo adopts the
+  library, delete instead. The nix-packaging skill already stands alone either way.
+- **Deferred full `skill-review` pass** on the eight nix-domain-consolidation skills (five restored + three
+  promoted): all shipped at review lite, so verdicts are ready / ready-with-risks with discovery behavior
+  unmeasured.
+- **Parked named risks** (verified as risks, not defects, during the restore): nix-packaging's Electron
+  dependency list may be dated for current nixpkgs; nix-flakes' deprecation/flag claims assume modern CppNix,
+  Lix parity unverified; the `or`/`?` null-tolerance wording in home-manager was verified only on Determinate
+  Nix 2.34.8; `direnv-nix-direnv`'s `source_url` example still pins nix-direnv 3.1.2 — refresh only after
+  verifying the newer tag's hash.
 - **`nix-dendritic-pattern` — deleted from the archive 2026-09-06**; its value is fully accounted for in
   nix-config (nine `dendritic-*` skills, six `den-*.md` references, the pin-debt TODO entry). It was the only
   document verified at den rev `e8e8de1e` (the rev nix-config's lock actually pins, while its live den docs
   still stamp `2040b613`); nix-config's pin-debt lane can recover it from git history
   (`skills/archived/nix/nix-dendritic-pattern/`) if needed.
-
-The three promotions the same mapping pass approved (`direnv-nix-direnv`, `flake-manifest-sync` →
-`shared/nix/`; `generated-file-verify` → `shared/git/`) shipped move-don't-copy on 2026-09-06 with their strip
-lists applied; `colmena-deploy` stays repo-local in nix-config. One item deliberately skipped: the
-`direnv-nix-direnv` `source_url` example still pins nix-direnv 3.1.2 — refresh it only after verifying the
-newer tag's hash. Their review tier is review lite, so they join the restored nix skills' deferred
-`skill-review` pass.
 
 ## Unevaluated Candidate Sources
 

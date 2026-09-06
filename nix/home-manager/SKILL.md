@@ -1,6 +1,6 @@
 ---
 name: home-manager
-description: "Configure home-manager user environments: NixOS-module vs standalone mode, home.packages vs programs.*, dotfile management, overlay scope under useGlobalPkgs, osConfig access, home.stateVersion, and home-manager switch. Use when adding user packages or dotfiles, when a home-manager setting has no effect, when an overlay is ignored, when a setting evaluates fine but is missing from the generated config file, or when choosing between standalone and integrated home-manager. Triggers on: home-manager, home.nix, home.packages, programs.*, homeConfigurations, home-manager switch, useGlobalPkgs, useUserPackages, osConfig, mkOutOfStoreSymlink, xdg.configFile, home.stateVersion, standalone home-manager, programs.*.settings, configFile, plasma-manager, cosmic-manager, lib.optionalAttrs, lib.recursiveUpdate, freeform submodule, emptyValue, has no value defined."
+description: "Configure home-manager user environments: NixOS-module vs standalone mode, home.packages vs programs.*, dotfiles via mkOutOfStoreSymlink, overlay scope under useGlobalPkgs, osConfig access, home.stateVersion, home-manager switch. Use when a setting has no effect or is missing from the generated file, an overlay is ignored, or choosing standalone vs integrated. Triggers on: home.nix, homeConfigurations, useUserPackages, osConfig, xdg.configFile, programs.*.settings, freeform submodule, emptyValue."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -53,16 +53,26 @@ display managers. A config that works integrated can silently under-deliver stan
 
 Home-manager exposes the host's NixOS configuration as `osConfig`, and sets
 `_module.args.osConfig = lib.mkDefault null`. On a standalone home it is therefore **bound and `null`, not
-absent** — a module taking `osConfig` still loads, and any attribute access on it fails.
+absent** — a module taking `osConfig` still loads. The hazard is **plain attribute selection**:
+`osConfig.services` throws `expected a set but found null`. The `?` and `or` forms are null-tolerant along
+their whole attrpath — `osConfig ? services` is `false`, and `osConfig.services.foo.enable or false` yields
+the default even with `osConfig` null at the first step — but only for the single attrpath the `or` is
+attached to: a split selection (`(osConfig.services).foo or false`) and `builtins.hasAttr "x" osConfig` both
+still throw on null.
 
 ```nix
-# CORRECT — works in both modes
+# CORRECT — works in both modes; the explicit null check reads clearest
 { osConfig, ... }: {
   programs.foo.enable = osConfig != null && osConfig.services.foo.enable;
 }
+# `osConfig.services.foo.enable or false` is equivalent when null-or-missing
+# should mean false
 
-# WRONG — `osConfig ? services` is a type error on null, and omitting the
+# WRONG — plain selection throws standalone, and omitting the `osConfig`
 # argument does not make the module "standalone-safe"
+{ osConfig, ... }: {
+  programs.foo.enable = osConfig.services.foo.enable;
+}
 ```
 
 Config that must work in both modes should not reach into `osConfig` at all; pass what it needs through a
@@ -153,8 +163,9 @@ Load ONLY when the trigger fires. **Do NOT load it to add a package, a dotfile, 
 - **System config in home-manager** — `services.*`, `boot.*`, `networking.*` belong to NixOS modules.
 - **Overlays in home-manager under `useGlobalPkgs = true`** — silently ignored; define them at the NixOS
   level.
-- **Attribute access on `osConfig` without a null guard** — standalone binds it to `null`, so it is a type
-  error, not a missing argument.
+- **Plain attribute selection on `osConfig` without a null guard** — standalone binds it to `null`, so
+  `osConfig.services.foo` throws `expected a set but found null`. Guard with `osConfig != null` or an
+  attrpath `or` default; `?`/`or` tolerate null, but `builtins.hasAttr` and a split selection do not.
 - **Raw package where a `programs.*` module exists** — you get the binary without config generation, shell
   integration, or services.
 - **Same package in `systemPackages` and `home.packages`** — ambiguous `PATH` precedence, potentially
@@ -182,3 +193,7 @@ expected (`programs.git.userName`, not `users.users.<name>.name`).
 The `mcp-nixos` MCP server searches home-manager options directly (`uvx mcp-nixos`, or
 `nix run github:utensils/mcp-nixos`). Without it, the home-manager option search page or `nix repl` on the
 resolved `homeConfigurations.<name>.config` is the fallback.
+
+MCP and API indexes for home-manager options are often empty or stale; an empty lookup does NOT mean the
+option is absent. Fall back to an options index site (e.g. searchix.ovh), and cross-check the hit against the
+home-manager source at the revision the user's flake pins — options move between releases.

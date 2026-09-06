@@ -149,11 +149,15 @@ Deployment variants, remote deploys, generation management, and rollback:
 Load one ONLY when its trigger fires. **Do NOT load either to add a service, a package, or an option to a
 working host** — the body covers that.
 
-| Reference                                                                               | Load when                                                                                                |
-| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| [hardware-and-boot.md](references/hardware-and-boot.md)                                 | Standing up a NEW host, or changing bootloader, disk layout, or hardware config                          |
-| [operations.md](references/operations.md)                                               | Deploying, rolling back, a failing build, an unbootable system, or a downloaded binary that will not run |
-| [settings-trees-and-merges.md](../home-manager/references/settings-trees-and-merges.md) | Writing or gating a nested `settings` tree that a generator renders to a file, in either module system   |
+| Reference                                                 | Load when                                                                                                |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [hardware-and-boot.md](references/hardware-and-boot.md)   | Standing up a NEW host, or changing bootloader, disk layout, or hardware config                          |
+| [operations.md](references/operations.md)                 | Deploying, rolling back, a failing build, an unbootable system, or a downloaded binary that will not run |
+| `../home-manager/references/settings-trees-and-merges.md` | Writing or gating a nested `settings` tree that a generator renders to a file, in either module system   |
+
+The last row lives in the companion `home-manager` skill and resolves only when both are deployed side by
+side; if it is missing, its core is: nested attrsets in `settings`-style options shallow-merge per module —
+they do not deep-merge, so a shared name is replaced wholesale.
 
 ## Anti-Patterns
 

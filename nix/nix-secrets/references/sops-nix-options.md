@@ -2,24 +2,27 @@
 
 ## NixOS — Top-level Options
 
-| Option                      | Type             | Default                           | Description                                       |
-| --------------------------- | ---------------- | --------------------------------- | ------------------------------------------------- |
-| `sops.defaultSopsFile`      | `path`           | required                          | Default sops file                                 |
-| `sops.defaultSopsFormat`    | `str`            | `yaml`                            | Default format (yaml, json, ini, dotenv, binary)  |
-| `sops.defaultSopsKey`       | `str`            | `""`                              | Default key path in sops file                     |
-| `sops.validateSopsFiles`    | `bool`           | `true`                            | Validate sops files at eval time                  |
-| `sops.keepGenerations`      | `int`            | `0`                               | Keep N generations of secrets                     |
-| `sops.log`                  | `bool`           | `false`                           | Enable logging                                    |
-| `sops.environment`          | `attrsOf str`    | `{}`                              | Extra environment variables                       |
-| `sops.package`              | `package`        | `pkgs.sops`                       | sops package                                      |
-| `sops.validationPackage`    | `package`        | `pkgs.sops`                       | Package for validation                            |
-| `sops.useTmpfs`             | `bool`           | `false`                           | Use tmpfs for secrets (kernel \<6.4 swap warning) |
-| `sops.useSystemdActivation` | `bool`           | `true`                            | Use systemd activation for secrets                |
-| `sops.age.generateKey`      | `bool`           | `false`                           | Generate age key if not exists                    |
-| `sops.age.keyFile`          | `path`           | `null`                            | Path to age key file                              |
-| `sops.age.sshKeyPaths`      | `listOf path`    | `[/etc/ssh/ssh_host_ed25519_key]` | SSH keys to convert to age                        |
-| `sops.age.plugins`          | `listOf package` | `[]`                              | age plugins (e.g. age-plugin-yubikey)             |
-| `sops.gnupg.*`              | various          | —                                 | GPG backend options                               |
+| Option                      | Type             | Default                           | Description                                                     |
+| --------------------------- | ---------------- | --------------------------------- | --------------------------------------------------------------- |
+| `sops.defaultSopsFile`      | `path`           | required                          | Default sops file                                               |
+| `sops.defaultSopsFormat`    | `str`            | `yaml`                            | Default format (yaml, json, ini, dotenv, binary)                |
+| `sops.defaultSopsKey`       | `str`            | `""`                              | Default key path in sops file                                   |
+| `sops.validateSopsFiles`    | `bool`           | `true`                            | Validate sops files at eval time                                |
+| `sops.keepGenerations`      | `int`            | `0`                               | Keep N generations of secrets                                   |
+| `sops.log`                  | `bool`           | `false`                           | Enable logging                                                  |
+| `sops.environment`          | `attrsOf str`    | `{}`                              | Extra environment variables                                     |
+| `sops.package`              | `package`        | `pkgs.sops`                       | sops package                                                    |
+| `sops.validationPackage`    | `package`        | `pkgs.sops`                       | Package for validation                                          |
+| `sops.useTmpfs`             | `bool`           | `false`                           | Use tmpfs for secrets (kernel \<6.4 swap warning)               |
+| `sops.useSystemdActivation` | `bool`           | auto\*                            | Install secrets via systemd units instead of activation scripts |
+| `sops.age.generateKey`      | `bool`           | `false`                           | Generate age key if not exists                                  |
+| `sops.age.keyFile`          | `path`           | `null`                            | Path to age key file                                            |
+| `sops.age.sshKeyPaths`      | `listOf path`    | `[/etc/ssh/ssh_host_ed25519_key]` | SSH keys to convert to age                                      |
+| `sops.age.plugins`          | `listOf package` | `[]`                              | age plugins (e.g. age-plugin-yubikey)                           |
+| `sops.gnupg.*`              | various          | —                                 | GPG backend options                                             |
+
+\* `useSystemdActivation` defaults to `true` only when `systemd.sysusers.enable` or `services.userborn.enable`
+is set (users managed by systemd); otherwise `false`.
 
 ## NixOS — Per-Secret Options (`sops.secrets.<name>`)
 

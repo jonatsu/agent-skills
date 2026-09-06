@@ -46,7 +46,8 @@ environment. Installation changes the target disk and boot configuration; confir
 
 ```bash
 nixos-rebuild switch --rollback                                   # previous generation
-nix-env --list-generations --profile /nix/var/nix/profiles/system # inspect
+nixos-rebuild list-generations                                    # inspect (NixOS 23.11+)
+nix-env --list-generations --profile /nix/var/nix/profiles/system # inspect (older releases)
 nix-collect-garbage --delete-older-than 30d                        # prune
 ```
 
@@ -84,7 +85,10 @@ shared-library error. Cheapest first:
 }
 ```
 
-2. **`steam-run`** — a one-off FHS sandbox: `nix-shell -p steam-run --run "steam-run ./binary"`.
+2. **`steam-run`** — a one-off FHS sandbox: `nix-shell -p steam-run --run "steam-run ./binary"`. The
+   package is unfree-gated: without unfree allowed it fails with a licensing error, so use
+   `NIXPKGS_ALLOW_UNFREE=1 nix-shell --impure -p steam-run …` for a one-off, or set
+   `nixpkgs.config.allowUnfree = true`.
 3. **`nix-alien`** — resolves a specific binary's missing libraries automatically
    (<https://github.com/thiagokokada/nix-alien>).
 

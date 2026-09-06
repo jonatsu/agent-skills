@@ -12,10 +12,11 @@ IRON LAW: NEVER edit `flake.lock` by hand. Use `nix flake update` or `nix flake 
 reproducibility and cause silent evaluation failures.
 
 IRON LAW 2: New or moved files MUST be `git add`ed (or already tracked) before any flake evaluation can see
-them. `nix build`/`nix eval`/`nix flake check` against a git-backed flake (`.`/`path:.`) only operate on the
-git index, not the raw working directory. An untracked new file is silently invisible — no error at the file
-itself, just a confusing "attribute ... missing" error at whatever *references* it. If a brand-new file/module
-isn't resolving, run `git status` before debugging the Nix logic.
+them. `nix build`/`nix eval`/`nix flake check` against a git-backed flake (`.`/`path:.`) copy only files git
+knows about: tracked files are visible — including unstaged, dirty edits — but untracked and ignored files
+are silently invisible. No error at the file itself, just a confusing "attribute ... missing" error at
+whatever *references* it. If a brand-new file/module isn't resolving, run `git status` before debugging the
+Nix logic.
 
 ## Prerequisites
 
@@ -58,8 +59,8 @@ Ask: Is this a new flake or an existing one?
 - Check for `flake-parts` → look for `flake-parts.lib.mkFlake` in outputs
 - Check for `import-tree` → look for `inputs.import-tree` (dendritic pattern indicator)
 
-If the project uses the Denful (den) dendritic pattern, `flake.nix` is a minimal dependency manifest and all
-logic lives in `modules/`. Look for a dendritic skill in the configuration repository itself before working
+If the project uses a dendritic-pattern framework (e.g. den), `flake.nix` is a minimal dependency manifest and
+all logic lives in `modules/`. Look for a dendritic skill in the configuration repository itself before working
 there.
 
 ## Step 2: Work with Inputs
@@ -127,7 +128,8 @@ inputs = {
 
 ### nixConfig attribute
 
-Set Nix settings scoped to the flake (restricted — only a subset of nix.conf options allowed):
+Set Nix settings scoped to the flake. Any `nix.conf` option may appear here, but application is two-tier
+(see below):
 
 ```nix
 {
@@ -139,12 +141,12 @@ Set Nix settings scoped to the flake (restricted — only a subset of nix.conf o
 }
 ```
 
-**Allowed nixConfig keys** (restricted set): `bash-prompt`, `extra-substituters`, `extra-trusted-public-keys`,
-`max-jobs`, `narinfo-cache-positive-ttl`, `narinfo-cache-negative-ttl`, `netrc-file`, `post-build-hook`,
-`substituters`, `system-features`, `trusted-public-keys`, `trusted-substituters`, `warn-dirty`.
+**Auto-applied keys** (the only ones Nix honors without confirmation, per `src/libflake/config.cc`):
+`bash-prompt`, `bash-prompt-prefix`, `bash-prompt-suffix`, `flake-registry`, `commit-lock-file-summary`.
 
-Settings from `nixConfig` are only applied with `--accept-flake-config` or when the user confirms
-interactively.
+**Every other key** (`substituters`, `extra-trusted-public-keys`, `max-jobs`, ...) is applied only with
+`--accept-flake-config`, or after interactive per-value confirmation (accepted values are persisted in
+`trusted-settings.json`). In the example above, only `bash-prompt` takes effect without acceptance.
 
 ## Step 3: Work with Outputs
 

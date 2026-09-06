@@ -114,8 +114,8 @@ Reading one field directly, or `builtins.attrNames`, is safe; only forcing a val
 | `str`, `bool`, `int`, `float`, `path`, `package`, `enum`, `either`, `lines`, `commas`, `anything`, `raw` | No                | **throws**                  |
 | `nullOr X`, `attrsOf`, `lazyAttrsOf`, `listOf`, `submodule`, `attrs`, `unique` wrapping one of those     | Yes               | silently yields empty value |
 
-Measured on nixpkgs `6d65bfc1bcef2ef39a239d38e577e92a89fb0f07` (`lib.version` `26.05.20260801.6d65bfc`); the
-error string is that rev's wording.
+Measured on nixpkgs master `af8ad534c6dc23cac562c372e66d81f2bb487b9a` (2026-09-06, `lib/types.nix` +
+`lib/modules.nix`); the error string is that rev's wording.
 
 Either supply a `default`, use a type with an `emptyValue`, or declare it as `types.nullOr X`. Declaring
 `default = null` on a non-nullable type does not help — it swaps the "no value" error for a type-check

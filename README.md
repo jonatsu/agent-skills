@@ -73,7 +73,7 @@ forty-three skills in one directory had stopped being a list anyone could read.
 | `design/`      | Shaping and recording a design before it is built                     |
 | `development/` | Doing the work: debugging, testing, dev-environment tooling           |
 | `git/`         | Git, GitHub, and repository hygiene                                   |
-| `nix/`         | Nix-bound tooling: direnv/nix-direnv, generated flake manifests       |
+| `nix/`         | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv       |
 | `ops/`         | Machines and runtimes: containers, systemd, dotfiles                  |
 | `review/`      | Reviewing code and designs                                            |
 | `writing/`     | Human-facing prose                                                    |
@@ -82,9 +82,9 @@ forty-three skills in one directory had stopped being a list anyone could read.
 `<skills-dir>/<skill>/` and no skill needs to know where its source lives.
 
 The `nix/` domain was archived whole on 2026-09-03 pending consolidation with the repo-local skills in
-`~/src/nix-config`, then revived on 2026-09-06 for the two skills promoted from that repo. The six archived
-originals survive intact as `archived/nix/`, which is the shape their restore needs; see `archived/README.md`
-and the fix lists in `TODO.md`.
+`~/src/nix-config`, then revived on 2026-09-06: two skills promoted from that repo plus five archived
+originals fixed and restored the same day. Only `nix-wrapper-modules` remains in `archived/nix/`, deliberately
+— see `archived/README.md` and `TODO.md`.
 
 Three consequences worth knowing before you move anything:
 

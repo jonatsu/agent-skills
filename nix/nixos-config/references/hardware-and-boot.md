@@ -17,8 +17,9 @@ devices. Keep it per-host and never share it between machines — two hosts with
 failure waiting for the first disk swap. Treat it as a generated baseline: regenerate after hardware changes,
 and keep deliberate hardware policy in a separate host-specific module where possible.
 
-`--show-hardware-config` writes only the hardware half, which is what you want when refreshing an existing
-host; the plain form also rewrites `configuration.nix`.
+`--show-hardware-config` prints only the hardware half, which is what you want when refreshing an existing
+host; the plain form overwrites `hardware-configuration.nix` unconditionally but writes `configuration.nix`
+only when it is missing (or with `--force`).
 
 ## Bootloader
 
