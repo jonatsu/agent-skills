@@ -50,23 +50,25 @@ docs = ["sphinx", "myst-parser"]
 default-groups = ["dev"]
 
 [tool.ruff]
-line-length = 100          # a choice, not a standard; ruff's own default is 88
+line-length = 120          # a choice, not a standard; ruff's own default is 88
 target-version = "py311"   # match requires-python above
 src = ["src"]
 
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-    "D",       # pydocstyle; enable selectively
     "COM812",  # trailing comma, conflicts with the formatter
     "ISC001",  # implicit string concat, conflicts with the formatter
 ]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
     "S101",     # assert is the point of a test
     "PLR2004",  # magic values are readable in a test
-    "ANN",      # annotations optional in tests
+    "D",        # public API docstrings are not required for tests
 ]
 
 [tool.ruff.format]

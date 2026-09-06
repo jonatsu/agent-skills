@@ -112,13 +112,16 @@ audit = ["pip-audit"]
 default-groups = ["dev"]
 
 [tool.ruff]
-line-length = 100          # a choice, not a standard; ruff's own default is 88
+line-length = 120          # a choice, not a standard; ruff's own default is 88
 target-version = "py311"   # match requires-python above
 src = ["src"]
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["D", "COM812", "ISC001"]
+ignore = ["COM812", "ISC001"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 ```
 
 `[dependency-groups]` is PEP 735 and is not installed by consumers of the package.
@@ -135,13 +138,13 @@ configuration belongs to `python-typing`** for the same reason.
 ## Ruff Owns the Style Rules
 
 `select = ["ALL"]` with a short, explained ignore list is the recommended starting point: it opts into every
-rule ruff ships and forces each exclusion to be deliberate. Three exclusions are near-universal.
+rule ruff ships and forces each exclusion to be deliberate. Use Google-style docstrings for public APIs.
+Two exclusions avoid formatter conflicts.
 
-| Ignored  | Why                                                                           |
-| -------- | ----------------------------------------------------------------------------- |
-| `D`      | pydocstyle. Enable selectively once the project agrees a docstring convention |
-| `COM812` | Trailing comma rule that fights the formatter                                 |
-| `ISC001` | Implicit string concatenation rule that fights the formatter                  |
+| Ignored  | Why                                                          |
+| -------- | ------------------------------------------------------------ |
+| `COM812` | Trailing comma rule that fights the formatter                |
+| `ISC001` | Implicit string concatenation rule that fights the formatter |
 
 Tests need their own relaxations, `S101` for `assert` and `PLR2004` for magic values among them. The
 per-file-ignores block is in [pyproject-reference.md](references/pyproject-reference.md).

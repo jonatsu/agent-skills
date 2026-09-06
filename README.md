@@ -57,6 +57,10 @@ deploying them there would ship skills describing a different agent. Add the gro
 Codex also receives `shared/` and nothing agent-specific. Its built-in `.system` skills remain platform-owned
 beside the Kasetto-managed global skills and are excluded by exact path from the ownership gate.
 
+Python preferences are maintained in [the scoped Python rule](../agents/rules/python.md).
+The retired `python-idioms` package remains in [the archive](archived/python-idioms/ARCHIVED.md).
+Project management, typing, testing, async, and error-handling skills retain their specialist procedures.
+
 ### Domains within `shared/`
 
 Since 2026-08-26 the shared group is organised by subject: `shared/<domain>/<skill>/`. Before that change,

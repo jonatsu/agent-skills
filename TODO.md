@@ -96,42 +96,14 @@ from primary sources, record provenance, and decide whether the source overlaps 
   compare with archived `design-forge` and its deliberate rejection of a universal atomic `FR-` and `NFR-`
   schema.
 
-## Revisit `searchable-code` as an Engineering-Patterns Skill
+## Python Preference Placement Resolved
 
-Raised by
-[../docs/plans/archived/python-skill-set-draft.md](../docs/plans/archived/python-skill-set-draft.md), which
-folds the Python expression of these rules into `python-idioms` and leaves the general version with no home.
-That skill set now exists, so this is unblocked.
-
-`searchable-code` was deleted 2026-09-03 because its subject was a moment nobody verbalizes, so it never
-activated; `../docs/findings/skill-discovery-limits.md` holds the measurement. Only its authoring rules
-survived, condensed, in `agents/rules/instructions/workflow.md`. Its diagnostic half was lost entirely: the
-recovery procedure for a search that came up empty, and the rule that whichever recovery worked names the
-defect to fix in the same change. Recover the original before rewriting anything:
-`git show aa34532^:skills/shared/development/searchable-code/SKILL.md`. That commit also carries the package's
-`ATTRIBUTIONS.md`, `LICENSE.upstream`, and its `evals/activation.json` fixture, which is the measurement's
-reusable baseline.
-
-The question is whether a broader skill about engineering patterns and principles has a trigger that
-findability alone did not. Candidate material beyond findability: naming, module boundaries, duplication
-versus abstraction, error-message shape, and the same empty-search recovery generalized. Settle discovery
-before writing it. If the honest answer is that a user says nothing that would load it, the answer is a rules
-file or a deliberately opened reference, not a second attempt at the same skill.
-
-## Where the Global Workflow's Patterns Should Live
-
-The user intends to lean up `agents/rules/instructions/workflow.md`, keeping global instructions generic and
-language-agnostic. That file currently carries language-specific and pattern-specific material, including the
-condensed `searchable-code` naming rules and the testing-level policy, which the proposed `python-idioms`
-copies deliberately in case the rules file loses them.
-
-Decide, for each pattern that file establishes, whether its home is the global rules, a skill, or a repository
-instruction file. Load-bearing constraints: an always-loaded rule fires at moments no skill can reach, and a
-skill only fires when a request matches it, so moving a rule into a skill can silently stop it applying.
-Weigh discovery across every agent, not only Claude Code.
-
-Note the accepted duplication this creates in the meantime. `python-idioms` and the global rules will both
-carry the naming and test-writing preferences, with nothing detecting divergence.
+The user approved retiring `python-idioms` on 2026-09-06. Persistent preferences now belong to
+`agents/rules/python.md`; language-independent search recovery belongs to `agents/rules/tools.md`;
+general commenting and testing policies belong to `agents/rules/workflow.md`.
+This resolves the temporary duplication and the proposal for another engineering-patterns skill.
+The archive preserves the original package and its provenance.
+See [the consolidation review](../docs/evaluations/2026-09-06-python-idioms-rule-consolidation.md).
 
 ## Codex Skill-Description Budget
 
@@ -226,22 +198,16 @@ any of them. The design is in
 [../docs/plans/archived/python-skill-set-draft.md](../docs/plans/archived/python-skill-set-draft.md), which
 carries the full reasoning behind each item here.
 
-- **`python-idioms` activation is the one that decides something.** Its predecessor `searchable-code` activated
-  in 0 of 13 runs, and explicit invocation produced the intended behavior, so wording was never the fault.
-  Measure a review request, a refactor request, and a failed-grep report. If it does not fire on those three,
-  delete the skill rather than reword it. `../docs/findings/skill-discovery-limits.md` holds the predecessor's
-  measurement, and its `evals/activation.json` fixture is the reusable baseline.
-- **Discovery among six sibling descriptions is unmeasured.** All six share a prefix and a subject, and the two
+- **Discovery among the five remaining sibling descriptions is unmeasured.** They share a prefix and a subject; the two
   deliberate boundaries exist only as prose: `python-async-patterns` versus `python-testing` for async tests,
   and `python-typing` versus `python-project-management` for mypy configuration. Measure positive requests per
   skill, near-miss requests across both boundaries, and requests that legitimately need two.
 - **The claim that the superseded wshobson material was largely model recall is inference from its text**, not
   measurement. Nothing depends on settling it.
 
-Two costs the set carries until then. Six descriptions are charged to every session in every repository,
-including sessions that touch no Python, so recheck this against the Codex description-budget item above. The
-naming and test-writing preferences are duplicated in `python-idioms` and
-`agents/rules/instructions/workflow.md` by the user's decision, and nothing detects divergence.
+Five specialist descriptions remain available across repositories. Recheck their cost against the Codex description
+budget when measuring discovery. `python-idioms` is archived by consolidation decision; evaluating its activation is no
+longer a prerequisite for retirement. The predecessor's evidence remains in `../docs/findings/skill-discovery-limits.md`.
 
 ## OpenCode Reflect Ownership
 

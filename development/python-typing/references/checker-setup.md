@@ -46,17 +46,13 @@ strict = true
 [[tool.mypy.overrides]]
 module = "myproject.legacy.*"
 ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-disallow_untyped_defs = false
 ```
 
 The exemption list is then a visible, shrinking backlog. The alternative — global leniency — has no such list,
 and nothing ever tightens.
 
-Relaxing annotations in tests is a common and reasonable choice: test functions take fixtures and return
-`None`, so requiring annotations adds noise without catching anything.
+Annotate test function signatures too. Preserve explicitly configured exceptions in existing projects;
+introduce new exceptions only as part of an authorized typing migration.
 
 ### Third-Party Libraries Without Types
 
