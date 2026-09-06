@@ -35,6 +35,43 @@ fix lists and restored to `shared/nix/`. Verdicts, evidence, and coverage limits
   still stamp `2040b613`); nix-config's pin-debt lane can recover it from git history
   (`skills/archived/nix/nix-dendritic-pattern/`) if needed.
 
+## `test-engineer` Did Not Trigger on Real Test-Writing Work
+
+**Observed 2026-09-06, in this repository, and it is a discovery failure rather than a skill defect.** A
+session wrote four new pytest integration tests for `services/tests/test_crawl4ai_integration.py` — squarely
+the `TEST-IMPLEMENTATION` and `REGRESSION` modes `test-engineer` declares — and **no test skill appeared in
+the session's available-skills listing at any point**. `test-engineer`, `python-testing` and
+`test-driven-development` are all deployed under `~/.config/claude/skills/`, so the packages were present and
+the agent simply never saw them offered. They were loaded only after the user asked directly, by name.
+
+**What the listing did offer, in a repository containing no Nix at all**, was five Nix skills
+(`direnv-nix-direnv`, `flake-manifest-sync`, `generated-file-verify`, `home-manager`, `nix-flakes`,
+`nix-packaging`, `nix-secrets`, `nixos-config`) plus `writing-for-humans`. That inversion is the finding: the
+surfaced set correlated with the 2026-09-06 nix-domain consolidation rather than with the work in hand.
+
+Cost of the miss, measured rather than assumed: the tests written without the skill carried a **false
+rationale** in a docstring — a regression test claiming to catch a `Mount`-for-`Route` swap that mutation
+testing showed it never caught. `test-engineer`'s "ask what the suite would CATCH" rule is exactly the check
+that finds this, and it was applied by hand only because
+[a memory note](../docs/findings/skill-discovery-limits.md) said to mutation-test.
+
+Before treating this as a `test-engineer` frontmatter problem, establish which layer failed:
+
+- **Whether the listing is truncated or ranked.** If Claude Code surfaces a bounded subset, this is a budget
+  problem and no description edit fixes it. `docs/findings/skill-discovery-limits.md` already holds the
+  evidence that a validated skill can simply never activate; check it before re-deriving.
+- **Whether the nix-domain consolidation changed what gets surfaced**, given those skills dominated a listing
+  in a repository with no Nix files. Correlation only so far; the deploy was the same day.
+- **Whether `test-engineer`'s description names the triggers that would have fired here.** The work was
+  "write integration tests for a new transport" and "verify a regression is caught", phrased in neither Nix
+  nor prose terms.
+- Only then consider a description edit, and measure activation before and after rather than assuming the
+  rewrite worked. This is the same trap the `python-` skills' evaluation section below records.
+
+Related: the repository-wide **Python Skill Set Behavioral Evaluation** section already notes that no
+behavioral evidence exists for `python-testing`. This is the first recorded instance of it failing to
+activate on work it names.
+
 ## Unevaluated Candidate Sources
 
 Recorded 2026-08-26 and never fetched, read, or license-checked. The descriptions are path-based inferences,
