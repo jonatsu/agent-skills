@@ -50,10 +50,58 @@ establish:
 
 Do not invent the missing actor. Ask the author or state the gap.
 
+## Unnamed Authority
+
+False agency hides the actor inside a mechanism. This hides a claim behind a crowd nobody can check:
+
+- "experts say"
+- "research suggests"
+- "observers note"
+- "critics argue"
+- "it is widely accepted that"
+
+Name the source and keep the claim inside what that source establishes. Where no source exists, attribute the
+claim to whoever is making it, mark it as unsupported, or cut it.
+
 ## Clustered Rhetorical Setup
 
 One contrast or rhetorical question may be deliberate. Inspect a passage when several sentences stage a reveal,
 announce insight, or end in a manufactured payoff instead of making the claim directly.
+
+## Editing Distortions
+
+These are the ways an edit changes a claim while appearing to change only its wording. Check an edited passage
+against its source for each one.
+
+| Distortion            | Example                                                                  |
+| --------------------- | ------------------------------------------------------------------------ |
+| Certainty inflated    | "may reduce" becomes "will reduce"                                       |
+| Scope widened         | "some teams" becomes "most teams"; "in this sample" becomes "in general" |
+| Sequence made causal  | "associated with" becomes "caused"                                       |
+| Absence made proof    | "found no evidence" becomes "proved there was none"                      |
+| Attribution detached  | "the vendor claims the export completes" becomes "the export completes"  |
+| Reported view claimed | "the user reported a hang" becomes "the feature hangs"                   |
+| Obligation softened   | "must" becomes "should"; "never" becomes "avoid"                         |
+| Negation lost         | a condition, exception, or qualifier drops out of a shortened sentence   |
+| Exact term weakened   | a term of art is replaced by a general synonym that does not carry it    |
+
+When shortening, protect every word that carries a limit, condition, exception, or qualification. Those words
+are usually the ones a length target reaches for first.
+
+Do not silently repair an inconsistency, inaccuracy, or omission as though the correction came from the author.
+Preserve it and flag it, or ask when the answer would change the piece.
+
+## Leaked Machinery and Placeholders
+
+Remove these on sight. They are production residue with no reading under which they belong in delivered text:
+
+- unresolved placeholders: "[insert source]", "[Name]", "TK", "TBD", "XX", "202X";
+- leaked tool, interface, and citation tokens: "turn0search0", "oaicite", "oai_citation", "contentReference";
+- editorial notes and alternatives left in publication-ready copy; and
+- broken fences, empty footnotes, and malformed links introduced during generation.
+
+Replace a placeholder with the real value when the source supplies it. Otherwise state the gap to the author
+rather than inventing a plausible filler.
 
 ## Invisible Marks and Metadata
 
@@ -63,3 +111,17 @@ language, accessibility, bidirectional text, typography, or emoji composition. P
 interoperability, and application metadata unless the user included it in scope or it is a confirmed AI mark.
 
 When removing a confirmed invisible mark, verify that the rendered text and intended semantics did not change.
+
+## Compound Hyphenation
+
+This section is an English convention. In another language, follow that language's own rules for compounds.
+
+Hyphenate a temporary compound before the noun it modifies, and usually open it after a linking verb:
+"a well-known author", but "the author is well known"; "a long-term plan", but "the plan is long term".
+
+Do not hyphenate an "-ly" adverb compound: "highly qualified", not "highly-qualified". Do not hyphenate a set
+phrase that reads as one unit: "high school", "real estate", "machine learning".
+
+Keep a conventional or ambiguity-preventing hyphen, such as "state-of-the-art", "cost-effective", and
+"user-friendly". Where a project names a dictionary or style guide, that source governs; where none is named,
+preserve the established usage in the surrounding text rather than correcting it.

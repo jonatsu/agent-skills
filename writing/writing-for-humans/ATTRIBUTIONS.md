@@ -15,13 +15,31 @@ adaptation, and AI-mark diagnosis.
 - [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop), pinned at
   `8da1f030185bdfe8471220585162991eaeb970e9`, informed the chat-residue, promotional-language, and
   false-agency diagnostics. MIT, Copyright (c) 2025 Hardik Pandya.
+
 - [blader/humanizer](https://github.com/blader/humanizer), based on Wikipedia's
   [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), informed the
   weak-signal threshold and writing-sample override. MIT, Copyright (c) 2025 Siqi Chen.
+
 - [jpeggdev/humanize-writing](https://github.com/jpeggdev/humanize-writing) informed the warning that
   specificity rules can pressure a writer to invent details. MIT, Copyright (c) 2025 jpeggdev.
 
-The MIT license texts fetched on 2026-08-24 remain in `LICENSE.upstream`.
+- [Anbeeld/WRITING.md](https://github.com/Anbeeld/WRITING.md), `skills/writing`, pinned at
+  `0c127ca4a4e51debec5adf4816f2bf464d83438b`, informed the task non-substitution rule, the quotation-integrity
+  additions, the causality-inflation rule, the repeated-move inspection threshold, the authorship-provenance
+  guard, the over-correction guard, the placeholder and leaked-token artifacts, the editing-distortion
+  diagnostics, the unnamed-authority diagnostic, and the compound-hyphenation guidance. It also prompted the
+  revision of the em-dash rule from a character ban to a rewrite-first default, though the rule adopted here is
+  stricter than its source and reaches a different result. MIT, Copyright (c) 2026 Anbeeld.
+
+  Its scope is the inverse of this skill's: it covers marketing, SEO, criticism, scripts and application
+  materials while excluding commits and code comments, and it is English-only. Its medium-routing table, its
+  document-structure rules, its voice-calibration procedure, its numbered required-checks gate, and its
+  fixed jargon list were considered and declined. Structure belongs to `writing-documentation`, this skill's
+  voice rule is already stricter, and a fixed word list contradicts both the skill's stance against blocklists
+  and its language-general scope.
+
+The MIT license texts remain in `LICENSE.upstream`, fetched on 2026-08-24 except for the `Anbeeld/WRITING.md`
+text, fetched on 2026-09-06.
 
 ## ASD-STE100 as an Inspirational Source
 
@@ -38,9 +56,12 @@ the paragraph topic sentence and six-sentence ceiling, and the inclusive-languag
 
 Three of its rules were considered and deliberately declined: its prohibition on the semicolon, its absolute
 ban on contractions, and its rule on articles before alphanumeric identifiers. Its remaining rules are defined
-by its controlled dictionary, which this project does not hold and does not reproduce. This skill's ban on em
-and en dashes is a house rule and is not derived from the standard, which states that it gives no general
-punctuation rules.
+by its controlled dictionary, which this project does not hold and does not reproduce. This skill's em-dash
+rule is a house rule and is not derived from the standard, which states that it gives no general punctuation
+rules. That rule was a flat character ban until 2026-09-06, when it became a rewrite-first default with a
+density cap and an explicit write-versus-edit asymmetry. The ban could not distinguish a dash doing real work
+from a dash covering a relation the writer declined to name, and it left unclear whether an editor should
+strip an author's existing dashes.
 
 No rule text and no dictionary entry is reproduced here or in `SKILL.md`. The standard is free to obtain and not
 free to redistribute: its copyright notice grants reproduction rights to eight listed categories of ASD, AIA and

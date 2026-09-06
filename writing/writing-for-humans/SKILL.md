@@ -34,11 +34,23 @@ concepts before relying on them, and define unfamiliar terms and abbreviations b
 When editing supplied prose, preserve every supported claim, distinction, qualification, and normative
 requirement. Do not invent facts, actors, dates, numbers, causes, citations, opinions, or personality.
 
+**Do not substitute a neighboring task.** A review does not authorize a rewrite. Shortening does not authorize
+dropping a condition, exception, citation, or qualification. Polishing does not authorize restructuring. When
+the requested depth is unclear, make the smallest edit that answers the request.
+
+Keep a direct quotation exact and visibly quoted. Do not merge separate quotations into one, repair a quotation
+silently, or use an ellipsis to change what the speaker claimed.
+
 Write inclusively. Do not use a gender-specific pronoun for a person whose pronouns the text does not state,
 and do not infer them from a name. Use "they". Use a gendered term for a role or person only where the subject
 genuinely requires it.
 
 Flag unsupported assertions and ambiguity rather than resolving them silently.
+
+**Do not assert a cause the source does not support.** Where the evidence shows only sequence or
+co-occurrence, write the weaker relation it does support: "coincided with", "appeared alongside", "was followed
+by". Cut the relation when even that overstates it. This binds an edit as much as a draft, because promoting
+"associated with" to "caused" changes the claim rather than the wording.
 
 When editing a file, change prose only. Preserve code blocks, inline code, frontmatter, link targets, table
 syntax, identifiers, commands, and quotations unless the user explicitly includes them in scope. AI-writing
@@ -118,11 +130,23 @@ noun: "logging", "the mounting bracket".
 Keep a noun cluster to three words, breaking a longer one with a preposition: "the timeout value for the
 connection pool", not "the connection pool timeout configuration value".
 
-Do not use em or en dashes. The only exception is a construct whose grammar requires the character itself,
-such as an en dash in a numeric or date range. A dash that joins, separates, or dramatizes two statements is
-not such a construct: name the relation or write two sentences. This holds in every language. Where a language
-uses a dash for a purpose English does not, such as marking dialogue, that use is a required construct and is
-permitted; wanting the effect is not.
+**Do not reach for an em dash.** It always has an alternative, and the alternative names the relation the dash
+leaves implicit. Before keeping one, write the version without it: a comma, colon, semicolon, parentheses,
+conjunction, subordinate clause, or full stop. Keep the dash only when that version loses a distinction you can
+state in words. Wanting the effect is not such a loss, and neither is preferring the rhythm.
+
+Never pair em dashes as parentheses, and never use two in one paragraph. Density is the signal a reader
+actually detects, and a single justified dash is not it.
+
+This default holds in every language, because the failure it prevents is a hidden relation rather than an
+English typographic habit.
+
+**In prose someone else wrote, an existing dash is the author's.** Treat it as a weak signal that prompts
+inspection of the passage, not as an artifact to strip on sight. Rewrite it only when the passage shows the
+relation was genuinely dodged.
+
+An en dash in a numeric or date range falls outside this rule, as does a dash a language requires as a
+grammatical construct, such as marking dialogue. Use those where that language uses them.
 
 In sentences and paragraphs:
 
@@ -148,6 +172,10 @@ ambiguous. Meet the limits above by splitting sentences, never by compressing gr
 
 Avoid repeated sentence openings, formulaic transitions, manufactured revelations, and routine concluding
 sentences that merely restate the paragraph.
+
+**Name the most repeated visible move before delivering.** Inspect it when it appears three or more times, or
+when it dominates two consecutive paragraphs. Inspection may end in no change: a repeated move that carries the
+argument stays.
 
 ## Apply Artifact-Specific Rules
 
@@ -179,7 +207,9 @@ Act immediately on definitive artifacts:
 - empty promotional language;
 - canned transitions and repeated rhetorical setups;
 - manufactured revelations or concluding slogans;
-- false agency that hides an identifiable actor; and
+- false agency that hides an identifiable actor;
+- unresolved placeholders such as "[insert source]", "TK", "TBD", or "202X";
+- leaked tool, interface, and citation tokens such as "turn0search0", "oaicite", or "contentReference"; and
 - invisible characters or metadata introduced to mark AI-generated text.
 
 Rewrite the affected passage while preserving its claims, qualifications, normative force, and intended voice.
@@ -189,6 +219,11 @@ application metadata.
 
 Treat weak signals such as one dash, adverb, transition, or rhetorical question as prompts to inspect the
 surrounding passage. A weak signal alone does not establish an AI-writing artifact.
+
+**Surface style is not evidence of authorship.** A dash, a semicolon, a clean paragraph, or a word from any
+diagnostic list says nothing about who wrote the text. Settle an authorship question from draft history,
+revision history, source traces, or disclosed AI use. The marks in this skill exist to improve prose, never to
+decide who produced it.
 
 **The categories of AI-writing artifact carry across languages; the words that signal them do not.** Chat
 residue, meta-commentary, empty promotion, canned transitions, manufactured revelation, and false agency all
@@ -205,7 +240,15 @@ blocklist.
 
 Before delivery, scan the completed prose for AI-writing artifacts and remove every confirmed mark.
 
-For a rewrite, return the edited text or requested file change.
+**Leave a sentence alone when it already works.** Do not rewrite one to match a neighbour's cadence, to satisfy
+a preference nobody requested, or to show that editing happened. A limit in this skill is a ceiling on the
+prose, not a quota of changes to make, and a passage that meets every rule needs no edit.
+
+Check the finished work for over-correction as well: fabricated informality, variation introduced for its own
+sake, and roughness added to make the prose look handmade. Each is as much an artifact as the marks above.
+
+For a rewrite, return the edited text or requested file change. Do not append a change summary, a self-review,
+or a confidence statement unless the user asked for one.
 
 For a review, separate:
 
