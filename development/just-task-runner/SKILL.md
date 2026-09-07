@@ -1,6 +1,6 @@
 ---
 name: just-task-runner
-description: Build and maintain Just command-runner files for repeatable project tasks.
+description: Create, maintain, and debug justfiles that expose repeatable project commands. Use when adding or changing recipes, parameters, dependencies, imports, modules, or shell settings; investigating Just parsing, quoting, working-directory, or recipe failures; or validating recipe behavior. Use mise-tools for mise tasks and toolchain configuration.
 license: MIT
 compatibility: Just is required for local parsing, formatting, and runtime verification.
 metadata:

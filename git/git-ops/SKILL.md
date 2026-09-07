@@ -1,6 +1,6 @@
 ---
 name: git-ops
-description: Stage, commit, push, rewrite, investigate Git history, and recover repositories without losing other work.
+description: Perform Git operations while preserving uncommitted and unrelated work. Use when staging, committing, pushing, resolving merge conflicts, managing branches, worktrees or stashes, amending or rewriting history, investigating changes with blame or bisect, recovering lost work, or troubleshooting commit hooks and signatures. Use github-ops for GitHub pull requests, policies, and API operations.
 license: MIT
 compatibility: Requires Git. Force-push protection with --force-if-includes requires Git 2.30 or newer.
 metadata:

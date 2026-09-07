@@ -1,6 +1,6 @@
 ---
 name: posix-shell
-description: Write, review, migrate, and test portable POSIX sh scripts; use bash-shell when Bash features are required.
+description: Write, review, debug, and test portable POSIX sh scripts and sourced libraries. Use when removing Bashisms, migrating Bash scripts to sh, preserving argument and filename boundaries, handling pipeline failures and traps, or checking compatibility across required shells and systems. Use bash-shell when Bash-specific features are intended; establish the required POSIX baseline before claiming portability.
 license: MIT
 metadata:
   author: Joonas Onatsu

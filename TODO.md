@@ -120,16 +120,19 @@ No Podman support or activation behavior has been verified.
 
 ## Description Audit — 13 Skills Share the Shape That Failed
 
-**Description-focused review completed 2026-09-07; all six proposed refinements applied with user authorization.**
+**Description-focused review completed 2026-09-07; all 13 descriptions expanded with user authorization.**
 [Findings and candidate wording](../docs/evaluations/2026-09-07-skill-description-audit.md) distinguish three priority
-revisions, three optional refinements, and seven descriptions worth preserving.
+revisions, three optional refinements, and an initial recommendation to preserve seven descriptions.
 The review found all 13 passing both validators and unchanged since this queue was added in `6d947f6`.
 The accepted descriptions now clarify `systematic-debugging`'s test-review boundary, expose `repo-management`'s
 baseline artifacts, and limit `containers`' Kubernetes scope to workload hardening.
 The three optional refinements are also applied: `chezmoi-dotfiles` names managed artifacts and drift symptoms;
 `mise-tools` names config files and qualifies failures and migration as mise work; `systemd` names unit extensions
 and user-service failures while routing networking configuration to `systemd-networking`.
-The other seven descriptions remain unchanged.
+The user rejected preserving the other seven merely because no defect was proven: the original 120-character
+limit was an error, and descriptions should explain the supported work and triggers.
+Approved expanded descriptions are now applied to `git-ops`, `github-ops`, `kasetto`, `just-task-runner`,
+`systemd-networking`, `bash-shell`, and `posix-shell`, retaining their neighboring-skill boundaries.
 Activation is still unmeasured; deployment or a listing appearance after editing is not activation evidence.
 The earlier `0c91d24` already revised `test-engineer` and `python-testing`; preserve those edits.
 The review corrects the assumption below that debugging and repository setup lack request-time intent:

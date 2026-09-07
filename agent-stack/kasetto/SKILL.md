@@ -1,6 +1,6 @@
 ---
 name: kasetto
-description: Configure and operate Kasetto to sync AI agent skills, MCP servers, commands, and instructions.
+description: Configure and troubleshoot Kasetto synchronization of AI agent skills, MCP servers, commands, and instructions. Use for kasetto.yaml, kasetto.lock, kst add/remove/sync, source pins, inherited configuration, destination selection, stale deployed copies, lock drift, or assets that fail to update or disappear after removal.
 license: MIT
 compatibility: Requires the Kasetto `kst` CLI. Tested against 3.8.0; check runtime help on other versions.
 metadata:

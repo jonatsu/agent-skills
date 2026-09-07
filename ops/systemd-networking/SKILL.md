@@ -1,6 +1,6 @@
 ---
 name: systemd-networking
-description: Configure and debug systemd-networkd and systemd-resolved network and DNS behavior on Linux systems.
+description: Configure and troubleshoot Linux networking and DNS with systemd-networkd and systemd-resolved. Use for .network, .netdev, .link, resolved.conf, interface matching, DHCP, routes, bridges, bonds, VLANs, per-link DNS, or unexpected resolver routing. Diagnose with networkctl and resolvectl while checking which network manager owns the configuration. Use systemd for service units and lifecycle problems.
 license: MIT
 compatibility: Requires Linux with systemd-networkd or systemd-resolved; commands and settings vary by systemd version.
 metadata:

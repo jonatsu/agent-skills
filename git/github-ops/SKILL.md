@@ -1,6 +1,6 @@
 ---
 name: github-ops
-description: Manage GitHub pull requests, policies, APIs, Actions, authentication, and rate limits with gh.
+description: Manage GitHub operations with the gh CLI and REST or GraphQL APIs. Use for pull requests, blocked merges, branch protection and rulesets, Actions workflows and runs, authentication or permission failures, rate limits, and incomplete API or search results. Use git-ops for local commits, rebases, worktrees, and recovery. Excludes general issue triage.
 license: MIT
 compatibility: Requires GitHub CLI (gh); jq is optional. GitHub Enterprise features vary by server version.
 metadata:

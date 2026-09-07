@@ -1,6 +1,6 @@
 ---
 name: bash-shell
-description: Write, review, debug, and harden Bash scripts and automation; use posix-shell for POSIX sh portability.
+description: Write, review, debug, and harden Bash scripts, sourced libraries, and shell automation embedded in CI or task runners. Use for argument parsing, arrays, quoting, pipelines, exit statuses, errexit, traps, temporary files, cleanup, and safe file operations, including ShellCheck findings and runtime failures. Use posix-shell when the script must remain portable POSIX sh.
 license: MIT
 metadata:
   author: Joonas Onatsu
