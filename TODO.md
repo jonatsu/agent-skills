@@ -24,8 +24,8 @@ Attribution repairs and any package-wide adaptation assessment remain pending.
 
 Buildroot repository survey completed 2026-09-07 across the three subtrees in `~/src/embedded-linux/repos/`.
 [Evidence and conservative proposals](../docs/evaluations/2026-09-07-buildroot-repository-survey.md): refine the existing
-local-source iteration and overlay/artifact checks; propose one small image-capacity subsection. These additions are
-not approved or implemented. The skill's review verdict and the other four skills' pending status are unchanged.
+local-source iteration and overlay/artifact checks; add one small image-capacity subsection. The user approved these
+additions; implementation remains pending. The skill's review verdict and the other four skills' pending status are unchanged.
 Buildroot/genimage first-party sources govern adoption; the survey records resolved third-party conflicts and excludes
 unverified fork-specific guidance.
 
@@ -36,6 +36,16 @@ unverified fork-specific guidance.
 | `kas-build-orchestration`                          | Pending                          | Review not started                                                                                                                                                                        | —                                                                                                        |
 | `u-boot-development`                               | Pending                          | Review not started                                                                                                                                                                        | —                                                                                                        |
 | `yocto-openembedded-development`                   | Pending                          | Review not started                                                                                                                                                                        | —                                                                                                        |
+
+### Embedded QEMU Skill Candidate
+
+Consider `embedded-qemu-emulation` for repeatable boot–test–debug workflows across embedded Linux projects, independent
+of their build system. LKMC supplies useful patterns: inspectable launch commands, disposable disk state, serial logs,
+debugger attachment, guest-result checks, and isolated concurrent runs. Verify mechanics against QEMU's release-matched
+documentation; do not import LKMC's wrappers or assume arbitrary board images/DTBs work on `virt`. Keep hardware-dependent
+validation and runtime driver diagnosis with `embedded-linux-bringup`. Assess moving its existing QEMU guidance rather
+than duplicating it. Exclude general VM management, desktop virtualization, and cloud workloads. Candidate only;
+creation is not yet authorized. [QEMU machine-model reference](https://www.qemu.org/docs/master/system/arm/virt.html).
 
 ## Nix Domain — Remaining Work
 
