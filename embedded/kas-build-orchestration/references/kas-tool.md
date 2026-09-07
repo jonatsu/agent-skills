@@ -1,491 +1,406 @@
 # kas — Command and Configuration Reference
 
-kas is a setup tool for Yocto/OpenEmbedded and other BitBake-based projects. It replaces the manual "clone these layers,
-hand-edit `bblayers.conf`, tweak `local.conf`" workflow with a single versioned YAML configuration file, then optionally
-drives the build. This reference is the full command and schema detail behind `SKILL.md`; pull the section you need on
-demand.
+Checked against **kas 5.3** documentation and implementation. Use release-matched help for other versions; native kas,
+`kas-container`, and a project's custom wrapper can own different commands and flags. This reference supports the
+workflow in `SKILL.md`; read only the branch needed for the task.
 
 ## Contents
 
-- [What kas does](#what-kas-does)
-- [Installation](#installation)
-- [Core commands](#core-commands)
-- [`kas dump` — the flattened config](#kas-dump--the-flattened-config)
-- [Configuration file structure](#configuration-file-structure)
-- [Configuration composition (includes)](#configuration-composition-includes)
+- [Installation and commands](#installation-and-commands)
+- [Dump and observed build state](#dump-and-observed-build-state)
+- [Configuration and composition](#configuration-and-composition)
 - [Lockfiles](#lockfiles)
-- [Excluding layers](#excluding-layers)
-- [Environment variables](#environment-variables)
-- [Container builds (`kas-container`)](#container-builds-kas-container)
-  - [Script and image version match](#script-and-image-version-match)
-  - [Container image selection](#container-image-selection)
-  - [Container engine](#container-engine)
-  - [Directory mounts](#directory-mounts)
-  - [Credential forwarding](#credential-forwarding)
-  - [Additional runtime arguments](#additional-runtime-arguments)
-  - [What `container-entrypoint` does](#what-container-entrypoint-does)
-  - [Cleanup and purge](#cleanup-and-purge)
-- [CI usage](#ci-usage)
-- [ISAR builds](#isar-builds)
-- [kas vs manual setup](#kas-vs-manual-setup)
+- [Selection and path variables](#selection-and-path-variables)
+- [Containers](#containers)
+- [Credentials](#credentials)
+- [Cleanup and purge](#cleanup-and-purge)
+- [CI and ISAR](#ci-and-isar)
 - [Security](#security)
+- [Reproduction evidence](#reproduction-evidence)
 
-## What kas does
+## Installation and Commands
 
-1. Clones every BitBake layer and checks each out at the commit the config pins.
-2. Generates `bblayers.conf` and `local.conf` from that config.
-3. Launches a minimal, controlled build environment, which limits host contamination.
-4. Optionally invokes BitBake to run the build.
+Use the project's supported kas version and existing installation method. An isolated native install can use
+`pipx install 'kas==5.3'`; distro packages may provide another release. Native builds still need the dependencies of
+the selected Yocto/OE release. Menu requires both kconfiglib (supplied by `kas[tui]`) and newt's Python bindings
+for its terminal UI. Consult the
+[installation guide](https://kas.readthedocs.io/en/5.3/userguide/getting-started.html) for the host environment.
 
-Everything kas produces in the build directory is regenerated from the config on the next run. Treat the YAML as the
-source of truth and the build dir as disposable output.
+Before these commands, inspect paths and repository state and establish authorization for their effects. Dump, diff,
+lock, shell, and build can resolve repositories; their names do not imply passive inspection.
 
-## Installation
+| Operation                              | kas 5.3 command                                               | Relevant effect                                                                    |
+| -------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Set up and build                       | `kas build kas-project.yml`                                   | Fetch/checkout, patches, generated config, BitBake build                           |
+| Set up without building                | `kas checkout kas-project.yml`                                | Fetch/checkout, patches and generated config                                       |
+| Flatten inputs                         | `kas dump kas-project.yml`                                    | Resolve repositories, emit configuration; skip patches and build config generation |
+| Run a command in the build environment | `kas shell kas-project.yml -c 'bitbake -c devshell myrecipe'` | Normally performs setup before the command                                         |
+| Configure a menu                       | `kas menu Kconfig`                                            | Read Kconfig, write `.config.yaml`; can trigger a selected build                   |
+| Create missing pins                    | `kas lock kas-project.yml`                                    | Resolve floating managed repos and write applicable local locks                    |
+| Refresh pins                           | `kas lock --update kas-project.yml`                           | Update floating refs and applicable local locks                                    |
+| Compare configurations                 | `kas diff old.yml new.yml`                                    | Resolve two configurations; not a one-argument checkout-versus-lock comparison     |
+| Select a target/task                   | `kas build kas-project.yml --target myrecipe --task compile`  | Run the selected BitBake task after setup                                          |
 
-```bash
-# Recommended: isolated install via pipx
-pipx install kas
+`kas menu` consumes **Kconfig**, not a kas YAML file. Its `.config.yaml` records menu selections and generated kas
+settings; commands with an omitted config can use that file in `KAS_WORK_DIR`. Do not accidentally replace another
+project's saved selections. `kas diff` accepts `--content-only` to omit repository log details; this does not make
+repository resolution read-only.
 
-# Debian/Ubuntu system package (may lag upstream)
-sudo apt install kas
-```
+[Plugin documentation and help](https://kas.readthedocs.io/en/5.3/userguide/plugins.html) owns the full option inventory.
+`--force-checkout` can discard local work; never add it merely to make a setup warning disappear. Without it, kas skips
+repositories it detects as dirty, so verify actual HEAD/status even after success. For Git, kas 5.3's dirty test uses
+`git diff --stat`, which does not cover every staged or untracked change. Inspect full status and relevant branch refs.
 
-## Core commands
+## Dump and Observed Build State
 
-```bash
-# Clone all layers, set up the environment, and build the default target
-kas build kas-project.yml
-
-# Clone and set up only — no build. Inspect the checkout before committing to one.
-kas checkout kas-project.yml
-
-# Print the fully merged, includes-resolved config (ground truth for debugging)
-kas dump kas-project.yml
-
-# Drop into the BitBake shell environment to run arbitrary bitbake commands
-kas shell kas-project.yml -c 'bitbake core-image-minimal'
-kas shell kas-project.yml -c 'bitbake -c devshell myrecipe'
-
-# Interactive, menuconfig-style configuration
-kas menu kas-project.yml
-
-# Pin every repo to its current commit (write/refresh a lockfile)
-kas lock kas-project.yml
-
-# Show differences between the current and the locked state
-kas diff kas-project.yml
-
-# Build a specific target
-kas build kas-project.yml --target core-image-minimal
-
-# Run a specific BitBake task
-kas build kas-project.yml --target myrecipe --cmd compile
-
-# Compose configs on the command line (same effect as includes in the file)
-kas build kas-base.yml:debug-image.yml:board.yml
-
-# Clean build artifacts (see Cleanup and purge for the destructive variants)
-kas clean kas-project.yml
-kas cleansstate kas-project.yml   # also empties the sstate cache
-kas cleanall kas-project.yml      # also removes downloads
-```
-
-## `kas dump` — the flattened config
-
-`kas dump` resolves every include, applies the merge order, folds in any auto-loaded lockfile, and prints the single
-effective config that kas will actually build from. It is read-only. Reach for it first whenever an override, pin,
-machine, or distro value is not behaving as the file in front of you suggests.
+Dump can fetch/clone/check out repositories, including repositories supplying includes. In 5.3 it skips patch application,
+build-environment setup, and generated BitBake configuration. Therefore it is useful for input resolution, but cannot
+prove that existing files under the build directory correspond to that input. Do not use it as the first action when
+preserving a live checkout is part of the task; inspect files first or resolve in an authorized disposable workspace.
 
 ```bash
-# Human-readable YAML of the merged config
-kas dump kas-project.yml
-
-# Dump the exact command-line composition you build
 kas dump kas-base.yml:board.yml:debug-image.yml
-
-# Machine-readable, for scripting or diffing
 kas dump --format json kas-project.yml
-
-# Replace floating branch/tag refs with the exact commit hashes they resolve to
 kas dump --resolve-refs kas-project.yml
-
-# Write/refresh a lockfile from the resolved refs
-kas dump --lock --update --inplace kas-project.yml
 ```
 
-- `--format {yaml,json}` selects the output format (`yaml` by default).
-- `--resolve-refs` pins each floating ref to its concrete commit in the output.
-- `--lock` emits lockfile-shaped output; combine with `--update` to advance refs to their latest commit and `--inplace`
-  to overwrite the `.lock` file next to the config.
+Plain dump retains the `overrides` mapping. Read `overrides.repos.<name>` alongside base/default repository selectors.
+`--resolve-refs` replaces managed repository refs with resolved revisions and removes those overrides from the output.
+Resolution happens before configured patches; neither form captures arbitrary dirty files. `--resolve-local` can add
+root-repository tracking information, but warnings about unversioned or dirty sources still require investigation.
 
-When the dump disagrees with the config you were handed, the include/override chain or an auto-loaded lockfile is the
-real story. Trust the dump.
+Selection overrides such as `KAS_MACHINE` are not substituted into plain dump's `machine` field. Capture the relevant
+CLI/environment selection separately, then inspect actual `local.conf`, `bblayers.conf`, and repository state. A strong
+assignment in a `local_conf_header` can outrank kas's generated `MACHINE ??=`; use the Yocto/OE skill for final BitBake
+variable evaluation. Avoid logging environment variables or configuration values containing credentials.
 
-## Configuration file structure
+`kas dump --lock` emits locking-shaped output. The old write combination `--lock --inplace` is deprecated in 5.3 and
+routes to the lock plugin; use the lock commands below for writes. Do not equate an invocation containing `--update`
+with one that omits it.
 
-kas configs are YAML (JSON also works). The minimal fields are `header`, `machine`, `distro`, and `repos`.
+## Configuration and Composition
+
+A header with a supported `version` is sufficient for schema validity; a useful build also needs suitable repositories,
+layers, and target selections. In 5.3, omitted machine/distro/target select `qemux86-64`, `nodistro`, and
+`core-image-minimal`. Specify them when a silent default would select the wrong product.
+
+The following illustrates the configuration shape using historical documentation pins, not a qualified release matrix.
+Replace repository revisions and machine/layer choices with the project's verified compatible set.
 
 ```yaml
-# kas-project.yml
 header:
-  version: 14          # config format version — always required
+  version: 14
 machine: raspberrypi4-64
 distro: poky
-
 repos:
-  # The repo this config lives in — include it in bblayers with an empty entry
   meta-custom:
-
-  # External layer — cloned and checked out at the pinned commit
   poky:
-    url: "https://git.yoctoproject.org/git/poky"
+    url: https://git.yoctoproject.org/git/poky
     commit: 89e6c98d92887913cadf06b2adb97f26cde4849b
     layers:
       meta:
       meta-poky:
       meta-yocto-bsp:
-
-  meta-openembedded:
-    url: "https://git.openembedded.org/meta-openembedded"
-    commit: d1a58c8c71ef3e8f327ed5a5671af6cc3f9cde00
-    layers:
-      meta-oe:
-      meta-python:
-
-# Additions to local.conf. Named keys let includes override or append per key.
 local_conf_header:
-  meta-custom: |
+  product: |
     BB_NUMBER_THREADS = "8"
     PARALLEL_MAKE = "-j8"
     IMAGE_INSTALL:append = " strace gdbserver"
-
-# Additions to bblayers.conf (rarely needed)
-bblayers_conf_header:
-  meta-custom: |
-    POKY_BBLAYERS_CONF_VERSION = "2"
 ```
 
-`header.version` is the schema format number, an integer. Key semantics are gated on it, so do not use a key the
-declared version predates, and do not bump it casually.
+A repository with neither URL nor path refers to the repository containing the configuration. Its layer paths are
+relative to that repository's root. An explicit relative repository `path` is relative to `KAS_WORK_DIR`; an absolute
+path can put managed data outside it. No URL disables VCS operations for that entry. An absent `layers` mapping selects
+the repository root as a layer; explicitly exclude non-layer repositories such as a standalone BitBake checkout.
 
-## Configuration composition (includes)
-
-Split a build into composable fragments — base, BSP, product, image — and compose them.
+### Include Order, Paths, and Replacement
 
 ```yaml
-# kas-product-a.yml
 header:
   version: 14
   includes:
-    - kas-base.yml          # poky + common layers + local_conf_header
-    - kas-bsp-myboard.yml   # BSP layer + MACHINE setting
-    - kas-debug-image.yml   # debug packages added to IMAGE_INSTALL
+    - kas/base.yml
+    - kas/boards/board.yml
+    - kas/features/debug.yml
 ```
 
-Or compose on the command line without writing a combined file. The two forms are equivalent:
+For files under Git, these string paths are relative to the **repository root**, not the including file's directory.
+Outside version control, the root is the first configuration's directory. A deprecated file-relative fallback exists
+in 5.3; do not rely on it for a new configuration. Cross-repository includes use `repo` and `file`, with `file` relative
+to that repository's root. Includes must stay inside the referenced repository.
+
+```yaml
+header:
+  version: 14
+  includes:
+    - repo: bsp
+      file: kas/board.yml
+repos:
+  bsp:
+    url: https://www.example.com/git/meta-bsp
+    branch: release
+    layers:
+      meta-board:
+```
+
+The cross-repository example requires a real project URL and an approved branch/pin. kas may need several checkout/merge
+iterations to discover transitive includes. An included file must not change the revision of the repository from which
+it is being loaded; that creates an unsupported circular repository dependency.
+
+Includes merge depth-first and top-to-bottom, then the containing file's values merge last. Dictionaries merge
+recursively; non-map values, including strings and lists, replace earlier values. Dictionary insertion order is
+preserved, and the merged header version is the maximum used version. For example:
+
+| Earlier fragment                                  | Later fragment                      | Result                                    |
+| ------------------------------------------------- | ----------------------------------- | ----------------------------------------- |
+| `target: [image-a, image-b]`                      | `target: [image-c]`                 | Only `image-c`                            |
+| `local_conf_header: {product: old, common: keep}` | `local_conf_header: {product: new}` | `product` becomes `new`; `common` remains |
+| `local_conf_header: {product: old}`               | `local_conf_header: {debug: extra}` | Both named entries, in insertion order    |
+
+For append-like header behavior, use another named entry. Reusing a key replaces its complete text, not part of the
+BitBake statement inside it. Map merging also means omitted layer entries remain; explicitly exclude unwanted layers:
+
+```yaml
+repos:
+  poky:
+    layers:
+      meta-yocto-bsp: excluded
+```
+
+Command-line composition applies the same ordered merging:
 
 ```bash
-kas build kas-base.yml:kas-bsp-myboard.yml:kas-debug-image.yml
+kas dump kas/base.yml:kas/boards/board.yml:kas/features/debug.yml
 ```
 
-Pull an include from another repository:
+All colon-composed files must belong to the same repository or all be outside version control. Use a cross-repository
+include for files from different repositories. Configs on the command line **and included fragments** can each have
+adjacent lockfiles. A new containing file can add its own lock, so include/composition equivalence assumes the same
+relevant inputs and locks. See the
+[configuration guide](https://kas.readthedocs.io/en/5.3/userguide/project-configuration.html) and
+[include implementation](https://github.com/siemens/kas/blob/5.3/kas/includehandler.py).
 
-```yaml
-header:
-  version: 14
-  includes:
-    - repo: meta-bsp-collection
-      file: hw1/kas-hw-bsp1.yml
-repos:
-  meta-bsp-collection:
-    url: "https://www.example.com/git/meta-bsp-collection"
-    commit: 3f786850e387550fdab836ed7e6dc881de23001b
-```
+### Format Version Versus Tool Version
 
-**Merge order is the mechanism, not a detail.** Includes merge top-to-bottom; a later entry overrides an earlier one,
-and the current file's own values override every include. Debugging an override without knowing the order is guessing —
-dump the config and read the result.
+Use the [format changelog](https://kas.readthedocs.io/en/5.3/format-changelog.html) to select an appropriate declaration:
+`commit`/`branch` and repository overrides arrived with format 14, `tag` with 15, and signing configuration with 19.
+This history is not a complete runtime gate on each key: 5.3 validates with its installed schema and separately checks
+the declared version range. A successful parse on 5.3 does not prove the file works with an older kas executable.
+Keep version declarations honest and test every release for which compatibility is claimed.
 
 ## Lockfiles
 
-A lockfile pins every repo to an exact commit for a fully reproducible build. kas auto-loads `<config>.lock.<ext>`
-whenever it sits next to the config, so a checkout at an "unexpected" commit is usually the lockfile doing its job, not
-a bug.
+For `kas-project.yml`, the adjacent lock is `kas-project.lock.yml`. kas loads locks for each processed config, including
+transitive includes and colon-composed fragments. A lock's repository entries normally live in `overrides.repos`, which
+are interpreted separately from the base `repos` entries. Read both when a pin appears unexpected.
 
 ```yaml
-# kas-project.lock.yml — auto-loaded when kas-project.yml is used
 header:
   version: 14
 overrides:
   repos:
     poky:
       commit: 89e6c98d92887913cadf06b2adb97f26cde4849b
-    meta-openembedded:
-      commit: d1a58c8c71ef3e8f327ed5a5671af6cc3f9cde00
 ```
 
-Generate or refresh a lockfile from the current checkouts:
+For kas 5.3:
+
+- `kas lock kas-project.yml` resolves repositories with existing locks in effect. It creates missing pins for floating
+  managed repositories; it is not the operation for deliberately advancing an existing locked branch.
+- `kas lock --update kas-project.yml` ignores locks during resolution and updates floating refs. Explicit commits still
+  constrain their repositories. Revision resolution is before patches, not an arbitrary snapshot of working trees.
+- The lock plugin updates existing local lockfiles that own the relevant pin. If a repository is locked only in an
+  external included repository, it does not rewrite that external lock. A corresponding local lock can be updated.
+  Remaining unpinned floating repositories are added to the top lock, adjacent to the first command-line config.
+- Inspect every affected lockfile, checkout, and warning. External locks retained on disk can still determine the next
+  normal build, even after an update resolution observed a newer revision. Validate the subsequent locked selection.
+- A root repository without VCS operations, arbitrary dirty files, and repositories already pinned by explicit commits
+  do not all become new lock entries. Preserve the configuration repository's revision and changes separately.
+
+A lock refresh is a deliberate input change. Reuse authorization for that change, preserve prior lock edits, and review
+the complete pin diff. Restoring a file from HEAD is safe only if HEAD is the intended previous state. See
+[Lock implementation](https://github.com/siemens/kas/blob/5.3/kas/plugins/lock.py).
+
+## Selection and Path Variables
+
+| Variable                    | Native kas 5.3 meaning                                                      |
+| --------------------------- | --------------------------------------------------------------------------- |
+| `KAS_WORK_DIR`              | Existing workspace directory; default current directory                     |
+| `KAS_BUILD_DIR`             | Build directory; default `KAS_WORK_DIR/build`; configured parent must exist |
+| `KAS_MACHINE`, `KAS_DISTRO` | Override corresponding configuration selections                             |
+| `KAS_TARGET`, `KAS_TASK`    | Override target/task; target supports space-separated values                |
+| `DL_DIR`, `SSTATE_DIR`      | Download and shared-state caches passed into the build environment          |
+| `KAS_REPO_REF_DIR`          | Reference repositories used for fetching/cloning; can be populated by kas   |
+| `KAS_BUILDTOOLS_DIR`        | Explicit location for downloaded/installed buildtools                       |
+
+For target/task, a supplied build CLI option wins over environment, then configuration, then the default. Do not infer
+selection from YAML alone. Paths must be accessible and must not overlap, except that the data directories may be
+inside `KAS_WORK_DIR`. See the release's
+[environment reference](https://kas.readthedocs.io/en/5.3/command-line.html#environment-variables).
+
+## Containers
+
+The wrapper sets up mounts and runs kas in an OCI image; direct image and CI invocations can bypass parts of that setup.
+Record the actual entry point before diagnosing. Prefer a wrapper from the same release as the image; kas 5.3 emits a
+warning on a mismatch. Matching versions is a useful compatibility default, not a diagnosis by itself.
 
 ```bash
-kas lock kas-project.yml
-# or, equivalently, via dump:
-kas dump --lock --update --inplace kas-project.yml
-```
-
-To move to newer commits, update the lockfile deliberately rather than editing around it.
-
-## Excluding layers
-
-Mark a layer excluded to drop it from a combined configuration:
-
-```yaml
-repos:
-  poky:
-    url: "https://git.yoctoproject.org/git/poky"
-    commit: abc123
-    layers:
-      meta-yocto-bsp: excluded   # do not add to bblayers.conf
-```
-
-## Environment variables
-
-| Variable        | Description                                            |
-| --------------- | ------------------------------------------------------ |
-| `KAS_WORK_DIR`  | Working directory for kas (default: current directory) |
-| `KAS_BUILD_DIR` | Build directory (default: `KAS_WORK_DIR/build`)        |
-| `KAS_MACHINE`   | Overrides `machine` from the config                    |
-| `KAS_DISTRO`    | Overrides `distro` from the config                     |
-| `KAS_TARGET`    | Overrides `target`; space-separated for several        |
-| `KAS_TASK`      | Overrides `task`                                       |
-
-Precedence for the selection variables is CLI flag (`kas build --target`), then environment, then the config value, then
-the schema default. The defaults are `qemux86-64` / `nodistro` / `core-image-minimal`, so a config that omits `machine`,
-`distro` or `target` builds something plausible-looking rather than failing.
-
-`kas dump` renders the merged **config files** and does not apply these overrides, so it cannot show which variant an
-environment-selected build will actually produce. Where `dump` must stay truthful, keep the selection in files and
-compose them (`base.yml:variant/debug.yml`) instead.
-
-Container builds honour several more; see [Directory mounts](#directory-mounts).
-
-## Container builds (`kas-container`)
-
-`kas-container` is a shell-script wrapper that runs `kas` inside an OCI container. It is the recommended way to build,
-because:
-
-- The build environment is fully decoupled from the host.
-- All build dependencies are pinned inside the image.
-- Developers on different hosts get identical environments.
-- CI and local builds share one image.
-
-### Script and image version match
-
-The `kas-container` script version MUST match the `kas` version inside the image. Download the script from the same
-release tag as the image you intend to use; a mismatch causes subtle mount and entrypoint failures.
-
-```bash
-# Download the kas-container script pinned to a release
-curl -fsSL https://raw.githubusercontent.com/siemens/kas/5.3/kas-container \
-    -o kas-container
-chmod +x kas-container
-
-# Confirm the version
+# Inspect a project-vendored wrapper's version before use
 ./kas-container --version
-```
-
-Vendoring the script into your own repo and updating it alongside `KAS_IMAGE_VERSION` keeps the two in lockstep.
-
-### Container image selection
-
-By default `kas-container` uses `ghcr.io/siemens/kas/kas:<version>`.
-
-```bash
-# Default: image auto-resolved to the script version
-./kas-container build kas-project.yml
-
-# Pin an explicit image version
 KAS_IMAGE_VERSION=5.3 ./kas-container build kas-project.yml
-
-# Distribution-specific image (kas >= 5.0): debian-bookworm, debian-trixie
-KAS_CONTAINER_IMAGE_DISTRO=debian-bookworm \
-    ./kas-container build kas-project.yml
-# Resolves to ghcr.io/siemens/kas/kas:5.3-debian-bookworm
-
-# A fully custom image
-KAS_CONTAINER_IMAGE=myregistry/my-kas:latest \
-    ./kas-container build kas-project.yml
-```
-
-### Container engine
-
-`kas-container` auto-detects Docker or Podman. Force one explicitly:
-
-```bash
 KAS_CONTAINER_ENGINE=podman ./kas-container build kas-project.yml
-KAS_CONTAINER_ENGINE=docker ./kas-container build kas-project.yml
 ```
 
-For Podman it adds `--userns=keep-id` automatically so the container runs with your UID and file ownership on mounts
-stays consistent.
+The default image is `ghcr.io/siemens/kas/kas:<script-version>`. `KAS_CONTAINER_IMAGE` supplies a custom full image
+reference, including a digest when exact content identity matters. Since 5.0, `KAS_CONTAINER_IMAGE_DISTRO` can select
+an available base such as `debian-bookworm`, yielding a `<version>-<distro>` tag. Check the release's actual image set.
+Docker is preferred during engine auto-detection; `KAS_CONTAINER_ENGINE` selects Docker or Podman explicitly.
+The 5.3 wrapper adds `--userns=keep-id` for Podman.
 
-### Directory mounts
+### Mounts and Ownership
 
-`kas-container` mounts host directories into the container at fixed paths. Set these variables to control where data
-lands on the host:
+| Host input             | Container path when forwarded |
+| ---------------------- | ----------------------------- |
+| Source repository root | `/repo`                       |
+| `KAS_WORK_DIR`         | `/work`                       |
+| `KAS_BUILD_DIR`        | `/build`                      |
+| `DL_DIR`               | `/downloads`                  |
+| `SSTATE_DIR`           | `/sstate`                     |
+| `KAS_REPO_REF_DIR`     | `/repo-ref`                   |
+| `KAS_BUILDTOOLS_DIR`   | `/buildtools`                 |
 
-| Host variable                 | Container path | Notes                                       |
-| ----------------------------- | -------------- | ------------------------------------------- |
-| `KAS_WORK_DIR` (default: CWD) | `/work`        | Working dir; kas-managed repos land here    |
-| `KAS_BUILD_DIR`               | `/build`       | BitBake build directory; created if absent  |
-| `DL_DIR`                      | `/downloads`   | Download cache; created if absent           |
-| `SSTATE_DIR`                  | `/sstate`      | Shared state cache; created if absent       |
-| `KAS_REPO_REF_DIR`            | `/repo-ref`    | Git reference repo for faster cloning       |
-| `KAS_BUILDTOOLS_DIR`          | `/buildtools`  | Yocto buildtools archive; created if absent |
+Paths inside `KAS_WORK_DIR` are rewritten under `/work` instead of mounted again at the fixed paths above. Unset optional
+variables can leave data at kas's in-container defaults; inspect actual arguments before inferring a host path from this
+table. The wrapper finds the source repository root from the config file. Its default source mount
+is read-only for build/checkout and writable for shell/lock; `--repo-ro` and `--repo-rw` select explicit modes.
+If work and source are the same host directory, the writable `/work` mount also exposes the source through that path;
+a read-only `/repo` mount alone does not isolate it from writes. Use separate directories when that distinction matters.
 
-Share `DL_DIR` and `SSTATE_DIR` across projects to skip re-downloading and re-building:
-
-```bash
-export DL_DIR=/mnt/yocto-cache/downloads
-export SSTATE_DIR=/mnt/yocto-cache/sstate
-export KAS_WORK_DIR=$HOME/kas-builds/my-project
-./kas-container build kas-project.yml
-```
-
-The source repo is mounted at `/repo` — read-only for `build` and `checkout`, read-write for `shell` and `lock`.
-Override with `--repo-ro` or `--repo-rw`. kas-container finds it by running `git rev-parse --show-toplevel` on the
-config file's directory, so `/repo` is the repository root even when the config sits in a subdirectory.
-
-That distinction matters for in-tree layers. A layer reached through `/work` has no `.git` above it when the work dir is
-a subdirectory of the repository, so `image-buildinfo` records `<unknown>` for it while every fetched layer reports a
-revision. Declaring the layer through its own repository puts it under `/repo`, where git works:
+Represent an in-tree layer through its source repository so Git metadata remains reachable under `/repo`:
 
 ```yaml
 repos:
-  # No url and no path: the repository containing this config file.
-  # `layers:` paths are relative to that repository's root.
   my-project:
     layers:
       subdir/meta-my-layer:
 ```
 
-### Credential forwarding
+The entrypoint remaps `builder` and uses `gosu builder` when a nonzero `USER_ID` is supplied, as the wrapper normally
+does. It skips that remapping path when `USER_ID` is absent or zero. Therefore a direct image or CI job needs its own
+UID/entrypoint check; do not promise host ownership merely because the image name contains kas.
+
+Rootless Docker requires a read-only source repository. Use a separate `KAS_WORK_DIR`; kas temporarily changes managed
+directory ownership, and the host must not write managed files while kas is operating. Entrypoint cleanup restores
+ownership of top-level managed directories, not a blanket recursive restoration of all content. In this mode the
+wrapper defaults the source mount to read-only even for shell/lock and rejects an explicit writable source request.
+Lock writes under `/repo` therefore need a different supported execution arrangement, such as an authorized native
+refresh. Do not resolve that limitation by blindly changing owners or making the source writable. See
+[container guidance](https://kas.readthedocs.io/en/5.3/userguide/kas-container.html) and the
+[entrypoint](https://github.com/siemens/kas/blob/5.3/container-entrypoint).
+
+Extra runtime options can be passed with `--runtime-args "--memory=8g --cpus=4"`. Inspect existing options and resource
+limits; do not add privilege or host mounts as a generic fix for permission errors.
+
+## Credentials
+
+These are kas-container 5.3 wrapper options, placed before its subcommand:
 
 ```bash
-# Forward the SSH agent (private layer repos)
 ./kas-container --ssh-agent build kas-project.yml
-
-# Mount a specific SSH config dir — avoid $HOME/.ssh, which exposes every key
 ./kas-container --ssh-dir ~/.ssh/kas-only build kas-project.yml
-
-# Git credential store
-./kas-container --git-credential-store ~/.git-credentials build kas-project.yml
-
-# Git credential cache socket
-./kas-container --git-credential-socket /tmp/git-credential.socket build kas-project.yml
-
-# AWS CLI config (private S3 sstate mirrors)
-./kas-container --aws-dir ~/.aws build kas-project.yml
-
-# Block host proxy settings from being inherited
+./kas-container --git-credential-store /path/to/scoped-credentials build kas-project.yml
+./kas-container --aws-dir /path/to/scoped-aws build kas-project.yml
 ./kas-container --no-proxy-from-env build kas-project.yml
 ```
 
-Forwarding `--ssh-dir ~/.ssh` or `--aws-dir ~/.aws` wholesale exposes every key and active SSO session to the build.
-`--aws-dir ~/.aws` copies the whole `~/.aws/sso/cache` into the workspace. Use a dedicated directory (`~/.ssh/kas-only`)
-or a scoped AWS profile, and log out of unrelated profiles first.
+Use dedicated directories/files that contain only credentials intended for the build. An AWS profile does not narrow
+which files a supplied directory exposes: the whole SSO cache can be copied, including unrelated active sessions.
+For isolation, use a dedicated directory or separate account; logging out unrelated sessions helps only if no other
+sensitive material remains accessible. Do not copy actual secrets into logs or saved diagnostic output.
 
-### Additional runtime arguments
+For native kas 5.3, when the directory beside `AWS_CONFIG_FILE` lacks `sso/cache`, credential setup can fall back to
+the invoking user's `~/.aws/sso/cache`. A dedicated config file alone is therefore insufficient. Supply a dedicated
+cache directory (empty if SSO is not used) or use an account without unrelated cached sessions. Verify which cache path
+is selected; do not inspect or copy real credential contents merely to diagnose it.
 
-Pass extra arguments straight to the container engine:
+SSH-agent forwarding exposes agent operations, even without exposing the private key files. Use it only for the intended
+build's trust boundary. A credential-store file also grants its contents to the build. There is no
+`--git-credential-socket` wrapper option in 5.3; do not prescribe one from another wrapper's documentation.
 
-```bash
-./kas-container --runtime-args "--memory=8g --cpus=4" build kas-project.yml
-```
+[Credential handling](https://kas.readthedocs.io/en/5.3/userguide/credentials.html) describes the release's supported
+file/environment mechanisms. Forwarding and limiting credential authority are separate decisions.
 
-### What `container-entrypoint` does
+## Cleanup and Purge
 
-`container-entrypoint` is the entrypoint baked into the image. You never invoke it directly; its key behaviours are
-worth knowing when a container build fails on ownership or credentials:
+Inspect the actual resolved paths and preserve local work before authorizing deletion. kas workspace cleanup commands
+are different from `bitbake -c clean/cleansstate/cleanall <recipe>`; kas's operations can affect whole caches.
 
-- Reads `USER_ID`/`GROUP_ID` (set by `kas-container` from `id -u`/`id -g`) and remaps the internal `builder` user to
-  your host UID/GID, so files written to mounts are owned by your host user.
-- Copies SSH config from `/var/kas/userdata/.ssh` into the builder's home.
-- Syncs the container timezone to the host (`KAS_HOST_TZ`).
-- Runs `kas` via `gosu builder`, so the build has your UID rather than root.
-- Under rootless Docker (which cannot use `--userns=keep-id`), restores directory ownership after the build.
-- On GitLab CI, marks `CI_PROJECT_DIR` as a safe git directory to work around runner ownership mismatches.
+| kas 5.3 operation | Removal scope                                                                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `clean`           | Build `tmp*` directories; ISAR layout may require privileged removal                                                                                   |
+| `cleansstate`     | Clean artifacts plus contents of the environment-selected or default sstate cache                                                                      |
+| `cleanall`        | Above plus contents of the environment-selected or default download cache                                                                              |
+| `purge`           | Above plus build-directory contents, managed repositories and other managed paths; matching reference repos unless preserved; explicit buildtools path |
 
-### Cleanup and purge
+Native cleanup selects cache paths from process `SSTATE_DIR`/`DL_DIR` or defaults under the build directory. Do not
+assume it evaluates arbitrary BitBake assignments in `local.conf` to discover caches. Repository `path` settings can
+point outside the workspace. Explicit cache directories themselves may survive while their contents are deleted.
 
-```bash
-# Build artifacts only (keep sstate and downloads)
-./kas-container clean kas-project.yml
-
-# Build artifacts and the sstate cache
-./kas-container cleansstate kas-project.yml
-
-# Build artifacts, sstate, and downloads
-./kas-container cleanall kas-project.yml
-
-# ALL kas-managed data (build dir + managed repos), and restore directory
-# ownership so the host can delete the tree
-./kas-container purge kas-project.yml
-
-# Preview what purge would remove — run this first
-./kas-container purge --dry-run kas-project.yml
-```
-
-`purge` is the correct way to fully remove a kas workspace, especially under rootless Docker where directory ownership
-must be restored before the host can delete the directories. It also removes the managed repos, so any uncommitted work
-in a managed layer is lost — preview with `--dry-run` and confirm the work dir first.
-
-## CI usage
-
-Reference the image directly in CI configuration:
-
-```yaml
-# GitHub Actions
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/siemens/kas/kas:5.3
-    steps:
-      - uses: actions/checkout@v4
-      - run: kas build kas-project.yml
-```
-
-```yaml
-# GitLab CI
-build:
-  image: ghcr.io/siemens/kas/kas:5.3
-  script:
-    - kas build kas-project.yml
-```
-
-On GitLab CI, set `CI_PROJECT_DIR`; `container-entrypoint` uses it to configure `safe.directory` automatically.
-
-## ISAR builds
-
-For ISAR (Debian-based embedded) images, use the `kas-isar` image:
+Preview the exact release/entry point and environment you intend to use:
 
 ```bash
-./kas-container --isar build kas-isar-project.yml
-# Uses ghcr.io/siemens/kas/kas-isar:<version>
+kas cleanall --dry-run kas-project.yml
+kas purge --dry-run --preserve-repo-refs kas-project.yml
+# Through the wrapper, if that is the actual build environment:
+./kas-container purge --dry-run --preserve-repo-refs kas-project.yml
 ```
 
-ISAR requires privileged container execution and does not work under rootless Docker.
+Purge must resolve repositories to discover its targets, including on `--dry-run`; the preview suppresses deletion,
+not all setup, checkout, or network activity. A fresh workspace is not guaranteed to stay empty after preview.
+`--preserve-repo-refs` protects matching reference repositories only, not downloads or sstate. Establish authorization
+for every shared or external path, not just `KAS_WORK_DIR`. Remove `--dry-run` only when the listed effects match the
+approved deletion scope. Keep the same other flags and environment.
 
-## kas vs manual setup
+For rootless Docker, use the supported wrapper purge path for ownership cleanup rather than ad hoc recursive chown/rm.
+If preview fails, report the unresolved targets; do not treat partial output as a complete deletion inventory.
+[Cleanup implementation](https://github.com/siemens/kas/blob/5.3/kas/plugins/clean.py) owns version-specific details.
 
-| Situation                                            | Recommendation                                          |
-| ---------------------------------------------------- | ------------------------------------------------------- |
-| New project, multiple developers                     | kas — reproducible environment in one file              |
-| Existing project with an established README workflow | Either; kas is a drop-in for `source oe-init-build-env` |
-| CI/CD with a layer-pinning requirement               | kas — lockfiles and container support built in          |
-| Quick single-layer experiment                        | Manual setup may be simpler for a one-off               |
+## CI and ISAR
+
+CI may use the image directly or invoke the wrapper. Verify which entrypoint runs, its effective user, work/source
+mounts, cache locations, environment, and config composition. The entrypoint's GitLab safe-directory handling requires
+`CI_PROJECT_DIR` and absent `USER_ID`; setting a variable cannot help if the runner bypasses the entrypoint. Respect
+runner-provided project paths instead of inventing a replacement. Use the same kas release and intended inputs locally.
+
+Use the GitHub operations guidance for runner/workflow behavior and the shell guidance for command quoting. Keep CI
+credentials scoped, use explicit minimal permissions, disable checkout credential persistence unless needed, and pin
+remote actions to verified commits. Record image digests when reproducibility requires immutable image content.
+This skill does not supply an unqualified copy-and-run CI template across different runner contracts.
+
+For ISAR, `./kas-container --isar build kas-isar-project.yml` selects the `kas-isar` image. ISAR requires privileged,
+rootful container execution; the wrapper can invoke a privileged executor. Confirm that this authority and the target
+environment are already within the task before running it. Do not silently add privileged mode to an ordinary OE build.
 
 ## Security
 
-kas does not validate the integrity of fetched repositories. Pull only from trusted sources, pin commits, use lockfiles,
-and consider GPG signing for supply-chain security in production builds.
+Repository pins select content; they do not authenticate its publisher. kas 5.3 supports explicit Git signature
+verification: define trusted keys using `signers`, enable `signed` on the repository, and set nonempty `allowed_signers`.
+These keys were introduced with format 19. Depending on the scheme, dependencies include GPG/python-gnupg or Git's SSH
+signature tools. Check the release's [schema and signing fields](https://kas.readthedocs.io/en/5.3/userguide/project-configuration.html).
+
+Trust roots must come from an already trusted source, not solely from the repository being authenticated. kas checks
+configured signatures before checkout, including repositories supplying includes; verification is not enabled for all
+repositories by default. Wrong-signer and unsigned cases must reject under the intended policy. Tags are mutable: use
+appropriate commit constraints as well as authentication. A valid signature identifies an authorized signer; it does
+not make build recipes safe to execute with unrelated credentials or privileges.
+
+## Reproduction Evidence
+
+Record the exact config composition, its source repository revision and local changes, applicable locks, explicit pins,
+patches, kas version, image digest/base, relevant environment, and downstream recipe source inputs. A lockfile alone
+does not capture all of these. OCI images reduce host package variation but share kernel/runtime constraints and
+purposefully receive mounts, user settings, and credentials.
+
+Normal kas setup rewrites `local.conf` and `bblayers.conf`; make durable changes in the owning YAML. Setup-skip options
+can preserve existing config. Neither behavior means every build-directory file is recoverable output: inspect local
+work before cleanup. Verify release artifact reproduction separately, using the Yocto/OE skill for build-system inputs.

@@ -7,10 +7,9 @@
 - Current license: MIT
 - Status: original synthesis distilled from the upstream kas documentation, with one adapted source acknowledged below
 
-This skill is an original synthesis authored for this repository. The method, workflow, Iron Law, confirmation gates,
-and routing are new writing. The command and configuration reference (`references/kas-tool.md`) is distilled from the
-upstream kas project's own documentation; no prose was carried over verbatim, and the content was rewritten and
-reorganized in original words.
+This skill combines independently written orchestration guidance with a command/configuration reference distilled and
+adapted from upstream kas documentation. The 2026-09-07 repairs also use upstream implementation to explain mutation,
+merging, locking, cleanup, credentials, and container behavior. Rewriting the expression does not remove that influence.
 
 ## Adapted from (MIT — mandatory attribution)
 
@@ -18,18 +17,40 @@ reorganized in original words.
 - Upstream project: <https://github.com/siemens/kas>
 - Upstream documentation: <https://kas.readthedocs.io/>
 - Source material: the kas command, configuration-schema, lockfile, and `kas-container` documentation
-- Source commit: not pinned (tracked against the current release line; commands and `header.version` semantics are
-  version-gated — see the SKILL.md "Version awareness" section)
+- Historical source revision: not recorded by the original adaptation; it remains unknown.
+- Verified repair baseline: [kas tag 5.3](https://github.com/siemens/kas/tree/5.3), checked 2026-09-07.
+  This identifies the repair source, not an invented pin for the original adaptation.
 - Upstream license: MIT
 
 The kas reference material informed and seeded `references/kas-tool.md`, which has since been distilled, reorganized,
 and materially rewritten (the Contents table, the dedicated `kas dump` section, and the safety framing are original to
 this skill). MIT permits this reuse and modification; this notice preserves the required attribution.
 
+### Repair Source Influence
+
+The 5.3 sources below influenced both `SKILL.md` and `references/kas-tool.md`. Explanations and replacement examples
+are independently expressed; the existing adaptation relationship and notice remain. No upstream executable is bundled.
+
+- `docs/userguide/project-configuration.rst`, `docs/format-changelog.rst`, `kas/includehandler.py`,
+  `kas/config.py`, and `kas/schema-kas.json`: recursive composition, include path bases, lock discovery,
+  selection overrides, format-version limits, local repository and layer semantics.
+- `kas/plugins/{dump,checkout,lock,diff,menu,clean}.py`, `kas/libcmds.py`, and `kas/repos.py`: resolving side effects,
+  dirty-checkout handling, lock creation versus refresh, external lock ownership, parser contracts, and deletion scope.
+- `kas-container`, `container-entrypoint`, `docs/userguide/kas-container.rst`, and the credential documentation:
+  wrapper/image distinctions, mount aliases and ownership, rootless restrictions, AWS cache exposure, and supported
+  credential options.
+- `kas/keyhandler.py`, `kas/repos.py`, and the signing schema: optional Git signature enforcement, dependencies,
+  and the distinction between pins and publisher authentication.
+
+The repair's command fixtures were written for this repository from those contracts, outside the deployed package.
+Bootlin's local Yocto training PDF was consulted during review for context only; no material was adopted from it.
+No third-party project wrapper supplied adopted guidance. The MIT license is unchanged.
+
 ## Upstream license
 
 The upstream kas project is licensed under the MIT License. MIT requires that its copyright notice and permission notice
-be preserved in copies and substantial portions. The upstream notice is reproduced here to satisfy that requirement:
+be preserved in copies and substantial portions. The upstream notice is preserved below and verbatim in
+[LICENSE.upstream](LICENSE.upstream), copied from the verified 5.3 source:
 
 ```
 MIT License

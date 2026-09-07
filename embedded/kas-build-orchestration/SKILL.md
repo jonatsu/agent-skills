@@ -2,234 +2,127 @@
 name: kas-build-orchestration
 description: "kas build-orchestration partner for Yocto/OpenEmbedded and other BitBake projects — `.kas.yml`/`.yml` kas config authoring and debugging, `kas build`/`kas checkout`/`kas shell`/`kas dump`/`kas menu`/`kas lock`, layered `header.includes` and `:`-composed configs, multi-repo/multi-layer orchestration, lockfiles and reproducible pins, `kas-container` (Docker/Podman, image/script version match, mounts, credential forwarding), and kas in CI (GitHub Actions/GitLab). Use when a kas build clones the wrong commit, an include override does not take effect, `bblayers.conf`/`local.conf` come out wrong, a lockfile drifts, kas-container fails on UID/ownership or SSH, or you must reason about the effective merged config. kas orchestrates Yocto/OE builds; for recipe/layer/BitBake work use yocto-openembedded-development, and for board/kernel/device-tree debugging use embedded-linux-bringup."
 license: MIT
+compatibility: Requires kas and Git; native builds need the target project's host dependencies, container builds need Docker or Podman. Menu needs kas UI dependencies. Guidance verified against kas 5.3; check release-matched help on other versions.
 metadata:
   author: Joonas Onatsu
-  tags:
-    - kas
-    - yocto
-    - openembedded
-    - bitbake
-    - build-orchestration
-    - kas-container
-    - lockfile
-    - reproducible-build
-    - ci
-    - docker
-    - podman
-    - isar
-    - layers
-    - yaml
 ---
 
 # kas Build Orchestration
 
-**IRON LAW: A kas configuration is layered and ordered — includes merge top-to-bottom and the current file overrides all
-of them. You MUST resolve the EFFECTIVE merged config with `kas dump` before debugging any build, and reason from that
-output. You MUST NOT assume the one `.kas.yml` you are looking at is the whole story.**
+Diagnose the complete input composition, resolved repository pins, actual checkouts, and generated build configuration.
+These are related evidence, but they can disagree: a lock overrides a repository selector, the environment overrides a
+machine, or kas skips a dirty checkout. One YAML file or a successful command is not sufficient proof of the build state.
 
-The `machine`, a `commit`, or a `local_conf_header` entry that governs the build may come from an included fragment, a
-cross-repo include, or an auto-loaded lockfile — not from the file in front of you. Flatten first, then diagnose.
+Use this file for method; load the relevant section of [the reference](references/kas-tool.md) for command, merge,
+lock, container, or cleanup details. The reference is checked against kas 5.3, not a promise about every release.
 
----
+## Route the Task
 
-## Overview
+| Boundary                                                                                 | Guidance                           |
+| ---------------------------------------------------------------------------------------- | ---------------------------------- |
+| kas composition, repository resolution, generated configuration, wrapper/container setup | This skill                         |
+| Recipes, layer integration, BitBake task failures, sstate internals, SDKs                | **yocto-openembedded-development** |
+| Kernel, device tree, drivers, or board runtime                                           | **embedded-linux-bringup**         |
+| Bootloader internals, boot flow, FIT verification                                        | **u-boot-development**             |
+| Buildroot configuration or package integration                                           | **buildroot-development**          |
 
-Development partner for kas: authoring and debugging kas YAML configs, running and orchestrating BitBake builds through
-kas, pinning repos with lockfiles, and building in containers with `kas-container`. Keep this file for method and
-routing; pull the full command and config reference from `references/kas-tool.md` on demand — do NOT read it upfront for
-a question this file answers.
-
-kas orchestrates the build; it does not replace BitBake knowledge. For recipe, layer, BitBake task, sstate, and SDK work
-use **yocto-openembedded-development**. For board bring-up, kernel, and device-tree debugging use
-**embedded-linux-bringup**.
-
-### Route the task
-
-| Task                                                             | Where                              |
-| ---------------------------------------------------------------- | ---------------------------------- |
-| Recipes, layers, BitBake tasks, sstate internals, SDK            | **yocto-openembedded-development** |
-| Board/kernel/DTS/driver debugging of a kas-built image           | **embedded-linux-bringup**         |
-| kas commands, config schema, includes, lockfiles, containers, CI | `references/kas-tool.md`           |
-
----
+A downstream build failure can expose a wrong kas checkout. Establish the implicated inputs before handing off, without
+requiring a new checkout or a full build merely to classify an error.
 
 ## Workflow
 
-Tick each step per task. Steps marked ⛔ BLOCKING MUST complete before the next; ⚠️ REQUIRED MUST be done but MAY
-interleave.
+1. **Establish context.** Record kas version, native/wrapper/direct-image/CI entry point, the exact command and ordered
+   config list, relevant `KAS_*` selection/path variables, and the symptom. For containers, record script version,
+   engine, image tag/digest, effective user, entrypoint, and mounts as needed. Inspect values narrowly; redact credentials.
+2. **Classify the failing boundary.** Is it include/merge, fetch/ref/lock, configuration generation, container setup,
+   or downstream BitBake? If dump itself fails, inspect that failure and its inputs. Missing tools or an unavailable
+   engine are not reasons to block file inspection or invent a successful resolution.
+3. **Inspect existing state before resolving it.** Read the entry files, relevant include chain and adjacent locks;
+   resolve repository and cache paths. Inspect managed repositories with `git status --short --untracked-files=all`,
+   current HEAD, and relevant branch refs. Preserve local commits and edits before changing checkouts.
+4. **Collect evidence appropriate to the boundary.** Use the table below. When repository setup is authorized and its
+   effects are understood, run dump with the exact composition to resolve includes. It may fetch, use credentials,
+   create repositories, and change checkouts. Use a disposable workspace when existing state must remain untouched;
+   record that it cannot reproduce uncommitted local changes automatically.
+5. **Validate the most likely cause.** Choose the smallest check that distinguishes it from plausible alternatives.
+   Compare intended selectors with actual HEAD/status and generated configuration. A successful checkout can still have
+   skipped a dirty repository. Route final BitBake variable expansion to the Yocto skill when assignment precedence matters.
+6. **Apply the authorized fix and verify its result.** Correct the owning YAML fragment, pin, or wrapper setting. Review
+   affected configuration/lock diffs and repeat the check at the failed boundary. Do not turn a diagnostic into an
+   unrequested branch update, cleanup, or long build.
 
-- [ ] **⚠️ REQUIRED — Lock kas context.** Record the kas version (`kas --version`), whether the build runs native or via
-  `kas-container` (and which image/`KAS_IMAGE_VERSION`), the entry config file(s), the config `header.version`, and the
-  exact symptom (wrong commit, ignored override, `bblayers.conf`/`local.conf` content, container error). Label any
-  unknown as an assumption.
-- [ ] **⛔ BLOCKING — Resolve the effective config.** Run `kas dump <config>` (add every `:`-composed fragment) and read
-  the merged result. You MUST NOT reason about includes, overrides, `machine`/`distro`, or repo commits from a single
-  unflattened file.
-- [ ] **⛔ BLOCKING — Classify the boundary.** Place the failure at: config-merge (include/override), repo-fetch
-  (url/commit/refspec/lockfile), env-generation (`local_conf_header`/`bblayers_conf_header`), container (`kas-container`
-  UID/mounts/creds), or downstream BitBake. A BitBake recipe/task failure is NOT a kas problem — route it to
-  **yocto-openembedded-development** once kas has produced the correct config and checkout.
-- [ ] **⚠️ REQUIRED — Collect evidence at that boundary.** Gather the bounded artifacts in *Evidence First* before
-  ranking causes.
-- [ ] **⚠️ REQUIRED — Rank causes, then validate ONE.** Propose the single most likely cause and ONE command
-  (`kas dump`, `kas checkout`, a `git -C` inspection of a managed repo) that confirms or refutes it.
-- [ ] **⚠️ REQUIRED — Confirm before mutating.** Any `clean`/`cleansstate`/`cleanall`/`purge`, build-dir or workspace
-  deletion, or lockfile rewrite passes the *Confirmation gates* first.
-- [ ] **⚠️ REQUIRED — Close with the Output contract.** Root cause → evidence → exact fix/command → validation command.
+## Evidence by Boundary
 
----
+| Symptom                                    | Collect and compare                                                                                                       |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| Ignored include or setting                 | Exact colon composition, repo-relative include paths, same-key replacements, each fragment's lock, relevant dump sections |
+| Wrong commit                               | Base/default selectors, `overrides.repos`, update/force flags, actual HEAD and complete Git status                        |
+| Wrong machine, distro, target, task        | File values plus relevant CLI and environment overrides; generated config and downstream variable evaluation              |
+| Wrong layers or local.conf                 | Resolved repository paths/layer entries, named header entries, actual files in the configured build directory             |
+| UID, mount, credentials, or engine failure | Wrapper versus direct image, effective UID, image/script versions, mount paths/modes and credential file scope            |
 
-## Confirmation gates
+Plain `kas dump` shows merged file inputs, retaining an `overrides` section; it does not fold selection variables such
+as `KAS_MACHINE` into the dumped machine. `--resolve-refs` resolves managed repository revisions and removes repository
+overrides from that output; it does not snapshot dirty work or prove a final BitBake value. See
+[configuration and locks](references/kas-tool.md#lockfiles).
 
-You MUST stop and get explicit user confirmation before any destructive or state-mutating action. Default to read-only
-inspection (`kas dump`, `kas checkout`); require an explicit opt-in to mutate; pair every mutating command with its
-reverse or its cost.
+Capture only relevant configuration/log sections, with context sufficient to interpret them. Use the actual
+`KAS_BUILD_DIR` and configured repository paths rather than assuming every build lives in `./build`.
 
-- **`kas purge`** — removes ALL kas-managed data: the build directory AND every repo kas cloned into the work dir. It is
-  effectively irreversible for local edits in those managed repos. You MUST confirm the target work dir and MUST offer
-  `kas purge --dry-run <config>` first to preview exactly what disappears.
-- **`kas cleansstate` / `kas cleanall`** — `cleansstate` also empties the sstate cache; `cleanall` also removes `DL_DIR`
-  downloads. Both force expensive re-fetch/rebuild. You MUST confirm and note that a shared `SSTATE_DIR`/`DL_DIR` may
-  serve other projects.
-- **Build-dir / workspace mutation** — deleting or repointing `KAS_BUILD_DIR` / `KAS_WORK_DIR`, or `kas checkout` into a
-  work dir that already holds uncommitted edits in a managed repo. `kas checkout` resets managed repos to the configured
-  commit; you MUST warn that local commits/uncommitted work in a managed layer can be discarded or detached.
-- **Lockfile rewrite** — `kas lock` / `kas dump --lock --update --inplace` overwrites `<config>.lock.<ext>` and re-pins
-  every repo to its current checkout. You MUST confirm; the reverse is `git checkout -- <config>.lock.<ext>` (or
-  restoring the prior pinned commits).
+## Mutation and Authorization
 
-### Safety
+Reuse the user's existing authorization. An explicit request to fix configuration or refresh a lock permits that
+bounded change and its necessary verification. A review-only request does not authorize modifying a live workspace.
+Ask only when destructive effects, shared paths, credential exposure, or another consequential action exceed the scope.
 
-- MUST NOT run `purge`, `cleansstate`, `cleanall`, or `kas checkout` over a dirty managed repo unprompted. Managed layer
-  repos can contain the user's uncommitted work.
-- MUST NOT rewrite a committed lockfile as a side effect of another task; a lockfile change alters everyone's
-  reproducible pin.
-- MUST NOT point `KAS_WORK_DIR`/`KAS_BUILD_DIR`/`SSTATE_DIR`/`DL_DIR` at a shared or pre-populated path without
-  confirming; kas creates and cleans within them.
-- Prefer reversible inspection first: `kas dump` over editing, `kas checkout` over `kas build`, `--dry-run` over the
-  real `purge`.
+- **Dump and checkout are resolving operations.** Both can fetch and check out repositories. Checkout also normally
+  applies configured patches and writes build configuration. Inspect state first. kas 5.3 skips repositories it detects
+  as dirty unless `--force-checkout` is supplied; its Git dirty check is narrower than full status. Never force checkout
+  to silence a warning without authority to discard the affected work. Branch checkout can also move local branch refs.
+- **Lock changes alter reproducible selection.** `kas lock` creates missing floating-repository pins; use
+  `kas lock --update` for a deliberate refresh. They are not snapshots of every current checkout. Existing local and
+  external locks affect which file can be updated. Preserve earlier lock edits and inspect all changed pins; do not
+  restore from Git as a supposed rollback unless that is the state the user intends to restore.
+- **Cleanup needs its actual deletion scope.** Resolve build, work, downloads, sstate, reference-repository, buildtools,
+  and managed-repository paths before approval or execution. Shared caches can serve other projects. Use the release's
+  dry run before deletion, but disclose that purge's preview can perform repository setup/checkout. See
+  [cleanup and purge](references/kas-tool.md#cleanup-and-purge), including `--preserve-repo-refs`.
+- **Credential scope is the accessible file/socket set.** Use dedicated SSH/AWS directories when isolation is needed.
+  An AWS profile does not hide other files or cached sessions in a mounted directory. An SSH agent can authorize signing
+  operations even though its private key files are not mounted. Native AWS setup can fall back to the user's cache if
+  the dedicated config directory lacks `sso/cache`; see [credential isolation](references/kas-tool.md#credentials).
+  Do not forward unrelated credentials.
 
----
+Keep normal generated-file ownership clear: kas normally rewrites `local.conf` and `bblayers.conf` during setup. Make
+lasting changes in the configuration sources. This does not make every build-directory file disposable, and setup-skip
+options change which generation steps run.
 
-## Evidence First
+## Versions, Trust, and Reproducibility
 
-Before diagnosing, inspect (or ask the user for) the artifacts that pin the failing boundary. Keep every capture BOUNDED
-— grep and tail, never a raw full log.
+Check `kas --version`, the actual subcommand's `--help`, and matching upstream documentation before prescribing
+version-dependent flags. Check wrapper help separately from native kas help. Prefer matching wrapper/image releases;
+5.3 warns on a mismatch, which is a compatibility concern, not proof of a particular failure.
 
-- The **flattened config** — `kas dump <config>` (or `kas dump --format json <config>` for machine reading). This is the
-  ground truth for includes, overrides, `machine`/`distro`, and per-repo `commit`/`refspec`.
-- The **entry file set** — every fragment in a `a.yml:b.yml:c.yml` command line, plus each path under `header.includes`
-  (including cross-repo `repo:`/`file:` includes) and any auto-loaded `<config>.lock.<ext>`.
-- The **generated build config** — `build/conf/bblayers.conf` and `build/conf/local.conf` as kas actually wrote them,
-  versus what the YAML intended.
-- The **managed-repo state** — for a wrong-checkout symptom, `git -C <work_dir>/<repo> rev-parse HEAD` and
-  `git -C … status` against the configured/locked commit.
-- The **container context** — for a `kas-container` failure: engine (`KAS_CONTAINER_ENGINE`), resolved image
-  (`KAS_IMAGE_VERSION`/`KAS_CONTAINER_IMAGE`), and the script-vs-image version match.
+`header.version` declares configuration-format expectations. Use the format changelog to choose a suitable minimum;
+do not bump it without a feature need. The installed kas validates against its schema and a supported version range,
+not a comprehensive per-key gate keyed to that declaration. Parsing on a new release does not qualify an older release.
 
-```bash
-# Ground truth: the fully merged, includes-resolved config
-kas dump kas-project.yml
-kas dump kas-base.yml:board.yml:debug-image.yml     # dump the exact composition you build
+Pins constrain repository selection; they do not establish publisher identity. kas 5.3 can enforce configured Git
+commit/tag signature verification with `signers`, `signed`, and `allowed_signers` (format 19). Use the version-matched
+[security guidance](references/kas-tool.md#security), including its trust-root and dependency requirements.
 
-# Resolve every repo ref to a concrete commit (what a lockfile would pin)
-kas dump --resolve-refs kas-project.yml
+A lockfile does not capture unmanaged root-repository changes, arbitrary local edits, every recipe source, or the host
+kernel. Record those inputs and image identity when release reproduction matters. Containers reduce host dependency
+variation; verify artifact reproducibility separately rather than claiming it from a lock or image tag.
 
-# Set up only, no build — inspect before committing to a build
-kas checkout kas-project.yml
+## Report the Result
 
-# What did kas actually generate?
-sed -n '1,40p' build/conf/local.conf
-grep -n BBLAYERS build/conf/bblayers.conf
+Report the proven cause or remaining hypothesis, the evidence that supports it, the precise edit/command, and the result
+of verification. When blocked, name the unavailable evidence and the next discriminating check. State whether you
+verified configuration shape, real repository behavior, a build artifact, or only a static walkthrough.
 
-# Wrong-commit check on a managed repo
-git -C <work_dir>/poky rev-parse HEAD
-git -C <work_dir>/poky status -s
+## Sources
 
-# Container version sanity (script MUST match image)
-./kas-container --version
-```
-
-If `kas dump` output disagrees with the file you were handed, the include/override chain or an auto-loaded lockfile is
-the story — trust the dump.
-
----
-
-## Output contract
-
-Every diagnostic answer MUST end with these four, in order:
-
-1. **Root cause** — the single proven boundary and mechanism (which fragment/override/pin/container setting).
-2. **Supporting evidence** — the `kas dump` line, generated `local.conf`/`bblayers.conf` content, managed-repo `HEAD`,
-   or container version that proves it.
-3. **Exact fix** — the precise YAML edit (real key path, e.g. `header.includes`, `repos.<name>.commit`,
-   `local_conf_header.<key>`) or command.
-4. **Validation** — the command that confirms the fix, normally a fresh `kas dump` / `kas checkout` showing the
-   corrected effective config.
-
-If the root cause is not yet proven, say so and give the ONE command (usually `kas dump`) that would prove it — do NOT
-present a guess as a diagnosis.
-
----
-
-## Version awareness
-
-kas config schema, commands, and container plumbing drift across releases. Before giving version-specific guidance you
-MUST confirm:
-
-- **Config `header.version`** — the YAML schema format number (a plain integer, e.g. `14`). Features and key semantics
-  are gated on it; do NOT recommend a key the file's declared version does not support, and do NOT bump it casually.
-- **kas tool version** — `kas --version`. Commands and flags (`kas dump`, `--resolve-refs`, menu/lock behavior,
-  distro-image selection) vary; confirm the command exists in the user's version before prescribing it.
-- **`kas-container` script vs image version** — the `kas-container` script version MUST match the `kas` version inside
-  the image. A mismatch causes subtle mount/entrypoint failures. Pin both to the same release tag and set
-  `KAS_IMAGE_VERSION` explicitly.
-- **Distro-specific images (kas ≥ 5.0)** — `KAS_CONTAINER_IMAGE_DISTRO` (e.g. `debian-bookworm`, `debian-trixie`)
-  resolves to `…:<version>-<distro>`; only offer it when the version supports it.
-
-When the version is unknown, state which answer applies per version rather than assuming one.
-
----
-
-## Anti-patterns
-
-- MUST NOT debug a build from a single `.kas.yml` — an override or pin may live in an include, a cross-repo include, or
-  an auto-loaded lockfile. Run `kas dump` first (the Iron Law).
-- MUST NOT hand-edit `bblayers.conf` or `local.conf` in the build dir to "fix" a kas build — kas regenerates them from
-  the config on the next run and your edit vanishes. Change the YAML (`repos.*.layers`, `local_conf_header`,
-  `bblayers_conf_header`).
-- MUST NOT expect a later include to be overridden by an earlier one — merge is top-to-bottom and the CURRENT file wins
-  over all includes. Order is the mechanism, not a suggestion.
-- MUST NOT treat a checkout at the "wrong" commit as a kas bug when a `<config>.lock.<ext>` exists — the lockfile pins
-  the commit and kas auto-loads it. Update the lockfile (`kas lock`), do not fight it.
-- MUST NOT run a plain `kas-container` script against a mismatched image version — pin the script and
-  `KAS_IMAGE_VERSION` to the same tag.
-- MUST NOT forward `--ssh-dir ~/.ssh` or `--aws-dir ~/.aws` wholesale — that exposes ALL keys / active SSO sessions to
-  the build. Use a dedicated `~/.ssh/kas-only` dir or a scoped AWS profile.
-- MUST NOT `kas purge`/`cleanall`/`checkout` over a work dir with uncommitted work in a managed layer repo — that is a
-  mutation, and it goes through the *Confirmation gates*.
-- MUST NOT trust fetched layers implicitly — kas does not verify repository integrity. Pin commits, use lockfiles, and
-  pull only from trusted sources.
-- MUST NOT diagnose a downstream BitBake recipe/task failure as a kas problem once `kas dump` and `kas checkout` are
-  correct — route it to **yocto-openembedded-development**.
-
----
-
-## Reference pointers
-
-Canonical upstream docs (cite the version-matched release):
-
-- kas manual: <https://kas.readthedocs.io/> — commands, config schema, `header.version` history, container usage.
-- kas source and `kas-container` script: <https://github.com/siemens/kas> (`kas-container`, `container-entrypoint`,
-  release tags).
-
-`references/`:
-
-- `kas-tool.md` — full command reference (`build`/`checkout`/`shell`/`dump`/`menu`/`lock`/`diff`/`clean*`/`purge`),
-  config file structure and schema, includes and command-line composition, lockfiles, layer exclusion, environment
-  variables, the complete `kas-container` reference (image/engine selection, directory mounts, credential forwarding,
-  entrypoint behavior, cleanup, CI, ISAR), and a kas-vs-manual decision table.
-
-## Attribution
-
-See `ATTRIBUTIONS.md` for upstream sources and the MIT notice.
+- [kas 5.3 manual](https://kas.readthedocs.io/en/5.3/)
+- [kas 5.3 implementation](https://github.com/siemens/kas/tree/5.3)
+- [Attributions and source influence](ATTRIBUTIONS.md), with the MIT notice and [upstream license](LICENSE.upstream)
