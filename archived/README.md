@@ -13,7 +13,8 @@ whole mechanism; there is no separate opt-out to remember.
 
 The embedded domain was restored to `../shared/embedded/` on 2026-09-07. Its five skills now use the names
 `buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`, and
-`yocto-openembedded-development`. Their technical reviews remain deferred in [../TODO.md](../TODO.md).
+`yocto-openembedded-development`. Their review progress is tracked in
+[../TODO.md](../TODO.md#embedded-domain--review-ledger).
 
 A row saying "Review is deferred" is the authoritative record that the package's review is still outstanding.
 The 2026-09 review campaign's own ledger is retired; its verdicts and evidence are in

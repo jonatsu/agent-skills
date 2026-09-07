@@ -3,19 +3,27 @@
 Operational and future-feature backlog for the skills stack, including candidate sources not yet evaluated.
 The completed 2026-09 review's verdicts and evidence are the record in
 [../docs/evaluations/2026-09-shared-skill-review.md](../docs/evaluations/2026-09-shared-skill-review.md), and
-reviews still deferred are the rows marked "Review is deferred" in
-[archived/README.md](archived/README.md). Repository-wide items live in [../TODO.md](../TODO.md).
+archived reviews still deferred are the rows marked "Review is deferred" in
+[archived/README.md](archived/README.md). The restored embedded skills are tracked below.
+Repository-wide items live in [../TODO.md](../TODO.md).
 
-## Embedded Domain — Technical Review Deferred
+## Embedded Domain — Review Ledger
 
 The five embedded skills were restored on 2026-09-07 with new names. This restoration covers package moves,
 sibling routing, top-level license placement, and required Markdown formatting. It does not establish the
 accuracy of the existing technical guidance or agent activation behavior.
 
-Review `buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`,
-and `yocto-openembedded-development` before treating their guidance as reviewed. Include version-sensitive
-commands, conflicting workflow statements, provenance records, and the descriptions above the 512-character
-budget. Discovery and hardware/build behavior remain unmeasured.
+Review one skill at a time using the current `skill-forge` and `skill-review` guidance. Review completion
+does not mean fixes have been applied or behavioral evaluation has passed. Discovery and hardware/build
+behavior remain unmeasured unless a linked review records otherwise.
+
+| Skill                                              | Review status                    | Verdict / remaining work                                                                                                                                    | Evidence                                                                                                 |
+| -------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `buildroot-development` (formerly `buildroot-dev`) | Review lite completed 2026-09-07 | **Invalid; technically not ready.** F1–F12 repairs pending; original-PDF provenance comparison and full behavioral evaluation outstanding. Skill unchanged. | [Review, evidence, and proposed repairs](../docs/evaluations/2026-09-07-buildroot-development-review.md) |
+| `embedded-linux-bringup`                           | Pending                          | Review not started                                                                                                                                          | —                                                                                                        |
+| `kas-build-orchestration`                          | Pending                          | Review not started                                                                                                                                          | —                                                                                                        |
+| `u-boot-development`                               | Pending                          | Review not started                                                                                                                                          | —                                                                                                        |
+| `yocto-openembedded-development`                   | Pending                          | Review not started                                                                                                                                          | —                                                                                                        |
 
 ## Nix Domain — Remaining Work
 

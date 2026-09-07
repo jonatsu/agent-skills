@@ -90,7 +90,7 @@ originals fixed and restored the same day. Only `nix-wrapper-modules` remains in
 The `embedded/` domain was restored on 2026-09-07 with clearer skill names:
 `buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`, and
 `yocto-openembedded-development`. Restoration updates names, routing, metadata placement, and formatting;
-the broader technical review remains deferred in [TODO.md](TODO.md).
+technical review progress and pending repairs are tracked in [TODO.md](TODO.md#embedded-domain--review-ledger).
 
 Three consequences worth knowing before you move anything:
 
