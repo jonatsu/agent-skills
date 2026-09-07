@@ -107,6 +107,17 @@ Do not count a listing appearance that follows a deploy of that same skill as ev
 immediately after their 2026-09-06 redeploy, and the user confirmed the same effect explains the Nix entries
 above. A skill a session just edited surfaces for that reason alone.
 
+## Containers — Review Podman Coverage
+
+Deferred 2026-09-07 at the user's request. The `containers` skill currently names Docker and OCI containers,
+but its body prefers Docker commands and its package contains no Podman, Quadlet, Containerfile, or Buildah guidance.
+
+Review the intended Podman scope before extending the skill. Assess runtime selection, rootless operation,
+Compose-provider differences, and systemd/Quadlet integration against current primary documentation.
+Then propose matching description triggers and body/reference guidance; adding a Podman trigger alone would
+advertise coverage the package does not yet provide. Keep Docker behavior intact and record validation limits.
+No Podman support or activation behavior has been verified.
+
 ## Description Audit — 13 Skills Share the Shape That Failed
 
 **Description-focused review completed 2026-09-07; three priority rewrites applied with user authorization.**
