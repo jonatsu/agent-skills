@@ -1,6 +1,6 @@
 ---
 name: repo-management
-description: Set up or refresh repository baseline files, hooks, community templates, and read-only hygiene audits.
+description: Set up or refresh repository baseline files and hygiene hooks. Use for repository bootstrap, .gitignore, .editorconfig, .gitattributes, pre-commit configuration, community templates, or read-only hygiene and README-accuracy audits. Use git-ops for commits and history operations.
 license: MIT
 metadata:
   author: Joonas Onatsu

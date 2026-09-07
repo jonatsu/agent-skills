@@ -1,6 +1,6 @@
 ---
 name: containers
-description: Build, run, inspect, secure, and ship Docker and OCI containers with Dockerfiles, Compose, or Kubernetes.
+description: Build, run, diagnose, and secure Docker and OCI containers. Use for Dockerfiles, Compose applications, container runtime settings, image scanning and publication, or Kubernetes workload hardening. Excludes general Kubernetes cluster administration.
 license: MIT
 compatibility: Requires the container, registry, scanner, or Kubernetes tools used by the target project.
 metadata:

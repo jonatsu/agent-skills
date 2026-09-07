@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: Debug non-obvious failures, regressions, and flaky tests through evidence and root-cause fixes.
+description: Investigate failures, regressions, and intermittent behavior to find and verify the root cause. Use when debugging an error, tracing an unexpected result, or diagnosing a flaky test. For test strategy or coverage review without failure diagnosis, use test-engineer.
 license: MIT
 metadata:
   author: Joonas Onatsu
