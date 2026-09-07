@@ -6,6 +6,15 @@ The completed 2026-09 review's verdicts and evidence are the record in
 reviews still deferred are the rows marked "Review is deferred" in
 [archived/README.md](archived/README.md). Repository-wide items live in [../TODO.md](../TODO.md).
 
+## Deferred Review Progress — 2026-09-07
+
+Review lite completed for `anti-rationalization` and the four `brooks-lint-*` packages.
+All five pass specification validation and fail current repository policy. They remain archived and unchanged.
+Findings, proposed dispositions, and coverage limits:
+[first batch review](../docs/evaluations/2026-09-07-archived-skill-review-batch-1.md).
+The next deferred row is `buildroot-dev`; the archive index remains the queue authority.
+Full behavioral evaluations and the description audit's observation prerequisite remain open.
+
 ## Nix Domain — Remaining Work
 
 The 2026-09-06 nix-domain consolidation is complete except for the items below: three skills promoted from
