@@ -6,15 +6,6 @@ The completed 2026-09 review's verdicts and evidence are the record in
 reviews still deferred are the rows marked "Review is deferred" in
 [archived/README.md](archived/README.md). Repository-wide items live in [../TODO.md](../TODO.md).
 
-## Deferred Review Progress — 2026-09-07
-
-Review lite completed for `anti-rationalization` and the four `brooks-lint-*` packages.
-All five pass specification validation and fail current repository policy. They remain archived and unchanged.
-Findings, proposed dispositions, and coverage limits:
-[first batch review](../docs/evaluations/2026-09-07-archived-skill-review-batch-1.md).
-The next deferred row is `buildroot-dev`; the archive index remains the queue authority.
-Full behavioral evaluations and the description audit's observation prerequisite remain open.
-
 ## Nix Domain — Remaining Work
 
 The 2026-09-06 nix-domain consolidation is complete except for the items below: three skills promoted from
@@ -117,6 +108,15 @@ immediately after their 2026-09-06 redeploy, and the user confirmed the same eff
 above. A skill a session just edited surfaces for that reason alone.
 
 ## Description Audit — 13 Skills Share the Shape That Failed
+
+**Description-focused review completed 2026-09-07; no rewrites applied.**
+[Findings and candidate wording](../docs/evaluations/2026-09-07-skill-description-audit.md) distinguish three priority
+revisions, three optional refinements, and seven descriptions worth preserving.
+All 13 pass both validators. None changed since this queue was added in `6d947f6`.
+The earlier `0c91d24` already revised `test-engineer` and `python-testing`; preserve those edits.
+The review corrects the assumption below that debugging and repository setup lack request-time intent:
+both support concrete user tasks. Short length or absence of `Use when` alone does not establish a defect.
+The historical audit follows; its activation hypothesis and the natural-observation prerequisite remain unmeasured.
 
 Swept 2026-09-06 across all 45 deployed skills, prompted by the `test-engineer` non-trigger above. The
 distribution is bimodal, and the split is a repository era rather than a judgment: descriptions written under
