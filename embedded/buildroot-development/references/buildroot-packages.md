@@ -13,6 +13,7 @@ or a `select` that warns, see `kconfig-troubleshooting.md`.
 - [Key Package Variables](#key-package-variables)
 - [Fetch Methods](#fetch-methods)
 - [Package Rebuild Commands](#package-rebuild-commands)
+- [Local Source Iteration](#local-source-iteration)
 - [Host Package Dependencies](#host-package-dependencies)
 - [Build Order vs Runtime Presence (there is no RDEPENDS)](#build-order-vs-runtime-presence-there-is-no-rdepends)
 - [Debugging Package Failures](#debugging-package-failures)
@@ -66,7 +67,8 @@ MYPKG_CONF_OPTS = --disable-tests --with-feature=yes
 $(eval $(autotools-package))
 ```
 
-The macro runs `autoreconf` when needed and sets `--host`, `--build`, `--prefix`, and `DESTDIR` for you.
+The infrastructure supplies cross-build configuration and installation paths. Set `MYPKG_AUTORECONF = YES` when
+the package needs its configure machinery regenerated; the default is `NO`, not automatic detection.
 
 ### `cmake-package`
 
@@ -114,13 +116,13 @@ MYPKG_SOURCE = mypkg-$(MYPKG_VERSION).tar.gz
 MYPKG_SITE = https://pypi.org/packages/source/m/mypkg
 MYPKG_LICENSE = MIT
 MYPKG_LICENSE_FILES = LICENSE
-MYPKG_SETUP_TYPE = setuptools  # or: pep517, flit, poetry, hatchling
+MYPKG_SETUP_TYPE = setuptools
 
 $(eval $(python-package))
 ```
 
-The accepted `SETUP_TYPE` values grow across releases — confirm the one you want exists in your Buildroot version before
-relying on it.
+Check `package/pkg-python.mk` in the selected release for accepted `SETUP_TYPE` values. Buildroot 2026.08 names the
+Hatch backend `hatch`, not `hatchling`; do not infer Buildroot's spelling from the Python module name.
 
 ### `kernel-module`
 
@@ -136,12 +138,14 @@ $(eval $(kernel-module))
 $(eval $(generic-package))
 ```
 
-`kernel-module` adds a `make` invocation with `KERNELDIR` pointed at the kernel source Buildroot built.
+`kernel-module` adds the kernel build dependency and module build/install hooks. For its module-directory and make-option
+interfaces, consult `package/pkg-kernel-module.mk` and the release's kernel-module documentation.
+Verify the resulting modules are paired with the kernel image actually selected at boot. Keep runtime module-load
+diagnosis in `embedded-linux-bringup`.
 
 ### `host-*` variants
 
-Every macro has a `host-*` sibling (`host-generic-package`, `host-cmake-package`, ...) for tools that must run on the
-build machine:
+Use the infrastructure's supported `host-*` form for tools that run on the build machine, for example:
 
 ```makefile
 $(eval $(host-autotools-package))
@@ -149,14 +153,15 @@ $(eval $(host-autotools-package))
 
 ## `Config.in` Structure
 
-Every package needs a `Config.in` beside its `.mk`:
+A selectable target package needs a `Config.in` beside its `.mk`. Host-only build dependencies usually need no menu
+entry; use the release's `Config.in.host` convention when exposing an optional host utility.
 
 ```kconfig
 # package/mypkg/Config.in
 config BR2_PACKAGE_MYPKG
     bool "mypkg"
     depends on BR2_TOOLCHAIN_HAS_THREADS
-    depends on BR2_PACKAGE_LIBFOO
+    select BR2_PACKAGE_LIBFOO
     select BR2_PACKAGE_LIBBAR
     help
       Short description of what mypkg does.
@@ -181,44 +186,48 @@ Or source it from your `BR2_EXTERNAL` tree's `Config.in` (see `buildroot-advance
 
 ## Key Package Variables
 
-| Variable                    | Purpose                                                     |
-| --------------------------- | ----------------------------------------------------------- |
-| `<PKG>_VERSION`             | Version string (feeds the source filename)                  |
-| `<PKG>_SOURCE`              | Source archive filename (set `= ""` for VCS fetches)        |
-| `<PKG>_SITE`                | Base URL or VCS URL                                         |
-| `<PKG>_SITE_METHOD`         | Override only — auto-detected from `<PKG>_SITE` (see below) |
-| `<PKG>_GIT_SUBMODULES`      | `YES` to init submodules after clone                        |
-| `<PKG>_LICENSE`             | SPDX identifier(s)                                          |
-| `<PKG>_LICENSE_FILES`       | Path(s) to license text within the source                   |
-| `<PKG>_DEPENDENCIES`        | Packages that MUST build first (build order)                |
-| `<PKG>_CONF_OPTS`           | Extra options for configure/cmake/meson                     |
-| `<PKG>_MAKE_OPTS`           | Extra options passed to `make` at build                     |
-| `<PKG>_INSTALL_TARGET`      | `YES` (default) — install into `$(TARGET_DIR)`              |
-| `<PKG>_INSTALL_STAGING`     | `YES` — install headers + `.so` into `$(STAGING_DIR)`       |
-| `<PKG>_INSTALL_TARGET_CMDS` | Custom install recipe (`generic-package` only)              |
+| Variable                    | Purpose                                                                      |
+| --------------------------- | ---------------------------------------------------------------------------- |
+| `<PKG>_VERSION`             | Version string (feeds the source filename)                                   |
+| `<PKG>_SOURCE`              | Source archive filename; normally keep the generated default for VCS sources |
+| `<PKG>_SITE`                | Base URL or VCS URL                                                          |
+| `<PKG>_SITE_METHOD`         | Override only — auto-detected from `<PKG>_SITE` (see below)                  |
+| `<PKG>_GIT_SUBMODULES`      | `YES` to init submodules after clone                                         |
+| `<PKG>_LICENSE`             | SPDX identifier(s)                                                           |
+| `<PKG>_LICENSE_FILES`       | Path(s) to license text within the source                                    |
+| `<PKG>_DEPENDENCIES`        | Packages that MUST build first (build order)                                 |
+| `<PKG>_CONF_OPTS`           | Extra options for configure/cmake/meson                                      |
+| `<PKG>_MAKE_OPTS`           | Extra options passed to `make` at build                                      |
+| `<PKG>_INSTALL_TARGET`      | `YES` (default) — install into `$(TARGET_DIR)`                               |
+| `<PKG>_INSTALL_STAGING`     | `YES` — install headers + `.so` into `$(STAGING_DIR)`                        |
+| `<PKG>_INSTALL_TARGET_CMDS` | Target install commands; infrastructure may provide a default                |
 
 A library that other packages link against MUST set `<PKG>_INSTALL_STAGING = YES`, or its headers and shared objects
 never reach `$(STAGING_DIR)` and downstream links fail.
 
 ## Fetch Methods
 
-Buildroot infers the download backend from the site URL, so you rarely set `<PKG>_SITE_METHOD` at all. There is no
-`https` method — an `http(s)://` or `ftp://` site uses the `wget` backend; a `git://` URL or one ending `.git` uses
-`git`; a `file://` path uses `file`. Set the variable explicitly only to force a backend the URL does not imply, and
-only to a real value: `wget`, `git`, `svn`, `hg`, `bzr`, `cvs`, `scp`, `file`, or `local`.
+URL inference uses the scheme, not a `.git` suffix. For a Git repository accessed over HTTPS, explicitly set
+`<PKG>_SITE_METHOD = git`. Keep the generated VCS source-archive name unless a verified need requires an override;
+an empty or quoted-empty `_SOURCE` is not the way to request a VCS checkout.
+
+Distinguish the effective method value from the download program: in 2026.08 an inferred `https` method is dispatched
+to wget, while FTP is dispatched to curl. The manual's backend shorthand is not an exhaustive description of these
+internal values. Check `package/pkg-download.mk`, `package/pkg-generic.mk`, and `support/download/dl-wrapper` when
+diagnosing inference in the target release.
 
 ```makefile
-# HTTPS tarball — method inferred as wget, do not set it
+# HTTPS tarball — infer the method from the URI; the wrapper chooses the backend
 MYPKG_SITE = https://example.com/releases
 MYPKG_SOURCE = mypkg-$(MYPKG_VERSION).tar.gz
 
-# Git repository — method inferred from the URL, but pin an exact revision
+# Git over HTTPS — select the method explicitly and pin the real full commit ID
 MYPKG_SITE = https://github.com/org/mypkg.git
 MYPKG_SITE_METHOD = git
-MYPKG_VERSION = abc1234def567    # full commit SHA for reproducibility
+MYPKG_VERSION = <full-commit-id>
 
 # Local directory — must be forced; useful for in-development packages
-MYPKG_SITE = $(TOPDIR)/../mypkg
+MYPKG_SITE = /absolute/path/to/mypkg
 MYPKG_SITE_METHOD = local
 ```
 
@@ -227,25 +236,36 @@ MYPKG_SITE_METHOD = local
 Buildroot stamps each build step, so a bare `make` skips a package that already built even after you edit its source or
 `.mk`. You MUST force the step you changed.
 
-```bash
-# Re-run configure + build + install for one package
-make <pkg>-rebuild
+| Change                                                                                        | Appropriate operation                                               |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Install commands only                                                                         | `<pkg>-reinstall`                                                   |
+| Source edit in the active build tree or source override                                       | `<pkg>-rebuild`: compilation and installation                       |
+| Configure options or configure inputs                                                         | `<pkg>-reconfigure`: configuration, compilation, and installation   |
+| Extract/patch inputs or a need to recreate this package's build tree                          | Preserve local edits, then `<pkg>-dirclean` and rebuild the package |
+| Package removed, architecture/toolchain changed, or affected dependents cannot be established | Fresh/full build; per-package uninstall is unsupported              |
 
-# Re-run install only (skip configure and build)
-make <pkg>-reinstall
-
-# Remove the package's build dir and stamps (next make re-fetches all steps)
-make <pkg>-dirclean
-
-# Rebuild the package, then regenerate the rootfs image
-make <pkg>-rebuild all
-
-# List every target a package exposes
-make <pkg>-list-targets
-```
+`-dirclean` does not remove installed files or cached downloads. Recreating the build tree normally reuses cached source
+archives; it does not necessarily download again. Rebuilding a dependency does not automatically rebuild every consumer.
+Use the release's `make help` and package-target documentation for available operations.
 
 A `-rebuild`/`-reinstall` updates `$(TARGET_DIR)` but not the packed image — follow it with `make` (or append `all`) to
 regenerate the filesystem image.
+
+## Local Source Iteration
+
+For repeated development edits, keep sources in a developer-owned checkout. Set an override in the file selected by
+`BR2_PACKAGE_OVERRIDE_FILE` (default: `local.mk` beside `BR2_CONFIG`):
+
+```makefile
+MYPKG_OVERRIDE_SRCDIR = /absolute/path/to/mypkg
+```
+
+Buildroot rsyncs the checkout into its temporary `<package>-custom` build tree. Normal download, extraction, and
+patching are bypassed; do not assume patches configured for a release source were applied to the override.
+Edit the checkout and use `make mypkg-rebuild all`, or `mypkg-reconfigure all` for configuration changes.
+Before release, verify the pinned source and patch inputs without the development override. See the
+[native development workflow](https://github.com/buildroot/buildroot/blob/2026.08/docs/manual/using-buildroot-development.adoc)
+for rsync exclusions and version-specific details.
 
 ## Host Package Dependencies
 
@@ -265,32 +285,34 @@ variable that says "this package needs that one present at run time." Do NOT go 
 `<PKG>_DEPENDENCIES` is a build-ORDER list and nothing more: it guarantees the listed packages finish building before
 this package configures. It has no separate runtime meaning.
 
-A library ends up on the target for one reason only: it is an enabled target package, and target packages install into
-`$(TARGET_DIR)` by default. So the way to guarantee something is present at run time is to make sure it is enabled in
-the configuration:
+Target-package install steps normally populate `TARGET_DIR`; invoking a package as a Make dependency can run those
+steps even without selecting its Kconfig symbol. This side effect is not a sound runtime dependency contract.
+Keep configuration dependencies and build-order dependencies consistent:
 
-- Express the need in `Config.in` with `select BR2_PACKAGE_X` (or a matching `depends on`). Enabling your package then
-  forces `X` on, and `X` installs itself to the target.
-- Listing a runtime-only library in `<PKG>_DEPENDENCIES` also pulls it in, but only as a build-ordering side effect — it
-  does not create a tracked runtime relationship, and it silently does nothing if the library is not also enabled in the
-  config.
+- Select required libraries in `Config.in`, propagating their toolchain and other non-selectable constraints.
+  `depends on` restricts availability; it does not enable the dependency.
+- Add build dependencies to `<PKG>_DEPENDENCIES` as well. Their targets can run even without a matching selected Kconfig
+  symbol, so this is not a substitute for correct configuration dependencies. Host tools and packages that disable target
+  installation do not imply runtime presence.
 
 The reliable lever is always the configuration (`Config.in` `select`/`depends on`), never a runtime-deps variable.
 
 ## Debugging Package Failures
 
 ```bash
-# Where the build ran and what it left behind
-ls output/build/<pkg>-<ver>/           # look for config.log, CMakeFiles/
-cat output/build/<pkg>-<ver>/config.log | tail -60   # autotools failures
+# Resolve the actual build directory, including source-override and O= cases
+make -s printvars VARS=MYPKG_DIR
+# Substitute the returned path; config.log is an autotools example.
+tail -n 60 -- /absolute/path/to/package-build/config.log
 
-# Reproduce the failure inside the exact build environment
-make <pkg>-shell
+# Inspect the release's supported targets and actual build invocation
+make help
+make V=1 mypkg
 
 # Package metadata (deps, version, license) as JSON
-make <pkg>-show-info
+make mypkg-show-info
 
 # Resolve a variable's effective value (wildcards allowed)
 make -s printvars VARS=MYPKG_SITE
-make -s printvars VARS='MYPKG_*'
+make -s printvars VARS='MYPKG_%'
 ```

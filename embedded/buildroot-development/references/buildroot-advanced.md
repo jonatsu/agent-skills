@@ -7,6 +7,10 @@ out-of-tree `O=` builds, and ccache.
 For package `.mk`/`Config.in` authoring, see `buildroot-packages.md`. For board files, overlays, and `genimage`, see
 `buildroot-board-support.md`.
 
+Paths shown as `output/...` illustrate the default layout relative to the Buildroot source. For a custom `O=` build,
+use the resolved `BASE_DIR`, `HOST_DIR`, `STAGING_DIR`, and `BINARIES_DIR`; do not append another `output` directory
+inside the selected output. Run configuration/build commands in the established build context.
+
 ## Contents
 
 - [BR2_EXTERNAL](#br2_external)
@@ -28,7 +32,7 @@ at once.
 
 ```
 my-br2-external/
-├── external.desc           # mandatory: name and description
+├── external.desc           # mandatory file: name required, description optional
 ├── Config.in               # mandatory: top-level Kconfig (sources package Config.in files)
 ├── external.mk             # mandatory: includes package .mk files
 ├── configs/                # board defconfigs (appear in make list-defconfigs)
@@ -72,7 +76,7 @@ include $(sort $(wildcard $(BR2_EXTERNAL_MYPROJECT_PATH)/package/*/*.mk))
 # Single external tree
 make BR2_EXTERNAL=/absolute/path/to/my-br2-external menuconfig
 
-# Multiple trees (space-separated, always absolute paths)
+# Multiple trees (space-separated; explicit absolute paths avoid cwd ambiguity)
 make BR2_EXTERNAL="/path/to/bsp-tree /path/to/app-tree" menuconfig
 ```
 
@@ -90,11 +94,11 @@ Lets the external tree add selectable providers for `toolchain`, `jpeg`, `openss
 - Skips rebuilding the toolchain on every `make distclean`.
 - Lets you use a pre-validated toolchain from Bootlin, Linaro, or your own crosstool-NG build.
 
-A Yocto or OpenEmbedded SDK does NOT work as a Buildroot external toolchain. Buildroot expects a bare cross toolchain —
-compiler, binutils, C/C++ runtime, and a sysroot that Buildroot itself fills as it builds packages. An OE/Yocto SDK
-instead ships a sysroot already loaded with hundreds of prebuilt libraries, so Buildroot cannot adopt it without
-colliding with the very packages it is supposed to build. The host distribution's own gcc/binutils are unusable for the
-same reason. Generate a toolchain with crosstool-NG or Buildroot instead.
+Check the candidate against the release's external-toolchain requirements before configuring it. A general application
+SDK or the host distribution's toolchain is not interchangeable with the external toolchain Buildroot expects.
+Use a supported profile or a suitable purpose-built toolchain. The
+[first-party toolchain documentation](https://github.com/buildroot/buildroot/blob/2026.08/docs/manual/configure.adoc)
+explains the supported inputs, including the OE/Yocto SDK exclusion; verify a real candidate's libc and features.
 
 ### Configuring in menuconfig
 
@@ -112,9 +116,9 @@ toolchain's: a glibc external toolchain cannot back a musl or uClibc target.
 
 ### Toolchain wrapper debugging
 
-Buildroot fronts the external toolchain with a small wrapper that injects the sysroot and target flags. To see what it
-forwards, set `BR2_DEBUG_WRAPPER` before the build: `1` prints the whole invocation on one line, `2` breaks each
-argument onto its own line, and `0` (or leaving it unset) prints nothing.
+When external compiler arguments are wrong, inspect the wrapper's actual invocation using `BR2_DEBUG_WRAPPER=2`.
+In 2026.08, level 2 separates arguments by line, level 1 prints one line, and 0/unset disables the trace. Verify these
+values in the release's toolchain-wrapper documentation when they differ from observed output.
 
 ```bash
 export BR2_DEBUG_WRAPPER=2
@@ -142,7 +146,7 @@ cmake \
     -DCMAKE_INSTALL_PREFIX=/usr \
     -B build_br -S .
 cmake --build build_br
-make DESTDIR=/path/to/buildroot/output/staging install -C build_br
+DESTDIR=/path/to/buildroot/output/staging cmake --install build_br
 ```
 
 ### Meson (cross file)
@@ -177,8 +181,8 @@ make sdk
 # Output: output/images/<tuple>_sdk-buildroot.tar.gz
 ```
 
-After extracting the tarball on another machine, the recipient MUST run the `relocate-sdk.sh` script at the SDK's top
-directory so paths point at the new location.
+For the exported SDK, follow its relocation instructions before compiling from a new installation path.
+The generated `relocate-sdk.sh` at the extracted SDK root performs the path update.
 
 ### Prepare the SDK layout without a tarball
 
@@ -202,10 +206,11 @@ Source it to point a shell at the Buildroot toolchain:
 source output/host/environment-setup
 ```
 
-It puts the SDK binaries on `PATH`, defines the standard autotools variables (`CC`, `CXX`, `CFLAGS`, `LDFLAGS`,
-`PKG_CONFIG_*`, ...), and sets `CONFIGURE_FLAGS` for cross-configuring autotools projects. Note the trade-off: once
-sourced, the shell is wired for cross-compilation ONLY — native builds in that same shell will break, so open a fresh
-shell when you need to compile for the host again.
+Use a dedicated shell for the SDK environment. Inspect the script's exported compiler, flags, search paths, and
+`CONFIGURE_FLAGS` rather than mixing them with a native build environment. Validate the resulting executable's target
+architecture and library requirements. See the release's
+[generated-toolchain guidance](https://github.com/buildroot/buildroot/blob/2026.08/docs/manual/using-buildroot-toolchain.adoc)
+for SDK layout, relocation, and environment setup.
 
 ## Legal-Info (License Compliance)
 
@@ -222,16 +227,14 @@ legal-info/
 ├── host-licenses/          # host tool license texts
 ├── licenses/               # target package license texts
 ├── host-manifest.csv       # host package name + version + license
-└── target-manifest.csv     # target package name + version + license
+└── manifest.csv            # target package name + version + license
 ```
 
-Limits you MUST account for before treating this as a compliance deliverable:
-
-- The manifest is only as complete as the `.mk` metadata behind it. A package missing `<PKG>_LICENSE` or
-  `<PKG>_LICENSE_FILES` produces gaps, flagged in the `README`.
-- Some material is not collected automatically — notably an external toolchain's source and Buildroot itself — so the
-  output is a starting point, not the whole obligation.
-- Review it by hand against each package's actual license terms before shipping.
+This is a partial layout; inspect the complete generated directory, including source archives and warnings.
+Validate the evidence against the actual package inputs and metadata. Resolve missing notices or sources before using
+it for a release, including inputs outside the normal package collection. The
+[first-party legal-info documentation](https://github.com/buildroot/buildroot/blob/2026.08/docs/manual/legal-notice.adoc)
+describes collection limits; a successful command is not a license-compliance verdict.
 
 ## Reproducible Builds
 
@@ -240,10 +243,11 @@ Limits you MUST account for before treating this as a compliance deliverable:
 BR2_REPRODUCIBLE=y
 ```
 
-The goal is a byte-for-byte identical image across rebuilds of the same configuration, even after a `make clean`. One
-practical constraint to plan around: the absolute output path MUST keep the same character length between the builds you
-compare. Build paths can leak into artifacts, and a path of a different length shifts those bytes and defeats the
-comparison — so build the runs you intend to match under equal-length directories.
+Treat reproducibility as a measured property of the selected inputs and outputs. Buildroot 2026.08 labels this option
+experimental and documents a same-output-directory constraint in `Config.in`; equal-length paths alone are not the
+documented guarantee. Keep source revisions, configuration, environment, and `SOURCE_DATE_EPOCH` fixed, then compare
+the intended artifacts from independent clean builds. Report mismatches and investigate their source.
+Do not put wall-clock timestamps in an in-image provenance file; keep volatile run metadata outside the image.
 
 ## Dependency Graphs
 
@@ -292,8 +296,5 @@ BR2_CCACHE=y
 BR2_CCACHE_DIR="/mnt/shared/br-ccache"   # optional: share across machines
 ```
 
-Alternatively wrap the compiler with ccache from outside Buildroot:
-
-```bash
-export CROSS_COMPILE="ccache arm-linux-gnueabihf-"
-```
+For builds outside Buildroot, use the project's supported compiler-launcher mechanism. Do not assume assigning a
+command containing spaces to `CROSS_COMPILE` is supported by its build system.

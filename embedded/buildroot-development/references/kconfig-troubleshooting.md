@@ -20,9 +20,8 @@ see the SKILL's *Version awareness*.
 
 ## How Visibility Works
 
-A symbol's prompt is shown only when ALL of its `depends on` conditions are satisfied. Fail one and the option does not
-merely default off — it DISAPPEARS from the menu entirely, with no message. "I cannot find the option for X" is almost
-always an unmet `depends on`, not a missing package.
+A false `depends on` expression can hide a prompt. Also inspect enclosing menus, prompt conditions, and whether the
+symbol exists in this release before concluding why it is absent. Symbols without a prompt are not user-selectable.
 
 A hidden symbol also cannot be set from a defconfig: writing `BR2_PACKAGE_FOO=y` into a defconfig whose dependencies are
 unmet is silently dropped when the config is loaded. You MUST satisfy the dependency first.
@@ -49,8 +48,8 @@ These three read similarly and behave very differently. Confusing them is the ro
 - **`select X`** — force-enables `X` and holds it on. Its trap: `select` does NOT evaluate `X`'s own `depends on`. It
   can therefore switch `X` on even when `X`'s dependencies are unmet, which is exactly what produces an "unmet direct
   dependencies" warning. Reserve `select` for leaf symbols with few or no dependencies.
-- **`imply X`** — sets `X` to default-on but lets the user turn it back off, and it respects `X`'s visibility. It is the
-  polite, non-forcing cousin of `select`.
+- **`imply X`** — a weak reverse dependency that respects direct dependencies and permits the user to disable a
+  selectable symbol. It cannot guarantee a mandatory library is enabled. Verify support in the release's Kconfig.
 
 Rule of thumb: gate with `depends on`, nudge with `imply`, and use `select` only when you are certain the target's
 dependencies are already guaranteed.
@@ -67,10 +66,12 @@ Mechanism: `A` does `select B`, but `B` has `depends on C`, and `C` is not enabl
 dependency check, Kconfig turns `B` on anyway and warns that `B` is now enabled with a dependency unsatisfied. The build
 often fails later in `B` with a missing header or library.
 
-Two ways to fix it, both in the selecting package's `Config.in`:
+First establish whether B is required or optional. If A requires B, keep that selection unconditional and propagate
+B's prerequisites: select required library C as well, or mirror a non-selectable constraint with `depends on` in A.
+For a library chain, add the corresponding build dependencies to the package `.mk` files.
 
-- Guard the select so it only fires when the dependency holds: `select BR2_PACKAGE_B if BR2_PACKAGE_C`.
-- Or mirror the dependency onto `A` so `A` itself cannot be enabled without `C`: add `depends on BR2_PACKAGE_C` to `A`.
+`select BR2_PACKAGE_B if BR2_PACKAGE_C` is suitable only when A can operate without B and its optional feature is
+disabled accordingly. Otherwise it hides the warning while leaving A without a required dependency.
 
 Do NOT "fix" it by just enabling `C` blindly in the config — that hides the authoring bug and leaves the next user to
 hit it.
@@ -109,7 +110,7 @@ grep -rn "BR2_PACKAGE_FOO\b" package/ */Config.in
 make -s printvars VARS=BR2_PACKAGE_FOO
 
 # Is it actually set in the resolved config?
-grep "BR2_PACKAGE_FOO" output/.config
+grep "BR2_PACKAGE_FOO" /absolute/path/to/active/.config
 ```
 
 ## Worked Example: an invisible option and an unguarded select
@@ -132,7 +133,20 @@ config BR2_PACKAGE_MYAPP
 - The `select BR2_PACKAGE_MYLIB` is unguarded. If `MYLIB` itself has `depends on BR2_PACKAGE_OPENSSL`, enabling `myapp`
   forces `MYLIB` on even without OpenSSL, yielding
   `... selects BR2_PACKAGE_MYLIB which has unmet direct dependencies (BR2_PACKAGE_OPENSSL)`. Fix in the `Config.in`:
-  `select BR2_PACKAGE_MYLIB if BR2_PACKAGE_OPENSSL`, or add `depends on BR2_PACKAGE_OPENSSL` to `BR2_PACKAGE_MYAPP`.
+  Keep `select BR2_PACKAGE_MYLIB` and also select the required OpenSSL package from `MYAPP`; propagate applicable
+  toolchain constraints to the selecting symbols. Correct `MYLIB`'s own library dependency declaration as needed.
+  Confirm both libraries remain enabled whenever `MYAPP` is enabled, then verify the `.mk` build-order dependencies.
 
-Root cause, evidence, fix, validation — end with `make -s printvars VARS=BR2_PACKAGE_MYAPP` and a `menuconfig` `/`
-search to confirm the prompt is visible and the warning is gone.
+For this example, the corrected selector is:
+
+```kconfig
+config BR2_PACKAGE_MYAPP
+    bool "myapp"
+    depends on BR2_TOOLCHAIN_HAS_THREADS
+    select BR2_PACKAGE_MYLIB
+    select BR2_PACKAGE_OPENSSL
+```
+
+Check the effective `MYAPP`, `MYLIB`, and `OPENSSL` settings together, with threads enabled and disabled.
+Successful validation preserves the required libraries whenever the application is enabled and produces no unmet
+dependency warning. Prompt visibility alone does not prove the dependency relationship is correct.

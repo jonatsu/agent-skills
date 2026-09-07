@@ -1,235 +1,119 @@
 ---
 name: buildroot-development
-description: "Buildroot build-system partner for embedded Linux — menuconfig/nconfig, defconfigs and `make savedefconfig`, `BR2_EXTERNAL` trees (`external.desc`/`Config.in`/`external.mk`), package authoring (generic-/cmake-/meson-/autotools-/python-package, kernel-module, host-* variants, `.mk` + `Config.in`), rootfs overlays, post-build/post-image scripts, genimage partition layout, internal vs external toolchains, `make sdk`, `make legal-info`, reproducible builds, and package build-failure triage. Use when a package will not build or rebuild, a `BR2_*` symbol is invisible or has unmet dependencies, a `.config` change vanished after `make clean`, an overlay file landed in the wrong path, an external toolchain is rejected, or you are standing up a board defconfig or SDK. For kernel/DTS/driver bring-up route to embedded-linux-bringup, for U-Boot env/porting to u-boot-development, and for Yocto/OpenEmbedded/BitBake to yocto-openembedded-development or kas-build-orchestration."
+description: "Develop and troubleshoot embedded Linux systems with Buildroot. Use for defconfigs, BR2_EXTERNAL trees, package .mk/Config.in authoring, toolchains, rootfs overlays, genimage layouts, SDKs, legal-info, reproducible builds, and package or configuration failures. Covers Buildroot integration; use embedded-linux-bringup for runtime kernel/device debugging and u-boot-development for bootloader internals."
 license: MIT
+compatibility: "Execution requires a Linux host with the selected Buildroot release's build prerequisites. Hook examples use Bash and GNU utilities. Image assembly, SDK, and graph workflows require their corresponding host tools; check availability before use."
 metadata:
   author: Joonas Onatsu
-  tags:
-    - buildroot
-    - embedded-linux
-    - br2-external
-    - menuconfig
-    - defconfig
-    - kconfig
-    - cross-compilation
-    - toolchain
-    - genimage
-    - rootfs
-    - package-infrastructure
-    - sdk
-    - legal-info
-    - reproducible-builds
 ---
 
 # Buildroot Development
 
-**IRON LAW: Run `make savedefconfig` after EVERY `menuconfig`/`nconfig`/`xconfig` session, and
-`make linux-update-defconfig` (or `linux-update-config`) after every `make linux-menuconfig`. A raw `output/.config` is
-a build-tree scratchpad, NOT a persistable board config — it is discarded by `make clean`/`distclean` and cannot be
-committed as the board's source of truth. You MUST NOT hand back, commit, or call "done" a configuration that lives only
-in `.config`.**
+Produce a persistable configuration and verify the artifacts the user will actually use. Keep package source changes
+outside disposable build directories. Choose the smallest rebuild that applies the change; package removal needs a
+fresh/full build, because Buildroot does not provide per-package uninstall.
 
-The persistable artifact is the minimal defconfig (and the kernel/BusyBox/U-Boot config files it references), never the
-expanded `.config`. Save it, then diff it.
+## Establish the Build Context
 
----
-
-## Overview
-
-Development partner for Buildroot configuration, package authoring, `BR2_EXTERNAL` trees, board support, toolchain
-selection, SDK generation, and release preparation. Keep this file for method, safety, and routing; pull worked commands
-and board examples from `references/` on demand — do NOT read every reference upfront.
-
-Board-specific examples live ONLY in `references/`, as clearly-labeled worked cases. This file stays board-agnostic.
-
-### Route sibling-domain work to another skill
-
-| Task                                                                  | Skill                              |
-| --------------------------------------------------------------------- | ---------------------------------- |
-| Kernel/DTS/driver bring-up, probe failures, `dmesg`, peripheral debug | **embedded-linux-bringup**         |
-| U-Boot env, `extlinux`, FIT, boot scripts, porting, board defconfig   | **u-boot-development**             |
-| Yocto/OpenEmbedded: recipes, layers, BitBake, sstate                  | **yocto-openembedded-development** |
-| kas build orchestration (`.kas.yml`, `kas build`)                     | **kas-build-orchestration**        |
-
-### Route the task to a reference
-
-| Task                                                                                      | Reference                               |
-| ----------------------------------------------------------------------------------------- | --------------------------------------- |
-| Package `.mk`/`Config.in`, infra type, fetch method, rebuild commands, deps               | `references/buildroot-packages.md`      |
-| Board dir layout, defconfig, overlays, post-build/post-image, genimage, provenance        | `references/buildroot-board-support.md` |
-| `BR2_EXTERNAL`, external toolchain, CMake/Meson sysroot, SDK, legal-info, reproducibility | `references/buildroot-advanced.md`      |
-| Symbol invisible, "unmet dependencies", `select`/`imply` loop, Kconfig triage             | `references/kconfig-troubleshooting.md` |
-
----
-
-## Workflow
-
-Tick each step per task. Steps marked ⛔ BLOCKING MUST complete before the next; ⚠️ REQUIRED MUST be done but MAY
-interleave.
-
-- [ ] **⚠️ REQUIRED — Lock build context.** Record Buildroot version (`make --version` inside the tree, or
-  `git describe`), `BR2_ARCH`, the active defconfig or `.config`, toolchain type (internal libc, or which external), the
-  output directory (`O=`), and the exact symptom (failing package, error string, invisible symbol, wrong config value).
-- [ ] **⛔ BLOCKING — Classify the lane.** Configuration, package authoring, `BR2_EXTERNAL`, board support, toolchain,
-  out-of-tree cross-build, SDK, or release. Do NOT jump to a fix in a downstream lane while the failing lane is
-  unproven.
-- [ ] **⛔ BLOCKING — Collect evidence at that lane.** Gather the bounded artifacts in *Evidence First* before ranking
-  causes. No fix proposal until the failure is evidenced by a log line, a `printvars` value, or a
-  `-graph-depends`/`show-info` output.
-- [ ] **⚠️ REQUIRED — Rank causes, validate ONE.** Propose the single most likely cause and ONE command or ONE edit that
-  confirms or refutes it. Keep steps small; stop and request the result.
-- [ ] **⚠️ REQUIRED — Persist config before mutating the tree.** Any `menuconfig`/`linux-menuconfig` change is saved
-  (Iron Law) before you clean or hand off.
-- [ ] **⚠️ REQUIRED — Confirm before destructive ops.** `make clean`/`distclean`/`<pkg>-dirclean` and external-toolchain
-  path writes pass the *Confirmation gates* first.
-- [ ] **⚠️ REQUIRED — Close with the Output contract.** Root cause → evidence → exact fix/command → validation command.
-
----
-
-## Confirmation gates
-
-You MUST stop and get explicit user confirmation before any command that discards build state or config. Default to
-read-only inspection; require an explicit opt-in to mutate; pair every mutating command with the work needed to recover
-from it.
-
-- **`make distclean`** — deletes the entire `output/` tree INCLUDING `.config`. You MUST confirm `make savedefconfig`
-  (and `linux-update-defconfig`) have run first; otherwise every unsaved menuconfig change is lost irrecoverably.
-  Recover by re-loading `<board>_defconfig`.
-- **`make clean`** — deletes `output/build`, `output/target`, `output/host`, `output/staging`, and images, but keeps
-  `.config` and `output/dl` (downloads). Confirm before running; recovery is a full rebuild (long), not a data-loss
-  event.
-- **`make <pkg>-dirclean`** — removes one package's build directory and stamps; the next `make` re-fetches,
-  re-configures, rebuilds, reinstalls it. Lower blast radius, but still confirm on a slow-to-build package (toolchain,
-  gcc, qt).
-- **External toolchain path / download dir writes** — confirm the exact path before any command that writes outside
-  `output/`.
-
-### Safety
-
-- MUST NOT run `make clean`/`distclean`/`<pkg>-dirclean` unprompted to "get a clean slate" — a lost unsaved `.config` or
-  a multi-hour rebuild is the cost.
-- MUST NOT edit `output/.config` by hand as the deliverable — edit via `menuconfig` then `savedefconfig`, or edit the
-  committed defconfig and reload it.
-- MUST NOT hand-edit generated files under `output/` (the CMake toolchain file, the Meson cross file,
-  `.br2-external.mk`) — they are regenerated and your edit vanishes.
-- For U-Boot env, `extlinux.conf`, boot-flow, and FIT changes, route to **u-boot-development** and follow its safety
-  contract; Buildroot only selects the U-Boot version and defconfig.
-
----
-
-## Evidence First
-
-Before diagnosing, inspect (or ask the user for) the artifacts that pin the failing lane. Keep every capture BOUNDED —
-`make foo 2>&1 | tail -40`, never a raw full build log.
-
-- The exact failing line: `make <pkg> 2>&1 | tail -40`.
-- The package build log and config: `ls output/build/<pkg>-<ver>/`, then `config.log` (autotools) or
-  `CMakeFiles/CMakeError.log` (cmake).
-- The effective value of a variable: `make -s printvars VARS=<PKG>_SITE` (accepts wildcards, e.g. `VARS='BUSYBOX_*'`).
-- The dependency graph: `make <pkg>-graph-depends` or `make <pkg>-show-info` (JSON metadata).
-- For an invisible/unset symbol: see `references/kconfig-troubleshooting.md`.
+Identify the Buildroot source, release, output directory, configuration, external trees, and intended result before
+editing. Record the architecture and toolchain when they affect the task. Do not infer Buildroot's release from
+`make --version`: that reports GNU Make. Inspect the release's `Makefile` or query the configured build:
 
 ```bash
-# What actually built and where it failed
-make <pkg> 2>&1 | tail -40
-ls output/build/<pkg>-<ver>/
-
-# Drop into the exact build environment for a package
-make <pkg>-shell
-
-# Resolve a Buildroot/package variable (wildcards allowed)
-make -s printvars VARS=<PKG>_SITE
-make -s printvars VARS='<PKG>_*'
-
-# Package metadata + dependency graph
-make <pkg>-show-info
-make <pkg>-graph-depends       # needs host graphviz; BR2_GRAPH_OUT=svg for SVG
-
-# Confirm the persisted config matches the tree
-make savedefconfig && git diff -- configs/<board>_defconfig
+make -s printvars VARS='BR2_VERSION BR2_CONFIG CONFIG_DIR BASE_DIR BR2_DEFCONFIG'
 ```
 
----
+Run examples below in the selected build context: use the generated output-directory Makefile for an existing `O=`
+build, or retain `-C <source> O=<output>` consistently. `BR2_CONFIG` names the active configuration; it is not always
+`output/.config`. `CONFIG_DIR` also owns the default `local.mk` override file. Resolve paths before using examples.
 
-## Output contract
+Use the target release's manual, configuration symbols, package infrastructure, and `make help` as the primary
+references. Third-party recipes can suggest cases, but verify their commands and distinguish wrapper behavior from
+native Buildroot. When documentation and code disagree, report the documented contract and verify actual behavior
+against that release; do not convert an untested assumption into a requirement.
 
-Every diagnostic answer MUST end with these four, in order:
+## Choose the Task
 
-1. **Root cause** — the single proven cause and mechanism (which lane, which symbol/variable/stamp).
-2. **Supporting evidence** — the build-log line, `printvars` value, `graph-depends` edge, or Config.in dependency that
-   proves it.
-3. **Exact fix** — the precise command or the `.mk`/`Config.in`/defconfig edit (real variable names, real paths).
-4. **Validation** — the command that confirms the fix (`make <pkg>-rebuild`, `make -s printvars …`,
-   `make savedefconfig && git diff`).
+- **Author or change a package/board:** inspect existing project conventions, select the appropriate package
+  infrastructure or configuration mechanism, and implement the requested behavior. A new feature does not require
+  a pre-existing failure log.
+- **Diagnose a failure:** identify the failing stage, collect the relevant log and effective values, then test the
+  most likely explanation. Run available checks yourself; ask for results only when the target or evidence is inaccessible.
+- **Prepare an SDK or release:** verify persisted inputs, source revisions, expected artifacts, and reproducibility
+  or license-evidence requirements. A successful package build alone does not prove the final image is current.
 
-If the cause is not yet proven, say so and give the ONE next command that would prove it — do NOT present a guess as a
-diagnosis.
+Reuse the user's existing authorization. Ask before discarding unpreserved changes, accepting an uncovered expensive
+rebuild, or writing to an unauthorized destination. Ordinary authorized edits to defconfigs, external trees, and board
+files do not need a second approval because they live outside the output directory.
 
----
+## Select the Reference
 
-## Version awareness
+| Task                                                                                                   | Reference                                                        |
+| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| Package infrastructure, fetch inputs, dependencies, local-source iteration, rebuild selection          | [Package infrastructure](references/buildroot-packages.md)       |
+| Board configuration, overlays, hooks, image assembly/capacity, provenance, kernel config persistence   | [Board support](references/buildroot-board-support.md)           |
+| External trees, external toolchains, out-of-tree application builds, SDKs, legal-info, reproducibility | [Advanced topics](references/buildroot-advanced.md)              |
+| Hidden symbols, unmet dependencies, conditional selection, configuration cycles                        | [Kconfig troubleshooting](references/kconfig-troubleshooting.md) |
 
-Buildroot ships an LTS release every year plus quarterly releases; Kconfig symbols, package infrastructure, and helper
-scripts drift across them. Before giving syntax-specific guidance you MUST confirm the release (`make --version` or
-`git describe` in the tree).
+Keep Buildroot's integration of the kernel and bootloader here. Route runtime driver/DTS work to
+`embedded-linux-bringup`, bootloader implementation and console behavior to `u-boot-development`, Yocto/BitBake to
+`yocto-openembedded-development`, and kas orchestration to `kas-build-orchestration`.
 
-- **Kconfig symbols** are renamed and removed between releases — verify a `BR2_*` symbol exists in the target release
-  before recommending it (`make menuconfig` search with `/`, or grep the release's `Config.in` files).
-- **Package infrastructure** gains new types and setup backends over time (e.g. `python-package` `SETUP_TYPE` values,
-  `golang-package`, `cargo-package`). Confirm the macro exists in the release.
-- **Helper script paths** (`support/scripts/genimage.sh`, `utils/`) move; check the tree, do not assume.
+## Diagnose Without Hiding Failures
 
-When the release is unknown, state which answer applies per era rather than assuming one.
+Start with an existing log. Reproducing a build may download, compile, and change output; establish that it is appropriate
+before running it. Retain the full log locally and show only the relevant excerpt. This Bash example preserves make's
+status while keeping displayed output bounded; replace the package name and use a fresh task-specific log path.
 
----
+```bash
+(
+  log_file=$(mktemp "${TMPDIR:-/tmp}/buildroot-build.XXXXXX") || exit 1
+  status=0
+  make V=1 mypkg >"$log_file" 2>&1 || status=$?
+  tail -n 40 -- "$log_file"
+  printf 'Full build log: %s\n' "$log_file"
+  exit "$status"
+)
+```
 
-## Anti-patterns
+Query exact variables or Make `%` patterns, not shell `*` patterns:
 
-- MUST NOT treat `output/.config` as the deliverable — it is not persisted (Iron Law). Save a minimal defconfig and
-  commit that plus the referenced kernel/BusyBox/U-Boot config files.
-- MUST NOT expect a config change to remove an already-installed package. Deselecting a package leaves its files in
-  `output/target`; you MUST `make clean` (or `make <pkg>-dirclean`) and rebuild — through the *Confirmation gates*.
-- MUST NOT rely on `make` alone after editing a package's source or `.mk` — stamp files mean an already-built package is
-  skipped. Use `make <pkg>-rebuild` (re-configure+build+install) or `<pkg>-reinstall`, then `make` to regenerate the
-  image.
-- MUST NOT set `<PKG>_SITE_METHOD` to a made-up value like `https` — it is auto-detected from the site URL
-  (`git://`/`.git` → git, `http(s)://`/`ftp://` → wget, `file://` → file); set it explicitly only to override, and only
-  to a real method (`git`, `svn`, `hg`, `bzr`, `cvs`, `scp`, `file`, `local`, `wget`).
-- MUST NOT assume a downstream package can link a library that is not staged — a library other packages link against
-  MUST set `<PKG>_INSTALL_STAGING = YES` (headers + `.so` into `$(STAGING_DIR)`).
-- MUST NOT reach for a "runtime dependency" / RDEPENDS variable — Buildroot has none. `<PKG>_DEPENDENCIES` is a
-  build-ORDER list; because those deps are themselves target packages they are also installed to `$(TARGET_DIR)`.
-  Runtime presence is governed by what is enabled in the config, via `Config.in` `depends on`/`select` — see
-  `references/buildroot-packages.md`.
-- MUST NOT chase a "silently unmet" `Config.in` dependency by eye — an option hidden by an unmet `depends on`, or
-  force-enabled by a `select` that skips a `depends on`, is the usual cause. See
-  `references/kconfig-troubleshooting.md`.
-- MUST NOT mismatch external-toolchain libc with `BR2_TOOLCHAIN_*_LIBC` — a glibc external toolchain cannot back a
-  musl/uClibc target; Buildroot validates declared features and errors at configure time.
-- MUST NOT drop a rootfs-overlay file at a path missing its leading `/` structure — overlay paths mirror the absolute
-  target path exactly (`overlay/etc/foo` → `/etc/foo`).
+```bash
+make -s printvars VARS='BUSYBOX_SITE BUSYBOX_SITE_METHOD BUSYBOX_VERSION'
+make -s printvars VARS='BUSYBOX_%DEPENDENCIES'
+make busybox-show-info
+```
 
----
+For a failing configure/build command, inspect the package log and generated build files. Use `make V=1` to see the
+actual invocation and reproduce it only with its environment and working directory understood. Do not invent
+`<pkg>-shell` or `<pkg>-list-targets`; use the release's documented targets.
 
-## Reference pointers
+## Preserve Inputs and Verify Completion
 
-Canonical upstream docs (cite the release-matched version):
+Save intentional configuration changes to an explicit project-owned destination, then inspect that file's diff:
 
-- Buildroot manual: buildroot.org/downloads/manual/manual.html (also `make manual` in-tree). It is the authority for
-  package infrastructure variables and `BR2_EXTERNAL` layout.
-- External toolchains: toolchains.bootlin.com. Community knowledge base: elinux.org.
-- genimage: github.com/pengutronix/genimage. Its config syntax is not Buildroot-specific.
+```bash
+make savedefconfig BR2_DEFCONFIG=/absolute/path/to/project/configs/myboard_defconfig
+```
 
-`references/`:
+Kernel and other component configurations have their own persistence rules; follow the reference for custom configs,
+named defconfigs, and fragments. Do not overwrite an upstream config merely because an example used its path.
 
-- `buildroot-packages.md` — package infrastructure types (generic/cmake/meson/autotools/python/kernel-module, host-\*
-  variants), `Config.in` structure, key `.mk` variables, fetch methods, staging vs target install, rebuild commands,
-  host and build-order dependencies, and package-failure debugging.
-- `buildroot-board-support.md` — board directory layout, defconfig structure, rootfs overlays, post-build/post-image
-  scripts, build-provenance logging, genimage partition layout, device/permission tables, init-system selection, and
-  kernel config persistence.
-- `buildroot-advanced.md` — `BR2_EXTERNAL` (single and multi-tree), external toolchains, out-of-tree CMake/Meson against
-  the staging sysroot, `pkg-config` sysroot, SDK generation and `environment-setup`, `make legal-info`, reproducible
-  builds, dependency graphs, out-of-tree `O=` builds, and ccache.
-- `kconfig-troubleshooting.md` — reading `make menuconfig` search, `depends on` vs `select` vs `imply` semantics, why a
-  symbol is invisible, "unmet direct dependencies" from an unguarded `select`, and dependency-loop diagnosis.
+Before cleanup, inspect the selected release's rules and resolve their affected paths:
+
+- `clean` removes build products, including package build directories, host/target/staging trees and images, while
+  retaining the top-level configuration. Preserve edits made inside package build directories first.
+- `distclean` also removes configuration state and can remove the source-tree `dl/` directory. Do not describe it as
+  output-only cleanup; inspect overrides, shared caches, and any symlinked locations before executing.
+- `<pkg>-dirclean` removes that package's build directory, not its installed files or cached source downloads.
+
+Leave generated output as output: edit its owning configuration or source instead of generated toolchain files or
+`.br2-external.mk`. Check which kernel/rootfs image the runner or deployment step consumes. Inspect the final image for
+changed or removed files and unintended overlay replacements. Explain what changed, what evidence establishes the
+result, and what remains unverified; identify a proven cause only when the evidence supports it.
+
+## Sources
+
+Use the [Buildroot manual](https://buildroot.org/downloads/manual/manual.html) for orientation and the manual bundled
+with the selected release for version-specific details. Genimage's [upstream documentation](https://github.com/pengutronix/genimage)
+owns image-layout syntax. [Attributions](ATTRIBUTIONS.md) records source influence and the repair's provenance.
