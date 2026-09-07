@@ -17,6 +17,10 @@ Review one skill at a time using the current `skill-forge` and `skill-review` gu
 does not mean fixes have been applied or behavioral evaluation has passed. Discovery and hardware/build
 behavior remain unmeasured unless a linked review records otherwise.
 
+Original materials are in `~/src/embedded-linux/`. Buildroot sources were located on 2026-09-07:
+`docs/buildroot-manual.pdf` (2026.05, GPL-2.0) and `bootlin-training-materials/buildroot/` (training PDFs
+declare CC BY-SA 3.0). Source-to-skill comparison remains pending; see the review's source-location addendum.
+
 | Skill                                              | Review status                    | Verdict / remaining work                                                                                                                                    | Evidence                                                                                                 |
 | -------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `buildroot-development` (formerly `buildroot-dev`) | Review lite completed 2026-09-07 | **Invalid; technically not ready.** F1–F12 repairs pending; original-PDF provenance comparison and full behavioral evaluation outstanding. Skill unchanged. | [Review, evidence, and proposed repairs](../docs/evaluations/2026-09-07-buildroot-development-review.md) |
