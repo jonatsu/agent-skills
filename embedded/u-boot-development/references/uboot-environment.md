@@ -1,196 +1,117 @@
 # U-Boot Environment
 
-How the environment loads and persists, the backends, the essential variables, scripting, and A/B / factory-reset
-patterns. Pair every persisting or erasing command with its restore — see the Safety contract in `SKILL.md`.
+Identify the configured and selected backend before diagnosing persistence. U-Boot changes its working environment in
+RAM; a saved backend is separate state. This reference uses upstream v2025.10 semantics.
 
 ## Contents
 
-- [How the environment works](#how-the-environment-works)
-- [Default environment sources](#default-environment-sources)
-- [Persistent backends](#persistent-backends)
-- [Essential environment variables](#essential-environment-variables)
-- [Commands](#commands)
-- [Scripting in environment variables](#scripting-in-environment-variables)
-- [A/B slot via environment](#ab-slot-via-environment)
-- [Factory reset pattern](#factory-reset-pattern)
+- [Defaults and persistence](#defaults-and-persistence)
+- [Backup and restore](#backup-and-restore)
+- [Scripting](#scripting)
+- [Bootcount and health confirmation](#bootcount-and-health-confirmation)
 
-## How the environment works
+## Defaults and persistence
 
-U-Boot keeps a working copy of the environment in RAM. At startup:
+Text defaults normally come from `board/<vendor>/<board>/<CONFIG_ENV_SOURCE_FILE>.env`, falling back to the board name
+when that setting is empty. Legacy C defaults also exist and can override text values. Read the generated default
+artifact when both participate. A `.env` file supplies initial values; it does not make their RAM copies immutable.
 
-1. It tries to load the saved env from the configured persistent backend.
-2. If loading fails (corrupt, first boot, `ENV_IS_NOWHERE`), it falls back to the compiled default environment.
-3. `setenv` changes the RAM copy only. `saveenv` writes the RAM copy back to storage.
+[Environment documentation](https://docs.u-boot.org/en/v2025.10/usage/environment.html) describes default sources and
+variables. Confirm the resolved `CONFIG_ENV_IS_IN_*` settings, runtime backend selection where supported, storage device,
+hardware partition, offsets, sizes, and erase geometry. Use the actual Linux implementation/version of `fw_printenv` and
+`fw_setenv`; identical executable names do not establish identical formats or configuration.
 
-```
-Compiled default env  ──→  RAM working copy  ──→  saveenv  ──→  persistent backend
-                        ↑
-                     saved env loaded at boot (if valid)
-```
+| Backend          | Check before writes                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| MMC              | Device, eMMC hardware partition, `CONFIG_ENV_OFFSET`, size, redundancy, any board-specific selection |
+| NAND             | Offset/range, erase blocks, bad-block handling and space for every copy                              |
+| SPI flash        | Bus/device, offset, sector geometry, size and redundant region                                       |
+| UBI/filesystem   | Volume or device/partition/file identity, backend-specific save and recovery behavior                |
+| `ENV_IS_NOWHERE` | No save callback; save fails or the command is absent, depending on build                            |
 
-MUST re-read after any `saveenv` — a "successful" save on a misconfigured backend can persist nothing (see
-`ENV_IS_NOWHERE` below).
+`setenv name value` changes RAM; `setenv name` deletes from RAM. `env default -a` replaces RAM values with compiled
+defaults. `saveenv`/`env save` attempt persistence; inspect their status. `printenv` immediately afterward still reads
+RAM. Verify the saved backend independently and perform an authorized reset/reload before declaring persistence proven.
+The [nowhere driver](https://github.com/u-boot/u-boot/blob/v2025.10/env/nowhere.c) and
+[save dispatcher](https://github.com/u-boot/u-boot/blob/v2025.10/env/env.c) distinguish unavailable saving from success.
 
-## Default environment sources
+Redundancy needs correct backend support, distinct regions, valid sizes/geometry, and tested selection after interrupted
+writes. One Kconfig symbol does not prove power-loss safety. Do not prescribe raw sector erases or `/etc/fw_env.config`
+offsets copied from another board. `env erase` affects backend state; it is neither a backup nor a universal factory reset.
+Resetting update variables is also different from resetting all environment state.
 
-U-Boot resolves the default env in this order:
+## Backup and restore
 
-1. **Text env file** (preferred): `board/<vendor>/<board>/<CONFIG_ENV_SOURCE_FILE>.env`. If `CONFIG_ENV_SOURCE_FILE` is
-   unset, it uses `board/<vendor>/<board>/<CONFIG_SYS_BOARD>.env`.
-2. **Legacy C macro**: `include/env_default.h` plus `CFG_EXTRA_ENV_SETTINGS` from the board header.
+Choose what must be recovered before selecting a format:
 
-Where both exist, the C-macro values override the text-env values. Prefer the text `.env` format for new boards — it
-reads and diffs cleanly.
+| Capture                | What it preserves                                 | Recovery limits                                                  |
+| ---------------------- | ------------------------------------------------- | ---------------------------------------------------------------- |
+| Console transcript     | Visible name/value evidence                       | Not a lossless import file; may be truncated or expose secrets   |
+| Text export (`-t`)     | Escaped name/value text                           | Match importer escaping/newlines and complete exported length    |
+| Binary export (`-b`)   | NUL-separated RAM values                          | Preserve full length; lacks raw backend headers/layout           |
+| Checksum export (`-c`) | Environment export with checksum header           | Not automatically an exact redundant-media snapshot              |
+| Raw backend backup     | Captured bytes, including relevant headers/copies | Restore only through a qualified layout/geometry-aware procedure |
 
-## Persistent backends
+For a RAM snapshot, reserve a verified safe buffer large enough for the complete environment, separate from every load,
+DT, stack, heap, and reserved region. Export success sets `filesize`; capture that length before any other operation
+changes it. An export followed by `md.b ... 200` displays only 0x200 bytes and is not a durable backup.
 
-The backend is fixed at compile time via `CONFIG_ENV_IS_IN_*`:
+The following is a **U-Boot command template**, not host Bash. Resolve the addresses, capacity and length before use;
+record them outside the environment too, because replacement import can delete helper variables. Binary export may
+write up to the configured environment size, so reserve that capacity even when a particular export is shorter.
 
-| Kconfig option        | Storage               | Notes                                         |
-| --------------------- | --------------------- | --------------------------------------------- |
-| `ENV_IS_IN_MMC`       | eMMC/SD (raw sectors) | Most common; `CONFIG_ENV_MMC_DEV/PART/OFFSET` |
-| `ENV_IS_IN_NAND`      | NAND flash            | MUST align to the erase block                 |
-| `ENV_IS_IN_SPI_FLASH` | SPI NOR               | `CONFIG_ENV_OFFSET`, `CONFIG_ENV_SIZE`        |
-| `ENV_IS_IN_UBI`       | UBI volume            | For systems with a full UBI stack             |
-| `ENV_IS_NOWHERE`      | No storage            | `saveenv` is a no-op; always uses default env |
-
-**`ENV_IS_NOWHERE`:** `saveenv` returns success but saves nothing. This is the correct choice for a production image
-that MUST stay locked to compiled defaults, but it also means `setenv` + `saveenv` from the console has no effect across
-reboots. Confirm the backend (`CONFIG_ENV_IS_IN_*`) before trusting a save.
-
-**NAND erase-block alignment:** `CONFIG_ENV_OFFSET` MUST align to the NAND erase-block size. Misalignment corrupts the
-env on `saveenv` silently.
-
-**Redundant env:** set `CONFIG_ENV_OFFSET_REDUND` to keep a second copy. U-Boot selects the newer valid copy at boot,
-which survives a power loss during `saveenv`.
-
-## Essential environment variables
-
-| Variable         | Purpose                                                                       |
-| ---------------- | ----------------------------------------------------------------------------- |
-| `bootdelay`      | Seconds before `bootcmd` runs (0 = no delay, -1 = no autoboot, -2 = no abort) |
-| `bootcmd`        | Command(s) run after the autoboot timeout                                     |
-| `bootargs`       | Kernel command line, passed via the DTB `/chosen` node or a register          |
-| `fdtfile`        | DTB filename used by distro/standard boot scripts                             |
-| `loadaddr`       | Default RAM address for file loads                                            |
-| `kernel_addr_r`  | Relocatable RAM address for the kernel                                        |
-| `fdt_addr_r`     | Relocatable RAM address for the DTB                                           |
-| `ramdisk_addr_r` | Relocatable RAM address for the initramfs                                     |
-| `pxefile_addr_r` | RAM address for the PXE / extlinux config                                     |
-| `scriptaddr`     | RAM address for boot scripts                                                  |
-| `serverip`       | TFTP server IP (auto-set by `dhcp`)                                           |
-| `ipaddr`         | Target IP (auto-set by `dhcp`)                                                |
-| `ethaddr`        | MAC address                                                                   |
-
-The `*_addr_r` variables follow the relocatable-address convention — boards set them in the default env to place images
-in non-overlapping RAM regions.
-
-## Commands
-
-```bash
-# Read
-printenv                # all variables
-env print               # same
-printenv bootcmd        # one variable
-
-# Set (RAM only, not persisted)
-setenv myvar "hello world"
-env set myvar "hello world"
-
-# Delete
-setenv myvar            # no value = delete
-env delete myvar
-
-# Snapshot before any write (capture restore state FIRST)
-env export -t $loadaddr; md.b $loadaddr 200
-
-# Persist to storage (mutating — gate this)
-saveenv
-env save
-
-# Reset to compiled defaults (mutating — gate this)
-env default -a
-env default myvar       # reset one variable
-
-# Run a variable as a command sequence
-run bootcmd
-run altbootcmd
+```text
+if env export -b ${backup_addr}; then
+    setenv backup_len ${filesize}
+else
+    echo "Environment export failed; stop before mutation"
+fi
 ```
 
-To restore from a snapshot, re-import it: `env import -t <addr>`; from Linux, `fw_setenv -s env.bak`.
+When recovery must survive reset, transfer exactly the captured bytes to an authorized durable destination and verify
+length and digest there. Use the project's available transfer command with explicit status checks. Reload the verified
+backup into safe RAM before restore. With the recorded literal address and length, replacement import is:
 
-## Scripting in environment variables
-
-Env scripting uses `;` for sequencing and `if`/`test`/`itest` for conditionals:
-
-```bash
-# Sequential commands in one variable
-setenv myboot 'mmc dev 0; fatload mmc 0:1 $kernel_addr_r Image; booti $kernel_addr_r - $fdt_addr_r'
-run myboot
-
-# String equality
-setenv slot a
-if test "$slot" = "a"; then echo "slot A"; else echo "slot B"; fi
-
-# Integer comparison
-setenv bootcount 3
-setenv bootlimit 3
-if itest $bootcount -ge $bootlimit; then run altbootcmd; fi
-
-# Arithmetic
-setexpr result $x + 1
-setexpr hex_val fmt %08x $loadaddr
-
-# String presence
-if test -n "$fdtfile"; then echo "fdtfile is set"; fi
+```text
+env import -d -b <verified-address> <recorded-length>
 ```
 
-## A/B slot via environment
+Without `-d`, import merges and retains newly introduced variables. With `-d` and no variable list, it replaces the
+working environment, subject to configured access controls. Check status and compare all required variables, including
+absences, spaces and multiline values. Persist only under the existing write authorization, then verify a reset/reload.
+See the [import/export implementation](https://github.com/u-boot/u-boot/blob/v2025.10/cmd/nvedit.c).
 
-```bash
-# In the default env or bootcmd:
-setenv bootcmd '
-  part list mmc 0 -bootable bootpart;
-  if test -z "$bootpart"; then setenv bootpart 2; fi;
-  setenv bootargs "console=ttyS0,115200 root=/dev/mmcblk0p${bootpart} rootwait";
-  ext4load mmc 0:${bootpart} $kernel_addr_r /boot/Image;
-  ext4load mmc 0:${bootpart} $fdt_addr_r /boot/myboard.dtb;
-  booti $kernel_addr_r - $fdt_addr_r
-'
-```
+For Linux-side recovery, do not feed `fw_printenv > env.bak` into `fw_setenv -s` as a universal round trip. U-Boot's
+[host script parser](https://github.com/u-boot/u-boot/blob/v2025.10/tools/env/fw_env.c) expects whitespace-separated
+name/value entries, whereas printed output uses `name=value`. A line-based conversion also loses multiline boundaries
+and does not express replacement deletions. Use a tool-supported lossless method or a qualified raw backup of the exact
+backend and both redundant copies. Stop if the required values cannot be restored by the available interface.
 
-Boot-failure fallback with `bootcount_limit`:
+Before a production write, demonstrate the procedure with a disposable backend containing an environment longer than
+512 bytes, spaces, multiline values, and changed/deleted/added variables. Demonstrate persistence after restoring it.
+A fresh-default reset is appropriate only when defaults are the intended result, with device-specific data accounted for.
 
-```bash
-setenv bootlimit 3           # max failed boots before fallback
-setenv altbootcmd 'echo fallback; run bootcmd_b'
-```
+## Scripting
 
-With `CONFIG_BOOTCOUNT_LIMIT`, U-Boot increments `bootcount` on every boot and runs `altbootcmd` once
-`bootcount >= bootlimit`. The Linux updater resets `bootcount=0` and clears `upgrade_available` via `fw_setenv` (from
-`u-boot-tools` or `libubootenv`) after a confirmed healthy boot.
+In U-Boot, semicolons continue after failure. Guard every dependent load, `source`, and boot step using supported Hush
+conditionals or `&&`. Use the guarded examples in [boot scripts](uboot-boot-scripts.md#guarded-loads).
 
-## Factory reset pattern
+`run name` executes a variable as commands. It can write media or jump into arbitrary code; RAM storage of the variable
+does not constrain its effects. Use `test` for string comparisons and `itest` for appropriate numeric comparisons,
+checking the command's radix rules. Preserve each artifact's `filesize` separately before loading the next one.
 
-```bash
-# From U-Boot: wipe saved env so the next boot uses compiled defaults
-env erase               # erases the env partition/area (mutating — gate + back up first)
-# Next reboot loads the compiled defaults automatically
+## Bootcount and health confirmation
 
-# From Linux (libubootenv / u-boot-tools)
-fw_setenv bootcount 0
-fw_setenv upgrade_available 0
-```
+With a nonzero limit, the generic test is **`bootcount > bootlimit`**, not `>=`. At limit 3, counts 2 and 3 do not take
+the over-limit branch; count 4 does. A zero limit disables this threshold. An absent `altbootcmd` can leave the system at
+a prompt; it is not an implicit rollback. See [bootcount.h](https://github.com/u-boot/u-boot/blob/v2025.10/include/bootcount.h).
 
-For `ENV_IS_IN_MMC` at a known offset:
+The counter's increment, persistence and health writer depend on its backend and stage. Establish initialization,
+watchdog/reset behavior, storage durability and update gating from the selected driver. The
+[environment backend](https://github.com/u-boot/u-boot/blob/v2025.10/drivers/bootcount/bootcount_env.c) and
+[filesystem backend](https://github.com/u-boot/u-boot/blob/v2025.10/drivers/bootcount/bootcount_fs.c) are different:
+`upgrade_available` and `fw_setenv bootcount 0` are not a universal protocol for every backend.
 
-```bash
-mmc erase <start-block> <count>   # erase the raw sectors holding the env
-```
-
-Worked example — Linux-side env access via `/etc/fw_env.config`:
-
-```
-# device         offset    size
-/dev/mmcblk0     0x3F0000  0x2000
-```
+The updater owns trial activation and health confirmation. RAUC's `BOOT_ORDER`/`BOOT_x_LEFT` integration is distinct
+from the generic counter. Test limit−1/limit/limit+1, disabled limit, missing fallback, watchdog and power resets, and
+userspace confirmation against the actual storage backend. See [A/B integration](uboot-porting.md#ab-integration).

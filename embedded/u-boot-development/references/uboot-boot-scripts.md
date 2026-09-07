@@ -1,197 +1,120 @@
 # U-Boot Boot Scripts and Images
 
-Boot-method precedence, `extlinux.conf`, `boot.scr`, distro/standard boot, the `booti`/`bootz`/`bootm`/`bootefi`
-selection, FIT authoring/signing/inspection, and network boot. `dumpimage -l` and `printenv` are read-only; treat
-everything that writes media as mutating.
+Trace the active boot framework and file selection before editing a script or image. Examples use upstream v2025.10;
+resolve board addresses, paths, formats and enabled commands before running them.
 
 ## Contents
 
-- [Boot-method hierarchy](#boot-method-hierarchy)
-- [extlinux.conf](#extlinuxconf)
-- [boot.scr (U-Boot script)](#bootscr-u-boot-script)
-- [distro_bootcmd](#distro_bootcmd)
-- [Boot commands](#boot-commands)
-- [FIT images (.its)](#fit-images-its)
-- [Inspecting and extracting a FIT (dumpimage)](#inspecting-and-extracting-a-fit-dumpimage)
-- [Network boot (TFTP + NFS)](#network-boot-tftp--nfs)
+- [Boot selection](#boot-selection)
+- [Guarded loads](#guarded-loads)
+- [Image commands](#image-commands)
+- [Signed FIT construction](#signed-fit-construction)
+- [Network loading](#network-loading)
 
-## Boot-method hierarchy
+## Boot selection
 
-`distro_bootcmd` tries boot methods in the order set by `boot_targets`. The typical priority (highest to lowest) on most
-platforms:
+Inspect `bootcmd` and generated defaults. For legacy distro boot, `boot_targets` orders devices/targets such as `mmc0`
+and `usb0`, not a global list of boot methods. The scan iterates prefixes, usually `/ /boot/`, trying extlinux before
+scripts **within each prefix**. Thus `/boot.scr` can run before `/boot/extlinux/extlinux.conf`, while extlinux wins when
+both candidates are under the same prefix and boot succeeds. Failed or returning candidates can continue the scan.
+See [config_distro_bootcmd.h](https://github.com/u-boot/u-boot/blob/v2025.10/include/config_distro_bootcmd.h).
 
-1. `extlinux.conf` (SYSLINUX-compatible; easiest to edit from Linux)
-2. `boot.scr` (a U-Boot script binary)
-3. PXE (network)
-4. DHCP boot
+For bootstd, inspect enabled bootdevs/bootmeths and their actual order using the release's `bootflow`/`bootmeth` commands
+and configuration. Do not assign a framework from the release date alone; vendor defaults can retain legacy scripts.
+Reproduce the selected device, partition, prefix and method before changing a file that might never be read.
 
-If both `extlinux.conf` and `boot.scr` are present, `extlinux.conf` wins on most platforms. Standard boot
-(`bootstd`/`bootflow`, `CONFIG_BOOTSTD`) supersedes `distro_bootcmd` from ≈v2021.10 — confirm the framework before
-debugging boot selection.
+An illustrative extlinux entry, for a filesystem containing these paths and a separately identified root filesystem:
 
-## extlinux.conf
-
-A SYSLINUX-compatible config parsed via `sysboot`. Easiest to update from a running Linux system — no special tools
-required.
-
-### Search path
-
-U-Boot looks for the file in order:
-
-1. `/extlinux/extlinux.conf`
-2. `/boot/extlinux/extlinux.conf`
-
-For network/PXE boot: `pxelinux.cfg/default`.
-
-### Format
-
-```
-# /boot/extlinux/extlinux.conf
-default linux
-timeout 10
-
+```text
 label linux
     kernel /boot/Image
-    fdt /boot/myboard.dtb
-    append console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait
-
-label linux-fallback
-    kernel /boot/Image.bak
-    fdt /boot/myboard.dtb
-    append console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait panic=5
+    fdt /boot/board.dtb
+    append console=ttyS0,115200 root=PARTUUID=<root-partition-uuid> rootwait
 ```
 
-Supported fields:
+The UUID and console are project inputs. Confirm supported fields from the release's parser; `fdtdir`, overlays, initrd,
+menu handling and image support depend on configuration. Environment expansion in `append` makes the environment an
+input to the final kernel command line. An editable extlinux file is not authenticated merely because its kernel is
+signed. For an authorized manual boot, `sysboot mmc <dev:part> any <safe-config-address> <config-path>` loads and runs
+the selected configuration; it is not inspection.
 
-| Field                                | Notes                                                   |
-| ------------------------------------ | ------------------------------------------------------- |
-| `kernel`                             | Kernel image path (Image, zImage, uImage, or FIT)       |
-| `fdt`                                | Explicit DTB path                                       |
-| `fdtdir`                             | Directory; U-Boot appends `${fdtfile}` to form the path |
-| `fdtoverlays` / `devicetree-overlay` | Space-separated overlay paths                           |
-| `initrd`                             | Initramfs/ramdisk path                                  |
-| `append`                             | Extra kernel command-line arguments                     |
-| `default`                            | Label booted if no key is pressed during `timeout`      |
-| `timeout`                            | Tenths of a second (0 = wait forever, absent = no wait) |
+## Guarded loads
 
-### Env-variable expansion in `append`
+U-Boot semicolons do not stop on failure. Use nested conditionals so a failed first or second load cannot execute stale
+RAM. This **Hush template** assumes authorized MMC 0:1, a raw Image, and prevalidated non-overlapping RAM capacities.
+`validate_loaded_pair` is a project-supplied validation command variable; its absent/failing status prevents boot.
+It must check recorded lengths against capacities, expected formats and artifact identities before returning success.
+A short memory dump or a DT model string cannot supply those checks.
 
-U-Boot expands env variables inside `append`:
-
+```text
+if load mmc 0:1 ${kernel_addr_r} /boot/Image; then
+    setenv kernel_size ${filesize}
+    if load mmc 0:1 ${fdt_addr_r} /boot/board.dtb; then
+        setenv fdt_size ${filesize}
+        if run validate_loaded_pair; then
+            booti ${kernel_addr_r} - ${fdt_addr_r}
+        else
+            echo "Loaded artifacts rejected"
+        fi
+    else
+        echo "DT load failed"
+    fi
+else
+    echo "Kernel load failed"
+fi
 ```
-append console=ttyS0 root=/dev/mmcblk0p${bootpart} rootwait
-```
 
-This drives A/B slot selection without duplicating configs.
+Bound the inputs before loading as well: checking overlap after a load cannot undo memory corruption. Account for FIT
+expansion, decompression and relocation destinations, U-Boot's own state, DT padding and reserved memory. When loading a
+ramdisk, save `ramdisk_size` immediately and use that value rather than a later load's `filesize`.
 
-### Manual trigger
+To wrap a reviewed command file as a legacy script on the host:
 
 ```bash
-sysboot mmc 0:1 any $pxefile_addr_r /boot/extlinux/extlinux.conf
+mkimage -T script -n 'Board boot sequence' -d boot.cmd boot.scr
 ```
 
-## boot.scr (U-Boot script)
+Regenerate after every source change. Guard loading and execution too:
 
-A binary-wrapped U-Boot script — more capable than `extlinux.conf` (full scripting), but MUST be regenerated with
-`mkimage` whenever the text changes.
-
-### Creating boot.scr
-
-```bash
-cat > boot.cmd << 'EOF'
-load mmc 0:1 $kernel_addr_r /boot/Image
-load mmc 0:1 $fdt_addr_r /boot/myboard.dtb
-setenv bootargs "console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait"
-booti $kernel_addr_r - $fdt_addr_r
-EOF
-
-mkimage -T script -d boot.cmd boot.scr
-mkimage -T script -n "My Boot Script" -d boot.cmd boot.scr   # named variant
+```text
+if load mmc 0:1 ${scriptaddr} /boot.scr; then
+    setenv script_size ${filesize}
+    if run validate_loaded_script; then
+        source ${scriptaddr}
+    fi
+fi
 ```
 
-### Loading and executing
+`validate_loaded_script` is likewise a required project validation variable, not a built-in command. Validate capacity
+before loading and identity before `source`. Legacy script CRCs detect damage but do not authenticate the author.
+Use an enforcing authenticated path where the threat model requires it.
 
-```bash
-fatload mmc 0:1 $scriptaddr boot.scr
-source $scriptaddr
+## Image commands
 
-source $scriptaddr#conf-1        # a FIT-wrapped script at a named config
-```
+| Command   | Select only with these prerequisites                                                                                                          |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `booti`   | Supported architecture's Image; configured compressed formats also need `kernel_comp_addr_r`, `kernel_comp_size` and safe decompression space |
+| `bootz`   | Supported zImage and architecture/build support                                                                                               |
+| `bootm`   | Supported FIT or enabled legacy uImage; named FIT configuration uses `address#configuration`                                                  |
+| `bootefi` | Supported EFI application/stub, enabled loader and compatible architecture/DT                                                                 |
 
-`distro_bootcmd` searches for `boot.scr` automatically when `CONFIG_DISTRO_DEFAULTS` is enabled.
+Use `<ramdisk-address>:<captured-ramdisk-size>` where a raw ramdisk size is required, or `-` for none. Confirm syntax
+with release-matched command help. The [booti contract](https://docs.u-boot.org/en/v2025.10/usage/cmd/booti.html) includes
+compressed formats and decompression memory requirements; it is not limited to uncompressed arm64 files in every build.
 
-## distro_bootcmd
+## Signed FIT construction
 
-`distro_bootcmd` is a pre-built `bootcmd` provided by `config_distro_bootcmd.h`. It iterates `boot_targets`,
-`boot_prefixes`, and `boot_scripts` to find a bootable config automatically.
-
-Controlling variables:
-
-| Variable        | Default                  | Purpose                                       |
-| --------------- | ------------------------ | --------------------------------------------- |
-| `boot_targets`  | board-specific           | Ordered list, e.g. `mmc0 mmc1 usb0 pxe dhcp`  |
-| `boot_prefixes` | `/ /boot/`               | Directories searched for boot files           |
-| `boot_scripts`  | `boot.scr.uimg boot.scr` | Script filenames tried                        |
-| `fdtfile`       | arch/board derived       | DTB filename appended to `fdtdir` in extlinux |
-
-Enable with `CONFIG_DISTRO_DEFAULTS=y`.
-
-## Boot commands
-
-Pick the command by image format — the wrong one produces "Bad Magic" or "Wrong Image Format".
-
-### booti — ARM64 Linux Image
-
-```bash
-booti $kernel_addr_r - $fdt_addr_r                       # kernel + no ramdisk + DTB
-booti $kernel_addr_r $ramdisk_addr_r:$filesize $fdt_addr_r   # with ramdisk
-```
-
-Use for `arm64` boards with an uncompressed `Image`.
-
-### bootz — ARM32 zImage
-
-```bash
-bootz $kernel_addr_r - $fdt_addr_r
-bootz $kernel_addr_r $ramdisk_addr_r:$filesize $fdt_addr_r
-```
-
-Use for 32-bit ARM boards with a self-decompressing `zImage`.
-
-### bootm — FIT / legacy uImage
-
-```bash
-bootm $loadaddr              # FIT default config, or a legacy uImage
-bootm $loadaddr#conf-1       # FIT named config
-```
-
-`bootm` handles both the legacy uImage format and FIT. FIT is the recommended modern format — it bundles kernel + DTB +
-ramdisk into one hashed, optionally signed file.
-
-### bootefi — UEFI
-
-```bash
-bootefi $kernel_addr_r $fdt_addr_r
-bootefi bootmgr                 # run the UEFI boot manager
-```
-
-EFI-stub kernels (`CONFIG_EFI_STUB`) boot this way — useful for UEFI-based OS installers on arm64.
-
-## FIT images (.its)
-
-FIT (Flattened Image Tree) bundles kernel, DTB, and ramdisk with hashes and optional RSA signatures into a single `.itb`
-binary.
-
-### Minimal .its for arm64
+A FIT's hashes detect component damage. A configuration signature authenticates the selected composition only when the
+trusted verifier enforces it. The example below is a host-side schema example for arm64, with deliberately
+board-specific load/entry addresses that must be replaced from the board memory map. It includes a real signing node.
 
 ```dts
 /dts-v1/;
 / {
-    description = "Kernel + DTB";
+    description = "Board kernel and device tree";
     #address-cells = <1>;
-
     images {
-        kernel {
+        os-image {
             data = /incbin/("Image");
             type = "kernel";
             arch = "arm64";
@@ -199,101 +122,62 @@ binary.
             compression = "none";
             load = <0x80080000>;
             entry = <0x80080000>;
-            hash { algo = "sha256"; };
+            hash-1 { algo = "sha256"; };
         };
-
-        fdt-1 {
-            data = /incbin/("myboard.dtb");
+        board-tree {
+            data = /incbin/("board.dtb");
             type = "flat_dt";
             arch = "arm64";
             compression = "none";
-            hash { algo = "sha256"; };
+            hash-1 { algo = "sha256"; };
         };
     };
-
     configurations {
-        default = "conf-1";
-        conf-1 {
-            description = "Default config";
-            kernel = "kernel";
-            fdt = "fdt-1";
+        default = "boot-main";
+        boot-main {
+            kernel = "os-image";
+            fdt = "board-tree";
+            signature-1 {
+                algo = "sha256,rsa2048";
+                key-name-hint = "release";
+                sign-images = "kernel", "fdt";
+            };
         };
     };
 };
 ```
 
-### Building the FIT
+In a new task-owned host directory, prepare a test RSA key/certificate as `keys/release.key` and `keys/release.crt`.
+Use protected production signing infrastructure for release keys. With a copy of the verifier's actual control DT:
 
 ```bash
-mkimage -f image.its image.itb
+mkimage -f image.its -k keys -K verifier-control.dtb -r image.itb
+fdtget verifier-control.dtb /signature/key-release required
 ```
 
-### Signing a FIT
+Require command success and the expected `conf` policy on the **control DT key node**. `-k` selects key material, `-K`
+updates the verifier DT, and `-r` marks the used keys required there. These options do not create a missing ITS signature
+node. Do not place `required = "conf"` in the untrusted FIT as if it controls the verifier. Package the exact modified
+control DT into the verifier and authenticate that verifier through the preceding boot stage.
+See [FIT enforcement](uboot-security-and-provenance.md#fit-enforcement) and the
+[signing implementation](https://github.com/u-boot/u-boot/blob/v2025.10/tools/image-host.c).
 
-```bash
-# Generate an RSA key pair
-mkdir -p keys
-openssl genpkey -algorithm RSA -out keys/dev.key -pkeyopt rsa_keygen_bits:2048
-openssl req -new -x509 -key keys/dev.key -out keys/dev.crt -days 3650
+`mkimage -F` modifies/re-signs an existing FIT. Key rotation needs a coordinated verifier-key and signed-image rollout,
+including rollback and any required-key policy; re-signing the payload alone cannot update a deployed trust anchor.
 
-# Build + sign; inject the public key into the U-Boot control FDT
-mkimage -f image.its -k keys -K u-boot.dtb -r image.itb
-# -k keys/       key directory
-# -K u-boot.dtb  inject the public key into the U-Boot control FDT
-# -r             require all configs to be signed
+`dumpimage -l image.itb` lists metadata and signature material. It does not establish cryptographic validity or required
+policy. Extraction writes a host file, for example `dumpimage -T flat_dt -p 0 -o kernel.out image.itb`; confirm the index
+from the listing and compare the extracted bytes with the intended source. Signature acceptance/rejection must be tested
+with an enforcing verifier, including unsigned, wrong-key and tampered inputs.
 
-# Re-sign an existing FIT (rotate the key without rebuilding source)
-mkimage -F -k keys -K u-boot.dtb image.itb
-```
+## Network loading
 
-Enable verification in U-Boot:
+Network boot avoids repeated flash writes during authorized development, but executes code and can mount a writable NFS
+root. Decide whether that is within scope. For DHCP address acquisition only, set `autoload no` first. Set `autostart no`
+before explicit TFTP loads; confirm actual command/environment behavior on the release.
 
-```
-CONFIG_FIT_SIGNATURE=y
-CONFIG_RSA=y
-```
-
-See `uboot-security-and-provenance.md` for making the signature *required* (rejecting unsigned images) and extending
-trust down to the SPL.
-
-## Inspecting and extracting a FIT (dumpimage)
-
-`dumpimage` reads and unpacks FIT and legacy images on the host. Listing is read-only — use it to confirm what a FIT
-actually contains before rebuilding or flashing it.
-
-```bash
-# List every sub-image, its hash, and any signature status (read-only)
-dumpimage -l image.itb
-
-# List a legacy uImage header
-dumpimage -l uImage
-
-# Extract sub-image at position N from a FIT into a file
-dumpimage -T flat_dt -p 0 -o kernel.out image.itb    # first image
-dumpimage -T flat_dt -p 1 -o fdt.out image.itb       # second image
-
-# Round-trip check: extracted kernel should match the source
-dumpimage -T flat_dt -p 0 -o kernel.out image.itb && sha256sum Image kernel.out
-```
-
-`-l` shows whether a signature node is present and which algorithm it uses, so it answers "is this FIT signed, and with
-what?" without booting the board.
-
-## Network boot (TFTP + NFS)
-
-```bash
-# DHCP — sets $ipaddr, $serverip, $gatewayip, $netmask
-dhcp
-
-# TFTP load
-tftp $kernel_addr_r Image
-tftp $fdt_addr_r myboard.dtb
-
-# NFS rootfs bootargs
-setenv bootargs "console=ttyS0,115200 root=/dev/nfs \
-    nfsroot=${serverip}:/srv/nfs/rootfs,v3,tcp rw ip=dhcp"
-
-booti $kernel_addr_r - $fdt_addr_r
-```
-
-Network boot is the preferred reversible path for iterating on a kernel or DTB without reflashing boot media.
+Guard DHCP, each TFTP load, validation and boot in the same nested sequence as the MMC example. Save the kernel size
+before loading the DT and save the DT size immediately afterward. A successful network configuration is not evidence
+that either payload loaded. Do not boot after any failed transfer. Define `bootargs` with the actual NFS server/export,
+protocol options and access mode only when that root filesystem is intended; it remains a trust input requiring the
+[final handoff checks](uboot-security-and-provenance.md#final-kernel-inputs).

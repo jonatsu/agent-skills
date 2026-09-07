@@ -1,240 +1,111 @@
 ---
 name: u-boot-development
-description: "U-Boot bootloader partner for board bring-up, boot-flow debugging, and porting — SPL/TPL boot chain, environment variables (printenv/setenv/saveenv/fw_setenv, CONFIG_ENV_IS_IN_*), extlinux.conf and boot.scr, FIT images (.its/mkimage/dumpimage), distro_bootcmd and bootstd/bootflow, storage loading (fatload/ext4load/tftp/sf/nand), Kconfig/defconfig porting, driver model (uclass/udevice/dm tree), A/B updates (RAUC/SWUpdate/bootcount), verified boot (FIT signature/HAB), and boot-time trimming. Use when U-Boot hangs before or after 'Starting kernel', saveenv does not persist, a board won't find its boot script, a FIT fails to verify, SPL overflows SRAM, or an env/bootcmd change locks the console. For kernel/DTS/driver bring-up route to embedded-linux-bringup; for the build system route to buildroot-development, yocto-openembedded-development, or kas-build-orchestration."
+description: "Develop and debug U-Boot: board porting, SPL/TPL, environment persistence, extlinux.conf/boot.scr, bootstd, FIT signatures, driver model, A/B bootcount, and build provenance. Use for saveenv/fw_setenv failures, missing boot scripts, rejected FITs, SPL overflows, new defconfigs, or bootcmd changes that lose console access. Route kernel/runtime faults to embedded-linux-bringup and build-system integration to Buildroot, Yocto/OE, or kas skills."
 license: MIT
+compatibility: Requires release-matched U-Boot source and build tools; target access is task-specific. The provenance helper requires Bash 4+, Git, and GNU coreutils on Linux.
 metadata:
   author: Joonas Onatsu
-  tags:
-    - u-boot
-    - bootloader
-    - spl
-    - fit-image
-    - mkimage
-    - extlinux
-    - distro-bootcmd
-    - bootstd
-    - environment
-    - saveenv
-    - fw-setenv
-    - driver-model
-    - defconfig
-    - kconfig
-    - verified-boot
-    - secure-boot
-    - ab-update
-    - bootcount
-    - embedded-linux
 ---
 
 # U-Boot Development
 
-**IRON LAW: Confirm which storage/boot medium and which U-Boot version you are on BEFORE proposing any env or boot-flow
-change. You MUST pair every `saveenv`/`fw_setenv`/env-erase recommendation with the exact command that captures the
-prior state and the command that restores it. An env write with no captured restore is a MUST NOT.**
+Develop the bootloader stages and their handoff to Linux. Before changing environment or boot flow, establish the
+board, U-Boot revision, boot medium, and active configuration. A working recovery procedure must restore the intended
+state, including persistent storage when required; compiled defaults are not a backup.
 
-The env backend, the boot method, and the syntax all drift by board and by release. A `saveenv` that "succeeds" on
-`ENV_IS_NOWHERE`, a `bootdelay=-2` that locks out the console, or `distro_bootcmd` guidance on a `bootstd`-only build
-are all the same mistake: acting before the medium and version are pinned.
+The technical reference baseline is upstream **v2025.10**. Check the project's actual release and vendor changes before
+applying a command or configuration symbol. Read the relevant reference when entering its branch.
 
----
+## Routing
 
-## Overview
+| Task                                                                  | Reference                                                              |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Environment defaults, backups, persistence, bootcount                 | [Environment](references/uboot-environment.md)                         |
+| Boot selection, scripts, image formats, FIT creation, network loading | [Boot scripts](references/uboot-boot-scripts.md)                       |
+| Board port, DT source, driver model, SPL memory, A/B integration      | [Porting](references/uboot-porting.md)                                 |
+| Signature enforcement, shell access, SoC lifecycle, artifact identity | [Security and provenance](references/uboot-security-and-provenance.md) |
 
-Development partner for the full SPL → U-Boot → kernel hand-off: environment management, boot scripts, FIT images,
-storage loading, driver model, porting, verified boot, and provenance. Keep this file for method and routing; pull
-worked commands and board examples from `references/` on demand — do NOT read every reference upfront.
-
-Board-specific examples (BeagleBone Black, STM32MP1, i.MX6/8, TI AM3/AM6, QEMU) live ONLY in `references/`. This file
-stays board-agnostic.
-
-### Route sibling-domain work to another skill
-
-| Task                                                          | Skill                              |
-| ------------------------------------------------------------- | ---------------------------------- |
-| Kernel/DTS, driver probe, general bring-up and debugging      | **embedded-linux-bringup**         |
-| Buildroot: `BR2_TARGET_UBOOT_*`, menuconfig, packaging U-Boot | **buildroot-development**          |
-| Yocto/OE: `u-boot` recipe, `UBOOT_CONFIG`, `do_deploy`        | **yocto-openembedded-development** |
-| kas build orchestration (`.kas.yml`, `kas build`)             | **kas-build-orchestration**        |
-
-### Route the symptom to a reference
-
-| Symptom                                                                           | Reference                                     |
-| --------------------------------------------------------------------------------- | --------------------------------------------- |
-| Env not persisting, wrong default env, scripting, A/B via env                     | `references/uboot-environment.md`             |
-| No boot script found, extlinux vs boot.scr, FIT boot, TFTP/NFS, `dumpimage`       | `references/uboot-boot-scripts.md`            |
-| New board defconfig/Kconfig, board files, DM, SPL sizing, A/B partitions          | `references/uboot-porting.md`                 |
-| Lock autoboot, block unauthenticated `saveenv`, FIT signing/HAB, build provenance | `references/uboot-security-and-provenance.md` |
-
----
+Use **embedded-linux-bringup** for kernel/OS DT, runtime drivers, rootfs integrity, OTA integration, and host flashing
+checks. Use **buildroot-development** for `BR2_TARGET_UBOOT_*`, **yocto-openembedded-development** for recipes and
+`UBOOT_CONFIG`, and **kas-build-orchestration** for kas configuration and checkout orchestration.
 
 ## Workflow
 
-Tick each step per task. Steps marked ⛔ BLOCKING MUST complete before the next; ⚠️ REQUIRED MUST be done but MAY
-interleave.
+1. Establish the task mode. For **authoring**, record the intended boot chain, interfaces, constraints, and a nearby
+   release-matched board or test fixture. A new board does not need a failure log. For **diagnosis**, identify the first
+   evidenced failure boundary and inspect its configuration, inputs, and console output before ranking causes.
+2. Identify the source revision and effective `.config`, board/SoC and silicon revision when relevant, boot medium,
+   environment backend and layout, active `bootcmd` and framework, and the exact artifacts involved. Distinguish known
+   values from assumptions; resolve consequential unknowns before a dependent target action.
+3. Trace the relevant branch through the loaded reference. Compare the observed result with the required result.
+   Test the most likely mechanism and its nearest failure boundary before broadening the diagnosis.
+4. For **target mutation**, identify the exact destination, existing authorization, backup, recovery procedure, and
+   persistence or trust boundary. Reuse explicit authorization. Ask only for missing intent, target identity, or
+   permission for consequential actions outside it.
+5. Validate the resulting behavior, including failure cases. Report the cause or design decision, supporting evidence,
+   changed files/commands, recovery conditions, and observed validation. Label unresolved hypotheses and untested
+   hardware/client behavior. A successful listing or build is not proof of persistence or signature enforcement.
 
-- [ ] **⚠️ REQUIRED — Lock boot context.** Record U-Boot version (`version` in console, or `git describe` /
-  `include/generated/version_autogenerated.h` in source), board + SoC, boot source (eMMC/SD/NAND/NOR-SPI/TFTP), the env
-  backend (`CONFIG_ENV_IS_IN_*`), and the exact symptom (console line, failing command, env value, hang point). If a
-  fact is unknown, state the assumption and LABEL it.
-- [ ] **⛔ BLOCKING — Classify the lane.** Place the task in one lane: environment, boot flow, storage, FIT/signing,
-  porting, driver model, A/B update, boot time, or hardening. Do NOT answer across lanes before the failing one is
-  evidenced.
-- [ ] **⛔ BLOCKING — Collect evidence.** Gather the bounded console/log artifacts in *Evidence First* before ranking
-  causes. No fix proposal until the lane is evidenced.
-- [ ] **⚠️ REQUIRED — Rank causes, then validate ONE.** Propose the single most likely cause and ONE command that
-  confirms or refutes it. Verify each storage load with `md.b $loadaddr 40` and each DTB with
-  `fdt addr $fdt_addr_r; fdt print /model` before booting.
-- [ ] **⚠️ REQUIRED — Confirm before mutating.** Any `saveenv`, `fw_setenv`, env erase, flash/erase of boot media, or
-  key/signature change passes the *Confirmation gates* first, with its restore command captured.
-- [ ] **⚠️ REQUIRED — Close with the Output contract.** Root cause → evidence → exact fix/command → validation command.
+## State and authority boundaries
 
----
+Source edits, host-side image construction, RAM changes, persistent writes, and OTP provisioning have different effects.
+An authorized local development task permits its ordinary source/build changes; it does not imply permission to flash a
+board or change its trust anchors.
 
-## Confirmation gates
+Before `saveenv`, `fw_setenv`, environment erase, or boot-media writes, identify the backend/device and exact region.
+Capture the prior state using the [environment recovery procedure](references/uboot-environment.md#backup-and-restore).
+Qualify recovery before the first production write. If recovery cannot be established, state the uncovered risk and
+pause the dependent write. Rebuilding a source file is not a reversal for a deployed policy that rejects the old image.
 
-You MUST stop and get explicit user confirmation before any persisting, erasing, or trust-changing action. Default to
-read-only (`printenv`, `md`, `fdt print`, `dumpimage -l` are safe); require an explicit opt-in to mutate; pair every
-mutating command with its reverse.
+Before restricting console access or deploying an enforcing verifier, test both intended boot and failure/recovery paths
+under that policy. Fuse/OTP changes are irreversible and require explicit provisioning authorization for the exact
+silicon, values, lifecycle transition, and vendor procedure. Never invent a reverse command. A signed image booting in
+an open or non-enforcing state is insufficient evidence for closing the device.
 
-- **Env persistence** — `saveenv`, `env save`, `env default -a`, `env erase`, or `fw_setenv` from Linux. Capture the
-  current env FIRST (`printenv` transcript, or `env export -t <addr>`; from Linux `fw_printenv > env.bak`) and pair the
-  write with its restore (`env import -t <addr>` / `fw_setenv -s env.bak` / `env default -a`).
-- **Flashing/erasing boot media** — `mmc erase`, `mmc write`, `nand erase/write`, `sf erase/write`, `gpt write`, or a
-  host-side `dd`/`bmaptool` onto the SD/eMMC. A wrong target destroys the boot chain or the host disk; confirm the
-  device path and back up the region first. For host-side flashing, follow **embedded-linux-bringup**'s flash gate.
-- **Locking autoboot** — `bootdelay=-2`, `bootstopkeysha256`, or an autoboot password. These can permanently remove
-  console access; confirm a recovery path exists (fused fallback, UART download mode) before applying.
-- **Changing the trust anchor** — `mkimage -F`/re-signing, injecting a public key into the control FDT, enabling
-  `CONFIG_FIT_SIGNATURE` on a required-signature config, or fusing SoC secure-boot (HAB/OTP). Fusing is one-way; a
-  signed image MUST be proven to boot before the locked config is flashed.
+RAM-only does not mean passive or reversible. `env export` writes memory; `md` can read MMIO with side effects; device
+queries can probe hardware. Network commands can fetch or autostart images. Confirm safe RAM ranges and network behavior
+before use. Loading or executing a script can perform any action the script contains.
 
-### Safety
+## Diagnostic evidence
 
-- MUST NOT run `saveenv`/`fw_setenv`/`env erase`, edit `extlinux.conf`, change `bootcmd`/`bootargs`, alter
-  `CONFIG_ENV_*` offsets, or overwrite SPL/U-Boot on boot media unprompted.
-- Prefer reversible diagnostics first: set variables in RAM and `run` them WITHOUT `saveenv`; boot over TFTP/NFS before
-  reflashing; inspect a FIT with `dumpimage -l` before rebuilding it.
-- MUST NOT enable verified boot or fuse secure-boot until a signed image has been demonstrated to boot on the exact
-  target from the exact key set.
+Use bounded captures of relevant variables and failures. A complete recovery export is a separate artifact and may
+contain secrets; protect it and avoid placing its full contents in logs.
 
----
+| Boundary       | Useful evidence and its limit                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Identity       | `version`, source revision, generated version header, effective config; a banner alone cannot identify every payload             |
+| Environment    | Relevant `printenv` values, backend config, Linux tool/version/config; printenv shows RAM, not saved bytes                       |
+| Load           | Command status, actual address, captured size, expected format/hash, RAM layout; a short `md` or DT model string is insufficient |
+| SPL            | Last output plus source stage and map; SPL can fail before or after DRAM initialization                                          |
+| Boot selection | `bootcmd`, targets, prefixes, bootmeth order and selected file; no universal extlinux-first rule                                 |
+| Driver model   | `dm tree` bound/probed state, compatible match and dependencies; DM topology is not every DT node                                |
+| FIT            | `dumpimage -l` for structure, trusted control DT for keys/policy, enforcing verifier for acceptance/rejection                    |
+| Handoff        | Kernel console and actual command line/DT; upstream image authentication does not cover every later fixup                        |
 
-## Evidence First
+## Version and configuration checks
 
-Before diagnosing, inspect (or ask the user for) the artifacts that pin the failing lane:
+Inspect the active build instead of choosing an era by approximate migration dates. `distro_bootcmd` and bootstd can
+coexist; default environment sources and `CONFIG_`/`CFG_` placement depend on release and board. U-Boot may use the
+Linux-derived `dts/upstream` subtree with `CONFIG_OF_UPSTREAM`, local arch DTS files, or a board-supplied control DT.
+Follow the built artifact to its actual provider before editing.
 
-- The exact U-Boot console output — the `Error`/`Bad Linux ...`/`Wrong Image Format` line, or the last line before a
-  hang.
-- `printenv` for the relevant variables (`bootcmd`, `bootargs`, `fdtfile`, `boot_targets`, `*_addr_r`).
-- The SPL log — the earliest output, before U-Boot proper; a hang here is pre-DRAM.
-- Storage state (`mmc info`, `mmc part`, `ls mmc 0:1 /`) and a load sanity check (`md.b $loadaddr 40`).
-- `dmesg | head -5` after the kernel starts — confirms the hand-off, not just that U-Boot ran.
+Select boot commands by architecture, format, enabled support, and memory requirements. `booti` can accept configured
+compressed Image formats with suitable decompression memory; `bootm` handles supported FIT/legacy images. Persisting an
+environment with `ENV_IS_NOWHERE` is unavailable, not a successful no-op. `bootdelay=0` still allows interruption;
+`-2` suppresses the abort check but does not alone remove shell paths after failed boot.
 
-Keep every capture BOUNDED — one variable, the relevant partition, the failing line; never a full unfiltered dump.
+## Build identity
+
+Run the bundled helper immediately after a successful, quiescent build, using evidence captured by that build:
 
 ```bash
-# Version and board
-version                          # U-Boot version + build date + toolchain
-bdinfo                           # RAM size, CPU freq, boot params addr
-
-# Env — read-only
-printenv                         # all variables
-printenv bootcmd                 # one variable
-env export -t $loadaddr; md.b $loadaddr 200   # snapshot env before any write
-
-# Storage — read-only
-mmc list; mmc info; mmc part     # devices, current device, partitions
-ls mmc 0:1 /                     # files on partition 1
-md.b $loadaddr 40                # verify a load actually landed
-
-# FDT / FIT — read-only
-fdt addr $fdt_addr_r; fdt print /model
-dumpimage -l image.itb           # list FIT contents + signatures (host)
-
-# Driver model
-dm tree                          # probed device tree with state
-
-# Linux side (read-only)
-fw_printenv                      # read saved U-Boot env from userspace
+bash <skill-root>/scripts/stamp-uboot-provenance.sh \
+  <source-root> <build-dir> <new-record-path> <build-identity-file> <artifact> [artifact ...]
 ```
 
----
+All paths must be absolute. The identity file records the actual build invocation, defconfig, compiler/wrapper identity,
+and relevant dependency pins. The helper hashes it, the effective `.config`, and required artifacts, records the
+explicit source checkout's current revision/status, and refuses to replace any existing output. It cannot reconstruct
+historical inputs or prove that supplied artifacts came from that source. See the reference for its full contract.
 
-## Output contract
-
-Every diagnostic answer MUST end with these four, in order:
-
-1. **Root cause** — the single proven lane and mechanism.
-2. **Supporting evidence** — the console line, env value, or `md`/`dumpimage` output that proves it.
-3. **Exact fix** — the precise command, defconfig symbol, or file edit (real names, real paths), plus the restore
-   command for any env/flash write.
-4. **Validation** — the command that confirms the fix (a successful boot line, a re-read env value, `dumpimage -l`
-   output).
-
-If the root cause is not yet proven, say so and give the ONE next command that would prove it — do NOT present a guess
-as a diagnosis.
-
----
-
-## Version awareness
-
-U-Boot syntax and defaults drift across releases. Before giving version-specific guidance you MUST confirm the version
-(`version` in console, `git describe` in source) and account for:
-
-- **`CONFIG_` vs `CFG_` prefix** — many runtime `CONFIG_SYS_*` macros were renamed to `CFG_SYS_*` (≈v2022.10). Header vs
-  Kconfig placement depends on the release.
-- **`distro_bootcmd` vs standard boot (`bootstd`/`bootflow`)** — the standard-boot framework (`bootflow scan`,
-  `CONFIG_BOOTSTD`) supersedes `distro_bootcmd` from ≈v2021.10. Answering with the wrong framework wastes the fix.
-- **Env format** — the text `.env` file (`CONFIG_ENV_SOURCE_FILE`) is the modern default; older boards use
-  `CFG_EXTRA_ENV_SETTINGS` in `include/configs/<board>.h`.
-- **Kconfig migration** — board-header `#define`s are being migrated to Kconfig release by release; add new settings to
-  Kconfig where the version supports it.
-
-When the version is unknown, state which answer applies per era rather than assuming one.
-
----
-
-## Anti-patterns
-
-- MUST NOT assume `saveenv` persisted — on `ENV_IS_NOWHERE` (or a misconfigured backend) it returns success while saving
-  nothing. Confirm the backend (`CONFIG_ENV_IS_IN_*`) and re-read after saving.
-- MUST NOT set `bootdelay=0`/`-2` or lock autoboot on a development board without a proven recovery path — it removes
-  the console-interrupt window.
-- MUST NOT boot an image with the wrong command — `booti`/`bootz` take only a raw `Image`/`zImage`; a FIT or legacy
-  uImage needs `bootm`. The mismatch produces "Bad Magic"/"Wrong Image Format".
-- MUST NOT assume `boot.scr` will run when `extlinux.conf` is also present — on most platforms `distro_bootcmd` tries
-  `extlinux.conf` first and it wins.
-- MUST NOT edit the kernel DTS expecting U-Boot to change — U-Boot keeps its own tree under `arch/*/dts/`; the two are
-  maintained separately.
-- MUST NOT ignore SPL size — SPL runs from on-chip SRAM (often 64–256 KB) before DRAM init; overflow is a silent
-  power-on hang. Gate it with `CONFIG_SPL_SIZE_LIMIT`.
-- MUST NOT place the env partition unaligned to the NAND erase block — `saveenv` then corrupts the env silently. Check
-  `CONFIG_ENV_OFFSET` against the erase-block size.
-- MUST NOT enable a required FIT signature or fuse secure-boot before a signed image is proven to boot — a bad key or
-  config bricks the board.
-- MUST NOT ship a build with unknown provenance — record source rev + dirty flag, toolchain id, defconfig, and SPL/FIT
-  hashes (see `references/uboot-security-and-provenance.md`).
-
----
-
-## Reference pointers
-
-Canonical upstream docs (cite the release-matched version):
-
-- U-Boot documentation: u-boot.readthedocs.io — env, `bootstd`/distro boot, FIT and verified boot, driver model, board
-  porting.
-- FIT / verified boot: `doc/uImage.FIT/` and `doc/usage/fit/` in the U-Boot tree.
-- SoC secure-boot: the vendor's reference manual (i.MX HAB, TI secure boot, STM32 authenticated boot) — behaviour and
-  fuse layout are SoC-specific.
-
-`references/`:
-
-- `uboot-environment.md` — how the env loads, default sources (text `.env` vs C macro), persistence backends
-  (`CONFIG_ENV_IS_IN_*`), essential variables, scripting (`test`/`itest`/`setexpr`), A/B via env, factory reset.
-- `uboot-boot-scripts.md` — boot-method hierarchy, `extlinux.conf`, `boot.scr` via `mkimage`, `distro_bootcmd`,
-  `booti`/`bootz`/`bootm`/`bootefi`, FIT `.its` authoring and signing, `dumpimage` inspection, TFTP+NFS.
-- `uboot-porting.md` — defconfig + Kconfig board symbols, legacy board header, board directory and `board.c`, U-Boot
-  DTS, driver model (uclass/udevice/ofnode), SPL/TPL sizing and Falcon mode, A/B partition patterns.
-- `uboot-security-and-provenance.md` — boot-chain hardening checklist, disabling unauthenticated env writes, FIT
-  signature and SoC HAB chain of trust, and build-provenance logging (source rev/dirty, toolchain id, defconfig, SPL/FIT
-  hashes).
+Source influence and historical uncertainty are recorded in [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
