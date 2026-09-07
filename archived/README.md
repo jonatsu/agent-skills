@@ -11,6 +11,10 @@ whole mechanism; there is no separate opt-out to remember.
 
 ## What lives here
 
+The embedded domain was restored to `../shared/embedded/` on 2026-09-07. Its five skills now use the names
+`buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`, and
+`yocto-openembedded-development`. Their technical reviews remain deferred in [../TODO.md](../TODO.md).
+
 A row saying "Review is deferred" is the authoritative record that the package's review is still outstanding.
 The 2026-09 review campaign's own ledger is retired; its verdicts and evidence are in
 `../../docs/evaluations/2026-09-shared-skill-review.md`, which records no status.
@@ -22,22 +26,17 @@ The 2026-09 review campaign's own ledger is retired; its verdicts and evidence a
 | `brooks-lint-design-review` | 2026-09-02 | Review lite completed 2026-09-07: invalid under current policy. Remains archived pending repair decision; [review](../../docs/evaluations/2026-09-07-archived-skill-review-batch-1.md). |
 | `brooks-lint-maintainability-review` | 2026-09-02 | Review lite completed 2026-09-07: invalid under current policy. Remains archived pending repair decision; [review](../../docs/evaluations/2026-09-07-archived-skill-review-batch-1.md). |
 | `brooks-lint-test-review` | 2026-09-02 | Review lite completed 2026-09-07: invalid under current policy. Remains archived; assess overlap with `test-engineer` before restoration. [Review](../../docs/evaluations/2026-09-07-archived-skill-review-batch-1.md). |
-| `buildroot-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `design-forge` | 2026-09-02 | Temporarily removed from deployment. Its corpus contract and checker remain archived as reference material. Review is deferred. See its `ARCHIVED.md`. |
-| `embedded-linux-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `find-skills` | 2026-09-02 | Retired at the user's direction. Its cross-agent source catalogue, trust model and installation workflow require continuing maintenance against external services and agent interfaces; Codex's system `skill-installer` now covers its narrower installation lane. The security and provenance material remains useful as a reference. See its `ARCHIVED.md`. |
 | `headroom-management` | 2026-08-26 | The Headroom proxy it manages was rejected, so the skill governs a tool this setup no longer runs. See its `ARCHIVED.md`. |
 | `idea-forge` | 2026-09-02 | Replaced by portable `brainstorming` after behavioral evaluation and independent review completed 2026-09-04. Retained intact as historical evidence and an evaluation baseline. See its `ARCHIVED.md`. |
 | `lean-ctx` | 2026-08-27 | lean-ctx was removed from this setup, so every `ctx_*` trigger in the skill names a tool that no longer exists. Its three locally-measured reference files are why this is an archive rather than a deletion, and its Apache-2.0 `LICENSE.upstream`/`NOTICE.upstream` must stay with the directory. See its `ARCHIVED.md`. |
-| `kas-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `nix/nix-wrapper-modules` | 2026-09-03 | Archived pending consolidation with the repo-local skills in `~/src/nix-config`; the rest of the `nix/` domain was fixed and restored on 2026-09-06, this one deliberately stayed — its restore is contingent on nix-config's held wrapper inputs gaining a consumer (fix list in `../TODO.md`). Review is deferred. See its `ARCHIVED.md`. |
 | `python-idioms` | 2026-09-06 | Consolidated into scoped Python rules and general tools/workflow guidance after review lite. The package is preserved intact; specialist Python skills remain active. See its `ARCHIVED.md`. |
 | `security-audit` | 2026-09-02 | Removed with the intact `review/` domain while unused, then reviewed and replaced on 2026-09-04 by the independently written `shared/review/security-review`. The archived package stays as the source its method came from. See its `ARCHIVED.md`. |
 | `semantic-compression` | 2026-09-02 | Reviewed and replaced by the independently written `shared/context/context-compression` skill. The archived package remains the historical behavior and provenance baseline. See its `ARCHIVED.md`. |
 | `system-prompts` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `token-optimiser` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
-| `uboot-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
-| `yocto-oe-dev` | 2026-09-02 | Temporarily removed with the intact `embedded/` domain because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 
 ## Archiving a skill
 

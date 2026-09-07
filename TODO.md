@@ -6,6 +6,17 @@ The completed 2026-09 review's verdicts and evidence are the record in
 reviews still deferred are the rows marked "Review is deferred" in
 [archived/README.md](archived/README.md). Repository-wide items live in [../TODO.md](../TODO.md).
 
+## Embedded Domain — Technical Review Deferred
+
+The five embedded skills were restored on 2026-09-07 with new names. This restoration covers package moves,
+sibling routing, top-level license placement, and required Markdown formatting. It does not establish the
+accuracy of the existing technical guidance or agent activation behavior.
+
+Review `buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`,
+and `yocto-openembedded-development` before treating their guidance as reviewed. Include version-sensitive
+commands, conflicting workflow statements, provenance records, and the descriptions above the 512-character
+budget. Discovery and hardware/build behavior remain unmeasured.
+
 ## Nix Domain — Remaining Work
 
 The 2026-09-06 nix-domain consolidation is complete except for the items below: three skills promoted from

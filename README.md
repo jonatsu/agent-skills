@@ -72,6 +72,7 @@ forty-three skills in one directory had stopped being a list anyone could read.
 | `context/`     | Context and token economy: handoffs, compression, token budgets       |
 | `design/`      | Shaping and recording a design before it is built                     |
 | `development/` | Doing the work: debugging, testing, dev-environment tooling           |
+| `embedded/`    | Embedded Linux bring-up, Buildroot, kas, U-Boot, Yocto/OpenEmbedded   |
 | `git/`         | Git, GitHub, and repository hygiene                                   |
 | `nix/`         | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv       |
 | `ops/`         | Machines and runtimes: containers, systemd, dotfiles                  |
@@ -85,6 +86,11 @@ The `nix/` domain was archived whole on 2026-09-03 pending consolidation with th
 `~/src/nix-config`, then revived on 2026-09-06: two skills promoted from that repo plus five archived
 originals fixed and restored the same day. Only `nix-wrapper-modules` remains in `archived/nix/`, deliberately
 — see `archived/README.md` and `TODO.md`.
+
+The `embedded/` domain was restored on 2026-09-07 with clearer skill names:
+`buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`, and
+`yocto-openembedded-development`. Restoration updates names, routing, metadata placement, and formatting;
+the broader technical review remains deferred in [TODO.md](TODO.md).
 
 Three consequences worth knowing before you move anything:
 
