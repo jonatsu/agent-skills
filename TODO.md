@@ -22,6 +22,13 @@ Original materials are in `~/src/embedded-linux/`. Buildroot sources were locate
 declare CC BY-SA 3.0). The targeted Buildroot PDF comparison completed on 2026-09-07; see the review's source map.
 Attribution repairs and any package-wide adaptation assessment remain pending.
 
+Buildroot repository survey completed 2026-09-07 across the three subtrees in `~/src/embedded-linux/repos/`.
+[Evidence and conservative proposals](../docs/evaluations/2026-09-07-buildroot-repository-survey.md): refine the existing
+local-source iteration and overlay/artifact checks; propose one small image-capacity subsection. These additions are
+not approved or implemented. The skill's review verdict and the other four skills' pending status are unchanged.
+Buildroot/genimage first-party sources govern adoption; the survey records resolved third-party conflicts and excludes
+unverified fork-specific guidance.
+
 | Skill                                              | Review status                    | Verdict / remaining work                                                                                                                                                                  | Evidence                                                                                                 |
 | -------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | `buildroot-development` (formerly `buildroot-dev`) | Review lite completed 2026-09-07 | **Invalid; technically not ready.** F1–F12 repairs pending; targeted PDF comparison completed 2026-09-07; attribution repair and full behavioral evaluation outstanding. Skill unchanged. | [Review, evidence, and proposed repairs](../docs/evaluations/2026-09-07-buildroot-development-review.md) |
