@@ -1,192 +1,111 @@
 # Deploy and Iterate
 
-Two workflows that shorten the embedded feedback loop: emulating the board under QEMU so most kernel/driver/DTS work
-needs no hardware, and verifying that what you built is actually what booted on the target.
+Prove the identity and selection of the artifacts before attributing a target failure to the latest source change.
+Use emulation only for behavior the selected machine can represent.
 
-## Contents
+## Verify the Relevant Artifact
 
-- [The QEMU Iteration Loop](#the-qemu-iteration-loop)
-- [Booting a Custom DTB and Overlay Under QEMU](#booting-a-custom-dtb-and-overlay-under-qemu)
-- [Deploy-Verify: prove the target runs what you built](#deploy-verify-prove-the-target-runs-what-you-built)
-- [Deploy-Verify Script Pattern](#deploy-verify-script-pattern)
+Keep these claims separate:
 
-## The QEMU Iteration Loop
+| Claim                        | Evidence and limitation                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------- |
+| The file arrived intact      | Hash the exact host artifact and destination file; a matching file may still be unused                  |
+| The artifact is compatible   | Inspect ELF ABI or module metadata against the target; this does not identify its code                  |
+| The boot path selected it    | Inspect boot selection and logs, including fallback paths; a file on the boot partition is insufficient |
+| The running instance uses it | Correlate build identity, loaded module state, live DT properties, and process executable               |
+| The change works             | Exercise the relevant device or application behavior on that running instance                           |
 
-Flashing hardware for every kernel or DTS change is slow and error-prone. For any work that does not depend on real
-silicon — most driver logic, DTS structure, boot flow, and userspace integration — emulate the board and iterate in
-seconds.
-
-The loop:
-
-```
-1. edit    → change kernel source, .config, DTS, or rootfs
-2. build   → rebuild only what changed (kernel Image + dtbs, or the module)
-3. boot    → qemu-system-<arch> with -kernel/-dtb/-drive, serial to stdio
-4. observe → read the boot log / run the test over the emulated console
-5. repeat  → back to edit; no reflash, no power-cycle
-```
-
-A minimal aarch64 `virt` invocation, kernel + initramfs, console on stdio:
+For a userspace binary, use the same path in the transfer and verification steps:
 
 ```bash
-qemu-system-aarch64 \
-  -M virt -cpu cortex-a53 -m 1024 -nographic \
-  -kernel arch/arm64/boot/Image \
-  -initrd rootfs.cpio.gz \
-  -append "console=ttyAMA0 rdinit=/sbin/init loglevel=7"
+# Host and target respectively; board is the configured SSH alias.
+sha256sum ./myapp
+ssh board sha256sum /usr/local/bin/myapp
 ```
 
-Boot a full disk image with a real rootfs instead of an initramfs:
+Treat a failed hash command as unverified. When a process was already running, replacing its pathname does not replace
+its executable image. Check its actual executable and use the application's authorized restart procedure.
+
+For a module, inspect `modinfo -F vermagic ./mymod.ko`, its hash/build identity, the intended kernel build configuration,
+and the target's load result. `uname -r` supplies only the release string.
+Equal vermagic neither proves identical code nor covers symbol CRCs, signatures, dependencies, and load-time failures.
+An installed reference module can itself be stale. Do not force-load a rejected module to bypass these checks.
+See the target release's [module checks](https://github.com/torvalds/linux/blob/v6.12/kernel/module/version.c).
+
+For a DTB, verify both the selected boot artifact and the intended live properties.
+Bootloader fixups and overlays can legitimately change memory, bootargs, addresses, and random seeds.
+Use [device-tree-tooling.md](device-tree-tooling.md) to distinguish a missing change from a legitimate transformation.
+For bootargs, compare each required property with `/proc/cmdline`; do not turn the presence of `rootwait` into a
+universal success condition. A system using an initramfs or another root path may not need it.
+
+Report each applicable check as matched, different, failed, or unverified. Do not print an overall build match from
+a partial compatibility check or from a skipped comparison.
+
+## Decide Whether QEMU Can Exercise the Change
+
+Record QEMU version, machine, CPU, attached devices, kernel configuration, and the intended test.
+The [QEMU v10.1 virt model](https://github.com/qemu/qemu/blob/v10.1.0/docs/system/arm/virt.rst)
+is a virtual platform, not an emulator for an arbitrary real board.
+A custom DTB describes existing modeled hardware; it does not create a controller, sensor, clock, or interrupt route.
+
+- Use DT schema checks for structural/binding correctness without claiming that hardware works.
+- Use QEMU for compatible userspace, generic kernel paths, and devices the chosen machine actually models.
+- Test board-specific drivers only against a corresponding model with the necessary implementation and wiring.
+- Verify pinmux, power sequencing, electrical behavior, DMA coherency, timing, and silicon errata on suitable hardware.
+
+Start with the machine-generated DTB. If a custom tree is needed, derive it for the same machine configuration and
+verify its addresses, interrupts, memory, and attached devices. Do not substitute a physical board's DTB into `virt`.
 
 ```bash
-qemu-system-aarch64 \
-  -M virt -cpu cortex-a53 -m 1024 -nographic \
-  -kernel arch/arm64/boot/Image \
-  -drive file=rootfs.ext4,format=raw,if=virtio \
-  -append "console=ttyAMA0 root=/dev/vda rw"
-```
-
-Practical loop mechanics:
-
-- `-nographic` routes the emulated serial console to your terminal; `Ctrl-a x` quits QEMU, `Ctrl-a c` toggles the QEMU
-  monitor.
-- Add `-s -S` to expose a gdbstub on `:1234` and hold the CPU at reset, then attach the cross-GDB
-  (`target remote :1234`) to single-step early boot — see `debugging.md`.
-- `-netdev user,id=n0 -device virtio-net-device,netdev=n0` gives the guest outbound networking and host-forwarded ports
-  for NFS or SSH-based iteration.
-- Keep a scripted one-liner so `build && qemu …` is a single command; the point is to remove every manual step between
-  edit and observation.
-
-QEMU emulates the SoC's generic peripherals, not board-specific analog wiring, so sensor timing, PMIC sequencing, and
-signal-integrity faults still need hardware. Use QEMU to get the software layers correct first, then move to the board
-with a short remaining list of hardware-only unknowns.
-
-## Booting a Custom DTB and Overlay Under QEMU
-
-The `virt` machine can generate its own DTB, or accept yours. To iterate on a real board DTS in emulation, pass a
-compiled blob:
-
-```bash
-# Dump the machine's own generated DTB (baseline to diff against)
+# Host: inspect this exact machine configuration's generated tree.
 qemu-system-aarch64 -M virt,dumpdtb=virt.dtb -cpu cortex-a53 -m 1024 -nographic
+dtc -I dtb -O dts -o virt.dts virt.dtb
+```
 
-# Boot with your own compiled board/overlay-merged DTB
+Machine defaults can change between releases. Record or select an available versioned machine when the test requires
+stable virtual hardware. Regenerate its DTB when machine options or devices change.
+
+## A Compatible ARM64 Iteration Loop
+
+The examples require an ARM64 kernel with PL011 console support and a matching userspace.
+The initramfs must contain an executable init plus its interpreter/libraries, and the kernel must support its compression.
+
+```bash
 qemu-system-aarch64 \
-  -M virt -cpu cortex-a53 -m 1024 -nographic \
-  -kernel arch/arm64/boot/Image \
-  -dtb merged.dtb \
-  -append "console=ttyAMA0 root=/dev/vda rw"
+  -M virt -cpu cortex-a53 -m 1024 -nographic -nic none \
+  -kernel Image -initrd rootfs.cpio.gz \
+  -append 'console=ttyAMA0 rdinit=/sbin/init'
 ```
 
-Combine with `dtx_diff` and `dt-validate` (see `device-tree-tooling.md`) to confirm the merged tree is what you expect
-before booting it.
+For a raw ext4 filesystem image, attach storage explicitly. This example uses virtio-mmio; build its transport,
+block driver, and ext4 support into the kernel when no initramfs loads modules first.
 
-## Deploy-Verify: prove the target runs what you built
-
-After a deploy, the most common wasted hour is debugging a target that silently booted a stale kernel, module, or DTB.
-Before diagnosing behaviour, PROVE the artifacts on the target match the ones you just built. Four checks:
-
-1. **Kernel module vermagic match.** A module built against a different kernel is rejected or, worse, refuses to load
-   with `version magic … should be …`. Compare the module's vermagic to the running kernel's:
-
-   ```bash
-   # On target: running kernel's expected magic
-   cat /proc/version
-   modinfo /lib/modules/$(uname -r)/extra/mymod.ko | grep vermagic
-   # vermagic must match `uname -r` + toolchain/SMP/preempt flags exactly
-   ```
-
-2. **DTB / DTBO present and current.** Confirm the board booted the DTB you built, not a stale one on the boot
-   partition:
-
-   ```bash
-   # Reconstruct the live tree and diff against your source/blob
-   dtc -I fs -O dts /proc/device-tree > /tmp/live.dts
-   scripts/dtc/dtx_diff /tmp/live.dts my-board.dts   # empty diff => current
-   # Applied overlays (configfs-based):
-   ls /sys/kernel/config/device-tree/overlays/
-   ```
-
-3. **Boot-config sanity.** The kernel cmdline the target actually booted with is the ground truth for `console=`,
-   `root=`, and `rootwait`:
-
-   ```bash
-   cat /proc/cmdline
-   ```
-
-4. **Binary/rootfs identity.** For a deployed userspace binary, checksum both ends:
-
-   ```bash
-   sha256sum mybinary
-   ssh root@<target> sha256sum /usr/local/bin/mybinary   # must match
-   ```
-
-Only once all four confirm the target runs your build should you start diagnosing behaviour. A mismatch here is itself
-the root cause.
-
-## Deploy-Verify Script Pattern
-
-Fold the four checks into one script run on the target right after deploy. Invoke as
-`verify-deploy.sh <module.ko> <board.dts>`; it is read-only and exits non-zero on the first mismatch.
-
-```sh
-#!/bin/sh
-# verify-deploy.sh <module.ko> <board-source.dts>
-# Read-only: verifies the running target matches freshly built artifacts.
-# Exits non-zero on the first mismatch.
-set -eu
-
-mod="${1:?module .ko path}"
-dts="${2:?board .dts path}"
-[ -r "$mod" ] || { printf 'FAIL: cannot read module %s\n' "$mod" >&2; exit 1; }
-[ -r "$dts" ] || { printf 'FAIL: cannot read dts %s\n'    "$dts" >&2; exit 1; }
-
-tmpdir="$(mktemp -d)" || exit 1
-trap 'rm -rf -- "$tmpdir"' EXIT INT TERM
-
-# 1. Module vermagic vs the running kernel.
-# An in-tree module already installed for the running kernel carries the EXACT
-# vermagic the kernel enforces (release + SMP/preempt/module flags). Compare the
-# candidate's FULL vermagic against that reference so the check matches what insmod
-# would enforce, not just the release token. modinfo -F prints the field verbatim.
-running="$(uname -r)"
-mod_vm="$(modinfo -F vermagic "$mod")"
-ref_ko="$(find "/lib/modules/$running/kernel" -type f -name '*.ko*' 2>/dev/null | head -n 1)"
-if [ -n "$ref_ko" ]; then
-    ref_vm="$(modinfo -F vermagic "$ref_ko")"
-    [ "$mod_vm" = "$ref_vm" ] || {
-        printf 'FAIL vermagic:\n  module: %s\n  kernel: %s\n' "$mod_vm" "$ref_vm" >&2
-        exit 1
-    }
-    printf 'vermagic OK (full match): %s\n' "$mod_vm"
-else
-    # No in-tree reference to compare against: verify the release token only and say
-    # so — SMP/preempt/module flags are NOT checked on this path (insmod is the final
-    # arbiter and prints the expected magic on refusal).
-    mod_rel="${mod_vm%% *}"
-    [ "$mod_rel" = "$running" ] || {
-        printf 'FAIL vermagic: module built for %s, running %s\n' "$mod_rel" "$running" >&2
-        exit 1
-    }
-    printf 'WARN: no in-tree module to compare; release-only check (%s), flags unverified\n' \
-        "$mod_rel" >&2
-fi
-
-# 2. Live DTB vs source.
-dtc -I fs -O dts /proc/device-tree > "$tmpdir/live.dts" 2>/dev/null
-if command -v dtx_diff >/dev/null 2>&1; then
-    if dtx_diff "$tmpdir/live.dts" "$dts" | grep -q .; then
-        printf 'FAIL dtb: live tree differs from %s\n' "$dts" >&2
-        exit 1
-    fi
-fi
-
-# 3. Boot-config sanity.
-grep -q 'rootwait' /proc/cmdline || printf 'WARN: no rootwait in /proc/cmdline\n' >&2
-printf 'cmdline: %s\n' "$(cat /proc/cmdline)"
-
-printf 'OK: vermagic, device tree, and boot-config match the build\n'
+```bash
+qemu-system-aarch64 \
+  -M virt -cpu cortex-a53 -m 1024 -nographic -nic none -snapshot \
+  -kernel Image \
+  -drive file=rootfs.ext4,format=raw,if=none,id=rootfs \
+  -device virtio-blk-device,drive=rootfs \
+  -append 'console=ttyAMA0 root=/dev/vda rw rootwait'
 ```
 
-This is a diagnostic (read-only) step, not a mutation — it needs no confirmation gate. Run it before any deep-dive so
-you never debug a target running stale bits.
+Here `/dev/vda` contains a filesystem directly. A partitioned disk requires the appropriate partition root instead.
+`-snapshot` makes guest disk writes disposable; it is not a backup or protection for arbitrary host exports.
+Use separate writable state and ports for concurrent runs.
+
+For SSH iteration, replace `-nic none` with an explicit backend and device, for example:
+
+```text
+-netdev user,id=n0,hostfwd=tcp:127.0.0.1:2222-:22 -device virtio-net-device,netdev=n0
+```
+
+The guest needs its network driver, network configuration, and an SSH server. Connect through host port 2222.
+This does not configure an NFS rootfs; NFS needs its own reachable server and early guest networking.
+
+For early debugging, add `-gdb tcp:127.0.0.1:1234 -S` and connect cross-GDB to that port with matching `vmlinux`.
+The stub has no authentication. Loopback constrains remote reachability but not hostile users on the same host.
+Use an isolated development host, stop the stub after testing, and account for a halted guest's watchdog behavior.
+See [QEMU's invocation options](https://github.com/qemu/qemu/blob/v10.1.0/qemu-options.hx).
+
+Capture a bounded boot log and an observable guest result for each iteration. A QEMU process that starts successfully
+does not establish that Linux booted, that the test ran, or that the real board is qualified.

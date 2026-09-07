@@ -24,15 +24,17 @@
 
 ## Investigation Order
 
-Work through these layers in sequence. Do not skip to userspace before confirming the layer below it is healthy.
+Use these boundaries to locate the fault. Start from the observed failure and check its relevant prerequisites;
+a missing pathname alone does not prove a sensor or driver fault. Built-in drivers do not appear in `lsmod`.
+Resolve video/media node identity, namespace visibility, and capabilities before applying the examples below.
 
 1. **Confirm hardware and DTS ownership**
    - Sensor node exists and matches the driver `compatible`
    - Clocks, GPIOs, `<rail>-supply` regulators, and endpoints are declared
    - The endpoint graph is connected when the platform uses a media controller
 2. **Confirm probe path**
-   - Driver module loads (`lsmod | grep <driver>`)
-   - I2C device responds if applicable (`i2cdetect -y <bus>`)
+   - Driver is built in or its module loads within the authorized diagnostic scope
+   - The enumerated bus device has the intended driver; use only device-supported I2C transactions when needed
    - Probe logs show resource acquisition and chip-ID steps (`dmesg | grep <sensor>`; enable `dynamic_debug` on the
      module for detail — see `debugging.md`)
 3. **Confirm video registration**
@@ -59,7 +61,7 @@ v4l2-ctl --list-devices                   # registered video devices
 v4l2-ctl --all -d /dev/video0             # capabilities + current format
 v4l2-ctl --list-formats-ext -d /dev/video0 # supported formats and resolutions
 media-ctl -p                              # media controller graph (pipelines, links)
-i2cdetect -y 0                            # I2C bus scan (adjust bus number)
+i2cdetect -l                             # adapter inventory; no device probe transactions
 ```
 
 ## media-ctl — Inspect and Wire the Media Graph
@@ -71,9 +73,6 @@ formats must be set up before capture.
 # Print the whole graph: entities, pads, links, and the enabled links
 media-ctl -d /dev/media0 -p
 
-# Print one entity's current pad configuration
-media-ctl -d /dev/media0 --get-v4l2 "'ov5640 1-003c':0"
-
 # Enable a link between two pads (source pad -> sink pad)
 media-ctl -d /dev/media0 -l "'ov5640 1-003c':0 -> 'csi':0 [1]"
 
@@ -81,39 +80,40 @@ media-ctl -d /dev/media0 -l "'ov5640 1-003c':0 -> 'csi':0 [1]"
 media-ctl -d /dev/media0 --set-v4l2 "'ov5640 1-003c':0 [fmt:UYVY8_2X8/640x480]"
 ```
 
-The single most common no-frames cause on these platforms is a pad-format mismatch along the pipeline (sensor pad, CSI
-pad, and video node disagree on size or code) or a link that was never enabled. Walk the graph with `-p` and make every
-pad agree.
+Inspect the graph with `-p`, then establish compatible formats at each connected source/sink pad.
+Conversion, crop, scaling, and packing blocks can legitimately change the format across an entity.
+Sub-device media-bus codes and video-node memory formats are different interfaces; do not force identical values
+everywhere. Check the driver's link-validation and routing requirements.
+Link/format changes and streaming mutate device state; coordinate active consumers before an authorized test.
 
 ## v4l2-compliance — Validate a Driver
 
-`v4l2-compliance` exercises a device against the V4L2 API and reports which ioctls and behaviours are correct — it
-separates "my driver is broken" from "my capture code is wrong".
+`v4l2-compliance` exercises selected V4L2 API behavior. Read which tests ran, failed, or were skipped.
+It does not prove complete driver correctness, hardware timing, or application correctness.
 
 ```bash
-# Full compliance test of a capture device
+# Default compliance tests for the selected device
 v4l2-compliance -d /dev/video0
 
 # Include streaming tests (actually queues/dequeues buffers)
 v4l2-compliance -d /dev/video0 -s
 
-# Test a media device and all its sub-devices at once
-v4l2-compliance -m /dev/media0
 ```
 
-Run this after a driver change and before debugging userspace capture. Failures here point at the driver; a clean pass
-moves the investigation up to format negotiation and buffer handling in your application.
+Use the installed tool's media-device and sub-device options when those interfaces are relevant.
+Interpret failures with the selected device's capabilities, pipeline configuration, and tool/kernel versions.
+A clean result narrows the investigation only for the exercised cases.
 
 ## Common Failure Buckets
 
-| Symptom                               | Likely cause                                                                            |
-| ------------------------------------- | --------------------------------------------------------------------------------------- |
-| No device match / probe not attempted | DTS `compatible` wrong, Kconfig disabled, missing module, wrong bus number              |
-| Probe resource failure                | Clock, regulator, GPIO, reset timing, or incomplete endpoint graph                      |
-| Chip-ID failure                       | Wrong bus address, power-up sequence, clock/reset not deasserted, register timing       |
-| No `/dev/video*`                      | Host driver registration failed or the media graph is incomplete                        |
-| Stream failure / no frames            | Format mismatch, CSI lane config wrong, DMA/buffer issue, unsupported mode              |
-| Bad image / garbled colours           | Bayer order wrong, colorspace mismatch, wrong stride, crop region, sensor-mode mismatch |
+| Symptom                               | Likely cause                                                                                |
+| ------------------------------------- | ------------------------------------------------------------------------------------------- |
+| No device match / probe not attempted | DTS `compatible` wrong, Kconfig disabled, missing module, wrong bus number                  |
+| Probe resource failure                | Clock, regulator, GPIO, reset timing, or incomplete endpoint graph                          |
+| Chip-ID failure                       | Wrong bus address, power-up sequence, clock/reset not deasserted, register timing           |
+| No `/dev/video*`                      | Registration or media graph failure, node management, numbering, namespace or device policy |
+| Stream failure / no frames            | Format mismatch, CSI lane config wrong, DMA/buffer issue, unsupported mode                  |
+| Bad image / garbled colours           | Bayer order wrong, colorspace mismatch, wrong stride, crop region, sensor-mode mismatch     |
 
 ## Single-Frame Capture (Testing)
 
@@ -147,12 +147,12 @@ yavta -f UYVY -s 640x480 -c10 -n4 -F/tmp/frame-#.bin /dev/video0
 # Set a specific control by id while capturing (e.g. test pattern, exposure)
 yavta --set-control '0x009e0901 1' /dev/video0
 
-# Drive a sub-device pad directly (e.g. the sensor node)
-yavta -f SRGGB10 -s 1920x1080 --capture=4 /dev/v4l-subdev0
 ```
 
-Because `yavta` maps directly onto `VIDIOC_*`, it is the tool for isolating whether a failure is in the kernel
-buffer/DMA path or in higher-level userspace code.
+Use yavta against a capture-capable video node. Configure sensor pads through the sub-device interface or media-ctl;
+`/dev/v4l-subdev*` provides controls, events, formats, and routing, not the video buffer capture API.
+See the [kernel sub-device documentation](https://docs.kernel.org/userspace-api/media/v4l/dev-subdev.html).
+Match requested formats to the capabilities reported by the actual device.
 
 ## V4L2 Buffer Lifecycle
 
@@ -168,8 +168,10 @@ The canonical mmap streaming sequence:
 8. Loop: `VIDIOC_DQBUF` → process frame → `VIDIOC_QBUF` (return the buffer)
 9. Stop with `VIDIOC_STREAMOFF`
 
-**Buffer ownership rule:** only one side (driver or userspace) owns a buffer at a time. Every `DQBUF` must be paired
-with a `QBUF` return. Buffers that leak out of circulation starve the queue and cause frame drops or timeouts.
+**Buffer ownership rule:** do not access a buffer while it is queued to the driver.
+During continued streaming, requeue completed buffers after processing so the queue does not starve.
+Shutdown and error handling may instead stop streaming and release buffers; a final dequeue need not be requeued
+when capture ends. Handle nonblocking readiness, `EAGAIN`, interrupted calls, and failed queues explicitly.
 
 ### Blocking vs poll-based capture
 
@@ -185,8 +187,8 @@ Use **`poll()` / `epoll()` level-triggered** when:
 
 ## Capture Performance Triage
 
-Bisect before tuning. Run the smallest possible capture and compare its cost against the application's — that one
-comparison decides which layer to work in.
+Compare the smallest useful capture with the application under the same negotiated format, frame rate, buffer count,
+and load. The difference helps select the next measurement; it does not by itself prove which layer is faulty.
 
 ```bash
 # Minimal capture: 200 frames straight to /dev/null, 4 buffers
@@ -198,7 +200,7 @@ yavta -f UYVY -s 640x480 -c200 -n4 /dev/video0
 
 | Minimal capture   | Application              | Where the problem is                                                               |
 | ----------------- | ------------------------ | ---------------------------------------------------------------------------------- |
-| Already expensive | —                        | Driver and DMA path; userspace is not the cause                                    |
+| Already expensive | —                        | Shared capture path: inspect both the minimal tool's userspace and kernel/DMA cost |
 | Cheap             | Expensive                | Userspace: `memcpy`, format conversion, event-loop structure                       |
 | Cheap             | Cheap, FPS still low     | Sensor mode, bus format and lane count, host throughput ceiling                    |
 | Fine at first     | Degrades over a long run | Buffer leaks, queue starvation, logging left enabled, thermal or scheduler effects |

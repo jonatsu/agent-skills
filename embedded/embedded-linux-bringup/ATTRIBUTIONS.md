@@ -1,108 +1,99 @@
 # Attributions
 
-## Current skill
+## Current Package
 
 - Skill: `embedded-linux-bringup`
 - Current author: Joonas Onatsu
-- Current license: MIT
-- Status: original synthesis, with one adapted-base component and one learning source acknowledged below
+- Package license: MIT, unchanged by the 2026-09-07 repair
+- Composition: original runtime guidance, retained MIT adaptation, and historical training-material influence
 
-This skill is an original synthesis authored for this repository. The bulk of the method, workflow, and reference
-material is new writing. Two upstream sources are recorded for courtesy and completeness: one MIT-licensed skill that
-served as a starting base for the camera/V4L2 workflow (mandatory attribution), and one CC BY-SA learning source that
-informed some content (courtesy attribution). No prose was carried over verbatim; content traceable to the CC BY-SA
-source was rewritten in original words, and source-attributing framing was removed.
+The records below distinguish adapted material, independently expressed source influence, and interface verification.
+Changing words or removing source framing does not eliminate attribution or determine whether expression is independent.
 
-## Adapted from (MIT — mandatory attribution)
+## Retained MIT Adaptation
 
-- Original author: heyu-233
-- Upstream project: <https://github.com/heyu-233/linux-embedded-dev>
-- Source path: camera / V4L2 bring-up material; on re-review also the capture performance material and one
-  host-networking trap (see below)
-- Upstream license: MIT, Copyright (c) 2026 heyu-233 — read from the repository's `LICENSE` file on 2026-08-25
-- Source commit: `53e7526e3ba3ffe4018845a58af328f897ffd60a`, resolved 2026-08-25. **This is the commit the re-review
-  read, NOT the one the first adoption used** — that one was never recorded and cannot be recovered. Upstream last
-  pushed 2026-05-04, so the two are likely the same tree; likely is not verified.
+- Author: heyu-233
+- Project: [linux-embedded-dev](https://github.com/heyu-233/linux-embedded-dev)
+- Reviewed revision: `53e7526e3ba3ffe4018845a58af328f897ffd60a`
+- License: MIT, Copyright (c) 2026 heyu-233
+- License artifact: [LICENSE.upstream](LICENSE.upstream), reproduced verbatim from that revision
 
-The camera/V4L2 bring-up workflow (`references/camera-v4l2.md`) used this project as a starting base. It has since been
-restructured and materially rewritten and expanded — investigation-order layering, `media-ctl` graph wiring,
-`v4l2-compliance` validation, `yavta` low-level capture, the failure-bucket table, and the buffer lifecycle are original
-to this skill. MIT permits this reuse and modification; the notice reproduced at the end of this file preserves the
-required attribution.
+The 2026-08-25 re-review recorded this revision; the first adoption revision was not recorded and remains unknown.
+Do not assume they were the same tree. The license and relevant paths were checked again on 2026-09-07.
+No separate upstream NOTICE file was present in that revision's tree inventory.
 
-## Informed by (CC BY-SA — learning source, courtesy)
+| Upstream path                                                                | Retained influence and treatment                                                                                                                                                         |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `references/camera-v4l2-workflow.md`                                         | Starting base for camera investigation. The local `camera-v4l2.md` changes its organization and adds media graph, capture, and diagnostic detail. Retained as an MIT adaptation.         |
+| `references/perf-tuning-checklist.md` and `references/profiling-playbook.md` | Minimal capture versus application comparison, tuning order, readiness tradeoffs, and profile interpretation. Retained with corrected limits on what those observations prove.           |
+| `references/full-link-debug-pipeline.md`                                     | The case of two host NICs on the board's subnet and successful ping with stalled SSH. Retained as a hypothesis to verify; source binding is not presented as a universal routing repair. |
 
-- Source: Bootlin embedded Linux and debugging training materials
-- Upstream project: <https://bootlin.com/training/> (materials published under Creative Commons BY-SA)
-- Upstream license: CC BY-SA
+The 2026-09-07 repair removes capture against sub-device nodes, qualifies compliance and performance evidence, and
+adds hardware ownership and access requirements. The upstream MIT notice previously embedded in this file is preserved
+in `LICENSE.upstream`; no notice text was discarded.
 
-Bootlin's freely published training materials informed the general shape of some cross-compilation and kernel-debugging
-content. Any text that tracked a CC BY-SA source in fact selection or sequencing was rewritten in original words for
-this skill, and framing that attributed statements to the source was removed. This entry is a courtesy acknowledgement
-of the learning source; the skill itself ships under MIT as original work.
+Earlier decisions retained for continuity: the upstream teaching modes, fixed tutoring response template, learning
+roadmap, Windows writing advice, generic bus checklist, and `debugctl` CLI were not adopted.
+The previous local deploy-verification script was removed because it could report success after a failed comparison.
+Its removal does not justify adopting `debugctl` or another board-management framework.
 
-## Re-review, 2026-08-25
+## Historical Bootlin Influence and Independent Replacement
 
-The upstream was read again in full to check what the first adoption left behind. Two things had been, both taken:
+The earlier package acknowledged Bootlin embedded-Linux and debugging training as influences on cross-compilation and
+kernel-debugging coverage. It incorrectly treated that attribution as courtesy after rewording and removal of source
+framing. This record preserves the influence and removes that rationale.
 
-- **Capture performance triage**, now a section of `references/camera-v4l2.md`. The bisection between a minimal
-  `v4l2-ctl`/`yavta` capture and the application, the seven-step tuning order, the honest verdict on edge-triggered
-  `epoll`, and the profile-interpretation list come from upstream's `perf-tuning-checklist.md` and
-  `profiling-playbook.md`. This file previously stopped at the buffer lifecycle and blocking-vs-poll, so it named the
-  tools and none of the interpretation. Restated in this skill's own words and table form; no prose was carried over.
-- **The multi-NIC SSH trap** in `references/cross-compilation.md`: two host interfaces in the board's subnet, where
-  `ping` succeeds while every TCP connection stalls, fixed with `BindAddress` in the SSH config. From upstream's
-  `full-link-debug-pipeline.md`. Recorded because a successful ping sends the investigation one layer too high.
+Exact supplied sources were identified on 2026-09-07. Their original adoption revisions remain unknown.
+Publisher/author: Bootlin, copyright 2004–2026. Both slide decks below declare CC BY-SA 3.0 and a 2026-06-09 update.
 
-Declined, and recorded so the same ground is not re-reviewed a third time:
+| Source                                                                                             | Relevant correspondence                                                                                                                                                                                                                                                |
+| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Embedded Linux slides](https://bootlin.com/doc/training/embedded-linux/embedded-linux-slides.pdf) | Local `full-embedded-linux-slides.pdf`, pages 62/64 and 396, 400–402: libc/static-linking choices, target dependency inspection, cross-host selection, prefix and staging. These subjects remain, expressed through the target ABI and build-interface diagnosis task. |
+| [Debugging slides](https://bootlin.com/doc/training/debugging/debugging-slides.pdf)                | Local `full-debugging-slides.pdf`, pages 198, 200–204, 207–208: perf selection/probes and flame graphs. Page 208 contains the former `perf record -g -- sleep 30` example, which was corrected to explicit subject selection.                                          |
 
-- **The teaching-mode / efficiency-mode duality**, its fixed per-turn response template (Mode, Current goal, Principle
-  in brief, Do this now, Send back, Check your understanding), the question-back rules and the stage-summary rule. That
-  is a tutoring product; this skill is a debugging partner whose Iron Law is classify-the-boundary-then-prove-it, and a
-  comprehension-check turn would compete with the Output contract rather than extend it.
-- **`debugctl`**, upstream's SSH/SCP evidence-collection CLI with a target YAML schema. Building a board-connection tool
-  is a project, not a skill adoption, and the evidence-bundle discipline it encodes is already this skill's *Evidence
-  First* and the deploy-verify script in `references/deploy-and-iterate.md`.
-- **`common-bus-debugging.md`** — five generic bullets per bus, against the per-bus sections of
-  `references/device-tree-driver-bringup.md`.
-- The learning roadmap, repo reading list, project-note and board-case-template files, which are curriculum rather than
-  method, and a Windows-specific note about writing non-ASCII project notes through PowerShell here-strings.
+SHA-256 of the supplied embedded-Linux slides:
+`dc5547daee08b315c6fb004a42d40d9611d11e7d3556fb339c80470e953480a3`.
+SHA-256 of the supplied debugging slides:
+`5caad435377baa735a9ff653e60c0c2dc793c8915e7e6541285eb92284906977`.
+Online URLs may now serve different revisions; the hashes identify the inspected local documents.
 
-Upstream ships **no confirmation gate of any kind** — nothing on flash writes, `devmem` pokes or boot-config edits.
-Nothing to take, and it is the reason the first adoption stayed narrow.
+The repair independently replaces the source-corresponding cross-compilation and debugging exposition with procedures
+organized around artifact identity, actual command semantics, failure reporting, and runtime trust boundaries.
+It does not adapt the slides' prose, teaching sequence, lab templates, or code into the replacement.
+Training influence on retained subject selection remains acknowledged. Shared command syntax is checked as an interface
+fact, not used as proof of either copying or independence. The unknown original authoring chain remains an evidence limit.
 
-## Upstream license
+The local QEMU lab guide, dated 2026-06-08 and licensed CC BY-SA 3.0, was inspected at its identifying/setup pages.
+It describes Cortex-A9 Versatile Express, not arbitrary real-board DTBs on `virt`. No lab content was adopted.
+Its SHA-256 is `bbf32849ba984d523fc0dc4f4e569c6588dd19942ef50d48e69944e54f101cdf`.
 
-The `heyu-233/linux-embedded-dev` starting base is used under the MIT license, reproduced here in full as that license
-requires:
+## Removed Binding Example
 
-```text
-MIT License
+The previous calibration example claimed an upstream i.MX thermal-binding origin but omitted a referenced cell.
+The [Linux v6.12 binding](https://github.com/torvalds/linux/blob/v6.12/Documentation/devicetree/bindings/thermal/imx-thermal.yaml)
+provides the relevant cell-name contract. The copied-style partial DTS example is removed; the reference now links
+to the binding and asks the agent to resolve the actual SoC providers. No binding example code is retained.
+The calibration-cell concept remains acknowledged as source influence; no Linux license is changed.
 
-Copyright (c) 2026 heyu-233
+## First-party Interface Verification
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+The repair checks public interfaces and behavior against the sources linked at the relevant procedures:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+- Linux v6.12: DT availability, devtmpfs, clock/reset behavior, regmap read side effects, V4L2 sub-device interface,
+  module checks, perf, overlays, and dm-verity. Live kernel documentation links require matching the target release.
+- QEMU v10.1.0: `virt` device model and generated DTB, explicit storage/network attachment, snapshot and debugger options.
+- U-Boot v2025.10: post-verification FDT/bootargs modification; this skill does not implement FIT security policy.
+- dtc v1.7.2: file-buffer growth and DT tooling behavior; native verification also exercises Ubuntu's dtc 1.7.0.
+- RAUC v1.14: U-Boot attempt and confirmation semantics. SWUpdate's documentation supplies its own handler/verification
+  contract; no framework-specific boot script is copied.
+- GDB's server documentation: SSH stdio transport and TCP hostname/binding limitations.
+- Yocto 4.3 documentation and OE's `nanbield` toolchain-environment implementation: SDK variables and flag preservation.
+- Autoconf, CMake, Meson, cryptsetup, Valgrind, musl, libgpiod, i2c-tools, and NXP documentation: the specific interfaces,
+  license caveats, and hardware-access constraints cited in the references.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+No source implementation was vendored or translated into the skill during this repair.
+The explicit DT conversion/comparison shell example is original code written to satisfy the local failure-reporting
+requirement; `dtx_diff` was inspected to determine why empty output was not a sufficient verification condition.
 
-Until 2026-08-25 this section asserted that the file "provides that attribution" while reproducing neither the copyright
-line nor the permission notice. Recorded rather than silently corrected, because the defect was a claim of compliance,
-not an omission.
-
-Bootlin training materials are published under CC BY-SA. They are acknowledged here as a learning source; no CC
-BY-SA-licensed text is redistributed in this skill.
+No new guidance was taken from the local LKMC, Linux Lab, or Mastering Embedded Linux Programming collections in this
+repair. Their separate Buildroot survey is not an attribution source for this package's new content.

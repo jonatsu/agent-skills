@@ -1,323 +1,165 @@
 # Embedded Linux Debugging
 
-## Contents
+Choose the tool from the question: syscall failure, code location, CPU cost, timing, resource leak, or crash state.
+Match symbols and source to the running/captured build. Bound duration and storage, record relevant debug settings,
+and account for timing changes, watchdogs, and pauses before acting on a live target.
 
-- [strace — System Call Tracer](#strace--system-call-tracer)
-- [Remote GDB Debugging (gdbserver)](#remote-gdb-debugging-gdbserver)
-- [perf — Performance Profiling](#perf--performance-profiling)
-- [ftrace — In-Kernel Function Tracer](#ftrace--in-kernel-function-tracer)
-- [dynamic_debug — Enable pr_debug() at Runtime](#dynamic_debug--enable-pr_debug-at-runtime)
-- [devmem / devmem2 — Peek and Poke Physical Registers](#devmem--devmem2--peek-and-poke-physical-registers)
-- [kgdb / kdb — In-Kernel Debugger](#kgdb--kdb--in-kernel-debugger)
-- [crash — Kernel Analysis Tool](#crash--kernel-analysis-tool)
-- [kmemleak — Kernel Memory Leak Detector](#kmemleak--kernel-memory-leak-detector)
-- [Kernel Oops / Panic Analysis](#kernel-oops--panic-analysis)
-- [valgrind — Memory Error Detector](#valgrind--memory-error-detector)
-- [Quick Diagnostics Reference](#quick-diagnostics-reference)
+## Syscalls and Userspace Debuggers
 
-## strace — System Call Tracer
-
-`strace` intercepts and records the system calls a process makes.
+For an application you are authorized to run or attach to, choose a narrow strace scope and an output file:
 
 ```bash
-strace ./myapp                        # trace a new process
-strace -p <pid>                       # attach to a running process
-strace -f ./myapp                     # follow forked children
-strace -c ./myapp                     # per-syscall stats (count, time)
-strace -e open,read,write ./myapp     # only these syscalls
-strace -e trace=network ./myapp       # all network syscalls
-strace -e trace=signal ./myapp        # signal-related only
-strace -o /tmp/strace.log ./myapp     # write to file (stderr busy)
-strace -f -c ./myapp                  # follow forks + stats
+strace -f -e trace=openat,read,write -o trace.log ./myapp
+strace -f -c ./myapp
 ```
 
-| Symptom                | strace use                                              |
-| ---------------------- | ------------------------------------------------------- |
-| Process hangs silently | `strace -p <pid>` — see the blocking syscall            |
-| File-not-found errors  | `strace -e openat ./app` — see which paths are tried    |
-| Network failures       | `strace -e trace=network ./app` — see connect/bind/send |
-| Permission denied      | `strace -e openat,access ./app` — see EACCES calls      |
+For a hang, attach to the known process under a duration limit supported by the target's tools.
+Keep the captured return codes and time window; provide a useful excerpt without discarding the original evidence.
+Attaching changes timing, and traces may include application data. Missing files, permission errors, and blocking
+calls can explain userspace behavior without a kernel or DTS edit.
 
-## Remote GDB Debugging (gdbserver)
+Use cross-GDB with the exact executable and matching target libraries/debug information.
+Set its sysroot to the corresponding development/debug tree, or use supported remote file retrieval when appropriate.
+A sysroot supplies file lookup; it cannot create debug symbols absent from those files.
 
-Embedded targets rarely run a full GDB. Use `gdbserver` on the target and cross-GDB on the host.
+Prefer gdbserver over an authenticated SSH stdio transport when the target supports it:
 
-### Target side
-
-```bash
-gdbserver :2345 ./myapp [args]        # start a program under gdbserver
-gdbserver --attach :2345 <pid>        # attach to a running process
-gdbserver --multi :2345               # multi-process (re-run without restart)
-```
-
-### Host side
-
-```bash
-aarch64-linux-gnu-gdb ./myapp         # cross GDB (or the Yocto SDK's GDB)
-
-# In the GDB shell:
-(gdb) set sysroot /opt/poky/4.3/sysroots/cortexa53-poky-linux
-(gdb) set solib-search-path /opt/poky/4.3/sysroots/cortexa53-poky-linux/usr/lib
-(gdb) target remote 192.168.1.100:2345
+```text
+(gdb) file /path/to/matching/unstripped/myapp
+(gdb) set sysroot /path/to/matching/target-sysroot
+(gdb) target remote | ssh -T board gdbserver --once stdio /usr/local/bin/myapp
 (gdb) continue
 ```
 
-Multi-mode (re-run programs from the host without restarting gdbserver):
+Use a trusted SSH alias and appropriate target user. Account for this transport's application-stdin limitations.
+For attachment or multi-process sessions, use the installed GDB/gdbserver version's supported mode and explicitly
+end the session. Inspect whether the process should resume or terminate; do not assume disconnect performs recovery.
+
+[gdbserver has no built-in authentication](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Server.html).
+If TCP is necessary, establish actual firewall/network isolation before opening the listener and verify its addresses.
+The hostname part of gdbserver's `host:port` argument is ignored in the documented interface; writing `localhost`
+there is not a loopback security control. Close the listener after use.
+For QEMU's explicit loopback stub, see [deploy-and-iterate.md](deploy-and-iterate.md).
+
+## CPU Profiling: Select the Subject
+
+Use the target's available perf events and supported call-chain method.
+Capture a representative operation, not an idle timer process by accident:
 
 ```bash
-(gdb) target extended-remote 192.168.1.100:2345
-(gdb) set remote exec-file /usr/bin/myapp
-(gdb) run
-```
-
-`set sysroot` is critical — without it GDB cannot find shared-library debug symbols and backtraces show `??` frames.
-
-## perf — Performance Profiling
-
-```bash
-# Record CPU cycles for a duration (-g = call graph, needed for flame graphs)
-perf record -g -- sleep 30
+# Profile the command itself.
+perf record -g -- ./myapp
 perf report
-perf record -g ./myapp
+
+# System-wide capture for ten seconds, including unrelated work on this target.
+perf record -a -g -- sleep 10
+
+# Counters for one command.
+perf stat -- ./myapp
 ```
 
-### Flame Graph Generation
+For an already running process, select its PID explicitly with the installed perf's `-p` option and a bounded duration.
+Check permissions, event availability, unwind support, and lost samples before interpreting missing data.
+Frame pointers, DWARF unwinding, architecture, and build flags affect stack quality.
+See the matching [perf record manual](https://github.com/torvalds/linux/blob/v6.12/tools/perf/Documentation/perf-record.txt).
 
-Requires Brendan Gregg's FlameGraph scripts.
+For flame graphs, obtain and verify the selected FlameGraph tools, then convert the recorded data:
 
 ```bash
-# On target: record with call graph, then on host
-perf script | stackcollapse-perf.pl | flamegraph.pl > flamegraph.svg
-
-# Or copy perf.data to host and generate there
-scp root@target:/tmp/perf.data .
-perf script -i perf.data | stackcollapse-perf.pl | flamegraph.pl > flamegraph.svg
+perf script -i perf.data > stacks.txt
+stackcollapse-perf.pl stacks.txt > folded.txt
+flamegraph.pl folded.txt > flamegraph.svg
 ```
 
-### perf stat — Event Counters
+Run these as separate checked operations; an empty downstream graphic is not proof that collection succeeded.
+Keep matching symbols available on the analysis host. Interpret CPU samples as on-CPU cost, not automatically
+end-to-end latency or time blocked on I/O. Record workload, duration, event, sampling configuration, and build identity.
+
+## ftrace and trace-cmd
+
+Check the running kernel's tracing configuration and available tracers/events/functions first.
+tracefs is commonly `/sys/kernel/tracing`, with older debugfs paths also possible.
+Do not mount, reset, or overwrite a shared tracing session casually.
+
+For a supported target with trace-cmd installed, a bounded command can define the capture lifetime:
 
 ```bash
-perf stat ./myapp
-perf stat -e cache-misses,cache-references,instructions ./myapp
+trace-cmd record -p function_graph -g my_driver_probe ./reproduce-probe
+trace-cmd report
 ```
 
-## ftrace — In-Kernel Function Tracer
+Confirm the named function exists and the reproduction actually invokes it. A built-in probe may have occurred only
+during boot; starting tracing later will not recover that event. Select suitable boot tracing or an authorized reprobe.
+Use trace instances where supported when another session is active, and preserve the configuration you change.
+The [ftrace documentation](https://docs.kernel.org/trace/ftrace.html) governs filter, buffer, and clock semantics.
 
-`ftrace` is the kernel's built-in tracer. It needs:
+## dynamic_debug
 
-```
-CONFIG_FTRACE=y
-CONFIG_DYNAMIC_FTRACE=y        # zero-overhead when disabled
-CONFIG_FUNCTION_TRACER=y
-CONFIG_FUNCTION_GRAPH_TRACER=y
-CONFIG_SCHED_TRACER=y
-```
-
-Accessed via `tracefs`, usually at `/sys/kernel/tracing` (or `/sys/kernel/debug/tracing` on older kernels).
+When supported, inspect the dynamic-debug control table and select a narrow module/file/function query.
+Its location depends on the kernel's debugfs/proc configuration. Save the affected sites' prior flags first.
 
 ```bash
-mount -t tracefs nodev /sys/kernel/tracing   # if not already mounted
-cd /sys/kernel/tracing
-
-cat available_tracers                         # nop, function, function_graph, ...
-echo function_graph > current_tracer          # call depth + duration
-echo 1 > tracing_on
-./myapp
-echo 0 > tracing_on
-cat trace | head -100
-```
-
-### Trace a specific function and its callees
-
-```bash
-echo do_sys_open > set_graph_function
-echo function_graph > current_tracer
-echo 1 > tracing_on
-./myapp
-echo 0 > tracing_on
-cat trace
-```
-
-### trace-cmd (higher-level ftrace frontend)
-
-```bash
-trace-cmd list -t                             # tracers
-trace-cmd list -e                             # events
-trace-cmd list -f                             # functions
-
-trace-cmd record -p function_graph -g my_driver_probe ./myapp
-trace-cmd report | head -200
-
-trace-cmd record -l 'spi_*' -p function_graph # filter by name pattern
-trace-cmd record -e irq:irq_handler_exit -e irq:irq_handler_entry
-
-# Remote collection (avoid filling target storage)
-trace-cmd listen -p 6578                       # on host
-trace-cmd record -N <host-ip>:6578 -p function_graph   # on target
-
-trace-cmd reset                                # clear buffers
-```
-
-## dynamic_debug — Enable pr_debug() at Runtime
-
-`dynamic_debug` turns individual `pr_debug()`/`dev_dbg()` sites on and off without a rebuild — the fastest way to get a
-driver's own debug output during a probe failure. Needs `CONFIG_DYNAMIC_DEBUG=y`; control file is
-`/sys/kernel/debug/dynamic_debug/control` (debugfs must be mounted).
-
-```bash
-# See every controllable debug site and its current flags
-cat /sys/kernel/debug/dynamic_debug/control | head
-
-# Enable all debug prints in one module (+p = print)
+# Target example: changes logging for this module.
 echo 'module ov5640 +p' > /sys/kernel/debug/dynamic_debug/control
-
-# Enable one file, one function, or one line
-echo 'file drivers/media/i2c/ov5640.c +p' > /sys/kernel/debug/dynamic_debug/control
-echo 'func ov5640_probe +p' > /sys/kernel/debug/dynamic_debug/control
-echo 'file ov5640.c line 1200-1260 +p' > /sys/kernel/debug/dynamic_debug/control
-
-# Add source location + function name to each line (+pfl)
-echo 'module ov5640 +pfl' > /sys/kernel/debug/dynamic_debug/control
-
-# Turn it back off (-p)
-echo 'module ov5640 -p' > /sys/kernel/debug/dynamic_debug/control
 ```
 
-Enable at boot for a probe that fails before userspace by adding `dyndbg="module ov5640 +p"` (or `<module>.dyndbg=+p`)
-to the kernel command line. Output lands in `dmesg`. This is read-safe; it only changes logging verbosity.
+Restore the affected settings after capture; blanket `-p` is not an exact restore when some sites were previously enabled.
+For early failures, use the version-supported boot query or module dyndbg parameter in the authorized boot configuration.
+Extra logging changes timing and storage demand. It is less invasive than many code changes, but is not effect-free.
+See [dynamic debug](https://docs.kernel.org/admin-guide/dynamic-debug-howto.html).
 
-## devmem / devmem2 — Peek and Poke Physical Registers
+## MMIO, kgdb, and kdb
 
-`devmem2` (and BusyBox `devmem`) read and write physical addresses through `/dev/mem` — useful for confirming a pinmux,
-clock-gate, or peripheral register value the kernel is not exposing in sysfs. **Reads are a safe diagnostic; writes are
-a hardware mutation and MUST pass the skill's confirmation gate — a wrong write can hang or damage the SoC.**
+Prefer driver-owned clock, pinctrl, bus, and subsystem diagnostics over `/dev/mem` access.
+For a necessary raw read, verify the exact register, access width, read semantics, power/clock domain, and ownership
+against the device manual before selecting `devmem`/`devmem2` syntax.
+A read can clear an interrupt or fault. A saved register value is not a general undo for writes.
+Follow the hardware-access contract in `SKILL.md`; no board-independent register address is safe to prescribe here.
+
+For kernel debugging, check KGDB/KDB support, matching `vmlinux`, transport support, and recovery access.
+A serial setup can use `kgdboc=ttyS0,115200 kgdbwait` when that UART and built-in configuration are appropriate.
+`kgdbwait` requires kgdboc to be initialized at the relevant point; modules cannot provide the early built-in path.
+Sharing the console requires coordinating terminal ownership and the debugger connection.
+
+Writing `g` to `/proc/sysrq-trigger` can stop the kernel for debugging. Confirm that a halt and its watchdog consequences
+fit the authorized operation before doing so. Network KGDB transport is not universally available in upstream kernels.
+Follow the selected [kernel debugger documentation](https://docs.kernel.org/process/debugging/kgdb.html).
+
+## Kernel Oops and Crash Dumps
+
+Preserve the panic/oops, kernel build identity, relevant module identities, and available dump before reboot/cleanup.
+Decode against the crashed kernel, not the analysis host's `uname -r` or a different capture kernel:
 
 ```bash
-# READ a 32-bit register (safe)
-devmem2 0x020e0000 w
-devmem 0x020e0000 32          # BusyBox form
-
-# WRITE a 32-bit value (MUTATION — confirm first, record the old value to restore)
-devmem2 0x020e0000 w 0x00000005
-# reverse: write the value you captured with the read back to the same address
+crash /path/to/crashed-kernel/vmlinux /path/to/vmcore
 ```
 
-Common use: verify the bootloader/kernel programmed a mux or clock register as the DTS intended, when a device is silent
-but probe "succeeded". Prefer the clock (`clk_summary`) and pinctrl debugfs views first; drop to `devmem` only when you
-need the raw register and confirm before writing.
+Check that architecture, configuration, symbols, module data, and crash-tool support match the dump.
+Inside crash, `log`, `bt`, `bt -a`, `ps`, and `mod` answer different questions about the captured state.
+For textual stacks, use the matching kernel's `scripts/decode_stacktrace.sh` and its required toolchain/source context.
+Raw-address `addr2line` also requires accounting for relocation/KASLR; an unrelated symbol file can produce plausible noise.
 
-## kgdb / kdb — In-Kernel Debugger
+`oops=panic` can turn an oops into a panic, but it does not configure kdump by itself.
+Verify crash-kernel reservation, capture setup, dump destination, and recovery separately before expecting a vmcore.
 
-`kgdb` lets a host GDB debug the kernel itself over a serial line (or KGDB-over-NET); `kdb` is the built-in low-level
-shell front end. Needs `CONFIG_KGDB=y`, `CONFIG_KGDB_SERIAL_CONSOLE=y`, and ideally `CONFIG_DEBUG_INFO=y` for symbols.
+## Memory Leaks and Concurrency
 
-Enable a serial port as the KGDB channel, at boot or at runtime:
+With `CONFIG_DEBUG_KMEMLEAK` and the required debugfs support, inspect the existing scan state and reports.
+The supported control interface includes:
 
-```bash
-# Boot: share the console UART with kgdb, and break early
-#   kernel cmdline:  kgdboc=ttyS0,115200 kgdbwait
-
-# Runtime: attach kgdb to a UART after boot
-echo ttyS0 > /sys/module/kgdboc/parameters/kgdboc
-
-# Drop into the debugger on demand (sysrq-g), then connect host GDB
-echo g > /proc/sysrq-trigger
+```text
+scan          request a scan
+scan=off      stop the background scanner
+scan=on       start it
+scan=SECONDS  set its period (default 600 seconds in Linux v6.12)
 ```
 
-On the host, connect the cross-GDB to the same serial line:
+Write only the selected command to `/sys/kernel/debug/kmemleak`, record the changed scan settings, and restore them.
+Do not clear another investigation's reports. Interpret reported objects as candidates with possible false positives
+and omissions; see [kmemleak](https://docs.kernel.org/dev-tools/kmemleak.html).
 
-```bash
-aarch64-linux-gnu-gdb vmlinux
-(gdb) set serial baud 115200
-(gdb) target remote /dev/ttyUSB0
-(gdb) bt
-(gdb) continue
-```
-
-`kgdbwait` halts the kernel very early so you can set breakpoints before the fault; pair it with `earlycon` so you still
-see boot output. Debugging the kernel over the same UART as the console requires the shared `kgdboc` console setup
-above.
-
-## crash — Kernel Analysis Tool
-
-`crash` analyses live kernels and kernel core dumps (vmcore).
-
-```bash
-crash /usr/lib/debug/lib/modules/$(uname -r)/vmlinux /proc/vmcore
-
-# Inside the crash shell:
-crash> bt            # backtrace of current context
-crash> bt -a         # backtrace all tasks
-crash> log           # kernel message buffer (dmesg equivalent)
-crash> ps            # list all processes
-crash> files <pid>   # open files for a PID
-crash> kmem -i       # kernel memory info
-crash> mod           # loaded modules
-```
-
-`crash` is the primary tool when a panic produces a vmcore via kdump. It can also attach to a running kernel for live
-inspection.
-
-## kmemleak — Kernel Memory Leak Detector
-
-Requires `CONFIG_DEBUG_KMEMLEAK=y`.
-
-```bash
-mount -t debugfs none /sys/kernel/debug        # if not mounted
-echo scan > /sys/kernel/debug/kmemleak         # manual scan (auto runs every 10 min)
-cat /sys/kernel/debug/kmemleak                 # read leak report
-echo clear > /sys/kernel/debug/kmemleak        # clear reported leaks
-```
-
-Each entry shows the allocation call stack. The auto-scan interval is set by `CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN`; disable
-it and scan manually for tighter, targeted testing.
-
-## Kernel Oops / Panic Analysis
-
-An oops/panic prints the faulting address and a symbol+offset call stack. Decode it:
-
-```bash
-addr2line -s -f -e vmlinux <hex-address>       # a single address
-./scripts/decode_stacktrace.sh vmlinux [src/] < oops.txt > decoded.txt   # full report
-aarch64-linux-gnu-objdump -d vmlinux | grep -A 20 "<symbol>"             # disassemble
-```
-
-`ARCH` and `CROSS_COMPILE` must be set correctly when running kernel scripts on the host.
-
-| Kernel param / config    | Effect                                                 |
-| ------------------------ | ------------------------------------------------------ |
-| `oops=panic`             | Treat every oops as a panic (enables kdump collection) |
-| `CONFIG_PANIC_ON_OOPS=y` | Same, compile-time                                     |
-| `CONFIG_PANIC_TIMEOUT=5` | Reboot 5 s after panic                                 |
-| `panic=5`                | Cmdline: reboot after N seconds                        |
-
-## valgrind — Memory Error Detector
-
-Runs on the target when glibc and enough RAM are available.
-
-```bash
-valgrind --tool=memcheck --leak-check=full ./myapp   # memory errors, leaks
-valgrind --tool=helgrind ./myapp                     # threading errors
-
-# GDB bridge:
-valgrind --vgdb=yes --vgdb-error=0 ./myapp           # terminal 1
-aarch64-linux-gnu-gdb ./myapp                        # terminal 2 (host)
-(gdb) target remote | vgdb
-```
-
-Not suitable for bare-metal or extremely constrained targets — use it only with a full glibc userspace and adequate RAM.
-
-## Quick Diagnostics Reference
-
-| Problem                           | Tool                          | Key option                 |
-| --------------------------------- | ----------------------------- | -------------------------- |
-| Process hangs / blocked           | `strace -p`                   | see blocking syscall       |
-| Startup failure (file not found)  | `strace -e openat`            | trace open calls           |
-| Silent driver probe, no logs      | `dynamic_debug`               | `echo 'module <m> +p'`     |
-| Confirm a raw register value      | `devmem2` (read)              | peek physical address      |
-| Slow function / CPU hotspot       | `perf record -g` + flamegraph | call graph profile         |
-| Kernel driver timing / call order | `ftrace function_graph`       | function graph tracer      |
-| Step through kernel code          | `kgdb` + cross-gdb            | `kgdboc`, `kgdbwait`       |
-| Remote userspace stepping         | `gdbserver` + cross-gdb       | `target remote`            |
-| Kernel panic post-mortem          | `crash`                       | `bt -a`, `log`             |
-| Hardware event counting           | `perf stat`                   | cache-misses, instructions |
+Where Valgrind supports the target architecture/libc and memory budget, Memcheck and Helgrind can investigate userspace
+memory errors and races. Preserve the reproduction and account for substantial timing changes.
+For vgdb, run the bridge where it can reach that Valgrind instance, or configure an explicit supported remote transport.
+Host-local `target remote | vgdb` does not automatically connect to Valgrind on a separate board.
+Use the [Valgrind manual](https://valgrind.org/docs/manual/manual-core-adv.html) for the selected version's setup.

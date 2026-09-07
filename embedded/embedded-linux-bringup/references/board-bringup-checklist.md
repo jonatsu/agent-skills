@@ -1,230 +1,96 @@
-# Board Bring-Up Checklist
+# Board Bring-up and Boot Failures
 
-## Contents
+Use serial output, boot selection, and artifact identities to locate the handoff that failed.
+The chain may include ROM, SPL/TPL, TF-A, firmware, U-Boot, Linux, initramfs, and the final userspace.
+Do not require a particular banner or stage on platforms that omit it or suppress its console.
 
-- [Boot Chain Overview](#boot-chain-overview)
-- [SoC-Specific Boot File Naming](#soc-specific-boot-file-naming)
-- [Bootloader Stage](#bootloader-stage)
-- [Kernel Bring-Up](#kernel-bring-up)
-- [Rootfs and Userspace](#rootfs-and-userspace)
-- [First-Boot Checklist](#first-boot-checklist)
-- [NFS Rootfs for Development](#nfs-rootfs-for-development)
+## Before Changing the Boot Path
 
-## Boot Chain Overview
+Record board revision, boot medium, current image set, console wiring/settings, bootloader configuration, and recovery
+access. Get boot-file names, partition layout, and raw offsets from the matching board/SoC boot documentation.
+Offsets from another SoC or boot mode are not safe templates.
+Route U-Boot commands, image formats, environment edits, and flashing to **u-boot-development**.
 
-```
-Power-on
-  └─ Boot ROM (SoC-internal, reads boot source selection pins)
-       └─ SPL / TPL (Secondary Program Loader — minimal DDR init)
-            └─ U-Boot proper (full bootloader, loads kernel + DTB)
-                 └─ Linux kernel (decompresses, parses DTB)
-                      └─ Device driver probe sequence
-                           └─ rootfs mount → init → services → application
-```
+If output ends at `Starting kernel`, investigate both sides of the handoff: loaded image/address, CPU entry state,
+DTB, firmware requirements, and early console. That message does not prove the kernel received a valid handoff.
+Kernel output can also be absent while the system runs successfully on a different console.
 
-Each layer can fail silently if the next stage produces no console output. Always confirm which stage you are at before
-assuming the next one is reached.
+## Kernel and Root Mount
 
-## SoC-Specific Boot File Naming
+Inspect the actual command line and the selected kernel's configuration.
+`console=` needs the correct device and console driver. `earlycon` needs a supported UART description, such as the
+appropriate DT stdout path or a verified explicit parameter. Never copy an MMIO UART address from another board.
+`loglevel=8` permits all ordinary kernel message levels; `ignore_loglevel` is another diagnostic choice with output cost.
+See the matching [kernel parameter reference](https://docs.kernel.org/admin-guide/kernel-parameters.html).
 
-Different SoCs require their boot files in specific locations and formats. These are worked examples, not defaults —
-always confirm against your board's reference manual.
+For `VFS: Unable to mount root fs`, determine whether the root device was found before guessing the filesystem fault:
 
-| SoC / Board                      | First-stage file              | Location                          |
-| -------------------------------- | ----------------------------- | --------------------------------- |
-| BeagleBone / AM33xx              | `MLO` (SPL)                   | FAT partition                     |
-| BeagleBone / AM33xx              | `u-boot.img`                  | FAT partition                     |
-| i.MX6 / i.MX7                    | `u-boot.imx`                  | raw at **1 KB offset** on SD card |
-| STM32MP1 (TF-A/FIP, recommended) | `tf-a.stm32` (TF-A BL2)       | GPT partition `fsbl1` and `fsbl2` |
-| STM32MP1 (TF-A/FIP, recommended) | `fip.bin` (U-Boot inside FIP) | GPT partition `fip`               |
-| STM32MP1 (SPL chain, basic)      | `u-boot-spl.stm32` (SPL)      | GPT partition `fsbl1` and `fsbl2` |
-| STM32MP1 (SPL chain, basic)      | `u-boot.img`                  | GPT partition `ssbl`              |
-| AM62x / BeaglePlay               | `tiboot3.bin`                 | FAT partition                     |
-| AM62x / BeaglePlay               | `tispl.bin`                   | FAT partition                     |
-| AM62x / BeaglePlay               | `u-boot.img`                  | FAT partition                     |
-| Allwinner                        | `u-boot-sunxi-with-spl.bin`   | raw at **8 KB offset** on SD card |
+| Evidence                                 | Next check                                                                              |
+| ---------------------------------------- | --------------------------------------------------------------------------------------- |
+| Root device absent                       | Bootargs, storage driver, firmware, pinctrl, supplies, enumeration and discovery timing |
+| Device exists but partition differs      | Actual partition table and selected medium; use stable identifiers when supported       |
+| Device exists but mount fails            | Filesystem type, driver availability, corruption and image/partition layout             |
+| Verity mapping absent or rejects reads   | [Rootfs integrity](rootfs-integrity.md): backing devices, parameters and trust          |
+| Initramfs starts but final root does not | Its scripts, required modules, root selection and mount/switch_root errors              |
 
-The Boot ROM searches for the first-stage image in a fixed location — the wrong filename or offset causes a silent hang
-at power-on.
+`rootwait` waits for device discovery; it does not repair a missing driver, wrong device, or corrupt filesystem.
+Without an initramfs that loads modules, storage and filesystem support needed for root must be built into the kernel.
+Use a bounded serial window around discovery and mount, not only the final panic line.
 
-## Bootloader Stage
+An example disk-root command line is `console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait`.
+Every device name and option must match the target. `init=/bin/sh` can help inspect the final root; an initramfs
+uses its own init selection, commonly `rdinit=`. Account for security policy and the lack of normal service startup.
 
-Confirm the board reaches and completes the bootloader before blaming the kernel: the serial console MUST show
-bootloader banner output, a correct DDR size, and a kernel + DTB load from the expected medium.
+## From Init to Device Nodes
 
-For U-Boot console commands, environment, `extlinux.conf`/distro-boot, storage inspection, FIT images, and bootloader
-porting, use **u-boot-development**. The one signal this file relies on: if the console shows the bootloader but goes
-silent right after "Starting kernel …", the failure is a kernel/DTB or console-mismatch problem, covered below — not a
-bootloader problem.
+Confirm the root mounted, init executed, and required mounts/services started.
+A device can register correctly in sysfs while its `/dev` node is absent from the application's namespace.
 
-## Kernel Bring-Up
+1. Inspect the subsystem class, for example `/sys/class/video4linux/`, and its device/driver links.
+2. Read the class device's `dev` attribute when it represents a character/block device.
+3. Check whether devtmpfs is configured and mounted at the `/dev` visible to the process.
+4. Check the platform's node manager: kernel devtmpfs, BusyBox mdev, udev, or static node provisioning.
+5. Check numbering, permissions, symlinks, container/device policy, and mount namespaces before changing the driver.
 
-### Bootargs must match kernel and rootfs
+Linux's [devtmpfs implementation](https://github.com/torvalds/linux/blob/v6.12/drivers/base/devtmpfs.c)
+can create device nodes directly; a running udev daemon is not a universal prerequisite.
+Not every peripheral exposes a `/dev` node. For cameras, locate devices with `v4l2-ctl --list-devices` and the media
+graph rather than assuming the intended camera is `/dev/video0` or `/dev/video1`.
 
-The kernel command line is set by the bootloader but consumed by the kernel; a mismatch here shows up as a kernel-side
-failure. The `console=` device and baud MUST match the physical UART, or kernel output disappears after "Starting kernel
-…" even though the bootloader printed fine. `root=` MUST point at the real rootfs partition, and `rootwait` covers a
-storage driver that probes after the mount attempt.
+For udev systems, inspect applicable rules and bounded events using `udevadm info` and `udevadm monitor`.
+Reloading rules and triggering events changes system behavior; scope those operations to the intended device.
+Do not issue a global trigger or change every video device's permissions to test a single missing node.
 
-```
-console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait
-```
+## Service and Application Boundary
 
-Setting these in the bootloader environment is **u-boot-development** territory.
-
-### Early boot log signals
-
-```
-[    0.000000] Booting Linux on physical CPU 0x0              ← kernel started
-[    0.000000] Machine model: My Board Rev 1.0                ← DTB matched
-[    0.000000] Memory: 1024M available                        ← DDR detected
-...
-[    2.345678] VFS: Mounted root (ext4 filesystem) on device  ← rootfs mounted
-[    2.500000] Run /sbin/init as init process                 ← init started
-```
-
-If the log stops before "VFS: Mounted root", the failure is in the kernel or driver probe phase — not a userspace issue.
-
-### Kernel panic: rootfs not found
-
-```
-Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
-```
-
-Cause checklist:
-
-- `root=` bootarg points at the wrong device (check `ls /dev/mmcblk*` on a live system).
-- Rootfs filesystem driver not compiled in (ext4, f2fs, squashfs — `zcat /proc/config.gz | grep EXT4`).
-- MMC/storage driver did not probe before the mount attempt — add `rootwait`.
-- Wrong partition number (`mmcblk0p2` vs `mmcblk1p2` when two eMMC/SD devices are present).
-
-### Kernel Command-Line Parameters for Bring-Up
-
-| Parameter                             | Effect                                                                                                   |
-| ------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `earlycon`                            | Early console output before the full UART driver is up — uses a port from the DTS or a hardcoded default |
-| `earlycon=uart8250,mmio32,0xFF030000` | Explicitly specify the UART base address for earlycon                                                    |
-| `earlyprintk`                         | Legacy early printk (older kernels; prefer `earlycon`)                                                   |
-| `console=ttyS0,115200`                | Full UART console once the driver is up                                                                  |
-| `rootwait`                            | Wait indefinitely for the root device to appear                                                          |
-| `init=/bin/sh`                        | Drop to a shell instead of running init (rootfs debug)                                                   |
-| `panic=5`                             | Reboot 5 seconds after a kernel panic                                                                    |
-| `loglevel=7`                          | Maximum kernel log verbosity (0–7)                                                                       |
-
-`earlycon` is the most useful parameter when boot stalls between "Starting kernel …" and the first kernel timestamp — it
-prints before the console driver initialises.
-
-### Analyzing `dmesg` efficiently
+On systemd targets, inspect the failed unit and a bounded journal window:
 
 ```bash
-# Filter for a specific driver/device
-dmesg | grep -i "sensor\|camera\|i2c" | head -40
-
-# Show only errors and warnings
-dmesg --level=err,warn
-
-# Human-readable timestamps (kernel >= 3.5)
-dmesg -T | tail -50
-
-# Continuous monitor during bring-up (serial console or SSH)
-dmesg -w
-```
-
-## Rootfs and Userspace
-
-### `/dev` node lifecycle
-
-```
-Driver probe succeeds
-  └─ Driver calls device_create() or equivalent
-       └─ uevent sent to udev/mdev
-            └─ udev rule matches and creates /dev/<node>
-```
-
-If the `/dev` node is missing after a successful probe:
-
-```bash
-# Is udev/mdev running?
-ps aux | grep -E "udev|mdev"
-
-# Was the uevent fired?
-udevadm monitor --kernel   # watch in one terminal while probing in another
-
-# What rule would apply?
-udevadm test /sys/bus/i2c/devices/1-003c 2>&1 | grep -i "SYMLINK\|NAME\|RUN"
-
-# Force udev to re-scan
-udevadm trigger
-udevadm settle
-```
-
-### Service startup failures
-
-```bash
-# systemd: which units failed?
 systemctl --failed
-systemctl status <service-name> --no-pager -l
-
-# Startup order issue (service starting before a dependency)
-systemctl list-dependencies <service-name>
-
-# Boot-time analysis
-systemd-analyze
-systemd-analyze blame          # sorted unit startup times
-systemd-analyze critical-chain # critical path to default.target
-
-# BusyBox / SysV init
-cat /var/log/messages | grep -i "error\|fail" | tail -30
-dmesg | grep -i "init\|service" | tail -20
+systemctl status app.service --no-pager -l
+journalctl -u app.service -b -n 100 --no-pager
 ```
 
-### Permission issues on `/dev` nodes
+Use the target's equivalent on BusyBox/SysV systems. Check actual dependencies, executable/interpreter identity,
+working directory, credentials, device permissions, and mounts.
+`systemd-analyze blame` lists elapsed startup times, not a proof of the critical dependency causing delay.
+Route unit authoring to the systemd skill; use [cross-compilation.md](cross-compilation.md) for ELF/ABI failures.
 
-```bash
-# Check ownership and mode
-ls -la /dev/<node>
+## Faster Iteration with an NFS Root
 
-# Add a udev rule to fix permissions
-echo 'SUBSYSTEM=="video4linux", MODE="0664", GROUP="video"' \
-    > /etc/udev/rules.d/99-camera.rules
-udevadm trigger
-```
+Use a dedicated development export and identify exactly which target clients can access it.
+Root access to a writable export can modify host-side files; `no_root_squash` is a deliberate trust decision,
+not a default for an entire site subnet. Keep the export separate from valuable source and host system directories.
 
-## First-Boot Checklist
+The target needs early network/NFS support and a reachable server before mounting root.
+An example boot argument fragment is `root=/dev/nfs nfsroot=192.0.2.1:/srv/board-root,v3,tcp ip=dhcp`;
+replace it with the actual server, export, protocol, and network setup.
+Follow the [kernel NFS-root documentation](https://docs.kernel.org/admin-guide/nfs/nfsroot.html).
+Do not edit host exports, restart services, or populate a shared directory without the established scope.
 
-Work through these in order. Do not skip a layer.
+## Bring-up Completion
 
-- [ ] Serial console connects and shows bootloader output
-- [ ] Bootloader reports the correct DDR size
-- [ ] Correct DTB filename loaded (bootloader `fdtfile`/equivalent — see u-boot-development)
-- [ ] Kernel command line has the correct `console=`, `root=`, and `rootwait`
-- [ ] Kernel log shows "Machine model:" matching the board
-- [ ] Kernel log shows "VFS: Mounted root"
-- [ ] Shell prompt appears (or `init` output visible)
-- [ ] `dmesg` shows the target peripheral driver probe success
-- [ ] `/dev/<node>` exists for each expected peripheral
-- [ ] Basic userspace test succeeds (e.g. `i2cdetect -y 1`, `v4l2-ctl --list-devices`)
-- [ ] Application starts and logs expected output
-
-## NFS Rootfs for Development
-
-NFS rootfs eliminates the flash-then-boot cycle during bring-up. For the QEMU edit-build-test loop and deploy
-verification, see `deploy-and-iterate.md`.
-
-```bash
-# On host: export rootfs via NFS
-echo "/srv/nfs/rootfs 192.168.1.0/24(rw,no_root_squash,sync)" >> /etc/exports
-exportfs -a
-systemctl restart nfs-server
-
-# Populate the rootfs (from a build system image)
-sudo tar -xf tmp/deploy/images/<machine>/core-image-minimal-<machine>.tar.bz2 \
-    -C /srv/nfs/rootfs
-
-# Bootloader bootargs for NFS (set in u-boot-development)
-#   console=ttyS0,115200 root=/dev/nfs \
-#   nfsroot=192.168.1.1:/srv/nfs/rootfs,v3,tcp rw ip=dhcp
-```
-
-Advantage: edit files on the host, immediately visible on the target without reflashing. Cost: requires a stable
-Ethernet link from first boot.
+Record the booted image identities, final command line, successful root/init transition, required driver bindings,
+interface visibility, and a functional peripheral/application check.
+Name any remaining hardware, performance, recovery, or release qualification rather than treating a shell prompt as
+completion. [Deploy and iterate](deploy-and-iterate.md) separates the artifact checks from those functional results.

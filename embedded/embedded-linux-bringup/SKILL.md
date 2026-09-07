@@ -1,256 +1,98 @@
 ---
 name: embedded-linux-bringup
-description: "Embedded Linux bring-up and debugging partner for ARM/RISC-V SoC boards — device tree (DTS/DTSI/DTB/DTBO/overlays), kernel driver probe failures, board bring-up, boot-log and dmesg analysis, cross-compilation and toolchain/ABI mismatch, peripheral debugging (I2C/SPI/UART/MMC/GPIO/regulator/clock), V4L2 camera bring-up, and userspace diagnostics (strace/gdbserver/perf/ftrace/kmemleak/kgdb/dynamic_debug/devmem). Use when a driver will not probe, a `/dev` node or `/dev/video*` is missing, the kernel panics on rootfs mount, `-EPROBE_DEFER` loops, `GLIBC_2.xx not found` on target, dtc/fdtput/dt-validate device-tree work, QEMU board emulation, or verifying a module/DTB deploy (vermagic). For build systems and bootloaders route to yocto-openembedded-development, buildroot-development, kas-build-orchestration, or u-boot-development."
+description: "Bring up and debug embedded Linux targets. Use for DTS/DTB/overlay changes, kernel boot or rootfs failures, driver probe and peripheral faults, V4L2 cameras, cross-compiled binary/ABI problems, tracing and debugging, artifact deployment checks, and verified-rootfs or update-recovery diagnostics. Covers runtime kernel, hardware, and userspace boundaries; route build-system integration and bootloader internals to their specialist skills."
 license: MIT
+compatibility: Requires access to Linux source/build artifacts and target evidence. Commands depend on host/target tools, kernel configuration, privileges, and the BSP; check these at each branch. Hardware and emulation tests require suitable targets.
 metadata:
   author: Joonas Onatsu
-  tags:
-    - embedded-linux
-    - device-tree
-    - dts
-    - dtb
-    - kernel-driver
-    - board-bringup
-    - cross-compilation
-    - toolchain
-    - v4l2
-    - camera
-    - i2c
-    - spi
-    - gpio
-    - dmesg
-    - ftrace
-    - perf
-    - gdbserver
-    - kgdb
-    - qemu
-    - arm
-    - debugging
 ---
 
 # Embedded Linux Bring-up
 
-**IRON LAW: Classify every failure by its FIRST concrete boundary — build → boot → kernel/DTS → bus/peripheral →
-userspace — and PROVE that boundary with a log line, command output, or config value BEFORE hypothesizing. You MUST NOT
-guess across layers or propose a fix before the failing layer is evidenced.**
+Establish what the target actually runs, then investigate the boundary supported by the evidence.
+Keep an observation, a hypothesis, and a proven cause distinct. A missing device node alone does not locate the fault.
 
-A missing `/dev/video1` is a DTS or driver fault before it is a userspace fault. Name the boundary, demand the evidence
-that pins it there, then act.
+## Choose the Task
 
----
+Record the board/SoC revision, kernel version and tree, architecture, build system/release, boot path, and relevant
+toolchain. Use available artifacts to recover these facts; label unknowns instead of inventing defaults.
 
-## Overview
+- **Planned bring-up or authoring:** identify the required hardware behavior, binding/API, current configuration,
+  artifact path, and recovery method. Make a scoped change and define how its effect will be observed.
+  An existing failure log is not a prerequisite.
+- **Diagnosis:** capture the failing operation, return status, and relevant logs. Locate the first evidenced failure
+  among build, boot handoff, kernel, bus/peripheral, and userspace. Rank hypotheses and run the smallest useful check.
+  Revisit the boundary when new evidence contradicts it; initramfs userspace can run before the final root is mounted.
+- **Deployment or recovery verification:** distinguish artifact identity, compatibility, selection at boot, loaded
+  state, and functional behavior. Passing one check does not establish the others.
 
-Development partner for device tree, kernel drivers, board bring-up, cross-compilation, peripheral debugging, and
-userspace integration on embedded Linux targets. Keep this file for method and routing; pull worked commands and board
-examples from `references/` on demand — do NOT read every reference upfront.
+Continue authorized work when tools can obtain evidence. Ask for a result when target access is unavailable, or for
+clarification when the next action exceeds the established scope. Report missing tools and untested outcomes explicitly.
 
-Board-specific examples (BeagleBone Black, STM32MP1, i.MX6ULL/OV5640, QEMU virt) live ONLY in `references/`. This file
-stays board-agnostic.
+## Route by Boundary
 
-### Route build and bootloader work to a sibling skill
+Read the relevant reference when that branch becomes useful; the entire package need not be loaded for every task.
 
-| Task                                                  | Skill                              |
-| ----------------------------------------------------- | ---------------------------------- |
-| Yocto/OE: recipes, layers, BitBake, sstate, SDK       | **yocto-openembedded-development** |
-| kas build orchestration (`.kas.yml`, `kas build`)     | **kas-build-orchestration**        |
-| Buildroot: menuconfig, packages, `BR2_EXTERNAL`       | **buildroot-development**          |
-| U-Boot: env, extlinux, FIT, boot scripts, porting, DM | **u-boot-development**             |
+| Task                                                             | Reference                                                           |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Driver probe, resources, I2C/SPI/UART/MMC/GPIO, calibration      | [Device tree and drivers](references/device-tree-driver-bringup.md) |
+| Compile, validate, compare, or apply a DTB/overlay               | [Device tree tools](references/device-tree-tooling.md)              |
+| Boot handoff, console, root mount, init, missing device nodes    | [Board bring-up](references/board-bringup-checklist.md)             |
+| Toolchain, SDK, sysroot, cross-build, ELF/ABI mismatch           | [Cross-compilation](references/cross-compilation.md)                |
+| Userspace/kernel debugging, tracing, profiling, crash analysis   | [Debugging](references/debugging.md)                                |
+| Sensor/media graph, video registration, capture, performance     | [Camera and V4L2](references/camera-v4l2.md)                        |
+| Artifact identity and compatible QEMU iteration                  | [Deploy and iterate](references/deploy-and-iterate.md)              |
+| Update installation, boot confirmation, rollback/recovery faults | [Update diagnostics](references/ota-updates.md)                     |
+| dm-verity mapping, root hash, verified-rootfs boot faults        | [Rootfs integrity](references/rootfs-integrity.md)                  |
 
-### Route the symptom to a reference
+Build-system integration belongs to **buildroot-development** or **yocto-openembedded-development**;
+multi-repository build orchestration belongs to **kas-build-orchestration**.
+U-Boot environment, FIT authoring, boot scripts, and bootloader porting belong to **u-boot-development**.
+Keep their runtime interfaces here only where they help locate a target failure.
+General fleet rollout strategy and general-purpose VM management are outside this skill.
 
-| Symptom                                                              | Reference                                                        |
-| -------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| DTS node missing, driver not probing, wrong/absent resource          | `references/device-tree-driver-bringup.md`                       |
-| Need to compile/decompile/diff/validate a DTB or overlay             | `references/device-tree-tooling.md`                              |
-| Board won't boot, kernel panic, rootfs not found, earlycon           | `references/board-bringup-checklist.md`                          |
-| I2C/SPI/UART/MMC/GPIO bus or peripheral issue                        | `references/device-tree-driver-bringup.md` → bus section         |
-| Sensor reads off, clock drifts, per-unit or per-board calibration    | `references/device-tree-driver-bringup.md` → calibration section |
-| Cross-compile failure, ABI mismatch, missing `.so` on target         | `references/cross-compilation.md`                                |
-| strace, gdbserver, perf, ftrace, kmemleak, kgdb, dynamic_debug, oops | `references/debugging.md`                                        |
-| Camera bring-up, V4L2, no `/dev/video*`, no frames, bad colours      | `references/camera-v4l2.md`                                      |
-| Fast edit-build-test loop under QEMU; verify a deploy landed         | `references/deploy-and-iterate.md`                               |
-| Field/OTA updates, A/B rollout, RAUC/swupdate, rollback strategy     | `references/ota-updates.md`                                      |
-| dm-verity, verified/read-only rootfs, root hash, verified boot       | `references/rootfs-integrity.md`                                 |
+## Establish Evidence
 
----
+Capture the command, status, target identity, and a bounded time window around the event.
+Keep the original bounded log before presenting filtered excerpts; a keyword filter can hide the failing dependency.
+For a probe failure, correlate the device's driver link, binding, resources, and kernel diagnostics.
+Debugfs, tracefs, `/proc/config.gz`, and vendor overlay interfaces depend on the running kernel and mounts.
+Their absence does not establish a hardware fault.
 
-## Workflow
+Use the matching source tree and release documentation for syntax and APIs. Examples are starting points, not board
+defaults. Kernel DTS preprocessing, GPIO utility syntax, and vendor driver APIs differ by release.
+The Yocto override transition was in Honister 3.4; route version-specific build syntax to its owning skill.
 
-Tick each step per task. Steps marked ⛔ BLOCKING MUST complete before the next; ⚠️ REQUIRED MUST be done but MAY
-interleave.
+Close diagnosis with the demonstrated cause and evidence, the applied or proposed change, and its verification result.
+If the cause is unknown, give the next discriminating check and explain what its outcomes would mean.
+For authoring, report the implemented behavior and the observations still needed to qualify it.
 
-- [ ] **⚠️ REQUIRED — Lock platform context.** Record SoC/board + revision, kernel version and tree (mainline/vendor/BSP
-  branch), architecture and toolchain tuple, bootloader and version, build system + release, and the exact current
-  symptom (log line, failed command, missing node, errno). If a fact is unknown, state the assumption and LABEL it.
-- [ ] **⛔ BLOCKING — Classify the failure boundary.** Place the failure at build, boot, kernel/DTS, bus/peripheral, or
-  userspace. You MUST NOT skip to a downstream layer while an upstream one is unproven.
-- [ ] **⛔ BLOCKING — Collect evidence at that boundary.** Gather the bounded artifacts in *Evidence First* below before
-  ranking causes. No fix proposal until the boundary is evidenced.
-- [ ] **⚠️ REQUIRED — Rank causes, then validate ONE.** Propose the single most likely cause and ONE command or ONE file
-  edit that confirms or refutes it. Keep steps small; stop at a natural checkpoint and request the result.
-- [ ] **⚠️ REQUIRED — Confirm before mutating.** Any flash, register write, boot-config edit, or env write passes the
-  *Confirmation gates* first.
-- [ ] **⚠️ REQUIRED — Close with the Output contract.** Root cause → evidence → exact fix/command → validation command.
+## Hardware Access and Recovery
 
----
+Reuse the user's authorization for the known operation and target. Obtain missing authorization before destructive
+actions, uncovered hardware changes, or consequential external effects. A generic debugging request does not authorize
+flashing a disk, changing boot selection, exposing a debugger, or interrupting a critical device.
 
-## Confirmation gates
+- **Storage and boot state:** resolve the exact device, partition, selected slot, and current consumer before writing.
+  Preserve the affected data/configuration and a usable recovery path. Backups alone do not establish recoverability.
+  Do not overwrite a mounted production root or the only working recovery image as a diagnostic experiment.
+- **MMIO and bus transactions:** reads may acknowledge interrupts, consume FIFO data, or fault on an unpowered block.
+  Check the device manual, address, width, power/clock state, and driver ownership before access.
+  I2C scans send transactions; neither `i2cdetect` nor `i2cget` is universally passive. Prefer inventory and driver
+  diagnostics, then use only device-supported transactions within the authorized scope.
+- **GPIO and reset:** inspect ownership before requesting a line. A utility read may change direction.
+  Derive polarity and sequencing from the schematic, binding, and driver's logical GPIO operations; do not swap
+  polarity merely because a device is silent. A driver-owned line is not a free test pin.
+- **Driver lifecycle:** before unloading, unbinding, or reprobeing a driver, check mounted filesystems, consoles,
+  active consumers, and recovery access. Do not interrupt them without authorization for that effect.
+- **Debug sessions:** constrain listener access and account for pauses, watchdogs, trace overhead, and output storage.
+  Record existing debug settings and restore the settings changed by the session. Never reset another session's traces.
 
-You MUST stop and get explicit user confirmation before any destructive or hardware-mutating action. Default to
-read-only; require an explicit opt-in to mutate; pair every mutating command with its reverse.
+Not every hardware operation has a reverse: clear-on-read, write-one-to-clear, FIFO, reset, and fuse semantics differ.
+Use a documented recovery procedure instead of promising to restore hardware by writing back a saved value.
 
-- **Writing block/flash devices** — `dd`, `bmaptool copy … /dev/sdX`, `flashcp`, `nandwrite`, `mmc`/eMMC or SD
-  overwrites. You MUST confirm the exact target device path first; a wrong `/dev/sdX` destroys the host disk. Capture a
-  backup of any partition you overwrite.
-- **Boot-config edits** — `extlinux.conf`, `bootargs`, a DTB/DTBO on the boot partition, or `fw_setenv` from userspace.
-  You MUST back up the original and pair the change with its restore command.
-- **Register pokes** — `devmem`/`devmem2` WRITES and writes into `/sys` that change hardware state. You MUST confirm; a
-  wrong write can hang or damage the SoC. Reads are safe and need no gate.
-- **Unloading an in-use driver** — `rmmod`/`modprobe -r` of a module backing a mounted fs, console, or active device.
+## Sources
 
-### Safety
-
-- MUST NOT modify `extlinux.conf`, device tree source or blobs, boot memory reservations, or run `saveenv`/`fw_setenv`
-  unprompted.
-- Prefer reversible diagnostics first: NFS/QEMU rootfs over reflashing, `devmem` reads over writes, `dynamic_debug` over
-  patching source.
-- For env and boot-flow changes on the bootloader itself, route to **u-boot-development** and follow its safety
-  contract.
-
----
-
-## Evidence First
-
-Before diagnosing, inspect (or ask the user for) the artifacts that pin the failing boundary:
-
-- The exact failing log line — kernel `dmesg`, `${WORKDIR}/temp/log.do_*` for a build, or the serial console around
-  "Starting kernel …".
-- The DTS node and the binding it claims (`compatible`, `reg`, `clocks`, `*-supply`, `*-gpios`).
-- The driver `probe` return value and the last log line before it failed.
-- Command output from `i2cdetect`, `ls /dev/`, `cat /proc/device-tree/…`, `readelf -d`.
-
-Keep every capture BOUNDED — `dmesg | grep -i sensor | tail -20`, never a raw full `dmesg`.
-
-```bash
-# Probe result for a device
-dmesg | grep -E "(probe|error|defer)" | grep -i <device> | tail -20
-
-# Deferred-probe list (kernel >= 5.10)
-cat /sys/kernel/debug/devices_deferred 2>/dev/null
-
-# Which driver owns a node
-ls -la /sys/bus/platform/devices/<node>/driver
-
-# Clock tree (0 Hz => parent not enabled)
-cat /sys/kernel/debug/clk/clk_summary | grep -i <clock>
-
-# Device tree, live
-cat /proc/device-tree/<node>/compatible | xxd
-ls /proc/device-tree/
-
-# Bus scan / GPIO
-i2cdetect -y -r <bus>
-gpioinfo
-
-# Cross-compiled binary sanity
-file <binary>; readelf -d <binary> | grep NEEDED
-
-# Turn on a driver's pr_debug() without rebuilding
-echo 'module <mod> +p' > /sys/kernel/debug/dynamic_debug/control
-```
-
----
-
-## Output contract
-
-Every diagnostic answer MUST end with these four, in order:
-
-1. **Root cause** — the single proven boundary and mechanism.
-2. **Supporting evidence** — the log line, command output, or config value that proves it.
-3. **Exact fix** — the precise command or file edit (real property names, real paths).
-4. **Validation** — the command that confirms the fix worked.
-
-If the root cause is not yet proven, say so and give the ONE next command that would prove it — do NOT present a guess
-as a diagnosis.
-
----
-
-## Version awareness
-
-Kernel, bootloader, and build-system syntax drift across releases. Before giving syntax-specific guidance you MUST
-confirm:
-
-- **Kernel version and tree** — DT binding names, sysfs/debugfs paths, and driver APIs (e.g.
-  `devm_reset_control_get_exclusive` vs the soft-deprecated `devm_reset_control_get`) change across releases.
-- **Yocto release codename** — override syntax changed at Kirkstone (`_append` → `:append`). Answering in the wrong era
-  is a top error; defer detail to **yocto-openembedded-development**.
-- **U-Boot version** — env, distro-boot, and FIT specifics; defer to **u-boot-development**.
-- **Buildroot LTS** — Kconfig symbols and package infra; defer to **buildroot-development**.
-
-When the release is unknown, state which answer you would give per era rather than assuming one.
-
----
-
-## Anti-patterns
-
-- MUST NOT trust a `compatible` string by eye — one character between the DTS and the driver `of_match_table` silently
-  prevents binding with no error. Diff them.
-- MUST NOT treat `-EPROBE_DEFER` as a bug. It is expected retry; the bug is a driver that never rebinds because a
-  `clocks`/`*-supply`/`*-gpios` provider is `disabled` or absent.
-- MUST NOT copy a vendor BSP's reset GPIO polarity unquestioned — a device held silently in reset is almost always a
-  `GPIO_ACTIVE_LOW` vs `GPIO_ACTIVE_HIGH` mismatch.
-- MUST NOT enable a leaf clock without confirming its parent tree is enabled — a 0 Hz output in `clk_summary` is a
-  disabled parent.
-- MUST NOT deploy a binary before running `file` and `readelf -d … | grep NEEDED`; a host-glibc build fails on target
-  with `GLIBC_2.xx not found`.
-- MUST NOT ask for or paste a raw full `dmesg`/`strace` — always bound it (`| grep -i <x> | tail -N`).
-- MUST NOT poke registers (`devmem2` write) or overwrite boot config to "see what happens" — that is a mutation, and it
-  goes through the *Confirmation gates*.
-- MUST NOT assume a driver is present — a silent probe failure is often simply `CONFIG_<X>` not built
-  (`zcat /proc/config.gz | grep -i <X>`).
-- MUST NOT hardcode a physical-world constant that varies per board or per unit (oscillator trim, sensor bias, actuator
-  centre) — it needs a tunable seam, and a software fudge factor added before the error is proven at its own boundary
-  hides a real DTS, regulator, or clock fault.
-
----
-
-## Reference pointers
-
-Canonical upstream docs (cite the release-matched version):
-
-- Kernel DT bindings: `Documentation/devicetree/bindings/` in the kernel tree; the DT spec at devicetree.org.
-- dt-schema / `dt-validate`: github.com/devicetree-org/dt-schema; overlays and lopper: github.com/devicetree-org/lopper.
-- Toolchains: toolchains.bootlin.com. Community knowledge base: elinux.org.
-- V4L2 / media: the kernel `Documentation/userspace-api/media/` and `linuxtv.org`.
-
-`references/`:
-
-- `device-tree-driver-bringup.md` — DTS node anatomy, resource ownership, clock/reset/GPIO/regulator APIs, driver
-  registration, probe path, missing-`/dev`-node walk, per-bus (I2C/SPI/UART/MMC) debugging, Kconfig checks, calibration
-  and per-unit trim seams (DTS vs NVMEM vs IIO vs RTC offset).
-- `device-tree-tooling.md` — `dtc` compile/decompile, overlays (`dtc -@`), `fdtget`/`fdtput`/`fdtdump`, `dtx_diff`,
-  `dt-validate`/dt-schema, and the live `/proc/device-tree`.
-- `board-bringup-checklist.md` — boot chain, SoC boot-file naming, earlycon, kernel cmdline, panic-on-rootfs triage,
-  `/dev` node lifecycle, service startup, NFS rootfs.
-- `deploy-and-iterate.md` — the QEMU edit-build-test loop and a deploy-verify pattern (vermagic match, DTB/DTBO present,
-  boot-config sanity).
-- `cross-compilation.md` — toolchain types, Yocto SDK, autotools/CMake/Meson cross builds, sysroot and pkg-config, ABI
-  diagnosis, static/musl licensing.
-- `debugging.md` — strace, gdbserver, perf + flame graphs, ftrace/trace-cmd, dynamic_debug, devmem/devmem2, kgdb/kdb,
-  kmemleak, crash, valgrind, oops decode.
-- `camera-v4l2.md` — camera bring-up order, V4L2 + media-ctl diagnostics, `v4l2-compliance`, `yavta`, buffer lifecycle,
-  failure buckets, capture performance triage (minimal-vs-application bisection, tuning order, profile interpretation).
-- `ota-updates.md` — the userspace update-framework layer above the bootloader: A/B vs single-copy+recovery vs delta
-  strategy, RAUC (`system.conf`/`.raucb`/mark-good, `plain`/`verity`/`crypt` bundle formats), swupdate
-  (`sw-description`/`.swu`/suricatta), RAUC-vs-swupdate choice, signing, rollback verification; cross-links
-  `u-boot-development` for the boot-slot mechanics.
-- `rootfs-integrity.md` — read-only, cryptographically verified rootfs with dm-verity as the rootfs link of a
-  verified-boot chain: Merkle hash tree and root hash, `veritysetup` build, `dm-mod.create`/initramfs bring-up,
-  anchoring the root hash in a signed FIT cmdline, A/B per-slot root hashes, read-only rootfs consequences; cross-links
-  `u-boot-development` for the FIT/secure-boot half and `ota-updates.md` (RAUC `verity` bundle format is a DISTINCT use
-  of dm-verity).
-
-## Attribution
-
-See `ATTRIBUTIONS.md` for upstream sources and adaptation notes.
+Prefer the target kernel's `Documentation/`, DT bindings, device manuals, and the tool's own release documentation.
+Source baselines and retained influences are recorded in [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
+Client deployment is not evidence of automatic activation or correct task execution.

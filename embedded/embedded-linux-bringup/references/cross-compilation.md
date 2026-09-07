@@ -1,284 +1,143 @@
-# Cross-Compilation for Embedded Linux
+# Cross-compilation and Target ABI
 
-## Contents
+Use a development sysroot and toolchain that correspond to the target image and configuration.
+A runtime rootfs may lack headers, linker files, and development libraries needed for compilation.
+For package integration or SDK generation, use **buildroot-development** or **yocto-openembedded-development**.
 
-- [Toolchain Types](#toolchain-types)
-- [Using a Yocto SDK Toolchain](#using-a-yocto-sdk-toolchain)
-- [Autotools Cross-Compilation Patterns](#autotools-cross-compilation-patterns)
-- [Manual Toolchain (without SDK)](#manual-toolchain-without-sdk)
-- [Diagnosing ABI / Library Mismatch on Target](#diagnosing-abi--library-mismatch-on-target)
-- [CMake Cross-Compilation](#cmake-cross-compilation)
-- [Deploying Binaries to Target](#deploying-binaries-to-target)
-- [pkg-config Sysroot](#pkg-config-sysroot)
-- [ccache with Cross-Compilers](#ccache-with-cross-compilers)
-- [Static Linking and libc Licensing](#static-linking-and-libc-licensing)
+## Identify the Toolchain Before Building
 
-For Buildroot's own toolchain, SDK, and package build commands, see **buildroot-development**.
+Record architecture, CPU/ISA tuning, ABI, libc, dynamic loader, and library versions.
+A tuple is a useful hint, not proof of all these properties: `arm-none-eabi` commonly targets bare metal,
+`arm-linux-gnueabi` and `arm-linux-gnueabihf` select different ARM calling conventions, and
+`aarch64-linux-gnu` identifies a different architecture/ABI.
+Do not infer the complete supported CPU feature set from the tuple alone.
 
-## Toolchain Types
+For an SDK, use its supplied setup script in a dedicated shell and inspect its compiler command, flags, and sysroot.
+Do not install or source an untrusted SDK merely to inspect its documentation.
+Yocto 4.3's environment exports `SDKTARGETSYSROOT` and `OECORE_TARGET_SYSROOT`; `$SYSROOT` is not its generic contract.
+Compiler variables may contain multiple flags, so quoting the entire `CC` string as one executable is also wrong.
+Use the SDK's build integration and preserve its intentional argument expansion.
 
-| Type                     | Format                    | Use case                  |
-| ------------------------ | ------------------------- | ------------------------- |
-| Bare-metal               | `arm-none-eabi-gcc`       | MCU firmware, no OS       |
-| Linux uClibc             | `arm-linux-uclibc-gcc`    | Minimal embedded rootfs   |
-| Linux glibc (soft-float) | `arm-linux-gnueabi-gcc`   | ARMv5/v6, no FPU          |
-| Linux glibc (hard-float) | `arm-linux-gnueabihf-gcc` | ARMv7 with FPU            |
-| Linux glibc 64-bit ARM   | `aarch64-linux-gnu-gcc`   | ARM Cortex-A53/A72/A76    |
-| Yocto SDK                | `aarch64-poky-linux-gcc`  | Yocto-built target rootfs |
+An SDK generated for another image, tune, libc, or set of libraries is not an ABI guarantee.
+See [Yocto's SDK workflow](https://docs.yoctoproject.org/4.3/sdk-manual/working-projects.html) and inspect the actual
+setup script rather than copying a dated `/opt/poky/VERSION` path.
 
-**Always match the toolchain to the target C library version.** A binary built with a newer glibc fails on the target
-with `version GLIBC_2.XX not found` if the target runs an older glibc. The Yocto SDK toolchain guarantees ABI
-compatibility.
+## Autotools: Select the Execution Platform Explicitly
 
-## Using a Yocto SDK Toolchain
+For an application, `--build` names the compilation machine and `--host` names the machine running the result.
+`--target` applies to tools that themselves generate target code, such as a compiler.
+Keep host selection even when explicitly selecting a differently named compiler:
 
 ```bash
-# Install the SDK (run the self-extracting installer)
-./poky-glibc-x86_64-core-image-minimal-aarch64-toolchain-4.3.sh
-# Default install path: /opt/poky/4.3/
+# Standalone toolchain example; replace tuples and provide the intended sysroot/flags.
+./configure --build=x86_64-pc-linux-gnu --host=aarch64-linux-gnu CC=aarch64-linux-gnu-gcc
+```
 
-# Source the environment (do this in every new shell)
-source /opt/poky/4.3/environment-setup-cortexa53-poky-linux
+With a Yocto SDK, preserve its supplied `CONFIGURE_FLAGS` and compiler flags instead of overwriting them with this
+standalone example. Check `config.log` for the actual compiler, execution tests, and cross-compiling decision.
+Do not replace `--host` with `CC=...` alone or fabricate cache answers to suppress a failed target execution test.
+See [Autoconf's cross-compilation contract](https://www.gnu.org/software/autoconf/manual/autoconf-2.70/html_node/Hosts-and-Cross_002dCompilation.html).
 
-# Verify the toolchain
-echo $CC                          # should print the full aarch64 cross-compiler path
-${CC} --version
+`--prefix=/usr` describes the runtime installation prefix; `DESTDIR` stages installation elsewhere on the build host.
 
-# Build a project using the SDK environment
-./configure --host=aarch64-poky-linux
+```bash
+# After configuring with the correct cross environment and runtime prefix:
 make
+make DESTDIR="$PWD/stage-rootfs" install
 ```
 
-Variables set by the SDK environment script:
+Use a fresh build directory when changing toolchains or cached assumptions.
+If generated Autotools files are absent, follow the project's bootstrap procedure.
+`autoreconf -i` installs missing auxiliary files; it is not a universal promise to replace existing stale helper files.
+Inspect the specific `config.sub`/`config.guess` failure and the project's supported regeneration procedure.
 
-| Variable                  | Purpose                               |
-| ------------------------- | ------------------------------------- |
-| `$CC`                     | Cross C compiler with target flags    |
-| `$CXX`                    | Cross C++ compiler                    |
-| `$CFLAGS`                 | Target-specific compiler flags        |
-| `$LDFLAGS`                | Linker flags pointing to sysroot libs |
-| `$PKG_CONFIG_SYSROOT_DIR` | sysroot for pkg-config                |
-| `$SYSROOT`                | Path to target headers and libraries  |
+## CMake, Meson, and pkg-config
 
-## Autotools Cross-Compilation Patterns
-
-Autotools distinguishes three system tuples:
-
-- `--build` — the machine doing the compiling. Rarely needs changing; autotools detects it as the current machine.
-- `--host` — the machine the built program will run on. Override this to cross-compile.
-- `--target` — only relevant when the thing you are building is itself a compiler, where it names the machine that
-  compiler will emit code for.
-
-Set `--host` to the target tuple:
-
-```bash
-./configure --host=arm-linux-gnueabihf
-```
-
-`configure` then looks for cross tools whose names use that tuple as a prefix (for example `arm-linux-gnueabihf-gcc`).
-When the tools are not named that way, point at them explicitly:
-
-```bash
-./configure CC=arm-linux-gcc
-```
-
-### `--prefix` vs `DESTDIR`
-
-`--prefix` is where the program expects to find itself at runtime on the target. `DESTDIR` temporarily diverts the
-*installation* into a staging directory without changing that runtime prefix.
-
-```bash
-# Runtime prefix is /usr (where the binary looks for its files on the target),
-# but redirect `install` into a staging tree you later sync onto the rootfs.
-./configure --prefix=/usr
-make
-make DESTDIR="$PWD/stage-rootfs" install    # files land under stage-rootfs/usr/...
-```
-
-### `config.log` and cache variables
-
-`configure` records every test it runs in `config.log`. The end of the compiler tests section is usually where a
-cross-build failure shows up, and the top of the file repeats the exact `./configure` line with all options and
-environment variables. Cached test results appear there too, which matters when a stale cache hides a fixed problem —
-delete `config.cache` if results look wrong.
-
-### `autoreconf -i`, `config.guess`, and `config.sub`
-
-Regenerate the autotools scaffolding and pull in missing helper scripts with:
-
-```bash
-autoreconf -i
-```
-
-Helper files such as `compile`, `config.guess`, `config.sub`, and `depcomp` land in the source tree's top directory by
-default. Move them out of the way with `AC_CONFIG_AUX_DIR([build-aux])`. An out-of-date `config.sub`/`config.guess` is a
-frequent cause of "cannot guess host type" on a new target tuple — `autoreconf -i` refreshes them.
-
-## Manual Toolchain (without SDK)
-
-```bash
-export CROSS_COMPILE=aarch64-linux-gnu-
-export ARCH=arm64
-
-# Build the kernel
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc)
-
-# Build a standalone binary
-aarch64-linux-gnu-gcc -o myapp myapp.c
-
-# Specify a sysroot for libraries from a rootfs
-aarch64-linux-gnu-gcc --sysroot=/path/to/rootfs -o myapp myapp.c -lssl
-```
-
-## Diagnosing ABI / Library Mismatch on Target
-
-**Before copying any binary to the target, check it:**
-
-```bash
-# Architecture and linkage
-file mybinary
-# Output examples:
-# ELF 64-bit LSB executable, ARM aarch64  — correct for Cortex-A
-# ELF 32-bit LSB executable, ARM, EABI5   — correct for 32-bit ARM
-# ELF 64-bit LSB executable, x86-64       — wrong: host binary accidentally compiled
-
-# Dynamic library dependencies
-readelf -d mybinary | grep NEEDED
-# Or:
-aarch64-linux-gnu-readelf -d mybinary | grep NEEDED
-
-# Verify the binary uses the expected interpreter (dynamic linker)
-readelf -l mybinary | grep interpreter
-# Should be: /lib/ld-linux-aarch64.so.1 (not /lib64/ld-linux-x86-64.so.2)
-```
-
-**On the target, if you get `not found` errors:**
-
-```bash
-# Which libraries are missing?
-ldd mybinary 2>&1 | grep "not found"
-
-# Where is the library the target has?
-find /lib /usr/lib -name "libssl.so*" 2>/dev/null
-
-# Is the RPATH pointing somewhere wrong?
-readelf -d mybinary | grep RPATH
-```
-
-## CMake Cross-Compilation
-
-Use a CMake toolchain file:
+Prefer the SDK's supplied CMake toolchain integration when present. Find it through the SDK environment/documentation;
+do not reconstruct the SDK from an assumed installation path and a bare compiler name.
+For a standalone compiler, a minimal toolchain file can establish target lookup rules:
 
 ```cmake
-# aarch64-poky-linux.cmake
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR aarch64)
-
-set(CMAKE_C_COMPILER   aarch64-poky-linux-gcc)
-set(CMAKE_CXX_COMPILER aarch64-poky-linux-g++)
-
-set(CMAKE_SYSROOT /opt/poky/4.3/sysroots/cortexa53-poky-linux)
-set(CMAKE_FIND_ROOT_PATH ${CMAKE_SYSROOT})
-
+set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)
+set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
+set(CMAKE_SYSROOT /absolute/path/to/development-sysroot)
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 ```
+
+Add the actual CPU/ABI flags and other project requirements. Configure into a separate build directory:
 
 ```bash
-cmake -DCMAKE_TOOLCHAIN_FILE=aarch64-poky-linux.cmake \
-      -DCMAKE_INSTALL_PREFIX=/usr \
-      -B build_aarch64 -S .
-cmake --build build_aarch64
+cmake -S . -B build-target -DCMAKE_TOOLCHAIN_FILE=target.cmake -DCMAKE_INSTALL_PREFIX=/usr
+cmake --build build-target
 ```
 
-For Meson, use a cross file (`meson setup --cross-file <file> …`); a Yocto SDK and Buildroot both generate one for you
-(Buildroot specifics live in **buildroot-development**).
+For Meson, use a verified cross file with the intended compiler, host machine, and sysroot/pkg-config settings.
+Use a generated SDK cross file when supplied; do not assume every SDK includes one.
+See the native [CMake](https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html)
+and [Meson](https://mesonbuild.com/Cross-compilation.html) references.
 
-## Deploying Binaries to Target
+When target dependencies unexpectedly resolve to host libraries, inspect pkg-config's environment and selected `.pc`
+files. `PKG_CONFIG_LIBDIR` replaces its default metadata directories; include the target's applicable lib, share,
+and multiarch paths. `PKG_CONFIG_SYSROOT_DIR` adjusts emitted include/library paths.
+Remove unintended host entries in `PKG_CONFIG_PATH`, which can override the desired lookup.
+Do not assume arbitrary `.pc` variables receive the same sysroot rewriting.
+
+## Inspect the Binary and Its Dependencies
+
+Use host ELF inspection before attempting to run an unknown or incompatible binary:
 
 ```bash
-# SCP (most common)
-scp mybinary root@192.168.1.100:/usr/local/bin/
-
-# SSH + stdin (when SCP is unavailable)
-cat mybinary | ssh root@192.168.1.100 "cat > /tmp/mybinary && chmod +x /tmp/mybinary"
-
-# Via devtool (Yocto workflow — see yocto-openembedded-development)
-devtool deploy-target myapp root@192.168.1.100
-
-# Verify SHA-256 after copy
-sha256sum mybinary
-ssh root@192.168.1.100 sha256sum /tmp/mybinary
-# Both should match
+file ./myapp
+readelf -h ./myapp
+readelf -l ./myapp
+readelf -d ./myapp
+readelf --version-info ./myapp
 ```
 
-### The board pings but SSH stalls: two host NICs on one subnet
+Check machine/class, target-specific ABI attributes when applicable, requested interpreter, NEEDED entries, RPATH/RUNPATH,
+and required symbol versions. Inspect the target's actual libraries and loader against these requirements.
+A newer build-host glibc does not invariably make a binary incompatible; the relevant question is what versions its
+linked objects require and what the target supplies. Indirect dependencies also matter.
 
-A lab host usually has the site LAN on one interface and a direct link to the board on another. When both land in the
-same subnet the host can send from the wrong source interface, and the failure misleads: `ping <board>` succeeds while
-`ssh` and every other TCP connection stall, the board cannot reach the host, and `arp -a` shows the board's address
-against two interfaces or with a MAC that changes.
+If execution says `not found` while the file exists, inspect its ELF interpreter or script shebang.
+If a trusted target executable reports a missing library, use the target loader's diagnostic facilities or `ldd`
+where appropriate. Do not use `ldd` on an untrusted executable as a supposedly passive host inspection.
+Keep deployment path and checksum verification consistent; see [deploy-and-iterate.md](deploy-and-iterate.md).
 
-Pin the interface in the SSH config rather than chasing it per command:
+## The Board Pings but SSH Stalls
+
+Two host interfaces on the board's subnet are one possible cause, not a diagnosis from successful ping alone.
+Check the route, source address, neighbor state, and a bounded TCP/SSH diagnostic first.
+For an established source-address problem, an SSH alias can bind the intended local address:
 
 ```sshconfig
 Host board
-  HostName 192.168.1.100
-  User root
-  BindAddress 192.168.1.10        # host IP on the board-facing NIC
+  HostName 192.0.2.10
+  User developer
+  BindAddress 192.0.2.1
   StrictHostKeyChecking accept-new
 ```
 
-Deploy through the alias afterwards (`scp mybinary board:/usr/local/bin/`). The successful `ping` is what makes this
-expensive: it reads as proof the link is healthy, so the investigation starts one layer too high.
+Substitute real lab addresses and follow the user's host-key policy.
+`BindAddress` selects a source address; it does not repair every routing, firewall, or reverse-path-filter problem.
+Keep persistent host network changes with the network configuration owner.
 
-## pkg-config Sysroot
+## Static Linking and Iteration
 
-When cross-compiling, `pkg-config` defaults to host paths and emits `-L/usr/lib` pointing at the wrong sysroot.
+Static linking can isolate a dynamic-loader problem for a small utility when the toolchain and required libraries
+support it. Confirm the result with ELF inspection, then test the behavior that matters on the target.
+It does not solve wrong architecture, unsupported instructions, missing kernel interfaces, or all runtime dependencies.
 
-```bash
-# Fix: redirect pkg-config to the target sysroot
-export PKG_CONFIG_LIBDIR=/path/to/sysroot/usr/lib/pkgconfig
-export PKG_CONFIG_SYSROOT_DIR=/path/to/sysroot
-pkg-config --cflags --libs openssl
+musl's license avoids an LGPL relinking requirement for musl itself; it does not make the complete executable free of
+distribution obligations. Review all linked libraries and required notices against their actual licenses.
+See [musl's copyright and license record](https://git.musl-libc.org/cgit/musl/tree/COPYRIGHT?h=v1.2.5).
+Do not change libc merely to hide an unexplained ABI failure.
 
-# With a Yocto SDK (already set by the environment-setup script)
-source /opt/poky/4.3/environment-setup-cortexa53-poky-linux
-pkg-config --cflags --libs openssl   # uses $PKG_CONFIG_SYSROOT_DIR automatically
-```
-
-`PKG_CONFIG_LIBDIR` redirects the search path. `PKG_CONFIG_SYSROOT_DIR` rewrites the paths in the output
-(`-L${sysroot}/usr/lib` instead of `-L/usr/lib`). Both must be set for a correct cross-compile.
-
-## ccache with Cross-Compilers
-
-Speed up repeated cross builds:
-
-```bash
-export CROSS_COMPILE="ccache aarch64-linux-gnu-"
-make -j$(nproc)
-```
-
-Or enable it via the build system (`BR2_CCACHE=y` in Buildroot, `INHERIT += "ccache"` in Yocto).
-
-## Static Linking and libc Licensing
-
-When library ABI mismatches are blocking you and you need a fast path:
-
-```bash
-# Link everything statically (larger binary, no runtime deps)
-aarch64-linux-gnu-gcc -static -o myapp myapp.c
-
-# Verify no dynamic deps
-ldd myapp
-# Expected: "not a dynamic executable"
-```
-
-Use static linking as a diagnostic step or for simple utilities.
-
-**LGPL licensing caveat:** glibc and uClibc are LGPL, which requires that end users be able to relink against a modified
-library. A fully static binary built against glibc or uClibc creates a distribution obligation to provide the object
-files (or a relink mechanism). Use **musl libc** for clean, obligation-free static binaries in production — musl's
-static linking carries no LGPL relink requirement (select the musl toolchain in your build system).
+For repeated builds, use the build system's supported ccache configuration and verify that it still selects the
+intended compiler and flags. Keep kernel `ARCH`/`CROSS_COMPILE` work in its configured build context, and route
+Buildroot/Yocto persistence and package rebuilding to their owning skills.

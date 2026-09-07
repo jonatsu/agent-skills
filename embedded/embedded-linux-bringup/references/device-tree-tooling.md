@@ -1,172 +1,124 @@
 # Device Tree Tooling
 
-Tools for turning device tree source into blobs and back, building and applying overlays, reading and patching a
-compiled DTB, diffing two trees, validating against dt-schema, and inspecting the tree the running kernel actually
-parsed.
+Use the target kernel's build context and binding version. A valid DTB can still describe hardware that is absent,
+miswired, or unsupported by the running driver.
 
-For node structure, resource ownership, and the driver probe path, see `device-tree-driver-bringup.md`.
+## Build and Validate
 
-## Contents
-
-- [Compile and Decompile with `dtc`](#compile-and-decompile-with-dtc)
-- [Overlays](#overlays)
-- [Inspect and Patch a Blob: `fdtget` / `fdtput` / `fdtdump`](#inspect-and-patch-a-blob-fdtget--fdtput--fdtdump)
-- [Diff Two Trees: `dtx_diff`](#diff-two-trees-dtx_diff)
-- [Validate Against Bindings: `dt-validate` / dt-schema](#validate-against-bindings-dt-validate--dt-schema)
-- [The Live Tree: `/proc/device-tree`](#the-live-tree-procdevice-tree)
-- [Worked Example: confirm a board's DTB matches its source](#worked-example-confirm-a-boards-dtb-matches-its-source)
-
-## Compile and Decompile with `dtc`
-
-`dtc` is the device tree compiler. It converts between source (`.dts`/`.dtsi`) and the flattened binary blob (`.dtb`),
-in both directions.
+For a self-contained DTS without C preprocessor directives:
 
 ```bash
-# Source -> blob
-dtc -I dts -O dtb -o my-board.dtb my-board.dts
-
-# Blob -> source (decompile a DTB pulled off a target or build tree)
-dtc -I dtb -O dts -o my-board.dts my-board.dtb
-
-# Decompile to stdout for a quick look, keeping input as-is
-dtc -I dtb -O dts my-board.dtb | less
+dtc -I dts -O dtb -o board.dtb board.dts
+dtc -I dtb -O dts -o inspected.dts board.dtb
 ```
 
-Useful flags:
+Kernel DTS files commonly use C includes and macros. Build them through the matching kernel make target with the
+correct `ARCH`, toolchain, configuration, and output directory; passing such a source directly to dtc is insufficient.
+Do not overwrite an existing configured build with an unrelated defconfig.
 
-- `-@` — emit a `__symbols__` node so the blob can be a target for overlays.
-- `-@ -H epapr` / `-H` — control the header/handle format when required by the platform.
-- `-W no-unit_address_vs_reg` and friends — silence specific lint warnings; prefer fixing the warning over suppressing
-  it.
-- `-p <bytes>` — pad the blob with extra free space so it can be patched in place by `fdtput` or the bootloader.
+```bash
+# In the configured kernel build context; select ARCH/CROSS_COMPILE/O= as needed.
+make dtbs_check
+make DT_SCHEMA_FILES=vendor,device.yaml dtbs_check
+```
 
-Kernel builds usually invoke `dtc` for you; call it directly when you have a blob without matching source, or when
-reproducing a bootloader's compile step by hand.
+These need the release-compatible dt-schema tools and their dependencies.
+Use `dt_binding_check` when editing the schema itself. For a standalone blob and prepared matching schemas:
+
+```bash
+dt-validate -s /path/to/processed-schema.json board.dtb
+```
+
+Check actual errors and unmatched bindings; command completion alone does not mean every node was constrained.
+Follow the kernel's [schema guide](https://docs.kernel.org/devicetree/bindings/writing-schema.html).
+
+## Inspect and Patch
+
+Use `fdtget -l` to list children, `fdtget -p` to list properties, and explicit types to inspect values:
+
+```bash
+fdtget -t s board.dtb / compatible
+fdtget -t x board.dtb /soc/i2c@21a0000 clock-frequency
+fdtdump board.dtb
+```
+
+Paths are board examples. Resolve them from the actual tree before use.
+`fdtput` modifies a file; preserve the original and prefer a source change when source is available.
+
+```bash
+cp board.dtb candidate.dtb
+fdtput -t s candidate.dtb /soc/i2c@21a0000 status okay
+```
+
+dtc v1.7.2's `fdtput` expands its buffer when required. Do not impose a universal `dtc -p` prerequisite.
+In-memory bootloader edits can have different allocation constraints.
+See [fdtput's implementation](https://github.com/dgibson/dtc/blob/v1.7.2/fdtput.c).
 
 ## Overlays
 
-An overlay (`.dtbo`) modifies a base tree at load time — adding a node, changing a `status`, or wiring an endpoint —
-without editing the base DTB.
+Identify where application occurs: offline, in a bootloader, or in the running kernel.
+Label-based targets need symbols in the base. Path-based targets can work without them.
 
 ```bash
-# Base tree MUST be compiled with symbols so overlays can resolve labels
 dtc -@ -I dts -O dtb -o base.dtb base.dts
-
-# Compile the overlay source to a .dtbo
-dtc -@ -I dts -O dtb -o sensor-overlay.dtbo sensor-overlay.dts
-
-# Apply an overlay onto a base blob offline (fdtoverlay, from dtc/libfdt)
-fdtoverlay -i base.dtb -o merged.dtb sensor-overlay.dtbo
-
-# Decompile the merged result to verify the overlay landed
-dtc -I dtb -O dts merged.dtb | less
+dtc -@ -I dts -O dtb -o sensor.dtbo sensor-overlay.dts
+fdtoverlay -i base.dtb -o merged.dtb sensor.dtbo
 ```
 
-An overlay whose labels do not resolve against the base tree is almost always the base tree compiled without `-@`.
-Runtime overlay application (via configfs or a bootloader) requires kernel support and a base compiled with symbols.
+Check referenced labels/paths and required driver support, then validate the merged tree.
+A missing label can be a wrong base or misspelled symbol, not merely an omitted `-@`.
+Bootloader application produces a merged tree before Linux boots; it does not require Linux runtime overlay support.
+Runtime application needs the target kernel's supported API and policy. Do not assume that a vendor configfs interface
+exists in upstream Linux. The [kernel overlay notes](https://docs.kernel.org/devicetree/overlay-notes.html)
+describe its in-kernel API, target resolution, and removal constraints.
 
-## Inspect and Patch a Blob: `fdtget` / `fdtput` / `fdtdump`
+## Compare Blobs Without Hiding Conversion Failures
 
-These read and modify a compiled DTB directly, without a decompile/recompile round trip — handy when you only have the
-blob.
+`scripts/dtc/dtx_diff` is useful interactively in its matching kernel tree, including its preprocessing context.
+Do not use empty output alone as a verification gate: its process substitutions can hide conversion failures.
+For two compiled blobs, convert each explicitly before comparing. This standalone `sh` example takes two DTB paths;
+use ordinary file paths, prefixed with `./` if a name begins with a hyphen.
+
+```sh
+#!/bin/sh
+set -eu
+[ "$#" -eq 2 ] || { printf 'usage: compare-dtbs.sh expected.dtb actual.dtb\n' >&2; exit 2; }
+command -v dtc >/dev/null 2>&1 || { printf 'dtc unavailable\n' >&2; exit 2; }
+comparison_dir=$(mktemp -d) || exit 2
+trap 'rm -rf -- "$comparison_dir"' 0
+trap 'exit 130' INT
+trap 'exit 143' TERM
+if ! dtc -s -I dtb -O dts -o "$comparison_dir/expected.dts" "$1"; then
+    printf 'expected DTB conversion failed\n' >&2
+    exit 2
+fi
+if ! dtc -s -I dtb -O dts -o "$comparison_dir/actual.dts" "$2"; then
+    printf 'actual DTB conversion failed\n' >&2
+    exit 2
+fi
+comparison_status=0
+diff -u "$comparison_dir/expected.dts" "$comparison_dir/actual.dts" || comparison_status=$?
+case "$comparison_status" in
+    0) printf 'Canonical DT properties match; boot selection is not verified\n' ;;
+    1) printf 'DT properties differ; inspect the differences\n' >&2 ;;
+    *) printf 'DT comparison failed\n' >&2 ;;
+esac
+exit "$comparison_status"
+```
+
+This compares canonicalized properties, not byte identity or arbitrary semantic equivalence between differently
+encoded trees. Hashes answer byte identity. Symbol/phandle differences may still need interpretation.
+
+## Inspect the Running Tree
+
+When the kernel exposes its live tree, inspect `/sys/firmware/devicetree/base` or its `/proc/device-tree` view:
 
 ```bash
-# Read one property (path, then property name)
-fdtget my-board.dtb /soc/i2c@21a0000/sensor@3c compatible
-fdtget -t x my-board.dtb /soc/i2c@21a0000 clock-frequency   # -t x = hex, -t i = int, -t s = string
-
-# List the child nodes of a path, then the properties of a node
-fdtget -l my-board.dtb /soc/i2c@21a0000
-fdtget -p my-board.dtb /soc/i2c@21a0000/sensor@3c
-
-# Patch a property IN PLACE (needs free space — compile the blob with dtc -p)
-fdtput -t s my-board.dtb /soc/i2c@21a0000/sensor@3c status okay
-fdtput -t i my-board.dtb /soc/i2c@21a0000 clock-frequency 400000
-
-# Full human-readable dump of a blob (structure + values + string table)
-fdtdump my-board.dtb | less
+dtc -I fs -O dtb -o live.dtb /sys/firmware/devicetree/base
+fdtget -t s live.dtb / compatible
 ```
 
-`fdtput` mutates the blob — treat it like any boot-artifact edit: back up the original first and keep the reverse value
-to restore. Prefer editing source and recompiling when you have the source.
-
-## Diff Two Trees: `dtx_diff`
-
-`dtx_diff` (shipped in the kernel `scripts/dtc/`) normalises and diffs any two DT inputs — source or blob, in any
-combination — so a "did my change take effect" question becomes a clean textual diff.
-
-```bash
-# Diff two blobs (e.g. old vs newly built board DTB)
-scripts/dtc/dtx_diff old-board.dtb new-board.dtb
-
-# Diff source against the compiled blob shipped in an image
-scripts/dtc/dtx_diff my-board.dts /path/to/deployed/my-board.dtb
-
-# Diff what the running kernel parsed against your source
-scripts/dtc/dtx_diff /proc/device-tree my-board.dts
-```
-
-Because it canonicalises both sides first, the diff shows only real structural or value differences, not formatting
-noise. This is the fastest way to prove a rebuilt DTB actually differs from the one on the target.
-
-## Validate Against Bindings: `dt-validate` / dt-schema
-
-`dt-schema` provides `dt-validate`, which checks a tree against the YAML binding schemas so property names, types, and
-required fields are caught before boot.
-
-```bash
-# One-time install of the schema tooling
-pip install dtschema
-
-# In a kernel tree: build DTBs in the schema-checking YAML form and validate them
-make dtbs_check                       # validates all boards against bindings
-make DT_SCHEMA_FILES=vendor,model.yaml dtbs_check   # scope to one binding
-
-# Validate a standalone blob against the installed processed schema
-dt-validate -s /path/to/processed-schema.json my-board.dtb
-```
-
-This is what catches a typo like an unknown property (for example a made-up `enable-regulators` in place of the correct
-`<rail>-supply`) or a wrong value type, at build time rather than as a silent probe failure. Always run it after editing
-a binding-governed node.
-
-## The Live Tree: `/proc/device-tree`
-
-The kernel exposes the tree it actually parsed under `/proc/device-tree` (a view of the same data as
-`/sys/firmware/devicetree/base`). Each property is a file; each node is a directory.
-
-```bash
-# The compatible string the running kernel sees for a node
-cat /proc/device-tree/soc/i2c@21a0000/sensor@3c/compatible | xxd
-
-# A numeric property is big-endian bytes — decode with xxd or hexdump
-cat /proc/device-tree/soc/i2c@21a0000/clock-frequency | xxd   # e.g. 00 06 1a 80 = 400000
-
-# Is a node enabled?
-cat /proc/device-tree/.../status 2>/dev/null   # absent often means "okay"
-
-# Reconstruct the whole live tree as source for inspection
-dtc -I fs -O dts /proc/device-tree | less
-```
-
-`dtc -I fs -O dts /proc/device-tree` is the ground truth: it is the tree after the bootloader's fixups, not your source.
-When source and target disagree, this tells you which DTB actually booted.
-
-## Worked Example: confirm a board's DTB matches its source
-
-On an i.MX6ULL board where a freshly built sensor node does not appear to take effect:
-
-```bash
-# 1. Reconstruct the live tree the kernel booted with
-dtc -I fs -O dts /proc/device-tree > /tmp/live.dts
-
-# 2. Diff it against the source you think you deployed
-scripts/dtc/dtx_diff /tmp/live.dts arch/arm/boot/dts/imx6ull-myboard.dts
-
-# 3. If they differ, the target booted a stale DTB — check what the bootloader loaded
-#    and re-copy the freshly built arch/arm/boot/dts/imx6ull-myboard.dtb.
-#    (Bootloader DTB selection lives in u-boot-development.)
-```
-
-A non-empty diff here is the single most common "my device tree change did nothing" root cause: the edited source
-compiled fine but a stale `.dtb` is on the boot partition.
+The live tree includes bootloader fixups and any applied runtime changes. Compare the intended properties and explain
+expected transformations; a non-empty source/live diff does not prove a stale boot artifact.
+An absent `status` property is normally available under Linux's DT rules; distinguish that from an absent node.
+Verify the bootloader's selected blob independently through its configuration, artifact identity, and boot evidence.
