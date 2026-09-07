@@ -37,20 +37,29 @@ bitbake-layers show-appends | grep <recipe>
 
 ## Where Does a Setting Belong?
 
-The recurring mistake is treating `local.conf` as the project's configuration file. It is not: a change there reparses
-every recipe and — because it is developer-local and usually uncommitted — does not travel to teammates or CI, so the
-build is not reproducible. `local.conf` is for genuinely local, disposable settings you would never ship. `site.conf`
-carries host-wide settings (proxy, mirrors, shared-cache paths) and has the same "does not travel" limitation.
+The recurring mistake is treating a hand-edited `local.conf` as the project's configuration file. A change there
+reparses every recipe, and when the file is developer-local and uncommitted it does not travel to teammates or CI, so
+the build is not reproducible. Hand-maintained `local.conf` is for genuinely local, disposable settings you would never
+ship; `site.conf` carries host-wide settings (proxy, mirrors, shared-cache paths) with the same limitation.
+
+**The defect is "unversioned and hand-edited", not the file itself.** A `local.conf` that is *generated* from a
+committed source — a kas config's `local_conf_header`, a CI template, a checked-in fragment — travels, reproduces, and
+reviews perfectly well, and that is a legitimate and common design. When you find one, read the generator as the source
+of truth and edit *it*; do not "fix" a generated `local.conf` by hand (the next `kas build` overwrites it) and do not
+recommend migrating settings out of a versioned generator that already solves the reproducibility problem. kas
+orchestration itself routes to **kas-build-orchestration**.
+
+The placement table below still applies to the *content*: it says which scope owns a setting, whoever writes the file.
 
 Decide placement by asking *who and what a setting is about*, then put it in the narrowest file that owns that scope:
 
-| A setting about…       | Goes in…                     | Examples                                                                                        |
-| ---------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------- |
-| this developer's box   | `local.conf` (never shipped) | `BB_NUMBER_THREADS`, `PARALLEL_MAKE`, `DL_DIR`, debug tweaks                                    |
-| this build host / site | `site.conf`                  | proxy, `SSTATE_MIRRORS`, shared-cache paths                                                     |
-| distribution policy    | `conf/distro/<name>.conf`    | init system, libc, `DISTRO_FEATURES`, `PREFERRED_PROVIDER_*`, `PACKAGE_CLASSES`, license policy |
-| a specific board       | `conf/machine/<name>.conf`   | kernel/bootloader provider, `IMAGE_FSTYPES`, serial console, kernel-into-rootfs `IMAGE_INSTALL` |
-| image contents         | an image recipe (`.bb`)      | package set, `IMAGE_FEATURES`                                                                   |
+| A setting about…       | Goes in…                   | Examples                                                                                        |
+| ---------------------- | -------------------------- | ----------------------------------------------------------------------------------------------- |
+| this developer's box   | `local.conf`               | `BB_NUMBER_THREADS`, `PARALLEL_MAKE`, `DL_DIR`, debug tweaks                                    |
+| this build host / site | `site.conf`                | proxy, `SSTATE_MIRRORS`, shared-cache paths                                                     |
+| distribution policy    | `conf/distro/<name>.conf`  | init system, libc, `DISTRO_FEATURES`, `PREFERRED_PROVIDER_*`, `PACKAGE_CLASSES`, license policy |
+| a specific board       | `conf/machine/<name>.conf` | kernel/bootloader provider, `IMAGE_FSTYPES`, serial console, kernel-into-rootfs `IMAGE_INSTALL` |
+| image contents         | an image recipe (`.bb`)    | package set, `IMAGE_FEATURES`                                                                   |
 
 Two rules of thumb fall out of the table:
 
@@ -64,8 +73,9 @@ Two rules of thumb fall out of the table:
   IMAGE_FEATURES:append  = " ssh-server-openssh"
   ```
 
-- **Promote anything durable out of `local.conf`/`site.conf`** into the distro, machine, or image layer as soon as more
-  than one person or machine depends on it.
+- **Promote anything durable out of a hand-edited `local.conf`/`site.conf`** into the distro, machine, or image layer as
+  soon as more than one person or machine depends on it. Reusable policy belongs in a layer even when a generator is
+  emitting the config correctly — a generated `local.conf` solves reproducibility, not reuse across products.
 
 ## Poky Is a Reference, Not a Product Base
 
@@ -94,21 +104,46 @@ A reproducible, offline-capable release is three phases. Work them in order.
 
 **2 — Capture the sources (so the build needs no upstream later).**
 
-```bash
+Set in `local.conf`/`site.conf`, then fetch:
+
+```bitbake
 BB_GENERATE_MIRROR_TARBALLS = "1"     # turn VCS checkouts into archives in DL_DIR
-bitbake -c fetchall <image>           # or: bitbake --runall=fetch <image>
-tar -czf dl-$(date +%Y%m%d).tar.gz "${DL_DIR}"   # archive DL_DIR as the source mirror
 ```
 
-Publish the archive to your internal mirror and point BitBake at it with `PREMIRRORS`/`SOURCE_MIRROR_URL` or
-`INHERIT += "own-mirrors"`.
+```bash
+bitbake --runall=fetch <image>                       # fetch everything, build nothing
+tar -czf dl-mirror.tar.gz -C "${DL_DIR}" .           # DL_DIR's CONTENTS are the mirror
+```
+
+Publish the extracted archive to your internal mirror and point BitBake at it with `SOURCE_MIRROR_URL` +
+`INHERIT += "own-mirrors"`, or an explicit `PREMIRRORS`. Extract it *as* a `DL_DIR`-shaped directory — it is a flat set
+of archives and `.done` stamps, not a tree to overlay onto a build directory.
 
 **3 — Verify air-gapped (prove the capture is complete).**
 
-```bash
-BB_NO_NETWORK = "1" bitbake <image>       # fails loudly on any missed source / stray AUTOREV
-BB_FETCH_PREMIRRORONLY = "1"              # or: restrict fetches to the internal mirror
+These are **configuration variables, not shell prefixes**. `BB_NO_NETWORK = "1" bitbake <image>` typed at a prompt
+exits 127 running a command named `BB_NO_NETWORK`; the build never starts, and a green terminal proves nothing. Put
+them in configuration and confirm the effective values:
+
+```bitbake
+BB_NO_NETWORK = "1"                   # denies ALL network access
+# or, to prove only that the mirror is complete:
+BB_FETCH_PREMIRRORONLY = "1"          # restricts fetching to PREMIRRORS
 ```
+
+```bash
+bitbake-getvar BB_NO_NETWORK          # verify BitBake actually holds it
+bitbake --runall=fetch <image>        # fails loudly on a missed source or stray AUTOREV
+```
+
+Two conditions decide whether this test means anything:
+
+- **Choose the variable that matches the claim.** A premirror may be an `http://` host, so passing with
+  `BB_FETCH_PREMIRRORONLY` shows the mirror is complete, *not* that the build runs without a network.
+  `BB_NO_NETWORK` is the air-gap claim.
+- **Start from cold caches.** A populated `DL_DIR` or sstate cache silently satisfies sources the mirror is missing.
+  Verify with `DL_DIR` pointing at the extracted mirror alone and a fresh `TMPDIR`, and confirm the negative case: with
+  one source removed from the mirror, the build must fail.
 
 **4 — Attach compliance artifacts.** Generate the SBOM, CVE report, and license / source archives as part of the release
 — see `compliance-and-sbom.md`. Enable `buildhistory` (committed) and diff it against the previous release to catch
@@ -116,10 +151,18 @@ unintended package-size, dependency, or version changes.
 
 ## Sharing sstate Across Machines
 
-sstate reuse is keyed on a hash of each task's *inputs*, and those inputs include aspects of the build host. So a shared
-cache pays off only when the machines that produce and consume it are alike; a divergent host (different OS, tool
-versions) computes different hashes and simply misses the cache instead of reusing it. Design the share around that
-fact:
+sstate reuse is keyed on a hash of each task's *inputs*. A mismatch is a cache **miss**, never a wrong result — the
+build falls back to compiling, which is slow but correct.
+
+How much the host matters depends on what is being built. Target recipes are cross-compiled and largely insulated from
+the host, and `uninative` exists precisely to keep `-native` output portable across distributions by pinning a common
+loader and libc. So a shared cache does *not* require identical machines. Host divergence still costs hit rate, mostly
+through `-native` and SDK tasks and through the tool versions that leak into a task's signature, and
+`NATIVELSBSTRING` partitions some native artifacts by distribution. Standardising the host is a hit-rate optimisation,
+not a correctness precondition.
+
+When hit rates disappoint, measure rather than assume: `bitbake -S printdiff <recipe>` names the input that differed.
+Design the share around that:
 
 ```bash
 # site.conf, shared by all developers and CI
@@ -131,20 +174,37 @@ DL_DIR         = "/mnt/shared/downloads"                       # shared source c
 - Serve the cache over **NFS or HTTP**; populate `PREMIRRORS` from a shared `DL_DIR` so sources are shared too.
 - **Warm the cache from CI.** A nightly full build fills sstate before developers pull from it, so their first build of
   the day is fast.
-- **Standardize the host to keep hashes stable.** A build container (for example `kas-container`, via
-  **kas-build-orchestration**) pins the host environment, which is what makes the shared hashes actually match across
-  machines.
+- **Standardize the host to raise the hit rate.** A build container (for example `kas-container`, via
+  **kas-build-orchestration**) pins the host environment so native and SDK signatures match across machines. Keep
+  `INHERIT += "uninative"` in play too — it is what makes native artifacts portable between distributions in the first
+  place.
+- **Treat the cache as a trust boundary.** sstate archives are unsigned and unverified by default (`SSTATE_SIG_KEY`
+  empty, `SSTATE_VERIFY_SIG = "0"`), so write access to a shared directory or mirror is the ability to inject binaries
+  into everyone's build. Restrict who can write it, or enable signing and verification and test that a bad archive is
+  actually rejected. See the sstate section of `yocto-workflow.md`.
 
 ## Pruning sstate
 
 The cache grows without bound. Prune it deliberately — this is destructive, so gate it (SKILL.md *Confirmation gates*)
-and echo the expanded `${SSTATE_DIR}` first.
+and expand `${SSTATE_DIR}` and read it back first.
 
 ```bash
+echo "${SSTATE_DIR}"   # necessary, NOT sufficient — see below
 ./scripts/sstate-cache-management.sh --remove-duplicated -d --cache-dir="${SSTATE_DIR}"
-# Age-based prune (irreversible — verify the path is not empty or '/')
+# Age-based prune (irreversible)
 find "${SSTATE_DIR}" -type f -atime +30 -delete
 ```
+
+Printing the path catches the catastrophic case — an empty expansion turning the `find` into a walk of `/` — but a
+plausible-looking path is not a safe one. Two further checks before deleting:
+
+- **Whose cache is it?** A path under `/mnt/shared` or an NFS mount is very likely someone else's working set and CI's
+  warm cache as well. Pruning a shared cache is a team-wide action, not a personal cleanup; take it to whoever owns it.
+- **Will it come back anyway?** `SSTATE_MIRRORS` entries are untouched by any local prune, so deleting locally may
+  simply force a re-download rather than the rebuild you intended.
+
+Age-based pruning uses access times, so a filesystem mounted `noatime` or `relatime` can report far older access than
+reality and delete entries still in daily use. Check the mount options before trusting `-atime`.
 
 ## CI Patterns
 
@@ -163,7 +223,9 @@ find "${SSTATE_DIR}" -type f -atime +30 -delete
   bitbake-layers show-appends
   ```
 
-- **Release builds run offline** with `BB_FETCH_PREMIRRORONLY = "1"` (or `BB_NO_NETWORK = "1"`) to prove source capture.
+- **Release builds run offline** with `BB_FETCH_PREMIRRORONLY = "1"` to prove the mirror is complete, or
+  `BB_NO_NETWORK = "1"` to prove the build needs no network at all. Set them in configuration, not as shell prefixes,
+  and run the job from cold caches — a warm `DL_DIR` makes either check pass vacuously.
 
 ## wic Images and Flashing
 
@@ -192,22 +254,22 @@ dd if=my-image.wic of=/dev/sdX bs=4M conv=fsync status=progress   # fallback
 
 ## Common Traps
 
-| Trap                                                                   | Fix                                                                                                                                                |
-| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `_append` on Kirkstone+ silently no-ops                                | use `:append` (confirm release first)                                                                                                              |
-| `+=` in `local.conf` override                                          | use `:append` / `:prepend`                                                                                                                         |
-| `SRCREV = "${AUTOREV}"` in a release                                   | pin to a commit SHA                                                                                                                                |
-| Poky distro / default PREMIRRORS in production                         | own distro + own mirror                                                                                                                            |
-| `IMAGE_INSTALL +=` growing in `local.conf`                             | write a custom image recipe                                                                                                                        |
-| `.bbappend` version glob mismatch                                      | use the `%` wildcard                                                                                                                               |
-| `FILESEXTRAPATHS:prepend` missing in a `.bbappend`                     | add `:prepend := "${THISDIR}/files:"`                                                                                                              |
-| stale sstate after a `MACHINE` change                                  | `bitbake -c cleansstate <recipe>` (gated)                                                                                                          |
-| `DEPENDS` used for a runtime dep                                       | use `RDEPENDS:${PN}`                                                                                                                               |
-| missing `LIC_FILES_CHKSUM`                                             | add it (or `LICENSE = "CLOSED"`) — see compliance ref                                                                                              |
-| `def` block in a `.conf` fails to parse                                | move it to a `.inc`; only BBHandler (`.bb`/`.bbclass`/`.inc`) accepts `def`, ConfHandler owns `.conf`                                              |
-| `#CONFIG_X is not set` in a kernel `.cfg` is ignored                   | needs the space — `# CONFIG_X is not set`; without it Kconfig reads a comment and the option keeps its defconfig value                             |
-| distro identity set before `require conf/distro/poky.conf` is lost     | poky assigns `DISTRO`/`DISTRO_NAME`/`DISTRO_VERSION` with hard `=`; set yours after the require                                                    |
-| `kernel-module-*` in `IMAGE_INSTALL` breaks when the symbol turns `=y` | built-in emits no module, so the package stops existing; drop it in the same change                                                                |
-| dlopen'd plugin absent at runtime though its provider is installed     | plugins create no shared-library dependency, so nothing pulls them in; name the package explicitly                                                 |
-| `buildhistory` gives stale or mismatched answers                       | it keys on `MACHINE_ARCH` while deploy uses `MACHINE` (differ on hyphens), and keeps dirs for previously-named images — select the newest by mtime |
-| `UNPACKDIR` undefined on Scarthgap and older                           | use `${WORKDIR}` for `file://` sources                                                                                                             |
+| Trap                                                                   | Fix                                                                                                                                                                                                  |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `_append` on Honister+ aborts the parse with a fatal error             | use `:append` (confirm the release first); the reverse — `:append` on a pre-Honister tree — is the silent one                                                                                        |
+| `+=` in `local.conf` clobbered by a machine/distro conf                | `local.conf` parses first, so a later hard `=` wins; use `:append` for variables those files also assign                                                                                             |
+| `SRCREV = "${AUTOREV}"` in a release                                   | pin to a commit SHA                                                                                                                                                                                  |
+| Poky distro / default PREMIRRORS in production                         | own distro + own mirror                                                                                                                                                                              |
+| `IMAGE_INSTALL +=` growing in `local.conf`                             | write a custom image recipe                                                                                                                                                                          |
+| `.bbappend` version glob mismatch                                      | use the `%` wildcard                                                                                                                                                                                 |
+| `FILESEXTRAPATHS:prepend` missing in a `.bbappend`                     | add `:prepend := "${THISDIR}/files:"`                                                                                                                                                                |
+| suspected stale sstate after a `MACHINE`/patch/layer change            | those are hashed inputs and normally invalidate correctly — run `bitbake -S printdiff` / `bitbake-diffsigs` and fix the real input before cleaning                                                   |
+| `DEPENDS` used for a runtime dep                                       | use `RDEPENDS:${PN}` — but a linked shared library needs neither, it is detected from ELF `NEEDED`                                                                                                   |
+| missing `LIC_FILES_CHKSUM`                                             | add it (or `LICENSE = "CLOSED"`) — see compliance ref                                                                                                                                                |
+| `def` block in a `.conf` fails to parse                                | move it to a `.inc`; only BBHandler (`.bb`/`.bbclass`/`.inc`) accepts `def`, ConfHandler owns `.conf`                                                                                                |
+| `#CONFIG_X is not set` in a kernel `.cfg` is ignored                   | needs the space — `# CONFIG_X is not set`; without it Kconfig reads a comment and the option keeps its defconfig value                                                                               |
+| distro identity set before `require conf/distro/poky.conf` is lost     | poky assigns `DISTRO`/`DISTRO_NAME`/`DISTRO_VERSION` with hard `=`; set yours after the require                                                                                                      |
+| `kernel-module-*` in `IMAGE_INSTALL` breaks when the symbol turns `=y` | built-in emits no module, so the package stops existing; drop it in the same change                                                                                                                  |
+| dlopen'd plugin absent at runtime though its provider is installed     | plugins create no shared-library dependency, so nothing pulls them in; name the package explicitly                                                                                                   |
+| `buildhistory` gives stale or mismatched answers                       | it keys on `MACHINE_ARCH` while deploy uses `MACHINE` (differ on hyphens) and keeps dirs for every image ever built — resolve `BUILDHISTORY_DIR_IMAGE` and check `build-id.txt`; never pick by mtime |
+| `UNPACKDIR` undefined on Scarthgap and older                           | use `${WORKDIR}` for `file://` sources                                                                                                                                                               |

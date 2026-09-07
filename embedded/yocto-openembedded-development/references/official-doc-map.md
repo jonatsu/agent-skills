@@ -54,8 +54,9 @@ and github.com/devicetree-org/dt-schema.
 
 Confirm the codename before answering any of these; the answer is era-specific:
 
-- **Override separator** — `_append`/`_remove` (pre-Honister), both (Honister 3.4), `:append`/`:remove` only (Kirkstone
-  4.0+). → Migration Guides.
+- **Override separator** — `_append`/`_remove` before Honister; `:append`/`:remove` from **Honister 3.4** onward, where
+  BitBake raises a fatal error on the old operation syntax rather than ignoring it. → Migration Guides (the Honister
+  3.4 page, "Override syntax changes").
 - **Class location and names** — the split into `classes-recipe/` and `classes-global/`, and renamed/removed classes. →
   Migration Guides + Reference Manual (Classes) for the target release.
 - **SPDX / SBOM** — `create-spdx` output layout and SPDX schema version (2.x → 3.x). → Reference Manual (Classes) for

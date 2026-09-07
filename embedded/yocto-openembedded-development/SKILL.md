@@ -1,40 +1,28 @@
 ---
 name: yocto-openembedded-development
-description: "Yocto Project and OpenEmbedded build partner — BitBake recipes (.bb/.bbappend/.bbclass), meta-layers and BSP layers, bblayers.conf/local.conf/site.conf, sstate-cache, DL_DIR, devtool, wic/.wks images, SDK (populate_sdk/populate_sdk_ext), and reproducible release prep. Use when a BitBake task fails (do_fetch/do_compile/do_package/do_rootfs), an override silently no-ops after a Kirkstone upgrade (`_append` vs `:append`), a `.bbappend` will not apply, sstate serves stale artifacts, `LIC_FILES_CHKSUM` mismatch fails do_populate_lic, you need SBOM/SPDX (`create-spdx`), CVE audit (`cve-check`), or license-compliance archives for a release. Route kas build orchestration (`.kas.yml`, `kas build`) to kas-build-orchestration; general board bring-up, device tree, drivers, and debugging to embedded-linux-bringup; Buildroot to buildroot-development; U-Boot to u-boot-development."
+description: "Yocto Project and OpenEmbedded build partner — BitBake recipes (.bb/.bbappend/.bbclass), meta-layers and BSP layers, bblayers.conf/local.conf/site.conf, sstate-cache, DL_DIR, devtool, wic/.wks images, SDK (populate_sdk/populate_sdk_ext), and reproducible release prep. Use when a BitBake task fails (do_fetch/do_compile/do_package/do_rootfs), an override stops working or aborts the parse after a release upgrade (`_append` vs `:append`), a `.bbappend` will not apply, sstate serves stale artifacts, `LIC_FILES_CHKSUM` mismatch fails do_populate_lic, you need SBOM/SPDX (`create-spdx`), CVE audit (`cve-check`), or license-compliance archives for a release. Route kas build orchestration (`.kas.yml`, `kas build`) to kas-build-orchestration; general board bring-up, device tree, drivers, and debugging to embedded-linux-bringup; Buildroot to buildroot-development; U-Boot to u-boot-development."
 license: MIT
+compatibility: Requires a BitBake/OE-Core checkout and a Linux host meeting that release's build prerequisites. Commands assume an initialised build directory (`oe-init-build-env`); `devtool deploy-target` additionally needs SSH access to a running target. Class names, variables and override syntax are release-specific.
 metadata:
   author: Joonas Onatsu
-  tags:
-    - yocto
-    - openembedded
-    - bitbake
-    - poky
-    - meta-layer
-    - bsp
-    - recipe
-    - bbappend
-    - bbclass
-    - sstate
-    - devtool
-    - wic
-    - sdk
-    - sbom
-    - spdx
-    - cve-check
-    - license-compliance
-    - reproducible-builds
-    - release-engineering
 ---
 
 # Yocto / OpenEmbedded Development
 
-**IRON LAW: Confirm the Yocto release codename BEFORE giving any syntax- or class-specific answer. Override syntax and
-class names changed at Honister/Kirkstone (`_append` → `:append`, `_remove` → `:remove`); a pre-Kirkstone answer applied
-to a Kirkstone+ tree is a SILENT no-op, and answering in the wrong era is the top error this skill makes. You MUST NOT
-emit `_append`/`:append`, a class name, or a variable-behavior claim until the codename is known or explicitly assumed
-and LABELLED.**
+**IRON LAW: Confirm the release era from the actual checkout BEFORE giving any syntax- or class-specific answer.
+Override syntax changed at Honister 3.4 (`_append` → `:append`, `_remove` → `:remove`), and the two directions fail
+differently. You MUST NOT emit `_append`/`:append`, a class name, or a variable-behavior claim until the era is known or
+explicitly assumed and LABELLED.**
 
-The same `IMAGE_INSTALL_append` line is correct on Dunfell and dead weight on Kirkstone. Pin the era first, then answer.
+The two failure directions are not symmetric, and the asymmetry decides how you diagnose:
+
+- **Old syntax on a Honister-or-newer tree fails loudly.** BitBake raises a fatal error naming the variable, the file
+  and the line — `Variable %s contains an operation using the old override syntax`. It is not a silent no-op.
+- **New syntax on a pre-Honister tree is the silent one.** There `:` is not an override separator, so
+  `IMAGE_INSTALL:append` parses as an ordinary, inert variable name and quietly does nothing.
+
+So `IMAGE_INSTALL_append` is correct on Dunfell and a hard parse failure on Kirkstone, while `IMAGE_INSTALL:append` is
+correct on Kirkstone and silently dead on Dunfell. Pin the era first, then answer.
 
 ---
 
@@ -73,22 +61,44 @@ route to **kas-build-orchestration**. Yocto builds run fine without kas; reach f
 
 ## Workflow
 
-Tick each step per task. ⛔ BLOCKING MUST complete before the next; ⚠️ REQUIRED MUST be done but MAY interleave.
+Two shared steps, then branch by what the task actually is. ⛔ BLOCKING MUST complete before the next; ⚠️ REQUIRED MUST
+be done but MAY interleave.
 
-- [ ] **⛔ BLOCKING — Lock the release era.** Record the Yocto release codename and version (Scarthgap 5.0, Nanbield 4.3,
-  Kirkstone 4.0, Dunfell 3.1, …), from `LAYERSERIES_COMPAT` in `layer.conf` or the poky checkout. This gates override
-  syntax, class names, and variable behavior (Iron Law). If unknown, state the assumption and LABEL it.
-- [ ] **⚠️ REQUIRED — Lock build context.** Record `MACHINE`, `DISTRO`, the active layer set (Poky only?
-  meta-openembedded? custom BSP?), and the exact symptom: failing task, error line, or wrong variable value.
-- [ ] **⚠️ REQUIRED — Classify the task.** Layer setup / recipe authoring / `.bbappend` override / build config /
-  sstate-cache / devtool / image·wic / SDK / compliance·SBOM / release. One lane at a time.
+**Shared entry (both lanes):**
+
+- [ ] **⛔ BLOCKING — Lock the release era.** Establish the *actual* BitBake/OE-Core revision in use: the poky checkout's
+  tag or branch (`git -C <poky> describe --tags`), or `DISTRO_VERSION`/`poky.conf`. `LAYERSERIES_COMPAT` is a
+  *compatibility declaration* — a layer may legitimately list several codenames — so read it as "which releases this
+  layer claims to support", never as proof of which release is checked out. This gates override syntax, class names and
+  variable behavior (Iron Law). If it cannot be established, state the assumed era and LABEL the assumption.
+- [ ] **⚠️ REQUIRED — Lock build context.** Record `MACHINE`, `DISTRO`, and the active layer set (Poky only?
+  meta-openembedded? custom BSP?).
+
+**Authoring lane** — new recipe, new layer, `.bbappend`, image or SDK config, compliance wiring:
+
+- [ ] **⚠️ REQUIRED — State the target and its placement.** What is being added, and which file owns it per *Where Does
+  a Setting Belong?* in `references/yocto-best-practices.md`.
+- [ ] **⚠️ REQUIRED — Write it, then name its validation.** Produce the recipe, append or config, and give the command
+  that would prove it works (`bitbake-getvar`, `bitbake -c <task>`, `bitbake-layers show-appends`). A failing build is
+  not a prerequisite for authoring — do not manufacture one.
+- [ ] **⚠️ REQUIRED — Run the already-authorized local checks** rather than stopping to ask after each one. Parse and
+  variable-inspection commands are read-only; batch them and report the results together.
+
+**Diagnosis lane** — a task fails, a variable holds the wrong value, or an override does not apply:
+
 - [ ] **⛔ BLOCKING — Collect evidence.** Gather the bounded artifacts in *Evidence First* below before ranking causes.
   No fix proposal until the failing task is evidenced.
-- [ ] **⚠️ REQUIRED — Rank causes, validate ONE.** Propose the single most likely cause and ONE command or ONE file edit
-  that confirms or refutes it. Stop at a checkpoint; request the result.
-- [ ] **⚠️ REQUIRED — Confirm before mutating.** Any `cleansstate`/`cleanall`, sstate prune, or image write to
-  `/dev/sdX` passes the *Confirmation gates* first.
+- [ ] **⚠️ REQUIRED — Rank causes, validate the top one.** Propose the most likely cause and the command or file edit
+  that confirms or refutes it. Read-only checks you can already run, run — reserve a checkpoint for a result only you
+  cannot obtain (target access, a long build, a mutating command).
 - [ ] **⚠️ REQUIRED — Close with the Output contract.** Root cause → evidence → exact fix/command → validation command.
+
+**Both lanes:**
+
+- [ ] **⚠️ REQUIRED — Confirm before mutating.** Any `cleansstate`/`cleanall`, sstate prune, target deploy, or image
+  write to `/dev/sdX` passes the *Confirmation gates* first.
+- [ ] **⚠️ REQUIRED — Honor a stop request.** If the user asks to stop, stop. See the pseudo note under *Anti-patterns*
+  for what interrupting BitBake actually costs.
 
 ---
 
@@ -106,6 +116,11 @@ pair every mutating command with its reverse or its cost.
 - **Pruning sstate** — `find ${SSTATE_DIR} … -atime +N -delete` and `sstate-cache-management.sh --remove-*` permanently
   remove cache entries. Confirm the cache directory and the age threshold; a mistyped path or `${SSTATE_DIR}` that
   expanded empty deletes from `/`.
+- **Writing to a live target** — `devtool deploy-target` opens an SSH session to a running board and installs the
+  recipe's `do_install` output onto it. Local `devtool add`/`modify`/`build`/`finish` touch nothing outside the build
+  directory and need no gate; `deploy-target` mutates the board and does. Confirm the target identity, and reuse an
+  authorization the user already gave for that board rather than re-asking each invocation. See the devtool section of
+  `references/yocto-workflow.md` for what it does and does not deploy.
 
 ### Safety
 
@@ -128,14 +143,17 @@ Before diagnosing, inspect (or ask for) the artifacts that pin the failing task:
   `bitbake <recipe> -e | grep '^VAR='`.
 - Which layer and which appends are in play — `bitbake-layers show-recipes | grep <recipe>` and
   `bitbake-layers show-appends | grep <recipe>`.
-- The release and compatibility declaration — `LAYERSERIES_COMPAT` in each `layer.conf`.
+- The actual release, plus each layer's compatibility claim — the poky checkout's tag or branch for the former,
+  `LAYERSERIES_COMPAT` in each `layer.conf` for the latter. When they disagree, that mismatch is often the bug.
 
 Keep every capture BOUNDED — grep the log, do not paste a full build transcript.
 
 ```bash
 # Release / layer sanity
+git -C <poky> describe --tags            # what is actually checked out
+bitbake-getvar DISTRO_VERSION            # the distro's own release identity
 bitbake-layers show-layers
-grep -R LAYERSERIES_COMPAT */conf/layer.conf
+grep -R LAYERSERIES_COMPAT */conf/layer.conf   # what each layer CLAIMS to support
 
 # Final vs per-assignment variable value
 bitbake-getvar IMAGE_INSTALL              # all assignments + final value
@@ -176,25 +194,38 @@ as a diagnosis.
 BitBake and OE-Core syntax drift across releases. Before giving syntax-specific guidance you MUST confirm the release,
 because:
 
-- **Override separator changed at Kirkstone (4.0).** Pre-Honister used `_` (`SRC_URI_append`, `do_install_append`);
-  Honister (3.4) accepted both `_` and `:`; Kirkstone dropped `_`. On Kirkstone+, an `_append` line does not error — it
-  becomes an inert variable and silently does nothing. Match the confirmed era exactly.
+- **Override separator changed at Honister (3.4), not Kirkstone.** Pre-Honister used `_` (`SRC_URI_append`,
+  `do_install_append`); Honister introduced `:` and shipped `convert-overrides.py` to migrate metadata. From Honister
+  onward BitBake *rejects* the old operation syntax: `setVar` raises `bb.fatal` naming the variable, file and line when
+  the name contains `_append`, `_prepend` or `_remove`. Match the confirmed era exactly.
+
+  Two consequences worth keeping straight. First, the check is a **substring match on the variable name**, so ordinary
+  underscores are untouched — `SRC_URI`, `IMAGE_INSTALL` and `PACKAGE_ARCH` are all fine; only a name containing one of
+  those three operation substrings trips it. Second, the error is loud in that direction and silent in the other: see
+  the Iron Law.
+
 - **Class names and infrastructure move.** Classes are renamed, split, or relocated to
   `classes-recipe/`/`classes-global/` across releases; `create-spdx` behavior and the SBOM format changed notably
   between Kirkstone, Nanbield, and Scarthgap. Confirm before naming a class or its inherit.
+
 - **Variable semantics shift.** `WORKDIR` layout, `SRCPV`/`PV` handling, and default `INHERIT` sets differ by release.
 
-When the release is unknown, give the answer per era (pre-Kirkstone `_` vs Kirkstone+ `:`) rather than assuming one, and
-consult `references/official-doc-map.md` to read the version-matched manual.
+When the release is unknown, give the answer per era (pre-Honister `_` vs Honister-and-newer `:`) rather than assuming
+one, and consult `references/official-doc-map.md` to read the version-matched manual.
 
 ---
 
 ## Anti-patterns
 
-- MUST NOT emit `_append`/`_remove` (or `:append`/`:remove`) before the release era is known — the wrong separator is a
-  silent no-op, not an error.
-- MUST NOT use `+=` or `.=` in `local.conf`/`site.conf`; global-file parse order is undefined. Use `:append`/`:prepend`
-  (release permitting).
+- MUST NOT emit `_append`/`_remove` (or `:append`/`:remove`) before the release era is known — old syntax on a modern
+  tree is a fatal parse error, new syntax on a pre-Honister tree is a silent no-op.
+- MUST NOT reach for `+=`/`.=` in `local.conf`/`site.conf` **when a later file may hard-assign the same variable**.
+  Global parse order is defined, not undefined (`bitbake.conf` requires and includes `site.conf`, `auto.conf`,
+  `local.conf`, then machine, then distro), and that order is exactly the problem: `local.conf` is read *before* the
+  machine and distro configs, so a `VAR = "…"` in either overwrites a `VAR += "…"` you wrote earlier. `:append` is
+  applied at expansion time, after all parsing, so it survives. `+=` in `local.conf` is legitimate and common for
+  variables nothing downstream reassigns — prefer `:append` for anything a machine or distro conf also touches, and do
+  not rewrite a working `+=` for its own sake.
 - MUST NOT edit a core layer (`meta`, `meta-poky`, OE-Core, BitBake) to change behavior — upgrades wipe it silently.
   Override via a `.bbappend` in your own layer.
 - MUST NOT ship `SRCREV = "${AUTOREV}"` in a release recipe — a floating HEAD is unreproducible and breaks air-gapped
@@ -212,8 +243,12 @@ consult `references/official-doc-map.md` to read the version-matched manual.
 - MUST NOT judge a build by a piped command's status — `bitbake … | tail` exits with `tail`'s status, so a failed build
   reports success. Capture `$?` before any pipe, and confirm against an artifact (deployed file, `buildhistory`) rather
   than the log alone.
-- MUST NOT interrupt a running `bitbake` to save time — a killed build can leave pseudo's inode database inconsistent,
-  and the next task aborts with `path mismatch`, costing a `-c clean` and full rebuild of that recipe.
+- MUST NOT reach for a forced kill (`SIGKILL`, a second Ctrl-C) as the ordinary way to stop a build. BitBake has two
+  distinct stop levels: the first Ctrl-C requests `stateShutdown`, which starts no new tasks and lets running ones
+  finish cleanly; a second requests `stateForceShutdown`, which interrupts tasks mid-flight. Only the forced path risks
+  leaving pseudo's inode database inconsistent, and even then diagnose the actual error — a later `path mismatch` is
+  evidence for that story, not a foregone conclusion of any cancellation. **A user asking to stop is authorization to
+  stop:** issue the graceful stop and say what it costs, rather than refusing or continuing.
 
 ---
 
@@ -242,4 +277,7 @@ Cite the release-matched version of every manual (the codename is in the docs UR
 
 ## Attribution
 
-See `ATTRIBUTIONS.md` for the learning sources that informed this skill and the licensing note.
+See `ATTRIBUTIONS.md` for the sources behind this skill. It records an **open licensing question**: a 2026-09-07
+investigation established `references/yocto-best-practices.md` as a structural adaptation of a CC BY-SA 3.0 Bootlin
+source, which is unresolved against the MIT declaration above. Read it before redistributing this package or relying
+on that license field.

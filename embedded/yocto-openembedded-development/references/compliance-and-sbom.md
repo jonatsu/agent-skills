@@ -54,14 +54,39 @@ The build writes a per-image license manifest listing each package, its version,
 `${LICENSE_DIRECTORY}/${IMAGE_NAME}/license.manifest`. Review it by hand: it reflects only the declarative metadata, so
 any recipe with a weak `LICENSE` or a missing `LIC_FILES_CHKSUM` shows up as a gap.
 
-To ship the license texts on the target itself:
+To ship the license texts on the target itself there are two distinct routes, and the second has a step that is easy to
+miss.
+
+**Route 1 — copy the texts into the rootfs directly:**
 
 ```bitbake
-COPY_LIC_DIRS     = "1"      # copy license dirs into the rootfs
-COPY_LIC_MANIFEST = "1"      # and the manifest
-# or package them so only what you install is included:
-LICENSE_CREATE_PACKAGE = "1"
+COPY_LIC_MANIFEST = "1"      # place the manifest in the rootfs
+COPY_LIC_DIRS     = "1"      # and the per-package license directories (needs the manifest too)
 ```
+
+**Route 2 — ship them as packages, so only what you install is included:**
+
+```bitbake
+LICENSE_CREATE_PACKAGE = "1"          # GENERATES a <pkg>-lic package per recipe
+IMAGE_FEATURES:append  = " lic-pkgs"  # INSTALLS those packages into the image
+```
+
+**`LICENSE_CREATE_PACKAGE` only creates the packages; it does not install them.** Setting it alone produces
+`<pkg>-lic` packages that are built, feedable, and entirely absent from your image — a build that looks like it
+satisfied the obligation while shipping nothing. From Honister onward the license packages are no longer pulled in
+automatically, and `lic-pkgs` is the image feature that installs them. Confirm the release's mechanism in its
+Reference Manual rather than assuming this pair carries across every branch.
+
+Whichever route you take, **verify the delivered rootfs, not the configuration**:
+
+```bash
+grep -c . tmp/deploy/images/<machine>/<image>.manifest      # is <pkg>-lic actually in the image?
+grep -- '-lic' tmp/deploy/images/<machine>/<image>.manifest
+# and look inside the built rootfs for the texts themselves:
+find tmp/work/<machine>/<image>/*/rootfs/usr/share/{licenses,common-licenses} -maxdepth 1 2>/dev/null
+```
+
+Generating an artifact and delivering it are separate claims. A green build proves neither.
 
 ## SBOM with `create-spdx` (SPDX)
 
@@ -121,3 +146,9 @@ configured tree. Pair the archive with `COPYLEFT_LICENSE_INCLUDE`/`_EXCLUDE` to 
   entry.
 - [ ] `INHERIT += "archiver"` with the mode your licenses require — source archive captured for the shipped image.
 - [ ] License manifest reviewed by hand for metadata gaps.
+- [ ] If license texts must ship on target, the image **manifest and rootfs** inspected to confirm they are actually
+  installed — generating `<pkg>-lic` packages is not shipping them.
+
+Each box above is a *generation* check. None of them establishes that your distribution obligations are met: that is a
+legal determination about your product, your licenses and how you deliver it. Report what was generated and verified,
+and leave the compliance conclusion to whoever owns it.

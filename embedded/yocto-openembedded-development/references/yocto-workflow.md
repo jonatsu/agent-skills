@@ -122,10 +122,23 @@ IMAGE_INSTALL = "busybox mtd-utils"
 | `+=` / `=+` | append / prepend with a space                                                |
 | `.=` / `=.` | append / prepend without a space                                             |
 
-`:append`, `:prepend`, and `:remove` (the `_append`/`_prepend`/`_remove` forms before Kirkstone) are applied at
-variable-expansion time, after parsing — so their result is order-independent, unlike `+=`/`.=`. You control all spacing
-yourself. Application order is `:append`, then `:prepend`, then `:remove`. In global config files (`local.conf`,
-`site.conf`) prefer the override forms; `+=`/`.=` there depend on include order and are hard to reason about.
+`:append`, `:prepend`, and `:remove` (the `_append`/`_prepend`/`_remove` forms before Honister) are applied at
+variable-expansion time, after parsing. You control all spacing yourself. Application order is `:append`, then
+`:prepend`, then `:remove`.
+
+**What "order-independent" does and does not mean.** Because they are deferred to expansion, an `:append` cannot be
+wiped by a plain `=` parsed later in another file — that is the property worth having. It does **not** mean the appends
+are unordered among themselves: two `:append` operations on the same variable concatenate in the order BitBake parsed
+them, so a conditional override and an unconditional one still compose in a definite sequence. Inspect the result with
+`bitbake-getvar -r <recipe> VAR`, which prints every assignment site alongside the final value, rather than reasoning
+it out.
+
+**Global config files.** Parse order there is defined, not arbitrary: `bitbake.conf` includes `site.conf`, `auto.conf`
+and `local.conf`, and only then the multiconfig, machine and distro configs. That ordering is the real hazard — a
+`VAR = "…"` in a machine or distro conf silently overwrites a `VAR += "…"` written earlier in `local.conf`, while an
+`:append` survives it. Prefer the override forms for any variable a machine or distro conf also assigns. `+=` remains
+correct and idiomatic for variables nothing downstream reassigns (`BBLAYERS`, `EXTRA_IMAGE_FEATURES`, `INHERIT`), and
+OE's own examples use it; do not rewrite working `+=` lines without a reassignment to point at.
 
 ## BitBake Task Lifecycle
 
@@ -160,8 +173,27 @@ do_rootfs[recrdeptask]  += "do_packagedata"
 - `[rdeptask]` — task each `RDEPENDS` item must finish first (`RDEPENDS` = runtime).
 - `[recrdeptask]` — recursive form.
 
-Forgetting `RDEPENDS` produces a clean build that fails at runtime with a missing library — there is no build-time
-error.
+**Forgetting `RDEPENDS` is usually *not* how you get a missing library at runtime.** `do_package` scans the built ELF
+objects, reads their `NEEDED` entries, and `read_shlibdeps` merges the resolved providers into each package's
+`RDEPENDS` automatically. A normally-linked shared library therefore ends up in the runtime dependency set whether or
+not the recipe names it, and if no recipe provides it, packaging QA reports the unresolved dependency at build time
+rather than deferring it to the board.
+
+Three different mechanisms, worth separating before editing a recipe:
+
+| Need                                      | Mechanism                   | Declared by                                            |
+| ----------------------------------------- | --------------------------- | ------------------------------------------------------ |
+| A library/header to *build* against       | `DEPENDS`                   | you, explicitly                                        |
+| A shared library the binary links against | generated from ELF `NEEDED` | the build, automatically — usually needs no `RDEPENDS` |
+| Anything with no link-time trace          | `RDEPENDS:${PN}`            | you, explicitly — nothing can infer it                 |
+
+The third row is where an explicit `RDEPENDS` genuinely earns its place: an interpreter for a shipped script
+(`#!/usr/bin/env python3`), a `dlopen`'d plugin, a command the program shells out to, or a data/config package. None of
+those appear in `NEEDED`, so nothing detects them and the failure really does land at runtime.
+
+When a library *is* missing on target despite linking, suspect the package split (it landed in `-dev` or a separate
+subpackage) or an `RDEPENDS` you removed by hand, and check the generated metadata with
+`oe-pkgdata-util read-value RDEPENDS <pkg>` before adding names speculatively.
 
 ## Recipe Anatomy
 
@@ -177,8 +209,10 @@ S       = "${WORKDIR}/git"        # source dir after unpack (Git fetches)
 
 inherit cmake                     # or autotools, meson, python3-poetry, ...
 
-RDEPENDS:${PN} = "libssl"         # runtime deps
-DEPENDS        = "openssl"        # build-time deps
+DEPENDS        = "openssl"        # build-time: headers/libs to link against
+RDEPENDS:${PN} = "bash"           # runtime deps NOTHING can infer (here: a shipped script's
+                                  # interpreter). The libssl link is detected automatically —
+                                  # see "Task Dependency Varflags".
 
 do_install() {
     install -d ${D}${bindir}
@@ -237,39 +271,104 @@ Two rules that cause silent failures when missed:
 
 ## sstate-cache Mechanics
 
-sstate (shared state) stores each completed task's output as a signed tarball, keyed by a hash of that task's inputs. On
-rebuild BitBake reuses the cached result when the input hash is unchanged — the core of Yocto's incremental speed.
-(Sharing sstate across machines and pruning it: `yocto-best-practices.md`.)
+sstate (shared state) caches the output of the tasks a class opted in via `SSTATETASKS` — `do_populate_sysroot`,
+`do_package_write_*` and friends, not literally every task — as a tarball keyed by a hash of that task's inputs. On
+rebuild BitBake reuses the cached result when the input hash is unchanged. That is the core of Yocto's incremental
+speed. (Sharing sstate across machines and pruning it: `yocto-best-practices.md`.)
 
-Stale sstate serving a wrong result usually traces to an input change BitBake could not see reflected in the hash of an
-*already-cached* upper task:
+### Three things that are easy to conflate
 
-- switched `MACHINE` without a clean;
-- patched the kernel or a recipe but the depending task was already cached;
-- pulled a new layer revision while old artifacts remain.
+| Thing              | What it is                                                    | Where it lives           |
+| ------------------ | ------------------------------------------------------------- | ------------------------ |
+| **Stamp**          | a marker that this task already ran *in this build directory* | `tmp/stamps/`            |
+| **Task hash**      | a checksum over the task's inputs; the sstate lookup key      | in the signature/stamp   |
+| **sstate archive** | the reusable output tarball itself                            | `${SSTATE_DIR}`, mirrors |
+
+A task hash is an **integrity/lookup key, not a publisher signature.** It answers "were the inputs the same?", never
+"who produced this and do I trust them?"
+
+Cryptographic signing is a separate, opt-in layer and is **off by default**: `SSTATE_SIG_KEY` defaults to empty (so
+nothing is signed) and `SSTATE_VERIFY_SIG` defaults to `"0"` (so nothing is verified on extraction). Consequently
+**a shared or mirrored sstate cache is unauthenticated unless you configured it otherwise**, and anything that can
+write to that directory or mirror can hand your build a binary artifact. Decide the trust policy explicitly: either
+treat the cache as a trusted-boundary asset (access-controlled directory, mirror you host), or turn on signing with
+`SSTATE_SIG_KEY`, `SSTATE_VERIFY_SIG = "1"` and `SSTATE_VALID_SIGS`, and then test that an unsigned or wrong-key
+archive is actually rejected.
+
+### Diagnose before you delete
+
+Ordinary `MACHINE` switches, recipe patches and layer bumps **are** hashed inputs — they normally invalidate the
+affected tasks correctly. So "stale sstate" is a conclusion to reach *after* evidence, not the first guess; reaching
+for `cleansstate` on suspicion throws away hours of reusable work and usually leaves the real cause in place.
+
+Compare the signatures and let them name the changed input:
 
 ```bash
-bitbake -c cleansstate <recipe>            # drop this recipe's sstate → forces rebuild
-bitbake -c cleanall <recipe>               # cleansstate + remove its downloads
-bitbake-dumpsig <sigfile>                  # inspect a task's signature inputs
-bitbake-diffsigs <sig-a> <sig-b>           # why two signatures differ (what changed)
+bitbake-dumpsig <sigfile>                  # inspect one task's signature inputs
+bitbake-diffsigs <sig-a> <sig-b>           # exactly which input differs between two runs
+bitbake -S printdiff <recipe>              # why this task will not reuse the cached result
 ```
 
-`cleansstate`/`cleanall` discard reusable work — gate them (see SKILL.md *Confirmation gates*) and prefer scoping to one
-recipe.
+Genuine causes look like an input BitBake could not see: a file changed in place that nothing checksums, a dependency
+excluded via `vardepsexclude`, a host tool leaking into a task, or an sstate mirror serving artifacts built elsewhere.
+
+When cleanup really is warranted, pick the narrowest tool and know its blast radius:
+
+```bash
+bitbake -c <task> -f <recipe>              # force ONE task to rerun; keeps everything else
+bitbake -c clean <recipe>                  # remove this recipe's WORKDIR + stamps (sstate kept)
+bitbake -c cleansstate <recipe>            # also drop its LOCAL sstate → full rebuild of it
+bitbake -c cleanall <recipe>               # also delete its downloads → refetch from network
+```
+
+Three limits to state before running any of them:
+
+- **`cleansstate` only clears the local `${SSTATE_DIR}`.** It cannot remove objects from a remote `SSTATE_MIRRORS`, so
+  the next build may fetch the very artifact you thought you deleted. Rebuild against the mirror disabled if you need
+  to prove a local rebuild.
+- **`cleanall` is discouraged as routine practice** — it forces a refetch from upstream and defeats the source capture
+  an offline or release build depends on.
+- **On a shared cache, cleanup affects other people's builds**, and concurrent downloads into a shared `DL_DIR` are a
+  known hazard. Never prune a shared directory as a personal debugging step.
+
+All of these are gated — see SKILL.md *Confirmation gates* — and scoping to one recipe beats a global wipe.
 
 ## devtool Workflow
+
+**Local, no target involved.** These stay inside the build directory and need no special authorization:
 
 ```bash
 devtool add myapp https://github.com/org/myapp.git   # new recipe from source
 devtool modify linux-yocto                            # bring a recipe into the workspace
 devtool build myapp
-devtool deploy-target myapp root@192.168.1.100        # push to a running target
 devtool finish myapp meta-mylayer                     # write changes back as patches
 devtool upgrade myapp                                 # bump to a new upstream version
 ```
 
 Editable source lives at `workspace/sources/<recipe>/` and survives rebuilds.
+
+**Crossing to a live board.** `deploy-target` is a different kind of operation and belongs behind SKILL.md
+*Confirmation gates*: it opens SSH to a running machine and installs the recipe's `do_install` output onto it.
+
+```bash
+devtool deploy-target -n myapp root@<target>    # DRY RUN: list what would be written
+devtool deploy-target myapp root@<target>       # the actual write, once authorized
+devtool undeploy-target myapp root@<target>     # restore what it replaced
+```
+
+Four properties that decide whether this will do what you expect:
+
+- **It deploys the recipe only, never its runtime dependencies.** The command assumes the target already has them
+  installed. A binary that deploys "successfully" and then fails to start for a missing library is the normal
+  presentation of this, not a build defect.
+- **Existing files are preserved by default** and restored by `undeploy-target`; `--no-preserve` discards that safety
+  net. Undeploy recovers files this tool replaced — it is not a general rollback of the board.
+- **Resolve the target identity before connecting**, and reuse an authorization the user already gave for that board
+  rather than asking again per invocation. `-n/--dry-run` answers "what would change?" without touching it.
+- **The board keeps whatever you left on it.** Deployed output persists across your build directory being cleaned, so
+  a stale deploy can mask a later change; undeploy when finishing rather than assuming a rebuild supersedes it.
+
+Runtime debugging on the board once the code is there routes to **embedded-linux-bringup**.
 
 ## SDK Generation
 
@@ -303,17 +402,77 @@ buildhistory-diff        # compare the last two builds
 
 Catches unintended package-size, dependency, or version changes after a layer bump.
 
+**Resolve the directory, do not guess it by timestamp.** The image path is deterministic:
+
+```bitbake
+BUILDHISTORY_DIR       ?= "${TOPDIR}/buildhistory"
+BUILDHISTORY_DIR_IMAGE  = "${BUILDHISTORY_DIR}/images/${MACHINE_ARCH}/${TCLIBC}/${IMAGE_BASENAME}"
+```
+
+```bash
+bitbake-getvar -r <image-recipe> BUILDHISTORY_DIR_IMAGE   # the exact directory for THIS image
+cat <that-dir>/build-id.txt                                # MACHINE, image, DISTRO, DISTRO_VERSION
+```
+
+Picking "the newest directory by mtime" is unreliable and silently compares the wrong things: buildhistory retains
+directories for every image and machine ever built in that build directory, so the newest may belong to a different
+image entirely, and copying, restoring or merely touching a tree rewrites mtimes without changing what is inside.
+Resolve `BUILDHISTORY_DIR_IMAGE` for the image you mean, then confirm identity from `build-id.txt` before trusting a
+diff. Note also that the path keys on `MACHINE_ARCH` while deployed artifacts are named with `MACHINE`; the two differ
+where a machine name contains a hyphen, so do not derive one from the other by hand.
+
 ## Offline / Air-Gapped Builds
 
 Mechanics only — the *release discipline* around these (pinning, tagging, verifying) is the checklist in
 `yocto-best-practices.md`.
 
-```bash
-BB_GENERATE_MIRROR_TARBALLS = "1"          # tar Git repos into DL_DIR
-bitbake -c fetchall <target>               # or: bitbake --runall=fetch <image>
-BB_NO_NETWORK = "1"                        # hard-fail on any network access
-BB_FETCH_PREMIRRORONLY = "1"               # only use pre-populated mirrors
+**These are BitBake configuration variables, not shell prefixes.** Set them in `local.conf` or `site.conf`:
+
+```bitbake
+BB_GENERATE_MIRROR_TARBALLS = "1"    # turn VCS checkouts into archives in DL_DIR
+BB_NO_NETWORK = "1"                  # deny ALL network access; any fetch that needs it fails
+BB_FETCH_PREMIRRORONLY = "1"         # restrict fetching to PREMIRRORS entries
 ```
+
+Writing `BB_NO_NETWORK = "1" bitbake <image>` on a shell command line does not do what it looks like: with spaces
+around the `=` the shell reads `BB_NO_NETWORK` as the *command name* and exits **127** before BitBake ever starts. The
+spaceless form `BB_NO_NETWORK=1 bitbake <image>` is at least valid shell, but BitBake filters its environment into the
+datastore — only variables passed through `BB_ENV_PASSTHROUGH_ADDITIONS` arrive — so an exported variable is not
+reliably in effect either. Put the policy in configuration and **verify the value BitBake actually holds**:
+
+```bash
+bitbake-getvar BB_NO_NETWORK
+bitbake-getvar BB_FETCH_PREMIRRORONLY
+```
+
+**The two settings prove different things.** `BB_FETCH_PREMIRRORONLY` restricts *where* fetches may come from; a
+premirror can itself be an `http://` host, so a build that passes with it is not thereby proved offline.
+`BB_NO_NETWORK` is the one that denies network access outright. Use premirror-only to prove "every source is in our
+mirror", and no-network to prove "this builds with the cable pulled" — do not report one as evidence for the other.
+
+Capture the sources, then verify:
+
+```bash
+bitbake --runall=fetch <image>     # fetch everything without building
+                                   # (prefer this: the old `-c fetchall` task no longer exists)
+tar -czf dl-mirror.tar.gz -C "${DL_DIR}" .
+```
+
+The archive is a flat directory of source archives and mirror tarballs plus `.done` stamps — extract it *as*
+`DL_DIR`, or publish the extracted directory and point at it with a `file://` premirror. It is not a nested tree to
+copy on top of a build directory:
+
+```bitbake
+SOURCE_MIRROR_URL = "file:///mnt/mirror/downloads"
+INHERIT += "own-mirrors"
+BB_FETCH_PREMIRRORONLY = "1"
+```
+
+**Verify in a build directory with cold caches.** An existing `DL_DIR` or sstate cache satisfies a fetch that the
+mirror is actually missing, so an offline build that reuses your working caches proves nothing about the capture.
+Point `DL_DIR` at the extracted mirror only, use a fresh `TMPDIR`, and confirm the negative case as well: a
+deliberately removed source must make the build fail, or the test cannot distinguish a complete capture from an
+unused one.
 
 ## Debugging a Task Failure
 
@@ -336,3 +495,5 @@ bitbake-getvar -r <recipe> SRC_URI                  # value + every assignment s
 - `oe-pkgdata-util find-path <path>` — which package ships a given file path.
 - `oe-pkgdata-util list-pkg-files <pkg>` — the files a built package contains.
 - `oe-pkgdata-util lookup-recipe <pkg>` — the recipe behind a runtime package name.
+- `oe-pkgdata-util read-value RDEPENDS <pkg>` — a package's *generated* metadata, including the shared-library
+  dependencies the build detected automatically. Read this before adding an `RDEPENDS` by hand.

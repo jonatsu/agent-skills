@@ -4,41 +4,105 @@
 
 - Skill: `yocto-openembedded-development`
 - Current author: Joonas Onatsu
-- Current license: MIT
-- Status: original synthesis; two CC BY-SA learning sources acknowledged below
+- Declared license: MIT — **see "Unresolved licensing question" below before relying on this field**
+- Status: mixed. Substantial original material, plus a best-practices reference established as a structural
+  adaptation of a CC BY-SA source.
 
-This skill is an original synthesis authored for this repository. The method, workflow, references, and command coverage
-are new writing. Two freely published CC BY-SA learning sources informed some of the content and are recorded here as a
-courtesy — this is acknowledgement, NOT relicensing. The skill ships under MIT as original work; no CC BY-SA-licensed
-text is redistributed. Passages that had tracked a learning source in fact selection or sequencing were rewritten in
-original words (the configuration-scope guidance, the sstate-sharing guidance, the release checklist, and the
-Poky/`PREMIRRORS` note), and framing that attributed statements to a source ("Bootlin highlights…", "the lectures add…")
-was removed.
+## Unresolved licensing question
 
-## Informed by (CC BY-SA — learning sources, courtesy)
+**A 2026-09-07 provenance investigation established that `references/yocto-best-practices.md` is a structural
+adaptation of a CC BY-SA 3.0 source, not an independent synthesis.** The previous version of this file asserted the
+opposite — that rewriting in original words meant no CC BY-SA material was redistributed and attribution was a
+courtesy. That conclusion was not supported, and the evidence below contradicts it.
+
+Rewriting text in original words does not, by itself, end an adaptation. Selection and arrangement of material is
+protectable, and CC BY-SA's BY and SA terms attach to a derivative work regardless of whether wording was changed.
+Removing source-attributing framing does not help; it removes the attribution that BY requires.
+
+The MIT declaration in `SKILL.md` therefore sits unresolved against the ShareAlike term of the adapted portion. This
+is recorded, not decided: resolving it is a licensing decision for the repository owner, and no relicensing has been
+performed. **No infringement finding is made here** — this file records an established source relationship and an open
+question, not a legal conclusion. The realistic options are to license the affected reference compatibly, to replace
+its structure with an independently derived organization, or to obtain a determination that the overlap is
+uncopyrightable fact. Until one is chosen, treat the MIT field as covering the original material only.
+
+## Established adaptation (CC BY-SA 3.0)
+
+### Bootlin — Belloni, "OpenEmbedded and Yocto Project best practices"
+
+- Author: Alexandre Belloni, Bootlin
+- Edition inspected: Embedded Linux Conference Europe 2020; PDF created 2020-10-26; 30 slides
+- Notice carried by the source: © Copyright 2004-2020, Bootlin. Creative Commons BY-SA 3.0 license.
+- Upstream: <https://bootlin.com/> training and conference materials
+
+The correspondence is systematic across selection, sequencing and specific technical choices, and is documented here
+so a later reader does not have to re-derive it:
+
+| Skill material                                        | Corresponding source material                                                                                        |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| "Where Does a Setting Belong?" scope decomposition    | consecutive slides `local.conf`, `local.conf - site.conf`, `local.conf - image recipes`, `- machine`, `- distro`     |
+| distro-policy row contents                            | the distro slides' item list (toolchain/libc, init, `DISTRO_FEATURES`, `PREFERRED_PROVIDER*`, `PACKAGE_CLASSES`)     |
+| "write your own image recipe … parse-order-safe"      | "core-image-\*.bb recipes are not enough anymore" + "not even easy for beginners due to parse order"                 |
+| "Poky Is a Reference, Not a Product Base"             | the Poky and "Creating your own distribution" slides                                                                 |
+| release capture sequence (phases 1–2)                 | the Network access slide: no `AUTOREV` → mirror tarballs → fetch all → archive `DL_DIR` → `PREMIRRORS`/`own-mirrors` |
+| sstate sharing bullets                                | the "Sharing the sstate-cache" slide's four points, in the same order                                                |
+| `sstate-cache-management.sh --remove-duplicated …`    | reproduced essentially verbatim from the "Cleaning the sstate-cache" slide                                           |
+| `${LICENSE_DIRECTORY}/${IMAGE_NAME}/license.manifest` | the "Listing licenses" slide                                                                                         |
+| `COPY_LIC_DIRS` / `COPY_LIC_MANIFEST` pairing         | the "Providing license text" slide                                                                                   |
+| `INHERIT += "archiver"` shown with `configured`       | the "Providing sources" slide, including the same non-default mode as the worked value                               |
+
+Two further pieces of evidence support adaptation over coincidence:
+
+- **An inherited defect.** The skill carried `bitbake -c fetchall` — a Dunfell-era command the source uses — forward to
+  a Scarthgap baseline where that task no longer exists. An independently written reference checked against a current
+  release would not reproduce a stale command from a 2020 deck. (Corrected under F2 in the 2026-09-07 repair.)
+- **The port brief said so.** The skill family's introducing brief (`26cc26d`, `docs/embedded-linux-port/port-brief.md`)
+  instructed: if prose was "lifted (verbatim OR **structurally — same fact selection/sequencing**)" from the CC BY-SA
+  learning sources, rewrite it in original words and remove source-attributing framing such as "Bootlin highlights…".
+  That instruction concedes the structural lifting and prescribes exactly the two steps that produced this file's
+  earlier, unsupported claim. It is historical evidence of what happened, not authority for the conclusion it reached.
+
+## Informed by
 
 ### Yocto Project documentation
 
 - Source: the Yocto Project manuals (Reference, BitBake, BSP, Kernel, Security, Development Tasks, Migration Guides)
-- Upstream project: <https://docs.yoctoproject.org/>
+- Upstream: <https://docs.yoctoproject.org/>
 - Upstream license: CC BY-SA 2.0 UK
 
-The Yocto Project manuals informed the shape of the BitBake-syntax, task-lifecycle, recipe-anatomy, and compliance
-material. Facts drawn from them are stated generically and in original words; no manual text is reproduced.
+The manuals informed the BitBake-syntax, task-lifecycle, recipe-anatomy and compliance material, and are the primary
+source for the 2026-09-07 technical corrections. Facts are stated generically and in original words; the
+`references/official-doc-map.md` routing table is this skill's own organization.
 
-### Bootlin "Yocto/OpenEmbedded best practices" (Belloni)
+This includes the Yocto Project's "What I wish I'd known about Yocto Project" document, which `SKILL.md` and
+`references/official-doc-map.md` both point readers to by name. It carries the manuals' license and is recorded here
+because the skill routes to it, not because passages were taken from it.
 
-- Source: Alexandre Belloni, "Yocto and OpenEmbedded best practices" (Bootlin, ELCE 2020)
-- Upstream project: <https://bootlin.com/> training and conference materials
-- Upstream license: CC BY-SA 3.0
+### Verification-only sources
 
-These slides informed the general topics of the best-practices reference (configuration scope, Poky-vs-production,
-release preparation, sstate sharing). Every passage that had tracked the slides in fact selection or sequencing was
-restructured and rewritten in original words for this skill.
+The 2026-09-07 review and repair verified behavior against pinned Poky `yocto-5.0.12` sources — `data_smart.py`,
+`sstate.bbclass`, `package.bbclass`, `buildhistory.bbclass`, `bitbake.conf`, `knotty.py`, `devtool/deploy.py` — and the
+Honister 3.4 migration guide. These confirmed public facts and are cited near the affected claims. Under this
+repository's provenance policy, verification-only use does not create an attribution obligation; they are listed for
+traceability.
 
-## Licensing note
+## Present but not established
 
-Both sources above are Creative Commons BY-SA learning materials, acknowledged here as a courtesy. This skill contains
-no CC BY-SA-licensed text: content traceable to these sources was rewritten as original prose, and it is distributed
-under MIT. There is no "adapted from" upstream component (no MIT-licensed source skill was used as a base), so no
-upstream MIT notice is required.
+`/home/user/src/embedded-linux/docs/yocto-project/` also holds Jérémie Dautheribes, "10 best practices for Yocto"
+(Bootlin, Toulouse meetup 2024, CC BY-SA 3.0). It shares themes with this skill — "don't overuse `local.conf`", "don't
+use Poky in production" — but the investigation found no distinctive correspondence in wording, sequencing, examples or
+command choices beyond what the Belloni deck already accounts for. Shared subject matter between two decks by the same
+organization is not evidence of copying, so **no source relationship is asserted here.** It is recorded only so a later
+reader knows the file was inspected and why it was not listed above.
+
+The skill's `Common Traps` table (the `# CONFIG_X is not set` spacing rule, `kernel-module-*` with a built-in symbol,
+`UNPACKDIR`, `def` in a `.conf`, the `dlopen` plugin case, the `buildhistory` `MACHINE_ARCH`/`MACHINE` mismatch) has no
+counterpart in any inspected deck and appears to be independent material.
+
+## Scope of this investigation
+
+Bounded, and complete enough to establish the relationship above but not a comprehensive copyright audit. Three PDFs
+were converted to text and compared against the package by topic, sequence and command; the Yocto manuals were not
+compared passage by passage; no other editions of the Belloni deck were located or checked; and no legal advice was
+sought or given. A later reader should treat "no correspondence found" as a bounded negative result, not proof of
+independence.
