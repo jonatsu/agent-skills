@@ -1,6 +1,6 @@
 ---
 name: systemd
-description: Write, review, harden, and debug systemd units and service-manager behavior on Linux systems.
+description: Write, review, harden, and debug Linux systemd units. Use for .service, .timer, and .socket files, drop-ins, dependencies, failed system or user services, journal diagnosis, and resource controls. Use systemd-networking for networkd link configuration and resolved DNS routing.
 license: MIT
 compatibility: Requires Linux with systemd and its command-line tools; available directives vary by systemd version.
 metadata:

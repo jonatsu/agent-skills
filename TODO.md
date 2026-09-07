@@ -120,13 +120,16 @@ No Podman support or activation behavior has been verified.
 
 ## Description Audit — 13 Skills Share the Shape That Failed
 
-**Description-focused review completed 2026-09-07; three priority rewrites applied with user authorization.**
+**Description-focused review completed 2026-09-07; all six proposed refinements applied with user authorization.**
 [Findings and candidate wording](../docs/evaluations/2026-09-07-skill-description-audit.md) distinguish three priority
 revisions, three optional refinements, and seven descriptions worth preserving.
 The review found all 13 passing both validators and unchanged since this queue was added in `6d947f6`.
 The accepted descriptions now clarify `systematic-debugging`'s test-review boundary, expose `repo-management`'s
 baseline artifacts, and limit `containers`' Kubernetes scope to workload hardening.
-The three optional refinements remain unimplemented; the other seven descriptions remain unchanged.
+The three optional refinements are also applied: `chezmoi-dotfiles` names managed artifacts and drift symptoms;
+`mise-tools` names config files and qualifies failures and migration as mise work; `systemd` names unit extensions
+and user-service failures while routing networking configuration to `systemd-networking`.
+The other seven descriptions remain unchanged.
 Activation is still unmeasured; deployment or a listing appearance after editing is not activation evidence.
 The earlier `0c91d24` already revised `test-engineer` and `python-testing`; preserve those edits.
 The review corrects the assumption below that debugging and repository setup lack request-time intent:

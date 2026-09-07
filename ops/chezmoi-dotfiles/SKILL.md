@@ -1,6 +1,6 @@
 ---
 name: chezmoi-dotfiles
-description: Manage chezmoi edits, applies, syncs, templates, scripts, ignores, secrets, and conflicts.
+description: Manage dotfiles with chezmoi. Use when editing, applying, or syncing managed files; resolving source/target drift or overwritten local changes; or working on chezmoi templates, encrypted files, .chezmoiignore, .chezmoiscripts, and run_once_ scripts.
 license: MIT
 compatibility: Requires chezmoi. Git is required for source repositories that use Git.
 metadata:

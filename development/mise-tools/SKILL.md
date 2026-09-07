@@ -1,6 +1,6 @@
 ---
 name: mise-tools
-description: Configure mise tools, environments, tasks, activation, and locks; migrate projects from asdf or direnv.
+description: Manage tool versions, environments, and tasks with mise. Use for mise.toml, .miserc.toml, mise.lock, mise installation or activation, wrong tool versions, missing shims, and configuration or task failures in mise-managed environments. Also use when migrating from asdf or direnv to mise.
 license: MIT
 compatibility: Mise is required for runtime inspection and verification.
 metadata:
