@@ -115,11 +115,38 @@ PARALLEL_MAKE = "-j8"                # make parallelism inside a task
 DL_DIR    = "/mnt/yocto-cache/downloads"      # shared download cache
 SSTATE_DIR = "/mnt/yocto-cache/sstate-cache"  # shared state cache
 IMAGE_INSTALL:append = " strace gdbserver"    # dev extras (release: use an image recipe)
-EXTRA_IMAGE_FEATURES += "debug-tweaks tools-debug"
+EXTRA_IMAGE_FEATURES += "tools-debug"                 # plus dev logins — see the note below
 ```
 
 A change to `local.conf` reparses every recipe, so keep it to genuinely local, development-only settings. Everything
 durable belongs in a distro, machine, or image recipe — see `yocto-best-practices.md`.
+
+### `debug-tweaks` was removed after 5.1 — confirm the release before using it
+
+`debug-tweaks` was the umbrella image feature that opened up a development image. It is in
+`IMAGE_FEATURES[validitems]` at **5.0 Scarthgap and 5.1 Styhead**, and **absent from 5.2 Walnascar onward**. On
+those newer releases, name the individual features it used to imply:
+
+```bitbake
+# 5.0 / 5.1 only
+EXTRA_IMAGE_FEATURES += "debug-tweaks"
+
+# 5.2 and newer — the same four, named explicitly
+EXTRA_IMAGE_FEATURES += "empty-root-password allow-empty-password allow-root-login post-install-logging"
+```
+
+Those four are exactly what `debug-tweaks` expanded to: it gated `zap_empty_root_password`,
+`ssh_allow_empty_password`, `ssh_allow_root_login` and `postinst_enable_logging` in
+`rootfs-postcommands.bbclass`. Splitting them up is an improvement for security work, because you can keep postinst
+logging without also shipping a passwordless root login.
+
+**The failure mode is not a clean error.** An unrecognised image feature raises `bb.parse.SkipRecipe`, so the *image
+recipe is skipped* rather than failing loudly — the visible symptom is BitBake reporting nothing provides your image.
+The real reason is in the skip message, which names every valid feature and has a distinct wording when the feature
+arrived via `EXTRA_IMAGE_FEATURES`. Read the skip reason before believing the image recipe is missing.
+
+**None of these belong in a production image.** They exist to make a development image convenient, and each one
+weakens authentication or leaks build detail onto the target.
 
 ## MACHINE and DISTRO Feature Variables
 
