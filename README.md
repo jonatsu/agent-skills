@@ -10,8 +10,8 @@ declarative, lock-first skills manager.
 This directory is where the repository started, as `agent-skills`. It was renamed to `agent-setup` on
 2026-08-21 to become the base the other config repositories merge into, so the repository is no longer only
 skills — see [../README.md](../README.md) for the whole of it, and
-[../docs/plans/repo-consolidation.md](../docs/plans/repo-consolidation.md) for what has merged and what has
-not.
+[the consolidation overview](../docs/plans/agent-management/repo-consolidation.md) for what has merged and
+what has not.
 
 > **History:** deployment was previously handled by `skillsmgr`, which kept a central store and symlinked each
 > agent's skills dir into it. It is retired; its scripts and the reasons for dropping it were removed in
