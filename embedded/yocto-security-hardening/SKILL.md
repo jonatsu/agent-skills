@@ -1,6 +1,6 @@
 ---
 name: yocto-security-hardening
-description: "Yocto/OpenEmbedded security hardening: configure a control, then prove it on the built artefact. Use for IMAGE_FEATURES and distro hardening, root credentials, read-only rootfs, security_flags.inc and checksec, kernel hardening fragments, signed-FIT and dm-verity, LUKS/fscrypt and TPM2 key sealing, firewalls and listening services, AppArmor/SELinux wiring, sstate trust, meta-security. Route BitBake mechanics and CVE/SBOM to yocto-openembedded-development, U-Boot verification to u-boot-development."
+description: "Yocto/OpenEmbedded security hardening: configure a control, then prove it on the built artefact. Use for IMAGE_FEATURES and distro hardening, root credentials, read-only rootfs, security_flags.inc and checksec, kernel fragments, signed-FIT and dm-verity, LUKS/fscrypt and TPM2 key sealing, firewalls and listening services, AppArmor/SELinux wiring, sstate trust, meta-security. Route CVE/SBOM to yocto-vulnerability-management, image auditing to yocto-security-audit, U-Boot verification to u-boot-development."
 license: MIT
 compatibility: Requires a BitBake/OE-Core checkout and an initialised build directory. Class names, variables and valid IMAGE_FEATURES items are release-specific; guidance is written for 5.0 Scarthgap with 6.0 deltas named inline. On-target verification needs QEMU or a reachable board plus testimage. checksec, kernel-hardening-checker and Lynis come from meta-security or meta-openembedded, which must be added to bblayers.
 metadata:
@@ -35,13 +35,15 @@ a real daemon's behaviour rather than a model's expectations — see *Stated gap
 
 ### Route to a sibling skill
 
-| Task                                                                                             | Skill                              |
-| ------------------------------------------------------------------------------------------------ | ---------------------------------- |
-| BitBake mechanics, recipes, `.bbappend`, sstate mechanics, licence obligations, `cve-check`/SBOM | **yocto-openembedded-development** |
-| U-Boot verified boot, FIT verification, console lockdown, boot scripts                           | **u-boot-development**             |
-| Runtime kernel, driver, verity or OTA behaviour on a booted board                                | **embedded-linux-bringup**         |
-| `.kas.yml` orchestration                                                                         | **kas-build-orchestration**        |
-| Buildroot equivalents                                                                            | **buildroot-development**          |
+| Task                                                                                        | Skill                              |
+| ------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Auditing a built image, running an auditor or an oeqa suite, reading a result, gating in CI | **yocto-security-audit**           |
+| CVEs affecting an image, SBOM generation, VEX, a CVE release gate                           | **yocto-vulnerability-management** |
+| BitBake mechanics, recipes, `.bbappend`, sstate mechanics, licence obligations              | **yocto-openembedded-development** |
+| U-Boot verified boot, FIT verification, console lockdown, boot scripts                      | **u-boot-development**             |
+| Runtime kernel, driver, verity or OTA behaviour on a booted board                           | **embedded-linux-bringup**         |
+| `.kas.yml` orchestration                                                                    | **kas-build-orchestration**        |
+| Buildroot equivalents                                                                       | **buildroot-development**          |
 
 ### Route the task to a reference
 
