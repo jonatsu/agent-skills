@@ -74,6 +74,26 @@ This creates `build/conf/{local.conf,bblayers.conf}` and puts `bitbake` on the p
 configure, and build" wrapper driven by a single YAML config, use kas — that workflow lives in the
 **kas-build-orchestration** skill. Plain `bitbake` after `oe-init-build-env` is fully sufficient; kas is optional.
 
+**Newer releases add `bitbake-setup`, and it is not a rename of `oe-init-build-env`.** It bootstraps a whole setup —
+selecting a configuration, fetching the layer repositories, and *then* preparing a build directory — where
+`oe-init-build-env` only initialises a build directory in a tree you already assembled yourself.
+
+```bash
+./bitbake/bin/bitbake-setup list        # available configurations
+./bitbake/bin/bitbake-setup init        # choose one interactively, fetch layers, prepare the build
+./bitbake/bin/bitbake-setup status      # does the setup still match its configuration?
+source <top-dir>/<setup-dir>/build/init-build-env
+```
+
+`init` also takes `--non-interactive`, `--source-overrides` to pin repositories and revisions from a local file, and
+`--setup-dir-name`; the tool as a whole takes `--no-network`. That combination puts it in the same problem space as
+kas, so treat the two as alternatives rather than layers, and keep kas questions with **kas-build-orchestration**.
+
+**Confirm it exists before recommending it (Iron Law).** It is absent from BitBake at the 5.0, 5.1 and 5.2 release
+tags and present at 5.3, so a Scarthgap LTS tree does not have it — checked at those tags, where `bin/bitbake` is
+present in every one and `bin/bitbake-setup` only in the last. On a release without it, `oe-init-build-env` plus a
+manually assembled layer tree, or kas, are the options.
+
 **The output directory is not always `tmp/`.** `TMPDIR` defaults to `${TOPDIR}/tmp`, but OE-Core's
 `defaultsetup.conf` then appends `TCLIBCAPPEND`, itself defaulting to `-${TCLIBC}` — so an ordinary distro builds into
 `tmp-glibc/`. Poky sets `TCLIBCAPPEND = ""`, which is the only reason Poky builds show a plain `tmp/`. Deployed
