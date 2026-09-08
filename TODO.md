@@ -32,10 +32,10 @@ unverified fork-specific guidance.
 
 | Skill                                              | Review status                                         | Verdict / remaining work                                                                                                                                                                                                                                                                                                             | Evidence                                                                                                                                                                                                                                                                       |
 | -------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `buildroot-development` (formerly `buildroot-dev`) | Review lite and repairs completed 2026-09-07          | **Ready with risks.** F1–F12 and approved A–C addressed; native package, hook, Kconfig, and image checks pass. Full behavioral evaluation and hardware/release qualification remain pending.                                                                                                                                         | [Repair evidence](../docs/evaluations/2026-09-07-buildroot-development-repair.md); [original review](../docs/evaluations/2026-09-07-buildroot-development-review.md)                                                                                                           |
-| `embedded-linux-bringup`                           | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F15 addressed; native DT comparison/overlay and verity image checks pass. Full model evaluation and hardware/release qualification remain deferred.                                                                                                                                                         | [Repair evidence](../docs/evaluations/2026-09-07-embedded-linux-bringup-repair.md); [original review](../docs/evaluations/2026-09-07-embedded-linux-bringup-review.md)                                                                                                         |
-| `kas-build-orchestration`                          | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F14 addressed; 16 native/wrapper contract cases pass. Model evaluation, real container/CI execution, builds, and release qualification remain deferred.                                                                                                                                                     | [Repair evidence](../docs/evaluations/2026-09-07-kas-build-orchestration-repair.md); [original review](../docs/evaluations/2026-09-07-kas-build-orchestration-review.md)                                                                                                       |
-| `u-boot-development`                               | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F17 addressed; native environment, FIT, load-guard, helper and DM checks pass. Historical provenance uncertainty, model behavior and board qualification remain open.                                                                                                                                       | [Repair evidence](../docs/evaluations/2026-09-07-u-boot-development-repair.md); [original review](../docs/evaluations/2026-09-07-u-boot-development-review.md)                                                                                                                 |
+| `buildroot-development` (formerly `buildroot-dev`) | Review lite and repairs completed 2026-09-07          | **Ready with risks.** F1–F12 and approved A–C addressed; native package, hook, Kconfig, and image checks pass. Full behavioral evaluation and hardware/release qualification remain pending. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                              | [Repair evidence](../docs/evaluations/2026-09-07-buildroot-development-repair.md); [original review](../docs/evaluations/2026-09-07-buildroot-development-review.md)                                                                                                           |
+| `embedded-linux-bringup`                           | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F15 addressed; native DT comparison/overlay and verity image checks pass. Full model evaluation and hardware/release qualification remain deferred. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                                              | [Repair evidence](../docs/evaluations/2026-09-07-embedded-linux-bringup-repair.md); [original review](../docs/evaluations/2026-09-07-embedded-linux-bringup-review.md)                                                                                                         |
+| `kas-build-orchestration`                          | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F14 addressed; 16 native/wrapper contract cases pass. Model evaluation, real container/CI execution, builds, and release qualification remain deferred. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                                          | [Repair evidence](../docs/evaluations/2026-09-07-kas-build-orchestration-repair.md); [original review](../docs/evaluations/2026-09-07-kas-build-orchestration-review.md)                                                                                                       |
+| `u-boot-development`                               | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F17 addressed; native environment, FIT, load-guard, helper and DM checks pass. Historical provenance uncertainty, model behavior and board qualification remain open. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                            | [Repair evidence](../docs/evaluations/2026-09-07-u-boot-development-repair.md); [original review](../docs/evaluations/2026-09-07-u-boot-development-review.md)                                                                                                                 |
 | `yocto-openembedded-development`                   | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F12 addressed and the specification violation cleared. The CC BY-SA adaptation the provenance investigation found in the best-practices reference was re-derived independently on 2026-09-08, resolving the MIT conflict. Packaging/QA coverage added the same day. No Yocto execution or model evaluation. | [Follow-up](../docs/evaluations/2026-09-08-yocto-openembedded-development-followup.md); [repair evidence](../docs/evaluations/2026-09-07-yocto-openembedded-development-repair.md); [original review](../docs/evaluations/2026-09-07-yocto-openembedded-development-review.md) |
 
 The `embedded-linux-bringup` review and approved F1–F15 repairs completed on 2026-09-07. The records distinguish
@@ -73,6 +73,43 @@ do not re-survey it.** Attribution for the gap selection is recorded in the skil
 
 Full model evaluations, hardware/release qualification, and QEMU skill creation remain separate decisions.
 Buildroot's completed source/deployment commits (`9a512da`, `d56586d`) are preserved.
+
+### Re-Review the Other Four Embedded Skills — Non-Urgent
+
+**Trigger:** the 2026-09-08 work on `yocto-openembedded-development` found several defects that its completed
+2026-09-07 review had not, so the same classes are worth a bounded second pass over the four skills reviewed in the
+same batch. None of this is urgent and none of it is evidence that those four are wrong — it is a targeted recheck,
+not a re-run of the reviews.
+
+**Weigh one difference before assuming equal risk.** Yocto's was the only review in the batch with *no* execution
+evidence at all; the other four each carried native checks (Buildroot: package, hook, Kconfig, image; U-Boot:
+environment, FIT, load-guard, helper, driver model; kas: 16 native/wrapper contract cases; bring-up: DT
+comparison/overlay and verity image). Execution catches class 1 below and some of class 4, so the exposure is
+genuinely lower there. It does not catch classes 2 or 3.
+
+Check for these four classes, each of which actually occurred in the Yocto package:
+
+1. **A command that no longer exists at the pinned baseline.** `sstate-cache-management.sh` was rewritten as `.py`
+   after Kirkstone; `bitbake -c fetchall` was removed. Extract every command invocation and verify it against the
+   pinned upstream rather than reading it for plausibility. Both of these read fine.
+2. **A default environment presented as universal.** `poky.conf`, `/opt/poky/`, and `tmp/` were all stated as facts
+   when each depends on the selected distro. The analogues: Buildroot assuming `output/` or one `BR2_EXTERNAL`
+   layout, U-Boot assuming a board's image names or a `u-boot.bin`, kas assuming a config shape, bring-up assuming a
+   toolchain or distro layout. Ask of each concrete path or filename: what sets this, and what happens when it is set
+   differently?
+3. **An area the description advertises but no reference covers.** Yocto's description promised task-failure
+   diagnosis while `do_package`/`do_package_qa` appeared nowhere in four references. Grep each description's claimed
+   triggers against the reference bodies.
+4. **A tool interface asserted from memory.** Check flags and arity against the pinned `--help` or source. This one
+   bites authors and reviewers equally.
+
+Two of these were visible in existing artifacts and still missed: the `sstate-cache-management.sh` line was already
+recorded in `ATTRIBUTIONS.md` as reproduced near-verbatim from a 2020 deck, and nobody asked whether it still ran.
+**A provenance note about a command is also a staleness signal about it.**
+
+Scope: a bounded recheck against pinned upstreams and each package's own description, not new behavioral evaluation.
+Full model evaluation and hardware qualification stay separately deferred as recorded above. Record findings the
+normal way, in a dated file under `../docs/evaluations/`.
 
 ### Embedded QEMU Skill Candidate
 
