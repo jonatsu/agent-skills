@@ -75,6 +75,36 @@ two of them changed less than they appear to.
   scheme. It supplied the observation that a product distro maintains a downstream SELinux tree, recorded in
   `references/mac-frameworks.md` as a worked example while routing the dependency upstream.
 
+### Two further sources surveyed 2026-09-08, both used for facts only
+
+Both were read after the encryption, network and MAC sections existed, and both changed the skill enough to be
+recorded here. Neither supplied wording, structure, section ordering, examples or exercises.
+
+- **Bootlin, Embedded Linux Security course lab manual**, the edition built for an NXP i.MX93 development
+  board (43 pages, CC BY-SA). Licence-incompatible with this MIT package, so nothing was adapted; it was read
+  for mechanisms and for *verification shapes*, which are this skill's currency. What it changed: the
+  observation that a signing key must reach U-Boot's control device tree as well as the FIT recipe; the
+  requirement that an unsigned image and a wrong-key image fail distinguishably; the platform-level
+  generalisation of ROM-stage verification, including that programming a root-key hash enforces nothing until
+  the part's lifecycle state changes; the build-side half of an A/B updater (CA-not-leaf keyring, signing-time
+  validation, layout consistency); PKCS#11 as the portable key-custody boundary with on-device key generation;
+  and the SELinux relabel and login-mapping facts. **Everything board-specific was deliberately excluded** at
+  the user's instruction — the container format, the vendor tooling, the fuse indices, the lifecycle state
+  names and the board setup are instantiation, not mechanism, and the skill states the platform prerequisite
+  instead.
+- **Matt St. Onge, "The Embedded Linux Security Handbook"** (Packt, 2025, 278 pages). Commercially published
+  and all rights reserved; read for facts and for gap discovery only, with every finding restated
+  independently. It is RHEL/Fedora- and x86/UEFI-shaped rather than a build-system book, so most of it does
+  not transfer. What it changed: the named anti-pattern in `references/storage-encryption.md` — its LUKS
+  automation stores a key file in cleartext on an unencrypted root filesystem and presents this as an
+  improvement, which is the clearest published instance of the failure mode this skill's Iron Law targets; the
+  key-recovery paragraph; the non-IP exposure section in `references/network-and-services.md`; and the UEFI
+  Secure Boot subsection in `references/chain-of-trust-wiring.md`, kept deliberately thin. Its TPM taxonomy is
+  wrong in at least two checkable places, so nothing was taken from it on that subject.
+
+The general-Linux residue of both — seccomp, systemd sandboxing, SELinux operations, PKI practice, firmware
+update security — was deliberately **not** written into this skill, per its build-system-shaped scope.
+
 ## Primary sources read at named refs
 
 These are verification sources: they establish public facts and are cited near the affected claims. Under this

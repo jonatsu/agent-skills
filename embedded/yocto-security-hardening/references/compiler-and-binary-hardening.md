@@ -78,6 +78,28 @@ defaults.
 The exemption count is 21 on both refs, so the upgrade changes *whether* you get the flags, not *which*
 recipes are excluded.
 
+## The baseline is behind a mainstream distro
+
+`lcl_maybe_fortify` writes `-D_FORTIFY_SOURCE=2`. Fedora moved its distribution build flags to
+**`-D_FORTIFY_SOURCE=3`** in Fedora 38, and other distributions have followed. So an OE image built with
+`security_flags.inc` is not at parity with a current desktop or server distribution, and a customer's security
+questionnaire that asks for "level 3 fortification" is asking for something the include does not provide.
+
+Raising it is a one-line distro-conf override, but it is a change to test rather than to assume:
+
+```bitbake
+lcl_maybe_fortify = "${@oe.utils.conditional('OPTLEVEL','-O0','','${OPTLEVEL} -D_FORTIFY_SOURCE=3',d)}"
+```
+
+`_FORTIFY_SOURCE=3` needs a compiler that supports it and produces build failures in code the weaker level
+tolerated, so expect to fix or exempt recipes — which is the same maintenance burden the 21 existing opt-outs
+represent.
+
+**Worth checking against whatever distribution you are being compared to**, and not asserted here: several
+distributions also enable stack-clash protection and control-flow protection by default. Neither appears
+anywhere in `security_flags.inc`. Read your reference distribution's own build-flags documentation before
+quoting a gap.
+
 ## Verify per binary, host-side
 
 Upstream packages the tool. `meta-security` ships `checksec` 2.6.0 from `slimm609/checksec.sh` at a pinned

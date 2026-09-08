@@ -26,6 +26,22 @@ Host-side, the equivalent is the manifest: a package that ships a listening daem
 finding before it is ever booted. See `image-attack-surface.md` for removing it and for dropping the service's
 privileges when it must stay.
 
+**IP sockets are not the whole surface, and on an embedded device they are often not the interesting part.**
+A firewall says nothing about any of these:
+
+```sh
+ls -l /sys/class/tty/          # serial consoles and USB-serial gadgets — an interactive root shell is a port
+ls /sys/class/net/             # CAN and other non-IP interfaces appear here too
+ip -details link show          # link type: can, vcan, vlan, wwan
+lsusb; ls /sys/class/udc/      # USB gadget mode — the device can present itself as storage, serial or network
+```
+
+A CAN bus carries no authentication or encryption by design, so anything reachable on it is reachable by
+whatever else sits on the bus; a debug UART with a console on it is a root shell for anyone holding the board;
+and a USB gadget interface is an entry point that no `ss` output will ever show. Enumerate them, decide about
+each, and disable at the kernel-config or device-tree level rather than at runtime — which puts the fix in
+`kernel-hardening.md` and in the board's device tree, not here.
+
 ## What Yocto gives you, and the trap in the defaults
 
 | Tool                                                             | Where                                              | Note                                                 |

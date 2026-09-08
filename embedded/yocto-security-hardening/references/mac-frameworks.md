@@ -80,7 +80,17 @@ scarthgap that decide whether it drops into an existing build:
 
 `selinux` is a `DISTRO_FEATURE`, not an `IMAGE_FEATURES` entry — OE-Core's systemd recipe, for instance,
 derives its `selinux` `PACKAGECONFIG` by filtering `DISTRO_FEATURES`. Labelling also needs `xattr` and
-filesystem security support, and a relabel at image creation time.
+filesystem security support.
+
+Two operational facts that decide whether enforcement means anything, and that a build-side reader misses:
+
+- **Labels have to exist before enforcement can work.** A filesystem populated without labels, or one whose
+  policy changed, needs a full relabel (`fixfiles relabel`, or the equivalent autorelabel trigger) followed by
+  a reboot. Turning enforcement on over unlabelled content produces either a flood of denials or a policy that
+  permits everything it cannot classify — neither is the protection you configured.
+- **"Enforcing" does not mean "confined".** Login mappings decide which SELinux user a Linux account gets, and
+  a default mapping can leave root effectively unconfined while `getenforce` proudly answers `Enforcing`.
+  Check the mapping (`semanage login -l`) and the process context (`ps -eZ`), not the global mode.
 
 `ni/meta-selinux` (National Instruments, 7★, pushed 2026-06) is a **maintained downstream copy**, not a fork
 of record: same `selinux` collection name and priority, same `LAYERSERIES_COMPAT`, with NI's own
@@ -102,6 +112,13 @@ cat /proc/<pid>/attr/current          # and of the daemon you meant to confine
 **`complain` mode is the trap.** A profile in complain mode logs and permits, so `aa-status` reporting
 profiles loaded is compatible with nothing being enforced. Count the enforce-mode profiles, and check that
 your daemon's PID is confined by the profile you expect rather than by `unconfined`.
+
+**The other trap is the kernel command line**, and it is where vendor and training images routinely land: an
+image built with a full policy that boots with enforcement disabled (`enforcing=0`, or the LSM switched off
+outright) looks correctly configured from every angle except the running system. It is also the standard
+workaround when a policy blocks something — an update that will not install with enforcement on gets shipped
+with enforcement off, and nobody turns it back on. Read `/proc/cmdline` as part of the check, and treat a
+disabling parameter as a finding regardless of what the metadata says.
 
 Then prove the negative case: make the confined process attempt something the profile forbids and confirm it
 is **denied**, with the denial visible in `dmesg` or the audit log. A policy never observed denying anything

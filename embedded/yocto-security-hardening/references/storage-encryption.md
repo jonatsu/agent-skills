@@ -8,6 +8,14 @@ system's measured state.
 A passphrase-less key file sitting in a read-only rootfs defeats the first threat and none of the second. Say
 which threat a design covers; most embedded designs quietly cover only the first.
 
+**The common failure is worse than that, and it is published advice.** A 2025 professional handbook on
+embedded Linux security walks through automating LUKS unlock by writing a key file to the root filesystem,
+restricting its permissions, and referencing it from `crypttab` — on a machine whose own `lsblk` output shows
+that root filesystem is **not encrypted** — and presents it as an unambiguous improvement in security posture,
+with no threat model stated. A key stored in cleartext next to the thing it unlocks defeats neither threat:
+whoever steals the device gets both halves. Recognise this pattern when reviewing an existing design, and when
+reading guidance about one.
+
 ## What the platform decides
 
 **Portable rule: LUKS with a hardware-bound key needs kernel Trusted Keys backed by a real key store.** Where
@@ -88,6 +96,13 @@ Everything below is metadata, and each piece has a way of being missing without 
 3. **fscrypt on a directory tree.** Cheapest to integrate; protects file contents and names, not metadata or
    the directory structure above the protected tree.
 
+**Design the recovery path with the enrolment.** A device whose only key slot is a TPM-sealed one is
+unrecoverable the moment the sealing policy stops matching — a firmware update, a board repair, a TPM
+failure. LUKS supports multiple key slots precisely so a second, differently-held credential can exist:
+an escrow passphrase kept by whoever supports the fleet, or a recovery key generated per device and stored
+off it. Enrol it at manufacture, not after the first field failure, and treat it as a secret with its own
+custody story rather than a shared password.
+
 **Which PCRs to seal against is the decision that decides whether this survives an update.** Sealing to
 firmware and bootloader measurements means every legitimate firmware update invalidates the policy and needs a
 re-enrolment path; sealing to too little means an attacker who can boot a modified kernel gets the key. Design
@@ -100,6 +115,13 @@ Host-side, the build only proves the pieces are present:
 ```bash
 grep -E 'cryptsetup|tpm2-tools|libtss2' tmp/deploy/images/<machine>/<image>-<machine>.rootfs.manifest
 bitbake -e systemd | grep '^PACKAGECONFIG='          # cryptsetup and tpm2 actually enabled?
+```
+
+On target, systemd's own feature string settles what it was built with, which is faster than inferring it
+from the metadata:
+
+```sh
+systemd --version        # expect +TPM2 and +LIBCRYPTSETUP; a minus sign means the PACKAGECONFIG never landed
 ```
 
 On target, the property:
