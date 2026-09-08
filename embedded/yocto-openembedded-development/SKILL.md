@@ -1,6 +1,6 @@
 ---
 name: yocto-openembedded-development
-description: "Yocto/OpenEmbedded build partner: BitBake recipes (.bb/.bbappend/.bbclass), meta-layers, bblayers.conf/local.conf, sstate, devtool, wic images, SDKs, and reproducible release prep. Use when a BitBake task fails (do_fetch/do_compile/do_package/do_rootfs), packaging QA fails (installed but not shipped), an override stops applying after a release upgrade (`_append` vs `:append`), a `.bbappend` has no effect, sstate serves stale artifacts, or a release needs SBOM/SPDX, cve-check or license archives. Route kas configs to kas-build-orchestration, and kernel, board or driver debugging to embedded-linux-bringup."
+description: "Yocto/OpenEmbedded build partner: BitBake recipes (.bb/.bbappend/.bbclass), meta-layers, bblayers.conf/local.conf, sstate, devtool, wic, SDKs, reproducible release prep, licence manifests and copyleft source archives. Use when a BitBake task fails (do_fetch/do_compile/do_package/do_rootfs), packaging QA fails (installed but not shipped), an override stops applying after a release upgrade (`_append` vs `:append`), a `.bbappend` has no effect, or sstate serves stale artifacts. Route kas to kas-build-orchestration, board debugging to embedded-linux-bringup, CVE/SBOM to yocto-vulnerability-management."
 license: MIT
 compatibility: Requires a BitBake/OE-Core checkout and a Linux host meeting that release's build prerequisites. Commands assume an initialised build directory (`oe-init-build-env`); `devtool deploy-target` additionally needs SSH access to a running target. Class names, variables and override syntax are release-specific.
 metadata:
@@ -41,21 +41,23 @@ route to **kas-build-orchestration**. Yocto builds run fine without kas; reach f
 
 ### Route to a sibling skill
 
-| Task                                                                     | Skill                       |
-| ------------------------------------------------------------------------ | --------------------------- |
-| kas orchestration (`.kas.yml`, `kas build/checkout/dump`, kas-container) | **kas-build-orchestration** |
-| Board bring-up, device tree, driver probe, dmesg/boot debugging          | **embedded-linux-bringup**  |
-| Buildroot: menuconfig, packages, `BR2_EXTERNAL`                          | **buildroot-development**   |
-| U-Boot: env, extlinux, FIT, boot scripts, porting                        | **u-boot-development**      |
+| Task                                                                     | Skill                              |
+| ------------------------------------------------------------------------ | ---------------------------------- |
+| kas orchestration (`.kas.yml`, `kas build/checkout/dump`, kas-container) | **kas-build-orchestration**        |
+| Board bring-up, device tree, driver probe, dmesg/boot debugging          | **embedded-linux-bringup**         |
+| Buildroot: menuconfig, packages, `BR2_EXTERNAL`                          | **buildroot-development**          |
+| U-Boot: env, extlinux, FIT, boot scripts, porting                        | **u-boot-development**             |
+| CVE scanning and triage, SBOM/SPDX generation, VEX, release CVE gates    | **yocto-vulnerability-management** |
+| Configuring a security control and proving it on the artefact            | **yocto-security-hardening**       |
 
 ### Route the task to a reference
 
-| Task / symptom                                                                                                                                                                                      | Reference                            |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| Layer model, BitBake operators, task lifecycle, recipe anatomy, packaging (`PACKAGES`/`FILES`, `PACKAGECONFIG`), `.bbappend`, sstate mechanics, devtool, SDK, wic, offline builds, debugging a task | `references/yocto-workflow.md`       |
-| Where a setting belongs, layer hygiene, release checklist, sstate sharing, CI, common traps                                                                                                         | `references/yocto-best-practices.md` |
-| SBOM/SPDX, `cve-check`, `LIC_FILES_CHKSUM`, archiver / copyleft source release                                                                                                                      | `references/compliance-and-sbom.md`  |
-| "Which manual, which section?" keyed to the release                                                                                                                                                 | `references/official-doc-map.md`     |
+| Task / symptom                                                                                                                                                                                      | Reference                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| Layer model, BitBake operators, task lifecycle, recipe anatomy, packaging (`PACKAGES`/`FILES`, `PACKAGECONFIG`), `.bbappend`, sstate mechanics, devtool, SDK, wic, offline builds, debugging a task | `references/yocto-workflow.md`           |
+| Where a setting belongs, layer hygiene, release checklist, sstate sharing, CI, common traps                                                                                                         | `references/yocto-best-practices.md`     |
+| `LIC_FILES_CHKSUM`, licence manifest, on-target licence texts, archiver / copyleft source release                                                                                                   | `references/compliance-and-licensing.md` |
+| "Which manual, which section?" keyed to the release                                                                                                                                                 | `references/official-doc-map.md`         |
 
 ---
 
@@ -244,8 +246,9 @@ one, and consult `references/official-doc-map.md` to read the version-matched ma
 - MUST NOT add `INSANE_SKIP` (or move a check out of `ERROR_QA`) to clear a packaging failure before the named paths
   are explained. Silencing `installed-vs-shipped` does not package anything — the files ship in nothing and vanish from
   the image, so the build goes green while the defect gets worse.
-- MUST NOT treat a green build as compliant — SBOM (`create-spdx`) and `cve-check` are separate gates; see
-  `references/compliance-and-sbom.md`.
+- MUST NOT treat a green build as compliant — licence obligations are a separate gate
+  (`references/compliance-and-licensing.md`), and SBOM and CVE reporting are separate again
+  (**yocto-vulnerability-management**).
 - MUST NOT judge a build by a piped command's status — `bitbake … | tail` exits with `tail`'s status, so a failed build
   reports success. Capture `$?` before any pipe, and confirm against an artifact (deployed file, `buildhistory`) rather
   than the log alone.
@@ -279,8 +282,9 @@ Cite the release-matched version of every manual (the codename is in the docs UR
   `recipetool`/`oe-pkgdata-util`.
 - `yocto-best-practices.md` — setting placement (where a variable belongs), layer hygiene, the Poky/production
   distinction, the release checklist, sstate sharing, CI patterns, wic + flashing safety, and a common-traps table.
-- `compliance-and-sbom.md` — `create-spdx`/SPDX SBOM, `cve-check` and the security workflow, `LIC_FILES_CHKSUM`
-  discipline, and the `archiver` class for copyleft source release.
+- `compliance-and-licensing.md` — `LIC_FILES_CHKSUM` discipline, the licence manifest, shipping licence texts
+  on target, and the `archiver` class for copyleft source release. SBOM and CVE work route to
+  `yocto-vulnerability-management`.
 - `official-doc-map.md` — problem type → exact manual and section, keyed to the release codename.
 
 ## Attribution

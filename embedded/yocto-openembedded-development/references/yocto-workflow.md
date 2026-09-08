@@ -2,7 +2,7 @@
 
 Mechanics reference: the layer model, BitBake syntax and task lifecycle, recipe anatomy, `.bbappend` overrides, sstate
 internals, and the build/inspect/debug commands. For where a setting *belongs* and release-engineering discipline, see
-`yocto-best-practices.md`; for licensing and SBOM, `compliance-and-sbom.md`.
+`yocto-best-practices.md`; for licensing and SBOM, `compliance-and-licensing.md`.
 
 ## Contents
 
@@ -283,7 +283,7 @@ do_install() {
 ## License, Fetch, and Version Fields
 
 - `LIC_FILES_CHKSUM` is mandatory unless `LICENSE = "CLOSED"`; it may reference a whole license file or a line range
-  inside a source file. A mismatch fails `do_populate_lic`. (Compliance detail: `compliance-and-sbom.md`.)
+  inside a source file. A mismatch fails `do_populate_lic`. (Compliance detail: `compliance-and-licensing.md`.)
 - `SRC_URI[sha256sum]` guards a fetched archive against a tampered upstream server.
 - `SRCREV` selects the commit for a Git fetch; set `S` to the unpacked directory.
 - If the version cannot come from the filename, set `PV` (e.g. `PV = "3.8.0+git"`).

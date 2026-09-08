@@ -2,7 +2,7 @@
 
 Judgment reference: where a setting belongs, how to keep layers clean, how to prepare a reproducible release, and how to
 share and prune sstate. For the raw mechanics of any command named here, see `yocto-workflow.md`; for licensing and
-SBOM, `compliance-and-sbom.md`.
+SBOM, `compliance-and-licensing.md`.
 
 ## Contents
 
@@ -193,7 +193,7 @@ Two conditions decide whether this test means anything:
   one source removed from the mirror, the build must fail.
 
 **4 — Attach compliance artifacts.** Generate the SBOM, CVE report, and license / source archives as part of the release
-— see `compliance-and-sbom.md`. Enable `buildhistory` (committed) and diff it against the previous release to catch
+— see `compliance-and-licensing.md`. Enable `buildhistory` (committed) and diff it against the previous release to catch
 unintended package-size, dependency, or version changes.
 
 ## Sharing sstate Across Machines

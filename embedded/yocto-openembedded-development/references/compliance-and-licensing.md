@@ -1,33 +1,34 @@
-# Compliance, SBOM, and CVE Auditing
+# Licence Compliance and Copyleft Source Release
 
-License compliance, software bill of materials, CVE auditing, and copyleft source release for a Yocto image. These are
-release gates separate from a green build: a build can succeed and still ship an incomplete SBOM, an unaudited CVE, or a
-license-metadata gap. Feature names and SBOM formats are release-sensitive — confirm the codename (Iron Law) and read
-the version-matched Reference and Security manuals (`official-doc-map.md`).
+License compliance and copyleft source release for a Yocto image. These are release gates separate from a green build:
+a build can succeed and still ship a license-metadata gap or an incomplete source archive. Feature names are
+release-sensitive — confirm the codename (Iron Law) and read the version-matched Reference Manual
+(`official-doc-map.md`).
+
+**SBOM generation and CVE auditing are not here.** They read the same recipe metadata but answer a different question
+and have their own release discontinuity; they belong to **yocto-vulnerability-management**, which owns `create-spdx`,
+`cve-check`, `sbom-cve-check`, `CVE_STATUS` triage and VEX.
 
 ## Contents
 
 - [The Compliance Gates](#the-compliance-gates)
 - [`LIC_FILES_CHKSUM`: the Root of Everything](#lic_files_chksum-the-root-of-everything)
 - [License Manifest and On-Target License Text](#license-manifest-and-on-target-license-text)
-- [SBOM with `create-spdx` (SPDX)](#sbom-with-create-spdx-spdx)
-- [CVE Auditing with `cve-check`](#cve-auditing-with-cve-check)
 - [Copyleft Source Release with the `archiver` Class](#copyleft-source-release-with-the-archiver-class)
 - [Release Compliance Checklist](#release-compliance-checklist)
 
 ## The Compliance Gates
 
-Four independent outputs, each driven by recipe metadata:
+Two independent outputs here, each driven by recipe metadata:
 
-| Gate             | Question it answers                                | Driver                         |
-| ---------------- | -------------------------------------------------- | ------------------------------ |
-| License manifest | what licenses are on the image?                    | `LICENSE` + `LIC_FILES_CHKSUM` |
-| SBOM (SPDX)      | what components, versions, and relationships ship? | `create-spdx`                  |
-| CVE report       | which known vulnerabilities affect them?           | `cve-check`                    |
-| Source archive   | can I hand over copyleft sources?                  | `archiver` class               |
+| Gate             | Question it answers               | Driver                         |
+| ---------------- | --------------------------------- | ------------------------------ |
+| License manifest | what licenses are on the image?   | `LICENSE` + `LIC_FILES_CHKSUM` |
+| Source archive   | can I hand over copyleft sources? | `archiver` class               |
 
-All four read the same declarative recipe metadata, so a wrong or missing `LICENSE`/`CVE_PRODUCT`/`SRC_URI` silently
-degrades every downstream artifact. Fix the metadata, not the report.
+Both read the same declarative recipe metadata as the SBOM and the CVE report, so a wrong or missing
+`LICENSE`/`SRC_URI` silently degrades every downstream artifact, here and in vulnerability management alike. Fix the
+metadata, not the report.
 
 ## `LIC_FILES_CHKSUM`: the Root of Everything
 
@@ -88,42 +89,6 @@ find tmp/work/<machine>/<image>/*/rootfs/usr/share/{licenses,common-licenses} -m
 
 Generating an artifact and delivering it are separate claims. A green build proves neither.
 
-## SBOM with `create-spdx` (SPDX)
-
-Yocto generates an SPDX software bill of materials via a class you inherit globally:
-
-```bitbake
-# local.conf or distro conf
-INHERIT += "create-spdx"
-```
-
-The build emits SPDX JSON documents (per recipe and a rolled-up image document) into `tmp/deploy/spdx/` (and a symlink
-beside the image). They record components, versions, licenses, files, and dependency relationships — the artifact
-downstream tooling ingests for supply-chain and vulnerability analysis.
-
-Release-sensitive: the class name, output layout, and SPDX schema version differ by release (the SPDX 2.x → 3.x
-transition is a notable jump). Confirm the codename and check the Reference Manual for that release before asserting the
-exact path or schema.
-
-## CVE Auditing with `cve-check`
-
-```bitbake
-# local.conf or distro conf
-INHERIT += "cve-check"
-```
-
-`cve-check` maps built components against the NVD CVE database and writes per-recipe and image-level reports
-(`tmp/deploy/cve/`, plus a summary beside the image). The mapping hinges on metadata:
-
-- `CVE_PRODUCT` — the upstream product name(s) as the NVD knows them; the default is the recipe name and is often wrong
-  (e.g. `openssl` vs `openssl:openssl`). Set it explicitly when the report is empty or clearly incomplete.
-- `CVE_VERSION` — the version to match, when it is not the plain `PV`.
-- `CVE_STATUS[<cve-id>]` (release-dependent flag name) — record a triage decision (patched, not-applicable,
-  ignored-with-reason) so a known-and-handled CVE stops reappearing as noise.
-
-A CVE is closed either by upgrading, by a patch in `SRC_URI` whose CVE tag the checker recognizes, or by an explicit,
-justified status entry — never by deleting the report.
-
 ## Copyleft Source Release with the `archiver` Class
 
 To hand over the sources a copyleft license obliges you to provide:
@@ -141,9 +106,6 @@ configured tree. Pair the archive with `COPYLEFT_LICENSE_INCLUDE`/`_EXCLUDE` to 
 
 - [ ] Every non-`CLOSED` recipe has a `LICENSE` (SPDX identifiers) and a matching `LIC_FILES_CHKSUM`; `do_populate_lic`
   is clean.
-- [ ] `INHERIT += "create-spdx"` — SBOM generated and archived with the release.
-- [ ] `INHERIT += "cve-check"` — CVE report reviewed; each open CVE upgraded, patched, or given a justified status
-  entry.
 - [ ] `INHERIT += "archiver"` with the mode your licenses require — source archive captured for the shipped image.
 - [ ] License manifest reviewed by hand for metadata gaps.
 - [ ] If license texts must ship on target, the image **manifest and rootfs** inspected to confirm they are actually

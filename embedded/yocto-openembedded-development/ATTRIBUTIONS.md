@@ -27,8 +27,10 @@ Removing source-attributing framing does not help; it removes the attribution th
 
 **Resolved on 2026-09-08 by independent re-derivation, keeping MIT.** Of the ten correspondences documented below, six
 had already become independent through the 2026-09-07 technical repair, which replaced the surrounding reasoning and
-moved three of them into `compliance-and-sbom.md` as Reference Manual facts. The four that still carried the source's
-organization were re-derived from primary sources:
+moved three of them into `compliance-and-sbom.md` as Reference Manual facts — that file was renamed
+`compliance-and-licensing.md` on 2026-09-08 when SBOM and CVE material moved to
+`yocto-vulnerability-management`. The four that still carried the source's organization were re-derived from
+primary sources:
 
 | Was organized as                                          | Re-derived from                                                                                             |
 | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
