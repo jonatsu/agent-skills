@@ -78,11 +78,32 @@ This includes the Yocto Project's "What I wish I'd known about Yocto Project" do
 `references/official-doc-map.md` both point readers to by name. It carries the manuals' license and is recorded here
 because the skill routes to it, not because passages were taken from it.
 
+### awesome-yocto-ai-agent-skills (coverage gaps only)
+
+- Author: Prashant Divate
+- Upstream: <https://github.com/prashantdivate/awesome-yocto-ai-agent-skills>
+- Upstream license: MIT (compatible with this package's declaration)
+- Inspected 2026-09-08 at commit `0e268dc`
+
+Reading that skill set on 2026-09-08 surfaced four subjects this package did not cover: packaging and the
+`installed-vs-shipped` QA failure, `PACKAGECONFIG`, the collection-vs-directory distinction in `LAYERDEPENDS`, and the
+assumption that build output sits under `tmp/`. The **selection of those gaps** is the influence and is recorded here
+under this repository's policy that an external source is attribution-bearing whenever reading it changes what a skill
+contains.
+
+No wording, structure, examples or command choices were taken. Each subject was written from pinned Poky `yocto-5.0.12`
+sources — `meta/lib/oe/package.py`, `meta/conf/bitbake.conf`, `meta/classes-global/{base,insane}.bbclass`,
+`meta/conf/distro/defaultsetup.conf`, `meta-poky/conf/distro/poky.conf`, and `bitbake/lib/bb/cooker.py` — which state
+mechanisms the upstream skill set does not (the `PACKAGES` first-match-wins ordering, `installed-vs-shipped` being an
+`ERROR_QA` rather than a warning, `PACKAGECONFIG` declaring the whole enabled set, `TCLIBCAPPEND` as the actual reason
+for `tmp-glibc/`). Its compliance, SBOM, CVE and bundled-script material was reviewed and not adopted.
+
 ### Verification-only sources
 
 The 2026-09-07 review and repair verified behavior against pinned Poky `yocto-5.0.12` sources — `data_smart.py`,
 `sstate.bbclass`, `package.bbclass`, `buildhistory.bbclass`, `bitbake.conf`, `knotty.py`, `devtool/deploy.py` — and the
-Honister 3.4 migration guide. These confirmed public facts and are cited near the affected claims. Under this
+Honister 3.4 migration guide. The 2026-09-08 packaging additions used the further pinned sources listed above.
+These confirmed public facts and are cited near the affected claims. Under this
 repository's provenance policy, verification-only use does not create an attribution obligation; they are listed for
 traceability.
 

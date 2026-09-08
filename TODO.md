@@ -60,6 +60,15 @@ rewrite its organization independently, or determine the overlap is uncopyrighta
 A third Bootlin deck (Dautheribes 2024) sits in the same source directory and is named nowhere in the package; no
 source relationship was asserted, because nothing distinctive corresponds.
 
+On 2026-09-08 the third-party skill set
+[awesome-yocto-ai-agent-skills](https://github.com/prashantdivate/awesome-yocto-ai-agent-skills) (MIT, commit
+`0e268dc`) was compared against `yocto-openembedded-development`. Its prose is thinner than ours and none was adopted,
+but it surfaced four genuine coverage gaps, now written from pinned Poky `yocto-5.0.12` sources: packaging
+(`PACKAGES`/`FILES` ordering and the `installed-vs-shipped` error), `PACKAGECONFIG`, `LAYERDEPENDS` naming collections
+rather than directories, and build output not always sitting under `tmp/`. Its compliance, SBOM, CVE and bundled-script
+material was reviewed and rejected as weaker than what the package already carries. **This source is evaluated;
+do not re-survey it.** Attribution for the gap selection is recorded in the skill's `ATTRIBUTIONS.md`.
+
 Full model evaluations, hardware/release qualification, and QEMU skill creation remain separate decisions.
 Buildroot's completed source/deployment commits (`9a512da`, `d56586d`) are preserved.
 

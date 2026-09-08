@@ -16,6 +16,8 @@ internals, and the build/inspect/debug commands. For where a setting *belongs* a
 - [Task Dependency Varflags](#task-dependency-varflags)
 - [Recipe Anatomy](#recipe-anatomy)
 - [License, Fetch, and Version Fields](#license-fetch-and-version-fields)
+- [Packaging: `PACKAGES` and `FILES`](#packaging-packages-and-files)
+- [Optional Features: `PACKAGECONFIG`](#optional-features-packageconfig)
 - [Inline and Anonymous Python](#inline-and-anonymous-python)
 - [`.bbappend` and `FILESEXTRAPATHS`](#bbappend-and-filesextrapaths)
 - [sstate-cache Mechanics](#sstate-cache-mechanics)
@@ -71,6 +73,17 @@ source oe-init-build-env build
 This creates `build/conf/{local.conf,bblayers.conf}` and puts `bitbake` on the path. For a one-command "fetch layers,
 configure, and build" wrapper driven by a single YAML config, use kas — that workflow lives in the
 **kas-build-orchestration** skill. Plain `bitbake` after `oe-init-build-env` is fully sufficient; kas is optional.
+
+**The output directory is not always `tmp/`.** `TMPDIR` defaults to `${TOPDIR}/tmp`, but OE-Core's
+`defaultsetup.conf` then appends `TCLIBCAPPEND`, itself defaulting to `-${TCLIBC}` — so an ordinary distro builds into
+`tmp-glibc/`. Poky sets `TCLIBCAPPEND = ""`, which is the only reason Poky builds show a plain `tmp/`. Deployed
+artifacts land in `DEPLOY_DIR_IMAGE` (`${DEPLOY_DIR}/images/${MACHINE}` by default), and `DEPLOY_DIR` is commonly moved
+outside `TMPDIR` altogether. Resolve both instead of assuming them, especially before reporting an artifact missing:
+
+```bash
+bitbake-getvar TMPDIR
+bitbake-getvar -r <image-recipe> DEPLOY_DIR_IMAGE
+```
 
 ## `local.conf` Essentials
 
@@ -233,6 +246,71 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263 \
                     file://serpent.c;beginline=14;endline=36;md5=ca0d220bc413e18..."
 SRC_URI = "http://downloads.example.org/${BP}.tar.xz"
 SRC_URI[sha256sum] = "f2c1c76592a82ffff8413ba3c4a1299b6c7ab06c734dee03fd88630485c2b920"
+```
+
+## Packaging: `PACKAGES` and `FILES`
+
+`do_install` fills `${D}`; `do_package` then splits that tree into binary packages. Each path is matched against
+`FILES:<pkg>` for every package in `PACKAGES` **in order, and the first match claims it** — a file already taken is
+skipped for every later package. The default list puts `${PN}` last:
+
+```bitbake
+PACKAGES = "${PN}-src ${PN}-dbg ${PN}-staticdev ${PN}-dev ${PN}-doc ${PN}-locale ${PACKAGE_BEFORE_PN} ${PN}"
+```
+
+So the main package receives only what the `-src`/`-dbg`/`-staticdev`/`-dev`/`-doc`/`-locale` globs left behind. That is
+why a shared library splits without anyone asking for it: `FILES:${PN}` claims `${libdir}/lib*${SOLIBS}` (`.so.*`, the
+versioned runtime object) while `FILES:${PN}-dev` claims `${FILES_SOLIBSDEV}` (`.so`, the development symlink). A
+library that looks "missing" on target is usually this split rather than a missing dependency — check with
+`oe-pkgdata-util list-pkg-files`.
+
+To add a package that must claim files **before** `${PN}` takes them, put it in `PACKAGE_BEFORE_PN`; appending to
+`PACKAGES` places it after `${PN}`, where it gets nothing. `ALLOW_EMPTY:<pkg> = "1"` keeps a package that ends up with
+no files at all (the default for `-dev` and `-dbg`).
+
+### `installed but not shipped`
+
+Whatever is left in `${D}` that no package's `FILES` claimed is reported by path, and this is an **error, not a
+warning** — `installed-vs-shipped` is in the default `ERROR_QA`. Read the listed paths: each one says either "extend
+`FILES`" or "`do_install` should not have installed this".
+
+```bitbake
+FILES:${PN} += "${datadir}/myapp"            # ship them, or
+INSANE_SKIP:${PN} += "installed-vs-shipped"  # silence the check — read the caveat first
+```
+
+`INSANE_SKIP` silences the report; it packages nothing. Those files then belong to no package and are absent from the
+image, so the skip is only right when they genuinely should not ship — and deleting them at the end of `do_install` is
+usually the clearer way to say that. Note the key: this check reads `INSANE_SKIP:<recipe>` (`PN`), whereas most other
+QA checks are keyed by *package* name, so the two forms coincide only for the main package.
+
+## Optional Features: `PACKAGECONFIG`
+
+`PACKAGECONFIG` is OE's idiom for a recipe's optional features, and the alternative to hand-editing `EXTRA_OECONF` and
+`DEPENDS` in a `.bbappend`. Each feature is one varflag holding up to six comma-separated fields:
+
+```bitbake
+PACKAGECONFIG ??= "ssl"
+PACKAGECONFIG[ssl] = "--enable-ssl,--disable-ssl,openssl"
+PACKAGECONFIG[gtk] = "--with-gtk,--without-gtk,gtk+3"
+#                     enable-arg,disable-arg,DEPENDS,RDEPENDS,RRECOMMENDS,conflicts
+```
+
+Fields 3–5 are added to the recipe's dependencies only when the feature is enabled. Critically, **every declared
+feature that is not listed contributes its disable argument**: the variable declares the whole enabled set, it is not
+an additive list.
+
+```bitbake
+PACKAGECONFIG:append = " gtk"   # correct — adds gtk, keeps the recipe's defaults (note the leading space)
+PACKAGECONFIG = "gtk"           # in a .bbappend this silently DISABLES every other default feature
+```
+
+A feature name with no matching varflag is only a warning (`invalid-packageconfig` sits in `WARN_QA`), so a typo
+disables the feature you meant to turn on and the build still succeeds. Confirm the outcome rather than the intent:
+
+```bash
+bitbake-getvar -r <recipe> PACKAGECONFIG
+bitbake-getvar -r <recipe> PACKAGECONFIG_CONFARGS   # the arguments actually passed to configure
 ```
 
 ## Inline and Anonymous Python

@@ -28,6 +28,10 @@ SBOM, `compliance-and-sbom.md`.
   already exists.
 - **Declare compatibility.** Every `layer.conf` sets `LAYERSERIES_COMPAT` (which releases the layer targets) and
   `LAYERDEPENDS` (which layers it needs). These are also your first evidence when debugging a release mismatch.
+  `LAYERDEPENDS` names **collections, not directories** — BitBake resolves each entry against `BBFILE_COLLECTIONS`, so
+  a layer living in `meta-foo/` but declaring the collection `foo` must be depended on as `foo`. Name the directory
+  instead and the parse fails with `depends on layer 'y', but this layer is not enabled`, which reads like a missing
+  layer even though it is sitting right there in `bblayers.conf`.
 
 ```bash
 bitbake-layers show-layers
@@ -265,6 +269,11 @@ dd if=my-image.wic of=/dev/sdX bs=4M conv=fsync status=progress   # fallback
 | `FILESEXTRAPATHS:prepend` missing in a `.bbappend`                     | add `:prepend := "${THISDIR}/files:"`                                                                                                                                                                |
 | suspected stale sstate after a `MACHINE`/patch/layer change            | those are hashed inputs and normally invalidate correctly — run `bitbake -S printdiff` / `bitbake-diffsigs` and fix the real input before cleaning                                                   |
 | `DEPENDS` used for a runtime dep                                       | use `RDEPENDS:${PN}` — but a linked shared library needs neither, it is detected from ELF `NEEDED`                                                                                                   |
+| build fails with `installed but not shipped`                           | `installed-vs-shipped` is in `ERROR_QA`, not `WARN_QA`: extend `FILES:<pkg>` or stop installing the paths it names; `INSANE_SKIP` hides the report and still ships the files nowhere                 |
+| a linked library is "missing" on target                                | usually the package split, not a dependency — `PACKAGES` is matched in order with `${PN}` last, so `.so` goes to `-dev` and only `.so.*` to `${PN}`                                                  |
+| `PACKAGECONFIG = "x"` in a `.bbappend`                                 | that declares the whole enabled set, silently disabling every other default feature; use `PACKAGECONFIG:append = " x"` with the leading space — and note a typo'd feature is only a `WARN_QA`        |
+| `LAYERDEPENDS` naming a layer directory                                | it resolves against `BBFILE_COLLECTIONS`; use the collection name, or the layer reports as "not enabled" while sitting in `bblayers.conf`                                                            |
+| artifacts "missing" because nothing is under `tmp/deploy`              | `TMPDIR` gains `-${TCLIBC}` outside Poky (`tmp-glibc/`) and `DEPLOY_DIR` is often moved out of it — resolve `bitbake-getvar TMPDIR` and `DEPLOY_DIR_IMAGE` before reporting an absence               |
 | missing `LIC_FILES_CHKSUM`                                             | add it (or `LICENSE = "CLOSED"`) — see compliance ref                                                                                                                                                |
 | `def` block in a `.conf` fails to parse                                | move it to a `.inc`; only BBHandler (`.bb`/`.bbclass`/`.inc`) accepts `def`, ConfHandler owns `.conf`                                                                                                |
 | `#CONFIG_X is not set` in a kernel `.cfg` is ignored                   | needs the space — `# CONFIG_X is not set`; without it Kconfig reads a comment and the option keeps its defconfig value                                                                               |

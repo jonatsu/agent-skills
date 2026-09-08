@@ -1,6 +1,6 @@
 ---
 name: yocto-openembedded-development
-description: "Yocto/OpenEmbedded build partner: BitBake recipes (.bb/.bbappend/.bbclass), meta-layers and BSP layers, bblayers.conf/local.conf, sstate, devtool, wic images, SDKs, and reproducible release prep. Use when a BitBake task fails (do_fetch/do_compile/do_rootfs), an override stops applying after a release upgrade (`_append` vs `:append`), a `.bbappend` has no effect, sstate serves stale artifacts, or a release needs SBOM/SPDX, cve-check or license archives. Route kas configs to kas-build-orchestration, and kernel, board or driver debugging to embedded-linux-bringup."
+description: "Yocto/OpenEmbedded build partner: BitBake recipes (.bb/.bbappend/.bbclass), meta-layers, bblayers.conf/local.conf, sstate, devtool, wic images, SDKs, and reproducible release prep. Use when a BitBake task fails (do_fetch/do_compile/do_package/do_rootfs), packaging QA fails (installed but not shipped), an override stops applying after a release upgrade (`_append` vs `:append`), a `.bbappend` has no effect, sstate serves stale artifacts, or a release needs SBOM/SPDX, cve-check or license archives. Route kas configs to kas-build-orchestration, and kernel, board or driver debugging to embedded-linux-bringup."
 license: MIT
 compatibility: Requires a BitBake/OE-Core checkout and a Linux host meeting that release's build prerequisites. Commands assume an initialised build directory (`oe-init-build-env`); `devtool deploy-target` additionally needs SSH access to a running target. Class names, variables and override syntax are release-specific.
 metadata:
@@ -50,12 +50,12 @@ route to **kas-build-orchestration**. Yocto builds run fine without kas; reach f
 
 ### Route the task to a reference
 
-| Task / symptom                                                                                                                                     | Reference                            |
-| -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| Layer model, BitBake operators, task lifecycle, recipe anatomy, `.bbappend`, sstate mechanics, devtool, SDK, wic, offline builds, debugging a task | `references/yocto-workflow.md`       |
-| Where a setting belongs, layer hygiene, release checklist, sstate sharing, CI, common traps                                                        | `references/yocto-best-practices.md` |
-| SBOM/SPDX, `cve-check`, `LIC_FILES_CHKSUM`, archiver / copyleft source release                                                                     | `references/compliance-and-sbom.md`  |
-| "Which manual, which section?" keyed to the release                                                                                                | `references/official-doc-map.md`     |
+| Task / symptom                                                                                                                                                                                      | Reference                            |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| Layer model, BitBake operators, task lifecycle, recipe anatomy, packaging (`PACKAGES`/`FILES`, `PACKAGECONFIG`), `.bbappend`, sstate mechanics, devtool, SDK, wic, offline builds, debugging a task | `references/yocto-workflow.md`       |
+| Where a setting belongs, layer hygiene, release checklist, sstate sharing, CI, common traps                                                                                                         | `references/yocto-best-practices.md` |
+| SBOM/SPDX, `cve-check`, `LIC_FILES_CHKSUM`, archiver / copyleft source release                                                                                                                      | `references/compliance-and-sbom.md`  |
+| "Which manual, which section?" keyed to the release                                                                                                                                                 | `references/official-doc-map.md`     |
 
 ---
 
@@ -238,6 +238,9 @@ one, and consult `references/official-doc-map.md` to read the version-matched ma
   `do_fetch` fails with a confusing "not found".
 - MUST NOT declare a recipe's `LICENSE` without a matching `LIC_FILES_CHKSUM` (unless `LICENSE = "CLOSED"`) — a checksum
   mismatch fails `do_populate_lic`, and a wrong license silently corrupts the SBOM and CVE report.
+- MUST NOT add `INSANE_SKIP` (or move a check out of `ERROR_QA`) to clear a packaging failure before the named paths
+  are explained. Silencing `installed-vs-shipped` does not package anything — the files ship in nothing and vanish from
+  the image, so the build goes green while the defect gets worse.
 - MUST NOT treat a green build as compliant — SBOM (`create-spdx`) and `cve-check` are separate gates; see
   `references/compliance-and-sbom.md`.
 - MUST NOT judge a build by a piped command's status — `bitbake … | tail` exits with `tail`'s status, so a failed build
@@ -266,9 +269,11 @@ Cite the release-matched version of every manual (the codename is in the docs UR
 `references/`:
 
 - `yocto-workflow.md` — layer model, BitBake assignment operators and override order, task lifecycle and dependency
-  varflags, recipe anatomy and license/fetch/version fields, inline/anonymous Python, `.bbappend` + `FILESEXTRAPATHS`
-  detail, sstate mechanics, devtool, SDK, kernel customization, buildhistory, offline builds, and task-failure debugging
-  including `recipetool`/`oe-pkgdata-util`.
+  varflags, recipe anatomy and license/fetch/version fields, packaging (`PACKAGES`/`FILES` splits,
+  installed-vs-shipped, `PACKAGECONFIG`), inline/anonymous Python, `.bbappend` + `FILESEXTRAPATHS` detail, sstate
+  mechanics,
+  devtool, SDK, kernel customization, buildhistory, offline builds, and task-failure debugging including
+  `recipetool`/`oe-pkgdata-util`.
 - `yocto-best-practices.md` — setting placement (where a variable belongs), layer hygiene, the Poky/production
   distinction, the release checklist, sstate sharing, CI patterns, wic + flashing safety, and a common-traps table.
 - `compliance-and-sbom.md` — `create-spdx`/SPDX SBOM, `cve-check` and the security workflow, `LIC_FILES_CHKSUM`
