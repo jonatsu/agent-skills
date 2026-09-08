@@ -453,9 +453,23 @@ Runtime debugging on the board once the code is there routes to **embedded-linux
 ```bash
 bitbake core-image-minimal -c populate_sdk       # standard SDK (cross toolchain + sysroot)
 bitbake core-image-minimal -c populate_sdk_ext   # extensible SDK (bundles devtool)
-./tmp/deploy/sdk/poky-glibc-x86_64-*-toolchain-*.sh   # installer
+./tmp/deploy/sdk/poky-glibc-x86_64-*-toolchain-*.sh   # installer (name and path are distro-specific)
 source /opt/poky/<ver>/environment-setup-aarch64-poky-linux
 ```
+
+**Those last two paths are Poky's, not universal.** The installer filename comes from `SDK_NAME` and the default
+install prefix from `SDKPATHINSTALL`, both set by the distro conf, so a custom distro produces different strings —
+and the deploy directory follows `TMPDIR`, which is `tmp-glibc/` outside Poky. Resolve them rather than pattern-match:
+
+```bash
+bitbake-getvar -r <image-recipe> SDK_NAME          # one variable per call
+bitbake-getvar -r <image-recipe> SDKPATHINSTALL
+ls "$(bitbake-getvar --value --quiet DEPLOY_DIR)/sdk"
+```
+
+`bitbake-getvar` takes a single variable name. By default it prints the assignment history *and* the value; add
+`--value` for the bare value alone, which is what a command substitution needs, and `--quiet` to keep server logging
+out of it.
 
 After sourcing, `$CC`, `$CXX`, `$CFLAGS`, and the target `$SDKTARGETSYSROOT` point at the cross toolchain and sysroot.
 Add packages with `TOOLCHAIN_TARGET_TASK:append` (target sysroot) and `TOOLCHAIN_HOST_TASK:append` (host `nativesdk-*`

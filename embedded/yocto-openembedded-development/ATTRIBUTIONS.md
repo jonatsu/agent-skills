@@ -33,7 +33,7 @@ organization were re-derived from primary sources:
 | Was organized as                                          | Re-derived from                                                                                             |
 | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | a five-scope decomposition of configuration files         | `bitbake.conf`'s own include sequence, which orders the table and explains which file overrules which       |
-| a list of what distro policy covers                       | `meta-poky/conf/distro/poky.conf` read directly, and cited so a reader can check it                         |
+| a list of what distro policy covers                       | resolving the selected distro from the datastore, with `poky.conf` demoted to a template if Poky is in use  |
 | four sstate-sharing points in the source's order          | the section's own correctness-versus-hit-rate thesis, which splits them into two differently ordered groups |
 | an `sstate-cache-management.sh` invocation, near-verbatim | the tool at the pinned release, which exposed a real defect — see below                                     |
 

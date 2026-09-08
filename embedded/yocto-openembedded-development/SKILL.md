@@ -66,8 +66,10 @@ be done but MAY interleave.
 
 **Shared entry (both lanes):**
 
-- [ ] **⛔ BLOCKING — Lock the release era.** Establish the *actual* BitBake/OE-Core revision in use: the poky checkout's
-  tag or branch (`git -C <poky> describe --tags`), or `DISTRO_VERSION`/`poky.conf`. `LAYERSERIES_COMPAT` is a
+- [ ] **⛔ BLOCKING — Lock the release era.** Establish the *actual* BitBake/OE-Core revision in use: the tag or branch
+  of the OE-Core checkout (`git -C <oe-core-or-poky> describe --tags`), or `DISTRO_VERSION`. Do not assume a `poky`
+  directory or `poky.conf` — plenty of builds are OE-Core plus layers, or a vendor BSP with its own distro, and there
+  may be no Poky in the tree at all; `bitbake-getvar DISTRO` says what is actually selected. `LAYERSERIES_COMPAT` is a
   *compatibility declaration* — a layer may legitimately list several codenames — so read it as "which releases this
   layer claims to support", never as proof of which release is checked out. This gates override syntax, class names and
   variable behavior (Iron Law). If it cannot be established, state the assumed era and LABEL the assumption.
@@ -150,7 +152,8 @@ Keep every capture BOUNDED — grep the log, do not paste a full build transcrip
 
 ```bash
 # Release / layer sanity
-git -C <poky> describe --tags            # what is actually checked out
+git -C <oe-core-checkout> describe --tags   # what is actually checked out (may not be named "poky")
+bitbake-getvar DISTRO                    # which distro is selected; "nodistro" if none
 bitbake-getvar DISTRO_VERSION            # the distro's own release identity
 bitbake-layers show-layers
 grep -R LAYERSERIES_COMPAT */conf/layer.conf   # what each layer CLAIMS to support

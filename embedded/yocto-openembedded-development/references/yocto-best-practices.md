@@ -80,11 +80,33 @@ to survive belongs at or below the level that owns it — or must use `:append`,
 | 6 `conf/distro/<name>.conf`  | policy across every board        | `DISTRO_FEATURES`, `INIT_MANAGER`, `PACKAGE_CLASSES`, `PREFERRED_VERSION_*`, `TCLIBCAPPEND`, SDK naming |
 | — an image recipe (`.bb`)    | what lands in one image          | `IMAGE_INSTALL`, `IMAGE_FEATURES`                                                                       |
 
-The distro row is not a guess: read `meta-poky/conf/distro/poky.conf` in your own checkout, which sets exactly those —
-identity (`DISTRO`, `DISTRO_VERSION`, `DISTRO_CODENAME`), `DISTRO_FEATURES`, `INIT_MANAGER`, `PACKAGE_CLASSES`,
-`PREFERRED_VERSION_linux-yocto`, `TCLIBCAPPEND`, `SDK_NAME`/`SDKPATHINSTALL`, a signature handler, and a set of
-`INHERIT` and `require` lines for security flags, `uninative` and `create-spdx`. It is the worked example of the file
-you are being told to write.
+**Resolve the distro row against the build in front of you, not against Poky.** The file included is
+`conf/distro/${DISTRO}.conf` from whichever layer provides it, so on a product build it is your own distro layer, and
+the examples above are only the *kind* of setting that belongs there. Establish `DISTRO` first (SKILL.md *Lock build
+context*), then let BitBake name the file rather than guessing a path — `bitbake-getvar` prints every assignment site,
+which is the reliable way to find what set a value in a layer stack you did not write:
+
+```bash
+bitbake-getvar DISTRO                 # which distro is actually selected
+bitbake-getvar DISTRO_FEATURES        # value plus the file:line of every assignment
+bitbake-layers show-layers            # which layer could be providing that conf
+```
+
+Two cases that break the assumption:
+
+- **There may be no distro conf at all.** `DISTRO` defaults to `nodistro`, and OE-Core ships no
+  `conf/distro/nodistro.conf`. The line in `bitbake.conf` is an `include`, not a `require`, so a `DISTRO` naming a
+  file that does not exist resolves to nothing and the parse continues without complaint. The defaults you observe
+  then come from `conf/distro/defaultsetup.conf`, which is included unconditionally afterwards and supplies
+  `PACKAGE_CLASSES`, `INIT_MANAGER`, `TCLIBCAPPEND` and the `INHERIT_DISTRO` set.
+- **A vendor BSP usually brings its own distro**, and it may set policy you did not intend to inherit. Read the actual
+  file before assuming a default.
+
+If Poky *is* what is checked out, `meta-poky/conf/distro/poky.conf` is worth reading as a worked example of the file
+this section is telling you to write: it sets identity (`DISTRO`, `DISTRO_VERSION`, `DISTRO_CODENAME`),
+`DISTRO_FEATURES`, `INIT_MANAGER`, `PACKAGE_CLASSES`, `PREFERRED_VERSION_linux-yocto`, `TCLIBCAPPEND`,
+`SDK_NAME`/`SDKPATHINSTALL`, a signature handler, and `INHERIT`/`require` lines for security flags, `uninative` and
+`create-spdx`. Read it as a template, not as a description of your build.
 
 Two rules of thumb fall out of the table:
 
@@ -305,6 +327,7 @@ dd if=my-image.wic of=/dev/sdX bs=4M conv=fsync status=progress   # fallback
 | build fails with `installed but not shipped`                           | `installed-vs-shipped` is in `ERROR_QA`, not `WARN_QA`: extend `FILES:<pkg>` or stop installing the paths it names; `INSANE_SKIP` hides the report and still ships the files nowhere                 |
 | a linked library is "missing" on target                                | usually the package split, not a dependency — `PACKAGES` is matched in order with `${PN}` last, so `.so` goes to `-dev` and only `.so.*` to `${PN}`                                                  |
 | `PACKAGECONFIG = "x"` in a `.bbappend`                                 | that declares the whole enabled set, silently disabling every other default feature; use `PACKAGECONFIG:append = " x"` with the leading space — and note a typo'd feature is only a `WARN_QA`        |
+| reading `poky.conf` to answer "what does this build set?"              | only valid if Poky is the selected distro; resolve `bitbake-getvar DISTRO` first — it may be a vendor or custom distro, or `nodistro`, for which OE-Core ships no conf file at all                   |
 | `LAYERDEPENDS` naming a layer directory                                | it resolves against `BBFILE_COLLECTIONS`; use the collection name, or the layer reports as "not enabled" while sitting in `bblayers.conf`                                                            |
 | artifacts "missing" because nothing is under `tmp/deploy`              | `TMPDIR` gains `-${TCLIBC}` outside Poky (`tmp-glibc/`) and `DEPLOY_DIR` is often moved out of it — resolve `bitbake-getvar TMPDIR` and `DEPLOY_DIR_IMAGE` before reporting an absence               |
 | missing `LIC_FILES_CHKSUM`                                             | add it (or `LICENSE = "CLOSED"`) — see compliance ref                                                                                                                                                |
