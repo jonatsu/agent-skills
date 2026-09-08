@@ -1,6 +1,6 @@
 ---
 name: yocto-security-hardening
-description: "Yocto/OpenEmbedded security hardening: configure a control, then prove it on the built artefact. Use for IMAGE_FEATURES and distro hardening, root credentials, read-only rootfs, PACKAGE_EXCLUDE, security_flags.inc and checksec, kernel hardening fragments and kernel_configcheck, signed-FIT and dm-verity wiring, sstate and mirror trust, meta-security. Route BitBake mechanics and CVE/SBOM to yocto-openembedded-development, U-Boot verification to u-boot-development, board debugging to embedded-linux-bringup."
+description: "Yocto/OpenEmbedded security hardening: configure a control, then prove it on the built artefact. Use for IMAGE_FEATURES and distro hardening, root credentials, read-only rootfs, security_flags.inc and checksec, kernel hardening fragments, signed-FIT and dm-verity, LUKS/fscrypt and TPM2 key sealing, firewalls and listening services, AppArmor/SELinux wiring, sstate trust, meta-security. Route BitBake mechanics and CVE/SBOM to yocto-openembedded-development, U-Boot verification to u-boot-development."
 license: MIT
 compatibility: Requires a BitBake/OE-Core checkout and an initialised build directory. Class names, variables and valid IMAGE_FEATURES items are release-specific; guidance is written for 5.0 Scarthgap with 6.0 deltas named inline. On-target verification needs QEMU or a reachable board plus testimage. checksec, kernel-hardening-checker and Lynis come from meta-security or meta-openembedded, which must be added to bblayers.
 metadata:
@@ -26,11 +26,12 @@ alone is an incomplete answer.
 
 **In:** configuring a security control in a Yocto build, and proving on the artefact that it took effect —
 image and distro composition, credentials, root filesystem state, compiler and kernel hardening, the build
-side of the boot chain, build and supply-chain trust, and both verification lanes.
+side of the boot chain, data-at-rest encryption, network exposure, MAC framework wiring, build and
+supply-chain trust, and both verification lanes.
 
 **Out:** auditing an artefact you did not build (that starts from an image, not from metadata); CVE and SBOM
-work; U-Boot's own verification mechanics; runtime board debugging; MAC policy authoring and disk or network
-hardening, which this skill deliberately does not yet cover — see *Stated gaps*.
+work; U-Boot's own verification mechanics; runtime board debugging; and **MAC policy authoring**, which needs
+a real daemon's behaviour rather than a model's expectations — see *Stated gaps*.
 
 ### Route to a sibling skill
 
@@ -52,6 +53,9 @@ hardening, which this skill deliberately does not yet cover — see *Stated gaps
 | Kernel config fragments, `kernel_configcheck` audit levels, `kernel-hardening-checker`, MAC packaging | `references/kernel-hardening.md`              |
 | Signed FIT, dm-verity, initramfs bundling, IMA/EVM wiring, key handling                               | `references/chain-of-trust-wiring.md`         |
 | sstate and mirror trust, `SRC_URI` checksums, `AUTOREV`, reproducibility, release gates               | `references/build-and-supply-chain-trust.md`  |
+| LUKS/dm-crypt, fscrypt, TPM2 key sealing, and which threat a design actually covers                   | `references/storage-encryption.md`            |
+| What is listening, firewalling it, the legacy-vs-nft split, ssh exposure                              | `references/network-and-services.md`          |
+| Choosing and wiring AppArmor, SELinux or SMACK, and confirming one is enforcing                       | `references/mac-frameworks.md`                |
 | How to check something host-side or on target; writing an oeqa assertion; the three-image pattern     | `references/verification-workflows.md`        |
 | What `meta-security` provides; judging a third-party security layer                                   | `references/meta-security-layer-map.md`       |
 
@@ -194,8 +198,13 @@ Keep every capture bounded — grep the artefact, do not paste a build log.
 
 Naming these is part of the skill's contract; filling them from general knowledge is not.
 
-- **Disk and filesystem encryption, network hardening, and MAC policy authoring.** Packaging is covered;
-  policy and design are not, and the material to do them properly is not yet in hand.
+- **MAC policy authoring.** Choosing a framework, wiring it in and confirming it enforces are covered;
+  writing an AppArmor profile or an SELinux module is not. The honest workflow is complain/permissive mode,
+  collect denials, turn them into rules — say that rather than generating a profile.
+- **TPM sealing policy.** Which PCR set to bind a key to depends on the boot chain and the update strategy,
+  and getting it wrong bricks devices in the field. The trade-off is stated; a PCR list is not.
+- **Network depth beyond exposure and a default-drop baseline.** VPN and overlay design, IDS tuning, and
+  per-protocol server hardening are named and routed, not taught.
 - **Crypto and FIPS depth.** Pointer only. `meta-wolfssl` is the FIPS-capable route and carries a
   GPL-2.0/commercial split; certificate scope and module boundaries are unverified here.
 - **`meta-security` scanner health.** Reports that `buck-security`, `checksec` and `nikto` are broken in the

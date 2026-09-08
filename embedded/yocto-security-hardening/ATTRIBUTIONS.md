@@ -55,6 +55,26 @@ tasks — a build-graph problem rather than a generic Linux one — was taken fr
 *problem statement*. Its approach is described in `references/chain-of-trust-wiring.md` as one of two options,
 with its unresolved licence (`NOASSERTION`) stated. No code or configuration was adopted.
 
+### Sources supplied 2026-09-08 for the encryption, network and MAC sections
+
+Three inputs arrived while those sections were being written. What each changed is stated exactly, because
+two of them changed less than they appear to.
+
+- **Root Commit, "Yocto Project and OpenEmbedded Training Course"** (Michael Opdenacker), revision dated
+  2026-06-13, 282 pages, fetched from the publisher. A newer revision of a deck already in the research
+  corpus. Its security chapter carries an explicit *not covered* slide naming firewalls, block-device and
+  filesystem encryption, extended file attributes and LSMs — so it **confirmed the three gaps rather than
+  filling them**, and no material from it entered those sections. Its own closing slide names the same
+  subjects as remaining work. Licence per the publisher's terms; nothing was adapted.
+- **An `embedded.com` overview article on securing Yocto-built systems**, supplied by the user. Overview
+  depth, no mechanism detail, and no author or date given on the page. It contributed exactly one thing: a
+  pointer to a `meta-encrypted-storage` layer for LUKS, which a direct check showed was **last pushed in
+  2017**. That correction is in `references/storage-encryption.md`; nothing else was taken.
+- **`ni/meta-selinux`** (National Instruments), supplied by the user. Compared against upstream
+  `meta-selinux` at scarthgap: same collection name, priority and `LAYERSERIES_COMPAT`, with NI's own branch
+  scheme. It supplied the observation that a product distro maintains a downstream SELinux tree, recorded in
+  `references/mac-frameworks.md` as a worked example while routing the dependency upstream.
+
 ## Primary sources read at named refs
 
 These are verification sources: they establish public facts and are cited near the affected claims. Under this
@@ -67,20 +87,29 @@ traceability, and because every corrected claim below depends on one.
 `classes-global/insane.bbclass`, `classes-global/sstate.bbclass`, `conf/bitbake.conf`,
 `conf/distro/defaultsetup.conf`, `conf/distro/include/security_flags.inc`,
 `conf/distro/include/rust_security_flags.inc`, `lib/oe/rootfs.py`,
-`lib/oe/package_manager/ipk/__init__.py`, `lib/oeqa/selftest/cases/reproducible.py`.
+`lib/oe/package_manager/ipk/__init__.py`, `lib/oeqa/selftest/cases/reproducible.py`,
+`recipes-core/systemd/systemd_255.22.bb` (the `cryptsetup`, `tpm2`, `selinux` and `smack` `PACKAGECONFIG`
+entries, the default set, and `FILES:${PN}-crypt`), and `recipes-extended/iptables/iptables_1.8.10.bb` (the
+`libnftnl` option and the `xtables-nft-multi` symlinks it gates).
 
 `bitbake` at **`yocto-5.0.12`** — `lib/bb/siggen.py`.
 
 `meta-security` at **`scarthgap`** — `classes/check_security.bbclass`, `classes/dm-verity-img.bbclass`,
 `recipes-kernel/linux/linux-yocto_%.bbappend` and `linux-yocto_security.inc`, `recipes-core/images/*`,
 `recipes-core/packagegroup/packagegroup-core-security.bb`, `recipes-scanners/checksec/checksec_2.6.0.bb`,
-`recipes-compliance/lynis/lynis_3.1.6.bb`, `lib/oeqa/runtime/cases/{checksec,aide}.py`, and every sublayer's
-`conf/layer.conf`.
+`recipes-compliance/lynis/lynis_3.1.6.bb`, `recipes-mac/AppArmor/apparmor_3.1.3.bb`, the
+`recipes-security/` and `meta-tpm/recipes-tpm2/` inventories, `lib/oeqa/runtime/cases/{checksec,aide}.py`,
+and every sublayer's `conf/layer.conf`.
 
 `meta-openembedded` at **`scarthgap`**, **`walnascar`** and **`master`** —
-`meta-oe/recipes-security/kernel-hardening-checker`.
+`meta-oe/recipes-security/kernel-hardening-checker`, `meta-oe/recipes-crypto/cryptsetup`, and
+`meta-networking/recipes-filter` (nftables and the rest of that directory's inventory).
 
-U-Boot at **`v2025.10`** — `boot/Kconfig`.
+`meta-selinux` at **`scarthgap`** — `conf/layer.conf`, and the root listing that shows the layer carries no
+licence file of its own.
+
+U-Boot at **`v2025.10`** — `boot/Kconfig`. systemd at **`v255`** — `meson_options.txt`, for the `apparmor`
+option's auto-detected feature type, which is what makes OE-Core's missing `PACKAGECONFIG` consequential.
 
 ## Corrections made against those sources
 
