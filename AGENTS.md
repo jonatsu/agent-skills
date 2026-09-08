@@ -42,6 +42,10 @@ first fails, and accepts a path relative to wherever you are.
   `scripts/check-skill-descriptions.sh` does.
 - Record a review's verdict, evidence, and coverage limits in a dated file under `../docs/evaluations/` in the
   same work, and clear the "Review is deferred" note in `archived/README.md` when a deferred review completes.
+- Keep an `ATTRIBUTIONS.md` source entry permanently, restated in the past tense once the material is replaced.
+  Rewriting or independently re-deriving adapted material changes the current revision only; the revisions that
+  carried it stay in git history, so deleting the entry hides a relationship a later reader still needs. This is why
+  every embedded skill's record names its Bootlin and vendor sources even where nothing of them now remains.
 - Delete a domain's `kasetto/base.yaml` entry in the same source commit that empties it. Git cannot preserve an
   empty directory, and Kasetto rejects a configured domain that is absent on a fresh clone.
 - Ask what a user would have to say for a proposed skill to load, before writing it. Guidance that applies

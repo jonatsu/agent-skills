@@ -11,6 +11,11 @@ external-toolchain, SDK, legal-info, reproducibility, and board-provenance expla
 guidance and selected failure cases. No third-party wrapper, lab script, or prose passage was copied into this repair.
 This record acknowledges influence even where the wording and implementation are independent.
 
+**These records are permanent.** A source entry is not closed by a later repair that replaces the material it
+describes. Independent replacement changes what the current revision contains; it does not retract the revisions that
+carried the adapted material, and those remain in this repository's history. Keep every entry — in the past tense once
+the material is gone — so that a reader who reaches an older revision can still establish what the relationship was.
+
 ## First-Party Technical Sources
 
 - **The Buildroot developers — Buildroot user manual 2026.05**, generated 2026-06-08 from revision `313414b92c`.

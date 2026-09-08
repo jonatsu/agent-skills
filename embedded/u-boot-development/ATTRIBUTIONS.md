@@ -11,6 +11,12 @@ The replacement explanations and helper are independently expressed. The source 
 no wording is copied. This record does not claim that independently expressed content erases obligations for any
 historical adaptation. The original adoption path remains partly unresolved.
 
+**These records are permanent.** A source entry is not closed by a later repair that replaces the material it
+describes. Independent replacement changes what the current revision contains; it does not retract the revisions that
+carried the adapted material, and those remain in this repository's history. Keep every entry — in the past tense once
+the material is gone — so that a reader who reaches an older revision can still establish what the relationship was.
+That applies with particular force here, where the original adoption path is only partly known.
+
 ## U-Boot implementation and documentation influence
 
 Authors include Wolfgang Denk, DENX Software Engineering, Google/Chromium OS contributors, NVIDIA, Red Hat, Linaro,

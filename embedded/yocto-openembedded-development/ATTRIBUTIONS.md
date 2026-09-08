@@ -4,29 +4,51 @@
 
 - Skill: `yocto-openembedded-development`
 - Current author: Joonas Onatsu
-- Declared license: MIT — **see "Unresolved licensing question" below before relying on this field**
-- Status: mixed. Substantial original material, plus a best-practices reference established as a structural
-  adaptation of a CC BY-SA source.
+- Declared license: MIT
+- Status: original material. A best-practices reference was previously a structural adaptation of a CC BY-SA source;
+  that structure was replaced on 2026-09-08. See "Resolved licensing question" below, which stays here permanently.
 
-## Unresolved licensing question
+**These records are permanent.** A source entry is not closed by a later repair that replaces the material it
+describes. Independent replacement changes what the current revision contains; it does not retract the revisions that
+carried the adapted material, and those remain in this repository's history. Keep every entry — in the past tense once
+the material is gone — so that a reader who reaches an older revision can still establish what the relationship was.
 
-**A 2026-09-07 provenance investigation established that `references/yocto-best-practices.md` is a structural
-adaptation of a CC BY-SA 3.0 source, not an independent synthesis.** The previous version of this file asserted the
+## Resolved licensing question
+
+**A 2026-09-07 provenance investigation established that `references/yocto-best-practices.md` was a structural
+adaptation of a CC BY-SA 3.0 source, not an independent synthesis.** An earlier version of this file asserted the
 opposite — that rewriting in original words meant no CC BY-SA material was redistributed and attribution was a
-courtesy. That conclusion was not supported, and the evidence below contradicts it.
+courtesy. That conclusion was not supported.
 
 Rewriting text in original words does not, by itself, end an adaptation. Selection and arrangement of material is
 protectable, and CC BY-SA's BY and SA terms attach to a derivative work regardless of whether wording was changed.
-Removing source-attributing framing does not help; it removes the attribution that BY requires.
+Removing source-attributing framing does not help; it removes the attribution that BY requires. The MIT declaration in
+`SKILL.md` therefore sat unresolved against the ShareAlike term of the adapted portion.
 
-The MIT declaration in `SKILL.md` therefore sits unresolved against the ShareAlike term of the adapted portion. This
-is recorded, not decided: resolving it is a licensing decision for the repository owner, and no relicensing has been
-performed. **No infringement finding is made here** — this file records an established source relationship and an open
-question, not a legal conclusion. The realistic options are to license the affected reference compatibly, to replace
-its structure with an independently derived organization, or to obtain a determination that the overlap is
-uncopyrightable fact. Until one is chosen, treat the MIT field as covering the original material only.
+**Resolved on 2026-09-08 by independent re-derivation, keeping MIT.** Of the ten correspondences documented below, six
+had already become independent through the 2026-09-07 technical repair, which replaced the surrounding reasoning and
+moved three of them into `compliance-and-sbom.md` as Reference Manual facts. The four that still carried the source's
+organization were re-derived from primary sources:
 
-## Established adaptation (CC BY-SA 3.0)
+| Was organized as                                          | Re-derived from                                                                                             |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| a five-scope decomposition of configuration files         | `bitbake.conf`'s own include sequence, which orders the table and explains which file overrules which       |
+| a list of what distro policy covers                       | `meta-poky/conf/distro/poky.conf` read directly, and cited so a reader can check it                         |
+| four sstate-sharing points in the source's order          | the section's own correctness-versus-hit-rate thesis, which splits them into two differently ordered groups |
+| an `sstate-cache-management.sh` invocation, near-verbatim | the tool at the pinned release, which exposed a real defect — see below                                     |
+
+The last one was carrying a live bug. `sstate-cache-management.sh` does not exist at the skill's pinned
+`yocto-5.0.12` baseline; OE-Core rewrote it as `sstate-cache-management.py` after Kirkstone, and the quoted line also
+passed `--remove-duplicated` and its own short form `-d` together. Like the inherited `bitbake -c fetchall` noted
+below, that is a 2020-era artifact surviving into a Scarthgap baseline, and it corroborates the adaptation finding.
+
+**This section is permanent.** It is not a defect report to be closed once the structure was replaced. Removing the
+adapted organization from the current revision does not retract the revisions that carried it, which remain in this
+repository's history, and a later reader is entitled to know what the relationship was and how it ended. The
+correspondence table below stays for the same reason. **No infringement finding is made here or was made before** —
+this file records a source relationship and its resolution, not a legal conclusion.
+
+## Historical adaptation, since replaced (CC BY-SA 3.0)
 
 ### Bootlin — Belloni, "OpenEmbedded and Yocto Project best practices"
 
@@ -35,8 +57,9 @@ uncopyrightable fact. Until one is chosen, treat the MIT field as covering the o
 - Notice carried by the source: © Copyright 2004-2020, Bootlin. Creative Commons BY-SA 3.0 license.
 - Upstream: <https://bootlin.com/> training and conference materials
 
-The correspondence is systematic across selection, sequencing and specific technical choices, and is documented here
-so a later reader does not have to re-derive it:
+The correspondence below was systematic across selection, sequencing and specific technical choices. It is stated in
+the past tense because the 2026-09-07 repair and the 2026-09-08 re-derivation removed it, and it is kept because a
+reader who finds the earlier revisions in history should not have to re-derive what the relationship was:
 
 | Skill material                                        | Corresponding source material                                                                                        |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |

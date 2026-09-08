@@ -282,7 +282,7 @@ Cite the release-matched version of every manual (the codename is in the docs UR
 
 ## Attribution
 
-See `ATTRIBUTIONS.md` for the sources behind this skill. It records an **open licensing question**: a 2026-09-07
-investigation established `references/yocto-best-practices.md` as a structural adaptation of a CC BY-SA 3.0 Bootlin
-source, which is unresolved against the MIT declaration above. Read it before redistributing this package or relying
-on that license field.
+See `ATTRIBUTIONS.md` for the sources behind this skill, including a 2026-09-07 finding that
+`references/yocto-best-practices.md` was a structural adaptation of a CC BY-SA 3.0 Bootlin source, and the 2026-09-08
+independent re-derivation that resolved it in favour of the MIT declaration above. That record is permanent: the
+adapted revisions remain in this repository's history even though the current text no longer carries them.

@@ -55,15 +55,36 @@ orchestration itself routes to **kas-build-orchestration**.
 
 The placement table below still applies to the *content*: it says which scope owns a setting, whoever writes the file.
 
-Decide placement by asking *who and what a setting is about*, then put it in the narrowest file that owns that scope:
+**Let the parse order decide, because it already decides for you.** `bitbake.conf` pulls the configuration files in a
+fixed sequence, and a plain `=` in a later file silently beats anything an earlier one set:
 
-| A setting about…       | Goes in…                   | Examples                                                                                        |
-| ---------------------- | -------------------------- | ----------------------------------------------------------------------------------------------- |
-| this developer's box   | `local.conf`               | `BB_NUMBER_THREADS`, `PARALLEL_MAKE`, `DL_DIR`, debug tweaks                                    |
-| this build host / site | `site.conf`                | proxy, `SSTATE_MIRRORS`, shared-cache paths                                                     |
-| distribution policy    | `conf/distro/<name>.conf`  | init system, libc, `DISTRO_FEATURES`, `PREFERRED_PROVIDER_*`, `PACKAGE_CLASSES`, license policy |
-| a specific board       | `conf/machine/<name>.conf` | kernel/bootloader provider, `IMAGE_FSTYPES`, serial console, kernel-into-rootfs `IMAGE_INSTALL` |
-| image contents         | an image recipe (`.bb`)    | package set, `IMAGE_FEATURES`                                                                   |
+```bitbake
+include conf/site.conf                          # 1. host / site
+include conf/auto.conf                          # 2. written by tooling, not by hand
+include conf/local.conf                         # 3. this build directory
+require conf/multiconfig/${BB_CURRENT_MC}.conf  # 4. multiconfig
+include conf/machine/${MACHINE}.conf            # 5. board
+include conf/distro/${DISTRO}.conf              # 6. distribution policy
+```
+
+Read that list downward and it answers both questions at once: which file owns a setting, and which file can overrule
+which. Anything a machine or distro conf assigns is beyond `local.conf`'s reach with `=` or `+=`, so a setting you want
+to survive belongs at or below the level that owns it — or must use `:append`, applied after every file is parsed.
+
+| Level in the parse order     | Owns                             | Observable examples                                                                                     |
+| ---------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 1 `site.conf`                | this build host                  | proxy settings, `SSTATE_MIRRORS`, shared `DL_DIR`/`SSTATE_DIR` paths                                    |
+| 2 `auto.conf`                | whatever your tooling generates  | CI-injected values; hand-editing it loses the next time the generator runs                              |
+| 3 `local.conf`               | this build directory, disposably | `BB_NUMBER_THREADS`, `PARALLEL_MAKE`, `EXTRA_IMAGE_FEATURES` debug tweaks                               |
+| 5 `conf/machine/<name>.conf` | one board                        | `KERNEL_IMAGETYPE`, `PREFERRED_PROVIDER_virtual/bootloader`, `SERIAL_CONSOLES`, `IMAGE_FSTYPES`         |
+| 6 `conf/distro/<name>.conf`  | policy across every board        | `DISTRO_FEATURES`, `INIT_MANAGER`, `PACKAGE_CLASSES`, `PREFERRED_VERSION_*`, `TCLIBCAPPEND`, SDK naming |
+| — an image recipe (`.bb`)    | what lands in one image          | `IMAGE_INSTALL`, `IMAGE_FEATURES`                                                                       |
+
+The distro row is not a guess: read `meta-poky/conf/distro/poky.conf` in your own checkout, which sets exactly those —
+identity (`DISTRO`, `DISTRO_VERSION`, `DISTRO_CODENAME`), `DISTRO_FEATURES`, `INIT_MANAGER`, `PACKAGE_CLASSES`,
+`PREFERRED_VERSION_linux-yocto`, `TCLIBCAPPEND`, `SDK_NAME`/`SDKPATHINSTALL`, a signature handler, and a set of
+`INHERIT` and `require` lines for security flags, `uninative` and `create-spdx`. It is the worked example of the file
+you are being told to write.
 
 Two rules of thumb fall out of the table:
 
@@ -175,17 +196,23 @@ SSTATE_MIRRORS = "file://.* http://internal-mirror/sstate/PATH"  # read-through 
 DL_DIR         = "/mnt/shared/downloads"                       # shared source cache
 ```
 
-- Serve the cache over **NFS or HTTP**; populate `PREMIRRORS` from a shared `DL_DIR` so sources are shared too.
-- **Warm the cache from CI.** A nightly full build fills sstate before developers pull from it, so their first build of
-  the day is fast.
-- **Standardize the host to raise the hit rate.** A build container (for example `kas-container`, via
-  **kas-build-orchestration**) pins the host environment so native and SDK signatures match across machines. Keep
-  `INHERIT += "uninative"` in play too — it is what makes native artifacts portable between distributions in the first
-  place.
+**Settle these before anyone shares a cache**, because they decide whether the share is safe and functional at all:
+
 - **Treat the cache as a trust boundary.** sstate archives are unsigned and unverified by default (`SSTATE_SIG_KEY`
   empty, `SSTATE_VERIFY_SIG = "0"`), so write access to a shared directory or mirror is the ability to inject binaries
   into everyone's build. Restrict who can write it, or enable signing and verification and test that a bad archive is
   actually rejected. See the sstate section of `yocto-workflow.md`.
+- **Decide how it is served and who writes it.** NFS gives a shared `SSTATE_DIR`; HTTP gives a read-only
+  `SSTATE_MIRRORS` that developers cannot poison, which is usually the better default. Share sources the same way, with
+  `PREMIRRORS` pointing at a common `DL_DIR`.
+
+**Then raise the hit rate.** These are optimisations, and a miss only costs time:
+
+- **Warm the cache from CI.** A nightly full build populates sstate before developers pull from it, so their first build
+  of the day is fast.
+- **Pin the host environment.** A build container (for example `kas-container`, via **kas-build-orchestration**) keeps
+  native and SDK signatures matching across machines. Keep `INHERIT += "uninative"` in play too — it is what makes
+  native artifacts portable between distributions in the first place.
 
 ## Pruning sstate
 
@@ -194,10 +221,16 @@ and expand `${SSTATE_DIR}` and read it back first.
 
 ```bash
 echo "${SSTATE_DIR}"   # necessary, NOT sufficient — see below
-./scripts/sstate-cache-management.sh --remove-duplicated -d --cache-dir="${SSTATE_DIR}"
+./scripts/sstate-cache-management.py -d --cache-dir="${SSTATE_DIR}"   # drop all but the newest per package
 # Age-based prune (irreversible)
 find "${SSTATE_DIR}" -type f -atime +30 -delete
 ```
+
+**Confirm the script's name for your release before quoting it.** OE-Core rewrote this tool in Python: it is
+`sstate-cache-management.sh` up to and including Kirkstone (4.0) and `sstate-cache-management.py` by Scarthgap (5.0),
+where the shell version no longer exists. The `-d`/`--remove-duplicated` and `--cache-dir` options survived the
+rewrite, so only the filename changes. The Python version also takes `--stamps-dir` to keep exactly what the named
+build directories still use, and prompts before deleting unless you pass `-y`/`--yes`.
 
 Printing the path catches the catastrophic case — an empty expansion turning the `find` into a walk of `/` — but a
 plausible-looking path is not a safe one. Two further checks before deleting:

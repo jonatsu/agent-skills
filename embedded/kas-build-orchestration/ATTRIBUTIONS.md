@@ -11,6 +11,11 @@ This skill combines independently written orchestration guidance with a command/
 adapted from upstream kas documentation. The 2026-09-07 repairs also use upstream implementation to explain mutation,
 merging, locking, cleanup, credentials, and container behavior. Rewriting the expression does not remove that influence.
 
+**These records are permanent.** A source entry is not closed by a later repair that replaces the material it
+describes. Independent replacement changes what the current revision contains; it does not retract the revisions that
+carried the adapted material, and those remain in this repository's history. Keep every entry — in the past tense once
+the material is gone — so that a reader who reaches an older revision can still establish what the relationship was.
+
 ## Adapted from (MIT — mandatory attribution)
 
 - Original author: Siemens AG and kas contributors

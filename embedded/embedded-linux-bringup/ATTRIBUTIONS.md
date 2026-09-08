@@ -10,6 +10,11 @@
 The records below distinguish adapted material, independently expressed source influence, and interface verification.
 Changing words or removing source framing does not eliminate attribution or determine whether expression is independent.
 
+**These records are permanent.** A source entry is not closed by a later repair that replaces the material it
+describes. Independent replacement changes what the current revision contains; it does not retract the revisions that
+carried the adapted material, and those remain in this repository's history. Keep every entry — in the past tense once
+the material is gone — so that a reader who reaches an older revision can still establish what the relationship was.
+
 ## Retained MIT Adaptation
 
 - Author: heyu-233
