@@ -103,13 +103,33 @@ quoting a gap.
 ## Verify per binary, host-side
 
 Upstream packages the tool. `meta-security` ships `checksec` 2.6.0 from `slimm609/checksec.sh` at a pinned
-`SRCREV`, with `BBCLASSEXTEND = "native"` — so a **host-side scan needs no target**:
+`SRCREV`, with `BBCLASSEXTEND = "native"` — so a host-side scan is *meant* to need no target.
+
+⛔ **`checksec-native` does not build at `scarthgap`.** Measured 2026-09-08 by building the layer with its own
+`kas/qemux86-64.yml`: the recipe sets `BBCLASSEXTEND = "native"` but leaves `RDEPENDS:${PN}` carrying `procps`,
+which has no native variant in OE-Core, so BitBake refuses the target:
+
+```text
+ERROR: Nothing RPROVIDES 'procps-native' (but …/checksec_2.6.0.bb RDEPENDS on or otherwise requires it)
+```
+
+The target `checksec` builds and packages cleanly; only the native variant is affected. A one-line `.bbappend`
+restores the host-side lane, mirroring what the layer's own `buck-security` recipe already does — **verified by
+building it**:
+
+```bitbake
+# checksec_%.bbappend
+RDEPENDS:${PN}:class-native = "bash openssl-bin binutils findutils file"
+```
 
 ```bash
-bitbake checksec-native                       # or add checksec to a prod-test image for on-target use
+bitbake checksec-native                       # works with the bbappend above
 checksec --dir=tmp/work/<arch>/<recipe>/…/image/usr/bin
 checksec --file=tmp/deploy/images/<machine>/…/usr/bin/busybox
 ```
+
+Without the bbappend, the host-side lane needs another route: run the `checksec` shell script straight from the
+recipe's source checkout, or install the target package into a prod-test image and scan on target.
 
 What to read in the output, mapped back to the flags above:
 

@@ -12,7 +12,7 @@ Everything here reads the deploy directory or the datastore. Nothing boots.
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | What actually shipped?                                | `tmp/deploy/images/<machine>/<image>-<machine>.rootfs.manifest`                                |
 | Which kernel modules shipped?                         | `grep '^kernel-module-' <manifest>`                                                            |
-| Is a binary hardened?                                 | `checksec --file=<path>` / `--dir=<dir>` (`bitbake checksec-native`)                           |
+| Is a binary hardened?                                 | `checksec --file=<path>` / `--dir=<dir>` — **`checksec-native` needs a one-line bbappend**     |
 | Did a kernel symbol survive?                          | `grep CONFIG_… <kernel build dir>/.config`, plus `cfg/mismatch.txt`                            |
 | Did the recipe drop `LDFLAGS`, strip, or leak rpaths? | the `ldflags`, `already-stripped`, `rpaths` `ERROR_QA` checks — already run at `do_package_qa` |
 | What changed since the last release?                  | `buildhistory` diff                                                                            |
@@ -134,8 +134,20 @@ Two rules that make the difference between this and the upstream case:
 - **Name the artefact under test.** A check against PID 1, or against whatever happens to be running, is not a
   statement about the image.
 
-Confirm `checksec`'s option and output format at the packaged version before pinning a string — the recipe
-pins a `SRCREV`, and the JSON key names have changed upstream across versions.
+**The key names above are measured, not assumed.** Run against `checksec` 2.6.0 as `meta-security` packages it
+at `scarthgap` on 2026-09-08, `--format=json --file=` emits exactly:
+
+```json
+{ "/bin/bash": { "relro":"full","canary":"yes","nx":"yes","pie":"yes","rpath":"no","runpath":"no",
+                 "symbols":"no","fortify_source":"yes","fortified":"13","fortify-able":"33" } }
+```
+
+So `"fortify_source":"yes"` is correct at this version. Two cautions that still apply: the recipe pins a
+`SRCREV`, and these names have changed upstream across versions, so re-check when the pin moves; and
+`--format=json --fortify-file=` emits **repeated `"function"` keys in one object**, which is not valid JSON and
+which `jq` silently reduces to the last occurrence. Parse the `--file` form, not the `--fortify-file` form.
+
+Getting `checksec-native` to build at all needs a one-line bbappend — see `compiler-and-binary-hardening.md`.
 
 ## Reporting a result
 

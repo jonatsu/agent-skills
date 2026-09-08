@@ -50,11 +50,20 @@ the host-side lane in `verification-workflows.md` possible without a board.
 - **The oeqa security cases are smoke tests**, and at least one is a genuine defect. See
   `verification-workflows.md`.
 
-- **Scanner health is unconfirmed.** Secondary sources report `buck-security`, `checksec` and `nikto` as
-  broken in the layer, `buck-security` upstream having been idle for around a decade. **This has not been
-  verified by building them here**, and it must not be repeated as fact. Verify against the branch you use
-  before relying on any of the three, and prefer the `-native` `checksec` path, which is the one this skill's
-  host-side lane depends on.
+- **Scanner health, measured 2026-09-08.** Secondary sources report `buck-security`, `checksec` and `nikto` as
+  broken in the layer. **Built at `scarthgap` with the layer's own `kas/qemux86-64.yml`: all three build and
+  package cleanly**, exit 0, no errors — `buck-security` 0.7, `checksec` 2.6.0, `nikto` 2.1.6. The blanket
+  "broken" claim does not hold, and must not be repeated.
+
+  **One real defect sits underneath it, and it is narrower and worse-placed than the rumour.**
+  `checksec-native` is **unbuildable**: the recipe sets `BBCLASSEXTEND = "native"` while `RDEPENDS:${PN}` keeps
+  `procps`, which has no native variant, so BitBake reports `Nothing RPROVIDES 'procps-native'`. The layer's own
+  `buck-security` recipe solves exactly this with an `RDEPENDS:${PN}:class-native` override; `checksec` simply
+  lacks one. That single missing line disables the host-side scanning lane this skill depends on — see
+  `compiler-and-binary-hardening.md` for the verified one-line `.bbappend`.
+
+  Building a recipe is not the same as the tool working. These results cover fetch, compile and package only;
+  none of the three has been *run* against an image here.
 
 ## Judging any security layer
 
