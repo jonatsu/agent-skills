@@ -30,13 +30,13 @@ additions, and they are implemented in the repaired Buildroot skill. The other s
 Buildroot/genimage first-party sources govern adoption; the survey records resolved third-party conflicts and excludes
 unverified fork-specific guidance.
 
-| Skill                                              | Review status                                         | Verdict / remaining work                                                                                                                                                                                                                                                                                                             | Evidence                                                                                                                                                                                                                                                                       |
-| -------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `buildroot-development` (formerly `buildroot-dev`) | Review lite and repairs completed 2026-09-07          | **Ready with risks.** F1–F12 and approved A–C addressed; native package, hook, Kconfig, and image checks pass. Full behavioral evaluation and hardware/release qualification remain pending. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                              | [Repair evidence](../docs/evaluations/2026-09-07-buildroot-development-repair.md); [original review](../docs/evaluations/2026-09-07-buildroot-development-review.md)                                                                                                           |
-| `embedded-linux-bringup`                           | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F15 addressed; native DT comparison/overlay and verity image checks pass. Full model evaluation and hardware/release qualification remain deferred. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                                              | [Repair evidence](../docs/evaluations/2026-09-07-embedded-linux-bringup-repair.md); [original review](../docs/evaluations/2026-09-07-embedded-linux-bringup-review.md)                                                                                                         |
-| `kas-build-orchestration`                          | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F14 addressed; 16 native/wrapper contract cases pass. Model evaluation, real container/CI execution, builds, and release qualification remain deferred. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                                          | [Repair evidence](../docs/evaluations/2026-09-07-kas-build-orchestration-repair.md); [original review](../docs/evaluations/2026-09-07-kas-build-orchestration-review.md)                                                                                                       |
-| `u-boot-development`                               | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F17 addressed; native environment, FIT, load-guard, helper and DM checks pass. Historical provenance uncertainty, model behavior and board qualification remain open. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                            | [Repair evidence](../docs/evaluations/2026-09-07-u-boot-development-repair.md); [original review](../docs/evaluations/2026-09-07-u-boot-development-review.md)                                                                                                                 |
-| `yocto-openembedded-development`                   | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F12 addressed and the specification violation cleared. The CC BY-SA adaptation the provenance investigation found in the best-practices reference was re-derived independently on 2026-09-08, resolving the MIT conflict. Packaging/QA coverage added the same day. No Yocto execution or model evaluation. | [Follow-up](../docs/evaluations/2026-09-08-yocto-openembedded-development-followup.md); [repair evidence](../docs/evaluations/2026-09-07-yocto-openembedded-development-repair.md); [original review](../docs/evaluations/2026-09-07-yocto-openembedded-development-review.md) |
+| Skill                                              | Review status                                         | Verdict / remaining work                                                                                                                                                                                                                                                                                                                                                                                                | Evidence                                                                                                                                                                                                                                                                       |
+| -------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `buildroot-development` (formerly `buildroot-dev`) | Review lite and repairs completed 2026-09-07          | **Ready with risks.** F1–F12 and approved A–C addressed; native package, hook, Kconfig, and image checks pass. Full behavioral evaluation and hardware/release qualification remain pending. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                                                                                                                 | [Repair evidence](../docs/evaluations/2026-09-07-buildroot-development-repair.md); [original review](../docs/evaluations/2026-09-07-buildroot-development-review.md)                                                                                                           |
+| `embedded-linux-bringup`                           | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F15 addressed; native DT comparison/overlay and verity image checks pass. Full model evaluation and hardware/release qualification remain deferred. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                                                                                                                                 | [Repair evidence](../docs/evaluations/2026-09-07-embedded-linux-bringup-repair.md); [original review](../docs/evaluations/2026-09-07-embedded-linux-bringup-review.md)                                                                                                         |
+| `kas-build-orchestration`                          | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F14 addressed; 16 native/wrapper contract cases pass. **Real container execution finally happened on 2026-09-08** — the skill drove a full `meta-security` build and oeqa run under kas-container, its method held, and five coverage gaps were recorded but **not yet applied**. See *Apply the kas-container Field Notes* below. Model evaluation and release qualification remain deferred. | [Field notes](../docs/research/yocto-security/kas-container-field-notes.md); [repair evidence](../docs/evaluations/2026-09-07-kas-build-orchestration-repair.md); [original review](../docs/evaluations/2026-09-07-kas-build-orchestration-review.md)                          |
+| `u-boot-development`                               | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F17 addressed; native environment, FIT, load-guard, helper and DM checks pass. Historical provenance uncertainty, model behavior and board qualification remain open. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                                                                                                               | [Repair evidence](../docs/evaluations/2026-09-07-u-boot-development-repair.md); [original review](../docs/evaluations/2026-09-07-u-boot-development-review.md)                                                                                                                 |
+| `yocto-openembedded-development`                   | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F12 addressed and the specification violation cleared. The CC BY-SA adaptation the provenance investigation found in the best-practices reference was re-derived independently on 2026-09-08, resolving the MIT conflict. Packaging/QA coverage added the same day. No Yocto execution or model evaluation.                                                                                    | [Follow-up](../docs/evaluations/2026-09-08-yocto-openembedded-development-followup.md); [repair evidence](../docs/evaluations/2026-09-07-yocto-openembedded-development-repair.md); [original review](../docs/evaluations/2026-09-07-yocto-openembedded-development-review.md) |
 
 The `embedded-linux-bringup` review and approved F1–F15 repairs completed on 2026-09-07. The records distinguish
 first-party source checks, targeted PDF comparison, native artifact tests, validator acceptance, and unmeasured behavior.
@@ -134,8 +134,11 @@ mechanisms before third-party tooling.
 Konrad Weihmann ([priv-kweihmann](https://github.com/priv-kweihmann)) maintains several more embedded-development
 utilities the user rates highly; worth a scan when this pass happens.
 
-The security-relevant layers from the same list — `meta-sca`, `meta-quantum-safe`, `meta-sbom-cve-check` and
-`sbom-cve-check` — are being assessed as part of the Yocto security skill work and are not repeated here.
+**Partly resolved 2026-09-08.** The security-relevant layers from the same list have been assessed as part of
+the now-complete Yocto security skill set: `sbom-cve-check` is covered in depth by
+`yocto-vulnerability-management`, including the 6.0 `OE_FRAGMENTS` wiring read from upstream. `meta-sca` and
+`meta-quantum-safe` were **not** assessed — the latter is named in the crypto/FIPS entry below as still
+unevaluated.
 
 ### Yocto/OpenEmbedded Testing Coverage Is Missing
 
@@ -160,6 +163,17 @@ Open question to settle first: whether this belongs in `yocto-openembedded-devel
 Testing spans build-host checks, on-QEMU runtime tests and on-hardware tests, and the last of those already routes
 to `embedded-linux-bringup`, so the seam is not obvious.
 
+**Partly overtaken 2026-09-08, and the seam is now half-answered.** `yocto-security-audit` covers `testimage`,
+`TEST_SUITES` and reading an oeqa result — but only for *security* suites, and it was written from an actual
+run, so its container obstacles (TUN, KVM group, slirp) and its warning about `OETestDepends` chains hiding
+results are measured rather than inferred. `yocto-security-hardening` carries the worked property assertion.
+
+What that leaves for this entry: `oe-selftest`, `ptest` and `ptest-runner`, `testexport`, `runqemu` as a
+harness, and reproducibility testing — none of which is security-specific. Read the two security skills first
+so the general treatment cites them instead of restating the oeqa mechanics, and note that the security set
+already demonstrates the seam working, which argues for a separate testing skill over an expansion of
+`yocto-openembedded-development`.
+
 ### Embedded QEMU Skill Candidate
 
 Consider `embedded-qemu-emulation` for repeatable boot–test–debug workflows across embedded Linux projects, independent
@@ -170,15 +184,61 @@ validation and runtime driver diagnosis with `embedded-linux-bringup`. Assess mo
 than duplicating it. Exclude general VM management, desktop virtualization, and cloud workloads. Candidate only;
 creation is not yet authorized. [QEMU machine-model reference](https://www.qemu.org/docs/master/system/arm/virt.html).
 
+### Apply the kas-container Field Notes
+
+**Recorded 2026-09-08 from a real engagement, not applied.** Standing up a throwaway builder to settle the
+`meta-security` scanner question exercised `kas-build-orchestration` end to end for the first time. Its
+*method* held — the skill's insistence on reading the **generated** configuration rather than the YAML caught
+two real defects that `kas checkout` had reported success on. Five gaps are container-boundary specifics the
+skill does not cover:
+
+1. **Colon composition has a same-repository constraint.** All concatenated configs must be in one repository
+   or all outside version control. Hard error, one-line remedy, first thing anyone hits when overriding a
+   layer's shipped kas config.
+2. **A layer path escaping the repo root resolves differently under the wrapper.** `layers: ../meta-security`
+   works natively and becomes `/meta-security` under kas-container, because the root repo mounts at `/repo`.
+   `kas checkout` succeeds and produces an unparseable `bblayers.conf`.
+3. **A layer's own kas config can defeat the wrapper's cache mounts.** A `local_conf_header` assignment beats
+   the `DL_DIR`/`SSTATE_DIR` the wrapper exports, silently sending both caches to ephemeral container storage.
+4. **`local_conf_header` merge order is key order**, and that is the mechanism for overriding a vendored
+   config without editing it. Unstated today.
+5. **A build is a long-running mutation.** A task `ERROR:` is not terminal, and `KAS_BUILD_DIR` is effectively
+   a mutex — a second concurrent run corrupts both and reports a misleading OOM cause. Cost ~90 minutes here.
+
+Full write-up with reproductions: [field notes](../docs/research/yocto-security/kas-container-field-notes.md).
+A working configuration is preserved at
+[`kas-container-meta-security.yml`](../docs/research/yocto-security/kas-container-meta-security.yml).
+
+Items 1–4 are additions to the reference; item 5 belongs beside the existing *Mutation and Authorization*
+material. None contradicts the skill.
+
+### Send or Retire the meta-security Upstream Defects
+
+**Five defects drafted and deliberately not sent**, deferred by the user on 2026-09-08:
+[the report](../docs/research/yocto-security/meta-security-upstream-defects.md). Two of them are now backed by
+execution rather than source reading.
+
+Defect 3 is the one to send first if any go: `checksec-native` cannot be built, the cause is one unsatisfiable
+`RDEPENDS` entry, the layer's own `buck-security` recipe supplies the fix pattern, and the patch was verified
+by building. Defect 4 — the inverted-assertion pattern across 10 test methods in 5 files — is the most
+valuable and the least ready, because deciding what each test should assert is a maintainer judgement; raise
+it as a question rather than as ten guesses.
+
+Before sending anything, re-check every claim against `master`; all of it was read and run at `scarthgap`.
+
 ### Crypto and FIPS Depth for the Yocto Security Set
 
 Deferred with its cost stated when `yocto-security-hardening` was designed and again when it was written on
 2026-09-08: the skill routes to `meta-wolfssl` as the FIPS-capable option and states its GPL-2.0/commercial
 split, but **it cannot answer "how do I ship FIPS-validated crypto"** beyond that pointer. A real treatment
 needs the certificate scope, which validated module versions the layer targets, and the module boundary a
-compliance evidence package must reflect — all unverified. It also interacts with the CRA/SBOM material, so it
-may belong to `yocto-vulnerability-management` rather than to hardening. Needs its own research pass before
-either skill claims coverage.
+compliance evidence package must reflect — all unverified.
+
+**Now the only substantive gap left in the three-skill set**, which is otherwise complete as of 2026-09-08.
+The placement question is also sharper than it was: `yocto-vulnerability-management` now carries the CRA
+provisions read from the regulation itself, including the Annex I SBOM requirement and the support period, so
+a validated module's certificate and boundary sit closer to that skill's compliance-evidence material than to
+hardening's configure-and-verify lane. Decide placement as part of the research pass, not before it.
 
 Related and separately unfinished: post-quantum crypto has no upstream answer either, and the two Yocto-native
 candidates (`meta-oqs`, `meta-quantum-safe`) are both self-described as experimental and have never been
