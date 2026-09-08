@@ -87,6 +87,11 @@ Ask only when destructive effects, shared paths, credential exposure, or another
   and managed-repository paths before approval or execution. Shared caches can serve other projects. Use the release's
   dry run before deletion, but disclose that purge's preview can perform repository setup/checkout. See
   [cleanup and purge](references/kas-tool.md#cleanup-and-purge), including `--preserve-repo-refs`.
+- **A build is a long-running mutation that holds the build directory.** One run per `KAS_BUILD_DIR`: a second
+  concurrent run corrupts both, and the surviving error names a plausible wrong cause such as an OOM-killed
+  bitbake-server. A task-level `ERROR:` in the log does **not** mean the run ended — BitBake keeps scheduling
+  independent tasks and stops only when it cannot proceed. Check whether the process is alive before retrying;
+  a log containing errors is not evidence that it finished.
 - **Credential scope is the accessible file/socket set.** Use dedicated SSH/AWS directories when isolation is needed.
   An AWS profile does not hide other files or cached sessions in a mounted directory. An SSH agent can authorize signing
   operations even though its private key files are not mounted. Native AWS setup can fall back to the user's cache if

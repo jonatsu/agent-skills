@@ -158,7 +158,29 @@ preserved, and the merged header version is the maximum used version. For exampl
 | `local_conf_header: {product: old}`               | `local_conf_header: {debug: extra}` | Both named entries, in insertion order    |
 
 For append-like header behavior, use another named entry. Reusing a key replaces its complete text, not part of the
-BitBake statement inside it. Map merging also means omitted layer entries remain; explicitly exclude unwanted layers:
+BitBake statement inside it.
+
+**Merge order and emission order are different, and the second one decides which assignment wins.** Merging preserves
+insertion order, as above. But kas writes the header entries **sorted by key**: `_get_conf_header` iterates
+`sorted(...)` over the mapping, so `local.conf` receives them alphabetically regardless of which fragment supplied
+them ([config.py](https://github.com/siemens/kas/blob/5.3/kas/config.py)). `bblayers_conf_header` is emitted the same
+way.
+
+That is the supported lever for overriding a vendored fragment's setting without editing it: add a named entry whose
+key sorts after the one being overridden, and use a plain `=` so the later line wins in BitBake.
+
+```yaml
+local_conf_header:
+  base: |          # from the upstream fragment
+    BB_NUMBER_THREADS = "24"
+  host-tuning: |   # sorts after "base", so this is written later and wins
+    BB_NUMBER_THREADS = "8"
+```
+
+Confirm the result in the generated `local.conf` rather than trusting the ordering; a key chosen for its alphabetical
+position is a fragile intent to express, so comment why the name was chosen.
+
+Map merging also means omitted layer entries remain; explicitly exclude unwanted layers:
 
 ```yaml
 repos:
@@ -271,7 +293,22 @@ The 5.3 wrapper adds `--userns=keep-id` for Podman.
 
 Paths inside `KAS_WORK_DIR` are rewritten under `/work` instead of mounted again at the fixed paths above. Unset optional
 variables can leave data at kas's in-container defaults; inspect actual arguments before inferring a host path from this
-table. The wrapper finds the source repository root from the config file. Its default source mount
+table.
+
+**A mounted cache can still be bypassed by the configuration.** kas passes `SSTATE_DIR`, `SSTATE_MIRRORS`, `DL_DIR` and
+`TMPDIR` into BitBake through `BB_ENV_PASSTHROUGH_ADDITIONS` ([libkas.py](https://github.com/siemens/kas/blob/5.3/kas/libkas.py)),
+so they arrive as environment. A hard `=` assignment in a `local_conf_header` outranks that, and a configuration
+carrying someone else's absolute paths — a vendored fragment with CI paths is the common case — silently redirects both
+caches to directories that are not mounted. Nothing errors; the build simply re-downloads and rebuilds every run and the
+mounted directories stay empty.
+
+```bash
+# The only reliable check: read the generated file, not the wrapper's arguments.
+rg -n 'DL_DIR|SSTATE_DIR|BB_NUMBER_THREADS' "$KAS_BUILD_DIR/conf/local.conf"
+```
+
+Override with a later-sorting `local_conf_header` entry pointing at the container-side mount paths, per the emission
+order documented above. The wrapper finds the source repository root from the config file. Its default source mount
 is read-only for build/checkout and writable for shell/lock; `--repo-ro` and `--repo-rw` select explicit modes.
 If work and source are the same host directory, the writable `/work` mount also exposes the source through that path;
 a read-only `/repo` mount alone does not isolate it from writes. Use separate directories when that distinction matters.
@@ -283,6 +320,35 @@ repos:
   my-project:
     layers:
       subdir/meta-my-layer:
+```
+
+**A layer path that escapes the repository root resolves differently native versus containerised**, and the failure is
+silent at checkout time. Under native kas the root repository sits inside `KAS_WORK_DIR`, so `..` reaches the workspace;
+under the wrapper the root repo is mounted at `/repo`, so `..` is `/`. A configuration written for the native layout
+therefore generates a `bblayers.conf` naming a directory that does not exist:
+
+```yaml
+repos:
+  meta-example:
+    layers:
+      ../meta-example:     # resolves under native kas; becomes /meta-example in the container
+```
+
+```text
+ERROR: The following layer directories do not exist:
+ERROR:    /work/build/../../meta-example
+```
+
+`kas checkout` reports **success** — generating a `bblayers.conf` is not validating one — and the error surfaces later
+from BitBake. Prefer paths that stay inside the repository. To repair a vendored configuration without editing it,
+exclude the escaping entry and name the repository root:
+
+```yaml
+repos:
+  meta-example:
+    layers:
+      ../meta-example: disabled    # 5.3 also accepts the deprecated spelling "excluded"
+      .:
 ```
 
 The entrypoint remaps `builder` and uses `gosu builder` when a nonzero `USER_ID` is supplied, as the wrapper normally

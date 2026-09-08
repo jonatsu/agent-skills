@@ -51,6 +51,27 @@ The repair's command fixtures were written for this repository from those contra
 Bootlin's local Yocto training PDF was consulted during review for context only; no material was adopted from it.
 No third-party project wrapper supplied adopted guidance. The MIT license is unchanged.
 
+### 2026-09-09 Additions From a Real Engagement
+
+Four additions came from **using this skill** to stand up a throwaway builder for `meta-security` at `scarthgap`
+under kas-container 5.3 and Docker, rather than from reading upstream first. Each was then confirmed against the
+5.3 sources so the text states a mechanism rather than an anecdote:
+
+- **`local_conf_header` emission order.** `kas/config.py`'s `_get_conf_header` iterates `sorted(...)`, so the
+  generated `local.conf` orders entries **alphabetically by key**, independently of the insertion order that
+  merging preserves. This is the documented lever for overriding a vendored fragment; the two orders were
+  previously conflated.
+- **Cache passthrough precedence.** `kas/libkas.py` passes `SSTATE_DIR`, `SSTATE_MIRRORS`, `DL_DIR` and `TMPDIR`
+  through `BB_ENV_PASSTHROUGH_ADDITIONS`, which a hard `local_conf_header` assignment outranks.
+- **Layer paths escaping the repository root** resolve differently native versus containerised, because the root
+  repo is mounted at `/repo`. Observed as a successful `kas checkout` producing an unparseable `bblayers.conf`.
+- **A build holds `KAS_BUILD_DIR`**, and a task-level `ERROR:` is not a terminal state. Both were learned by
+  losing a build to a concurrent second run.
+
+The engagement's own record is in this repository at `docs/research/yocto-security/kas-container-field-notes.md`
+and is not part of the deployed package. It also recorded a fifth item — the same-repository constraint on colon
+composition — which **turned out to be already documented** in `references/kas-tool.md`; nothing was added for it.
+
 ## Upstream license
 
 The upstream kas project is licensed under the MIT License. MIT requires that its copyright notice and permission notice
