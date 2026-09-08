@@ -170,6 +170,20 @@ validation and runtime driver diagnosis with `embedded-linux-bringup`. Assess mo
 than duplicating it. Exclude general VM management, desktop virtualization, and cloud workloads. Candidate only;
 creation is not yet authorized. [QEMU machine-model reference](https://www.qemu.org/docs/master/system/arm/virt.html).
 
+### Crypto and FIPS Depth for the Yocto Security Set
+
+Deferred with its cost stated when `yocto-security-hardening` was designed and again when it was written on
+2026-09-08: the skill routes to `meta-wolfssl` as the FIPS-capable option and states its GPL-2.0/commercial
+split, but **it cannot answer "how do I ship FIPS-validated crypto"** beyond that pointer. A real treatment
+needs the certificate scope, which validated module versions the layer targets, and the module boundary a
+compliance evidence package must reflect — all unverified. It also interacts with the CRA/SBOM material, so it
+may belong to `yocto-vulnerability-management` rather than to hardening. Needs its own research pass before
+either skill claims coverage.
+
+Related and separately unfinished: post-quantum crypto has no upstream answer either, and the two Yocto-native
+candidates (`meta-oqs`, `meta-quantum-safe`) are both self-described as experimental and have never been
+compared side by side.
+
 ## Nix Domain — Remaining Work
 
 The 2026-09-06 nix-domain consolidation is complete except for the items below: three skills promoted from
