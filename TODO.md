@@ -111,6 +111,55 @@ Scope: a bounded recheck against pinned upstreams and each package's own descrip
 Full model evaluation and hardware qualification stay separately deferred as recorded above. Record findings the
 normal way, in a dated file under `../docs/evaluations/`.
 
+### Yocto Tooling Candidates for the General Skill Review
+
+User-supplied on 2026-09-08 for a later pass over `yocto-openembedded-development`. Metadata below was read from the
+GitHub API the same day; **re-check staleness before adopting any of it**, because a layer that stopped at an old
+release is a liability rather than an asset. None of this is adopted yet, and a skill should route to upstream
+mechanisms before third-party tooling.
+
+| Tool                                                                                                     | What it is                                                              | State on 2026-09-08                         |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------- |
+| [oelint-adv](https://github.com/priv-kweihmann/oelint-adv)                                               | advanced recipe linter, the strongest general candidate here            | 86★ BSD-2-Clause, pushed 2026-09-02         |
+| [yocto-kiss](https://github.com/bootlin/yocto-kiss)                                                      | a deliberately unelaborate working Yocto setup; useful as a baseline    | 206★ MIT, pushed 2026-08-24                 |
+| [vscode-bitbake](https://github.com/yoctoproject/vscode-bitbake)                                         | **first-party** BitBake language support for VS Code                    | 74★, pushed 2026-09-01                      |
+| [bitbake-language-server](https://github.com/Freed-Wu/bitbake-language-server)                           | editor-agnostic LSP alternative to the above                            | 18★ GPL-3.0, pushed 2026-09-07              |
+| [yocto-lens](https://github.com/prashantdivate/yocto-lens)                                               | terminal UI over static analysis, layer validation, patch/licence audit | 22★ MIT, pushed 2026-07-28                  |
+| [meta-buildutils](https://github.com/priv-kweihmann/meta-buildutils)                                     | build-time utility classes                                              | 12★ BSD-2-Clause, pushed 2026-07-21         |
+| [oelint-vscode](https://github.com/priv-kweihmann/oelint-vscode)                                         | editor front end for oelint-adv                                         | 8★, pushed 2026-04-08                       |
+| [meta-osselot](https://github.com/iris-GmbH/meta-osselot)                                                | Osselot licence-compliance integration                                  | 7★ MIT, **pushed 2025-02-18**               |
+| [meta-bitbake-variable-substitution](https://github.com/coreycothrum/meta-bitbake-variable-substitution) | expand BitBake variables from external scripts                          | 3★ MIT, pushed 2026-06-29                   |
+| [bbclient](https://github.com/AngryMane/bbclient)                                                        | utility commands for BitBake                                            | 6★ MIT, **pushed 2023-08-09 — likely dead** |
+
+Konrad Weihmann ([priv-kweihmann](https://github.com/priv-kweihmann)) maintains several more embedded-development
+utilities the user rates highly; worth a scan when this pass happens.
+
+The security-relevant layers from the same list — `meta-sca`, `meta-quantum-safe`, `meta-sbom-cve-check` and
+`sbom-cve-check` — are being assessed as part of the Yocto security skill work and are not repeated here.
+
+### Yocto/OpenEmbedded Testing Coverage Is Missing
+
+**Gap identified by the user on 2026-09-08:** `yocto-openembedded-development` says nothing about how to *test* a
+Yocto build or the things it produces. That is a real omission for a skill whose diagnosis lane assumes evidence,
+since the upstream test machinery is where much of that evidence comes from.
+
+Cover the upstream mechanisms first, and confirm each against the release-matched Test Environment Manual:
+
+- `oeqa` and its selftest suite (`oe-selftest`), the layer-level runtime tests, and how a layer supplies its own.
+- `testimage` and `testexport`, and how they reach a target or QEMU.
+- `ptest` — enabling `DISTRO_FEATURES += "ptest"`, the `ptest-runner`, and per-recipe `ptest` packages.
+- `runqemu` as a test harness rather than as a demo.
+- Reproducibility testing (`oe-check-sstate`, the `reproducible` selftest) as a build-integrity check.
+- Where each of these puts results, and what a passing run does *not* prove.
+
+Third-party candidate: [meta-shift](https://github.com/shift-left-test/meta-shift), shift-left testing for Yocto
+(10★ MIT, pushed 2026-08-06). Assess it only after the upstream mechanisms are covered — it is a wrapper around
+tooling the skill should be able to describe unaided.
+
+Open question to settle first: whether this belongs in `yocto-openembedded-development` or in a separate skill.
+Testing spans build-host checks, on-QEMU runtime tests and on-hardware tests, and the last of those already routes
+to `embedded-linux-bringup`, so the seam is not obvious.
+
 ### Embedded QEMU Skill Candidate
 
 Consider `embedded-qemu-emulation` for repeatable boot–test–debug workflows across embedded Linux projects, independent
