@@ -95,10 +95,25 @@ Five ideas came from that source and are recorded here because reading it change
   set before writing into it, including configuration such as `.adr-dir` or an `adr-tools` setup.
 
 The upstream's remaining subjects were deliberately declined, not overlooked. Inline code-comment discipline,
-JSDoc and OpenAPI examples, a README template, changelog structure, and agent rules-file guidance each belong
-to another owner in this repository, and carrying them here would break this skill's scope. Its "Common
-Rationalizations" and "Red Flags" tables serve a different job again, persuading a reluctant agent to write
-documentation at all, rather than composing a document well.
+JSDoc and OpenAPI examples, a README template, and agent rules-file guidance each belong to another owner in
+this repository, and carrying them here would break this skill's scope. Its "Common Rationalizations" and "Red
+Flags" tables serve a different job again, persuading a reluctant agent to write documentation at all, rather
+than composing a document well.
+
+## Changelog Reference
+
+`references/changelog.md` was added on 2026-09-09 from the same upstream reading. Two ideas came from it: that
+a maintained changelog belongs to this skill's change-note subject at all, and grouping entries by kind of
+change under a dated, versioned release heading. No text or example was copied; the worked example is
+independent.
+
+The grouping vocabulary — added, changed, deprecated, removed, fixed, security — and the `Unreleased` section
+are the [Keep a Changelog](https://keepachangelog.com) convention, named here as the widely used standard the
+reference describes rather than as a source it reproduces. The entry-writing guidance, the
+effect-versus-commit-subject distinction, and the omission rules are this skill's own.
+
+The decision about whether a project warrants a changelog defers to `context-architecture`, which owns it as a
+conditional addition to a repository's documentation layout. This reference covers composition only.
 
 Material changes from peizh/tech-writing include:
 

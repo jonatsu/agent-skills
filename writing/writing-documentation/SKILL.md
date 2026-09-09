@@ -93,7 +93,7 @@ Choose one primary mode. Split and link material when another mode would interru
 - **Decision record:** make a decision and its consequences reviewable, and keep it reviewable after the
   conditions change. Its elements carry their own rules, below.
 - **Change note:** explain what changed, who is affected, required action, compatibility effects, and recovery or
-  migration steps.
+  migration steps. For a maintained changelog, read [references/changelog.md](references/changelog.md).
 
 A README or setup guide may begin with orientation, then link to the mode-specific material its reader needs.
 
