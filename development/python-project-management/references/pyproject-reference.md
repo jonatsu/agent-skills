@@ -64,9 +64,14 @@ ignore = [
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
+
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
     "S101",     # assert is the point of a test
+    "S105",     # fixture credentials are not secrets
+    "S106",
     "PLR2004",  # magic values are readable in a test
     "D",        # public API docstrings are not required for tests
 ]
@@ -119,6 +124,14 @@ module-root = ""
 
 These backends move quickly. Prefer a `>=X.Y,<X+1` constraint so patch and minor releases arrive without an
 edit.
+
+### `[tool.ruff.lint.flake8-type-checking]`
+
+`select = ["ALL"]` turns on the `TC` rules, which move an import used only in annotations behind
+`if TYPE_CHECKING:`. Pydantic resolves annotations at runtime to build its validators, so the model then fails
+to construct with an unresolved name. Naming `pydantic.BaseModel` as a runtime-evaluated base class exempts its
+subclasses. Add any other base whose annotations are read at runtime — `attrs` classes using
+`attrs.resolve_types`, and SQLAlchemy declarative bases, are the usual others.
 
 ### `[tool.uv]`
 
