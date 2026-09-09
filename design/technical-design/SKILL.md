@@ -83,6 +83,11 @@ governing intent, local scope, evidence, chosen system shape, behavior, interfac
 alternatives, risks, assumptions, and open questions. End with a planning handoff that names settled obligations without
 sequencing their implementation.
 
+In the handoff, identify invariants, failure modes, and rollout/recovery obligations that need particular scrutiny or
+qualification, with the evidence boundary and owner where known. Link applicable policy or coding constraints instead
+of duplicating their rules. Implementation planning turns these obligations into explicit practice, review, and
+validation steps; keep reviewer scheduling and execution commands out of the design.
+
 Use diagrams, tables, examples, state descriptions, or sequence narratives only when they materially clarify a
 relationship or behavior. Keep every canonical decision recoverable in text.
 

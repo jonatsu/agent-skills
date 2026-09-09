@@ -73,7 +73,8 @@
         "Produces a small independently verifiable work unit covering the default, schema, and documentation surfaces without inventing a separate design artifact.",
         "Uses direct schema or configuration validation and documentation checks suited to the claim.",
         "Does not require a red-green unit-test cycle, per-file tasks, arbitrary micro-steps, or a commit after every step.",
-        "Does not claim runtime timeout behavior because no consumer exists."
+        "Does not claim runtime timeout behavior because no consumer exists.",
+        "Names the applicable repository rules and a proportionate self-review/check gate without requiring an independent agent or paid review call."
       ]
     },
     {
@@ -132,6 +133,39 @@
         "Does not authorize production probes or real sensitive data.",
         "Permits one integration check to support several related obligations.",
         "Does not force one test per criterion or one criterion per test."
+      ]
+    },
+    {
+      "id": "review-gates-and-required-practices",
+      "prompt": "Write the implementation plan for the accepted webhook-retry design supplied with this request. The repository has Python coding rules, required tests and lint/type gates, and an available skill catalog. The change spans validation, durable retry state, and operational rollout. Include everything an implementer needs without implementing it or spending additional model calls.",
+      "required_inputs": [
+        "An accepted design with bounded retries, persisted state, authorization, failure recovery, and rollout obligations.",
+        "A temporary repository with current source/tests, authoritative Python rules, and configured verification commands.",
+        "An available catalog containing the relevant Python, security, test, and Git guidance."
+      ],
+      "behavior": "Put applicable practices, review ownership, staged validation, and finding resolution into the implementation units.",
+      "outcomes": [
+        "Names applicable guidance from the actual instructions/catalog and assigns its use before the affected edits or verification.",
+        "Includes preflight, in-progress checks, independent completed-unit review for substantive work, targeted fix review, and final integration/operational gates in the unit sequence.",
+        "Defines reviewer responsibility, review inputs, blocking findings, and the evidence needed before dependent work proceeds.",
+        "Preserves repository overrides and does not invent skills, read the full catalog, or copy an unrelated coding stack.",
+        "Uses bounded review handoffs and existing authorization without spawning reviewers or implementing the plan."
+      ]
+    },
+    {
+      "id": "review-availability-and-cost",
+      "prompt": "Revise the review strategy in this accepted multi-unit implementation plan. It currently asks for a fresh whole-repository agent review after every commit and every fix. The repository requires independent review of consequential units. The host cannot launch subagents, and no extra model spending is authorized. A human reviewer can be assigned later. Do not change the implementation or waive the repository review requirement.",
+      "required_inputs": [
+        "A plan with settled unit dependencies and the excessive review strategy described in the prompt.",
+        "Repository policy requiring independent review of consequential changes."
+      ],
+      "behavior": "Bound repeated review while preserving a genuinely independent completion gate and existing spending authority.",
+      "outcomes": [
+        "Replaces per-commit full reviews with focused unit reviews, targeted finding rechecks, and a final cross-unit integration review.",
+        "Carries reviewed revisions, unchanged conclusions, test evidence, and open findings forward instead of replaying session history.",
+        "Names the pending human reviewer assignment and leaves dependent completion blocked until required review occurs.",
+        "Does not claim self-review is independent, silently waive required review, launch subagents, or request repeated approval already covered by the task.",
+        "Allows independent authorized work to continue and broadens rechecks only for a concrete new impact or failure."
       ]
     }
   ]

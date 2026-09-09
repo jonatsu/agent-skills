@@ -18,9 +18,12 @@ when production code will change.
 
 Before editing production code:
 
-1. Read nearby tests, the existing behavior, and the repository's test configuration.
-2. State the behavior, input or trigger, expected result, and an independently derived oracle.
-3. Discover the relevant test command from repository tooling or neighboring tests. Never assume a language, runner,
+1. Apply the accepted plan's relevant skill, coding-rule, preflight, and review requirements. Resolve current guidance
+   from the repository and available catalog; reuse it instead of rereading unrelated skills for each test.
+   If no plan applies, use repository requirements and task scope; do not create a plan just to start a focused test.
+2. Read nearby tests, the existing behavior, and the repository's test configuration.
+3. State the behavior, input or trigger, expected result, and an independently derived oracle.
+4. Discover the relevant test command from repository tooling or neighboring tests. Never assume a language, runner,
    assertion API, or mock library.
 
 If the behavior is unclear, clarify it before inventing an assertion. If no useful automated seam exists, use the most
@@ -69,6 +72,11 @@ When an existing expectation conflicts with intended product behavior, treat it 
 silently weaken or rewrite the assertion to obtain green.
 
 ## Report Honestly
+
+Follow the unit's planned review and final validation gates before declaring the implementation complete.
+A green regression test does not close an outstanding code/security review or qualification obligation.
+For review findings, change the affected code/tests and recheck that evidence; repeat a broader review only when the
+change introduces a concrete new impact. Do not treat a self-review as the planned independent review.
 
 Before completion, state:
 

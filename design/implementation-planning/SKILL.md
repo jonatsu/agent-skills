@@ -41,6 +41,20 @@ Check acceptance from the design's substance, not its status label. A document i
 contains consequential recommendations awaiting confirmation, unresolved behavioral or safety obligations, or
 architecture added after the user's latest confirmation. Return those gaps to technical design before decomposing work.
 
+## Establish Required Practices
+
+Inspect the applicable repository instructions, language/coding rules, configured checks, and available skill catalog.
+Resolve which guidance applies to the actual work, including packaging, parsing, security, tests, generated artifacts,
+and deployment when relevant. Do not invent skill names, assume authoring-machine paths, or load the full catalog.
+Reuse guidance already read in the session unless it changed. Explicit user decisions and repository requirements
+outrank skill defaults; a generic recommendation does not authorize an incidental tooling or framework migration.
+
+Make applying that guidance an explicit preflight step in the affected work unit. Name the skill or authoritative rule,
+the work that triggers it, and when it must be read before editing or verification. Shared requirements may be defined
+once and referenced from units; an unattached appendix or a general instruction to "follow best practices" is insufficient.
+Record missing required guidance or unavailable tooling as a prerequisite with its owner and downstream effect.
+Require completion evidence for the applicable coding rules and checks, not merely a claim that a skill was loaded.
+
 ## Map Dependencies Before Ordering
 
 Identify prerequisites, baseline evidence, contracts or seams that unlock later work, consumers and producers, risky
@@ -62,9 +76,11 @@ For every unit, make these facts recoverable without forcing one rigid template:
 - **Design obligations:** the accepted decisions or requirements it satisfies;
 - **Affected surfaces:** verified files, symbols, configuration, data, documentation, or operational assets;
 - **Dependencies:** prerequisites, consumed and produced interfaces, and downstream unlocks;
+- **Required practices:** applicable skills, coding rules, and the preflight step that applies them;
 - **Implementation guidance:** the smallest useful explanation of the change and local constraints;
 - **Verification:** commands or observations, expected results, the claim each check proves, and relevant negative
   guarantees;
+- **Review gates:** reviewer responsibility, timing, scope, evidence, and what blocks dependent work;
 - **Failure and recovery:** expected failure interpretation, cleanup, rollback, or next action when relevant; and
 - **Completion:** the evidence that makes the unit reviewable and safe to hand onward.
 
@@ -98,6 +114,38 @@ boundary. Follow repository commit policy instead of requiring one commit per wo
 End the complete plan with system-level verification traced to the governing outcome. File existence, task completion,
 or clean version-control state alone cannot establish completion.
 
+## Put Review Stages in the Work
+
+The plan must state who reviews, when, how, and what evidence closes the gate. Put the applicable stages in the work
+units and dependency order, not just in a closing recommendation:
+
+1. **Before implementation:** the implementer checks scope, prerequisites, required practices, test seams, and failure
+   or recovery scenarios. Give sensitive or irreversible work deeper scrutiny before coding; name an early independent
+   review when a concrete risk or repository requirement warrants its cost.
+2. **During implementation:** perform self-review, the applicable test loop, coding-rule checks, and proportionate
+   integration validation. Record observed outcomes; a command written in the plan is not a result.
+3. **After a substantive unit:** an independent reviewer examines the exact change and its evidence before dependent
+   work proceeds. Identify the role or assignment mechanism. Independence requires someone other than the implementer;
+   a second self-review cannot be labeled independent. For a small low-impact change, a documented self-review and
+   focused checks may suffice unless repository policy requires more. State that choice and its reason.
+4. **After corrections:** the implementer owns repairs; the reviewer checks the changed findings and affected evidence.
+   Track severity, location, concrete failure or violated requirement, correction, and blocking status. Required checks
+   and blocking findings must be resolved before the unit closes. Record nonblocking follow-ups with an owner and reason.
+5. **At system completion and operational cutover:** review cross-unit behavior, migration/recovery, packaging, and the
+   applicable qualification evidence. Before consequential external actions, review the exact proposed operation and
+   obtain only authorization not already supplied. Unit approval does not supply deployment or risk acceptance.
+
+Use one focused independent review per substantive unit and one final integration review for multi-unit changes as
+the default. Prefer compact handoffs containing base/head revisions, the relevant diff/contracts, test evidence, and
+open findings. Reuse the reviewer and unchanged evidence; do not replay full session history or review every file or
+commit separately. Broaden a recheck only for changed scope, new failures, or a concrete dependency impact.
+Scale the strategy to the work instead of imposing independent agents or a full audit on every minor edit.
+
+Review may be performed by a person, another agent, or a separate session where the environment and authorization allow.
+Naming a reviewer does not authorize subagent/model calls or their cost. If required independent review is unavailable,
+record the missing assignment and keep the dependent completion gate open; continue independent authorized work.
+Neither the implementer nor reviewer may waive a consequential requirement or uncovered risk on the user's behalf.
+
 ## Write and Check the Plan
 
 Resolve the plan path in this order:
@@ -114,8 +162,10 @@ Use two or three descriptive kebab-case words before `-implementation-plan.md` i
 to each other while preserving their authority: the design owns system behavior; the plan owns execution order.
 
 Before calling the plan ready, check design coverage, dependency order, interface consistency, ownership, verified
-touchpoints, placeholders, verification strength, and final integration evidence. Make unavailable checks and unresolved
-risks visible. An implementer should be able to execute without reconstructing the design conversation.
+touchpoints, required-practice preflight, review-stage placement, reviewer assignment, finding-resolution gates,
+review cost, verification strength, and final integration evidence. Remove placeholders and expose unavailable checks
+and unresolved risks. Require the completion record to identify applied guidance, reviewed revisions, results,
+finding dispositions, and unverified obligations. An implementer should not need to reconstruct the design conversation.
 
 Saving or completing a plan does not authorize implementation. Continue only when the user's request already supplied
 that authority; otherwise present the plan and stop before changing the system.
