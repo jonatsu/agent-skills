@@ -27,7 +27,10 @@ DEFAULT_NAMES = ("AGENTS.md", "CLAUDE.md")
 
 # Directories whose instruction files are payloads the repository stores rather
 # than context it obeys. Evaluation transcripts and test fixtures both contain
-# realistic AGENTS.md files that must not be measured.
+# realistic AGENTS.md files that must not be measured. The scratch directory
+# holds task artefacts and cloned repositories, so it grows instruction files
+# the repository never obeys; it is untracked, which is why walking the
+# filesystem sees what a git-aware scan would not.
 DEFAULT_EXCLUDES = (
     "*/fixtures/*",
     "*/testdata/*",
@@ -35,6 +38,7 @@ DEFAULT_EXCLUDES = (
     "*/node_modules/*",
     "*/vendor/*",
     "*/.git/*",
+    "*/.scratch/*",
 )
 
 ISO_DATE = re.compile(r"\b20\d{2}-\d{2}-\d{2}\b")
