@@ -33,6 +33,22 @@ adapt it when an established repository already carries deliberate conventions.
   table-content loss observed under 0.41.0.
 - Mirror every Markdown exclusion in pre-commit's `exclude` and markdownlint-cli2's `ignores`. A stale entry
   in either layer silently creates format-only or lint-only coverage.
+- Neither Markdown hook sees a non-breaking space. U+00A0 is not whitespace to a parser, so a nested item or
+  fence indented with one leaves its parent block, and the linter then reports a broken list or a missing blank
+  line somewhere that reads as correct in every editor. Measured on mdformat 1.0.0 and markdownlint-cli2
+  0.23.2: a hard tab in that position fails MD010, while both hooks pass a U+00A0 file and leave the character
+  intact. The shipped `markdown-nbsp-indent` hook closes the gap. Keep it report-only so mdformat stays the
+  sole writer; `language: pygrep` is built into pre-commit, so it adds no dependency.
+- Scope an invisible-character hook to the leading whitespace run rather than banning the character. A mid-line
+  U+00A0 is legitimate typography, as in `5000<U+00A0>ms`, and harms no block structure, so a blanket pattern
+  fails honest prose. Write the UTF-8 bytes out and use alternation instead of a character class: pygrep
+  compiles the entry as a bytes regex, where `[\xc2\xa0]` matches each byte alone and fires on the tail of
+  characters such as `à` (`\xc3\xa0`). Single-quote the entry so YAML keeps the backslashes. Select files with
+  `types_or: [markdown, mdx]`, because identify tags `.mdx` as `mdx` rather than `markdown`, and a plain
+  `types: [markdown]` reports "no files to check" on every MDX file.
+- Prove any check-only hook with both controls before trusting it. One file that must fail, one that must pass,
+  and then the whole tree. A pattern that never matches and a pattern that matches everything are
+  indistinguishable from a working one on a tree that happens to be clean.
 - Give wrapping to one tool. The shipped profile uses mdformat `wrap = "keep"`; markdownlint supplies the
   numeric ceiling, and EditorConfig deliberately leaves Markdown line length unset.
 - Keep mdformat's line ending at `lf` to agree with the global EditorConfig rule. `keep` leaves CRLF Markdown

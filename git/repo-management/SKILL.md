@@ -64,9 +64,9 @@ Use assets as starting points after inspecting the repository:
 - `.gitattributes`: Keep the bundled cross-platform text, script, document, serialization, image, archive, and
   patch rules unless repository evidence requires a narrower adaptation.
 - `.pre-commit-config.yaml`: The bundled asset is the full preferred profile: pre-commit-hooks, Betterleaks,
-  EditorConfig checking, YAML and Markdown formatting and linting, ShellCheck, and shfmt. Use the complete
-  profile when the user requests the preferred baseline. Make only the requested delta when extending an
-  established configuration.
+  EditorConfig checking, YAML and Markdown formatting and linting, a local invisible-character check for
+  Markdown, ShellCheck, and shfmt. Use the complete profile when the user requests the preferred baseline. Make
+  only the requested delta when extending an established configuration.
 - Community files: Use the bundled contribution, security, conduct, pull-request, and issue templates when
   their workflow applies. Replace every placeholder and remove irrelevant sections.
 

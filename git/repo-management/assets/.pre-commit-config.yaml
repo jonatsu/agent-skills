@@ -130,6 +130,37 @@ repos:
       # Report only. mdformat is the sole Markdown writer.
       - id: markdownlint-cli2
 
+  # Catch what the two Markdown hooks above both let through. A non-breaking
+  # space is not whitespace to a parser, so it never counts as indentation: a
+  # nested item or fence indented with one leaves its parent block, and the
+  # linter then reports a broken list or a missing blank line somewhere that
+  # reads as correct in every editor. Measured on mdformat 1.0.0 and
+  # markdownlint-cli2 0.23.2 — a hard tab in that position fails MD010, while
+  # both hooks pass a U+00A0 file and leave the character intact.
+  #
+  # `language: pygrep` is built into pre-commit, so this adds no dependency.
+  # Report only, matching markdownlint above: mdformat is the sole Markdown
+  # writer, and it does not normalise U+00A0, so the two cannot disagree.
+  #
+  # Scoped to the leading whitespace run rather than banning the character. A
+  # mid-line U+00A0 is legitimate typography (`5000<U+00A0>ms`) and harms no
+  # block structure, so a blanket pattern fails honest prose.
+  #
+  # The entry is compiled as a BYTES regex, so the two-byte UTF-8 sequence is
+  # written out, and alternation replaces a character class — `[\xc2\xa0]` in
+  # bytes mode matches each byte alone and would fire on the tail of unrelated
+  # characters such as `à` (\xc3\xa0). Single-quoted so YAML keeps the
+  # backslashes; double quotes would consume them.
+  #
+  # `types_or`, because identify tags .mdx as `mdx` and not as `markdown`.
+  - repo: local
+    hooks:
+      - id: markdown-nbsp-indent
+        name: no non-breaking space in Markdown indentation
+        language: pygrep
+        entry: '^(?:[ \t]|\xc2\xa0)*\xc2\xa0'
+        types_or: [markdown, mdx]
+
   # Check shell scripts with ShellCheck (Python wrapper for cross-platform support):
   # https://www.shellcheck.net/
   # https://github.com/shellcheck-py/shellcheck-py
