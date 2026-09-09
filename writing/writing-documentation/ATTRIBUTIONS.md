@@ -76,6 +76,30 @@ No rule text and no dictionary entry is reproduced here or in `SKILL.md`. The st
 free to redistribute. `docs/plans/archived/ste-adoption.md` records the decisions, including the rejected
 alternatives.
 
+## Decision-Record Section and Reference
+
+The "Write a Decision Record" section, the decision-record additions to "Match an Established House Style" and
+"Review", and `references/decision-record.md` were written on 2026-09-09 after reading
+[addyosmani/agent-skills `documentation-and-adrs`](https://github.com/addyosmani/agent-skills/blob/main/skills/documentation-and-adrs/SKILL.md)
+(Copyright (c) 2025 Addy Osmani, MIT). No text, template, or example was copied or adapted; the worked example
+is independent and shares no subject with the upstream's.
+
+Five ideas came from that source and are recorded here because reading it changed what this skill contains:
+
+- writing a decision record on a cost-to-reverse trigger, with concrete decision classes, rather than only on
+  request;
+- an explicit status field and the proposed, accepted, superseded, deprecated lifecycle;
+- never deleting a superseded record, and superseding by writing a new one that references it;
+- requiring a per-alternative rejection reason rather than a bare list of alternatives considered; and
+- checking an existing series for its location and markup, its numbering and filename pattern, and its heading
+  set before writing into it, including configuration such as `.adr-dir` or an `adr-tools` setup.
+
+The upstream's remaining subjects were deliberately declined, not overlooked. Inline code-comment discipline,
+JSDoc and OpenAPI examples, a README template, changelog structure, and agent rules-file guidance each belong
+to another owner in this repository, and carrying them here would break this skill's scope. Its "Common
+Rationalizations" and "Red Flags" tables serve a different job again, persuading a reluctant agent to write
+documentation at all, rather than composing a document well.
+
 Material changes from peizh/tech-writing include:
 
 - Folded a short documentation-type taxonomy into the "choose the right

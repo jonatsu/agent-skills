@@ -1,6 +1,6 @@
 ---
 name: writing-documentation
-description: "Design, draft, or review documentation of any kind so its reader understands or acts on the first pass, and match the house style of an existing documentation set. Use for tutorials, how-to guides, READMEs, references, explanations, decision records, release notes, runbooks, onboarding and process documents, and technical documentation specifically. Not for prose-level editing, which is writing-for-humans."
+description: "Design, draft, or review documentation of any kind so its reader understands or acts on the first pass, and match the house style of an existing documentation set. Use for tutorials, how-to guides, READMEs, references, explanations, decision records and ADRs, release notes, runbooks, onboarding and process documents, and technical documentation specifically. Not for prose-level editing, which is writing-for-humans."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -66,6 +66,11 @@ Record a compact style profile:
 - exemplar evidence for each convention; and
 - aspects the profile does not govern.
 
+A numbered series constrains more than voice. For a decision record joining one, check three conventions
+specifically: its location, file extension, and markup; its numbering sequence and filename pattern; and its
+heading set. Continue the existing sequence rather than restarting it or adding a second scheme alongside it,
+and surface a conflict between two schemes rather than silently picking one.
+
 Apply only supported conventions. Repository requirements outrank the profile, and the source author's voice
 governs wherever the profile is silent. When the profile and this skill's defaults conflict, the profile wins
 for anything it covers with evidence: consistency within a documentation set serves the reader more than an
@@ -85,8 +90,8 @@ Choose one primary mode. Split and link material when another mode would interru
 - **Reference:** support lookup. Mirror the structure of whatever is being described, whether an interface, a
   system, or a process. Cover inputs, outputs, options, limits, defaults, and failure cases accurately.
 - **Explanation:** answer one bounded why question. Cover context, constraints, alternatives, and trade-offs.
-- **Decision record:** make a decision and its consequences reviewable. State the context, decision,
-  alternatives considered, and resulting obligations.
+- **Decision record:** make a decision and its consequences reviewable, and keep it reviewable after the
+  conditions change. Its elements carry their own rules, below.
 - **Change note:** explain what changed, who is affected, required action, compatibility effects, and recovery or
   migration steps.
 
@@ -109,6 +114,33 @@ A README or setup guide may begin with orientation, then link to the mode-specif
 - Make informative images understandable without color alone. Use meaningful link text and explain screenshots or
   diagrams that readers need to act on.
 - Surface missing facts rather than inventing examples, commands, limits, or recovery steps.
+
+## Write a Decision Record
+
+Propose one whenever a decision would be expensive to reverse: a framework, dependency, data model, protocol,
+authentication or authorization strategy, hosting or build platform, or any commitment later work will be built
+on. Do not wait to be asked. A decision nobody wrote down gets argued again.
+
+A decision record carries five elements:
+
+- **Status and date.** Whether the decision is proposed, accepted, superseded, or deprecated, and when it was
+  made. A record without a status cannot be superseded; one without a date cannot be read against the
+  conditions that produced it.
+- **Context.** The problem, the requirements, and the constraints in force at the time.
+- **Decision.** What was chosen, stated plainly enough to act on.
+- **Alternatives, each with the reason it was rejected.** The rejection reason is the load-bearing part,
+  because it is what stops the alternative being proposed again. An alternative listed without one records that
+  you looked, not what you learned.
+- **Consequences in both directions.** What the decision now obliges, and what it lets the reader avoid or
+  stop doing. Include costs that arrive later, such as knowledge the team must acquire.
+
+Freeze a record once it is accepted. When the decision changes, write a new record that references and
+supersedes the old one. Never rewrite or delete the original: it is the evidence for why the earlier choice was
+reasonable under the conditions it was made in, and a series that edits its own history cannot be trusted to
+explain anything.
+
+Read [references/decision-record.md](references/decision-record.md) for numbering and file conventions, the
+common format standards, and a worked example.
 
 ## Write Notes and Safety Instructions
 
@@ -140,6 +172,8 @@ Check:
 - Do tutorials provide visible progress and a usable result?
 - Do references mirror what they describe and cover its important limits and failures?
 - Do explanations and decision records make the relevant reasoning and consequences visible?
+- Does each decision record carry a status, a date, the reason every alternative was rejected, and a
+  supersession pointer where one applies?
 - Does the document provide the accessibility information and recovery guidance its reader needs?
 - Does the procedure still work with every note deleted, and does each warning or caution match its risk level?
 
