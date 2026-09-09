@@ -1,6 +1,6 @@
 ---
 name: python-error-handling
-description: Design how Python code validates input and fails. Use when validating arguments or external data at a boundary, designing an exception hierarchy, chaining or re-raising exceptions, handling partial failure in a batch, or writing an error message someone has to act on.
+description: Design how Python code validates input and fails. Use when validating arguments or external data at a boundary, loading configuration or handling secrets at startup, designing an exception hierarchy, chaining or re-raising exceptions, handling partial failure in a batch, or writing an error message someone has to act on.
 license: MIT
 compatibility: ExceptionGroup and except* examples require Python 3.11+. Everything else works on 3.9+.
 metadata:
@@ -47,6 +47,31 @@ class OutputFormat(Enum):
 ```
 
 Note the `from exc`, and see the chaining section below for why.
+
+## Configuration Is a Boundary Too
+
+Configuration arrives from outside the program, so it gets the same treatment as any other external input:
+validated once, at the edge, and converted to something the rest of the program can trust.
+
+```python
+class Settings(BaseSettings):
+    database_url: str
+    api_token: SecretStr
+    request_timeout: float = 5.0
+```
+
+Load it once at startup and pass it down. Reading `os.environ` deep in the call tree hides a dependency the
+caller cannot see, cannot substitute in a test, and cannot discover before the code path runs.
+
+Fail at startup rather than at first use. A settings model validated on construction gives that for free: a
+missing variable becomes a startup error naming the field, instead of a `KeyError` an hour into a batch job.
+
+Type a secret as `SecretStr` so it is redacted from logs, reprs, and tracebacks, and call `.get_secret_value()`
+only at the point of use. An unredacted token reaches a log the first time an exception renders the settings
+object, which is exactly when the traceback gets pasted somewhere.
+
+Keep secrets and environment-specific values out of the repository and out of defaults. Ship a `.env.example`
+listing the names with no values, so the required set is discoverable without the values leaking.
 
 ## Report Every Problem, Not the First
 
