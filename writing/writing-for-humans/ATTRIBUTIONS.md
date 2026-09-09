@@ -20,6 +20,25 @@ adaptation, and AI-mark diagnosis.
   [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), informed the
   weak-signal threshold and writing-sample override. MIT, Copyright (c) 2025 Siqi Chen.
 
+  Upstream rebuilt itself on 2026-09-06 around a single account of why model prose reads as it does, plus 25
+  patterns ordered by strength. That revision, pinned at `9862685f575c65a8247f90369951df1b3416e3d6`, further
+  informed the staging account, the act-on-one-sighting tier and its members: the negative half nobody
+  claimed, the closer that restates its paragraph, the aphorism standing in for a claim, the announced
+  run-up, the objection nobody raised, and the gap filled with a plausible guess. It also informed the
+  forced-triad rule, the plain-verb rule against "serves as" and "boasts", the vague-relation rule that
+  complements this skill's existing causality rule, the heading-restated and previous-version rules, the
+  emphasis-density rule, and the closing search for the five marks that survive a rewrite. Every idea is
+  expressed independently and the worked examples in `references/rewrites.md` are original; upstream's own
+  examples are general-interest prose rather than technical writing.
+
+  Its em-dash rule, its hyphenated-pair rule, and its fixed vocabulary list were considered and declined.
+  This skill's dash rule is stricter and already carries the write-versus-edit asymmetry; `diagnostics.md`
+  treats compound hyphenation more accurately than a flat tell; and a word blocklist contradicts both this
+  skill's stance on evidence and its language-general scope, for the same reasons recorded against
+  `Anbeeld/WRITING.md` below. Upstream's sentence-case heading rule is declined because it contradicts this
+  skill's heading convention. Its bold rule was adopted only after measurement, recorded in
+  `docs/evaluations/2026-09-09-humanizer-prose-comparison.md`.
+
 - [jpeggdev/humanize-writing](https://github.com/jpeggdev/humanize-writing) informed the warning that
   specificity rules can pressure a writer to invent details. MIT, Copyright (c) 2025 jpeggdev.
 

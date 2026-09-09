@@ -52,6 +52,13 @@ co-occurrence, write the weaker relation it does support: "coincided with", "app
 by". Cut the relation when even that overstates it. This binds an edit as much as a draft, because promoting
 "associated with" to "caused" changes the claim rather than the wording.
 
+**Name a relation the source does state.** Those same weak words are a defect in the opposite direction when
+the source is specific. "Associated with", "linked to", "tied to", and "connected with" hide whether someone
+chaired the board, consulted for a month, or filed one patch; "the timeout is related to the retry setting"
+hides whether it bounds the retry, is derived from it, or merely sits nearby. Write the relation the source
+gives. Keep the vague wording only where the source is genuinely vague, and never resolve the vagueness by
+inventing the specific.
+
 When editing a file, change prose only. Preserve code blocks, inline code, frontmatter, link targets, table
 syntax, identifiers, commands, and quotations unless the user explicitly includes them in scope. AI-writing
 artifacts are production residue and are the exception: remove confirmed marks without changing the surrounding
@@ -114,6 +121,11 @@ Remove needless words, hedges, clichés, prefabricated phrases, and empty promot
 Express an action with a verb rather than a noun built from one. Write "analyze the log", not "perform an
 analysis of the log".
 
+Use "is", "are", and "has" where they are the true verb. "Serves as", "stands as", "functions as",
+"represents", "boasts", and "features" replace a plain verb with a longer one that adds no information:
+"`config.py` serves as the validation layer" is "`config.py` validates configuration", and "the release
+boasts four new commands" is "the release adds four commands".
+
 Use one consistent term per concept. Do not rotate synonyms or redefine abbreviations.
 
 State affirmative claims directly. Avoid rhetorical forms such as “X, not Y” and “not just X, but Y,” and
@@ -147,6 +159,13 @@ relation was genuinely dodged.
 
 An en dash in a numeric or date range falls outside this rule, as does a dash a language requires as a
 grammatical construct, such as marking dialogue. Use those where that language uses them.
+
+**Count a list of three before keeping it.** Three is the length a model reaches for when the content has no
+length of its own, so the triad arrives by rhythm: "keynotes, panels, and networking opportunities", or three
+parallel examples where one carries the point, or three short facts followed by a lesson. Check that each item
+adds something the others do not. Merge them, develop the strongest, or let the list be two or four when that
+is what the subject has. The parallel-form rule below governs a list the content earned; it does not license
+padding one out to three.
 
 In sentences and paragraphs:
 
@@ -188,6 +207,29 @@ wrap prose at phrase or clause boundaries without orphaning a sentence's final w
 English headings. Title case is an English convention: in another language use that language's heading
 convention, which is usually sentence case.
 
+Do not open a section with a sentence that restates its heading. A "Performance" heading followed by "Speed
+matters." spends a line on what the heading already said. Begin with the first thing the reader does not
+know.
+
+Describe what the artifact does now, not what it replaced. A comment, docstring, or reference page written
+against the previous approach dates itself the moment the next change lands, and a later reader cannot tell
+whether the comparison still holds. Change logs, release notes, migration guides, and decision records are
+the documents whose subject is change, and are the exception.
+
+**Emphasis is relative, so bold is a budget rather than a tool.** A bold span reads as strong only because
+the text around it is not, and a page where every paragraph carries one has no emphasis left, just texture.
+Before adding a mark, look at what is already bold within a screen of it and decide which one the reader most
+needs. Prefer the shortest span that carries the decision, and prefer restructuring over a longer bold run:
+a heading, a shorter paragraph, or the point moved to the front of the sentence.
+
+Do not give every item in a vertical list a bold label. A label earns its bold where the reader scans for it
+and the labels differ in kind. Where a label restates the opening words of its own item, delete the bold or
+turn the list into prose.
+
+**In prose someone else wrote, the existing emphasis is the author's.** The same write-versus-edit asymmetry
+applies here as to the em dash: density is a prompt to inspect the passage, not a licence to strip marks on
+sight.
+
 In formal English documents, prefer full forms such as “it is,” “does not,” and “cannot.” Terse commits and
 error messages may use shorter forms. In another language, apply the equivalent register distinction that
 language draws between formal and terse writing rather than looking for contractions it may not have.
@@ -199,6 +241,12 @@ disclose them when delivering the work.
 
 Remove AI-writing artifacts whenever they appear. They are production residue and do not belong to the
 author's voice.
+
+**One account covers most of them: the sentence signals that a point matters instead of adding to it.** A
+model continues with what fits the widest range of readers and subjects, and staging fits everywhere. Reach
+for the account rather than the lists when a passage reads wrong but matches nothing below. Ask what each
+sentence gives a reader who has already read the one before it, and cut the sentence whose answer is
+"emphasis".
 
 Act immediately on definitive artifacts:
 
@@ -212,13 +260,33 @@ Act immediately on definitive artifacts:
 - leaked tool, interface, and citation tokens such as "turn0search0", "oaicite", or "contentReference"; and
 - invisible characters or metadata introduced to mark AI-generated text.
 
+Act on one sighting of these structural moves as well. Each stages a point rather than making it, and none
+needs a second signal to justify a rewrite:
+
+- a negative half nobody claimed, as in "not just X, but Y" or "this is not X, it is Y", including the form
+  split across two sentences and the clipped tail ("…, no guessing"). Keep the contrast where the negative
+  half corrects a belief the reader holds, or where both halves carry information;
+- a closer that restates the paragraph above it, a one-line dramatic fragment, or the same sign-off after
+  every section;
+- an aphorism standing in for the claim: "the real question is", "at its core", "what really matters", "X is
+  the Y of Z", "the architecture of". Write the specific claim instead;
+- a run-up that announces the point instead of making it, including staged candour: "let's dive in", "here's
+  what you need to know", "here's the thing", a standalone "Honestly?";
+- an objection or alternative nobody raised: "to be clear", "don't get me wrong", "a tempting approach would
+  be", "you might think… but". These are usually leftovers from an earlier draft. Keep an objection the text
+  attributes and answers, and an option a reader would genuinely weigh; and
+- a gap filled with a plausible guess. "The sources do not say" is an acceptable sentence. "It likely began
+  in the 1990s", written straight after admitting no source exists, is a fabrication wearing a hedge. Cut the
+  guess or state the gap, and remove knowledge-cutoff disclaimers with it.
+
 Rewrite the affected passage while preserving its claims, qualifications, normative force, and intended voice.
 Remove confirmed invisible marks without changing visible text. Remove format metadata only when its purpose as
 an AI-origin marker is established; preserve legitimate accessibility, authorship, interoperability, and
 application metadata.
 
-Treat weak signals such as one dash, adverb, transition, or rhetorical question as prompts to inspect the
-surrounding passage. A weak signal alone does not establish an AI-writing artifact.
+Treat weak signals as prompts to inspect the surrounding passage rather than as findings. One dash, adverb,
+transition, rhetorical question, bold run, stacked qualifier, or repeated sentence opening does not establish
+an AI-writing artifact; several sharing a passage do.
 
 **Surface style is not evidence of authorship.** A dash, a semicolon, a clean paragraph, or a word from any
 diagnostic list says nothing about who wrote the text. Settle an authorship question from draft history,
@@ -236,9 +304,20 @@ Load `references/diagnostics.md` for a long draft, difficult diagnosis, or final
 apply to any language; its example strings are English. Use its patterns as evidence, not as a mechanical word
 blocklist.
 
+Load `references/rewrites.md` when the size of an edit is the question rather than its target. It works this
+skill's rules through paired before-and-after passages of technical prose, which is what settles how far to
+cut once a mark is identified.
+
 ## Deliver the Result
 
-Before delivery, scan the completed prose for AI-writing artifacts and remove every confirmed mark.
+Before delivery, scan the completed prose for AI-writing artifacts and remove every confirmed mark. Read it
+once as a reader rather than as an editor, then search specifically for the five that most often survive a
+rewrite, each of which an edit elsewhere can reintroduce: a not-X-but-Y contrast, a closer that restates its
+paragraph, an em dash, a list of three, and a bold run.
+
+Use the same pass to check what the edit dropped. A change of shape is where a claim goes missing, so after
+merging a triad, cutting a closer, or unbolding a labelled list, verify that every fact, number, ranking, and
+simultaneity claim survived. A lost claim is an error unless a rule above called for cutting it.
 
 **Leave a sentence alone when it already works.** Do not rewrite one to match a neighbour's cadence, to satisfy
 a preference nobody requested, or to show that editing happened. A limit in this skill is a ceiling on the
