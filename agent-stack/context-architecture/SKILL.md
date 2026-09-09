@@ -31,9 +31,12 @@ unverified. An existing repository's established conventions outrank this skill'
 - **Restructure:** an existing context system misroutes, bloats, or mixes genres. Diagnose against the model
   below before moving anything; propose structural moves rather than silently applying them, and preserve
   stable anchors other documents cite.
-- **Audit:** assess navigation efficiency without assuming edits are wanted. Run the checker (below), read
-  [references/walk-test.md](references/walk-test.md) for the behavioral measurement, and delegate
-  instruction-file internals to `agents-management`'s audit branch. Deliver findings by severity with
+- **Audit:** assess navigation efficiency and coverage without assuming edits are wanted. Run the checker
+  (below), read [references/walk-test.md](references/walk-test.md) for the behavioral measurement, and delegate
+  instruction-file internals to `agents-management`'s audit branch. Coverage is a separate question from
+  navigation, and the walk test cannot ask it: compare the decisions the repository visibly made — framework and
+  dependency choices, data models, authentication strategies, anything expensive to reverse — against the
+  records in its decisions genre, and report an unrecorded one as a gap. Deliver findings by severity with
   evidence; record measurements as a dated file in the repository's evaluations genre.
 
 Read [references/writing-rules.md](references/writing-rules.md) before writing or reviewing any agent-facing

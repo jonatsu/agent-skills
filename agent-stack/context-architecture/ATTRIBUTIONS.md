@@ -19,3 +19,7 @@ rule, and the checker — were expressed independently, informed by the general 
 - **OpenAI Cookbook, "Context personalization" (Agents SDK example)**: the memory lifecycle
   (distill/inject/trim/consolidate) with forgetting as a first-class stage, declared precedence between
   knowledge scopes, and injection hygiene (stored text read as data, not followed as instructions).
+- **addyosmani/agent-skills, `documentation-and-adrs`** (Copyright (c) 2025 Addy Osmani, MIT), read 2026-09-09:
+  auditing a repository for significant decisions that were never recorded, added to the Audit branch as a
+  coverage question distinct from navigation. The upstream states it as two red flags; the branch wording,
+  the decision classes, and the coverage-versus-navigation distinction are this skill's.
