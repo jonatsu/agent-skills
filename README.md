@@ -1,29 +1,13 @@
 # Skills
 
-Single source of truth for my agent skills, deployed to **Claude Code**, **OpenCode**, **GitHub Copilot CLI**
-and **Codex** from one place. Edit a skill here once; every agent picks it up.
+Single source of truth for my agent skills, deployed as real copies to Claude Code, OpenCode, GitHub Copilot
+CLI and Codex. Edit a skill here once, commit, and every agent picks it up.
 
-The skills previously lived in two config dirs (`~/.config/claude/skills` and `~/.config/opencode/skills`) and
-drifted. Now they live here and deploy out via [Kasetto](https://github.com/pivoshenko/kasetto) (`kst`), a
-declarative, lock-first skills manager.
+[Kasetto](https://github.com/pivoshenko/kasetto) (`kst`) does the deploying. It reads the declarative configs
+under `kasetto/`, resolves each source, installs real copies into each agent's skills directory, and records
+what it installed in a committed `kasetto.lock`. No central store, no symlink layer.
 
-This directory is where the repository started, as `agent-skills`. It was renamed to `agent-setup` on
-2026-08-21 to become the base the other config repositories merge into, so the repository is no longer only
-skills — see [../README.md](../README.md) for the whole of it, and
-[the consolidation overview](../docs/plans/agent-management/repo-consolidation.md) for what has merged and
-what has not.
-
-> **History:** deployment was previously handled by `skillsmgr`, which kept a central store and symlinked each
-> agent's skills dir into it. It is retired; its scripts and the reasons for dropping it were removed in
-> favour of git history — `git log --diff-filter=D -- docs/skillsmgr-legacy/` finds them if ever needed.
-
-## Mental model
-
-Kasetto reads a declarative config (`kasetto/base.yaml` plus the six overlays at `kasetto/*/kasetto.yaml`),
-resolves each source, and installs **real copies** into each agent's skills dir, recording exactly what it
-installed in a committed `kasetto.lock`. There is no central store and no symlink layer.
-
-```
+```text
 this repo (source of truth)
   ├─ shared/<domain>/                hand-crafted skills (local sources)
   ├─ claude/  opencode/              these two groups stay flat
@@ -32,39 +16,166 @@ this repo (source of truth)
                                      tracked by kasetto/**/kasetto.lock
 ```
 
-The edit loop is: **edit a skill here → commit → a post-commit hook syncs the changed scope → the live copy
-refreshes.** The hook delegates to `./scripts/kasetto-deploy.sh`, which re-resolves local skills by name and
-leaves every remote source pinned to the lock, so warm syncs stay ~instant and need no network. To deploy by
-hand, run the same script.
+**What this does not do.** It does not run anywhere but this machine: the locks bake absolute destination
+paths, and the destinations are hard-coded per agent. Real copies can drift from their source, which is why
+half of this document is about detecting that. And this file describes the *mechanism*;
+[AGENTS.md](AGENTS.md) sets the rules an agent must follow here and wins wherever the two overlap.
+
+Skills are one part of the repository — see [../README.md](../README.md) for the rest.
+
+## Does it work
+
+`just skills-deployed` reads every destination and compares each deployed copy against its committed source:
+
+```console
+$ just skills-deployed
+210 compared, 0 drifted, 0 stray .bak, 0 pending, 4 remote-skipped, 0 unresolved
+```
+
+One skill, itemised per destination. Use this rather than a hand-written `diff -rq`, which silently checks
+only the destinations you remembered to list:
+
+```console
+$ just skills-deployed --skill git-ops --verbose
+ok         git-ops                       /home/user/.config/claude/skills/git-ops
+ok         git-ops                       /home/user/.codex/skills/git-ops
+ok         git-ops                       /home/user/.copilot/skills/git-ops
+ok         git-ops                       /home/user/.config/opencode/skills/git-ops
+
+4 compared, 0 drifted, 0 stray .bak, 0 pending, 0 remote-skipped, 0 unresolved
+```
+
+A name no lock carries exits 2 rather than passing vacuously, so a typo and a genuinely pruned skill both
+fail loudly. That failure is how you confirm a removal actually pruned.
+
+Both skill validators over one package:
+
+```console
+$ just skill-check skills/shared/git/git-ops
+Agent Skills specification (skills-ref)
+
+1 checked, 0 failed
+Skill Forge local policy (quick_validate)
+
+1 checked, 0 failed, 0 with warnings
+```
+
+Running only one of them is the mistake the pair exists to prevent: the specification validator passes a file
+that breaks every repository policy, and the policy validator does not look at frontmatter shape at all.
+
+## Everyday workflow
+
+The edit loop is **edit here → commit → the post-commit hook syncs the touched scope → `just skills-sync`**.
+`pre-commit install` wires that hook (`scripts/sync-skills-kasetto.sh`) alongside the pre-commit checks. Use
+the `skill-forge` skill for authoring conventions and `skill-review` for reviews.
+
+### Editing a skill
+
+Edit the files and commit. The hook maps the commit's changed paths to Kasetto scopes and redeploys them, so
+edits go live in every agent. Every file in the package counts — `references/` and `scripts/` propagate the
+same as `SKILL.md`.
+
+Then run **`just skills-sync`**. The redeploy rewrites the scope's `kasetto.lock`, leaving it dirty in an
+otherwise clean tree; the recipe settles it with a warm redeploy and a `chore(kasetto):` commit of the locks
+alone, staged by explicit path. It never runs `git add -A`, because this checkout is often open in more than
+one agent session, and it refuses outright if the index already holds staged changes it did not put there.
+Skipping it is safe in the moment — the skills are already live — but a stale committed lock defeats the
+`kst lock --check` drift gate the lock exists for.
+
+**A skill edit is always two commits.**
+
+### Adding a skill
+
+Create `shared/<domain>/<name>/SKILL.md`, or a flat directory under `claude/`/`opencode/` if the skill is
+coupled to that agent. Then `git add` and commit; that is the whole procedure. The configs discover group
+members through `skills: "*"`, so no config edit is needed and the hook deploys the new skill.
+
+**A new domain is the one case that does need a config edit:** add a matching `source: ../../shared` /
+`sub-dir: <domain>` / `skills: "*"` entry to `kasetto/base.yaml`, in the same commit that creates the
+directory. Kasetto discovers skills exactly one level under a source root, and `sub-dir: "*"` is not
+supported. The reverse holds too: removing the last skill from a domain must remove its `base.yaml` entry in
+the same commit, because a configured domain that does not exist fails the sync outright — and since git does
+not track empty directories, that failure surfaces on someone's next clone rather than here.
+
+A third-party skill used as-is is not vendored: add a source entry to `kasetto/base.yaml` and it stays
+upstream-updatable. Vendor a copy into a group only when it is *forked* — materially modified and no longer
+tracking upstream — which trades upstream updates for the right to fix the skill.
+
+### Removing a skill
+
+`git rm` the directory and commit. The hook drops it from the lock and prunes the live copies. Settle the
+lock with `just skills-sync`, then confirm the prune with `just skills-deployed --skill <name> --verbose`
+and its exit-2 answer. Archiving instead of deleting has its own procedure in
+[archived/README.md](archived/README.md).
+
+**Why a bare add or remove works at all**, since the mechanism is not obvious and an earlier note here got it
+wrong: `--update <name>` maps a name to a source *through the lock*, so a brand-new skill matches no source
+and re-resolves nothing. Naming the new skill is useless. But per `kst sync --help`, *"updating one asset from
+a multi-asset source re-resolves that whole source"*, and the local groups are globs.
+`scripts/kasetto-deploy.sh` names **every** local skill in the scope's group, so an already-locked sibling
+re-reads the glob from disk and the membership change rides along. Measured 2026-08-23 in both directions,
+offline, in single-digit milliseconds.
+
+A bare `kst sync --project --update` re-resolves membership too, but re-resolves moving refs on the remote
+sources as well — so reach for it only when pulling upstream drift is what you actually want.
+
+## Fresh machine
+
+```bash
+git clone git@github.com:jonatsu/agent-setup.git ~/src/agent-setup
+cd ~/src/agent-setup
+cargo install kasetto            # provides `kst`
+pre-commit install               # pre-commit checks plus the post-commit redeploy hook
+just deploy                      # skills to every agent, plus the dotbot map
+```
+
+`just deploy` is skills *and* the dotbot map, which is what puts the Copilot CLI configuration in `~/.copilot`
+and the knowledge-vault tooling in `~/.local/share/`. Skills alone are `just deploy-skills`.
+
+A cold sync clones whatever remote sources `kasetto/base.yaml` declares, and unauthenticated GitHub clones are
+rate-limited, so set a `GITHUB_TOKEN` first. It exits non-zero and is safe to re-run. Warm syncs resolve from
+the lock and touch no network.
+
+**This is the only place that requirement is stated.** How much it matters scales with how many remote sources
+`base.yaml` declares: with the single pinned source it carries today, an unauthenticated clone will usually
+succeed, and the token is cheap insurance. Add sources and it stops being optional. Read `base.yaml` for the
+current set rather than assuming either extreme.
+
+```bash
+just deploy-skills                       # skills only: every config to every agent
+./scripts/kasetto-deploy.sh --dry-run    # preview without writing
+./scripts/kasetto-deploy.sh --check      # audit each lock against its config (CI drift gate)
+```
 
 ## Layout
 
-Hand-crafted skills are grouped by target agent. Each skill is a directory with a `SKILL.md` (plus optional
-`references/`, `scripts/`, `ATTRIBUTIONS.md`).
+Each skill is a directory with a `SKILL.md`, plus optional `references/`, `scripts/` and `ATTRIBUTIONS.md`.
+Hand-crafted skills are grouped by which agents get them.
 
-| Group       | Deployed to                                  | Contents                                                                                                                                                                                                       |
-| ----------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `shared/`   | Claude Code + OpenCode + Copilot CLI + Codex | Agent-agnostic skills (the majority), organised by domain one level down — see below                                                                                                                           |
-| `claude/`   | Claude Code only                             | Claude-coupled skills (e.g. `reflect`). Flat: two skills do not need a taxonomy                                                                                                                                |
-| `opencode/` | OpenCode only                                | OpenCode-coupled skills. **Currently empty** — `headroom-management` was archived 2026-08-26, and git does not track empty directories, so the group is absent until the next OpenCode-only skill recreates it |
-| `archived/` | nothing                                      | Kept for reference, deployed nowhere. See `archived/README.md`                                                                                                                                                 |
+| Group       | Deployed to                                  | Contents                                                         |
+| ----------- | -------------------------------------------- | ---------------------------------------------------------------- |
+| `shared/`   | Claude Code + OpenCode + Copilot CLI + Codex | Agent-agnostic skills, organised by domain one level down        |
+| `claude/`   | Claude Code only                             | Claude-coupled skills. Flat: too few to need a taxonomy          |
+| `opencode/` | OpenCode only                                | OpenCode-coupled skills. Flat for the same reason                |
+| `archived/` | nothing                                      | Kept for reference. See [archived/README.md](archived/README.md) |
 
-There is no `copilot/` group. Copilot CLI gets `shared/` and nothing else: the Claude-only skills are
-Claude-coupled by the placement rule — they are about `CLAUDE.md`, `.claude/agents` and Claude subagents — so
-deploying them there would ship skills describing a different agent. Add the group, and a
-`kasetto/copilot-extra/` config, the first time a Copilot-coupled skill is written.
+`opencode/` is currently empty, and git does not track empty directories, so the group is absent from a fresh
+clone until the next OpenCode-only skill recreates it. Its Kasetto scope is kept anyway.
 
-Codex also receives `shared/` and nothing agent-specific. Its built-in `.system` skills remain platform-owned
-beside the Kasetto-managed global skills and are excluded by exact path from the ownership gate.
+There is no `copilot/` group. Copilot CLI gets `shared/` and nothing else, because the Claude-only skills are
+about `CLAUDE.md`, `.claude/agents` and Claude subagents — deploying them there would ship skills describing a
+different agent. Add the group, and a `kasetto/copilot-extra/` config, the first time a Copilot-coupled skill
+is written. Codex likewise receives `shared/` only; its built-in `.system` skills sit beside the
+Kasetto-managed ones and are excluded by exact path from the ownership gate.
 
-Python preferences are maintained in [the scoped Python rule](../agents/rules/python.md).
-The retired `python-idioms` package remains in [the archive](archived/python-idioms/ARCHIVED.md).
-Project management, typing, testing, async, and error-handling skills retain their specialist procedures.
+Python style preferences are a rule rather than a skill —
+see [the scoped Python rule](../agents/rules/python.md). The specialist Python skills (project management,
+typing, testing, async, error handling) keep their own procedures.
 
 ### Domains within `shared/`
 
-Since 2026-08-26 the shared group is organised by subject: `shared/<domain>/<skill>/`. Before that change,
-forty-three skills in one directory had stopped being a list anyone could read.
+Skills live at `shared/<domain>/<skill>/`; one flat directory had stopped being a list anyone could read.
+`kasetto/base.yaml` is the authoritative list of domains, one entry each.
 
 | Domain         | Holds                                                                 |
 | -------------- | --------------------------------------------------------------------- |
@@ -79,195 +190,94 @@ forty-three skills in one directory had stopped being a list anyone could read.
 | `review/`      | Reviewing code and designs                                            |
 | `writing/`     | Human-facing prose                                                    |
 
-**The domain level exists only in this repository.** Kasetto deploys flat, so every agent still reads
-`<skills-dir>/<skill>/` and no skill needs to know where its source lives.
+**The domain level exists only in this repository.** Kasetto deploys flat, so every agent reads
+`<skills-dir>/<skill>/` and no skill needs to know where its source lives. Two consequences:
 
-The `nix/` domain was archived whole on 2026-09-03 pending consolidation with the repo-local skills in
-`~/src/nix-config`, then revived on 2026-09-06: two skills promoted from that repo plus five archived
-originals fixed and restored the same day. Only `nix-wrapper-modules` remains in `archived/nix/`, deliberately
-— see `archived/README.md` and `TODO.md`.
+- **A skill name must stay unique across every domain.** The lock records no domain, so its keys are
+  `../../shared::<name>` and two same-named skills collapse to one key — Kasetto then deploys whichever it
+  resolved last, silently. `just skills-deployed` reports that as `ambiguous`; nothing else catches it.
+- **Moving a skill between domains is free.** Same lock keys, so a `git mv` produces no lock diff. A lock diff
+  after a pure move means something else changed.
 
-The `embedded/` domain was restored on 2026-09-07 with clearer skill names:
-`buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`, and
-`yocto-openembedded-development`. Restoration updates names, routing, metadata placement, and formatting;
-technical review progress and pending repairs are tracked in [TODO.md](TODO.md#embedded-domain--review-ledger).
+## How the deploy works
 
-Three consequences worth knowing before you move anything:
+`kasetto/base.yaml` carries the shared skill list and no destination. One config directory per deploy scope
+extends it and adds a destination: one per agent for the shared set, plus an `-extra` scope for each
+agent-coupled group. `kasetto/` is the authoritative list.
 
-- **A skill name MUST stay unique across all domains.** The lock records no domain, so two same-named skills
-  collapse to one key and Kasetto silently deploys whichever it resolves last. `just skills-deployed` reports
-  that as `ambiguous`; nothing else catches it.
-- **Moving a skill between domains is free.** Lock keys are `../../shared::<name>`, so a `git mv` produces no
-  lock diff. A lock diff after a pure move means something else changed.
-- **Adding or emptying a domain needs a `kasetto/base.yaml` edit.** Kasetto discovers skills exactly one level
-  under a source root, so each domain is its own `sub-dir:` entry there, and `sub-dir: "*"` is not supported.
-  A named domain that does not exist fails the sync outright — which, since git does not track empty
-  directories, is a failure that appears on the next clone rather than here.
+The extra scopes exist because Kasetto's `extends` inherits a parent's skills only when the child declares
+none — a child's own `skills:` *replaces* the parent's, and multi-parent lists do not merge. So agent-coupled
+skills cannot ride on the shared base. An extra scope targets the **same destination** as its base overlay,
+which is safe: `kst sync` prunes only items in its *own* lock, so the two never delete each other's skills,
+nor any pre-existing foreign skill already in the agent's directory.
 
-Third-party skills used **as-is** are not vendored here — they are pulled from their upstream repos by Kasetto
-and listed in `kasetto/base.yaml`, so they stay upstream-updatable.
+Two mechanics make the per-directory invocation load-bearing — `scripts/kasetto-deploy.sh` and the post-commit
+hook both `cd` into each config directory before syncing:
 
-A skill is vendored into a group only when it is **forked**: materially modified and no longer tracking
-upstream. A fork keeps the upstream license in the top-level frontmatter `license` field and records
-provenance plus the list of changes in `ATTRIBUTIONS.md` (see `shared/agent-stack/agents-management`,
-`claude/claude-code-setup-audit`). Forking trades upstream updates for the right to fix the skill, so
-take that route only when the upstream cannot be used unmodified.
+- **Relative local sources resolve against the invoking cwd**, not the config file. That is why `base.yaml`'s
+  shared source is `../../shared`, which is correct from `kasetto/<scope>/`.
+- **The lock is always named `kasetto.lock` and written to the cwd**, so each scope keeps its own lock beside
+  its config.
 
-## The Kasetto config (`kasetto/`)
+Every destination is an explicit tilde path rather than a Kasetto preset. Kasetto expands `~` but not `$VARS`.
+The `claude-code` preset targets `~/.claude/skills` and ignores `CLAUDE_CONFIG_DIR`, which is the wrong
+directory here; the `github-copilot` preset additionally claims `~/.copilot/copilot-instructions.md` as a file
+it generates, and dotbot deploys that file.
 
-The deploy uses **seven** configs. Kasetto's `extends` inherits a parent's skills only when the child declares
-none — a child's own `skills:` *replaces* the parent's, and multi-parent lists don't merge. Since `shared/`
-goes to every agent but the agent-coupled skills go to one each, those skills can't ride on the shared base
-and need their own configs.
+The hook does not run a plain `kst sync`. It delegates to `./scripts/kasetto-deploy.sh --scope <name>`, which
+names every local skill in that scope as `kst sync --project --update <name>...`. **That matters: a plain
+`kst sync` trusts the locked hash and never re-reads a local source, so an edited skill is reported
+`unchanged` and silently never deploys.** Naming the local skills re-resolves only their sources and leaves
+remote moving refs pinned, which is also why warm syncs need no network.
 
-| Config dir                | What it deploys                                                         | Destination                   |
-| ------------------------- | ----------------------------------------------------------------------- | ----------------------------- |
-| `kasetto/base.yaml`       | Common set: 24 third-party + `shared/` (local, one entry per domain)    | *(inherited, no destination)* |
-| `kasetto/claude/`         | `extends base.yaml`                                                     | `~/.config/claude/skills`     |
-| `kasetto/opencode/`       | `extends base.yaml`                                                     | `~/.config/opencode/skills`   |
-| `kasetto/copilot/`        | `extends base.yaml`                                                     | `~/.copilot/skills`           |
-| `kasetto/codex/`          | `extends base.yaml`                                                     | `~/.codex/skills`             |
-| `kasetto/claude-extra/`   | `claude/` group (e.g. `reflect`)                                        | `~/.config/claude/skills`     |
-| `kasetto/opencode-extra/` | `opencode/` group — **empty since 2026-08-26**, scope kept deliberately | `~/.config/opencode/skills`   |
-
-Two mechanics make the per-dir invocation load-bearing — `scripts/kasetto-deploy.sh` and the post-commit hook
-both `cd` into each config dir before syncing:
-
-- **Relative local sources resolve against the invoking cwd**, not the config file. So `base.yaml`'s `shared/`
-  source is `../../shared` (correct from `kasetto/<agent>/`).
-- **The lock is always named `kasetto.lock` and written to the cwd**, so each config keeps its own lock beside
-  it.
-
-An extra config targets the **same destination** as its base overlay. That is safe because `kst sync` prunes
-only items in its *own* lock, so the two never delete each other's skills (nor any pre-existing foreign skill
-already in the agent dir).
-
-Unlike the old `skillsmgr` path, Kasetto needs **no `CLAUDE_CONFIG_DIR`** — each config carries an explicit
-tilde destination (Kasetto expands `~`, but not `$VARS`). The Copilot overlay names its destination rather
-than using Kasetto's `github-copilot` preset, because that preset also claims
-`~/.copilot/copilot-instructions.md` as a file it generates, and dotbot deploys that file from `copilot/`.
-
-## Deploy
-
-The root `justfile` is the entry point. `just deploy` runs the Kasetto sync **and** the dotbot map, which is
-what puts the Copilot CLI configuration in `~/.copilot` and the knowledge-vault tooling in `~/.local/share/` —
-skills alone are not the whole deploy any more.
-
-```bash
-just deploy                              # skills + the dotbot map
-just deploy-skills                       # skills only: sync every config to every agent
-./scripts/kasetto-deploy.sh --dry-run    # preview without writing
-./scripts/kasetto-deploy.sh --check      # audit each lock against its config (CI drift gate)
-```
-
-The script requires only `kst` on `PATH`. Set a `GITHUB_TOKEN` in your environment: a **cold** sync clones 12
-upstream sources across 9 repositories and can hit unauthenticated GitHub rate limits (it exits non-zero and
-is safe to re-run). Warm syncs use the lock and touch no network.
-
-## Adding a skill
-
-**Hand-crafted:** create `shared/<domain>/<name>/SKILL.md`, picking an existing domain (or under
-`claude/`/`opencode/`, which are flat, if the skill is agent-coupled). No config edit is needed — the configs
-discover every skill in the group via `skills: "*"`, and committing is enough to deploy it: the post-commit
-hook re-resolves glob membership along with the content hashes, so a new skill reaches every agent dir with no
-extra step. See "Adding or removing a skill" below for why that works. Use the `skill-forge` skill for
-authoring conventions.
-
-**A new domain is the one case that does need a config edit:** add a matching `- source: ../../shared` /
-`sub-dir: <domain>` / `skills: "*"` entry to `kasetto/base.yaml`, in the same commit that creates the
-directory.
-
-**Third-party:** add a source entry to `kasetto/base.yaml` (Kasetto discovers skills in a source's root or its
-`skills/` subdir; use `sub-dir:` for deeper layouts), then deploy.
-
-## Editing a skill
-
-Edit the files here and **commit**, then run **`just skills-sync`**. The `post-commit` hook
-(`scripts/sync-skills-kasetto.sh`, wired via `.pre-commit-config.yaml`) syncs whichever scope the commit
-touched, so edits go live in every agent. Requires `pre-commit install` once (bootstrap does this). Every file
-counts, so `references/`/`scripts/` edits propagate too — not just `SKILL.md`.
-
-That deploy rewrites the scope's `kasetto.lock`, leaving it dirty in an otherwise clean commit.
-`just skills-sync` settles it: warm redeploy, then a `chore(kasetto):` commit of the locks alone, staged by
-explicit path (never `git add -A` — the checkout is often open in more than one agent session, and it refuses
-if the index already holds staged changes it did not put there). Skipping the recipe is safe in the moment,
-since the skills are already live, but a stale committed lock defeats the `kst lock --check` drift gate the
-lock exists for.
-
-The hook maps the commit's changed paths to Kasetto scopes and delegates to
-`./scripts/kasetto-deploy.sh --scope <name>`, which names every local skill in that scope's group as
-`kst sync --project --update <name>...`. That matters: a plain `kst sync` trusts the locked hash and never
-re-reads a local source, so an edited skill is reported `unchanged` and silently never deploys. Naming the
-local skills re-resolves only their sources, leaving third-party moving refs pinned.
-
-## Adding or removing a skill
-
-`git add` (or `git rm`) the skill directory and commit. That is the whole procedure: the post-commit hook adds
-a new skill to the lock and deploys it, and drops a deleted one from the lock and prunes its live copies.
-Settle the resulting `kasetto.lock` changes with `just skills-sync`, the same as for an edit.
-
-**Why that works**, because the mechanism is not obvious and the old note here got it wrong: `--update <name>`
-maps a name to a source **through the lock**, so a brand-new skill — which is in no lock — matches no source
-and re-resolves nothing. Naming the new skill is therefore useless. But per `kst sync --help`, *"updating one
-asset from a multi-asset source re-resolves that whole source"*, and the local groups are `skills: "*"` globs.
-`kasetto-deploy.sh` names **every** local skill in the group, so an already-locked sibling re-reads the glob
-from disk and the membership change comes with it. Measured 2026-08-23 in both directions, offline and in
-single-digit ms.
-
-A bare `kst sync --project --update` also re-resolves membership, but re-resolves moving refs on the remote
-third-party sources too — so reach for it only when pulling upstream drift is what you actually want.
-
-If a skill ever fails to appear, `kst lock --check` (via `just check`) is the backstop: it exits 1 on
-membership drift and names the offender, e.g. `+ ../../shared::my-new-skill`.
-
-## Reproducibility & the lock
+## The lock
 
 `kasetto.lock` records each skill's `source`, resolved `source_revision`, content `hash`, and absolute
-`destination`. It is committed like `Cargo.lock`.
+`destination`. It is committed, like `Cargo.lock`.
 
-- **Drift detection, not frozen pins.** Sources without a `ref:` track `branch:main`; the lock's content hash
-  lets `kst lock --check` (via `kasetto-deploy.sh --check`) flag when upstream `main` drifts from the locked
-  snapshot. Add `ref: <tag-or-sha>` to a source to freeze it.
-- **The lock bakes absolute destination paths** (this machine's home), so it is somewhat machine-specific; a
-  fresh machine regenerates it on first sync.
-- **No offline restore.** `kst sync --locked` needs a warm cache and can't rebuild a wiped deploy;
-  reproducible restore is a plain `kst sync` (re-fetches at the locked revision).
+- **Drift detection, not frozen pins.** A source without a `ref:` tracks `branch:main`; the content hash lets
+  `kst lock --check` flag when upstream drifts from the locked snapshot. Add `ref: <tag-or-sha>` to freeze one.
+- **Absolute destinations are baked in**, so the lock is somewhat machine-specific. A fresh machine
+  regenerates it on first sync.
+- **No offline restore.** `kst sync --locked` needs a warm cache and cannot rebuild a wiped deploy. The
+  reproducible restore is a plain `kst sync`, which re-fetches at the locked revision.
+- **Foreign skills are left alone.** Anything in an agent's directory that Kasetto did not install is
+  untouched, because pruning is scoped to the config's own lock. Codex's `~/.codex/skills/.system` is
+  platform-owned on the same principle.
+- **Rollback** is `kst clean` per config directory; deleting `kasetto/` afterwards leaves nothing behind,
+  because there is no store to clear.
 
-## Fresh-machine bootstrap
+## When a skill did not deploy
 
-```bash
-git clone git@github.com:jonatsu/agent-setup.git ~/src/agent-setup
-cd ~/src/agent-setup
-cargo install kasetto            # provides `kst`
-pre-commit install               # wires pre-commit checks + the post-commit redeploy hook
-just deploy                      # skills to every agent, plus the dotbot map
-```
+Start with `kst lock --check` (via `just check`), the backstop for membership drift: it exits 1 and names the
+offender, for example `+ ../../shared::my-new-skill`. Then match the symptom.
 
-## Coexistence & rollback
+| Symptom                                                                              | Read                                          |
+| ------------------------------------------------------------------------------------ | --------------------------------------------- |
+| A skill edit deployed nothing, `kst` reports `unchanged`, or a lock looks stale      | `../docs/findings/kasetto-deploy.md`          |
+| A move, archive or removal left a destination wrong, or a description broke the lock | `../docs/findings/skills-hook-and-pruning.md` |
+| A validated skill never activates, or you need to measure whether one did            | `../docs/findings/skill-discovery-limits.md`  |
 
-- **Foreign skills are left alone.** Any skill in an agent dir that Kasetto didn't install (e.g. ad-hoc
-  `oh-my-opencode` skills) is untouched — scoped per-lock pruning never removes what isn't in the config's
-  lock.
-- **Codex system skills remain platform-owned.** Kasetto does not claim or prune `~/.codex/skills/.system`;
-  the ownership gate recognizes that exact built-in path.
-- **Rollback:** `kst clean` (per config dir) removes Kasetto-managed skills; deleting `kasetto/` afterwards
-  leaves nothing behind — there is no store to clear. Pre-migration copies remain in the `~/.config/claude`
-  and `opencode-config` git histories.
+**Do not accept the post-commit hook's exit status, a clean `git status`, or `kst`'s own report as evidence
+that a deployed copy changed or disappeared.** All three answer from somewhere other than the destination.
+Only `just skills-deployed` reads the destination.
 
 ## Licensing
 
-Repo `LICENSE` is **MIT** and covers the original works here. Individual skills may carry their own license
-via their top-level frontmatter `license` field and `ATTRIBUTIONS.md` — e.g. `agents-management` is
-**Apache-2.0** per its upstream, and ships `LICENSE.upstream` alongside. Do not assume MIT for a skill that
-declares otherwise. A skill whose upstream licence would block the use we need is replaced by an independently
-written one rather than adapted: `git-master` (SUL 1.0, personal/non-commercial only) was retired on
-2026-08-26 in favour of `shared/git/git-ops`, which is MIT.
+Repository `LICENSE` is MIT and covers the original works here. A skill may carry its own license in its
+top-level frontmatter `license` field with provenance and changes in `ATTRIBUTIONS.md` — `agents-management`
+is Apache-2.0 per its upstream and ships `LICENSE.upstream` alongside. Do not assume MIT for a skill that
+declares otherwise.
+
+Where an upstream licence would block the use we need, the skill is replaced by an independently written one
+rather than adapted. `shared/git/git-ops` is the worked example: its predecessor was SUL 1.0,
+personal/non-commercial only.
 
 ## External references on skill authoring
 
-Consulted on **2026-08-27** to settle a dispute about how skills should be structured, and recorded here so
-the next reader does not re-find them. Each is pinned, because an unpinned citation to a moving document is
-not evidence.
+Consulted on 2026-08-27 to settle a dispute about how skills should be structured, and recorded so the next
+reader does not re-find them. Each is pinned, because an unpinned citation to a moving document is not
+evidence.
 
 | Source                                                                                                                          | What it settles                                                                                                                                                                                               | Pinned at        |
 | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
@@ -276,35 +286,33 @@ not evidence.
 | [mgechev/skills-best-practices](https://github.com/mgechev/skills-best-practices)                                               | A short opinionated distillation that defers to Anthropic's guide                                                                                                                                             | commit `a0bfa56` |
 | [mgechev/skillgrade](https://github.com/mgechev/skillgrade)                                                                     | Not read in depth. An external grading tool that evaluates skills by running them against fixtures with graders; useful as a comparison point for behavioral evaluation, but not treated here as an authority | unpinned         |
 
-The Agent Skills specification is the structural authority. `skill-forge`'s vendored reference validator
-checks that contract; its local validator separately checks this repository's policy. Line counts, reference
-depth, tables of contents, prose person, and package shape can inform a review when they cause a concrete
-problem, but they are not universal quality gates.
+The Agent Skills specification is the structural authority. `skill-forge`'s vendored reference validator checks
+that contract; its local validator separately checks this repository's policy. Line counts, reference depth,
+tables of contents, prose person and package shape can inform a review when they cause a concrete problem, but
+they are not universal quality gates.
 
-**What neither has, and the finding that mattered most: no taxonomy of skill types, shapes, categories or
-tiers.** Anthropic's guide legislates character sets, description person and nesting depth, so a five-way type
-system is not something it would have left out by accident. That absence — together with the fact that three
-of `skill-review`'s five former "shapes" were re-scoring other dimensions — is why the shape taxonomy and the
-four complexity tiers were deleted on 2026-08-27. The current `skill-forge` instead treats sequence,
-branching, iteration, delegation, degradation, and templates as conditional workflow mechanisms rather than
-skill categories.
+**Neither source defines a taxonomy of skill types, shapes, categories or tiers**, and that absence is why
+`skill-forge` has none. Anthropic's guide legislates character sets, description person and nesting depth, so
+a type system is not something it would have left out by accident. `skill-forge` treats sequence, branching,
+iteration, delegation, degradation and templates as conditional workflow mechanisms rather than skill
+categories.
 
-**Two places they are wrong, or narrower than they read.** mgechev's `scripts/validate-metadata.py` rejects
-any first- or second-person pronoun in a description; measured against this repo's six `agent-stack` skills it
-fired on three, **every one a false positive**, because the pronouns sat inside quoted user utterances
-(`'my CLAUDE.md is too long'`) — which is exactly what a trigger list should contain. And Anthropic's ban on
-`anthropic`/`claude` in a skill name binds claude.ai uploads and the Skills API, not Claude Code: this repo's
-own `claude-code-setup-audit` is deployed and working under that prefix, so `quick_validate.py` warns rather
-than fails. **The warning was not observed on 2026-09-03** during the rename, but the validator was being
-reworked in a concurrent session at the time, so treat the behavior as unconfirmed rather than as changed.
+Two places these sources are wrong, or narrower than they read:
 
-## Future work / TODOs
+- mgechev's `scripts/validate-metadata.py` rejects any first- or second-person pronoun in a description.
+  Measured against this repository's `agent-stack` skills it fired only on false positives, because the
+  pronouns sat inside quoted user utterances (`'my CLAUDE.md is too long'`) — which is exactly what a trigger
+  list should contain.
+- Anthropic's ban on `anthropic`/`claude` in a skill name binds claude.ai uploads and the Skills API, not
+  Claude Code. This repository's own `claude-code-setup-audit` deploys and works under that prefix, so
+  `quick_validate.py` warns rather than fails. The warning was not observed during the 2026-09-03 rename, but
+  the validator was being reworked concurrently, so treat that as unconfirmed rather than as changed.
 
-Tracked separately in [TODO.md](TODO.md).
+## Where to go next
 
-## Repository Python Environment
-
-Skill validation and tests inherit the root `mise.toml`; `skills/` has no separate toolchain configuration.
-Use the existing `uv` on `PATH` and bootstrap the shared `.venv` with `mise exec -- uv sync --locked` at the root.
-`just test-skills` uses that environment. Portable bundled validators retain their declared script/project dependencies.
-Uv caches now live under root `.cache/uv`; validator wrapper caches also use root `.cache/`.
+- [AGENTS.md](AGENTS.md) — the rules for agents working here, and the normative source wherever it overlaps
+  with this file
+- [TODO.md](TODO.md) — operational backlog, review ledgers and unevaluated candidate sources
+- [archived/README.md](archived/README.md) — the archive procedure and recovery commands
+- [../README.md](../README.md) — the rest of the repository, including the shared toolchain this directory
+  inherits
