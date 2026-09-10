@@ -30,7 +30,7 @@
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) if this project accepts contributions.
+See [CONTRIBUTING.md](CONTRIBUTING.md) if this project accepts contributions. Keep the guidelines there.
 
 ## Help and support
 
@@ -42,4 +42,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) if this project accepts contributions.
 
 ## License
 
-{{LICENSE_SUMMARY}}
+{{LICENSE_NAME}}. See [`LICENSE`](LICENSE).

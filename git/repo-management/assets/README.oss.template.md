@@ -38,12 +38,8 @@ placeholders; drop unused sections. Do not invent badges you don't have. -->
 
 ## Contributing
 
-Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-```sh
-{{DEV_SETUP_AND_TEST_COMMANDS}}
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md). Keep dev-setup and test commands there, not here.
 
 ## License
 
-{{PROJECT_NAME}} is licensed under {{LICENSE_NAME}}. See [`LICENSE`](LICENSE).
+{{LICENSE_NAME}}. See [`LICENSE`](LICENSE).

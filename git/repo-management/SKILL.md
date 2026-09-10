@@ -55,7 +55,8 @@ Use assets as starting points after inspecting the repository:
 
 - `README.md`: Start with `assets/README.template.md`. When audience-specific structure helps, read
   [readme-by-audience.md](references/readme-by-audience.md) and use the matching OSS, personal, internal, or
-  configuration template. Apply `writing-for-humans` when available.
+  configuration template. The templates settle which sections a type needs; apply `writing-readmes` to make
+  the result worth reading, and `writing-for-humans` for prose quality.
 - `LICENSE`: Add only the license the user selected, using its canonical text.
 - `.gitignore`: Retrieve the applicable official GitHub template and adapt it to confirmed generated files.
 - `.editorconfig`: The bundled profile deliberately uses two spaces as the fallback and supplies targeted
@@ -102,6 +103,10 @@ Report paths and remediation without exposing secret values. Rotate a leaked cre
 from history. Hand history rewriting to `git-ops`.
 
 ### Check an Existing README
+
+This check answers **is it still true**, not **does it read well**. A request to review a README for quality —
+whether it reads flat, generic, or fails to make its case — belongs to `writing-readmes`. A thorough review
+runs both.
 
 When README accuracy is in scope, compare concrete claims with authoritative repository evidence:
 

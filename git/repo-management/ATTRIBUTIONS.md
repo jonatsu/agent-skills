@@ -56,3 +56,10 @@ placeholders throughout, including its badge URLs.
 ## Upstream license
 
 See [LICENSE.upstream](LICENSE.upstream) for the complete MIT license text.
+
+## Divergence from upstream
+
+On 2026-09-10 the Contributing and License rows of the section matrix, and the corresponding sections in the
+OSS, personal, and generic templates, were reduced to one-line pointers rather than section bodies. Upstream
+carries fuller sections. The change is permitted by the upstream MIT license and reflects a local decision
+recorded in `docs/plans/skills/writing-readmes-draft.md`.

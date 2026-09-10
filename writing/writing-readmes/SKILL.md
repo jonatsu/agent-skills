@@ -1,6 +1,6 @@
 ---
 name: writing-readmes
-description: "Write, rewrite, or judge the quality of a project's front door: a README, quickstart, getting-started page, or documentation landing page, so a stranger sees the point and can start. Use when a README reads flat, generic, or template-filled, when a project needs one from scratch, or when asked whether one is any good. Not for tutorials, how-to guides, references, runbooks, or decision records, which are writing-documentation. Not for checking whether a README's claims still match the repository, or for scaffolding baseline repository files, which are repo-management."
+description: "Write, rewrite, or judge the quality of a project's front door: a README, quickstart, getting-started page, or docs landing page, so a stranger sees the point and can start. Use when a README reads flat or template-filled, when a project needs one from scratch, or when asked whether one is any good. Not for tutorials, how-to guides, references, or runbooks, which are writing-documentation. Not for checking a README's claims against the repository or scaffolding baseline files, which are repo-management."
 license: MIT
 metadata:
   author: Joonas Onatsu

@@ -1,6 +1,6 @@
 ---
 name: writing-documentation
-description: "Design, draft, or review documentation of any kind so its reader understands or acts on the first pass, and match the house style of an existing documentation set. Use for tutorials, how-to guides, READMEs, references, explanations, decision records and ADRs, release notes, runbooks, onboarding and process documents, and technical documentation specifically. Not for prose-level editing, which is writing-for-humans."
+description: "Design, draft, or review documentation of any kind so its reader understands or acts on the first pass, and match the house style of an existing documentation set. Use for tutorials, how-to guides, references, explanations, decision records and ADRs, release notes, runbooks, onboarding and process documents, and technical documentation specifically. Not for READMEs, quickstarts, or documentation landing pages, which are writing-readmes. Not for prose-level editing, which is writing-for-humans."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,9 +8,13 @@ metadata:
 
 # Writing Documentation
 
-Use this skill to design, draft, or review documentation of any kind: tutorials, how-to guides, README and
-setup guides, references, explanations, design and decision records, release notes, runbooks, and onboarding
-or process documents. Technical documentation for developers is one case among these, not the boundary.
+Use this skill to design, draft, or review documentation of any kind: tutorials, how-to guides, references,
+explanations, design and decision records, release notes, runbooks, and onboarding or process documents.
+Technical documentation for developers is one case among these, not the boundary.
+
+Use `writing-readmes` for a project's front door — the README, the quickstart, the documentation landing page.
+Those are read by a stranger deciding whether to care; everything this skill owns is read by someone who
+already chose the project.
 
 The goal is a document that lets its intended reader understand the subject or complete the task on the first
 pass. This skill owns the document: its purpose, reader, organization, examples, document type, and the house
@@ -95,7 +99,8 @@ Choose one primary mode. Split and link material when another mode would interru
 - **Change note:** explain what changed, who is affected, required action, compatibility effects, and recovery or
   migration steps. For a maintained changelog, read [references/changelog.md](references/changelog.md).
 
-A README or setup guide may begin with orientation, then link to the mode-specific material its reader needs.
+A front door may begin with orientation, then link to the mode-specific material its reader needs. Write the
+front door itself with `writing-readmes`.
 
 ## Make the Content Usable
 

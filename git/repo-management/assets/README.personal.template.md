@@ -33,4 +33,4 @@ unused sections. -->
 
 ## License
 
-{{LICENSE_OR_PERSONAL_PROJECT_NOTE}}
+{{LICENSE_NAME}}. See [`LICENSE`](LICENSE). Drop this section if the project carries no license file.

@@ -27,14 +27,19 @@ When the type is unclear, ask. Default to the generic `assets/README.template.md
 | Usage / Examples   | Yes      | Yes      | Yes      | Brief  |
 | What's here        | No       | No       | No       | Yes    |
 | How to extend      | No       | No       | Optional | Yes    |
-| Contributing       | Yes      | Optional | Yes      | No     |
-| License            | Yes      | Optional | No       | No     |
+| Contributing       | Pointer  | Optional | Pointer  | No     |
+| License            | Pointer  | Optional | No       | No     |
 | Architecture       | Optional | No       | Yes      | No     |
 | Gotchas / Notes    | Optional | Optional | Yes      | Yes    |
 | Last reviewed      | No       | No       | Optional | Yes    |
 
-For prose quality inside whichever template you pick — skimmable structure, active voice, cut filler — apply
-the `writing-for-humans` skill if it is available.
+**Pointer** means one line naming the file and linking it, never a section body. Contribution guidelines and
+license text are maintained in `CONTRIBUTING.md` and `LICENSE`; restating them here creates two copies that
+drift.
+
+This matrix says which sections a type needs. It does not say how to make the result good — for the hook, the
+ordering, what evidence earns a place above the fold, and when a section should be cut, apply
+`writing-readmes`. For prose quality inside whichever template you pick, apply `writing-for-humans`.
 
 ## Provenance
 
