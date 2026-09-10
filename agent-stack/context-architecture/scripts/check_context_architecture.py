@@ -3,9 +3,9 @@
 
 The floor file's routing table is the contract that every agent-facing document
 can be found from a cold start. This measures that contract from the outside:
-a document no route reaches is invisible at need, a routing row without a
-read-when condition cannot be a load/skip classifier, and a line-number
-reference is stale before it is read.
+a document no structural route reaches is invisible at need, a routing row
+without a trigger condition cannot be a load/skip classifier, and a
+line-number reference is stale before it is read.
 
 Instruction-file internals (size budgets, evidence indexing) belong to
 agents-management's check_agent_context.py; run both. Stdlib only, so the
@@ -60,9 +60,12 @@ PIN_HEAD_LINES = 15
 PIN_WORD = re.compile(r"\bpinned\b", re.IGNORECASE)
 PIN_REV = re.compile(r"`[0-9a-f]{7,40}`")
 
-# A path-like token: markdown link target or backticked path ending in .md.
+# A Markdown link target, and a backticked path accepted only in a routing-table file cell.
 MD_LINK = re.compile(r"\]\(([^)#\s]+\.md)(?:#[^)]*)?\)")
 MD_BACKTICK = re.compile(r"`([^`\s]+\.md)`")
+STANDALONE_MD_LINK = re.compile(r"^\s*\[[^]\n]+\]\(([^)#\s]+\.md)(?:#[^)]*)?\)\s*$")
+ROUTE_TARGET_HEADERS = {"file", "read"}
+ROUTE_TRIGGER_HEADER = re.compile(r"^(?:read when|symptom|read before\b|if you\b)")
 # Line-number references that rot: file.ext:123 for code extensions, or GitHub-style #L123.
 LINE_REF = re.compile(
     r"\b\S+\.(?:md|nix|py|sh|bash|rs|go|ts|js|c|h|cpp|yaml|yml|toml|lock|pl|json):\d+\b|#L\d+\b"
@@ -98,11 +101,19 @@ def _find_floor(root: Path) -> Path | None:
     return None
 
 
-def _referenced_paths(text: str, base: Path, root: Path) -> set[Path]:
-    """Markdown-link and backticked .md targets in `text`, resolved and de-duplicated."""
+def _structural_paths(text: str, base: Path, root: Path) -> set[Path]:
+    """Resolve deliberate parent-child routes rather than incidental references."""
     found: set[Path] = set()
-    for match in (*MD_LINK.finditer(text), *MD_BACKTICK.finditer(text)):
-        raw = match.group(1)
+    raw_paths = [
+        match.group(1)
+        for line in text.splitlines()
+        if (match := STANDALONE_MD_LINK.fullmatch(line))
+    ]
+    for _, (file_cell, _) in _routing_rows(text):
+        raw_paths.extend(match.group(1) for match in MD_LINK.finditer(file_cell))
+        raw_paths.extend(match.group(1) for match in MD_BACKTICK.finditer(file_cell))
+
+    for raw in raw_paths:
         for origin in (base, root):
             candidate = (origin / raw).resolve()
             if candidate.is_file():
@@ -123,7 +134,7 @@ def _routing_roots(root: Path, excludes: tuple[str, ...]) -> list[Path]:
 
 
 def _reachable(seeds: list[Path], root: Path) -> set[Path]:
-    """Transitive closure of .md references starting at the routing roots."""
+    """Transitive closure of structural routes starting at the routing roots."""
     seen: set[Path] = {seed.resolve() for seed in seeds}
     queue = list(seen)
     while queue:
@@ -132,35 +143,46 @@ def _reachable(seeds: list[Path], root: Path) -> set[Path]:
             text = current.read_text(encoding="utf-8")
         except OSError:
             continue
-        for target in _referenced_paths(text, current.parent, root):
+        for target in _structural_paths(text, current.parent, root):
             if target not in seen:
                 seen.add(target)
                 queue.append(target)
     return seen
 
 
-def _routing_rows(floor_text: str) -> list[tuple[int, list[str]]]:
-    """Data rows of any table whose header names a read-when column."""
+def _routing_rows(document_text: str) -> list[tuple[int, list[str]]]:
+    """Return target and trigger cells from routing tables with recognized headers."""
     rows: list[tuple[int, list[str]]] = []
     in_table = False
-    read_when_index = -1
-    for lineno, line in enumerate(floor_text.splitlines(), start=1):
+    target_index = -1
+    trigger_index = -1
+    for lineno, line in enumerate(document_text.splitlines(), start=1):
         stripped = line.strip()
         if not stripped.startswith("|"):
             in_table = False
             continue
         cells = [cell.strip() for cell in stripped.strip("|").split("|")]
-        header_hit = next(
-            (i for i, cell in enumerate(cells) if "read when" in cell.lower()), -1
+        target_hit = next(
+            (i for i, cell in enumerate(cells) if cell.lower() in ROUTE_TARGET_HEADERS),
+            -1,
         )
-        if header_hit >= 0:
+        trigger_hit = next(
+            (
+                i
+                for i, cell in enumerate(cells)
+                if ROUTE_TRIGGER_HEADER.match(cell.lower())
+            ),
+            -1,
+        )
+        if target_hit >= 0 and trigger_hit >= 0:
             in_table = True
-            read_when_index = header_hit
+            target_index = target_hit
+            trigger_index = trigger_hit
             continue
         if in_table and set(stripped) <= {"|", "-", " ", ":"}:
             continue  # separator row
-        if in_table and read_when_index < len(cells):
-            rows.append((lineno, [cells[0], cells[read_when_index]]))
+        if in_table and max(target_index, trigger_index) < len(cells):
+            rows.append((lineno, [cells[target_index], cells[trigger_index]]))
     return rows
 
 
@@ -193,7 +215,7 @@ def _scan(
             findings.append(
                 Finding(
                     rel,
-                    "unreachable: no routing-table row or reachable document links here",
+                    "unreachable: no routing-table row or standalone inclusion link reaches here",
                 )
             )
         if _excluded(rel, FROZEN_DIR_GLOBS):
@@ -214,14 +236,14 @@ def _scan(
             )
 
     floor_rel = floor.relative_to(root).as_posix()
-    for lineno, (first_cell, read_when) in _routing_rows(
+    for lineno, (target_cell, trigger) in _routing_rows(
         floor.read_text(encoding="utf-8")
     ):
-        if not read_when:
+        if not trigger:
             findings.append(
                 Finding(
                     floor_rel,
-                    f"line {lineno}: routing row {first_cell!r} has an empty read-when cell",
+                    f"line {lineno}: routing row {target_cell!r} has an empty trigger cell",
                 )
             )
     return findings

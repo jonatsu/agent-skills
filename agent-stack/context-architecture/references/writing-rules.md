@@ -19,6 +19,20 @@ exclusion only when it prevents likely misrouting. One owner per trigger across 
 descriptions claim the same phrase, move the trigger to the document that carries the full treatment and cut
 it from the other.
 
+## Separate Structural Routes From References
+
+A file target in the destination cell of a trigger-keyed table creates a structural route. The default uses
+`File` and `Read when`; symptom indexes may use `Symptom` and `Read`, and scoped pointers may put a
+`Read before` condition before their `File` column. Outside such a table, use a Markdown link alone on its line
+when the current document should act as a parent index for the target. Put the load condition or relationship
+immediately before that link, so the parent explains why the child belongs in this context. The same child may
+have more than one parent when each route serves a distinct task.
+
+An inline Markdown link cites related material; it does not make that material reachable from the floor.
+Likewise, a backticked `.md` path outside a routing-table file cell is only an identifier. This distinction
+keeps incidental mentions from satisfying the reachability check and lets an index expose focused child
+routes without copying their contents into the floor.
+
 ## Summary First, Fractally
 
 Progressive disclosure applies inside documents, not only between them. A document's first paragraph answers
@@ -71,8 +85,10 @@ not check keep their existing status — do not silently launder them into verif
 
 ## Checkable Subset
 
-The package checker enforces: every living load-at-need document reachable from the routing roots (dated
-records are reached by browsing their genre directory and are exempt), read-when cells present and non-topical
-(heuristically: non-empty), and no line-number references in living unpinned documents. An audit additionally
-reads for: cold-start violations, genre mixing, missing stamps, missing authority lines, inventory counts, and
+The package checker enforces: every living load-at-need document reachable through structural routes from the
+routing roots (dated records are reached by browsing their genre directory and are exempt), trigger cells
+present and non-topical (heuristically: non-empty), and no line-number references in living unpinned
+documents. It recognizes trigger-keyed routing-table target cells and standalone Markdown inclusion links as
+structural; inline links and incidental backticked paths remain references. An audit additionally reads for:
+cold-start violations, genre mixing, missing stamps, missing authority lines, inventory counts, and
 paraphrased error messages.

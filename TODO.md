@@ -426,7 +426,8 @@ evidence of activating anyway.
 ## `agents-management` Rework Behind `context-architecture`
 
 Deferred by the 2026-09-06 grilling (decision record:
-[../docs/plans/context-architecture-skill.md](../docs/plans/context-architecture-skill.md)): once
+[../docs/plans/archived/context-architecture-skill.md](../docs/plans/archived/context-architecture-skill.md)):
+once
 `context-architecture` has survived first real use, align `agents-management`'s templates with the named
 default layout, refresh `references/loading-model.md`'s client adapters, and run both skills through the
 deferred `skill-review` pass together. The minimal routing edits (description ownership line, initialize and

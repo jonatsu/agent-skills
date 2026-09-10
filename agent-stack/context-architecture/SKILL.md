@@ -53,7 +53,8 @@ Five concerns, in order of leverage. Topology is deliberately last.
 2. **Read-when sharpness.** Every index entry, document header, and skill description is a load/skip
    classifier. Phrase it as the trigger condition ("read before gating a change"), never the topic
    ("verification"). It must work under the lowest common denominator of identifier plus text search, with no
-   client discovery features assumed.
+   client discovery features assumed. Keep structural routes distinct from inline references so an incidental
+   mention cannot masquerade as a usable path.
 3. **Genre separation with declared authority.** Each document belongs to exactly one genre, and each genre
    declares its update semantics and its place in the override chain (stored guidance is advisory; live code
    and the user's current instruction outrank it). The genre table and named default layout live in
@@ -62,27 +63,30 @@ Five concerns, in order of leverage. Topology is deliberately last.
 4. **Truth maintenance.** One owner per fact; generate what is derivable from code and never hand-edit the
    output; stamp non-obvious facts with what they were verified against, not just when; gate what enters
    (no secrets, no speculation, no unverified recall); schedule consolidation and pruning, not only appending.
-5. **Lazy topology.** Hub-and-spoke. Shard a hub only when its own index no longer fits one comfortable read;
-   add a routing level only when the number of hubs does the same. Graphs emerge from evidence; never design
-   one up front.
+5. **Lazy topology.** Hub-and-spoke. Put a destination directly in the floor only when the agent must choose it
+   there; route related destinations through a read-when hub before direct rows crowd the floor. Shard a hub
+   only when its own index no longer fits one comfortable read. Graphs emerge from evidence; never design one
+   up front.
 
 ## Cross-Agent Invariants
 
 - Durable state lives in agent-neutral files in the repository. The floor is `AGENTS.md`, with `CLAUDE.md` as
   a symlink where a client requires that name.
 - Client capabilities — skill auto-discovery, subagents, lifecycle hooks, proprietary memory, auto-compaction
-  — are progressive enhancement. Every one of them gets a files-based fallback: any skill's trigger condition
-  also appears as a read-when line in the floor's routing table, so an agent with no discovery still finds the
-  workflow.
+  — are progressive enhancement. Every one of them gets a files-based fallback reachable from the floor. Put
+  a skill's trigger in the floor only when it is a floor-level choice; otherwise route the floor to a focused
+  skill or workflow index whose own read-when entries expose the trigger without taxing unrelated sessions.
 - Deterministic obligations belong to repository-run gates (pre-commit, CI, task runner), which fire whichever
   agent edits. Prose orients; gates enforce. When a rule must hold every time, propose the gate.
 
 ## Enforcement
 
 Run `scripts/check_context_architecture.py <repository-root>` after any change and resolve every finding. It
-measures the system level: documents no index reaches, routing entries without a read-when condition, and
-line-number references that rot. Pair it with `agents-management`'s `check_agent_context.py` for the
-instruction-file level; neither substitutes for the other. Propose wiring both into the repository's gates.
+measures the system level: documents no structural route reaches, routing entries without a trigger condition,
+and line-number references that rot. A structural route is a target in a trigger-keyed routing table or a
+standalone Markdown inclusion link; inline links and incidental backticked paths do not establish reachability.
+Pair it with `agents-management`'s `check_agent_context.py` for the instruction-file level; neither substitutes
+for the other. Propose wiring both into the repository's gates.
 
 Scripts prove structure, not behavior. The behavioral acceptance gate is the walk test in
 [references/walk-test.md](references/walk-test.md); a context system nobody has walked is unmeasured, and its
@@ -90,7 +94,8 @@ efficiency claims are hypotheses.
 
 ## Completion
 
-- Every created or moved document sits in exactly one genre and is reachable from the floor's routing table.
+- Every created or moved document sits in exactly one genre and is reachable through structural routes rooted
+  in the floor.
 - The floor is no longer than the work found it, or the report states what was relocated and where.
 - Both checkers pass, or every remaining finding is reported with a reason.
 - Structural moves, deferred decisions, and unverified claims are reported explicitly.

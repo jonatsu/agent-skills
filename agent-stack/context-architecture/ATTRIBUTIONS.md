@@ -1,10 +1,10 @@
 # Attributions
 
 External sources whose reading shaped this skill's content. No text or code was copied from any of them; the
-influences below are adopted ideas, named per the repository's provenance policy. Ideas not listed —
-the genre taxonomy with per-genre authority declarations, the named default layout (merged from the author's
-`nix-config` and `agent-setup` conventions), read-when phrasing, verified-against stamps, the search-surface
-rule, and the checker — were expressed independently, informed by the general framing below.
+influences below are adopted ideas, named per the repository's provenance policy. Ideas not listed — the genre
+taxonomy with per-genre authority declarations, the named default layout (merged from the author's
+`nix-config` and `agent-setup` conventions), read-when phrasing, verified-against stamps, and the search-surface
+rule — were expressed independently, informed by the general framing below.
 
 - **Van Clief & McDermott, "Interpretable Context Methodology: Folder Structure as Agent Architecture"
   (arXiv:2603.16021)** and its companion repository (RinDig/icm-architect): the walk test (name and core
@@ -23,3 +23,11 @@ rule, and the checker — were expressed independently, informed by the general 
   auditing a repository for significant decisions that were never recorded, added to the Audit branch as a
   coverage question distinct from navigation. The upstream states it as two red flags; the branch wording,
   the decision classes, and the coverage-versus-navigation distinction are this skill's.
+- **Matt Pocock, [“A Complete Guide To AGENTS.md”](https://www.aihero.dev/a-complete-guide-to-agents-md)**
+  (updated 2026-01-18, read 2026-09-11): nested progressive disclosure and the correction from one direct
+  floor entry per skill to a floor-reachable intermediate index. The guidance is independently expressed; no
+  prose, examples, or assets were copied, and the page's license is not relied on.
+- **IWE, [“Inclusion Links”](https://iwe.md/docs/concepts/inclusion-links/)** (read 2026-09-11): distinguishing
+  standalone structural links from inline references, allowing a document to appear under multiple useful
+  parents, and placing relationship context in the parent. The checker and guidance implement those ideas
+  independently without IWE code, prose, examples, or assets; the page's license is not relied on.

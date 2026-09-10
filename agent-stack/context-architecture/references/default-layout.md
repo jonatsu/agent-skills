@@ -48,8 +48,10 @@ table (when X changes, touch Y — freshness is part of done-ness). The routing 
 | File | What it holds | Read when |
 ```
 
-Every document the system wants found has a row or is linked from a document that has one. The read-when cell
-is a trigger condition, not a topic — see [writing-rules.md](writing-rules.md).
+Every living document the system wants found has a structural route from this table. Give a destination a
+direct row only when the floor reader must choose it there; route a related group through one focused index
+when separate rows would tax unrelated sessions. The read-when cell is a trigger condition, not a topic, and
+links deeper in the route must use the structural forms in [writing-rules.md](writing-rules.md).
 
 ## Lazy Growth Order
 
