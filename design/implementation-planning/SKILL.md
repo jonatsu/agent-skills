@@ -14,9 +14,9 @@ product or architecture decisions outside the plan.
 
 ## Verify the Design Basis
 
-Read the governing design, repository instructions, relevant implementation, tests, interfaces, migrations, operational
-assets, and configured tooling before decomposing work. Cite the design and keep shared constraints in one authoritative
-home.
+Read the governing requirements specification and design, repository instructions, relevant implementation, tests,
+interfaces, migrations, operational assets, and configured tooling before decomposing work. Cite the specification and
+design when they exist, and keep each shared constraint in its authoritative home.
 
 Planning normally requires an accepted technical design. Requirements alone are insufficient when behavior,
 architecture, interfaces, failure handling, compatibility, or migration choices remain open. A small change may use an
@@ -30,8 +30,9 @@ independent, already-designed branches and state the limit.
 
 When the design is incomplete, record the exact gap, its downstream consequence, and the design section or owner that
 must resolve it. Stop only the blocked branch; independent, already-designed work may continue. Return missing behavior,
-architecture, interfaces, failure policy, compatibility, or migration strategy to technical design. Return changed
-purpose or product scope to brainstorming.
+architecture, interfaces, failure policy, compatibility, or migration strategy to technical design. Return missing or
+contradictory intended behavior and acceptance to `requirements-specification`. Return changed purpose or product scope
+to brainstorming.
 
 Repository inspection may settle implementation-local facts and ordinary techniques already constrained by the design
 and local conventions. Do not use that allowance to hide a public-behavior, compatibility, material-cost, or
@@ -40,6 +41,8 @@ architecture decision.
 Check acceptance from the design's substance, not its status label. A document is not accepted for planning when it
 contains consequential recommendations awaiting confirmation, unresolved behavioral or safety obligations, or
 architecture added after the user's latest confirmation. Return those gaps to technical design before decomposing work.
+When an accepted specification exists, require the design to name a compatible revision; a newer accepted requirement
+keeps the affected planning branch blocked until technical design reconciles it.
 
 ## Establish Required Practices
 
@@ -73,7 +76,7 @@ an accepted stable interface. Keep shared files, generated artifacts, and depend
 For every unit, make these facts recoverable without forcing one rigid template:
 
 - **Outcome:** the behavior, capability, migration state, or visible result;
-- **Design obligations:** the accepted decisions or requirements it satisfies;
+- **Requirements and design obligations:** the accepted behavior and technical decisions it satisfies;
 - **Affected surfaces:** verified files, symbols, configuration, data, documentation, or operational assets;
 - **Dependencies:** prerequisites, consumed and produced interfaces, and downstream unlocks;
 - **Required practices:** applicable skills, coding rules, and the preflight step that applies them;
@@ -111,8 +114,8 @@ Use test-driven development when a focused automated test can state the changed 
 documentation, mechanical configuration, exploratory integration, or work whose suitable evidence lies at another
 boundary. Follow repository commit policy instead of requiring one commit per work unit.
 
-End the complete plan with system-level verification traced to the governing outcome. File existence, task completion,
-or clean version-control state alone cannot establish completion.
+End the complete plan with system-level verification traced through the design to the governing requirements and
+outcome. File existence, task completion, or clean version-control state alone cannot establish completion.
 
 ## Put Review Stages in the Work
 
@@ -158,14 +161,16 @@ Resolve the plan path in this order:
 6. Otherwise propose `docs/plans/<name>-implementation-plan.md` and ask once.
 7. Outside a repository, ask for a destination.
 
-Use two or three descriptive kebab-case words before `-implementation-plan.md` in the fallback. Link the plan and design
-to each other while preserving their authority: the design owns system behavior; the plan owns execution order.
+Use two or three descriptive kebab-case words before `-implementation-plan.md` in the fallback. Link the specification,
+design, and plan while preserving their authority: the specification owns intended observable behavior, the design owns
+its technical realization, and the plan owns execution order.
 
-Before calling the plan ready, check design coverage, dependency order, interface consistency, ownership, verified
-touchpoints, required-practice preflight, review-stage placement, reviewer assignment, finding-resolution gates,
-review cost, verification strength, and final integration evidence. Remove placeholders and expose unavailable checks
-and unresolved risks. Require the completion record to identify applied guidance, reviewed revisions, results,
-finding dispositions, and unverified obligations. An implementer should not need to reconstruct the design conversation.
+Before calling the plan ready, check requirement and design coverage, source-revision consistency, dependency order,
+interface consistency, ownership, verified touchpoints, required-practice preflight, review-stage placement, reviewer
+assignment, finding-resolution gates, review cost, verification strength, and final integration evidence. Remove
+placeholders and expose unavailable checks and unresolved risks. Require the completion record to identify applied
+guidance, reviewed revisions, results, finding dispositions, and unverified obligations. An implementer should not need
+to reconstruct the specification or design conversation.
 
 Saving or completing a plan does not authorize implementation. Continue only when the user's request already supplied
 that authority; otherwise present the plan and stop before changing the system.

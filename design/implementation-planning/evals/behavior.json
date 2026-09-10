@@ -167,6 +167,31 @@
         "Does not claim self-review is independent, silently waive required review, launch subagents, or request repeated approval already covered by the task.",
         "Allows independent authorized work to continue and broadens rechecks only for a concrete new impact or failure."
       ]
+    },
+    {
+      "id": "specification-design-traceability",
+      "prompt": "Write the implementation plan for the accepted account-export specification and its accepted technical design. The specification uses stable requirement anchors for format selection, resumability, retention, and cross-tenant nondisclosure. Do not implement anything.",
+      "required_inputs": [
+        "An accepted requirements specification and a compatible accepted technical design that maps system guarantees to its anchors."
+      ],
+      "behavior": "Trace implementation and evidence through design to intended behavior.",
+      "outcomes": [
+        "Names compatible governing specification and design revisions.",
+        "Traces work units through design obligations to the existing requirement anchors without duplicating their text.",
+        "Maps final behavioral and negative-guarantee evidence to the governing requirements.",
+        "Keeps requirements authority, technical realization, and execution order in their separate artifacts."
+      ]
+    },
+    {
+      "id": "stale-design-after-specification-change",
+      "prompt": "Plan the accepted report-sharing design. The governing specification was revised after design approval to prohibit public links, but the design still includes them.",
+      "behavior": "Stop planning from a design made stale by an accepted requirement change.",
+      "outcomes": [
+        "Detects that the accepted specification revision and design are incompatible.",
+        "Stops the affected planning branch and returns public-link realization to technical design.",
+        "Does not weaken the newer requirement, silently repair the design, or produce conditional implementation tasks.",
+        "Allows only genuinely independent work whose design remains compatible with the specification."
+      ]
     }
   ]
 }

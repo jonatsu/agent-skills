@@ -177,18 +177,18 @@ typing, testing, async, error handling) keep their own procedures.
 Skills live at `shared/<domain>/<skill>/`; one flat directory had stopped being a list anyone could read.
 `kasetto/base.yaml` is the authoritative list of domains, one entry each.
 
-| Domain         | Holds                                                                 |
-| -------------- | --------------------------------------------------------------------- |
-| `agent-stack/` | Authoring the setup itself — skills, prompts, agent instruction files |
-| `context/`     | Context and token economy: handoffs, compression, token budgets       |
-| `design/`      | Shaping and recording a design before it is built                     |
-| `development/` | Doing the work: debugging, testing, dev-environment tooling           |
-| `embedded/`    | Embedded Linux bring-up, Buildroot, kas, U-Boot, Yocto/OpenEmbedded   |
-| `git/`         | Git, GitHub, and repository hygiene                                   |
-| `nix/`         | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv       |
-| `ops/`         | Machines and runtimes: containers, systemd, dotfiles                  |
-| `review/`      | Reviewing code and designs                                            |
-| `writing/`     | Human-facing prose                                                    |
+| Domain         | Holds                                                                  |
+| -------------- | ---------------------------------------------------------------------- |
+| `agent-stack/` | Authoring the setup itself — skills, prompts, agent instruction files  |
+| `context/`     | Context and token economy: handoffs, compression, token budgets        |
+| `design/`      | Shaping ideas, requirements, and technical design before work is built |
+| `development/` | Doing the work: debugging, testing, dev-environment tooling            |
+| `embedded/`    | Embedded Linux bring-up, Buildroot, kas, U-Boot, Yocto/OpenEmbedded    |
+| `git/`         | Git, GitHub, and repository hygiene                                    |
+| `nix/`         | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv        |
+| `ops/`         | Machines and runtimes: containers, systemd, dotfiles                   |
+| `review/`      | Reviewing code and designs                                             |
+| `writing/`     | Human-facing prose                                                     |
 
 **The domain level exists only in this repository.** Kasetto deploys flat, so every agent reads
 `<skills-dir>/<skill>/` and no skill needs to know where its source lives. Two consequences:

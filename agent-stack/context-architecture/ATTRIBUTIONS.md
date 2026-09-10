@@ -31,3 +31,8 @@ rule — were expressed independently, informed by the general framing below.
   standalone structural links from inline references, allowing a document to appear under multiple useful
   parents, and placing relationship context in the parent. The checker and guidance implement those ideas
   independently without IWE code, prose, examples, or assets; the page's license is not relied on.
+- **Addy Osmani, [“How to write a good spec for AI agents”](https://addyosmani.com/blog/good-spec/)**
+  (published 2026-01-13, read 2026-09-11): version-controlled specifications as durable intended-behavior
+  context and modular retrieval for large specifications. The genre authority and lazy layout rules are
+  independently expressed; no prose, examples, images, templates, code, or assets were copied, and the page's
+  license is not relied on.

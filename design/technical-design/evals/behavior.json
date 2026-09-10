@@ -124,6 +124,31 @@
         "Keeps verification commands and implementation order out of the design.",
         "Hands the settled guarantee to planning as a design obligation."
       ]
+    },
+    {
+      "id": "accepted-specification-input",
+      "prompt": "Design the technical realization of the accepted tenant-export specification supplied with this request. Trace its observable requirements and negative guarantees, but do not rewrite the specification or plan implementation.",
+      "required_inputs": [
+        "An accepted requirements specification with a named revision, observable behavior, acceptance criteria, and a cross-tenant disclosure prohibition."
+      ],
+      "behavior": "Realize an accepted requirements specification without taking over its authority.",
+      "outcomes": [
+        "Identifies the governing accepted specification revision.",
+        "Traces consequential system guarantees to existing requirement anchors or identifiers without inventing a new ID scheme.",
+        "Preserves intended observable behavior while owning architecture, interfaces, state, failure, recovery, and operational decisions.",
+        "Does not copy the specification into the design or introduce new product policy."
+      ]
+    },
+    {
+      "id": "missing-requirement-return",
+      "prompt": "While designing scheduled report delivery, you discover the accepted specification does not say what users observe when delivery repeatedly fails or whether they may retry manually. Continue the design.",
+      "behavior": "Return missing observable behavior to requirements specification.",
+      "outcomes": [
+        "Identifies repeated-failure and manual-retry behavior as requirements gaps rather than architecture details.",
+        "Stops the affected design branch and returns those questions to requirements specification.",
+        "Continues only independent technical decisions that do not depend on the missing behavior.",
+        "Does not silently choose product behavior to keep the design moving."
+      ]
     }
   ]
 }

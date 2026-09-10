@@ -77,6 +77,17 @@ The source informed outcome-first reframing for solution-anchored seeds and cons
 retains no source prose, fixed phases, framework catalogue, question or idea counts, scoring matrix, MVP template,
 mandatory artifact, save path, script, or tone instructions.
 
+## Addy Osmani, “How to write a good spec for AI agents”
+
+- Source: [addyosmani.com/blog/good-spec/](https://addyosmani.com/blog/good-spec/)
+- Published: 2026-01-13; read 2026-09-11
+- Source license: no reuse license stated on the page; not relied on
+- Relationship: idea-level influence, independently expressed
+
+The article informed the explicit specification phase between an accepted brainstorm and technical design, while this
+skill preserves its existing proportionality and no-premature-acceptance boundaries. No source prose, examples, images,
+templates, code, or assets are copied, adapted, translated, or vendored.
+
 ## Upstream License
 
 The Superpowers source is used under the MIT License. `LICENSE.upstream` preserves the verified upstream license text.

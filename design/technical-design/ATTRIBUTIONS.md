@@ -38,3 +38,15 @@ upstream prose, examples, code, fixed template, execution protocol, or harness-s
 The source informed the boundary between current behavior and intended policy, risk-scaled depth, and explicit negative
 system guarantees. This skill retains no source prose, acceptance-brief template, criterion identifiers, revision
 protocol, or combined requirements and implementation workflow.
+
+## Addy Osmani, “How to write a good spec for AI agents”
+
+- Source: [addyosmani.com/blog/good-spec/](https://addyosmani.com/blog/good-spec/)
+- Published: 2026-01-13; read 2026-09-11
+- Source license: no reuse license stated on the page; not relied on
+- Relationship: idea-level influence, independently expressed
+
+The article informed the accepted-specification input and traceability seam added between requirements and technical
+design. This skill independently preserves architecture as a separate artifact rather than adopting the article's
+blended PRD/SRS/technical-plan shape. No source prose, examples, images, templates, code, or assets are copied, adapted,
+translated, or vendored.

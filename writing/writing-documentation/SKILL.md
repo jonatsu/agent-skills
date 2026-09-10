@@ -1,6 +1,6 @@
 ---
 name: writing-documentation
-description: "Design, draft, or review documentation of any kind so its reader understands or acts on the first pass, and match the house style of an existing documentation set. Use for tutorials, how-to guides, references, explanations, decision records and ADRs, release notes, runbooks, onboarding and process documents, and technical documentation specifically. Not for READMEs, quickstarts, or documentation landing pages, which are writing-readmes. Not for prose-level editing, which is writing-for-humans."
+description: "Design, draft, or review documentation so its reader understands or acts on the first pass, matching an existing house style. Use for tutorials, how-to guides, references, explanations, decisions and ADRs, release notes, runbooks, onboarding, process, and technical documentation. Not for READMEs, quickstarts, or docs landing pages (writing-readmes), requirements specifications, PRDs, or SRSs (requirements-specification), or prose-level editing (writing-for-humans)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -15,6 +15,10 @@ Technical documentation for developers is one case among these, not the boundary
 Use `writing-readmes` for a project's front door — the README, the quickstart, the documentation landing page.
 Those are read by a stranger deciding whether to care; everything this skill owns is read by someone who
 already chose the project.
+
+Use `requirements-specification` for product or feature specifications, PRDs, SRSs, requirements, and acceptance
+criteria. Those artifacts own intended observable behavior and its acceptance; this skill does not supply that
+authority model.
 
 The goal is a document that lets its intended reader understand the subject or complete the task on the first
 pass. This skill owns the document: its purpose, reader, organization, examples, document type, and the house

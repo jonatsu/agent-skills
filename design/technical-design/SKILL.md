@@ -1,6 +1,6 @@
 ---
 name: technical-design
-description: Design how a bounded software system or change should behave and fit together before implementation planning. Use for architecture, interfaces, state and data flow, failure handling, compatibility, migration, rollout, or rollback decisions; not for early ideation, task sequencing, or reviewing an already settled design.
+description: Design how a bounded software system or change should realize accepted requirements before implementation planning. Use for architecture, interfaces, state and data flow, failure handling, compatibility, migration, rollout, or rollback decisions; not for ideation, requirements specification, task sequencing, or reviewing an already settled design.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -14,18 +14,19 @@ design.
 
 ## Establish the Design Basis
 
-Read the governing overview or brainstorming draft, repository instructions, relevant implementation, tests,
-interfaces, operations, and prior decisions before asking questions. Recover facts from those sources instead of asking
-the user to repeat them.
+Read the governing requirements specification, overview or brainstorming draft, repository instructions, relevant
+implementation, tests, interfaces, operations, and prior decisions before asking questions. Recover facts from those
+sources instead of asking the user to repeat them.
 
-Technical design may start from either:
+Technical design may start from:
 
-- a brainstorming draft with a legible purpose, selected direction, scope, constraints, and open design questions; or
+- an accepted requirements specification with settled observable behavior and acceptance;
+- a brainstorming draft whose bounded direction already supplies the required observable behavior and constraints; or
 - a bounded request whose outcome and scope are explicit enough that widening possibilities would add no value.
 
 Return to brainstorming when a discovery changes the intended outcome, target user, product direction, or scope. Record
-the conflict and keep the former direction provisional until the user resolves it. Do not disguise a product decision as
-architecture.
+the conflict and keep the former direction provisional until the user resolves it. Return missing, contradictory, or
+unaccepted user-visible behavior to `requirements-specification`. Do not disguise a product decision as architecture.
 
 ## Investigate Before Deciding
 
@@ -49,6 +50,10 @@ Keep evidence and judgment distinct:
 - label recommendations and explain their rationale;
 - identify provisional assumptions and the evidence needed to settle them; and
 - distinguish blocking questions from details that may safely wait for implementation.
+
+When a governing specification exists, identify the accepted revision and trace each consequential system guarantee to
+the requirement it realizes. Use existing stable requirement identifiers or anchors; do not invent an ID scheme during
+design. A newer accepted specification makes the affected design provisional until the change is reconciled.
 
 Present alternatives only when a real consequential choice remains. Explain the difference, benefit, cost, likely
 failure mode, and reversibility of each live option. Recommend a direction with reasons. Facts may be researched;
@@ -79,9 +84,9 @@ source line ranges, commits, task assignments, or implementation status.
 ## Write the Design Artifact
 
 Use an outcome-based structure rather than filling a fixed template. Give the reader enough context to understand the
-governing intent, local scope, evidence, chosen system shape, behavior, interfaces, important paths, consequences,
-alternatives, risks, assumptions, and open questions. End with a planning handoff that names settled obligations without
-sequencing their implementation.
+governing specification and intent, local scope, requirement coverage, evidence, chosen system shape, behavior,
+interfaces, important paths, consequences, alternatives, risks, assumptions, and open questions. End with a planning
+handoff that names settled obligations without sequencing their implementation.
 
 In the handoff, identify invariants, failure modes, and rollout/recovery obligations that need particular scrutiny or
 qualification, with the evidence boundary and owner where known. Link applicable policy or coding constraints instead
@@ -108,7 +113,8 @@ directory, or an unrelated collision require user direction. Saving a design doe
 
 Before handing the design to implementation planning, check that:
 
-- purpose and scope still match the governing intent;
+- purpose, scope, and observable behavior still match the governing specification or intent;
+- consequential requirements map to system guarantees without invented product policy;
 - consequential behavior and architecture no longer require invention;
 - responsibilities, interfaces, and state or data flows agree;
 - consequential invariants and prohibited behavior are settled;

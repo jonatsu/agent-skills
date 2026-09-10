@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: Collaborate on an unformed idea by widening useful possibilities, narrowing a direction, or saving an active brainstorm as an explicitly incomplete design or plan draft. Use for ideation, shaping an early concept, scoping an opportunity, or preparing its design handoff; not for technical design, implementation planning, criticism of a settled plan, or a generic session handoff.
+description: Collaborate on an unformed idea by widening useful possibilities, narrowing a direction, or saving an active brainstorm as an explicitly incomplete specification or design draft. Use for ideation, shaping an early concept, scoping an opportunity, or preparing its next-phase handoff; not for requirements specification, technical design, implementation planning, criticism of a settled plan, or a generic session handoff.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,9 +8,9 @@ metadata:
 
 # Brainstorming
 
-Turn an unformed idea into a design or plan draft that preserves the user's intent and gives technical design a useful
-starting point. The draft stays explicitly incomplete: it does not settle architecture, interfaces, failure handling, or
-implementation order.
+Turn an unformed idea into a draft that preserves the user's intent and gives requirements specification or technical
+design a useful starting point. The draft stays explicitly incomplete: it does not settle detailed requirements,
+architecture, interfaces, failure handling, or implementation order.
 
 ## Work Conversationally
 
@@ -34,7 +34,7 @@ After a direction starts to narrow, check whether its goal describes an observab
 an activity from available context when the interpretation is well supported and reversible. Ask one consequential
 question when the missing outcome could change the product direction.
 
-Identify one observable success signal before technical-design handoff. Use a binary observation or human judgment when
+Identify one observable success signal before the next-phase handoff. Use a binary observation or human judgment when
 honest measurement is unavailable. Quantify only when the metric, method, and threshold represent genuine success.
 
 Ask one consequential question at a time. Use bounded options when they reveal the decision; use an open question when
@@ -70,7 +70,8 @@ compliance duties as user-supplied constraints or provisional assumptions.
 
 Recommend with reasons but do not silently make a consequential product decision. Ask for confirmation when a next step
 would change an established purpose, intent, desired outcome, or scope; select an unchosen consequential branch; accept
-material cost, risk, compatibility loss, or an irreversible direction; or hand a draft to technical design.
+material cost, risk, compatibility loss, or an irreversible direction; or hand a draft to specification or technical
+design.
 
 When the user asks which consequential product direction to choose, give a conditional recommendation and its reason
 before asking for their decision. If the available evidence cannot support a recommendation, identify the smallest
@@ -81,20 +82,21 @@ A clear choice in the user's ordinary response is already confirmation. Do not a
 through research, labeled recommendations, reversible provisional assumptions, and parked tangents do not need a
 separate confirmation.
 
-If a discovery changes the intended outcome, target user, or product scope while technical design or planning is under
-way, return to brainstorming. Keep the former direction provisional until the user confirms the revised intent.
+If a discovery changes the intended outcome, target user, or product scope while specification, technical design, or
+planning is under way, return to brainstorming. Keep the former direction provisional until the user confirms the
+revised intent.
 
 ## Draft and Handoff
 
 Synthesize an explicitly incomplete draft when the intended outcome, promising direction, scope, consequential
-constraints, observable success signal, and open questions are legible. It should let a technical designer continue
-without reconstructing the conversation or inventing purpose or scope.
+constraints, observable success signal, and open questions are legible. It should let a specification writer or
+technical designer continue without reconstructing the conversation or inventing purpose or scope.
 
 Record the original idea, purpose, intent, desired outcome, branches considered, current direction, scope, exclusions,
 parked ideas, consequential constraints and assumptions, observable success signal, bounded questions for technical
-design, and whether each item is a user decision, recommendation, or provisional idea. Record consequential prohibited
-outcomes when they define success. Add actors, prior art, detailed measurements, or rejected alternatives only when they
-help the later reader.
+design or requirements specification, and whether each item is a user decision, recommendation, or provisional idea.
+Record consequential prohibited outcomes when they define success. Add actors, prior art, detailed measurements, or
+rejected alternatives only when they help the later reader.
 
 When the work advances a larger initiative, reference its governing overview near the beginning of the saved draft and
 state how the selected direction advances that intent. Do not hand a draft to technical design when its direction weakens
@@ -121,5 +123,9 @@ Resolve a saved draft's path in this order:
 For the fallback, use two or three descriptive kebab-case words plus `-draft.md`. Reuse an existing file only when it is
 the same draft. State the resolved location before saving.
 
-Before technical-design handoff, ask whether the draft accurately captures what the user wants to refine. This single
+Route the handoff to `requirements-specification` when user-visible behavior, journeys, or acceptance still need a
+durable contract. A small bounded direction whose requirements are already explicit may proceed directly to
+`technical-design`; do not manufacture a specification merely to fill a phase.
+
+Before the next-phase handoff, ask whether the draft accurately captures what the user wants to refine. This single
 fidelity confirmation confirms intent, not completeness or implementation authorization.

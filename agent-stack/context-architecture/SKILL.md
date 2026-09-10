@@ -20,8 +20,9 @@ to them, when to shard, and how the whole is measured. Instruction-file internal
 `AGENTS.md`/`CLAUDE.md` content, scoped instructions, `llms.txt` — belong to `agents-management`; invoke it as
 the executor for those files. Extracting a repeated procedure into a skill belongs to `skill-forge`.
 
-Repository facts are the authority. Verify every claim about the repository against it or label the claim
-unverified. An existing repository's established conventions outrank this skill's defaults.
+Repository facts are the authority for current behavior. Accepted requirements are the authority for intended
+observable behavior within their scope. Verify each claim against its applicable authority or label it unverified. An
+existing repository's established conventions outrank this skill's defaults.
 
 ## Choose the Branch
 
@@ -55,9 +56,10 @@ Five concerns, in order of leverage. Topology is deliberately last.
    ("verification"). It must work under the lowest common denominator of identifier plus text search, with no
    client discovery features assumed. Keep structural routes distinct from inline references so an incidental
    mention cannot masquerade as a usable path.
-3. **Genre separation with declared authority.** Each document belongs to exactly one genre, and each genre
-   declares its update semantics and its place in the override chain (stored guidance is advisory; live code
-   and the user's current instruction outrank it). The genre table and named default layout live in
+3. **Genre separation with declared authority.** Each document belongs to exactly one genre, and each genre declares
+   its update semantics and its place in the override chain. Live code outranks descriptions of current behavior;
+   accepted specifications govern intended observable behavior; the user's current instruction outranks stored
+   guidance. The genre table and named default layout live in
    [references/default-layout.md](references/default-layout.md). Mixing genres — a living reference inside a
    frozen decision, state notes inside the floor — is the root failure behind most context rot.
 4. **Truth maintenance.** One owner per fact; generate what is derivable from code and never hand-edit the

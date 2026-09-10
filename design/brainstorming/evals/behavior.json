@@ -137,9 +137,9 @@
         "The governing overview aims to make neighbourhood borrowing practical for people without smartphones.",
         "We considered an app-first service and a lightweight reservation queue with volunteer pickup. The user chose the latter.",
         "The current scope is tool reservations and pickup coordination. A marketplace is parked. Technical notification and identity details remain open.",
-        "The user confirms that this captures the desired technical-design handoff."
+        "The user confirms that this captures the desired next-phase handoff."
       ],
-      "behavior": "Save a design-ready but explicitly incomplete handoff draft.",
+      "behavior": "Save a specification-ready or design-ready but explicitly incomplete handoff draft.",
       "outcomes": [
         "Resolves the documented draft location and uses a descriptive two- or three-word kebab-case fallback filename ending in -draft.md.",
         "References the governing overview near the beginning, states how the direction advances its intent, and does not hand off a direction that weakens that intent.",
@@ -147,7 +147,8 @@
         "Avoids unearned architecture, interfaces, schemas, file layouts, and task sequencing.",
         "Writes exactly one descriptive fallback draft under docs/plans in the copied workspace, so it can be inspected before cleanup.",
         "Uses brainstorming rather than a generic handoff workflow to save an active product brainstorm.",
-        "Asks one handoff-fidelity confirmation before handing the draft to technical design, unless a clear user response already supplies it."
+        "Routes to requirements specification when journeys or acceptance still need a durable contract, while allowing direct technical design when the bounded direction already supplies them.",
+        "Asks one handoff-fidelity confirmation before the next phase, unless a clear user response already supplies it."
       ]
     },
     {
@@ -203,7 +204,7 @@
         "Records the requested outcome, scope, constraints, and useful success signals when known.",
         "Declines or defers architecture-dependent acceptance detail.",
         "Does not create a fixed acceptance-brief template merely because the prompt requests one.",
-        "Explains that detailed requirements or design evidence needs a later, appropriately scoped activity."
+        "Explains that detailed requirements belong to requirements specification and architecture-dependent evidence belongs to technical design or planning."
       ]
     },
     {
@@ -216,6 +217,17 @@
         "Keeps the chatbot visible as a possible branch rather than silently discarding it.",
         "Asks exactly one question that resolves the consequential outcome choice.",
         "Does not invent chatbot architecture or implementation tasks."
+      ]
+    },
+    {
+      "id": "requirements-specification-handoff",
+      "prompt": "We chose a shared household emergency-supplies inventory and agreed who it serves and what is out of scope. The user journeys, denial cases, and acceptance behavior are not specified yet. Prepare the next-phase handoff without designing the system.",
+      "behavior": "Route an accepted direction with unresolved observable behavior to requirements specification.",
+      "outcomes": [
+        "Preserves the accepted direction, purpose, scope, non-goals, assumptions, and success signal.",
+        "Routes the draft to requirements specification because user-visible behavior and acceptance remain open.",
+        "Does not invent detailed requirements, architecture, interfaces, files, or implementation tasks.",
+        "Does not force technical design to invent product behavior."
       ]
     },
     {

@@ -50,3 +50,15 @@ not copy its prose, examples, fixed paths, size thresholds, tracker workflow, or
 The source informed safe verification environments, evidence for prohibited side effects, and non-bijective mappings
 between obligations and checks. This skill retains no source prose, acceptance-brief template, criterion identifiers,
 revision protocol, fixed criterion count, or implementation continuation behavior.
+
+## Addy Osmani, “How to write a good spec for AI agents”
+
+- Source: [addyosmani.com/blog/good-spec/](https://addyosmani.com/blog/good-spec/)
+- Published: 2026-01-13; read 2026-09-11
+- Source license: no reuse license stated on the page; not relied on
+- Relationship: idea-level influence, independently expressed
+
+The article informed the specification-to-design-to-task traceability seam and explicit stale-specification check. This
+skill independently keeps repository commands, verification environments, work decomposition, and review gates in the
+implementation plan rather than the requirements specification. No source prose, examples, images, templates, code, or
+assets are copied, adapted, translated, or vendored.

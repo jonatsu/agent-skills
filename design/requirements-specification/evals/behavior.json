@@ -1,0 +1,121 @@
+{
+  "skill_name": "requirements-specification",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "record": [
+      "client",
+      "model",
+      "date",
+      "source_revision",
+      "prompt",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "material_cost",
+      "result"
+    ],
+    "grading": "Grade outcomes from the response, written artifacts, and trace. Do not require exact wording or headings."
+  },
+  "cases": [
+    {
+      "id": "accepted-direction-to-spec",
+      "prompt": "Write the requirements specification for the accepted neighborhood tool-library direction. Residents reserve tools, volunteers coordinate pickup, access must not require a smartphone, and the marketplace idea is out of scope. Do not design the system or plan implementation.",
+      "behavior": "Turn an accepted direction into an observable behavioral contract.",
+      "outcomes": [
+        "Preserves the purpose, actors, selected direction, smartphone-access constraint, and marketplace exclusion.",
+        "Defines representative success, error, denial, interruption, and recovery behavior where consequential.",
+        "Separates accepted decisions, observed facts, assumptions, recommendations, and blocking questions.",
+        "Provides evidence-bearing acceptance criteria without choosing architecture, files, commands, or task order.",
+        "Keeps the specification proposed until the complete synthesis receives product-authority confirmation."
+      ]
+    },
+    {
+      "id": "trivial-change-no-prd",
+      "prompt": "Write a full PRD with requirement IDs for changing the CLI's existing --colour default from always to auto. The requested default, help text, compatibility behavior, and acceptance observation are already explicit; the repository has an established implementation pattern.",
+      "behavior": "Avoid specification ceremony for an already-specified trivial change.",
+      "outcomes": [
+        "Recognizes that the request already settles observable behavior, boundaries, and acceptance.",
+        "Does not manufacture a PRD, requirement catalogue, revision protocol, or identifier scheme.",
+        "Routes the remaining work directly to technical design or implementation planning according to any unresolved technical decision.",
+        "Preserves the supplied requirement instead of widening product scope."
+      ]
+    },
+    {
+      "id": "modular-specification",
+      "prompt": "Specify a multi-tenant reporting product covering report creation, scheduled delivery, sharing, and retention. The draft is too large for one useful review, and different product owners govern delivery and retention. Keep requirements separate from architecture and implementation planning.",
+      "behavior": "Split a large specification by independently governed behavioral domains.",
+      "outcomes": [
+        "Creates or proposes one authoritative overview plus focused child specifications for cohesive behavioral domains.",
+        "Keeps purpose, global scope, vocabulary, shared requirements, status, and dependencies in the overview.",
+        "Does not split by assumed frontend, backend, database, or service layers.",
+        "Uses explicit routes to child specifications without copying shared requirements into each child.",
+        "Keeps architecture, repository commands, and task order outside the specification set."
+      ]
+    },
+    {
+      "id": "optional-requirement-identifiers",
+      "prompt": "Write acceptance criteria for a small password-reset email wording change. Nothing else will cite individual criteria.",
+      "behavior": "Use descriptive structure instead of mandatory requirement IDs.",
+      "outcomes": [
+        "Produces a proportionate behavioral specification or explains why the bounded request is already sufficient.",
+        "Does not add requirement identifiers when no cross-artifact traceability need exists.",
+        "Uses observable acceptance rather than source-shape or task-completion statements."
+      ]
+    },
+    {
+      "id": "negative-guarantee",
+      "prompt": "Specify tenant-safe dashboard exports. Administrators may export filtered records from their own tenant, and exports must never disclose another tenant's data. Authorization architecture is not decided.",
+      "behavior": "Specify prohibited outcomes and acceptance without inventing mechanisms.",
+      "outcomes": [
+        "Records cross-tenant disclosure as an accepted prohibited outcome.",
+        "Defines allowed, denied, failure, and disclosure behavior at the user-visible boundary.",
+        "Provides acceptance examples for own-tenant and other-tenant cases.",
+        "Leaves authorization architecture, test commands, and implementation sequencing to later phases."
+      ]
+    },
+    {
+      "id": "current-code-is-not-policy",
+      "prompt": "The current code retains exports for 30 days, but no product artifact says whether that is intended. Write the export-retention specification.",
+      "behavior": "Keep observed behavior separate from intended requirements.",
+      "outcomes": [
+        "Records 30 days as observed current behavior with its evidence rather than accepted policy.",
+        "Identifies intended retention as a product-authority question.",
+        "Keeps dependent acceptance proposed instead of laundering current code into a requirement.",
+        "Continues only requirements work independent of the unresolved retention policy."
+      ]
+    },
+    {
+      "id": "accepted-specification-change",
+      "prompt": "An accepted account-export specification allowed CSV and JSON. Product has now removed CSV before implementation begins. Update the specification and determine what happens downstream.",
+      "behavior": "Revise an accepted requirement and expose its impact.",
+      "outcomes": [
+        "Requires product authority for the consequential requirement change and records the accepted new state.",
+        "Identifies affected design, plan, tests, documentation, and behavior without rewriting them silently.",
+        "Marks dependent artifacts stale until their owners reconcile the change.",
+        "Does not turn the requirements revision into architecture or implementation work."
+      ]
+    },
+    {
+      "id": "ordinary-feature-spec-language",
+      "prompt": "Turn this approved product brief into a feature spec with user journeys and acceptance criteria, but leave architecture for later.",
+      "behavior": "Handle ordinary feature-spec language without requiring formal terminology.",
+      "outcomes": [
+        "Produces requirements and acceptance rather than brainstorming, technical design, or implementation planning.",
+        "Treats the approved brief as the governing intent and does not reopen settled product direction."
+      ]
+    },
+    {
+      "id": "near-miss-technical-design",
+      "prompt": "Design the internal state machine, API contract, persistence boundary, and rollback behavior for this already accepted feature specification.",
+      "behavior": "Route architecture work to technical design.",
+      "outcomes": [
+        "Does not claim the request merely because it mentions an accepted specification.",
+        "Routes the internal architecture and rollback decisions to technical design."
+      ]
+    }
+  ]
+}
