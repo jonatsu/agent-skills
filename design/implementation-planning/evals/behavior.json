@@ -179,6 +179,7 @@
         "Names compatible governing specification and design revisions.",
         "Traces work units through design obligations to the existing requirement anchors without duplicating their text.",
         "Maps final behavioral and negative-guarantee evidence to the governing requirements.",
+        "Places a specification-conformance comparison in the final integration review without creating a parallel approval path.",
         "Keeps requirements authority, technical realization, and execution order in their separate artifacts."
       ]
     },

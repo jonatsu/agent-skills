@@ -62,3 +62,18 @@ The article informed the specification-to-design-to-task traceability seam and e
 skill independently keeps repository commands, verification environments, work decomposition, and review gates in the
 implementation plan rather than the requirements specification. No source prose, examples, images, templates, code, or
 assets are copied, adapted, translated, or vendored.
+
+## Warp `check-impl-against-spec`
+
+- Upstream publisher: Warp
+- Copyright holder: Denver Technologies, Inc.
+- Source path:
+  [`.agents/skills/check-impl-against-spec/SKILL.md`](https://github.com/warpdotdev/common-skills/blob/f3b58c81d1cfd5d8eabf2e32edb32db2b0573923/.agents/skills/check-impl-against-spec/SKILL.md)
+- Source revision: `f3b58c81d1cfd5d8eabf2e32edb32db2b0573923`, inspected 2026-09-11
+- Source license:
+  [MIT](https://github.com/warpdotdev/common-skills/blob/f3b58c81d1cfd5d8eabf2e32edb32db2b0573923/LICENSE)
+- Relationship: idea-level influence, independently expressed
+
+The source informed the final implementation-to-specification conformance gate and the decision to fold its findings
+into an existing review. This package retains no upstream prose, workflow, fixed filenames, output contract, code, or
+assets.

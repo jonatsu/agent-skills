@@ -187,7 +187,7 @@ Skills live at `shared/<domain>/<skill>/`; one flat directory had stopped being 
 | `git/`         | Git, GitHub, and repository hygiene                                    |
 | `nix/`         | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv        |
 | `ops/`         | Machines and runtimes: containers, systemd, dotfiles                   |
-| `review/`      | Reviewing code and designs                                             |
+| `review/`      | Reviewing code, designs, skills, and specification conformance         |
 | `writing/`     | Human-facing prose                                                     |
 
 **The domain level exists only in this repository.** Kasetto deploys flat, so every agent reads

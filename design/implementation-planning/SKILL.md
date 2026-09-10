@@ -138,6 +138,10 @@ units and dependency order, not just in a closing recommendation:
    applicable qualification evidence. Before consequential external actions, review the exact proposed operation and
    obtain only authorization not already supplied. Unit approval does not supply deployment or risk acceptance.
 
+When an accepted requirements specification governs the outcome, make `spec-conformance-review` or an equivalent
+requirements-to-implementation comparison part of the final integration gate. Feed its material findings into the
+existing review record; do not create a parallel approval path.
+
 Use one focused independent review per substantive unit and one final integration review for multi-unit changes as
 the default. Prefer compact handoffs containing base/head revisions, the relevant diff/contracts, test evidence, and
 open findings. Reuse the reviewer and unchanged evidence; do not replay full session history or review every file or

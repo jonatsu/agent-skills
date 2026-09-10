@@ -1,0 +1,123 @@
+{
+  "skill_name": "spec-conformance-review",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "record": [
+      "client",
+      "model",
+      "date",
+      "source_revision",
+      "prompt",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "material_cost",
+      "result"
+    ],
+    "grading": "Grade outcomes from the response, inspected artifacts, and trace. Do not require exact wording or headings."
+  },
+  "cases": [
+    {
+      "id": "material-requirement-omission",
+      "prompt": "Review this implementation against the accepted export specification and compatible design. The spec requires resumable exports, but the implementation loses all progress after a worker restart. Report findings; do not fix anything.",
+      "behavior": "Report an observable requirement that the implementation does not realize.",
+      "outcomes": [
+        "Traces resumability from the accepted requirement through design to implementation and evidence.",
+        "Classifies lost progress after restart as an implementation defect when the governing artifacts are compatible.",
+        "Explains the user or operational consequence and names evidence that would close the finding.",
+        "Does not modify code, tests, specifications, or review systems."
+      ]
+    },
+    {
+      "id": "safe-equivalent-implementation",
+      "prompt": "The accepted behavior and design require at-most-one active export per account. The design illustrates a database advisory lock, but the implementation uses an equivalent transactional uniqueness constraint with matching concurrency evidence. Review conformance.",
+      "behavior": "Accept safe implementation variation that preserves the contract.",
+      "outcomes": [
+        "Distinguishes the required concurrency guarantee from an illustrative low-level technique.",
+        "Uses the resulting behavior and concurrency evidence rather than requiring literal design wording.",
+        "Does not create a finding merely because the implementation uses a different safe mechanism.",
+        "States the reviewed coverage without adding an alignment comment for its own sake."
+      ]
+    },
+    {
+      "id": "unplanned-scope",
+      "prompt": "Review a report-sharing change against its accepted spec. The implementation also introduces public unauthenticated links, which are absent from scope and create a new disclosure boundary.",
+      "behavior": "Identify consequential behavior outside accepted scope.",
+      "outcomes": [
+        "Classifies public unauthenticated links as unplanned scope rather than silently treating them as an enhancement.",
+        "Explains the disclosure and authorization consequence.",
+        "Does not invent a missing public-link requirement or rewrite the specification to include the behavior.",
+        "Routes any proposed product change to requirements authority."
+      ]
+    },
+    {
+      "id": "stale-design",
+      "prompt": "The accepted specification was revised to prohibit public sharing after the technical design was approved. The implementation follows the older design and exposes public links. Determine the conformance problem.",
+      "behavior": "Distinguish stale technical design from an isolated implementation defect.",
+      "outcomes": [
+        "Identifies the incompatible specification and design revisions before judging implementation.",
+        "Classifies the design as stale and the implementation as nonconforming to the current accepted requirement.",
+        "Routes technical reconciliation to technical design without weakening the newer requirement.",
+        "States which comparisons remain blocked by the revision conflict."
+      ]
+    },
+    {
+      "id": "ambiguous-specification",
+      "prompt": "Review retry behavior against a spec that says only 'retry failures appropriately.' The code retries network errors three times and tests that behavior. Decide whether it conforms.",
+      "behavior": "Report insufficient requirement authority instead of inventing expected behavior.",
+      "outcomes": [
+        "Recognizes that retry classes, limits, timing, and terminal behavior are not specified.",
+        "Classifies the issue as specification ambiguity rather than declaring conformance or implementation failure.",
+        "Treats current code and tests as observed behavior, not desired policy.",
+        "Routes clarification to requirements specification."
+      ]
+    },
+    {
+      "id": "missing-migration-and-evidence",
+      "prompt": "The accepted design changes stored account IDs and the plan requires mixed-version compatibility, migration, rollback, and post-migration cleanup. The diff changes readers and writers but contains no migration, rollback evidence, or cleanup gate. Review conformance.",
+      "behavior": "Find missing execution obligations without confusing them with product requirements.",
+      "outcomes": [
+        "Traces compatibility and migration obligations to the design and implementation plan.",
+        "Reports missing migration or rollback work separately from missing verification evidence.",
+        "Does not claim that compilation or unit tests prove mixed-version operation.",
+        "Names the evidence required before cleanup or completion."
+      ]
+    },
+    {
+      "id": "negative-guarantee-coverage",
+      "prompt": "The accepted specification prohibits cross-tenant export disclosure. Unit tests cover own-tenant exports, but no denied cross-tenant combination or isolated integration behavior was exercised. Review conformance.",
+      "behavior": "Distinguish a negative-guarantee evidence gap from demonstrated conformance.",
+      "outcomes": [
+        "Traces the prohibited outcome to the available tests and implementation boundary.",
+        "Explains why allowed-path unit tests cannot establish cross-tenant nondisclosure.",
+        "Classifies the current result as an evidence gap unless inspected code independently proves a defect.",
+        "Names safe denied-path evidence without authorizing production or sensitive-data probes."
+      ]
+    },
+    {
+      "id": "near-miss-general-code-review",
+      "prompt": "Review this refactor for readability, maintainability, and idiomatic style. There is no accepted specification or design.",
+      "behavior": "Decline general code review when no conformance authority exists.",
+      "outcomes": [
+        "Does not invent specification commitments from code or the request.",
+        "Explains that general code quality review belongs to another workflow.",
+        "Does not perform a fake conformance assessment from implementation alone."
+      ]
+    },
+    {
+      "id": "active-review-output",
+      "prompt": "During an existing pull-request review, compare the implementation with its accepted specification. Use the review's blocker/high/medium/low vocabulary and existing report output. Do not post or create a second report.",
+      "behavior": "Integrate conformance findings into an established review without external side effects.",
+      "outcomes": [
+        "Uses the enclosing review's severity vocabulary and report destination.",
+        "Places line-specific findings only where changed lines materially cause or expose the mismatch.",
+        "Keeps broad drift in the review summary and does not create a duplicate standalone report.",
+        "Does not post to GitHub or mutate external review state."
+      ]
+    }
+  ]
+}

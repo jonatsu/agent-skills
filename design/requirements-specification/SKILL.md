@@ -139,6 +139,10 @@ documentation, and released behavior. Mark dependent artifacts stale until their
 changed purpose or product scope to brainstorming. Return internal architecture consequences to technical design. Do
 not edit the specification after implementation merely to make an accidental behavior look compliant.
 
+When implementation exists and the user asks whether it matches the accepted specification, route the comparison to
+`spec-conformance-review`. This skill owns authoring and authorized revision of intended behavior; it does not judge
+implementation evidence.
+
 ## Handoff
 
 Hand technical design an accepted specification or a clearly bounded accepted section. Name the governing revision,

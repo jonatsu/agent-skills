@@ -24,3 +24,17 @@ shape.
 No source prose, examples, images, templates, code, or assets are copied, adapted, translated, or vendored. The skill's
 authority model, optional identifier rule, behavioral-domain sharding rule, stale-dependent-artifact handling, and
 handoff boundaries are independently written for this repository's existing design-skill pipeline.
+
+## Warp `check-impl-against-spec`
+
+- Upstream publisher: Warp
+- Copyright holder: Denver Technologies, Inc.
+- Source path:
+  [`.agents/skills/check-impl-against-spec/SKILL.md`](https://github.com/warpdotdev/common-skills/blob/f3b58c81d1cfd5d8eabf2e32edb32db2b0573923/.agents/skills/check-impl-against-spec/SKILL.md)
+- Source revision: `f3b58c81d1cfd5d8eabf2e32edb32db2b0573923`, inspected 2026-09-11
+- Source license:
+  [MIT](https://github.com/warpdotdev/common-skills/blob/f3b58c81d1cfd5d8eabf2e32edb32db2b0573923/LICENSE)
+- Relationship: idea-level influence, independently expressed
+
+The source prompted the explicit downstream boundary between specification authoring and implementation conformance
+review. This package retains no upstream prose, workflow, filenames, output contract, code, or assets.

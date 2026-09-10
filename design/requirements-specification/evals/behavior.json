@@ -109,6 +109,16 @@
       ]
     },
     {
+      "id": "implementation-conformance-handoff",
+      "prompt": "The feature is implemented now. Check whether it matches the accepted requirements specification and report any drift.",
+      "behavior": "Route implementation comparison to specification conformance review.",
+      "outcomes": [
+        "Routes the request to spec-conformance-review rather than using specification authoring as code review.",
+        "Does not revise the accepted specification to match implementation behavior.",
+        "Preserves requirements authority while handing implementation evidence to the review workflow."
+      ]
+    },
+    {
       "id": "near-miss-technical-design",
       "prompt": "Design the internal state machine, API contract, persistence boundary, and rollback behavior for this already accepted feature specification.",
       "behavior": "Route architecture work to technical design.",
