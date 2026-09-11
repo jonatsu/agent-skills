@@ -16,9 +16,17 @@ dependency updates and audits, version bumps, and migration off legacy tooling.
 It does not own test authoring or test configuration, which is `python-testing`, nor type-checker usage, which
 is `python-typing`. Both are named where the boundary matters below.
 
-**Respect an existing project's choices.** When a repository already declares its tooling, its configuration
-wins over every default here. Recommend a change, explain what it buys, and let the user decide. Migrate only
-when asked.
+## Respect Project Conventions
+
+Use these defaults for new projects. In established projects, follow declared conventions and consistent local practice,
+including for new files and modules. Check both before filling an undecided choice.
+
+Do not recommend changes merely because these defaults differ. Recommend corrections supported by incorrect behavior,
+security vulnerabilities, or concrete reliability or maintenance harm. Explain the evidence, consequence, and smallest
+remedy. A different tool, layout, style, or supported syntax is not itself a defect.
+
+Apply fixes within the authorized task; otherwise report the recommendation without changing the project.
+An explicit modernization or conventions review permits broader recommendations.
 
 ## Decide What You Are Setting Up
 
@@ -27,7 +35,7 @@ when asked.
 | Single file with dependencies            | PEP 723 inline metadata, [pep723-scripts.md](references/pep723-scripts.md)            |
 | Multi-file project, not distributed      | `uv init`, then the minimal setup below                                               |
 | Reusable package or library              | `uv init --package`, then [pyproject-reference.md](references/pyproject-reference.md) |
-| Existing project on legacy tooling       | [migration-checklist.md](references/migration-checklist.md)                           |
+| Authorized tooling migration             | [migration-checklist.md](references/migration-checklist.md)                           |
 | Project that already works, needs upkeep | [dependency-maintenance.md](references/dependency-maintenance.md)                     |
 
 ## The Tools and What They Replace
@@ -46,19 +54,35 @@ when a project accepts a pre-1.0 dependency in its gate. `prek` is a Rust reimpl
 needs no Python runtime; choose it when hook startup time actually hurts. Both are drop-in enough to swap
 later. Default to mypy and pre-commit, and say why when you propose either alternative.
 
-## Always Use uv to Change Dependencies
+## Choose Defaults for a New Project
 
-`uv add` and `uv remove` edit `pyproject.toml` and update `uv.lock` together. Editing the `dependencies` or
-`dependency-groups` tables by hand leaves the lock stale, and the next `uv sync` either overwrites the edit or
-installs something the file does not describe.
+Use the latest stable CPython supported by the target environment and required dependencies.
+Choose the supported Python floor deliberately; the examples' version numbers are placeholders for that decision.
+Use uv for dependencies and environments, Ruff for linting and formatting, and mypy for type checking.
+Use pytest for new test suites and pip-audit before deployment. Preserve existing runners and checking scopes.
+Prefer `uv_build` for distributable pure-Python packages; use a compatible backend for specialized builds.
 
-Never activate a virtual environment. `uv run <cmd>` resolves and runs in the project environment, which is
-also what makes a command reproducible in CI and in a hook.
+Add runtime libraries only for capabilities the project needs. For new HTTP-client use, prefer Pydantic's `httpx2`
+as both dependency and import. Verify its current API and required integrations before adopting it.
+Preserve existing HTTP clients. For a CLI that benefits from a framework, prefer Typer and keep its command layer thin.
+Small dependency-free CLIs can use `argparse`. Logging and value-type defaults belong to `python-style`;
+validation library choices belong to `python-error-handling`.
+
+## Change Dependencies in a uv Project
+
+Prefer `uv add` and `uv remove`: they update project metadata and the lock together.
+Deliberate metadata edits are valid; follow them with `uv lock` and verify the resulting resolution.
+`uv sync` normally updates an outdated lock from project metadata. Use `--locked` in CI to reject drift.
+Never edit `uv.lock` by hand. Choose version constraints for compatibility rather than requiring exact pins universally.
+
+Run commands through the established task runner or `uv run`. An activated environment is also valid;
+do not replace an established workflow merely to change the invocation. Dependency-free scripts can use an interpreter
+directly. These commands describe uv projects, not a migration instruction for projects using another manager.
 
 ```bash
-uv add httpx                      # runtime dependency
+uv add httpx2                     # when an HTTP client is needed
 uv add --group dev ruff mypy      # development dependency group
-uv remove httpx
+uv remove httpx2
 uv sync --all-groups              # install everything the lock describes
 uv run pytest                     # run inside the project environment
 ```
@@ -117,11 +141,7 @@ target-version = "py311"   # match requires-python above
 src = ["src"]
 
 [tool.ruff.lint]
-select = ["ALL"]
-ignore = ["COM812", "ISC001"]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
+select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
 ```
 
 `[dependency-groups]` is PEP 735 and is not installed by consumers of the package.
@@ -137,17 +157,14 @@ configuration belongs to `python-typing`** for the same reason.
 
 ## Ruff Owns the Style Rules
 
-`select = ["ALL"]` with a short, explained ignore list is the recommended starting point: it opts into every
-rule ruff ships and forces each exclusion to be deliberate. Use Google-style docstrings for public APIs.
-Two exclusions avoid formatter conflicts.
+Start with `E4`, `E7`, `E9`, `F`, `I`, `B`, and `UP` for basic errors, import sorting, bug risks, and supported syntax.
+Use four-space indentation and a 120-character line limit when the project has no formatting convention.
+Add other rule families only when their findings justify the cost. `ALL` also adopts new rules on upgrades;
+[Ruff recommends a small starting set](https://docs.astral.sh/ruff/linter/#rule-selection).
 
-| Ignored  | Why                                                          |
-| -------- | ------------------------------------------------------------ |
-| `COM812` | Trailing comma rule that fights the formatter                |
-| `ISC001` | Implicit string concatenation rule that fights the formatter |
-
-Tests need their own relaxations, `S101` for `assert` and `PLR2004` for magic values among them. The
-per-file-ignores block is in [pyproject-reference.md](references/pyproject-reference.md).
+Fix causes before suppressing findings. When a suppression is justified, name the rule with `# noqa: RULE_CODE`
+and explain the non-obvious reason. Keep file-level exceptions narrow and remove obsolete suppressions.
+The configuration reference covers optional docstring and type-import rules and their exceptions.
 
 Configuring ruff is how this project's style preferences get enforced at the moment code is written. Anything
 ruff can decide belongs in this configuration rather than in prose an agent has to remember.
@@ -197,6 +214,6 @@ passes are in [migration-checklist.md](references/migration-checklist.md).
 
 1. Does `uv sync --all-groups` succeed from a clean checkout?
 2. Do lint, format-check, type-check and tests all run through `uv run`?
-3. Is `uv.lock` committed for an application, and ignored for a library?
+3. Is `uv.lock` committed for reproducible development and CI, including for a library?
 4. Does `requires-python` match what ruff and the type checker target?
 5. Does the project build, if it is meant to be distributed?

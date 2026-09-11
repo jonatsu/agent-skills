@@ -448,12 +448,12 @@ from primary sources, record provenance, and decide whether the source overlaps 
 
 ## Python Preference Placement Resolved
 
-The user approved retiring `python-idioms` on 2026-09-06. Persistent preferences now belong to
-`agents/rules/python.md`; language-independent search recovery belongs to `agents/rules/tools.md`;
-general commenting and testing policies belong to `agents/rules/workflow.md`.
-This resolves the temporary duplication and the proposal for another engineering-patterns skill.
-The archive preserves the original package and its provenance.
-See [the consolidation review](../docs/evaluations/2026-09-06-python-idioms-rule-consolidation.md).
+The user approved a concern-based Python routing stub on 2026-09-11.
+Everyday defaults belong to `python-style`; specialist Python skills own their procedures and convention policy.
+Language-independent search recovery remains in `agents/rules/tools.md`; general commenting and testing policies remain
+in `agents/rules/workflow.md`. The retired `python-idioms` package stays archived with its provenance intact.
+The [routing review](../docs/evaluations/2026-09-11-python-defaults-routing.md) records the decision and verification limits.
+The [earlier consolidation review](../docs/evaluations/2026-09-06-python-idioms-rule-consolidation.md) preserves its history.
 
 ## Codex Skill-Description Budget
 

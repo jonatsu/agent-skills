@@ -16,6 +16,18 @@ answers "how do I express this test", not "what should we test".
 `test-engineer`. Writing a failing test before the code is `test-driven-development`. Project and dependency
 setup is `python-project-management`. This skill assumes the decision to write a test has been made.
 
+## Respect Project Conventions
+
+Use these defaults for new projects. In established projects, follow declared conventions and consistent local practice,
+including for new files and modules. Check both before filling an undecided choice.
+
+Do not recommend changes merely because these defaults differ. Recommend corrections supported by incorrect behavior,
+security vulnerabilities, or concrete reliability or maintenance harm. Explain the evidence, consequence, and smallest
+remedy. A different tool, layout, style, or supported syntax is not itself a defect.
+
+Apply fixes within the authorized task; otherwise report the recommendation without changing the project.
+An explicit modernization or conventions review permits broader recommendations.
+
 ## Read the Project First
 
 Before writing or running anything, find out what this project already does:
@@ -31,6 +43,8 @@ Before writing or running anything, find out what this project already does:
   conventions, and they outrank every default below.
 
 Commands in this skill are written as bare `pytest`. If the project wraps it, use the wrapper.
+For a new suite, use pytest. Preserve an established unittest or other test framework instead of converting tests
+as a side effect; load pytest-specific guidance only when applicable.
 
 ## The Shape of a Test
 
@@ -48,6 +62,12 @@ nothing.
 
 One behavior per test. A test that asserts four unrelated things reports only the first failure and hides the
 rest.
+
+## Test Interfaces
+
+Prefer tests through public behavior. Direct tests of complex internal logic are appropriate when they isolate meaningful
+edge cases without excessive setup. Do not delete a branch merely because current public-interface tests do not reach it.
+If extraction improves cohesion, use `python-architecture` to define a focused internal interface.
 
 ## Fixtures
 

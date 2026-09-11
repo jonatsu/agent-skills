@@ -47,3 +47,14 @@ Named with a link and a one-line purpose, with no vendored API surface: aiorespo
 pytest-httpserver, freezegun, time-machine, pytest-docker, testcontainers-python, Hypothesis, pytest-cov,
 pytest-xdist, pytest-randomly, pytest-timeout, pytest-mock, pytest-subtests. Third-party interfaces move, so
 the upstream link is the authority rather than any summary here.
+
+## Python Defaults Review, 2026-09-11
+
+Reviewed Integralist's `.claude/rules/python.md` in `Integralist/agent-skills` at commit
+`07155927c4a44cf97b050ea4f728fce840822ce9`:
+
+<https://github.com/Integralist/agent-skills/blob/07155927c4a44cf97b050ea4f728fce840822ce9/.claude/rules/python.md>
+
+The comparison informed the preference for public-behavior tests, with deliberate exceptions for internal logic.
+The expression is independent; no upstream text or code is copied or adapted.
+No license covering these rules was found in the pinned tree; the MCP component has separate licensing.

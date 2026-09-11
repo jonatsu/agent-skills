@@ -13,10 +13,19 @@ Python skills: `python-typing` for annotations, `python-error-handling` for boun
 the tests themselves. Project tooling and `pyproject.toml` belong to `python-project-management`; this skill
 owns only the layout decisions that tooling then has to match.
 
-Apply these defaults where the project leaves the choice open. An established layout wins: propose a change and
-say what it buys, but do not restructure a working project as a side effect of another task.
+## Respect Project Conventions
 
-## Use a src Layout for Anything Installed
+Use these defaults for new projects. In established projects, follow declared conventions and consistent local practice,
+including for new files and modules. Check both before filling an undecided choice.
+
+Do not recommend changes merely because these defaults differ. Recommend corrections supported by incorrect behavior,
+security vulnerabilities, or concrete reliability or maintenance harm. Explain the evidence, consequence, and smallest
+remedy. A different tool, layout, style, or supported syntax is not itself a defect.
+
+Apply fixes within the authorized task; otherwise report the recommendation without changing the project.
+An explicit modernization or conventions review permits broader recommendations.
+
+## Prefer a src Layout for New Installed Packages
 
 ```text
 project/
@@ -29,17 +38,17 @@ project/
 └── README.md
 ```
 
-The distribution package sits one level below `src/`. `src/` is not itself a package: no `__init__.py`, no
-loose modules beside the package.
+In this layout, `src/` is the import root and `mypkg/` is the package. Configure the build backend to match it.
 
 The reason is not tidiness. Under a flat layout the package directory sits in the working directory, so
 `import mypkg` resolves to the working copy rather than the installed one — and a test suite can pass against
 code that was never installed, hiding a missing module in the packaged artifact until someone else installs it.
-A src layout cannot be imported without installing the project, normally as an editable install, and that
-requirement is what makes the suite honest.
+A src layout avoids that accidental root import under normal path settings. Test an installed artifact to verify
+packaging; editable-install tests alone cannot establish that the wheel contains the required files.
 
-A flat layout is fine for a single-file script or a throwaway. It is not fine for anything that will be
-installed or imported.
+A flat layout is also valid for installed projects. Preserve it when established, and check the built artifact in an
+isolated environment outside the checkout. Missing packaged files or unintended import resolution are defects;
+the layout itself is a convention.
 
 Keep the repository root to files that describe or configure the project. Group code into directories rather
 than letting modules accumulate at the top level.
@@ -53,23 +62,23 @@ attract anything that does not obviously belong elsewhere and stop being searcha
 Split a package into subpackages when its modules form groups that do not reference each other. Do not create a
 subpackage for a single module.
 
-## Keep the Dependency Graph a Tree
+## Keep Dependencies Acyclic
 
-Dependencies point one direction. No module imports a module that imports it back, directly or transitively.
+Prefer dependencies that point one direction. For new designs, avoid direct and transitive import cycles.
 
-When a cycle appears, work through these in order:
+When an import cycle causes a failure or its repair is authorized, work through these in order:
 
 1. **Is it only an annotation cycle?** Add `from __future__ import annotations` and move the import under
-   `if TYPE_CHECKING:`. Check this first — it resolves most cycles a type hint introduces, and hoisting a
-   module to fix one is over-treatment.
+   `if TYPE_CHECKING:` when runtime consumers do not need the annotation's name. Check model validation and reflection
+   before moving imports; postponed annotations alone do not make runtime dependencies optional.
 2. **Is there a shared piece?** Hoist it up the tree into a module both may depend on.
 3. **Is one side substitutable?** Declare the seam as a `Protocol` and inject the implementation, so the caller
    never imports the default one.
 
-An import placed inside a function to break a cycle is not a fix. It moves the failure to first call and hides
-the coupling from every tool that reads imports statically — record it as a defect rather than closing the
-task. A function-local import is legitimate only for a genuinely optional or expensive dependency, and then it
-needs a comment saying which of the two it is.
+A function-local import can defer initialization successfully; it does not necessarily move a failure to first call.
+Use it deliberately for optional dependencies, startup cost, or a documented import-order constraint.
+When a cycle causes failures or concrete maintenance harm, recommend the smallest repair and test the relevant import
+and call order. Do not restructure working imports merely because they are local to a function.
 
 ## Give `__init__.py` a Job or Leave It Empty
 
@@ -103,8 +112,11 @@ Declare console scripts in `[project.scripts]`, pointing at a function rather th
 Add `__main__.py` when the package should also run as `python -m mypkg`, and have it call the same function the
 console script does.
 
-The command-line layer parses and validates arguments, then calls into the package. Logic that lives in the CLI
-module cannot be tested without invoking the CLI, and cannot be reused by anything that is not the CLI.
+The command-line layer parses and validates arguments, then calls into the package. Keep reusable logic separate from
+command parsing and process exit behavior so callers and tests can invoke it directly.
+
+For complex internal algorithms, expose a focused internal module interface when that improves cohesion and testing.
+Do not create a new public API solely to avoid testing an underscore-prefixed helper. `python-testing` owns that choice.
 
 ## Layer an Application, and Point Dependencies One Way
 
@@ -124,9 +136,8 @@ defect rather than a shortcut — nothing else will catch it.
 
 ## Before Calling Structural Work Done
 
-1. Does the package import only after an install, rather than because of the working directory?
-2. Does every new or moved module leave the dependency graph acyclic, without a function-local import standing
-   in for a design decision?
+1. Does the built package import and work in an isolated environment outside the checkout?
+2. Do new or moved modules respect intended dependencies, with deferred imports verified where relevant?
 3. Does each `__init__.py` have one of the three jobs, or nothing at all?
 4. Can a reader find a module's tests from the module's name?
 

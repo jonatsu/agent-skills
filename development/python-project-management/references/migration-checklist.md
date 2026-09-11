@@ -7,8 +7,8 @@ was not requested.
 
 - [ ] Commit or branch first, so the migration is one reviewable diff and is trivially abandonable.
 - [ ] Decide the layout: `src/` or flat. A flat layout needs `[tool.uv.build-backend] module-root = ""`.
-- [ ] Decide the lock policy: an application commits `uv.lock`, a library usually ignores it. A library that
-  ignores it cannot use `uv sync --locked` or `uv lock --check` in CI, so choose the pair together.
+- [ ] Commit `uv.lock` for reproducible development and CI, including for libraries. Test library compatibility ranges
+  separately; consumers use published metadata rather than this lock.
 - [ ] Record the current interpreter floor. `requires-python` has to match what the code already assumes.
 
 ## Bring Dependencies Across
@@ -63,8 +63,6 @@ __pycache__/
 .mypy_cache/
 .pytest_cache/
 
-# Libraries ignore the lock; applications commit it
-# uv.lock
 ```
 
 ## Automatic Modernization
@@ -91,21 +89,8 @@ A `# noqa:` with no code after it suppresses everything on that line and should 
 
 ## Adopting a Type Checker Gradually
 
-A legacy codebase will not pass `--strict` on day one, and blocking the migration on that guarantees the
-migration stalls. Start where it passes and tighten per module.
-
-```toml
-[tool.mypy]
-python_version = "3.11"   # set to the project's own floor
-warn_unused_ignores = true
-
-[[tool.mypy.overrides]]
-module = "myproject.legacy.*"
-ignore_errors = true
-```
-
-Remove overrides as modules are cleaned. `python-typing` owns the strictness ladder and the per-module
-progression; this is only the migration entry point.
+Preserve checker scope and strictness unless their migration is authorized too.
+Use `python-typing` for the strictness ladder and per-module progression; keep checker configuration there.
 
 ## CI
 

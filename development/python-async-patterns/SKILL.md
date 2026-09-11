@@ -12,6 +12,18 @@ metadata:
 Concurrency with asyncio: structuring it, bounding it, cancelling it, and finding out why it stalled. Testing
 async code is `python-testing`.
 
+## Respect Project Conventions
+
+Use these defaults for new projects. In established projects, follow declared conventions and consistent local practice,
+including for new files and modules. Check both before filling an undecided choice.
+
+Do not recommend changes merely because these defaults differ. Recommend corrections supported by incorrect behavior,
+security vulnerabilities, or concrete reliability or maintenance harm. Explain the evidence, consequence, and smallest
+remedy. A different tool, layout, style, or supported syntax is not itself a defect.
+
+Apply fixes within the authorized task; otherwise report the recommendation without changing the project.
+An explicit modernization or conventions review permits broader recommendations.
+
 ## First, Decide Whether Async Helps
 
 Async buys concurrency for **waiting**, not for computing. A single event loop runs one thing at a time; it
@@ -141,8 +153,9 @@ with ProcessPoolExecutor() as pool:                           # CPU-bound
     result = await loop.run_in_executor(pool, cpu_heavy, arg)
 ```
 
-`asyncio.to_thread` (3.9+) suits a blocking I/O library with no async equivalent. CPU work needs a process
-pool; a thread still holds the GIL for the duration.
+`asyncio.to_thread` (3.9+) suits a blocking I/O library with no async equivalent.
+For sustained CPU parallelism on GIL-enabled CPython, prefer a process pool. Threads can suit native code that releases
+the GIL or a compatible free-threaded runtime. Check the workload and runtime before choosing an executor.
 
 Run with `PYTHONASYNCIODEBUG=1` during development. The loop then logs any callback that takes too long, which
 finds accidental blocking that reading the code does not.

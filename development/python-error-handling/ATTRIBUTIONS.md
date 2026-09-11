@@ -44,3 +44,14 @@ is the opposite of what the guidance is usually shortened to.
 
 Named without vendored API surface: pydantic, attrs, cattrs, voluptuous. Their interfaces move, so the
 upstream documentation is the authority rather than any summary here.
+
+## Python Defaults Review, 2026-09-11
+
+Reviewed Integralist's `.claude/rules/python.md` in `Integralist/agent-skills` at commit
+`07155927c4a44cf97b050ea4f728fce840822ce9`:
+
+<https://github.com/Integralist/agent-skills/blob/07155927c4a44cf97b050ea4f728fce840822ce9/.claude/rules/python.md>
+
+The comparison informed conditional boundary-model guidance while preserving simple validation paths.
+The expression is independent; no upstream text or code is copied or adapted.
+No license covering these rules was found in the pinned tree; the MCP component has separate licensing.

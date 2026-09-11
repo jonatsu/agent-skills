@@ -3,8 +3,8 @@
 Complete configuration reference. Read this when the shape in `SKILL.md` is not enough: optional runtime
 extras, entry points, per-file lint ignores, coverage, or a flat layout.
 
-**Change dependencies with `uv add` and `uv remove`, never by editing the tables directly.** A hand-edited
-`dependencies` or `dependency-groups` list leaves `uv.lock` stale.
+Prefer `uv add` and `uv remove` for dependency changes in uv projects.
+After deliberate metadata edits, run `uv lock` and review the resolution. Never edit the lockfile manually.
 
 ## Complete Example
 
@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = ["httpx", "rich"]
+dependencies = []
 
 [project.optional-dependencies]
 postgres = ["psycopg[binary]"]
@@ -55,26 +55,7 @@ target-version = "py311"   # match requires-python above
 src = ["src"]
 
 [tool.ruff.lint]
-select = ["ALL"]
-ignore = [
-    "COM812",  # trailing comma, conflicts with the formatter
-    "ISC001",  # implicit string concat, conflicts with the formatter
-]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-[tool.ruff.lint.flake8-type-checking]
-runtime-evaluated-base-classes = ["pydantic.BaseModel"]
-
-[tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = [
-    "S101",     # assert is the point of a test
-    "S105",     # fixture credentials are not secrets
-    "S106",
-    "PLR2004",  # magic values are readable in a test
-    "D",        # public API docstrings are not required for tests
-]
+select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -125,13 +106,16 @@ module-root = ""
 These backends move quickly. Prefer a `>=X.Y,<X+1` constraint so patch and minor releases arrive without an
 edit.
 
-### `[tool.ruff.lint.flake8-type-checking]`
+### Optional Ruff Rules
 
-`select = ["ALL"]` turns on the `TC` rules, which move an import used only in annotations behind
-`if TYPE_CHECKING:`. Pydantic resolves annotations at runtime to build its validators, so the model then fails
-to construct with an unresolved name. Naming `pydantic.BaseModel` as a runtime-evaluated base class exempts its
-subclasses. Add any other base whose annotations are read at runtime — `attrs` classes using
-`attrs.resolve_types`, and SQLAlchemy declarative bases, are the usual others.
+Enable additional families deliberately. If adopting `D` for docstrings, set the Google convention and exempt test
+docstrings where they add no information. If adopting `S`, allow `S101` in tests; fixture-secret exceptions need
+case-specific justification. Add ignores only for enabled rules whose findings have been reviewed.
+
+If adopting `TC`, preserve imports needed by runtime annotation consumers. Pydantic resolves model annotations at runtime;
+moving their dependencies under `TYPE_CHECKING` can break model construction. Configure
+`runtime-evaluated-base-classes = ["pydantic.BaseModel"]` under `[tool.ruff.lint.flake8-type-checking]` when applicable.
+Check other consumers, such as `attrs.resolve_types` and SQLAlchemy models, against the actual API before moving imports.
 
 ### `[tool.uv]`
 
@@ -152,10 +136,10 @@ python-preference = "managed"
 
 ## Committing `uv.lock`
 
-| Project type           | `uv.lock` in git | Why                                                |
-| ---------------------- | ---------------- | -------------------------------------------------- |
-| Application or service | Commit           | Reproducible deploys and CI                        |
-| Library                | Ignore           | Consumers resolve against their own constraint set |
+Commit `uv.lock` for reproducible development and CI, including for libraries.
+Library consumers resolve the constraints in published package metadata; a repository lock does not constrain them.
+Test supported dependency ranges separately from the locked development environment.
+See [uv's lockfile guidance](https://docs.astral.sh/uv/concepts/projects/layout/#the-lockfile).
 
 ## Shapes by Project Type
 
@@ -166,7 +150,7 @@ python-preference = "managed"
 dependencies = []
 
 [project.optional-dependencies]
-async = ["httpx"]
+async = ["httpx2"]
 
 [dependency-groups]
 dev = ["ruff", "mypy"]

@@ -16,8 +16,8 @@ Changes made while porting:
 
 - Added the frontmatter this repository requires (`license`, `metadata.author`) and a description written for
   discovery rather than as a summary.
-- Rewrote the cross-references. The original delegated to a single `python-style` skill, which does not exist
-  here; each pointer now names the skill that actually owns the subject — `python-typing`,
+- Rewrote the cross-references. The original delegated to a single `python-style` skill, which did not exist
+  here at the time; each pointer now names the skill that actually owns the subject — `python-typing`,
   `python-error-handling`, `python-testing`, and `python-project-management`.
 - Added the boundary statement against `python-project-management`, which owns `pyproject.toml` and the
   project's tooling. The overlap is `[project.scripts]` and the `src` layout, where this skill decides the
@@ -35,3 +35,14 @@ Both are cited in the skill and were used to confirm the packaging and pytest cl
 
 - <https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/>
 - <https://docs.pytest.org/en/stable/explanation/goodpractices.html>
+
+## Python Defaults Review, 2026-09-11
+
+Reviewed Integralist's `.claude/rules/python.md` in `Integralist/agent-skills` at commit
+`07155927c4a44cf97b050ea4f728fce840822ce9`:
+
+<https://github.com/Integralist/agent-skills/blob/07155927c4a44cf97b050ea4f728fce840822ce9/.claude/rules/python.md>
+
+The comparison informed the qualified guidance on focused internal module interfaces for complex logic.
+The expression is independent; no upstream text or code is copied or adapted.
+No license covering these rules was found in the pinned tree; the MCP component has separate licensing.

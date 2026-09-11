@@ -40,3 +40,14 @@ The Python typing specification and the `typing` module documentation were used 
 arrived in which version: PEP 695 type parameter syntax in 3.12, `Self` in 3.11, `TypeIs` in 3.13. Facts
 verified against a primary source require no package attribution; they are cited here because the version
 floors are load-bearing for the guidance.
+
+## Python Defaults Review, 2026-09-11
+
+Reviewed Integralist's `.claude/rules/python.md` in `Integralist/agent-skills` at commit
+`07155927c4a44cf97b050ea4f728fce840822ce9`:
+
+<https://github.com/Integralist/agent-skills/blob/07155927c4a44cf97b050ea4f728fce840822ce9/.claude/rules/python.md>
+
+The comparison informed the guidance on abstract collection imports and parameter capabilities.
+The expression is independent; no upstream text or code is copied or adapted.
+No license covering these rules was found in the pinned tree; the MCP component has separate licensing.

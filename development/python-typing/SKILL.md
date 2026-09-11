@@ -13,7 +13,20 @@ Annotations that a type checker can act on, and the checker itself. This skill i
 capable writer stalls: variance, Protocols, narrowing the checker refuses to follow, and getting an existing
 codebase to pass strict mode.
 
-Annotating an ordinary function signature needs no skill. Read this when the checker disagrees with you.
+Ordinary signature defaults live in `python-style`. Use this skill for annotation interfaces, checker configuration,
+and problems the checker exposes.
+
+## Respect Project Conventions
+
+Use these defaults for new projects. In established projects, follow declared conventions and consistent local practice,
+including for new files and modules. Check both before filling an undecided choice.
+
+Do not recommend changes merely because these defaults differ. Recommend corrections supported by incorrect behavior,
+security vulnerabilities, or concrete reliability or maintenance harm. Explain the evidence, consequence, and smallest
+remedy. A different tool, layout, style, or supported syntax is not itself a defect.
+
+Apply fixes within the authorized task; otherwise report the recommendation without changing the project.
+An explicit modernization or conventions review permits broader recommendations.
 
 ## Read the Project First
 
@@ -28,6 +41,10 @@ Annotating an ordinary function signature needs no skill. Read this when the che
 Never tighten a project's checker configuration as a side effect of another task.
 
 ## Generics
+
+Use built-in collection annotations and union syntax supported by the project's Python floor.
+Import abstract collection interfaces from `collections.abc` when supported by that floor.
+Accept the capabilities a function needs: use `Sequence` for indexing and `Iterable` for iteration alone.
 
 Python 3.12 (PEP 695) declares type parameters inline. No `TypeVar` import, and the scope is explicit:
 
@@ -110,14 +127,16 @@ def process(user_id: str) -> UserData:
 `isinstance`, `is None`, `assert`, and a truthiness check all narrow. What does not narrow is a check the
 checker cannot connect to the value: a helper returning `bool`, a lookup in a dict, or a flag set earlier.
 
-For a helper, say what it proves with `TypeIs` (3.13+) or `TypeGuard`:
+For a predicate, choose `TypeIs` (3.13+) when the narrowed type is compatible with the input type.
+For an invariant container narrowing such as `list[object]` to `list[str]`, use `TypeGuard`:
 
 ```python
-def is_str_list(value: list[object]) -> TypeIs[list[str]]:
+def is_str_list(value: list[object]) -> TypeGuard[list[str]]:
     return all(isinstance(item, str) for item in value)
 ```
 
-`TypeIs` narrows in both branches and is the better default; `TypeGuard` narrows only the positive branch.
+`TypeIs` narrows in both branches; `TypeGuard` narrows only the positive branch and permits this invariant-list case.
+The [typing documentation](https://docs.python.org/3/library/typing.html#typing.TypeIs) explains the compatibility condition.
 Both are available on older interpreters through `typing_extensions`, which is how a 3.11 or 3.12 project
 uses `TypeIs`.
 
@@ -160,6 +179,8 @@ validation library once the shape is known at all.
 Confine `Any` to the boundary. Convert to a real type immediately, and everything inward stays checked.
 
 ## Running the Checker
+
+For a new project, start with strict mypy checking. For an existing project, preserve its checker, scope, and strictness.
 
 ```bash
 mypy src/

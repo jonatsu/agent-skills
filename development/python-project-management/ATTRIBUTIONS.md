@@ -21,7 +21,7 @@ it must also be CC BY-SA 4.0 with attribution. The full license text is in `LICE
 
 Adapted material: the tool-and-replacement framing, the task-based routing between scripts, minimal projects,
 packages and migrations, the `pyproject.toml` shape including the PEP 735 dependency-group layout and the
-ruff `select = ["ALL"]` starting point, the uv command reference, the PEP 723 script guidance, the security
+former Ruff `select = ["ALL"]` starting point, the uv command reference, the PEP 723 script guidance, the security
 tool matrix, and the migration checklist's structure.
 
 ## Changes From Upstream
@@ -49,3 +49,20 @@ Deliberate divergences, each with its reason:
 
 Every uv command in this package was verified against uv 0.12.5 on 2026-09-04. The pre-commit revisions were
 read from each project's latest release on the same date.
+
+## Python Defaults Review, 2026-09-11
+
+Reviewed Integralist's `.claude/rules/python.md` in `Integralist/agent-skills` at commit
+`07155927c4a44cf97b050ea4f728fce840822ce9`:
+
+<https://github.com/Integralist/agent-skills/blob/07155927c4a44cf97b050ea4f728fce840822ce9/.claude/rules/python.md>
+
+The comparison informed the focused Ruff baseline and code-specific lint suppressions.
+The expression is independent; no upstream text or code is copied or adapted.
+No license covering these rules was found in the pinned tree; the MCP component has separate licensing.
+
+The former `ALL` baseline was replaced with focused rule families. Library locks now cover development and CI.
+The HTTP-client preference moved from the author's scoped Python rule, as approved in the 2026-09-06 consolidation.
+That rule recorded idea influence from Tim Vink's `dot_claude/rules/httpx2.md`:
+<https://github.com/timvink/dotfiles/blob/main/dot_claude/rules/httpx2.md>.
+The historical record did not pin a revision or establish that source's license; no additional text was copied from it.

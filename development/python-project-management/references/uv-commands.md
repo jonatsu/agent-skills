@@ -3,8 +3,8 @@
 Read this for the command that does what you need. uv manages packages, dependencies, virtual environments and
 Python versions in one tool, replacing pip, virtualenv, pip-tools, pipx and pyenv.
 
-**Never activate a virtual environment.** `uv run <cmd>` resolves and executes in the project environment,
-which is what makes the same command work for a developer, a hook and CI.
+Prefer the established task runner or `uv run <cmd>` for project commands.
+An activated environment is valid too; preserve an established invocation workflow.
 
 ## Projects
 
@@ -29,7 +29,7 @@ which is what makes the same command work for a developer, a hook and CI.
 
 ## Environments
 
-uv creates and manages the environment. Do not create one by hand.
+uv project commands create the environment as needed; a separate `uv venv` step is normally unnecessary.
 
 | Command                | Effect                                                 |
 | ---------------------- | ------------------------------------------------------ |
@@ -138,5 +138,5 @@ uv sync --locked --all-groups
 
 - uv caches aggressively; the first resolve of a dependency set is the slow one.
 - `uv cache clean` when the cache grows past what you want to keep.
-- A nonzero exit from `uv sync --locked` in CI means someone edited `pyproject.toml` without running
-  `uv add`, so the lock no longer matches.
+- A nonzero exit from `uv sync --locked` needs its diagnostic read: lock drift, installation, and network failures differ.
+  After deliberate metadata edits, run `uv lock` and review the resolution before committing.

@@ -15,6 +15,18 @@ mechanics of `try`.
 Type annotations that make absence explicit are `python-typing`. Asserting on failures in tests is
 `python-testing`.
 
+## Respect Project Conventions
+
+Use these defaults for new projects. In established projects, follow declared conventions and consistent local practice,
+including for new files and modules. Check both before filling an undecided choice.
+
+Do not recommend changes merely because these defaults differ. Recommend corrections supported by incorrect behavior,
+security vulnerabilities, or concrete reliability or maintenance harm. Explain the evidence, consequence, and smallest
+remedy. A different tool, layout, style, or supported syntax is not itself a defect.
+
+Apply fixes within the authorized task; otherwise report the recommendation without changing the project.
+An explicit modernization or conventions review permits broader recommendations.
+
 ## Validate at the Boundary, Then Trust
 
 Check external input once, where it enters, and convert it to something the rest of the program can rely on.
@@ -93,8 +105,10 @@ This applies to a form, a config file, and a CLI invocation. It does not apply w
 stop immediately when a later check depends on the value that just failed, or when proceeding would touch
 something it should not.
 
-For a rich structure, a validation library (`pydantic`, `attrs` validators, `cattrs`, `voluptuous`) already
-does the collecting, the coercion, and the path reporting. Use one rather than hand-rolling nested validation.
+For complex external schemas, prefer Pydantic v2 when the project has no established validation library.
+Use `pydantic-settings` for environment settings when needed. Verify coercion, unknown-field behavior, and error paths
+against the boundary's contract. Simple scalar checks and ordinary mappings do not require a model or new dependency.
+Keep internal value-type choices in `python-style` and typing-only interfaces in `python-typing`.
 
 ## Choose the Exception
 
