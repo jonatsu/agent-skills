@@ -12,8 +12,10 @@
 The six reference files, the procedure, the STRIDE section, the false-positive list, the rules, and the fix
 phase were written for this skill. Four passages in `SKILL.md` are adaptations and are named below.
 
-The skill descends from `security-audit`, previously deployed from this repository and now under
-`skills/archived/review/security-audit/`. That skill was written by the same author under MIT, so its
+The skill descends from `security-audit`, previously deployed from this repository. Its redundant archived
+package was deleted on 2026-09-11; the source remains in Git history at
+`c2e8f1b3afc905f4f98fc6ed5afe82e7ea73852c:skills/archived/review/security-audit/`.
+That skill was written by the same author under MIT, so its
 STRIDE-per-trust-boundary method, its report-only constraint, its ban on fabricated proofs of concept, and its
 requirement to record working controls carry forward without an external attribution obligation.
 
