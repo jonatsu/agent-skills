@@ -656,6 +656,69 @@ If a defect survives, `--no-renames` or `-M0` on the changed-path diff is one ca
 one; choose it against what the measurement actually shows. Keep the manual deployment and destination checks
 in `AGENTS.md` either way — they guard the hook's uninformative exit status, not this defect specifically.
 
+## Invocation Control Is Unapplied Across the Owned Skills
+
+Carried here 2026-09-11 from `~/.config/claude/TODO.md`, and **the state it describes has since become
+absolute**: checked 2026-09-11, no skill under `shared/` or `claude/` sets `disable-model-invocation` or
+`user-invocable` at all, and `allowed-tools` appears exactly once, in `claude-code-setup-audit`. The one skill
+that restricted invocation and rightly did — `find-skills`, which installs third-party code from GitHub, a
+side effect no gate inside a skill can undo — is archived and therefore deployed nowhere. So the worked
+example for "when the flag is right" now has to be reconstructed rather than pointed at.
+
+**The `git-ops` half of this question is settled and settled the other way**, and `AGENTS.md` records the
+reasoning: the flag never stopped an agent running `git push`, it only withheld the guidance at the moment the
+dangerous command ran, and OpenCode ignores the key entirely. Safety there rests on the skill's own
+confirmation gates. So what remains is the audit, not that case.
+
+**Ownership is the constraint that makes it need care.** Only owned skills can be edited: a frontmatter change
+to an upstream skill is overwritten on the next sync, and making it stick means forking, which trades away
+upstream updates for one line of frontmatter. So classify by ownership before classifying by side effect, and
+treat an upstream skill with a genuine side-effect problem as a separate decision — fork, or accept and
+document — rather than a quick fix. Any figures a previous pass wrote down are stale within days; derive the
+owned set from `skills/kasetto/*.yaml` and the locks at audit time.
+
+Steps, once the ownership split is settled:
+
+1. Audit the owned skills by actual behavior rather than by name: which install or execute third-party code,
+   write outside the working tree, mutate git history or remotes, or transmit data externally. Candidates
+   named on the last pass were `agents-management`, `reflect` and `chezmoi-dotfiles`; `agents-management` both
+   writes files and creates symlinks.
+2. Decide the bar. `disable-model-invocation: true` costs real capability — the model can no longer reach the
+   skill when it would help. Clearly right for "installs code from the internet"; arguably wrong for "writes a
+   doc file".
+3. Verify OpenCode's handling before touching anything in `shared/`, since those deploy to four agents and a
+   Claude-only frontmatter key may be inert or rejected elsewhere. Unverified so far.
+4. Record the resulting convention in `AGENTS.md` so new skills are classified at authoring time rather than
+   in the next audit.
+
+Open sub-question: whether tightening `allowed-tools` rides along with this or stays separate.
+
+## Skills With No Usage Signal — Recheck After 2026-10-08
+
+Measured 2026-09-08 across 738 Claude Code transcripts (2026-08-09 to 2026-09-08) and `skillUsage` in
+`.claude.json`: 28 of the 50 skills deployed there had a lifetime counter of zero and no transcript hit.
+**None of that is evidence of disuse.** Every skill directory carried an mtime inside the preceding week — the
+set was redeployed and largely renamed in that window (`bash-pro` → `bash-shell`, `git-master` → `git-ops`,
+`python-type-safety` → `python-typing`, `technical-writing` → `writing-documentation`, among others) — and
+`skillUsage` keys on the name, so the counters reset with each rename. A zero then meant "deployed last week".
+
+**Recheck no earlier than 2026-10-08**, by which point a month of sessions will have accumulated under the
+current names. `/doctor` re-runs the measurement. The inputs are `skillUsage` — `usageCount` is a lifetime
+total that never windows, while `lastUsedAt` is trustworthy for skills because it is written only on real
+dispatch — and `Skill` tool_use entries in `~/.config/claude/projects/*/*.jsonl`.
+
+**The recheck was partly compromised the same day it was scheduled.** Two commits set 21 of the 28 to
+`name-only`, which removes the description the model matches against, so those are now reached mainly by being
+named explicitly and a future zero on them will mean "never asked for by name" rather than "considered and
+passed". That is an acceptable trade for domain skills that would be invoked deliberately anyway, and a
+murkier one for `python-async-patterns` or `direnv-nix-direnv`, which were expected to fire on their own.
+Weigh the two groups differently, and read the full-description group as the clean test cases:
+`context-architecture`, `context-compression`, `flake-manifest-sync`, `generated-file-verify`, `git-ops`,
+`github-ops` and `repo-management`.
+
+This shares its outcome with the description-audit entries above. A non-trigger on a skill that still carries
+a full description is the same evidence those entries are waiting for.
+
 ## Two-Tier Memory Scoping
 
 Investigate whether the memory store should gain a global tier alongside the per-project silos. Today every
