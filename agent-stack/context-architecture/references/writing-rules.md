@@ -10,6 +10,19 @@ The test for every sentence: does it work for an agent with zero session history
 changelog and git history. If understanding requires knowing what some earlier session did, the document has
 leaked session state and fails the test.
 
+## Plain Language, and Detail Sized to Consequence
+
+Use ordinary words and precise terms, and prefer the specific noun to the general one. Cut filler, repetition,
+hedging, and praise for the project or its tools: a document that admires its subject spends the reader's
+attention proving nothing. Every sentence carries a fact, a constraint, a consequence, or an action.
+
+Length is not the target — the cost of being wrong is. These documents are read deliberately, by someone who
+followed a route to get here, so they owe more detail than the floor does: the reader came for exactly what the
+floor could not afford to carry, and arriving at a summary of it is a wasted trip. Write what the reader must
+not get wrong in as much detail as getting it wrong would cost, and leave out what would merely be nice to
+know. Shorten by deleting a passage that changes nobody's decision, never by thinning a qualifier inside one
+that does.
+
 ## Read-When Lines Are Trigger Conditions
 
 Every routing entry, document header, and skill description answers "when should I load this" — not "what is
