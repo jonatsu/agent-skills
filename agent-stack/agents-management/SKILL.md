@@ -55,6 +55,13 @@ precedence, includes, nesting, reload behavior, or symlink support. Load only th
   being asked for, an index only when something follows the route. So keep on the floor the symptoms an agent
   meets **while already in trouble**, and leave the ones it looks up deliberately to the index. A symptom
   owned by a subtree belongs to that subtree's instruction file and should never reach the root at all.
+- **Write in plain language, and size detail to consequence.** An instruction file is read under load by
+  something deciding what to do next, so every sentence carries a fact, a constraint, or an action, and each
+  one leads with the rule rather than its rationale — an agent that stops reading mid-passage must still have
+  the obligation. Prefer the specific term to the general one, and ordinary words to impressive ones. Omit
+  filler, repetition, hedging, and praise for the repository or its tools. Brevity never costs a constraint, a
+  risk, an ordering dependency, or a trade-off: state what the reader must not get wrong in as much detail as
+  getting it wrong would cost.
 - Never overwrite or automatically reconcile two divergent real context files. Show their unique and
   conflicting content, explain which clients receive each file, and ask which content should survive.
 - Reuse authorization in the user's request. Ask only when an unresolved choice changes topology, public
@@ -74,7 +81,8 @@ Those two tests judge a single addition. The **accretion test** judges the file:
 obligation must leave the instruction file no longer than it found it, or state what it relocated and where.
 Every passage in a bloated instruction file passed the other two tests on the day it arrived, so neither one
 can detect accumulation. A file that only grows becomes an incident log whose rules compete for attention with
-narrative that no longer changes any decision.
+narrative that no longer changes any decision. Satisfy it by relocating detail, never by cutting a qualifier
+the reader must not get wrong.
 
 ## Completion
 
