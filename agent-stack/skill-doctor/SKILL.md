@@ -31,9 +31,16 @@ just extract-sessions --out .scratch/doctor/<date> --limit 20
 `extract-sessions` writes one document per session plus an index, at `0600`. Each document carries metric
 values keyed by metric id, a declared-omission excerpt, and a `completeness` block.
 
-Read `completeness.clean` before judging a session. A thin session and a badly parsed one look identical in an
-excerpt, and only that field tells them apart. Judge a session whose `clean` is false only if you say so in the
-finding.
+Read two fields before judging a session.
+
+`completeness.clean` — a thin session and a badly parsed one look identical in an excerpt, and only this tells
+them apart. Judge a session whose `clean` is false only if you say so in the finding.
+
+`extraction.degradation` — what the budget ladder cut to make the excerpt fit. `null` means nothing was cut.
+Otherwise it names the window used and any cap applied to model or human text, in that order of severity: a
+`user_cap` means a person's words were shortened, so weigh a correction you can only partly read accordingly.
+`exceeded: true` means the anchors alone did not fit and the excerpt was emitted whole instead — that is the
+session with the most errors and corrections, and it is the one worth reading closely rather than skipping.
 
 ### 2. Judge each session against both rubrics
 
