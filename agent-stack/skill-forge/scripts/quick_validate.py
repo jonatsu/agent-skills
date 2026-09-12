@@ -19,7 +19,19 @@ import re
 import sys
 from pathlib import Path
 
-import yaml
+try:
+    import yaml
+except ModuleNotFoundError:  # pragma: no cover - depends on the caller's runner
+    # The inline script metadata above declares PyYAML, so a runner that reads it
+    # resolves this. A plain interpreter does not, and an import traceback tells
+    # the caller nothing about how to fix it. Exit 2 rather than 1: this is a
+    # broken invocation, and a gate must not record it as a policy failure.
+    print(
+        "error: PyYAML is required. Run this script with a PEP 723-aware runner, "
+        "for example: uv run quick_validate.py <skill-directory>",
+        file=sys.stderr,
+    )
+    sys.exit(2)
 
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---(?:\n|$)", re.DOTALL)
 PLACEHOLDERS = ("[TODO", "FIXME", "<skill-name>", "<upstream-")
@@ -166,7 +178,14 @@ def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
     if upstream_license.exists() and not attribution.exists():
         errors.append("LICENSE.upstream requires a corresponding ATTRIBUTIONS.md")
     if attribution.exists():
-        attribution_text = attribution.read_text(encoding="utf-8")
+        # Same contract as SKILL.md above: this runs as a repository gate that
+        # reports one line per skill, so an unreadable file is a finding rather
+        # than a traceback that takes the whole run down with it.
+        try:
+            attribution_text = attribution.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as error:
+            errors.append(f"cannot read ATTRIBUTIONS.md: {error}")
+            attribution_text = ""
         for placeholder in PLACEHOLDERS:
             if placeholder in attribution_text:
                 errors.append(
@@ -187,6 +206,7 @@ def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
 
 
 def _parse_args() -> argparse.Namespace:
+    """Parse the command line, exiting 2 on an invalid invocation."""
     parser = argparse.ArgumentParser(
         description=__doc__,
         epilog="Exit status: 0 valid, 1 policy failures, 2 invalid invocation.",
@@ -196,6 +216,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    """Report warnings then errors, exiting 1 when any policy failed."""
     args = _parse_args()
     errors, warnings = validate_skill(args.skill_directory)
     for warning in warnings:

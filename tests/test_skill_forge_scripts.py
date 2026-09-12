@@ -193,6 +193,26 @@ class QuickValidateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertIn("usage:", result.stderr.lower())
 
+    def test_absent_dependency_names_itself_and_the_runner(self) -> None:
+        """Without a PEP 723-aware runner the script must say so, not traceback.
+
+        `-S` drops site-packages, which is where the declared dependency lives,
+        so this reproduces the plain-interpreter case without uninstalling
+        anything. Exit 2 rather than 1, because a gate must not record a broken
+        invocation as a policy failure.
+        """
+        result = subprocess.run(
+            [sys.executable, "-S", str(VALIDATE_SCRIPT), str(SCRIPT_ROOT.parent)],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("PyYAML is required", result.stderr)
+        self.assertIn("uv run", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
 
 def _write_skill(skill_directory: Path, body: str) -> None:
     """Write a policy-clean SKILL.md whose only variable part is its body."""

@@ -11,6 +11,10 @@ Instruction-file internals (size budgets, evidence indexing) belong to
 agents-management's check_agent_context.py; run both. Stdlib only, so the
 skill stays portable: no package manager, no repository commands, and no
 assumption that the tree is a Git checkout.
+
+Contract:
+    Output: one line per finding on stdout, a count on stderr.
+    Exit:   0 clean, 1 findings, 2 bad invocation.
 """
 
 from __future__ import annotations
@@ -88,12 +92,32 @@ class Finding(NamedTuple):
     message: str
 
 
+class RoutingRow(NamedTuple):
+    """One row of a routing table whose headers the checker recognizes.
+
+    Attributes:
+        lineno: 1-based line the row sits on, so a finding can name it.
+        target: The cell naming the destination document.
+        trigger: The cell stating when to read that destination.
+    """
+
+    lineno: int
+    target: str
+    trigger: str
+
+
 def _excluded(rel_posix: str, excludes: tuple[str, ...]) -> bool:
+    """Report whether a root-relative path matches any exclusion glob.
+
+    Patterns are matched against "/<path>" so a `*/name/*` glob also catches a
+    top-level `name/`, which it would not without the leading separator.
+    """
     probe = f"/{rel_posix}"
     return any(fnmatch.fnmatch(probe, pattern) for pattern in excludes)
 
 
 def _find_floor(root: Path) -> Path | None:
+    """Return the root floor file, or None when the repository has none."""
     for name in FLOOR_NAMES:
         candidate = root / name
         if candidate.is_file():
@@ -109,9 +133,9 @@ def _structural_paths(text: str, base: Path, root: Path) -> set[Path]:
         for line in text.splitlines()
         if (match := STANDALONE_MD_LINK.fullmatch(line))
     ]
-    for _, (file_cell, _) in _routing_rows(text):
-        raw_paths.extend(match.group(1) for match in MD_LINK.finditer(file_cell))
-        raw_paths.extend(match.group(1) for match in MD_BACKTICK.finditer(file_cell))
+    for row in _routing_rows(text):
+        raw_paths.extend(match.group(1) for match in MD_LINK.finditer(row.target))
+        raw_paths.extend(match.group(1) for match in MD_BACKTICK.finditer(row.target))
 
     for raw in raw_paths:
         for origin in (base, root):
@@ -133,26 +157,51 @@ def _routing_roots(root: Path, excludes: tuple[str, ...]) -> list[Path]:
     return roots
 
 
-def _reachable(seeds: list[Path], root: Path) -> set[Path]:
-    """Transitive closure of structural routes starting at the routing roots."""
+def _reachable(seeds: list[Path], root: Path) -> tuple[set[Path], list[Finding]]:
+    """Walk structural routes from the routing roots to everything they reach.
+
+    Args:
+        seeds: Routing roots — the floor and every scoped instruction file.
+        root: Repository root, used to resolve root-relative route targets.
+
+    Returns:
+        The reachable set, and findings for documents that could not be read.
+        An unreadable document is reported rather than skipped, because every
+        route it carried would otherwise surface as unrelated unreachable files.
+    """
     seen: set[Path] = {seed.resolve() for seed in seeds}
     queue = list(seen)
+    findings: list[Finding] = []
     while queue:
         current = queue.pop()
         try:
             text = current.read_text(encoding="utf-8")
-        except OSError:
+        except (OSError, UnicodeDecodeError) as error:
+            findings.append(
+                Finding(
+                    _relative(current, root),
+                    f"unreadable, so any route it carries is invisible: {error}",
+                )
+            )
             continue
         for target in _structural_paths(text, current.parent, root):
             if target not in seen:
                 seen.add(target)
                 queue.append(target)
-    return seen
+    return seen, findings
 
 
-def _routing_rows(document_text: str) -> list[tuple[int, list[str]]]:
-    """Return target and trigger cells from routing tables with recognized headers."""
-    rows: list[tuple[int, list[str]]] = []
+def _relative(path: Path, root: Path) -> str:
+    """Return a root-relative POSIX path, falling back to the absolute one."""
+    try:
+        return path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def _routing_rows(document_text: str) -> list[RoutingRow]:
+    """Return the rows of every routing table whose headers are recognized."""
+    rows: list[RoutingRow] = []
     in_table = False
     target_index = -1
     trigger_index = -1
@@ -182,75 +231,129 @@ def _routing_rows(document_text: str) -> list[tuple[int, list[str]]]:
         if in_table and set(stripped) <= {"|", "-", " ", ":"}:
             continue  # separator row
         if in_table and max(target_index, trigger_index) < len(cells):
-            rows.append((lineno, [cells[target_index], cells[trigger_index]]))
+            rows.append(RoutingRow(lineno, cells[target_index], cells[trigger_index]))
     return rows
+
+
+def _candidates(
+    root: Path, docs_dirs: tuple[str, ...], excludes: tuple[str, ...]
+) -> list[tuple[str, Path]]:
+    """Yield (root-relative path, path) for every document the checks apply to.
+
+    Every Markdown file under the docs directories, plus root-level Markdown
+    that is neither the floor nor self-justifying by name.
+    """
+    found: list[Path] = []
+    for docs_dir in docs_dirs:
+        base = root / docs_dir
+        if base.is_dir():
+            found.extend(sorted(base.rglob("*.md")))
+    for child in sorted(root.glob("*.md")):
+        if child.name not in FLOOR_NAMES and child.name not in DEFAULT_ROOT_EXEMPT:
+            found.append(child)
+
+    selected: list[tuple[str, Path]] = []
+    for path in found:
+        relative = path.relative_to(root).as_posix()
+        if not _excluded(relative, excludes):
+            selected.append((relative, path))
+    return selected
+
+
+def check_reachability(
+    candidates: list[tuple[str, Path]], reachable: set[Path]
+) -> list[Finding]:
+    """Report living documents no structural route reaches.
+
+    Dated records are exempt: they are reached by browsing their genre directory
+    when their moment comes, so a routing row per record would be noise.
+    """
+    return [
+        Finding(
+            relative,
+            "unreachable: no routing-table row or standalone inclusion link reaches here",
+        )
+        for relative, path in candidates
+        if path.resolve() not in reachable and not _excluded(relative, RECORD_DIR_GLOBS)
+    ]
+
+
+def check_line_references(candidates: list[tuple[str, Path]]) -> list[Finding]:
+    """Report line-number references in living documents that do not pin a revision.
+
+    Frozen genres are skipped entirely: there a line number is a dated snapshot
+    coordinate rather than rot. A living document may opt out the same way by
+    declaring its pinned revision in its head.
+    """
+    findings: list[Finding] = []
+    for relative, path in candidates:
+        if _excluded(relative, FROZEN_DIR_GLOBS):
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as error:
+            findings.append(Finding(relative, f"unreadable: {error}"))
+            continue
+        head = "\n".join(text.splitlines()[:PIN_HEAD_LINES])
+        if PIN_WORD.search(head) and PIN_REV.search(head):
+            continue
+        findings.extend(
+            Finding(
+                relative,
+                f"line-number reference {match.group(0)!r} will rot; "
+                "point at a stable anchor",
+            )
+            for match in LINE_REF.finditer(text)
+        )
+    return findings
+
+
+def check_trigger_cells(floor: Path, root: Path) -> list[Finding]:
+    """Report floor routing rows with nothing in their trigger cell.
+
+    A row without a trigger condition cannot act as a load/skip classifier, which
+    is the only job the routing table has.
+    """
+    relative = _relative(floor, root)
+    try:
+        text = floor.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as error:
+        return [Finding(relative, f"unreadable: {error}")]
+    return [
+        Finding(
+            relative,
+            f"line {row.lineno}: routing row {row.target!r} has an empty trigger cell",
+        )
+        for row in _routing_rows(text)
+        if not row.trigger
+    ]
 
 
 def _scan(
     root: Path, docs_dirs: tuple[str, ...], excludes: tuple[str, ...]
 ) -> list[Finding]:
-    findings: list[Finding] = []
+    """Run every system-level check over one repository."""
     floor = _find_floor(root)
     if floor is None:
         return [
             Finding(".", f"no floor file found (looked for {', '.join(FLOOR_NAMES)})")
         ]
 
-    reachable = _reachable(_routing_roots(root, excludes), root)
+    reachable, findings = _reachable(_routing_roots(root, excludes), root)
+    candidates = _candidates(root, docs_dirs, excludes)
 
-    candidates: list[Path] = []
-    for docs_dir in docs_dirs:
-        base = root / docs_dir
-        if base.is_dir():
-            candidates.extend(sorted(base.rglob("*.md")))
-    for child in sorted(root.glob("*.md")):
-        if child.name not in FLOOR_NAMES and child.name not in DEFAULT_ROOT_EXEMPT:
-            candidates.append(child)
-
-    for path in candidates:
-        rel = path.relative_to(root).as_posix()
-        if _excluded(rel, excludes):
-            continue
-        if path.resolve() not in reachable and not _excluded(rel, RECORD_DIR_GLOBS):
-            findings.append(
-                Finding(
-                    rel,
-                    "unreachable: no routing-table row or standalone inclusion link reaches here",
-                )
-            )
-        if _excluded(rel, FROZEN_DIR_GLOBS):
-            continue
-        try:
-            text = path.read_text(encoding="utf-8")
-        except OSError:
-            continue
-        head = "\n".join(text.splitlines()[:PIN_HEAD_LINES])
-        if PIN_WORD.search(head) and PIN_REV.search(head):
-            continue
-        for match in LINE_REF.finditer(text):
-            findings.append(
-                Finding(
-                    rel,
-                    f"line-number reference {match.group(0)!r} will rot; point at a stable anchor",
-                )
-            )
-
-    floor_rel = floor.relative_to(root).as_posix()
-    for lineno, (target_cell, trigger) in _routing_rows(
-        floor.read_text(encoding="utf-8")
-    ):
-        if not trigger:
-            findings.append(
-                Finding(
-                    floor_rel,
-                    f"line {lineno}: routing row {target_cell!r} has an empty trigger cell",
-                )
-            )
+    findings.extend(check_reachability(candidates, reachable))
+    findings.extend(check_line_references(candidates))
+    findings.extend(check_trigger_cells(floor, root))
     return findings
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    """Entry point. See the module docstring for the contract."""
+    parser = argparse.ArgumentParser(
+        description=__doc__.splitlines()[0],
+        epilog="Exit status: 0 clean, 1 findings, 2 invalid invocation.",
+    )
     parser.add_argument("root", type=Path, help="repository root to scan")
     parser.add_argument(
         "--docs-dir",

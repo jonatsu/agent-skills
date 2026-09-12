@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Create a minimal, provenance-aware Agent Skill scaffold."""
+"""Create a minimal, provenance-aware Agent Skill scaffold.
+
+Standard library only, so the script runs from its deployed location with
+nothing around it but its own package. Git is consulted for a default author and
+its absence is handled; the target directory always arrives as an argument.
+"""
 
 import argparse
 import re
@@ -126,13 +131,35 @@ def init_skill(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("skill_name")
-    parser.add_argument("--path", required=True)
-    parser.add_argument("--author")
-    parser.add_argument("--license", dest="license_id", required=True)
+    """Resolve the author, scaffold the skill, and exit 1 on any failure."""
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        epilog="Exit status: 0 created, 1 refused. Nothing is overwritten.",
+    )
     parser.add_argument(
-        "--scope", choices=("portable", "repo-local"), default="portable"
+        "skill_name",
+        help="1-64 lowercase letters, digits and single hyphens; also the directory name",
+    )
+    parser.add_argument(
+        "--path",
+        required=True,
+        help="parent directory to create the skill directory in",
+    )
+    parser.add_argument(
+        "--author",
+        help="author recorded in metadata.author; defaults to git config user.name",
+    )
+    parser.add_argument(
+        "--license",
+        dest="license_id",
+        required=True,
+        help="identifier for the specification's top-level license field, such as MIT",
+    )
+    parser.add_argument(
+        "--scope",
+        choices=("portable", "repo-local"),
+        default="portable",
+        help="portable omits metadata.scope; repo-local sets it and needs --repository",
     )
     parser.add_argument(
         "--repository", help="repository name; required for repo-local skills"
