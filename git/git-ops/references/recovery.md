@@ -101,13 +101,20 @@ git cat-file -p HEAD^{tree}
 ```
 
 If the tree still contains a file you deleted on disk, the index-not-worktree rule in `SKILL.md` is why. Stage
-the intended state and amend:
+the intended state and amend **by pathspec**:
 
 ```bash
 git add -- <the paths you actually mean>
-git commit --amend --no-edit
+git commit --amend --no-edit -- <the same paths>
 git show --stat HEAD
 ```
+
+**`--amend` without a pathspec records the whole index**, exactly as a bare `git commit` does, and then
+rewrites the message so the damaged commit describes content it no longer holds. Arriving here, the index is
+the least trustworthy thing in the repository: you are already repairing one mistake about what got recorded.
+The pathspec amends the named paths and leaves everything else in the index untouched. Verified on git 2.43.0,
+2026-09-13: amending one path with a pathspec left a concurrent lane's staged file out of the commit, still
+staged, and its worktree copy unmodified.
 
 Amend only while the commit is unpushed and HEAD is yours. Confirm with `git log -1 --format='%h %an %s'`
 first. If it is pushed, add a follow-up commit instead.

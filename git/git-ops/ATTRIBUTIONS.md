@@ -30,7 +30,8 @@ rewritten around the official Git worktree model.
 
 Material changes include:
 
-- separating portable Git behavior from an explicitly labeled Claude Code-only branch;
+- separating portable Git behavior from client-specific worktree management, originally as an explicitly
+  labeled Claude Code-only branch and now as a client-neutral pointer;
 - accounting for shared refs, configuration, objects, and stash state across worktrees;
 - replacing automatic setup and project-local placement with repository-directed choices;
 - adding mixed-hunk ownership, concurrent `HEAD` movement, generated-file, integration, and cleanup checks;

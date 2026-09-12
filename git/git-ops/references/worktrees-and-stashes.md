@@ -79,8 +79,7 @@ the repository enables `extensions.worktreeConfig`. A commit created in one work
 visible in the others, and a shared ref or configuration change can affect every lane.
 
 Use `git rev-parse --git-path <name>` when locating Git administrative data; never build a path from `.git`
-manually. Recheck shared refs before rebasing, resetting, deleting a branch, integrating, or pushing. Do not
-use the shared stash as automatic lane isolation.
+manually. Recheck shared refs before rebasing, resetting, deleting a branch, integrating, or pushing.
 
 ### Initialize and Establish a Baseline
 
@@ -132,22 +131,12 @@ git worktree prune --dry-run --verbose
 Pruning removes stale registration data. It does not recover or preserve files from a directory removed
 outside Git.
 
-## Claude Code Only
+## Harness-Managed Worktrees
 
-This subsection applies only to Claude Code. Do not infer these commands or lifecycle behavior for plain Git,
-Codex, OpenCode, or GitHub Copilot CLI.
-
-Claude Code can create and enter a managed worktree when starting a session:
-
-```bash
-claude --worktree <name>
-claude -w <name>
-```
-
-Claude Code manages its worktree location, branch naming, session association, and cleanup checks. Consult the
-current Claude Code documentation before relying on `EnterWorktree`, `ExitWorktree`, `.worktreeinclude`,
-worktree hooks, or `worktree.baseRef`; these are client features rather than Git behavior. Before manual
-cleanup, inspect the managed worktree's status and run `git worktree list --porcelain`.
+Some agent harnesses create and manage their own worktrees, with their own location, branch naming, session
+association, and cleanup checks. Those are client features rather than Git behavior, so read that client's
+current documentation instead of inferring a lifecycle from this file. Before cleaning one up by hand, inspect
+its status and run `git worktree list --porcelain`.
 
 ## Stashes
 
