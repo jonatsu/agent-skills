@@ -91,6 +91,74 @@ class CheckAgentContextTests(unittest.TestCase):
         self.assertIn("orphaned", result.stdout)
         self.assertIn("lonely.md", result.stdout)
 
+    def _indexed_tree(self, index_name: str = "README.md") -> None:
+        """A floor that routes to an evidence index, which indexes the evidence."""
+        _write(
+            self.root,
+            "AGENTS.md",
+            f"# Root\n\nThe index is `docs/findings/{index_name}`.\n",
+        )
+        _write(
+            self.root,
+            f"docs/findings/{index_name}",
+            "# Findings\n\n| Symptom | Read |\n| --- | --- |\n"
+            "| It broke | [thing.md](thing.md) |\n",
+        )
+        _write(self.root, "docs/findings/thing.md", "# Thing\n\nEvidence.\n")
+
+    def test_routed_index_reaches_the_evidence_it_lists(self) -> None:
+        self._indexed_tree()
+        result = _run(str(self.root))
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+        self.assertNotIn("orphaned", result.stdout)
+
+    def test_index_md_is_honored_as_well_as_readme(self) -> None:
+        self._indexed_tree(index_name="index.md")
+        result = _run(str(self.root))
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+
+    def test_unrouted_index_grants_no_hop(self) -> None:
+        """The hop is self-correcting: drop the floor's route and it closes."""
+        self._indexed_tree()
+        _write(self.root, "AGENTS.md", "# Root\n\nNo route to the index.\n")
+        result = _run(str(self.root))
+        self.assertEqual(result.returncode, EXIT_FINDINGS)
+        self.assertIn("orphaned", result.stdout)
+        self.assertIn("thing.md", result.stdout)
+        self.assertIn("README.md", result.stdout)
+
+    def test_root_relative_reference_in_the_index_also_resolves(self) -> None:
+        """An index may spell an entry the long way without breaking the hop."""
+        self._indexed_tree()
+        _write(
+            self.root,
+            "docs/findings/README.md",
+            "# Findings\n\nSee `docs/findings/thing.md`.\n",
+        )
+        result = _run(str(self.root))
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+
+    def test_hop_is_one_level_only(self) -> None:
+        """An indexed finding citing a sibling does not thereby index it."""
+        self._indexed_tree()
+        _write(
+            self.root,
+            "docs/findings/thing.md",
+            "# Thing\n\nSee also [sibling.md](sibling.md).\n",
+        )
+        _write(self.root, "docs/findings/sibling.md", "# Sibling\n")
+        result = _run(str(self.root))
+        self.assertEqual(result.returncode, EXIT_FINDINGS)
+        self.assertIn("orphaned", result.stdout)
+        self.assertIn("sibling.md", result.stdout)
+
+    def test_dangling_link_inside_the_index_is_attributed_to_it(self) -> None:
+        self._indexed_tree()
+        (self.root / "docs/findings/thing.md").unlink()
+        result = _run(str(self.root))
+        self.assertEqual(result.returncode, EXIT_FINDINGS)
+        self.assertIn("dangling   docs/findings/README.md", result.stdout)
+
     def test_file_over_budget_fails(self) -> None:
         _write(self.root, "AGENTS.md", "word " * 50)
         result = _run(str(self.root), "--budget", "10")

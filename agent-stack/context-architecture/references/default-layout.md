@@ -8,7 +8,9 @@ tests stay comparable.
 ```text
 AGENTS.md              # the floor: always-loaded rules + routing index (CLAUDE.md -> AGENTS.md symlink)
 TODO.md                # open-work ledger, incl. decisions closed on evidence so they are not re-litigated
+BACKLOG.md             # wanted work nothing depends on yet; splits off TODO.md when deferrals accumulate
 docs/
+  README.md            # the hub: one routing table, one row per genre, reached from the floor
   reference/           # living "how it works now" write-ups; resync to code
   specs/               # accepted intended behavior and its proposed revisions
   decisions/           # frozen, dated decision records (ADR-like); amended, never rewritten
@@ -18,7 +20,51 @@ docs/
   findings/            # symptom-indexed evidence tier: gotchas, non-obvious failure modes, recovery steps
   archive/             # anything retired from live use; reference only, never resynced
 <subtree>/AGENTS.md    # scoped instructions, only where a subtree's conventions genuinely diverge
+<subtree>/README.md    # a subtree index, only when a reader must choose between its files
 ```
+
+`TODO.md` and `BACKLOG.md` are root ledgers: self-justifying by name and exempt from routing, which is why
+they are named here rather than left to improvisation. A ledger under a different name needs a floor row.
+
+## The Good-Enough Starting Point
+
+For a repository with nothing, three genres beat nine. Everything else arrives through the growth order below.
+
+```text
+AGENTS.md              # floor: identity, never-miss rules, ONE routing table, commands
+README.md              # humans
+TODO.md                # open work
+docs/
+  README.md            # hub: one row per genre, and what each genre may not mix with
+  findings/
+    README.md          # symptom index
+  plans/
+    README.md          # lifecycle: where an active plan lives, the archive trigger, what must not be archived
+    archived/
+  decisions/           # dated, frozen
+```
+
+Two rules keep it working, and both are cheap now and expensive later:
+
+- **A directory's index is created in the same change as the directory.** An index retrofitted once the floor
+  is already over budget gets written to fit a word count rather than to route.
+- **The floor routes to `docs/README.md` and to nothing beneath it**, except symptoms an agent meets while
+  already in trouble and that belong to no subtree. Those keep a direct floor row; see
+  `agents-management` for that split.
+
+## What a Subtree Earns, and When
+
+Progressive disclosure works downward as well as outward. A subtree file is not decoration, and each kind
+answers a different question:
+
+| Give it     | When                                                                                                                                               |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AGENTS.md` | the subtree has a rule an agent can violate *from outside it* — a sudo boundary, a generated tree, a deploy path. Not merely because it is complex |
+| `README.md` | a reader arriving there must choose between its files and the filenames do not settle it                                                           |
+| Both        | a subsystem with its own gates and its own findings: it indexes its own evidence and stops taxing the floor                                        |
+
+The scoped `AGENTS.md` is the strongest instrument available, because it is a routing root, an evidence index,
+and it loads by location. A finding owned by a subtree should never reach the root floor at all.
 
 ## Genre Table
 
@@ -63,7 +109,8 @@ A small repository is complete with the floor alone. Add, in each case on first 
 1. `docs/reference/` — when a how-it-works nuance outgrows a floor line.
 2. `docs/specs/` — when accepted intended behavior needs a durable contract across design or implementation work.
 3. `docs/findings/` — on the first non-obvious gotcha worth keeping; add a symptom → file index (in the floor
-   or a dedicated index file) at the same time, because an unindexed finding is unreachable at need.
+   or a dedicated index file) at the same time, because an unindexed finding is unreachable at need. This is
+   the specific case of the general rule: **every directory added here gets its index in the same change.**
 4. `docs/decisions/` and `docs/plans/` — on the first design question that gets settled or scoped.
 5. `docs/working-notes/` — when multi-session or multi-lane work needs durable state.
 6. `docs/evaluations/` — on the first recorded assessment (the first walk test creates it).

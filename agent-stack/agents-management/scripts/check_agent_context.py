@@ -25,6 +25,10 @@ DEFAULT_BUDGET = 2000
 DEFAULT_EVIDENCE_DIR = "docs/findings"
 DEFAULT_NAMES = ("AGENTS.md", "CLAUDE.md")
 
+# Filenames treated as the evidence directory's own index, covering both common
+# conventions. Only a file directly inside the evidence directory qualifies.
+INDEX_NAMES = ("README.md", "index.md")
+
 # Directories whose instruction files are payloads the repository stores rather
 # than context it obeys. Evaluation transcripts and test fixtures both contain
 # realistic AGENTS.md files that must not be measured. The scratch directory
@@ -161,11 +165,104 @@ def check_dates(relative: str, text: str) -> list[Finding]:
     ]
 
 
-def check_orphans(config: Config, referenced: set[str]) -> list[Finding]:
-    """Report evidence files no instruction file points at.
+def index_links(text: str) -> list[str]:
+    """Return each distinct Markdown reference in an index, in source order.
 
-    A symptom index is the only thing that loads these, so an unindexed file is
-    unreachable regardless of how good its contents are.
+    An index sits beside what it lists, so it names its entries relatively —
+    `[thing.md](thing.md)` rather than the full root-relative path an instruction
+    file must use. Markdown links and backticked paths are collected alike,
+    because an index table commonly uses either; the caller resolves them.
+    """
+    pattern = re.compile(r"\[[^\]]*\]\(([^)\s]+\.md)\)|`([^`\s]+\.md)`")
+    seen: dict[str, None] = {}
+    for link, literal in pattern.findall(text):
+        seen.setdefault(link or literal, None)
+    return list(seen)
+
+
+def resolve_index_reference(reference: str, path: Path, config: Config) -> Path:
+    """Resolve one index entry, accepting either spelling an author might use.
+
+    An index beside its entries names them relatively, but writing the
+    root-relative path is the obvious alternative and means the same file. The
+    index-relative reading wins, and is what a dangling report names, so an
+    unresolvable entry is reported as written.
+    """
+    candidate = (path.parent / reference).resolve()
+    if candidate.is_file():
+        return candidate
+    fallback = (config.root / reference).resolve()
+    return fallback if fallback.is_file() else candidate
+
+
+def check_index(
+    relative: str, path: Path, text: str, config: Config, referenced: set[str]
+) -> list[Finding]:
+    """Resolve one index's entries, recording the evidence files it reaches.
+
+    Only references landing inside the evidence directory count. An index may
+    cite anything it likes; only its evidence entries make a file reachable.
+    """
+    findings: list[Finding] = []
+    evidence_root = (config.root / config.evidence_dir).resolve()
+    for reference in index_links(text):
+        target = resolve_index_reference(reference, path, config)
+        if evidence_root not in target.parents:
+            continue
+        resolved = target.relative_to(config.root.resolve()).as_posix()
+        referenced.add(resolved)
+        if not target.is_file():
+            findings.append(Finding("dangling", relative, reference))
+    return findings
+
+
+def iter_index_files(config: Config) -> Iterator[tuple[str, Path]]:
+    """Yield (root-relative path, path) for the evidence directory's own index."""
+    evidence_root = config.root / config.evidence_dir
+    for name in INDEX_NAMES:
+        path = evidence_root / name
+        if path.is_file():
+            yield path.relative_to(config.root).as_posix(), path
+
+
+def follow_index_hop(config: Config, referenced: set[str]) -> list[Finding]:
+    """Extend `referenced` with what a routed evidence index points at.
+
+    An instruction file arrives without being asked for; an index does not, so
+    allowing a hop through one trades guaranteed presence for a followed link.
+    Exactly one hop is allowed, and only from an index an instruction file
+    already routes to, which keeps the weakening self-correcting: delete that
+    route and everything the index carried reverts to orphaned.
+
+    The floor should therefore keep symptoms an agent meets while already in
+    trouble, and leave the ones it looks up deliberately to the index.
+
+    Args:
+        config: Resolved options for this run.
+        referenced: Evidence paths seen so far; extended in place.
+
+    Returns:
+        Findings raised by the index's own links, attributed to the index.
+    """
+    findings: list[Finding] = []
+    for relative, path in iter_index_files(config):
+        if relative not in referenced:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError) as error:
+            findings.append(Finding("unreadable", relative, str(error)))
+            continue
+        findings.extend(check_index(relative, path, text, config, referenced))
+    return findings
+
+
+def check_orphans(config: Config, referenced: set[str]) -> list[Finding]:
+    """Report evidence files nothing reaches.
+
+    Reachable means named by an instruction file, or by an evidence index that an
+    instruction file itself names. An unindexed file is unreachable at need
+    regardless of how good its contents are.
     """
     evidence_root = config.root / config.evidence_dir
     if not evidence_root.is_dir():
@@ -175,7 +272,7 @@ def check_orphans(config: Config, referenced: set[str]) -> list[Finding]:
         relative = path.relative_to(config.root).as_posix()
         if relative not in referenced:
             findings.append(
-                Finding("orphaned", relative, "no instruction file indexes it")
+                Finding("orphaned", relative, "no instruction file or index reaches it")
             )
     return findings
 
@@ -202,6 +299,7 @@ def run_checks(config: Config) -> tuple[list[Finding], list[Finding], int]:
         findings.extend(check_budget(relative, text, config))
         warnings.extend(check_dates(relative, text))
 
+    findings.extend(follow_index_hop(config, referenced))
     findings.extend(check_orphans(config, referenced))
     return findings, warnings, checked
 
@@ -230,8 +328,11 @@ def build_parser() -> argparse.ArgumentParser:
         ),
         epilog=(
             "Findings: dangling (an evidence link that does not resolve), "
-            "orphaned (an evidence file nothing indexes), oversize (over budget), "
-            "escapes (a link leaving the root), unreadable. Dated lines are "
+            "orphaned (an evidence file nothing reaches), oversize (over budget), "
+            "escapes (a link leaving the root), unreadable. An evidence file "
+            "counts as reached when an instruction file names it, or when "
+            f"{' or '.join(INDEX_NAMES)} in the evidence directory does and an "
+            "instruction file names that index. Dated lines are "
             "reported as warnings and never fail the run. "
             "Exit 0 clean, 1 findings, 2 bad invocation. "
             "Example: check_agent_context.py . --budget-for AGENTS.md=2400"

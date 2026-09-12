@@ -23,7 +23,11 @@ it from the other.
 
 A file target in the destination cell of a trigger-keyed table creates a structural route. The default uses
 `File` and `Read when`; symptom indexes may use `Symptom` and `Read`, and scoped pointers may put a
-`Read before` condition before their `File` column. Outside such a table, use a Markdown link alone on its line
+`Read before` condition before their `File` column. **That vocabulary is exhaustive, and a table outside it
+routes nothing while looking perfectly serviceable** — a readable `Item | Where` table is invisible to the
+checker and to an agent scanning for the pattern. Rename the columns rather than inventing a synonym.
+
+Outside such a table, use a Markdown link alone on its line
 when the current document should act as a parent index for the target. Put the load condition or relationship
 immediately before that link, so the parent explains why the child belongs in this context. The same child may
 have more than one parent when each route serves a distinct task.

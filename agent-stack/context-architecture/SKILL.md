@@ -51,20 +51,30 @@ Five concerns, in order of leverage. Topology is deliberately last.
    rules and the routing index; everything else is a pointer. Grow it from observed failures — every floor
    rule should trace to a failure it prevents — and apply `agents-management`'s accretion test to keep it from
    becoming an incident log.
+
+   **A floor over its budget is a routing defect until routing is proven clean.** Diagnose before trimming:
+   trimming under budget pressure deletes meaning a word at a time, while moving one table can free hundreds of
+   words and make its contents more reachable. When a section does move, the never-miss obligation stays as one
+   imperative line and its trigger, exceptions and rationale go to the hub — "archive before reporting done"
+   stays, the archiving trigger table leaves.
+
 2. **Read-when sharpness.** Every index entry, document header, and skill description is a load/skip
    classifier. Phrase it as the trigger condition ("read before gating a change"), never the topic
    ("verification"). It must work under the lowest common denominator of identifier plus text search, with no
    client discovery features assumed. Keep structural routes distinct from inline references so an incidental
    mention cannot masquerade as a usable path.
+
 3. **Genre separation with declared authority.** Each document belongs to exactly one genre, and each genre declares
    its update semantics and its place in the override chain. Live code outranks descriptions of current behavior;
    accepted specifications govern intended observable behavior; the user's current instruction outranks stored
    guidance. The genre table and named default layout live in
    [references/default-layout.md](references/default-layout.md). Mixing genres — a living reference inside a
    frozen decision, state notes inside the floor — is the root failure behind most context rot.
+
 4. **Truth maintenance.** One owner per fact; generate what is derivable from code and never hand-edit the
    output; stamp non-obvious facts with what they were verified against, not just when; gate what enters
    (no secrets, no speculation, no unverified recall); schedule consolidation and pruning, not only appending.
+
 5. **Lazy topology.** Hub-and-spoke. Put a destination directly in the floor only when the agent must choose it
    there; route related destinations through a read-when hub before direct rows crowd the floor. Shard a hub
    only when its own index no longer fits one comfortable read. Graphs emerge from evidence; never design one
@@ -89,6 +99,15 @@ and line-number references that rot. A structural route is a target in a trigger
 standalone Markdown inclusion link; inline links and incidental backticked paths do not establish reachability.
 Pair it with `agents-management`'s `check_agent_context.py` for the instruction-file level; neither substitutes
 for the other. Propose wiring both into the repository's gates.
+
+**Run both before calling a restructure done, because they can be made to disagree.** Moving an evidence index
+off the floor satisfies this checker and, unless the instruction file still routes to the index, orphans every
+file that index carried by the other one. The handshake is the route: the floor names the index, the index
+names the evidence. Losing either end is a finding in one checker and silence in the other.
+
+One unreachable parent reports as many findings as it has children, so read a batch of unreachable files as one
+broken route rather than as many problems — and check that the parent's own entries are structural, since a
+route landing on an index whose links are prose stops there.
 
 Scripts prove structure, not behavior. The behavioral acceptance gate is the walk test in
 [references/walk-test.md](references/walk-test.md); a context system nobody has walked is unmeasured, and its

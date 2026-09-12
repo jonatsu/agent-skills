@@ -50,6 +50,11 @@ precedence, includes, nesting, reload behavior, or symlink support. Load only th
   has a problem belongs in the instruction file, as one imperative line. Evidence needed only after a symptom
   appears belongs in a separate findings file that a symptom index points to. Never delete preserved evidence
   to shorten an instruction file; relocate it.
+- The symptom index may live outside the instruction file, in the evidence directory's own `README.md`, with
+  the instruction file routing to it. That trade is real rather than free: an instruction file arrives without
+  being asked for, an index only when something follows the route. So keep on the floor the symptoms an agent
+  meets **while already in trouble**, and leave the ones it looks up deliberately to the index. A symptom
+  owned by a subtree belongs to that subtree's instruction file and should never reach the root at all.
 - Never overwrite or automatically reconcile two divergent real context files. Show their unique and
   conflicting content, explain which clients receive each file, and ask which content should survive.
 - Reuse authorization in the user's request. Ask only when an unresolved choice changes topology, public
@@ -80,7 +85,9 @@ loading verification is available; otherwise state the limitation.
 
 Then run `scripts/check_agent_context.py <repository-root>` and resolve every finding. It answers the accretion
 test with a measurement rather than an impression, and it catches the two failures an edit cannot see from its
-own diff: an evidence link that no longer resolves, and an evidence file that nothing indexes. Pass `--budget`,
+own diff: an evidence link that no longer resolves, and an evidence file that nothing reaches. It follows
+exactly one hop through the evidence directory's own index, and only when an instruction file routes to that
+index, so deleting the route reports every file the index carried. Pass `--budget`,
 `--budget-for`, `--evidence-dir` and `--exclude` when the repository's conventions differ from the defaults,
 and `--help` for the full contract. Report its result rather than only that it ran.
 
