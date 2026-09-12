@@ -59,6 +59,19 @@ adapt it when an established repository already carries deliberate conventions.
   Prefer narrow rule exceptions when only one rule conflicts.
 - Run pre-commit against explicit changed files. Whole-tree formatting can rewrite generated or vendored
   content, and every mutating hook must remain at the `pre-commit` stage.
+- Express a formatter's exception to EditorConfig as `unset` per glob in `.editorconfig`, not as a pre-commit
+  `exclude`. The commit gate and the editor then read one ruleset and cannot disagree. This generalizes: give
+  each tool an external configuration file that both the hook and the editor read, and keep tool options out of
+  the hook definition, where they drift from the editor's copy and surface as a formatter fight rather than as
+  an obvious misconfiguration.
+- Where a repository already runs Prettier, keep mdformat as the sole Markdown writer and scope Prettier to
+  JSONC. Take Prettier from `rbubley/mirrors-prettier`; `pre-commit/mirrors-prettier` is archived. Three
+  checkable arguments support the split: mdformat is CommonMark compliant and extends through the plugin set
+  the bundled hook pins, which Prettier has no equivalent of for Markdown; mdformat's `--number` matches
+  markdownlint's `ol-prefix: ordered`, while Prettier writes `1.` everywhere and conflicts with it; and Prettier's
+  prose-wrap offers `preserve`, `always` and `never` where mdformat's `--wrap` takes a numeric column. No
+  head-to-head trial is on record, so treat the preference itself as a stated convention rather than a
+  measured result.
 - Shell repos get both `shellcheck` (lint) and `shfmt` (format) — they only touch shell files via the hooks'
   own file matching, so both stay in the baseline.
 - Keep shell formatting in `.editorconfig`, not in `shfmt` flags. shfmt reads `.editorconfig` —
@@ -69,3 +82,27 @@ adapt it when an established repository already carries deliberate conventions.
   Do not set shfmt's `shell_variant` property to `auto`: shfmt 3.13.1 passes that value to a parser that does
   not support it and panics. Omit the property so shfmt infers the dialect from the file or shebang.
   `editorconfig-checker` ignores the remaining shfmt extension keys, so the two coexist.
+
+## Bringing a Previously Excluded Document Under the Hooks
+
+Expect a large diff. mdformat unwraps manual soft wraps to the configured width, repads GFM tables, and
+alphabetizes link reference definitions; `+` and `*` bullet markers become `-`. Where markdownlint runs with
+`--fix`, MD034 brackets bare URLs and MD040 requires a language on every fence, so a plain diagram needs a
+`text` tag.
+
+The diff is content-preserving, but reading it is not a practical check. Compare the alphanumeric-token
+multiset instead, which is unaffected by rewrapping, table repadding, and reference reordering:
+
+```sh
+for f in <files>; do
+  a=$(git show "HEAD:$f" | tr -cs '[:alnum:]' '\n' | sort | md5sum)
+  b=$(tr -cs '[:alnum:]' '\n' < "$f" | sort | md5sum)
+  [ "$a" = "$b" ] && echo "PRESERVED $f" || echo "DIFFERS $f"
+done
+```
+
+A token added on purpose, such as a `text` fence tag, is then the only difference; confirm it by diffing the
+sorted token streams.
+
+For a subtree that stays excluded, do not hand-run the formatters over it to make it "pass" a gate that does
+not run there by design. Apply surgical edits only.
