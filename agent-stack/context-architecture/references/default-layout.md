@@ -102,6 +102,12 @@ The header words are part of the checker contract, not illustrative labels. A ta
 `If you`. Keep that vocabulary narrow: a `Document` or `Directory` column does not establish structural
 reachability merely because its cells contain links, and the checker reports such a near miss at the table.
 
+**A table routes only when it carries both columns**, and this applies to every genre index as much as to the
+floor. A target column beside a topic column — `| File | What it decided |` — describes a set of documents
+without saying when to open one, which is the thing a route is for. The checker reports that near miss too,
+once such a table links two or more documents, so the diagnostic lands at the table rather than surfacing later
+as children that happen to be reachable by some other link.
+
 Every living document the system wants found has a structural route from this table. Give a destination a
 direct row only when the floor reader must choose it there; route a related group through one focused index
 when separate rows would tax unrelated sessions. The read-when cell is a trigger condition, not a topic, and

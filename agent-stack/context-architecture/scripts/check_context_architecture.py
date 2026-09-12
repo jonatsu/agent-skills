@@ -76,6 +76,8 @@ MD_LINK = re.compile(r"\]\(([^)#\s]+\.md)(?:#[^)]*)?\)")
 MD_BACKTICK = re.compile(r"`([^`\s]+\.md)`")
 STANDALONE_MD_LINK = re.compile(r"^\s*\[[^]\n]+\]\(([^)#\s]+\.md)(?:#[^)]*)?\)\s*$")
 ROUTE_TARGET_HEADERS = {"file", "read"}
+# Linked rows before a trigger-less table is read as an index rather than content.
+MINIMUM_ROUTED_ROWS = 2
 ROUTE_TRIGGER_HEADER = re.compile(r"^(?:read when|symptom|read before\b|if you\b)")
 # Line-number references that rot: file.ext:123 for code extensions, or GitHub-style #L123.
 LINE_REF = re.compile(
@@ -242,13 +244,29 @@ def _routing_rows(document_text: str) -> list[RoutingRow]:
     return rows
 
 
-def check_routing_table_headers(document_text: str, relative: str) -> list[Finding]:
-    """Report likely routing tables whose target header is not recognized.
+def _linked_target_rows(lines: list[str], start: int, target_index: int) -> int:
+    """Count rows whose target cell links a document, until the table ends."""
+    linked = 0
+    for line in lines[start:]:
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            break
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if target_index < len(cells) and MD_LINK.search(cells[target_index]):
+            linked += 1
+    return linked
 
-    A recognized trigger header followed by a Markdown table separator is a
-    strong signal that the table intends to route. Keeping the target vocabulary
-    narrow prevents incidental tables from establishing reachability; this
-    diagnostic makes a near miss visible at its cause.
+
+def check_routing_table_headers(document_text: str, relative: str) -> list[Finding]:
+    """Report likely routing tables that only one recognized header reaches.
+
+    A table routes only when both headers are recognized, so either one alone is
+    a near miss worth reporting at its own line rather than as unreachable
+    children elsewhere. The two directions need different evidence. A trigger
+    header is distinctive enough to convict on its own. A target header is not —
+    `File` heads many tables that route nothing — so the missing-trigger case is
+    reported only when the target cells actually carry document links, which is
+    what makes a reader treat the table as a route.
     """
     lines = document_text.splitlines()
     findings: list[Finding] = []
@@ -265,11 +283,11 @@ def check_routing_table_headers(document_text: str, relative: str) -> list[Findi
             (cell for cell in cells if ROUTE_TRIGGER_HEADER.match(cell.lower())),
             None,
         )
-        target = next(
-            (cell for cell in cells if cell.lower() in ROUTE_TARGET_HEADERS),
-            None,
+        target_index = next(
+            (i for i, cell in enumerate(cells) if cell.lower() in ROUTE_TARGET_HEADERS),
+            -1,
         )
-        if trigger is not None and target is None:
+        if trigger is not None and target_index < 0:
             findings.append(
                 Finding(
                     relative,
@@ -277,6 +295,19 @@ def check_routing_table_headers(document_text: str, relative: str) -> list[Findi
                     "but no recognized target column ('File' or 'Read')",
                 )
             )
+            continue
+        if trigger is None and target_index >= 0:
+            linked = _linked_target_rows(lines, index + 2, target_index)
+            if linked >= MINIMUM_ROUTED_ROWS:
+                findings.append(
+                    Finding(
+                        relative,
+                        f"line {index + 1}: table has target column "
+                        f"{cells[target_index]!r} and links {linked} documents, but "
+                        "no recognized trigger column ('Read when', 'Symptom', "
+                        "'Read before', 'If you'), so it routes to none of them",
+                    )
+                )
     return findings
 
 
