@@ -159,9 +159,20 @@ Portable is the default when no repository scope is declared. A portable skill m
 its job, but should declare material requirements in `compatibility`, avoid authoring-machine paths and
 repository-local commands, and report unavailable dependencies truthfully.
 
+**A portable skill's bundled scripts must run from the deployed package alone.** Read each one and ask what it
+would do on a machine that has never seen the authoring repository: does it resolve paths from its own
+location or its arguments rather than by climbing out of the package or querying version control, does it
+declare its dependencies in the script — standard library only, or inline script metadata — rather than
+assuming a virtual environment, lockfile or task runner, and does it name a missing dependency instead of
+failing on an import traceback? A script that only runs under its author's checkout is a portability defect
+however portable the prose is, and it is one that passes every check until someone else installs the skill.
+
 A repository-specific skill using `metadata.scope: repo-local` may rely on that repository's paths, commands,
 and conventions. It should name the repository and still declare external environment requirements. Do not
-infer repo-local scope merely because undeclared local bindings make that interpretation convenient.
+infer repo-local scope merely because undeclared local bindings make that interpretation convenient. Report
+avoidable environment coupling there as a finding of lower severity rather than treating the scope as a
+blanket exemption: the repository's own layout and runner move too, and the breakage surfaces in an unrelated
+change.
 
 Treat `metadata.scope: repo-local` as an authoring convention unless the client documents that it enforces the
 field. Deployment proves file placement, not client behavior.
