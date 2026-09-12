@@ -97,6 +97,11 @@ table (when X changes, touch Y — freshness is part of done-ness). The routing 
 | File | What it holds | Read when |
 ```
 
+The header words are part of the checker contract, not illustrative labels. A target column must be named
+`File` or `Read` (case-insensitive). A trigger column must start with `Read when`, `Symptom`, `Read before`, or
+`If you`. Keep that vocabulary narrow: a `Document` or `Directory` column does not establish structural
+reachability merely because its cells contain links, and the checker reports such a near miss at the table.
+
 Every living document the system wants found has a structural route from this table. Give a destination a
 direct row only when the floor reader must choose it there; route a related group through one focused index
 when separate rows would tax unrelated sessions. The read-when cell is a trigger condition, not a topic, and

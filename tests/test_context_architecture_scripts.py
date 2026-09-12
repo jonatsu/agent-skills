@@ -160,6 +160,40 @@ class CheckContextArchitectureTests(unittest.TestCase):
         self.assertEqual(result.returncode, EXIT_OK, result.stdout)
         self.assertEqual(result.stdout.strip(), "clean")
 
+    def test_root_ledgers_are_exempt_without_exempting_other_root_files(self) -> None:
+        _write(self.root, "BACKLOG.md", "# Backlog\n")
+        _write(self.root, "NOTES.md", "# Notes\n")
+
+        result = _run(self.root)
+
+        self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
+        self.assertNotIn("BACKLOG.md: unreachable", result.stdout)
+        self.assertIn("NOTES.md: unreachable", result.stdout)
+
+    def test_route_table_with_unrecognized_target_header_reports_the_header(
+        self,
+    ) -> None:
+        _write(self.root, "AGENTS.md", "# Root\n")
+        _write(
+            self.root,
+            "docs/index.md",
+            "# Index\n\n"
+            "| Document | What it holds | Read when |\n"
+            "| --- | --- | --- |\n"
+            "| `child.md` | Child guidance | Changing the child behavior |\n",
+        )
+        _write(self.root, "docs/child.md", "# Child\n")
+
+        result = _run(self.root)
+
+        self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
+        self.assertIn(
+            "docs/index.md: line 3: routing table has trigger column 'Read when' "
+            "but no recognized target column ('File' or 'Read')",
+            result.stdout,
+        )
+        self.assertIn("docs/child.md: unreachable", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

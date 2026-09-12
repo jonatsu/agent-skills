@@ -29,8 +29,15 @@ from typing import NamedTuple
 FLOOR_NAMES = ("AGENTS.md", "CLAUDE.md")
 DEFAULT_DOCS_DIRS = ("docs",)
 
-# Root-level files that are self-justifying and need no routing row.
-DEFAULT_ROOT_EXEMPT = ("README.md", "LICENSE.md", "CHANGELOG.md", "TODO.md")
+# Root-level files that are self-justifying and need no routing row. The ledger
+# pair is a documented default-layout contract protected by behavioral tests.
+DEFAULT_ROOT_EXEMPT = (
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md",
+    "TODO.md",
+    "BACKLOG.md",
+)
 
 DEFAULT_EXCLUDES = (
     "*/fixtures/*",
@@ -235,6 +242,44 @@ def _routing_rows(document_text: str) -> list[RoutingRow]:
     return rows
 
 
+def check_routing_table_headers(document_text: str, relative: str) -> list[Finding]:
+    """Report likely routing tables whose target header is not recognized.
+
+    A recognized trigger header followed by a Markdown table separator is a
+    strong signal that the table intends to route. Keeping the target vocabulary
+    narrow prevents incidental tables from establishing reachability; this
+    diagnostic makes a near miss visible at its cause.
+    """
+    lines = document_text.splitlines()
+    findings: list[Finding] = []
+    for index, line in enumerate(lines[:-1]):
+        stripped = line.strip()
+        separator = lines[index + 1].strip()
+        if not stripped.startswith("|") or not separator.startswith("|"):
+            continue
+        if not separator or not set(separator) <= {"|", "-", " ", ":"}:
+            continue
+
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        trigger = next(
+            (cell for cell in cells if ROUTE_TRIGGER_HEADER.match(cell.lower())),
+            None,
+        )
+        target = next(
+            (cell for cell in cells if cell.lower() in ROUTE_TARGET_HEADERS),
+            None,
+        )
+        if trigger is not None and target is None:
+            findings.append(
+                Finding(
+                    relative,
+                    f"line {index + 1}: routing table has trigger column {trigger!r} "
+                    "but no recognized target column ('File' or 'Read')",
+                )
+            )
+    return findings
+
+
 def _candidates(
     root: Path, docs_dirs: tuple[str, ...], excludes: tuple[str, ...]
 ) -> list[tuple[str, Path]]:
@@ -339,8 +384,18 @@ def _scan(
             Finding(".", f"no floor file found (looked for {', '.join(FLOOR_NAMES)})")
         ]
 
-    reachable, findings = _reachable(_routing_roots(root, excludes), root)
+    routing_roots = _routing_roots(root, excludes)
+    reachable, findings = _reachable(routing_roots, root)
     candidates = _candidates(root, docs_dirs, excludes)
+
+    documents = {path.resolve(): path for path in routing_roots}
+    documents.update({path.resolve(): path for _, path in candidates})
+    for path in sorted(documents.values()):
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue  # reachability and line-reference checks own unreadable-file findings
+        findings.extend(check_routing_table_headers(text, _relative(path, root)))
 
     findings.extend(check_reachability(candidates, reachable))
     findings.extend(check_line_references(candidates))

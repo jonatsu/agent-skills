@@ -102,6 +102,10 @@ Run `scripts/check_context_architecture.py <repository-root>` after any change a
 measures the system level: documents no structural route reaches, routing entries without a trigger condition,
 and line-number references that rot. A structural route is a target in a trigger-keyed routing table or a
 standalone Markdown inclusion link; inline links and incidental backticked paths do not establish reachability.
+In a routing table, the target header is exactly `File` or `Read` (case-insensitive), and the trigger header
+starts with `Read when`, `Symptom`, `Read before`, or `If you`. Other target words such as `Document` and
+`Directory` deliberately do not count; the checker reports that near miss at the table as well as any resulting
+unreachable documents.
 Pair it with `agents-management`'s `check_agent_context.py` for the instruction-file level; neither substitutes
 for the other. Propose wiring both into the repository's gates.
 

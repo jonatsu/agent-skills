@@ -10,18 +10,26 @@ metrics and the failure-mode mapping.
 
 ## Protocol
 
-1. **Select tasks.** Three to five representative tasks that real work would bring: at least one
-   navigation question ("where/how is X wired"), one change task ("add/modify X"), and one diagnosis task
-   ("why does X fail"). Reuse the same task set across runs and clients so results stay comparable; version
-   the set in the record.
+1. **Select tasks and establish the baseline.** Three to five representative tasks that real work would
+   bring: at least one navigation question ("where/how is X wired"), one change task ("add/modify X"), and
+   one diagnosis task ("why does X fail"). The set must also include one task whose correct handling depends
+   on frozen-genre semantics (for example, amend a decision rather than rewrite it) and one whose answer spans
+   more than one genre; these may overlap the first three kinds. Run this set before restructuring and again
+   after it. If no pre-change run exists, treat the first run only as a baseline, not evidence of improvement.
+   Reuse the same task set across runs and clients so results stay comparable; version the set in the record.
 2. **Cold-start per client.** For each target agent, start a fresh session with no carried context beyond
    what the client always loads. Give the task verbatim, with no hints about which documents exist.
 3. **Observe, do not steer.** Let the agent run until it takes its first materially correct action (right
    file edited, right command proposed, right diagnosis stated) or clearly commits to a wrong path. Only
    intervene to stop, never to redirect.
 4. **Score.** Record per task, per client:
-   - **Tokens to first correct action** — the headline efficiency number.
-   - **Wrong loads** — documents opened that a correct route would not touch.
+   - **Tokens to first correct action** — the headline efficiency number when the client exposes a token
+     count at that point. Otherwise record files opened and tool calls before the first correct action as the
+     fallback. Fallback comparisons are ordinal, and later runs must use the same substitute to preserve the
+     series.
+   - **Wrong loads** — documents opened that a correct route would not touch. Do not count a load that produced
+     a verified material finding; record it separately as a productive detour and revise the answer key's
+     interpretation without rewriting the pre-run key.
    - **Missed loads** — documents the task needed that were never opened (judged against a pre-written
      answer key of which documents each task requires).
    - Verbatim notes on where the agent hesitated, grepped fruitlessly, or asked the user.
@@ -46,8 +54,13 @@ Each observation indicts a specific layer; fix that layer, not the symptom:
 ## Interpreting Results
 
 - Compare against the previous record, not an absolute bar: the test's value is direction under change.
+- A first run taken only after a restructure establishes a baseline; it cannot show that the restructure
+  improved navigation or earned its maintenance cost.
 - One client's clean run does not generalize — client discovery and loading differ; every untested client is
   a coverage limit, not a supported claim.
+- Search behavior can bypass the intended topology. Record whether a route navigated to the answer or merely
+  confirmed one found by search, and preserve the task vocabulary that made either path successful. One
+  observed run is a question about relative leverage, not grounds to discard hub-and-spoke guidance.
 - A structural change that improves no metric did not earn its maintenance cost; consider reverting it.
 - Repetition costs real tokens: add repeat runs only when variance would change a decision, and note the
   spend in the record.
