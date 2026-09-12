@@ -13,6 +13,13 @@ Read [loading-model.md](loading-model.md) when client behavior affects a finding
 and pointers far enough to assess the behavior under review. Do not make a focused audit pay for unrelated
 complete-tree inspection.
 
+For a ruleset that is rendered rather than read in place, the surface is the source it is written in plus
+every output it renders to, and a finding must say which of the two it belongs to: a wording problem lives in
+the source, a drift problem only appears in an output. Such a ruleset also makes behavioral claims rather than
+claims about a repository, so most of it cannot be verified against a tree — assess it against whether a rule
+changes what an agent does, and do not record a dimension as unassessed merely because no repository fact
+backs it.
+
 ## Assess Separate Dimensions
 
 Report each dimension independently when relevant:

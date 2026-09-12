@@ -58,6 +58,11 @@ Five concerns, in order of leverage. Topology is deliberately last.
    imperative line and its trigger, exceptions and rationale go to the hub — "archive before reporting done"
    stays, the archiving trigger table leaves.
 
+   Routing is the first lever but not always an available one: a ruleset loaded at user or machine scope has
+   no hub to route to, because no second file loads in every session of every harness. There the register and
+   the accretion test are the whole remedy — shorten by deleting what changes no decision, never by thinning a
+   rule.
+
 2. **Read-when sharpness.** Every index entry, document header, and skill description is a load/skip
    classifier. Phrase it as the trigger condition ("read before gating a change"), never the topic
    ("verification"). It must work under the lowest common denominator of identifier plus text search, with no

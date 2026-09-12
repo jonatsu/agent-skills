@@ -18,9 +18,12 @@ between conflicting manifests without evidence.
 
 ## Scope
 
-This skill covers repository-local context such as root and nested `AGENTS.md` or `CLAUDE.md` files,
-vendor-specific instruction files, and `llms.txt`. A tracked file that this repository merely deploys into
-another environment is a payload, not this repository's context.
+This skill covers instruction files and the context around them: root and nested `AGENTS.md` or `CLAUDE.md`
+files, vendor-specific instruction files, and `llms.txt`. **Scope follows the file, not the repository.** A
+ruleset authored here and loaded at user or machine scope is an instruction file, and the tests below bind
+harder there, because every word is charged to every session of every agent rather than to one repository's. A
+tracked file this repository only relays into another environment, such as a deployed copy of something
+authored elsewhere, is a payload rather than context.
 
 Instruction files provide guidance. Hooks, permissions, and continuous integration provide deterministic
 enforcement. When a rule must hold every time, propose or identify the enforcement mechanism and use prose
@@ -98,6 +101,11 @@ exactly one hop through the evidence directory's own index, and only when an ins
 index, so deleting the route reports every file the index carried. Pass `--budget`,
 `--budget-for`, `--evidence-dir` and `--exclude` when the repository's conventions differ from the defaults,
 and `--help` for the full contract. Report its result rather than only that it ran.
+
+**`--names` is what points the script at a ruleset whose files are not called `AGENTS.md` or `CLAUDE.md`**, so
+pass it whenever the files under review carry their own names. Without it the run measures the default set and
+reports it clean, which reads as a pass for files it never opened. Check the count it prints against the files
+you meant to cover, and exclude any archived copies the names would also match.
 
 A script the agent runs is weaker than a gate the repository runs. When the repository has a task runner,
 pre-commit configuration, or continuous integration, propose wiring this check into it, so the next edit is
