@@ -79,6 +79,12 @@ against one corpus on one day; never rewrite one to match a later run.
 - **Average across harnesses.** Claude records an explicit error flag and a typed single-operand read; Codex
   infers errors from output text and batches reads, which costs it delivery attribution. A lower number may be
   the detector. Report per harness or report nothing.
+- **Compare one harness's coverage to another's without checking what each was offered.** The clients are
+  configured separately. `skillOverrides` in Claude's `settings.json` can set a skill to `name-only`, which
+  leaves it installed and invocable while withholding its description, so it cannot match a request and cannot
+  be repaired by rewriting one. Measured 2026-09-12: 34 skills. The extractor does not read that file, so
+  nothing in its output will warn you — open it yourself before any cross-harness sentence, and before calling
+  any silence a description defect.
 - **Score skill usage as a virtue.** A session that solved the problem without needing a skill is a good
   session. Coverage says which skills never fire; it does not say a session should have used one.
 - **Edit a deployed skill under `~/.config/*/skills` or `~/.codex/skills`.** The next `kst sync` overwrites it.
