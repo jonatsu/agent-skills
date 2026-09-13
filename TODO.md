@@ -250,13 +250,14 @@ The 2026-09-06 nix-domain consolidation is complete except for the items below: 
 fix lists and restored to `shared/nix/`. Verdicts, evidence, and coverage limits:
 [../docs/evaluations/2026-09-06-nix-domain-restore.md](../docs/evaluations/2026-09-06-nix-domain-restore.md).
 
-- **`nix-wrapper-modules` — still archived; restore after:** trimming the 795-char description; rewriting the
-  `wrappedModules` deprecation as completed (the alias is gone from upstream `main`, verified 2026-09-05);
-  fixing the Mode C example's `config.configFile.path` → `config.constructFiles.gitconfig.path`; re-verifying
-  against current upstream (pre-1.0, already moved — `inputs.pkgs` injection is undocumented in its
-  api-reference). Contingent: nix-config still holds the wrapper inputs deliberately but with no consumer —
-  restore only once that decision lands in adoption; if the inputs are dropped and no other repo adopts the
-  library, delete instead. The nix-packaging skill already stands alone either way.
+- **`nix-wrapper-modules` — deleted from the archive 2026-09-13**, resolving the "restore or delete" branch
+  below in favour of delete. nix-config ported it to `docs/reference/nix-wrapper-modules.md` — a reference
+  rather than a skill, because both wrapper inputs there still have zero consumers and a skill would spend
+  discovery budget in every session on a framework nothing uses. The port was verified against the revision
+  nix-config's lock pins (`7a6279b`) rather than upstream `main`, which independently confirmed two of this
+  entry's fix items: the 795-char description (dropped with the skill format) and the Mode C `configFile`
+  defect. Recoverable from git history at `skills/archived/nix/nix-wrapper-modules/`; the nix-packaging skill
+  stands alone either way, and keeps its own cross-reference to the upstream library.
 - **Deferred full `skill-review` pass** on the eight nix-domain-consolidation skills (five restored + three
   promoted): all shipped at review lite, so verdicts are ready / ready-with-risks with discovery behavior
   unmeasured.
