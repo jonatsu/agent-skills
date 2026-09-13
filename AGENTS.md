@@ -92,6 +92,9 @@ exit code against what you are proving:
   explicit rather than an absence of output.
 - **A name that should be gone:** expect exit 2, `no lock entry names the skill`. A removed skill leaves no
   lock entry, so that failure is the confirmation.
+- **A skill added from a remote source:** expect exit 1 and an `UNVALIDATED` line. Neither skill validator can
+  see a package with no copy under `skills/`, so the gate demands a decision: vendor it, or allowlist its URL
+  in `scripts/check-skill-deploy-drift.sh`.
 
 Neither answer is available from a hand-rolled loop, which checks only the destinations you remembered to
 list and cannot tell a pruned skill from a mistyped name.

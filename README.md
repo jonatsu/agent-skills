@@ -29,8 +29,13 @@ Skills are one part of the repository — see [../README.md](../README.md) for t
 
 ```console
 $ just skills-deployed
-210 compared, 0 drifted, 0 stray .bak, 0 pending, 4 remote-skipped, 0 unresolved
+238 compared, 0 drifted, 0 stray .bak, 0 pending, 0 remote-allowed, 0 unvalidated, 0 unresolved
 ```
+
+A remote-sourced skill fails this check rather than being skipped. Neither skill validator can see a package
+that has no copy under `skills/` — `find` is how they discover work — so a remote source deploys to all four
+agents with nothing checking it. Vendor the package into `skills/shared/<domain>/`, or name its URL in
+`allowed_remote_sources` in `scripts/check-skill-deploy-drift.sh` with a dated reason.
 
 One skill, itemised per destination. Use this rather than a hand-written `diff -rq`, which silently checks
 only the destinations you remembered to list:
@@ -42,7 +47,7 @@ ok         git-ops                       /home/user/.codex/skills/git-ops
 ok         git-ops                       /home/user/.copilot/skills/git-ops
 ok         git-ops                       /home/user/.config/opencode/skills/git-ops
 
-4 compared, 0 drifted, 0 stray .bak, 0 pending, 0 remote-skipped, 0 unresolved
+4 compared, 0 drifted, 0 stray .bak, 0 pending, 0 remote-allowed, 0 unvalidated, 0 unresolved
 ```
 
 A name no lock carries exits 2 rather than passing vacuously, so a typo and a genuinely pruned skill both
