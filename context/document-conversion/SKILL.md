@@ -167,7 +167,10 @@ done
 ```
 
 For MarkItDown, the bundled helper accepts local file inputs only, skips symlinks, preserves subdirectories,
-and writes each result as `<source-filename>.md` to avoid basename collisions:
+and writes each result as `<source-filename>.md` to avoid basename collisions. It does `import markitdown`,
+so **a `markitdown` on `PATH` is not enough** — a pipx, `uv tool`, or mise `pipx:` install is isolated from
+every other interpreter. Derive the one that can import it from the console script's shebang, as
+`references/markitdown_setup.md` shows:
 
 ```bash
 python <skill-root>/scripts/batch_convert.py documents/ markdown/ \

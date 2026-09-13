@@ -21,7 +21,27 @@ non-zero, so pass `--allow-version-mismatch` when a nearby release is acceptable
 
 **A CLI on `PATH` is not the same as an importable library.** The bundled conversion scripts do
 `import markitdown`, so they need an interpreter that can see the package. A `markitdown` installed through
-pipx or mise satisfies the shell command but not the import.
+pipx, `uv tool`, or mise's `pipx:` backend satisfies the shell command but not the import, because each
+installs into an isolated environment of its own.
+
+That isolation is not a dead end: **the console script's shebang names the interpreter that can import it.**
+
+```bash
+MARKITDOWN_PYTHON=$(head -1 "$(command -v markitdown)" | sed 's|^#!||')
+"$MARKITDOWN_PYTHON" <skill-root>/scripts/inspect_installation.py
+"$MARKITDOWN_PYTHON" <skill-root>/scripts/batch_convert.py documents/ markdown/
+```
+
+This needs no second install and no network, and it survives an upgrade because nothing version-specific is
+written down. It works for any installer that produces a console script, which is all of the above.
+
+Check it before relying on it: `inspect_installation.py` under that interpreter should report
+`import health: OK`. If the shebang points at a wrapper rather than a real interpreter, fall back to an
+ephemeral environment instead:
+
+```bash
+uv run --with "markitdown[all]==0.1.7" python <skill-root>/scripts/batch_convert.py documents/ markdown/
+```
 
 ## Install
 
