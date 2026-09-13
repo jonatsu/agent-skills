@@ -108,13 +108,26 @@ Release sequencing is in [dependency-maintenance.md](dependency-maintenance.md).
 | ------------------------ | --------------------------------------- |
 | `UV_CACHE_DIR`           | Cache location                          |
 | `UV_NO_CACHE`            | Disable caching                         |
-| `UV_PYTHON`              | Default interpreter                     |
+| `UV_PYTHON`              | Explicit interpreter request, see below |
 | `UV_PROJECT_ENVIRONMENT` | Use a non-default environment directory |
 | `UV_SYSTEM_PYTHON`       | Use the system interpreter              |
 
 `UV_PROJECT_ENVIRONMENT` solves one specific problem: developing on a host while also building in a
 container. Point the host at `.venv-dev` and the container keeps `.venv`, so switching context does not
 rebuild an environment for a different OS or interpreter. Ignore both paths in git.
+
+`UV_PYTHON` is a request, not a default. It outranks `.python-version`, and a value conflicting with
+`requires-python` is a hard error rather than a fallback:
+
+```text
+error: The requested interpreter resolved to Python 3.13.15, which is incompatible
+with the project's Python requirement: `==3.12.*` (from `project.requires-python`)
+```
+
+Prefer a bare version (`3.12`) to an absolute path: a version still resolves against whatever interpreters are
+discoverable, a path cannot, and a path exported machine-wide breaks every project whose floor differs.
+`UV_PYTHON_PREFERENCE` (`only-managed`, `managed`, `system`, `only-system`) decides where uv may look but
+never overrides an explicit request.
 
 ## Common Workflows
 
