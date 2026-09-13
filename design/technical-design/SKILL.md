@@ -1,7 +1,7 @@
 ---
 name: technical-design
 description: Design how a bounded software system or change should realize accepted requirements before implementation planning. Use for architecture, interfaces, state and data flow, failure handling, compatibility, migration, rollout, or rollback decisions; not for ideation, requirements specification, task sequencing, or reviewing an already settled design.
-license: MIT
+license: MIT AND CC-BY-SA-4.0
 metadata:
   author: Joonas Onatsu
 ---
@@ -83,10 +83,29 @@ source line ranges, commits, task assignments, or implementation status.
 
 ## Write the Design Artifact
 
-Use an outcome-based structure rather than filling a fixed template. Give the reader enough context to understand the
-governing specification and intent, local scope, requirement coverage, evidence, chosen system shape, behavior,
-interfaces, important paths, consequences, alternatives, risks, assumptions, and open questions. End with a planning
-handoff that names settled obligations without sequencing their implementation.
+Use arc42 for new technical-design documents by default. Inspect the repository's documentation instructions and
+relevant existing designs first. When continuing a document, preserve its organization. When joining an established
+design set, follow its applicable template, terminology, markup, and document boundaries. Use arc42 to check coverage
+within that structure; do not create a parallel design or reorganize existing documents solely to impose arc42.
+An unrelated README or incidental layout does not establish a design convention. Explicit user instructions take
+precedence. Briefly state the selected convention in the design basis; routine matching needs no separate approval.
+
+For arc42, read [the writing guide](references/arc42-writing-guide.md) and use
+[the template](assets/arc42-design-template.md). Read [the worked example](references/arc42-example.md) before the first
+draft to calibrate explanation and depth. Keep the twelve numbered sections in order; tailor subsections and depth.
+Use a short applicability statement or reference where sufficient. Remove authoring prompts from the finished document.
+Do not invent requirements, stakeholders, thresholds, or risks to fill a section. Keep status and governing-source
+links in a short preamble and the planning handoff in an unnumbered appendix.
+
+For bounded changes, state the affected boundary and baseline, explain the changed design, and link unchanged system
+documentation. In arc42, sections 1 and 10 summarize or reference accepted requirements; they do not acquire product authority.
+Section 9 links existing decisions rather than duplicating them. An unresolved obligation remains a gap even when its
+template section is present.
+
+Orient the reader before introducing detail. Show the structure, explain its important relationships and rationale,
+then describe selected internals. Explain concepts before relying on them. Use the same component names in diagrams,
+responsibility tables, interfaces, and scenarios; name the component responsible for each runtime action. Use prose
+to explain causes and trade-offs, tables for comparison or lookup, and diagrams to make relationships visible.
 
 In the handoff, identify invariants, failure modes, and rollout/recovery obligations that need particular scrutiny or
 qualification, with the evidence boundary and owner where known. Link applicable policy or coding constraints instead
@@ -117,6 +136,8 @@ Before handing the design to implementation planning, check that:
 - consequential requirements map to system guarantees without invented product policy;
 - consequential behavior and architecture no longer require invention;
 - responsibilities, interfaces, and state or data flows agree;
+- the reader can identify component responsibilities, follow an important scenario, and explain the major decisions;
+- names, interfaces, state transitions, and numerical claims agree across prose, diagrams, tables, and scenarios;
 - consequential invariants and prohibited behavior are settled;
 - important success, error, degraded, and recovery paths are defined;
 - relevant compatibility, migration, security, privacy, accessibility, and operational obligations are settled;

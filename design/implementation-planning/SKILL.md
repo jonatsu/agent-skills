@@ -18,6 +18,9 @@ Read the governing requirements specification and design, repository instruction
 interfaces, migrations, operational assets, and configured tooling before decomposing work. Cite the specification and
 design when they exist, and keep each shared constraint in its authoritative home.
 
+Consume accepted designs in arc42 or the repository's own format without requiring reformatting. Refer to their actual
+sections and decision records. Derive work units from dependencies and outcomes, never from design chapter order.
+
 Planning normally requires an accepted technical design. Requirements alone are insufficient when behavior,
 architecture, interfaces, failure handling, compatibility, or migration choices remain open. A small change may use an
 existing implementation or settled repository convention as design authority when no consequential design decision
@@ -52,9 +55,10 @@ and deployment when relevant. Do not invent skill names, assume authoring-machin
 Reuse guidance already read in the session unless it changed. Explicit user decisions and repository requirements
 outrank skill defaults; a generic recommendation does not authorize an incidental tooling or framework migration.
 
-Make applying that guidance an explicit preflight step in the affected work unit. Name the skill or authoritative rule,
-the work that triggers it, and when it must be read before editing or verification. Shared requirements may be defined
-once and referenced from units; an unattached appendix or a general instruction to "follow best practices" is insufficient.
+Define shared environment setup, coding guidance, and review procedures once in a shared preflight section. Give each
+shared requirement a short name or anchor. Each affected unit references the requirements it uses and explains its
+exceptions. Name the skill or authoritative rule, the work that triggers it, and when it must be read before editing
+or verification. An unattached appendix or a general instruction to "follow best practices" is insufficient.
 Record missing required guidance or unavailable tooling as a prerequisite with its owner and downstream effect.
 Require completion evidence for the applicable coding rules and checks, not merely a claim that a skill was loaded.
 
@@ -73,7 +77,18 @@ an accepted stable interface. Keep shared files, generated artifacts, and depend
 
 ## Specify Each Work Unit
 
-For every unit, make these facts recoverable without forcing one rigid template:
+Use [the plan template](assets/implementation-plan-template.md) unless explicit user instructions or an established
+repository plan convention supplies the structure. Preserve an existing plan's organization when extending it.
+An unrelated document does not establish a plan convention. Read [the worked plan](references/implementation-plan-example.md)
+before the first draft to calibrate detail; its paired design illustrates the design-to-plan boundary.
+
+Start with a short implementation overview: what changes, how the work reaches the outcome, and which dependencies
+determine the order. Put this explanation before paths and commands. Include a dependency diagram when the flow needs
+one. Then give each unit these sections: Outcome and rationale; Changes; Dependencies and constraints; Verification
+and completion; and Recovery when a failure needs a specific response. Follow repository headings when they differ.
+
+Explain how the changes produce the outcome in connected prose, rather than presenting a list of files to edit.
+Within that structure, make these facts recoverable:
 
 - **Outcome:** the behavior, capability, migration state, or visible result;
 - **Requirements and design obligations:** the accepted behavior and technical decisions it satisfies;
@@ -93,7 +108,9 @@ fragments, migrations, or non-obvious algorithms when they materially clarify an
 routine complete files or duplicate the future source of truth.
 
 Assign generated files, dependency locks, migrations, documentation, and operational configuration to the unit whose
-outcome requires them. Do not allow tools to modify unlisted surfaces by implication.
+outcome requires them. Identify expected generated outputs and the tools that own them. Inspect unexpected changes
+before including them; explain necessary consequences and keep unrelated changes outside the work. An unexpected
+output that changes scope or a consequential contract returns to the appropriate design or authority boundary.
 
 ## Match Verification to the Claim
 
@@ -155,6 +172,12 @@ Neither the implementer nor reviewer may waive a consequential requirement or un
 
 ## Write and Check the Plan
 
+Keep intended work distinct from execution evidence. The plan states actions and expected observations; the repository's
+existing tracker or completion-record convention holds actual results, deviations, reviewed revisions, and unresolved
+findings. Link that record rather than creating a competing ledger. If no convention exists, use one clearly separated
+execution-record section in the plan. Do not scatter status through explanatory prose or present expected results as
+observations. Update the intended approach when an authorized adaptation changes it, retaining the reason in the record.
+
 Resolve the plan path in this order:
 
 1. Use a path supplied by the user.
@@ -175,6 +198,11 @@ assignment, finding-resolution gates, review cost, verification strength, and fi
 placeholders and expose unavailable checks and unresolved risks. Require the completion record to identify applied
 guidance, reviewed revisions, results, finding dispositions, and unverified obligations. An implementer should not need
 to reconstruct the specification or design conversation.
+
+Read the plan as an unfamiliar implementer: can you identify the first action, explain what it unlocks, understand how
+each unit achieves its outcome, recognize completion, and respond to a failed check? Check that shared preflight
+references resolve and that the final integration gate proves the complete behavior. Headings and command lists alone
+do not establish an actionable plan.
 
 Saving or completing a plan does not authorize implementation. Continue only when the user's request already supplied
 that authority; otherwise present the plan and stop before changing the system.

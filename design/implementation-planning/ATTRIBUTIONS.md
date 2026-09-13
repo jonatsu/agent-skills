@@ -7,6 +7,20 @@
 - Current license: MIT
 - Status: original implementation with independently expressed idea-level influence
 
+## arc42 Compatibility
+
+- Original authors: Gernot Starke and Peter Hruschka
+- Source:
+  [English template](https://github.com/arc42/arc42-template/tree/8dff0d9b1f9640684df8c3bbcdc2ee45f989ca0f/EN)
+- Source revision: `8dff0d9b1f9640684df8c3bbcdc2ee45f989ca0f`, inspected 2026-09-14
+- Source license: CC BY-SA 4.0
+- Relationship: idea-level influence, independently expressed
+
+The architecture format informed the instruction to consume an accepted design without turning its chapter
+order into implementation order. The plan template and fictional worked plan are original execution guidance;
+they do not copy or adapt arc42's template, prose or examples. Their catalog scenario was authored for this
+skill pair. The separately licensed architecture example belongs to the `technical-design` package.
+
 ## Superpowers `writing-plans`
 
 - Original author: Jesse Vincent

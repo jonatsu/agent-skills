@@ -18,7 +18,7 @@
       "material_cost",
       "result"
     ],
-    "grading": "Grade outcomes from the response, written artifacts, and trace. Do not require exact wording or headings."
+    "grading": "Grade outcomes from the response, artifacts and trace. Check the default section structure only in cases that exercise that explicit format contract; honor established repository formats. Heading presence alone does not prove explanation, consistency or useful implementation guidance."
   },
   "cases": [
     {
@@ -148,6 +148,73 @@
         "Stops the affected design branch and returns those questions to requirements specification.",
         "Continues only independent technical decisions that do not depend on the missing behavior.",
         "Does not silently choose product behavior to keep the design moving."
+      ]
+    },
+    {
+      "id": "arc42-default",
+      "prompt": "Design a local catalog validator. It reads a UTF-8 JSON array of objects, requires a nonempty string id on each entry, rejects duplicate ids, never changes the input, and reports every entry issue. Parsing or read errors are distinct from invalid entries. There are no existing design docs or specified document format. Present the design in your answer.",
+      "behavior": "Choose the arc42 default and explain a bounded design.",
+      "outcomes": [
+        "Uses the twelve numbered arc42 sections in order, with a brief source/status preamble and unnumbered planning handoff.",
+        "Explains component responsibilities and traces an important runtime scenario through the same named components.",
+        "Explains reasons for consequential choices and separates requirements from recommendations.",
+        "Requests final design confirmation without beginning implementation planning."
+      ]
+    },
+    {
+      "id": "existing-design-format",
+      "prompt": "Extend the supplied design to cover recovery after a worker restart. Keep its accepted delivery guarantees. The existing design has Purpose, Current behavior, Proposed behavior, Decisions, and Open questions sections; repository instructions require that layout for design docs. Present the revised document.",
+      "behavior": "Preserve an applicable repository format.",
+      "outcomes": [
+        "Preserves the established headings and terminology instead of adding twelve arc42 chapters or a second design.",
+        "Checks relevant architecture coverage within the existing structure.",
+        "Does not invent accepted restart policy or overwrite an unresolved choice."
+      ],
+      "required_inputs": [
+        "Supply the accepted design, requirements and repository instructions described in the prompt; use an isolated repository fixture with its actual paths and configured checks. Do not infer acceptance or fabricate inspection."
+      ]
+    },
+    {
+      "id": "unrelated-docs-not-convention",
+      "prompt": "Design a read-only UTF-8 JSON catalog validator requiring nonempty string ids and unique ids, reporting all entry issues and distinguishing read/parse failures. The repository contains only a README with Installation and Usage headings and an API reference. No architecture or design template is established. Present the design.",
+      "behavior": "Distinguish unrelated documentation from a design convention.",
+      "outcomes": [
+        "Uses arc42 rather than copying the README headings.",
+        "Does not ask the user to choose a format when the default resolves it."
+      ]
+    },
+    {
+      "id": "small-change-arc42",
+      "prompt": "Design adding duplicate-id detection to an existing read-only catalog validator. The accepted requirement is to report all duplicate ids without changing existing read/parse errors or output ordering. Existing system documentation describes the parser, CLI and deployment, but does not establish a design-document format. Present a bounded change design.",
+      "behavior": "Scale depth without losing recognizable format.",
+      "outcomes": [
+        "Uses arc42 sections with concise applicability statements or references where sufficient.",
+        "Describes the affected design and links unchanged context rather than redesigning the entire tool.",
+        "Does not invent quality targets, stakeholders, deployment changes or risks to fill sections."
+      ]
+    },
+    {
+      "id": "requirements-and-adrs-in-format",
+      "prompt": "Create an arc42 design from the supplied accepted specification and existing ADRs. The specification owns retention and recovery behavior; the ADRs already settle storage and identity. Do not reopen these decisions.",
+      "behavior": "Use requirements and decision sections without duplicating authority.",
+      "outcomes": [
+        "Sections 1 and 10 summarize or reference accepted requirements and preserve their revision and identifiers.",
+        "Section 9 links settled ADRs and explains only additional decisions that are actually needed.",
+        "Does not manufacture acceptance thresholds or treat template completion as acceptance."
+      ],
+      "required_inputs": [
+        "Supply the accepted design, requirements and repository instructions described in the prompt; use an isolated repository fixture with its actual paths and configured checks. Do not infer acceptance or fabricate inspection."
+      ]
+    },
+    {
+      "id": "cross-view-comprehension",
+      "prompt": "Write a design for a read-only UTF-8 JSON catalog validator requiring nonempty string ids and unique ids, reporting all entry issues and distinguishing read/parse failures for a capable developer unfamiliar with this tool. Explain the structure, a successful check, duplicate-id handling and an unreadable input.",
+      "behavior": "Make the design understandable and consistent across views.",
+      "outcomes": [
+        "The reader can identify who reads input, who validates entries and who reports the result.",
+        "Runtime steps, diagrams and interface descriptions use consistent component names and error semantics.",
+        "Explains rationale in connected prose rather than presenting only labels, paths and obligation lists.",
+        "No timing, state or interface claim contradicts another section."
       ]
     }
   ]
