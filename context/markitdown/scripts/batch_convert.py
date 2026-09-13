@@ -13,9 +13,9 @@ import sys
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from importlib.metadata import version
+from collections.abc import Iterable
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Iterable
 
 from markitdown import MarkItDown
 

@@ -45,7 +45,9 @@ python3 <skill-root>/scripts/inspect_installation.py
 ```
 
 `inspect_installation.py` runs without MarkItDown present and reports which extras, plugins and external
-executables are available. The bundled conversion scripts do not: they import `markitdown`, so they need an
+executables are available. It exits non-zero when the installed version is not exactly 0.1.7, so pass
+`--allow-version-mismatch` when a nearby release is acceptable; only an import failure or a missing package
+means the install is actually unusable. The bundled conversion scripts do not: they import `markitdown`, so they need an
 interpreter that can see it. A CLI installed through pipx or mise satisfies `markitdown …` at the shell but
 not `import markitdown`, so run those scripts through an environment that has the library.
 
