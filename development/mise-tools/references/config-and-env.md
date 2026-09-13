@@ -18,7 +18,8 @@ Important files:
 Key behavior from upstream docs:
 
 - config files merge upward through parent dirs
-- `[tools]`, `[env]`, and `[settings]` are additive with overrides
+- `[tools]`, `[env]`, and `[settings]` are additive with overrides — with one exception for `tools = true`,
+  below
 - individual task definitions replace by task name
 - `MISE_ENV` activates `mise.<env>.toml`
 
@@ -63,6 +64,21 @@ Important features:
 - `env._.source` for sourced shell snippets when truly needed
 - `redactions` or per-var redaction controls for secret-safe output
 
+## `tools = true` breaks the layering rule
+
+An `[env]` entry written as `{ value = "...", tools = true }` renders a `{{ tools.* }}` template, so mise
+resolves it in a pass that runs *after* every plain `[env]` layer has merged, global and project alike. A
+global entry carrying `tools = true` therefore **cannot** be overridden by an ordinary project assignment: the
+project value merges first and the global template lands on top. Only a project entry that also carries
+`tools = true` wins.
+
+Measured on mise 2026.9.6. With `UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }` in the global
+config, a project `mise.local.toml` setting `UV_PYTHON = "3.12"` had no effect, while a plain `ZZTEST` in the
+same file applied normally. Switching the project entry to `{ value = "3.12", tools = true }` made it win.
+
+Prefer a plain value in global config. Where a global entry must template on a tool, every project needing to
+override it has to repeat the `tools = true` form — say so where the entry is defined.
+
 ## `[env]` applies during installation, not just activation
 
 `[env]` is resolved before tools, so it reaches tool-installation subprocesses — upstream states this in
@@ -106,3 +122,6 @@ reaches tools installed through the `go:` backend.
 - using global config when a project-local file would work
 - forgetting that parent configs can leak in
 - treating fuzzy versions as exact unless lockfile or pins enforce it
+- a global `[env]` entry carrying `tools = true`, which no plain project assignment can override
+- assuming `mise exec` gives a clean environment: it overrides only the variables the config declares, so an
+  inherited value for anything unmentioned passes straight through
