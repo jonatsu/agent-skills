@@ -1,6 +1,6 @@
 ---
 name: ast-grep-outline
-description: Map a file, directory, or changed file set with `ast-grep outline` before reading source. Use when exploring unfamiliar code, locating a symbol's members, tracing which files import a module, or reviewing the structure a change left behind. Use ast-grep for matching or rewriting a specific code pattern.
+description: Map a file, directory, or changed file set with `ast-grep outline` before reading it in full. Use when exploring unfamiliar code, locating a symbol's members, tracing which files import a module, reviewing the structure a change left behind, or finding the section you need in a long Markdown document such as a design doc, plan, README or set of notes. Use ast-grep for matching or rewriting a specific code pattern.
 license: MIT
 compatibility: Requires the ast-grep CLI (`ast-grep`, also installed as `sg`). Documented against 0.45.3.
 metadata:
@@ -10,11 +10,12 @@ metadata:
 # ast-grep outline
 
 `ast-grep outline` prints a compact structural map with line numbers: top-level items (imports, functions,
-classes, structs, interfaces, modules, enums) and their direct members (fields, methods, constructors, enum
-variants). It is local and syntax-only, so it is cheap enough to run before any full file read.
+classes, structs, interfaces, modules, enums, Markdown headings) and their direct members (fields, methods,
+constructors, enum variants). It is local and syntax-only, so it is cheap enough to run before any full file
+read.
 
-Read code in stages: find candidate files by search or by name, outline them, then open only the line range
-the outline points at. Defaults adapt to the input — a file shows local structure with member digests, a
+Read a file in stages: find candidates by search or by name, outline them, then open only the line range the
+outline points at. Defaults adapt to the input — a file shows local structure with member digests, a
 directory shows only its exported surface as grouped names.
 
 ## Uses
@@ -51,6 +52,27 @@ ast-grep outline <dir> --items imports --view signatures
 ```shell
 ast-grep outline $(git diff --name-only HEAD) --items exports
 ```
+
+## Markdown and Other Prose
+
+Headings are the structure, so a long design document, plan, README or notes file maps exactly as source
+does, with no configuration:
+
+```shell
+ast-grep outline <file.md>
+ast-grep outline <dir>
+ast-grep outline <file.md> --match <heading-regex>
+```
+
+The saving is largest precisely where a full read hurts most: a document of a few thousand lines outlines to
+around 1% of its own size. `--view` behaves as it does for code, while `--items imports` and `--type` find
+nothing, because prose has neither imports nor symbol types.
+
+**Only navigation transfers to Markdown, not matching.** `ast-grep run --pattern` returns nothing whatsoever
+on a Markdown file: every pattern collapses to `paragraph → inline`, and the inline kinds such as
+`inline_link`, `emphasis` and `code_span` do not exist in the grammar. Block kinds like `section` and
+`list_item` do resolve, so `--kind section` yields nested section extents when a start and end line are
+needed. Do not send the sibling `ast-grep` skill at a Markdown rewrite; edit the range this outline gives you.
 
 ## Arguments
 

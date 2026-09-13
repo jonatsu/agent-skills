@@ -35,3 +35,7 @@ Material changes:
 - Directory renamed from `outline` to `ast-grep-outline` to match the frontmatter name, since skill names must
   be unique across every domain in this repository.
 - Frontmatter `license`, `compatibility` and `metadata.author` added per this repository's skill-forge policy.
+- **Added 2026-09-13:** the Markdown branch, and the description now names it. Upstream's package is entirely
+  code-facing. Behaviour measured locally against 0.45.3 rather than taken from any source: that headings
+  outline unconfigured, that `--items imports` and `--type` find nothing in prose, and that a pattern run
+  against Markdown matches nothing at all because the grammar is block-level.
