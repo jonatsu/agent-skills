@@ -446,6 +446,15 @@ from primary sources, record provenance, and decide whether the source overlaps 
 - [stellarlinkco requirements agents](https://github.com/stellarlinkco/myclaude/tree/master/agents/requirements):
   compare with archived `design-forge` and its deliberate rejection of a universal atomic `FR-` and `NFR-`
   schema.
+- [firecrawl/pdf-inspector](https://github.com/firecrawl/pdf-inspector), recorded 2026-09-13 and **not yet
+  fetched or read**: a candidate third converter for `shared/context/document-conversion`, from the same
+  publisher as `anydoc`. That skill currently routes two cases to nothing it owns — *"bounding boxes, page
+  coordinates, or screenshots: neither; use a layout-aware parser"*, and a scanned or image-only PDF, where
+  both converters can only send the whole document to a hosted service. **Whether this fills either gap is
+  the open question, not an assumption.** Read it against that routing table before adding a third branch,
+  since the skill was rescoped specifically to stop two converters competing for one request. Check the
+  licence and whether it processes locally or uploads: the last Firecrawl package reviewed here was
+  `not ready` precisely because it omitted that its OCR path transmits the entire document.
 
 ## Python Preference Placement Resolved
 
