@@ -10,7 +10,7 @@ metadata:
 # Python Async Patterns
 
 Concurrency with asyncio: structuring it, bounding it, cancelling it, and finding out why it stalled. Testing
-async code is `python-testing`.
+async code is `python-testing`. Using more than one core for CPU-bound work is `python-parallelism`.
 
 ## Respect Project Conventions
 
