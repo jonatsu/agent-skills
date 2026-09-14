@@ -1,6 +1,6 @@
 ---
 name: cc-safety-net
-description: "Operate CC Safety Net: explain why a command was blocked, triage false positives, configure custom rulebooks, manage agent CLI integrations, and diagnose protection. Use when a BLOCKED by CC Safety Net message appears, or when asked whether the guard is working."
+description: Operate CC Safety Net — explain why a command was blocked, triage false positives, configure custom rulebooks, manage agent CLI integrations, and diagnose protection. Use when a BLOCKED by CC Safety Net message appears, or when asked whether the guard is working.
 license: MIT
 compatibility: Requires the cc-safety-net CLI on PATH. Verify the running version with `cc-safety-net --version`; guidance here tracks 2.4.1.
 metadata:

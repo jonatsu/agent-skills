@@ -41,6 +41,9 @@ Local changes since the vendored revision:
   repository's `AGENTS.md`.
 - `license`, `compatibility` and `metadata.author` were added to satisfy this repository's skill policy
   validator, which upstream does not run.
+- The description's leading colon was replaced with an em dash so the YAML scalar needs no surrounding quotes.
+  Kasetto reads `description` linewise, so upstream's quoted form was stored in `kasetto.lock` with its double
+  quotes included — and that stored string is what agents route on.
 
 ## Underlying Software
 
