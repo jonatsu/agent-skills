@@ -35,7 +35,8 @@ Assume unrecognized changes belong to another contributor. Commit only changes y
 - Record `HEAD`, worktree state, and index state before editing or staging.
 - Stop if the index contains changes you did not stage. Wait or ask; do not unstage, commit, or rewrite them.
 - Stage a whole path only when every changed hunk is yours. Use `git add -p` for mixed-ownership files, then
-  inspect the staged and unstaged versions separately.
+  inspect the staged and unstaged versions separately. Do not then commit that path with a pathspec: step 7
+  re-takes the whole worktree file, committing the foreign hunks you just excluded.
 - If overlapping edits cannot be separated confidently, stop and coordinate. Do not overwrite either version
   to make staging easier.
 - Do not run formatters or generators across files containing foreign changes unless their output can be
@@ -75,22 +76,36 @@ Use this path only when creating a new commit without amending, rewriting, pushi
 
 1. Confirm the repository with `git rev-parse --show-toplevel`. If it fails, report that no repository was
    found; do not run `git init` unless the user asked to create one.
+
 2. Inspect `git status --short`, the relevant worktree diff, and `git diff --cached --name-only`. A dirty
    index that you did not create is a stop condition.
+
 3. Stage only the intended paths with explicit pathspecs. Never `git add -A`, `git add .`, `git add -u`, or
    `git commit -a`.
+
 4. Inspect `git diff --cached --name-status` and `git diff --cached`. Stop if any staged path or hunk is
    unintended. Recheck after interactive staging or concurrent activity.
+
 5. Follow repository commit conventions. Otherwise use Conventional Commits: `<type>(<scope>): <subject>`,
    imperative, at most 72 characters, no period. When the type, scope, body, a breaking change or a trailer
    needs a decision, read [references/commit-messages.md](references/commit-messages.md).
+
 6. Run the validation required by the task and repository. Do not invent generic language-specific checks.
+
 7. Commit with an explicit pathspec, `git commit -m "<subject>" -- <paths>`. Given no pathspec, `git commit`
    records the whole index, and `git commit --amend` does the same while rewriting a message that then
-   describes content the commit no longer holds. A pathspec commits the named paths from the **worktree**, so
-   it overwrites a staged version of a path you both changed; that is why step 3's ownership check decides
-   which paths may appear here. Then inspect `git show --stat --oneline --summary HEAD`, the recorded diff for
-   the intended paths, and `git status --short`.
+   describes content the commit no longer holds. A pathspec commits the named paths from the **worktree**,
+   discarding whatever the index held for them, so it overwrites a staged version of a path you both changed;
+   that is why step 3's ownership check decides which paths may appear here. Then inspect
+   `git show --stat --oneline --summary HEAD`, the recorded diff for the intended paths, and
+   `git status --short`.
+
+   The exception no ownership check catches, because it is not about ownership: when the index holds what the
+   worktree cannot express, a pathspec cannot commit it and reverts it instead. `git rm --cached` stages a
+   deletion while the file stays on disk; `git add -p` stages some hunks of a file that still holds the rest.
+   Both need a pathspec-less `git commit`, after verifying the whole index with
+   `git diff --cached --name-status`, because that is the only form that records the index as staged.
+   Verified on git 2.43.0, 2026-09-14.
 
 A commit records the index, not the worktree. After a reset-based rebuild, a file removed only from disk can
 remain in the next commit until its deletion is staged. Verified on git 2.43.0, 2026-08-26.
