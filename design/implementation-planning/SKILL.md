@@ -71,6 +71,7 @@ documentation dependencies when the governing design requires them.
 Size work units by independently verifiable outcome. Prefer a vertical slice that produces observable behavior. Use a
 foundation unit only when it establishes a meaningful contract or seam and has useful verification of its own. Split
 further when risk, reviewability, or repository workflow requires it; do not split by arbitrary minutes or file count.
+A unit whose title needs an "and" to describe it, or that spans two independent subsystems, is two units.
 
 Order units by dependency and risk rather than imposing universal phases. Parallel work requires disjoint ownership or
 an accepted stable interface. Keep shared files, generated artifacts, and dependency-ordered changes with one owner.
