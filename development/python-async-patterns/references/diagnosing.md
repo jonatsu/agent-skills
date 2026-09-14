@@ -95,6 +95,32 @@ A coroutine was created and dropped, so its body never ran. Usually a forgotten 
 Under a `TaskGroup`, failures arrive as an `ExceptionGroup`. A plain `except ValueError` does not match one —
 use `except*`, or `except ExceptionGroup` if you need the whole group.
 
+## Already Inside a Running Loop
+
+```text
+RuntimeError: asyncio.run() cannot be called from a running event loop
+```
+
+A loop is already running on this thread. Jupyter and IPython run one for you, so does `pytest-asyncio` inside
+a test, and so does any async framework's request handler. Verified on CPython 3.12.14 and 3.13.15:
+`asyncio.run` raises the message above, and `loop.run_until_complete` raises `This event loop is already running`.
+
+The fix is to stop trying to start a loop and just await:
+
+```python
+result = await work()          # a notebook cell, a test body, a handler
+```
+
+Jupyter supports `await` at the top level of a cell for exactly this reason; `asyncio.run(work())` is the
+script entry point and belongs only there.
+
+**Do not reach for `nest_asyncio` to make the error go away.** It monkey-patches the loop to allow re-entrancy,
+which is not a property asyncio provides, and the failures it buys you — a task resumed inside another task's
+frame — are much harder to read than the `RuntimeError` it silenced. If a synchronous caller genuinely must
+drive async work while a loop runs elsewhere, run the coroutine on that loop from its own thread with
+`asyncio.run_coroutine_threadsafe`, or restructure so the boundary sits at the entry point. This is the
+"stay fully sync or fully async along a call path" rule in `SKILL.md` arriving as an exception.
+
 ## Loop Mismatch
 
 ```text

@@ -179,6 +179,51 @@ Use `asyncio.Lock`, never `threading.Lock`, inside async code: the threading loc
 You need a lock only when state must stay consistent **across** an `await`. Code between two awaits cannot be
 interrupted by another task on the same loop, so a purely synchronous update needs no lock.
 
+## Request Context Across Tasks
+
+`contextvars` carries per-request state — a request ID, a tenant, a trace span — through a call chain without
+threading it through every signature. It is the async-safe replacement for a thread-local, because the event
+loop interleaves requests on one thread and a thread-local would mix them up.
+
+```python
+from contextvars import ContextVar
+
+request_id: ContextVar[str] = ContextVar("request_id", default="-")
+
+async def handle(raw_id: str) -> None:
+    token = request_id.set(raw_id)
+    try:
+        await do_work()          # anything downstream can read request_id.get()
+    finally:
+        request_id.reset(token)
+```
+
+Use the token and `reset` rather than setting the variable and walking away, so a reused worker coroutine does
+not leak one request's identity into the next.
+
+**A task gets a copy of the context, not a reference to it.** Measured on CPython 3.12.14 and 3.13.15: a child
+task sees the value the parent had when `create_task` was called, and a `set()` inside the child is invisible
+to the parent afterwards. Two consequences:
+
+- Set the variable **before** spawning the tasks that should see it. A value set after `create_task` does not
+  reach an already-running task.
+- A task cannot return a value by setting a `ContextVar`. Return it, or write it somewhere both can reach.
+
+The same copy-on-spawn rule applies to `TaskGroup.create_task`.
+
+**Offloading to a thread splits on which call you use.** Measured on both versions: `asyncio.to_thread` copies
+the calling context into the worker thread, so a logging filter reading these variables still works there.
+`loop.run_in_executor` does **not** — the function runs with an empty context and every variable falls back to
+its default, silently. Prefer `to_thread`; where you need a specific executor, carry the context yourself:
+
+```python
+context = contextvars.copy_context()
+await loop.run_in_executor(pool, lambda: context.run(blocking_call, arg))
+```
+
+For logging, read the variables in a `logging.Filter` rather than passing them into every call site. The rest
+of the logging setup is `python-style`'s subject, not this skill's.
+
 ## Retries
 
 Retry a transient failure with a bounded count, exponential backoff, and jitter:

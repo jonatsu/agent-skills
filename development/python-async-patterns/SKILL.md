@@ -95,6 +95,38 @@ inspect the list — `isinstance(r, Exception)` — because nothing raises on yo
 Reach for `gather` when you want a list of results from a fixed set of coroutines and no cancellation
 semantics. Reach for `TaskGroup` the rest of the time.
 
+### Handling Results as They Arrive
+
+Neither `TaskGroup` nor `gather` gives you a result before the whole batch is ready. `asyncio.as_completed`
+yields each awaitable in completion order, which is what you want to stream results, show progress, or stop
+early on the first good answer. **Its interface changed in 3.13, and the two versions call for different
+code.** Measured on CPython 3.12.14 and 3.13.15:
+
+**On 3.12 and earlier** it is a plain generator that yields opaque coroutine wrappers, not the tasks you passed
+in. `async for` over it raises `TypeError`, and the wrapper tells you nothing about which input it came from,
+so the returned value is your only clue. Carry the identity in the result:
+
+```python
+for wrapper in asyncio.as_completed(coros):
+    name, value = await wrapper        # the coroutine returns its own identity
+    record(name, value)
+```
+
+**On 3.13 and later** it is also an async iterator, and iterating it that way yields the **original** task
+objects. The identity is right there, so the workaround above is unnecessary:
+
+```python
+async for task in asyncio.as_completed(tasks):
+    record(await task)
+```
+
+The 3.12 form still works on 3.13 — including the opaque wrappers, which the *synchronous* iterator still
+yields there. Write the 3.12 form when the code must run on both; switch only where 3.13 is the floor.
+
+Either way, `as_completed` inherits `gather`'s leak: on both versions, when one task raises, the exception
+propagates and **the siblings keep running**. Wrap the loop in a `TaskGroup`, or cancel the rest yourself once
+you have what you came for.
+
 ## Bound Everything That Waits
 
 An `await` on the network with no timeout can hang forever.
@@ -106,6 +138,27 @@ async with asyncio.timeout(5):
 
 `asyncio.timeout` is 3.11+. Before that, `asyncio.wait_for(fetch(url), timeout=5)`. From 3.11
 `asyncio.TimeoutError` is an alias of the built-in `TimeoutError`, so catching the built-in is correct on both.
+
+**Put timeouts at the boundaries, not on every step.** A timeout belongs where the program hands control to
+something it does not run: a socket, a subprocess, a lock it might not win. Wrapping each internal step in its
+own deadline produces numbers nobody can reason about, and their sum is not the deadline the caller cares
+about. The shape that works is one outer deadline for the whole operation plus one inner deadline per attempt:
+
+```python
+async with asyncio.timeout(30):              # the caller's budget for the whole thing
+    for attempt in range(ATTEMPTS):
+        try:
+            async with asyncio.timeout(5):   # this attempt's share
+                return await fetch(url)
+        except TimeoutError:
+            if attempt == ATTEMPTS - 1:
+                raise
+```
+
+Nested `asyncio.timeout` blocks compose, measured on CPython 3.12.14 and 3.13.15: the inner one firing raises
+`TimeoutError` inside the block, leaving the loop in control, and the outer one firing cuts the whole thing off
+mid-attempt at its own deadline. Retrying inside an outer budget is therefore bounded by it, which is the
+point — retries without one multiply the worst case by the attempt count.
 
 Bound concurrency too. Ten thousand tasks against one API is a denial-of-service attack on your own
 dependency:
@@ -140,6 +193,27 @@ Swallowing `CancelledError` produces a task that ignores shutdown, a `TaskGroup`
 process that hangs on Ctrl-C. Use `finally` for cleanup that must run either way, and keep it short: an
 `await` in a cleanup path can itself be cancelled.
 
+### Shield the Cleanup That Must Finish
+
+When a cleanup `await` must complete even though its task is being cancelled — committing a transaction,
+releasing a lease, flushing a final record — `asyncio.shield` detaches it from the cancellation:
+
+```python
+try:
+    await do_work()
+except asyncio.CancelledError:
+    await asyncio.shield(commit())     # commit() runs to completion
+    raise
+```
+
+Verified on CPython 3.12.14 and 3.13.15: the shielded coroutine completed after its awaiting task had been
+cancelled.
+
+Read what `shield` actually protects. It protects the **inner** coroutine, not the `await` on it: the awaiting
+task still receives `CancelledError` at that line, so the `await` can raise while `commit()` keeps running
+detached. Give it a timeout, keep it to work that genuinely cannot be abandoned, and never shield the main body
+of a task — that is how you build something shutdown cannot stop.
+
 ## Never Block the Loop
 
 One blocking call stalls every task in the process. `time.sleep`, `requests.get`, a synchronous database
@@ -162,21 +236,22 @@ finds accidental blocking that reading the code does not.
 
 ## Structure
 
-Async context managers and iterators, background task lifetime, queues, and producer-consumer shapes are in
-[structure.md](references/structure.md). Read it when the work is a pipeline or a long-lived service rather
-than a batch of calls.
+Async context managers and iterators, background task lifetime, queues, producer-consumer shapes, and carrying
+request context across tasks with `contextvars` are in [structure.md](references/structure.md). Read it when
+the work is a pipeline or a long-lived service rather than a batch of calls.
 
 ## Diagnosing
 
-| Symptom                               | Look at                                                      |
-| ------------------------------------- | ------------------------------------------------------------ |
-| Nothing runs concurrently             | Awaiting each call in a loop instead of scheduling first     |
-| Whole process stalls                  | A blocking call on the loop; run with `PYTHONASYNCIODEBUG=1` |
-| Hangs on shutdown or Ctrl-C           | `CancelledError` caught without re-raising                   |
-| `coroutine ... was never awaited`     | A coroutine created and dropped; nothing ran                 |
-| Work continues after an error         | `gather` without `TaskGroup`; siblings are not cancelled     |
-| `attached to a different loop`        | An object created under one loop used under another          |
-| Unbounded memory or connection errors | No semaphore, or a client created per request                |
+| Symptom                                      | Look at                                                      |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| Nothing runs concurrently                    | Awaiting each call in a loop instead of scheduling first     |
+| Whole process stalls                         | A blocking call on the loop; run with `PYTHONASYNCIODEBUG=1` |
+| Hangs on shutdown or Ctrl-C                  | `CancelledError` caught without re-raising                   |
+| `coroutine ... was never awaited`            | A coroutine created and dropped; nothing ran                 |
+| Work continues after an error                | `gather` without `TaskGroup`; siblings are not cancelled     |
+| `attached to a different loop`               | An object created under one loop used under another          |
+| `cannot be called from a running event loop` | `asyncio.run` in a notebook, test or handler; just `await`   |
+| Unbounded memory or connection errors        | No semaphore, or a client created per request                |
 
 Deeper diagnosis, including `asyncio.all_tasks` snapshots and reading a stalled loop, is in
 [diagnosing.md](references/diagnosing.md).
