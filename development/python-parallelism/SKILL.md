@@ -130,8 +130,19 @@ results = Parallel(n_jobs=-1)(delayed(solve)(p) for p in parameters)
 `n_jobs=-1` means every core. It adds progress reporting (`verbose`), a `threading` backend for GIL-releasing
 code, memory-mapping of large NumPy arrays between workers, and `Memory` for on-disk caching of expensive calls.
 Reach for it when a project already has it or wants those features; `concurrent.futures` is the standard-library
-answer and needs no dependency. Check the upstream documentation for the current API rather than trusting a
-summary here.
+answer and needs no dependency.
+
+Do not work from the summary above. Joblib's own documentation is organized as three separate things, and
+which one you want depends on the question:
+
+| You need                               | Read                                                                                 |
+| -------------------------------------- | ------------------------------------------------------------------------------------ |
+| How a feature works and when to use it | [User guide](https://joblib.readthedocs.io/en/stable/user_guide/index.html)          |
+| An exact current signature or argument | [API reference](https://joblib.readthedocs.io/en/stable/references.html)             |
+| A worked version of an awkward case    | [Examples gallery](https://joblib.readthedocs.io/en/stable/auto_examples/index.html) |
+
+The user guide's "Embarrassingly parallel for loops" page is the one that covers backends and `n_jobs`
+properly; the API reference is where its `Parallel`, `delayed` and `Memory` signatures are pinned down.
 
 ## Failure Modes
 

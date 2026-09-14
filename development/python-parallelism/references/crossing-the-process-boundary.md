@@ -22,7 +22,9 @@ generators and loggers do not pickle. Pass a path, a DSN or a plain value and le
 
 `joblib` uses `loky`, which pickles with `cloudpickle` and therefore accepts lambdas and closures. That is a
 real convenience, and it is also why code written against joblib does not necessarily port to
-`ProcessPoolExecutor` unchanged.
+`ProcessPoolExecutor` unchanged. Joblib's
+[serialization of un-picklable objects](https://joblib.readthedocs.io/en/stable/auto_examples/serialization_and_wrappers.html)
+example works through the cases where even that is not enough.
 
 ## Workers Do Not Share Memory
 
@@ -35,7 +37,9 @@ erases the speedup. Prefer a design where workers are independent and the parent
 
 Large read-only inputs are the common case that looks like it needs sharing. A big NumPy array passed as an
 argument is copied into every worker. Write it to disk and let workers memory-map it, or use joblib, which
-memory-maps large arrays for you.
+memory-maps large arrays for you — its
+[NumPy memmap in joblib.Parallel](https://joblib.readthedocs.io/en/stable/auto_examples/parallel_memmap.html)
+example shows the mechanism and its limits.
 
 ## Random Streams Must Be Split Deliberately
 
