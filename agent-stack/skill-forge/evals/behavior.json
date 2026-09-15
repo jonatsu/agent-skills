@@ -4,6 +4,7 @@
   "run_contract": {
     "supply_candidate_skill_path": true,
     "clean_context_per_case": true,
+    "fixture_setup": "Materialize required SKILL.md.fixture templates as SKILL.md only in a fresh isolated workspace. Copy the case's declared initial resources while preserving relative paths. Do not rename source or deployed templates, and do not expose grading material unless the case explicitly supplies it as task input.",
     "subject_skill_is_test_object_only": true,
     "record": [
       "client",
@@ -192,7 +193,7 @@
       "id": "preserve-workflow-before-revision",
       "prompt": "Revise the supplied report-summary skill into a clearer reusable procedure. Preserve its table columns, alphabetical order, handling of missing values, and prohibition on external data access. Fix only the known defect that drops zero-valued counts. The fixture contains the existing skill and synthetic before/after report examples. Establish what must stay stable before editing, then provide the revised candidate and author-side evidence without running model evaluations.",
       "required_inputs": [
-        "evals/fixtures/report-summary/SKILL.md",
+        "evals/fixtures/report-summary/SKILL.md.fixture",
         "evals/fixtures/report-summary/evals/regression.json"
       ],
       "behavior": "Preserve pre-change behavior and evidence while separating one authorized correction from regressions.",

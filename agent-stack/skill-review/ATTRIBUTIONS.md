@@ -78,3 +78,15 @@ The same revision incorporates lessons from this repository's `docs/plans/evalua
 `docs/evaluations/technical-design-planning-initial.md`. Those records supplied the preflight, permission,
 future-turn isolation, durable trace, failure classification, continuation, and model-allowance requirements.
 They are same-author project evidence rather than third-party material.
+
+## Operational Review and Lean Execution
+
+Mohammad Bayat's
+[Designing Large Agent Skills as Deterministic, Phase-Oriented Systems](https://www.okbayat.com/writing/essays/phase-oriented-agent-skills-en)
+influenced the operational-contract, recovery, loading, and preservation review criteria through the adopted
+skill-forge changes. Source: `OkBayat/OkBayat.github.io`,
+`docs/writing/essays/phase-oriented-agent-skills-en.md`, commit
+`9d0ad2e4a0a3793c10335b387b5a3f3d16c41f3b`, consulted 2026-09-15.
+The site's [rights statement](https://www.okbayat.com/about/rights) reserves rights to original content.
+The review wording and new cases are independently written; no source prose, code, diagrams, or templates
+were copied or adapted. Existing licenses and provenance are preserved.

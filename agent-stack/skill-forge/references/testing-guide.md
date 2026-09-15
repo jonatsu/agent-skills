@@ -21,12 +21,18 @@ independent review can reuse.
 
 Run this preflight before review lite. Repeat it before a later model-based test when the package or fixture changed:
 
-1. Run the specification and applicable policy validators.
+1. Materialize required fixture templates in isolation, then run the specification and applicable policy validators.
 2. Confirm the candidate and every promised resource are readable.
 3. Run advertised commands and representative script failure paths.
 4. Use safe temporary inputs and outputs for stateful script checks.
 
 A preflight failure is not skill behavior. Repair the package or fixture before starting the test.
+
+The bundled `SKILL.md.fixture` files are inert test inputs. Materialize them as `SKILL.md` only in a fresh
+workspace, with the case's declared resources at their original relative paths. Leave source and deployed
+templates unchanged. Check intended clients for accidental fixture discovery, and report unavailable catalog
+evidence as a limit. Keep expected outcomes and grading material out of candidate inputs unless the case
+explicitly supplies them as task evidence.
 
 ## Walk Cases Heuristically
 

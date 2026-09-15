@@ -50,10 +50,15 @@ Classify material qualitatively when that sharpens a recommendation:
 - **Recoverable:** facts better obtained from a reliable authoritative source during execution.
 - **Redundant:** material that does not change the target agent's behavior.
 
-Keep expert material, make activation guidance brief, replace recoverable facts with pointers when the source
-is reachable and accurate, and remove genuinely redundant content. Do not turn these classes into line-count
-ratios. Whether guidance is a no-op depends on the target models and is best settled through behavior when
-reviewers disagree.
+Keep expert material and useful reminders. Replace recoverable facts with pointers when the source is
+reachable and accurate. Apply the deletion test: would removing a passage weaken correct execution,
+understanding, or recovery? If not, recommend removal. Identify the passage and explain why it adds no useful
+meaning. Where value depends on untested model behavior, state the uncertainty.
+
+Check shortening proposals for lost conditions, exceptions, ordering, evidence requirements, and recovery
+behavior. Flag cryptic wording when the agent must reconstruct a consequential distinction. A reminder that
+prevents a specific likely failure may be useful; repetition that only adds emphasis is expendable.
+Do not use word counts or compression ratios as substitutes for this judgment.
 
 Weigh the useful outcome against the cost the skill induces: context, reasoning, tool calls, latency,
 distraction, and maintenance. Size and complexity are screening signals for that weighing. They do not justify
@@ -73,7 +78,7 @@ skill can still duplicate a neighbor, contradict a global rule, or activate in p
 Overlap is acceptable when it is deliberate and the boundary is stated where an agent reads it. Duplication with
 two homes that can drift apart is a finding.
 
-## Information Hierarchy
+## Lean Execution and Information Hierarchy
 
 - Is material needed by every execution available in `SKILL.md`?
 - Is branch-specific detail behind a pointer that states when to read it?
@@ -81,8 +86,19 @@ two homes that can drift apart is a finding.
 - Does splitting improve relevance, or merely scatter one cohesive procedure?
 - Does any meaning appear in several places and risk inconsistent updates?
 
-Neither file length nor resource count decides this. A short self-contained skill and a larger routed package
-can both be correct.
+Inspect representative paths across instructions, executable modules, and external data. Determine what each
+path needs, when it needs it, and whether unrelated work occurs before selection. Look for unconditional
+reference reads, unnecessary module initialization, and detailed retrieval where summaries suffice. Name
+the affected path and recommend the smallest correction.
+
+Distinguish intended loading from observed loading. Use available traces and deterministic checks where
+practical. File separation and valid links do not prove selective execution; absent telemetry does not prove
+waste.
+
+Use quantitative budgets where they enforce a justified boundary or detect regressions. Their absence does
+not excuse unnecessary loading. A small, self-contained skill may satisfy the criterion without additional
+machinery. Apply the same principle to the review: inventory the package, then inspect resources at the depth
+needed to assess its contract and risks.
 
 ## Workflow and Freedom
 
@@ -99,6 +115,25 @@ consequential or fragile operations may need exact sequences, validation, or det
 An Iron Law is useful only when one falsifiable absolute prevents the dominant failure and admits no
 reasonable exception. Anti-patterns are useful only when they counter a likely or observed harmful default.
 Checklists are useful only when they preserve order, prerequisites, or state across a long workflow.
+
+### Operational Guarantees
+
+For workflows that coordinate state changes, repeat operations, resume later, or share mutable state,
+identify the authoritative state, entry conditions, permitted effects, enforcement owner, completion
+evidence, and continuation rules required by the task. Check the author's claims against the implementation
+and verified tool contracts.
+
+Distinguish instructions the agent should follow from guarantees enforced by tools or runtime controls.
+Statements such as "retry safely" or "verify success" are insufficient when the caller must invent how.
+
+Trace a successful operation, an interruption after a consequential effect, and continuation against changed
+state where applicable. For state-changing scripts, check whether callers can recognize completed work,
+distinguish partial or unknown outcomes, retain necessary identities, and determine whether retry is safe.
+Review-lite traces are heuristic unless safe execution evidence is available; they do not authorize external writes.
+
+Separate demonstrated failures, design omissions, and missing execution evidence. Identify each finding's
+concrete consequence. Do not require a phase framework, checkpoint schema, or recovery machinery where the
+task does not need one.
 
 ## Practical Execution
 
@@ -132,6 +167,13 @@ Check relationships, not only isolated statements:
 
 This cross-file pass catches defects that look correct in isolation. A contradiction is material when it
 leaves the agent with competing actions or a false belief; cosmetic wording variation is not.
+
+For revisions, compare changed behavior against preservation requirements. Distinguish authorized
+corrections from unintended regressions. Check whether changes to tests or expected results have independent
+justification. Add counterexamples where the task's requirements expose gaps in the supplied cases.
+
+Keep the review proportional. Independence does not require duplicating adequate checks or launching
+another agent.
 
 ## Recoverability and Maintenance
 
@@ -198,9 +240,15 @@ normally.
 - Are validation failures and reduced-capability paths reported rather than presented as success?
 
 Treat missing required provenance and unauthorized behavior as hard failures. Scale evidence demands to the
-consequence and freshness of the claim rather than requiring citations on every sentence. Do not infer
-authoring order from a finished package; consult history only when the order matters and the repository can
-establish it.
+consequence and freshness of the claim rather than requiring citations on every sentence.
+
+Verify which revision, inputs, environment, and behavior each artifact covers, and whether it records
+execution or supplies synthetic test data. When prior evidence is unavailable, state the limitation and its
+consequence. Do not invent a baseline or claim that missing evidence proves a regression.
+
+When the review depends on whether tests or preservation evidence existed before a change, verify that
+sequence from reliable version history or execution records. If the records do not establish it, report the
+sequence as unverified. The finished package alone cannot establish when its contents were created.
 
 Keep observed behavior, textual evidence, inference, and project preference distinct in the report. Predicted
 behavior is not a measurement, and presenting it as one makes the review unauditable.

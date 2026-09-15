@@ -35,15 +35,24 @@ For each case record:
 Start with the smallest set that spans the important behavior. Add cases when failures expose a distinct
 boundary. Preserve useful cases as regression fixtures instead of growing the suite to meet a quota.
 
-Keep reusable fixtures in the package only when deployment is intentional. Keep run outputs and traces outside
-the package.
+Test whether the reviewer identifies the supported defect, cites relevant evidence, explains its consequence,
+and proposes a proportionate repair. Include valid alternatives where the reviewer could over-apply a
+criterion. Do not grade against preferred headings, terminology, file counts, or machinery. A correct verdict
+alone is insufficient, and an unsupported finding is a review failure.
+
+Keep fixture skills out of normal skill discovery. Store them outside deployed discovery paths or as inert
+templates that the evaluation setup materializes inside an isolated workspace. Check the intended clients
+for accidental fixture exposure. Where discovery cannot be inspected reliably, report that verification
+limit. Distributing test data does not authorize registering it as a usable skill.
+
+Keep run outputs and traces outside the package.
 
 ## Preflight Without a Model
 
 Preflight every selected client and case before the first model call:
 
 1. Resolve candidate, baseline, and fixtures by identity and source revision.
-2. Run specification and repository validators.
+2. Materialize required fixture templates in isolation, then run specification and repository validators.
 3. Run every advertised fixture command and its meaningful failure path.
 4. Create a fresh workspace containing only declared initial inputs.
 5. Keep future turns, expected outputs, and grading material outside that workspace.
@@ -182,8 +191,13 @@ Run [../evals/activation.json](../evals/activation.json) through each selected c
 mechanism. Do not provide the `skill-review` path in automatic-selection arms.
 
 Run [../evals/review-quality.json](../evals/review-quality.json) in clean contexts with the candidate supplied
-explicitly. Use its package fixtures. A correct verdict alone does not pass. Require the declared finding,
-evidence, consequence, repair, and validation.
+explicitly. Its `fixture` paths are relative to that case file. Copy only the case's declared initial inputs
+to a fresh workspace, materializing `SKILL.md.fixture` as `SKILL.md` there. Preserve fixture contents and
+relative resource paths; leave source and deployed templates inert. Keep expected outcomes and grading
+material outside the candidate workspace unless they are explicit task inputs.
+
+Require the declared finding, evidence, consequence, repair, and validation. Preserve existing cases and add
+coverage where the approved review criteria introduce a distinct boundary.
 
 The candidate skill is the object under test. Baselines, graders, and the main synthesis must not use
 `skill-review` or `skill-forge` as guidance when evaluating these two subject skills.

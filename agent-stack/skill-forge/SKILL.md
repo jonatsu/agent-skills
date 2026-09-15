@@ -178,8 +178,9 @@ may execute a script without loading its source. Verify that behavior before rel
 
 Keep each meaning in one authoritative place. Do not copy facts that a reliable live source can provide
 cheaply. Keep authoring notes, run outputs, and traces outside the deployed package. Bundle reusable fixtures
-only when deployment is intentional. A short, self-contained skill is complete when it contains everything
-its task needs.
+only when distribution is intentional, and keep fixture skills out of normal discovery. Store them as inert
+templates and materialize them only in isolated evaluation workspaces. A short, self-contained skill is
+complete when it contains everything its task needs.
 
 Read [references/workflow-patterns.md](references/workflow-patterns.md) when real prerequisites, branching,
 iteration, gates, or strict output contracts make control flow consequential.

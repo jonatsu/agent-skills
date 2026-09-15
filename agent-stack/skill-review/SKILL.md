@@ -55,6 +55,13 @@ If these are not explicit, infer only what the package and its environment suppo
 uncertainty rather than grading against an invented contract. Record unread files or unavailable environments
 as coverage limits.
 
+For revisions, identify the behavior that must remain stable and the corrections the user authorized.
+Inspect available prior versions, cases, and execution evidence. Treat the author's claims and cases as
+inputs to verify, not as the complete review contract.
+
+Derive review obligations from the intended task and accepted requirements. Identify consequential boundaries
+the author's cases omit.
+
 ### 2. Check Hard Requirements
 
 Use the Agent Skills specification as the authority for package structure and frontmatter. Run its reference
@@ -74,7 +81,7 @@ validator. Do not let a passing structural check imply behavioral quality.
 
 ### 3. Inspect Design
 
-Always inspect discovery and scope coherence. Review the other lenses relevant to the skill:
+Always inspect discovery, scope coherence, behavioral value, and lean execution. Apply other lenses where relevant:
 
 - **Discovery:** The name and description communicate the capability, user intent, distinct trigger branches,
   and likely boundaries. When they name a specialized tool, product, or artifact, they provide enough plain
@@ -84,12 +91,16 @@ Always inspect discovery and scope coherence. Review the other lenses relevant t
   establishes a deliberate shared task or decision boundary that requires them together. Shared popularity,
   one author's environment, possible integration, or occasional co-use is insufficient. Do not invent a
   unifying purpose that the package does not establish.
-- **Behavioral value:** Instructions add decisions, knowledge, or reliable operations the agent would
-  otherwise miss.
-- **Information hierarchy:** Shared essentials stay available; branch-specific detail is reachable where
-  needed.
+- **Behavioral value:** Instructions earn their place through useful decisions, actions, or necessary
+  understanding. Identify filler and repetition without practical value. Preserve conditions, constraints,
+  failure handling, and examples that resolve ambiguity. Do not reward shortness by itself.
+- **Lean execution and information hierarchy:** Shared essentials remain available. Branch-specific
+  instructions, executable modules, and detailed external data load when the selected work needs them.
+  Check whether routing can precede its selected detail. Apply this criterion without waiting for a cost problem.
 - **Workflow fit:** Sequences, branches, iteration, delegation, scripts, gates, and templates exist only where
-  the task's dependencies or risks justify them.
+  the task's dependencies or risks justify them. For workflows that coordinate state changes, repeat
+  operations, resume later, or share mutable state, inspect the operational contract and its enforcement.
+  Determine whether completion, partial results, and uncertain outcomes lead to defined, safe next actions.
 - **Clarity and completion:** Requirements are distinguishable from recommendations, and consequential work
   has observable completion criteria.
 - **Consistency:** Metadata, instructions, references, scripts, examples, and the skill's own conduct agree.
@@ -148,8 +159,12 @@ maintenance risk. For each material finding include:
 - **repair:** the smallest correction that preserves working behavior; and
 - **validation:** how to prove the repair worked.
 
-Rank severity from consequence and likelihood, not textual prominence. Avoid duplicate findings for one root
-cause. Mention strengths only when they identify behavior worth preserving during revision.
+Include only findings, evidence, consequences, repairs, and verification limits that help the user decide or
+act. Omit generic praise, repeated summaries, and narration of routine checks. Consolidate findings with one
+root cause. Preserve enough detail to make each finding actionable.
+
+Rank severity from consequence and likelihood, not textual prominence. Mention strengths only when they
+identify behavior worth preserving during revision.
 
 Do not edit the reviewed package unless the user separately authorizes repair. When repair is authorized,
 preserve working behavior and rerun the affected review tier.
@@ -160,7 +175,9 @@ Lead with material findings. Then report:
 
 - **Verdict:** `invalid`, `not ready`, `ready with risks`, or `ready`;
 - **Validity:** specification and repository-policy results, kept separate;
-- **Evidence:** evaluations performed, their comparison baseline, and coverage limits;
+- **Evidence:** evaluations performed, their comparison baseline, and coverage limits; identify which
+  author-side results were independently verified, which remain claims, and which required behavior is
+  untested. Keep mechanical checks, heuristic walkthroughs, and model evaluations distinct;
 - **Findings:** ordered by severity; and
 - **Preserve:** effective design choices that a repair should not regress, when any matter.
 

@@ -4,6 +4,8 @@
   "run_contract": {
     "supply_skill_path": true,
     "clean_context_per_case": true,
+    "fixture_template": "SKILL.md.fixture",
+    "fixture_setup": "Resolve fixture directories relative to this case file. Copy only the case's declared initial inputs into a fresh isolated workspace, materializing SKILL.md.fixture as SKILL.md there. Never rename templates in the source or deployed package. Keep expected outcomes and grading material outside the candidate workspace unless they are explicit task inputs.",
     "subject_skill_is_test_object_only": true,
     "baseline_version_commit": "8bb9e88bee6c8c937a4d2574b0e4baff56c10ece",
     "candidate_version": "Record the exact committed revision under evaluation.",
@@ -51,7 +53,8 @@
       "assertions": [
         "Does not report scope incoherence merely because querying and report formatting are distinct operations.",
         "Identifies the shared database-reporting workflow that requires both operations.",
-        "States that behavioral execution remains untested when assigning ready with risks."
+        "States that behavioral execution remains untested when assigning ready with risks.",
+        "Does not demand a state machine or recovery framework for this read-only reporting workflow."
       ]
     },
     {
@@ -115,6 +118,68 @@
         "Reports one pass from one run as a raw count rather than statistical confidence.",
         "Does not infer reliability or variance from one repetition.",
         "Caps the verdict at ready with risks unless broader full-evaluation evidence already exists."
+      ]
+    },
+    {
+      "id": "operational-recovery-judgment",
+      "prompt": "Review only the operational contracts in these two publication designs. Design A retries with a new operation ID whenever a submission times out, claiming timeout means nothing was published. Design B preserves the operation ID and content; its verified service contract atomically deduplicates identical submissions, rejects different content under that ID, and supports authoritative lookup. B records completion only after a matching lookup and stops when state cannot be established. Neither design has been exercised in a model run. Assess the supported defect and valid alternative without calling the service.",
+      "assertions": [
+        "Identifies A's unsupported timeout inference and loss of duplicate protection as one operational recovery finding with a concrete consequence.",
+        "Explains which service guarantees make B's retry safe and distinguishes them from instructions the model is expected to follow.",
+        "Does not demand a new workflow engine, phase layout, or checkpoint schema where B's existing mechanism suffices.",
+        "Keeps static contract evidence separate from unperformed runtime or model verification and proposes a focused recovery check."
+      ]
+    },
+    {
+      "id": "lean-execution-judgment",
+      "prompt": "Review these execution paths. A lists report titles but first fetches every report body and attachment and initializes the summarizer and attachment parser. The list endpoint already supplies IDs, titles, and dates. B compares the full contents of every report at the user's request and therefore retrieves all bodies, loading attachment handling only when relevant. There is no latency complaint or numerical token budget. These paths are explicit in the supplied design; actual client context traces are unavailable.",
+      "assertions": [
+        "Identifies A's unnecessary detail retrieval and module initialization without requiring a prior cost measurement or numerical budget.",
+        "Accepts B's necessary data loading and does not mistake loading less for correctness.",
+        "Recommends routing from summaries before loading selected detail or unrelated modules.",
+        "Distinguishes confirmed design instructions from unmeasured runtime loading, and identifies practical trace or deterministic checks.",
+        "Consolidates findings sharing the eager-loading cause and avoids generic praise, repeated summaries, and narration of routine checks."
+      ]
+    },
+    {
+      "id": "concise-complete-judgment",
+      "prompt": "Review this proposed shortening. The original begins with an enthusiastic welcome and three generic reminders to strive for accuracy. Its substantive rule says: 'Use supplied records only. Keep zero counts. Render absent counts as unknown. Publish only after the user approves the exact report revision.' The shortened version says: 'Report counts and publish.' The original also repeats the exact-revision check at the publication step; a supplied incident record establishes that the prior agent otherwise used approval for an older revision. Recommend what to remove and what to preserve.",
+      "assertions": [
+        "Identifies the welcome and generic reminders as filler without using a word quota or compression ratio.",
+        "Flags the shortened version's lost data, missing-versus-zero, and authorization distinctions.",
+        "Preserves the publication-step reminder whose failure-prevention purpose is supported by the supplied incident.",
+        "Explains the actionable changes without treating every verbose passage as a readiness blocker or inventing additional defects."
+      ]
+    },
+    {
+      "id": "preservation-evidence-judgment",
+      "prompt": "Review a count-report revision. The accepted contract requires Service and Count columns, alphabetical ordering, unknown for absent counts, and supplied data only. The user authorized one correction: include zero counts instead of omitting those rows. The revision includes zeros but silently renders absent counts as zero; its author changed that expectation and supplied only a passing happy-path case. Before/after examples are labeled synthetic, and no model runs are available. Identify the authorized change, regression, case gap, and evidence limits.",
+      "assertions": [
+        "Accepts inclusion of zero counts as the authorized correction rather than calling it a regression.",
+        "Flags changing absent counts to zero and the unsupported expectation change against the accepted contract.",
+        "Adds a missing-count counterexample independent of the author's happy-path case.",
+        "Treats synthetic examples as test data rather than execution evidence and distinguishes independently checked requirements from author claims.",
+        "Proposes a focused repair and validation while preserving the authorized correction."
+      ]
+    },
+    {
+      "id": "evidence-sequence-judgment",
+      "prompt": "The review decision depends on whether preservation tests existed before a revision. Package A contains both tests and the revised instructions, but no history or execution records. Package B has a supplied verified history: the preservation tests are present at revision T and unchanged at later revision U, where the implementation changes. The author claims both packages prove tests preceded implementation. Assess only what this evidence establishes.",
+      "assertions": [
+        "Reports A's sequence as unverified rather than inferring it from file presence or claiming the author skipped tests.",
+        "Recognizes the specific ordering established by B's history without inferring finer-grained actions or successful test execution.",
+        "Does not require a chronology audit where ordering is immaterial to a review.",
+        "States what additional evidence would resolve A's sequence without inventing a baseline."
+      ]
+    },
+    {
+      "id": "fixture-isolation-judgment",
+      "prompt": "Review fixture isolation. Package A ships a nested evals/fixtures/example/SKILL.md, and a captured client catalog lists example as a selectable skill. Package B ships SKILL.md.fixture and materializes SKILL.md only in isolated evaluation workspaces; its captured target-client catalog excludes the fixture. Other clients have not been checked. Neither fixture has been invoked. Explain the defect, a proportionate correction, and the limits of the evidence.",
+      "assertions": [
+        "Identifies A's catalog exposure as a packaging and discovery defect, not proof that the fixture was invoked.",
+        "Recommends inert templates or placement outside deployed discovery paths and isolated materialization.",
+        "Accepts B's verified isolation for the observed client without generalizing to untested clients.",
+        "Requires preservation of fixture contents and verification of references, materialization, and catalog exposure after repair."
       ]
     },
     {
