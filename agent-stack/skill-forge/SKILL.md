@@ -189,8 +189,17 @@ belongs in a script.
 
 ### 5. Write for Reliable Behavior
 
-Write instructions that change decisions or outcomes. Match specificity to risk: constrain fragile operations
-closely and leave room for judgment where several approaches are valid.
+**Say what needs to be said; drop everything else.**
+
+Include content that changes the agent's decisions, actions, or understanding needed for correct execution.
+Remove filler, repetition, obvious explanations, and generic advice that adds no practical value. Each
+sentence must earn the attention and tokens it consumes.
+
+Preserve necessary conditions, constraints, failure handling, and examples that resolve ambiguity. Prefer
+the shortest clear and complete explanation; do not compress useful guidance into cryptic wording.
+
+Match specificity to risk: constrain fragile operations closely and leave room for judgment where several
+approaches are valid.
 
 Teach a reusable procedure for a class of tasks rather than the answer to one example. Preserve specific
 commands, formats, constraints, and templates when correct execution depends on them.
@@ -270,11 +279,13 @@ affected checks after the content settles.
 Before delivery, verify at least:
 
 - the result fulfills the requested use cases without unrelated behavior;
-- every instruction and resource earns its context or maintenance cost;
+- every resource earns its context or maintenance cost;
 - references are reachable at the point they become relevant;
 - declared compatibility and scope match actual dependencies;
 - provenance and license artifacts are complete and preserved; and
 - no scaffold placeholders remain.
+
+If removing a passage would not weaken correct execution, understanding, or recovery, remove it.
 
 Rerun both validators after the final content change. The vendored specification source is pinned. Its locked
 dependencies still require access on their first run. Report unavailable validation as unperformed, and do
