@@ -39,8 +39,9 @@ of the surrounding documentation set, not this default, when the two differ.
 - **MADR**, which adds explicit decision drivers and itemized options with their pros and cons. Choose it when
   the alternatives carry most of the weight and reviewers need them separable.
 
-Both satisfy the five elements in `SKILL.md`. Neither is better in the abstract. Match the series being joined;
-for a series with no convention, prefer the shorter form and let a record grow only where its alternatives
+Both express the full form's five elements from `SKILL.md`. Neither is better in the abstract. Match the series
+being joined; for a series with no convention, prefer the light form from `SKILL.md` — a title and a few
+sentences — and let a record grow into one of these standards only where its blast radius or its alternatives
 require it.
 
 ## Status and Supersession

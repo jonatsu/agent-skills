@@ -126,11 +126,22 @@ front door itself with `writing-readmes`.
 
 ## Write a Decision Record
 
-Propose one whenever a decision would be expensive to reverse: a framework, dependency, data model, protocol,
-authentication or authorization strategy, hosting or build platform, or any commitment later work will be built
-on. Do not wait to be asked. A decision nobody wrote down gets argued again.
+Write one when all three hold: the decision is **hard to reverse** (changing your mind later costs real work),
+**surprising without context** (a future reader will meet the result and wonder why it was done this way), and
+**the outcome of a real trade-off** (there were genuine alternatives and you chose one for specific reasons). If
+any one is missing, skip it — an easily reversed decision you will simply reverse, an unsurprising one nobody
+questions, and a decision with no alternative records only that you did the obvious thing. Do not wait to be
+asked: a decision that clears this gate and goes unwritten gets argued again.
 
-A decision record carries five elements:
+Match the record's weight to the decision's blast radius. A record that clears the gate but stays contained
+needs only a **light form** — a title and a few sentences saying what was decided, why, and the main
+alternative you rejected. Most records need no more; the value is capturing *that* a decision was made and *why*,
+not filling in sections.
+
+Escalate to the **full form** when wide later work will be built on the decision — a framework, dependency, data
+model, protocol, authentication or authorization strategy, hosting or build platform, or a cross-boundary
+contract — or when the rejected alternatives carry most of the weight and a reviewer needs them separable. The
+full form carries five elements:
 
 - **Status and date.** Whether the decision is proposed, accepted, superseded, or deprecated, and when it was
   made. A record without a status cannot be superseded; one without a date cannot be read against the

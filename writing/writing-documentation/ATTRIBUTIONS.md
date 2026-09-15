@@ -100,6 +100,24 @@ this repository, and carrying them here would break this skill's scope. Its "Com
 Flags" tables serve a different job again, persuading a reluctant agent to write documentation at all, rather
 than composing a document well.
 
+## Decision-Record Gate and Tiering
+
+The "Write a Decision Record" section was revised on 2026-09-15 after reading
+[mattpocock/skills `domain-modeling`](https://github.com/mattpocock/skills/blob/main/skills/engineering/domain-modeling/SKILL.md)
+and its `ADR-FORMAT.md` (Copyright (c) 2026 Matt Pocock, MIT, HEAD
+`959a8e9f1edc3adbe2f7e3054bb6fbefa6696260`). No text, template, or example was copied or adapted.
+
+Two ideas came from that source and are recorded here because reading it changed what this skill contains:
+
+- the three-part gate for whether a decision warrants a record at all — hard to reverse AND surprising without
+  context AND the outcome of a real trade-off — which sharpened and replaced the earlier cost-to-reverse-only
+  trigger adopted from addyosmani; and
+- tiering the record's weight to the decision's blast radius, defaulting to a light title-plus-a-few-sentences
+  form and escalating to the full five-element record only where wide later work or the alternatives require it.
+
+The upstream's file-layout conventions (`docs/adr/NNNN-slug.md`, a co-located `ADR-FORMAT.md`) were not adopted:
+this repository's decision-record location and format discovery already live in `references/decision-record.md`.
+
 ## Changelog Reference
 
 `references/changelog.md` was added on 2026-09-09 from the same upstream reading. Two ideas came from it: that
