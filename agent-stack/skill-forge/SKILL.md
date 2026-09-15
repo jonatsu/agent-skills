@@ -24,6 +24,11 @@ structure and frontmatter. Do not substitute remembered vendor conventions for t
 When updating a skill, inventory the complete package before editing. Read `SKILL.md` and affected instruction
 resources. Inspect scripts, assets, binaries, generated files, and large references at the depth the change requires.
 
+Before substantially changing an existing workflow, identify the externally visible behavior that must remain
+stable. Preserve representative inputs, expected outcomes, known failure behavior, and available execution
+evidence before editing. Distinguish requirements being preserved from defects the requested change should
+correct.
+
 Establish:
 
 - the concrete task the skill enables;
@@ -134,9 +139,15 @@ effects, enforcement ownership, and recovery behavior. Resolve consequential gap
 candidate as complete. Scale the contract to the task: a short procedure may express it in a few sentences;
 more complex workflows may need explicit transitions and supporting executable checks.
 
-Design for progressive loading without assuming every client loads skills identically. Keep routing in
-metadata, shared execution guidance in `SKILL.md`, and branch-specific material in resources. Verify the target
-client before making claims about what it preloads or defers.
+Design for lean execution and progressive loading by default. Keep shared essentials available and load
+branch-specific instructions, executable modules, and detailed external data when the selected work needs
+them. Make routing possible before loading the detail it selects. Prefer summary observations before
+retrieving full records.
+
+Scale the mechanism to the skill. A small, self-contained skill may already satisfy these criteria without
+additional files or infrastructure. Keep routing in metadata, shared execution guidance in `SKILL.md`, and
+branch-specific material in resources. Verify the target client before making claims about what it preloads
+or defers.
 
 For each representative request, walk through execution from a capable agent's starting knowledge. Extract
 only resources that improve repeated execution:
@@ -246,7 +257,7 @@ a focused update, inspect the changed behavior and its nearest failure boundary.
 positive, near-miss, and ambiguous discovery cases.
 
 Review lite makes no model calls. Preserve useful cases, observed results, and untested clients for independent
-review. Do not select baselines or grade comparative performance during authoring.
+review. Do not select comparative evaluation baselines or grade comparative performance during authoring.
 
 Read [references/testing-guide.md](references/testing-guide.md) when author-side testing needs discovery cases,
 review lite, behavior cases, or an evidence handoff.
@@ -276,5 +287,7 @@ If full evaluation is deferred, report at most `ready with risks`. State which b
 Recommend full evaluation without blocking provisional use when review lite finds no material defect. Preserve
 real-use failures and corrections as cases for that later evaluation.
 
-Provide the candidate, cases, observed results, and limits to an independent skill review or the target
-repository's review process when the user authorizes the full evaluation.
+Deliver the candidate with its intended behavior, relevant cases, author-side results, and unresolved evidence
+gaps. Distinguish executable checks, heuristic walkthroughs, and actual model evaluations. Provide that
+evidence to an independent skill review or the target repository's review process when the user authorizes
+the full evaluation.

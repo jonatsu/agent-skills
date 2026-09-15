@@ -1,0 +1,30 @@
+{
+  "evidence_kind": "synthetic fixture examples, not model execution results",
+  "preserve": [
+    "Service and Count columns",
+    "alphabetical service ordering",
+    "unknown for absent counts",
+    "use only supplied records"
+  ],
+  "intentional_correction": "Include zero-valued counts instead of omitting their records.",
+  "cases": [
+    {
+      "id": "ordinary-records",
+      "input": [{"service": "Zulu", "count": 3}, {"service": "Alpha", "count": 7}],
+      "before": "| Service | Count |\n| --- | --- |\n| Alpha | 7 |\n| Zulu | 3 |",
+      "after": "| Service | Count |\n| --- | --- |\n| Alpha | 7 |\n| Zulu | 3 |"
+    },
+    {
+      "id": "missing-count",
+      "input": [{"service": "Beta"}],
+      "before": "| Service | Count |\n| --- | --- |\n| Beta | unknown |",
+      "after": "| Service | Count |\n| --- | --- |\n| Beta | unknown |"
+    },
+    {
+      "id": "zero-count",
+      "input": [{"service": "Beta", "count": 0}, {"service": "Alpha", "count": 2}],
+      "before": "| Service | Count |\n| --- | --- |\n| Alpha | 2 |",
+      "after": "| Service | Count |\n| --- | --- |\n| Alpha | 2 |\n| Beta | 0 |"
+    }
+  ]
+}

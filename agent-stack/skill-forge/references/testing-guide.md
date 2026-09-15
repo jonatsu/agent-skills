@@ -40,6 +40,22 @@ for coherence, usefulness, unstated decisions, and unforeseen defects.
 If earlier real use produced a trace, inspect it. A final artifact can hide ignored instructions, unnecessary
 work, tool failures, or unauthorized writes.
 
+## Check Loading Boundaries
+
+Inspect representative execution paths for unnecessary loading, initialization, and retrieval. Check
+instructions, executable modules, and external records separately. State what each path needs and when it
+becomes necessary; verify those boundaries using available traces and deterministic checks for imports or
+external calls where practical.
+
+Distinguish intended loading behavior from observed behavior. File separation and valid links establish
+organization and reachability, not selective loading. Treat actual model-context loading as unmeasured
+unless the target client exposes trustworthy evidence. A review-lite walkthrough does not authorize a
+model run to obtain that evidence.
+
+Add quantitative budgets where they make these boundaries enforceable or detect regressions. The absence
+of a numerical budget does not relax the default requirement for lean execution. Keep checks proportional:
+a small, self-contained skill needs no loading manifest merely to satisfy this criterion.
+
 ## Prepare Discovery Cases When Routing Changed
 
 Prepare cases for a client where the agent chooses among registered skills. The later full evaluation must not
@@ -80,8 +96,11 @@ Strongly recommend full independent evaluation for new skills, substantial rewri
 recurring failures. Let the user defer it when time or model allowance is limited. Deferral does not block
 provisional use when review lite finds no material defect.
 
-Provide the candidate, cases, observed results, environment, and limits to an independent skill review or the
-target repository's review process. Let that process choose isolation, permissions, baselines, graders,
-repetitions, client coverage, and readiness criteria.
+Provide the candidate, intended behavior, relevant cases, author-side results, environment, and unresolved
+evidence gaps to an independent skill review or the target repository's review process. Distinguish
+executable checks, heuristic walkthroughs, and actual model evaluations. Label synthetic fixture examples as
+test data rather than observed execution. Let the independent process choose isolation, permissions,
+comparative baselines, graders, repetitions, client coverage, and readiness criteria. Preserving pre-change
+requirements and execution evidence during authoring does not constitute comparative grading.
 
 Only the full process can support `ready`. Report untested clients and failed setup truthfully.

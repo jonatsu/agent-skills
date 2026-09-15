@@ -115,6 +115,8 @@ Its Claude-specific runner, viewer, subagent workflow, and package format are de
   original content and supplies no blanket open-source license for the repository.
 
 The essay influenced the decision to make operational design a conditional authoring obligation, including
-explicit state authority, enforcement ownership, completion evidence, and recovery behavior. The wording,
-report-service example, diagram, and acceptance cases are independently written. No source prose, code,
-schemas, diagrams, or templates are copied or adapted. Existing package license and provenance are preserved.
+explicit state authority, enforcement ownership, completion evidence, and recovery behavior. It also
+influenced the lean-execution default across instructions, modules, and data, loading-boundary verification,
+and preservation of behavior before substantial workflow revisions. The wording, examples, diagram, and
+acceptance fixtures are independently written. No source prose, code, schemas, diagrams, or templates are
+copied or adapted. Existing package license and provenance are preserved.
