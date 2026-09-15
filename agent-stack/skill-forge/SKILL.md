@@ -124,6 +124,16 @@ supplied adapted or vendored material.
 
 ### 4. Design the Package
 
+Before choosing files and resources, establish how the intended workflow behaves. If it coordinates multiple
+state changes, may repeat an operation after uncertain completion, pauses for later resumption, or shares
+mutable state with another actor, read
+[references/operational-workflows.md](references/operational-workflows.md).
+
+For those workflows, identify authoritative state, required preconditions and postconditions, permitted
+effects, enforcement ownership, and recovery behavior. Resolve consequential gaps before treating the
+candidate as complete. Scale the contract to the task: a short procedure may express it in a few sentences;
+more complex workflows may need explicit transitions and supporting executable checks.
+
 Design for progressive loading without assuming every client loads skills identically. Keep routing in
 metadata, shared execution guidance in `SKILL.md`, and branch-specific material in resources. Verify the target
 client before making claims about what it preloads or defers.

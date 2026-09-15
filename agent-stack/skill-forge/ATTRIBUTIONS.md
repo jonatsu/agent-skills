@@ -102,3 +102,19 @@ client-specific evaluation system also helped establish the core-versus-adapter 
 
 No Anthropic prose, code, schemas, examples, evaluator prompts, or interface assets are copied or adapted.
 Its Claude-specific runner, viewer, subagent workflow, and package format are deliberately excluded.
+
+## Operational Workflow Design
+
+- Author: Mohammad Bayat.
+- Source: [Designing Large Agent Skills as Deterministic, Phase-Oriented Systems](https://www.okbayat.com/writing/essays/phase-oriented-agent-skills-en).
+- Project: `OkBayat/OkBayat.github.io`.
+- Source path: `docs/writing/essays/phase-oriented-agent-skills-en.md`.
+- Source commit: `9d0ad2e4a0a3793c10335b387b5a3f3d16c41f3b`, resolved through the file's commit history.
+- Consulted: 2026-09-15.
+- Rights status: the website's [rights statement](https://www.okbayat.com/about/rights) reserves rights to
+  original content and supplies no blanket open-source license for the repository.
+
+The essay influenced the decision to make operational design a conditional authoring obligation, including
+explicit state authority, enforcement ownership, completion evidence, and recovery behavior. The wording,
+report-service example, diagram, and acceptance cases are independently written. No source prose, code,
+schemas, diagrams, or templates are copied or adapted. Existing package license and provenance are preserved.
