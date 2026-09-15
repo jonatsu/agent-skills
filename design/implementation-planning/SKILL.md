@@ -47,6 +47,11 @@ architecture added after the user's latest confirmation. Return those gaps to te
 When an accepted specification exists, require the design to name a compatible revision; a newer accepted requirement
 keeps the affected planning branch blocked until technical design reconciles it.
 
+An accepted design should reach planning already pressure-tested. Where it did not, or where planning itself
+introduces a consequential decision the design's pressure-test did not cover — a migration path, or an ordering with a
+hard-to-reverse step — pressure-test that decision with `grilling` before committing the plan to it. Skip only with a
+stated reason, or at the user's direction.
+
 ## Establish Required Practices
 
 Inspect the applicable repository instructions, language/coding rules, configured checks, and available skill catalog.

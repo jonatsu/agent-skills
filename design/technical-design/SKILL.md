@@ -28,6 +28,11 @@ Return to brainstorming when a discovery changes the intended outcome, target us
 the conflict and keep the former direction provisional until the user resolves it. Return missing, contradictory, or
 unaccepted user-visible behavior to `requirements-specification`. Do not disguise a product decision as architecture.
 
+When the design introduces or leans on a domain term that is vague or contested — two words for one concept, or one
+word stretched over two — engage `domain-modeling` to settle and record it rather than encoding the ambiguity into
+interfaces and data flow. The language can be settled at whatever stage it surfaces; when design is what exposed it,
+carry the resolved term back into the specification.
+
 ## Investigate Before Deciding
 
 Inspect the surfaces that could change the recommendation. Depending on the subject, establish current responsibilities,
@@ -143,6 +148,11 @@ Before handing the design to implementation planning, check that:
 - relevant compatibility, migration, security, privacy, accessibility, and operational obligations are settled;
 - assumptions are verified or have a named validation owner; and
 - remaining questions are implementation-local or explicitly deferred with their cost.
+
+Before that confirmation, pressure-test the design with `grilling`: walk its load-bearing and hard-to-reverse
+decisions for the ones a reviewer would challenge, and resolve or explicitly defer each. Skip only with a stated
+reason, or at the user's direction. A design handed to planning un-pressure-tested is the common source of a plan
+built on an unexamined choice.
 
 Then ask for one final confirmation that the design matches the user's understanding of the system to be planned. Earlier
 confirmation of individual choices does not replace this shared-understanding check. A clear response to that final

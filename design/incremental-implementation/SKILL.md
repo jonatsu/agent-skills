@@ -55,3 +55,10 @@ Stop and re-slice when you notice:
 
 The move against each is the same: shrink the slice until it verifies, commit what is green, and record anything
 out of scope as a separate task rather than folding it in.
+
+## Close Against the Spec
+
+When an accepted specification or design governs the work, close the change by comparing the result against it with
+`spec-conformance-review`. A formal plan built with `implementation-planning` already schedules this gate; this covers
+the plan-less path — a large batch of code written without one — where nothing else would. Skip only with a stated
+reason, or at the user's direction.

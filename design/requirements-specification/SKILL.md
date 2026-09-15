@@ -33,6 +33,11 @@ Repository inspection establishes current behavior and technical constraints, no
 users, priorities, entitlements, retention rules, service levels, and compliance duties as provisional until the user
 or an authoritative product artifact supplies them.
 
+When a term for an actor, behavior, or domain concept is contested or overloaded — two words for one thing, or one word
+stretched over two — engage `domain-modeling` to settle it and record it in the project's glossary before specifying
+behavior on it. Ambiguous vocabulary fixed here propagates into every downstream artifact; this is the stage where the
+ubiquitous language most cheaply originates. Skip only with a stated reason, or at the user's direction.
+
 ## Separate Authority and Status
 
 State whether the specification is proposed, accepted, superseded, or retired and identify the governing intent. An
