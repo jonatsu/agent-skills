@@ -51,6 +51,13 @@ Prefer:
 - `mise activate <shell>` for an explicitly requested interactive-shell integration; and
 - shims when editors or non-interactive shells need tool lookup without prompt hooks.
 
+Scope by the consumer, not the author. A tool used only inside a repository's own commands belongs in that
+repository's `mise.toml`. But a tool invoked by a process the harness spawns from an arbitrary working
+directory — an editor hook, an MCP server launcher, a connect-time credential helper — must go in the global
+config: its shim sits on `PATH` everywhere, yet resolves a version only from the config active in the caller's
+directory, so a repo-local declaration fails with `No version is set for shim: <tool>` anywhere else. "Narrowest
+scope" is bounded below by where the tool actually runs, which is not always where it is declared.
+
 Use exact pins or a committed lockfile when the requested workflow must reproduce across machines. A request
 to create or update a reproducible mise setup authorizes the expected project lockfile write. Ask before
 replacing unresolved user changes or adding a lockfile when the request does not establish that intent.

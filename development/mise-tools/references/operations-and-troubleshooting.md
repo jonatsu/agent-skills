@@ -34,6 +34,14 @@ Likely causes:
 - wrong activation model chosen
 - a per-process override like `MISE_<TOOL>_VERSION` points at a different or unavailable version
 
+### Shim reports "No version is set" from a directory that does not declare the tool
+
+A tool declared only in a project `mise.toml` is on `PATH` as a shim everywhere, but the shim resolves a
+version only from the config active in the caller's directory. A process the harness launches from
+elsewhere — an editor hook, an MCP launcher, a connect-time credential helper — then fails with
+`No version is set for shim: <tool>` even though the tool is installed. Move such a tool to the global
+config; see `SKILL.md`, "Choose Scope and Execution". Observed on mise 2026.9.7.
+
 ### Shell activation works in one shell, fails in another
 
 Likely causes:
@@ -109,6 +117,25 @@ only the mise tool entry changes nothing.
 
 mise sets no `GOPATH` and does not know about `GOMODCACHE`, so `go install` falls back to Go's own `$HOME/go` default
 in any context that did not export `GOPATH`. Load `references/go-backend.md`.
+
+### Removing a tool leaves its lockfile entry
+
+Deleting a tool from `mise.toml` does not remove its `[[tools.<name>]]` stanza from `mise.lock`. Neither
+`mise install` nor `mise prune` prunes the lock, so it keeps advertising a tool the config no longer
+declares. Remove the stanza by hand, then run `mise install` to confirm the lock and config agree.
+
+Changing a version specifier **accumulates** rather than replaces: pinning a tool at `"latest"` after it was
+pinned at `"3.13.3"` leaves `specifiers = ["3.13.3", "latest"]` in the lock. Trim the stale specifier by hand.
+Observed on mise 2026.9.7.
+
+### `mise prune` uninstalls by the active config and skips the lockfile
+
+`mise prune` with no flags prunes only configuration links; pruning tools needs `--yes`. `mise prune --yes` then
+uninstalls every installed tool version not referenced by the config active in the **current directory** — so
+running it inside a project can uninstall a version only a global or sibling config still wants, including an
+orphaned older version of a tool you depend on. Inspect `mise ls` first, and run prune from a directory whose
+config resolution covers everything you mean to keep. Prune also does not edit `mise.lock`. Observed on mise
+2026.9.7.
 
 ## Practical fixes
 
