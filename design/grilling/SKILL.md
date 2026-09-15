@@ -31,8 +31,17 @@ ratifying it.
 Bounce out only when there is no shape to grill at all: no direction, no candidate approach, just a topic. That
 is brainstorming, not this — say so and ask whether I want to shape the idea first.
 
-Read what exists and the code it touches before questioning. A question whose answer is already written wastes a
-slot in the budget.
+Read what exists and the code it touches before questioning — the design, and any specification, decision record,
+or design doc it is meant to conform to. A question whose answer is already written wastes a slot in the budget;
+a place where the design contradicts a document it must honor is the sharpest question you have. Bring each such
+contradiction to me as a question, naming the document and the conflict, rather than assuming which side wins.
+
+## When the design turns on its words
+
+If the grilling reveals that a decision hangs on what a term means — two words for one concept, or one word
+stretched over two — that is a domain-model question, not a plan question. Engage the `domain-modeling` skill to
+settle the term and capture it, then carry the settled term back into the interview. Grilling stress-tests the
+decisions; domain-modeling sharpens the language they are stated in.
 
 ## Map the branches before you ask
 
