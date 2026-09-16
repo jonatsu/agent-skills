@@ -127,15 +127,15 @@ Read `references/example-brief.md` only when a substantial stateful handoff need
 Use `PRIME` when the same work continues in a fresh context. Return one fenced block that the user can paste
 as the first message. Do not save it to disk.
 
-A pasted prompt is size-limited by the terminal, not by the model. Above roughly 5 KB — about 4,000
-characters, or 50–60 lines — terminals such as Windows Terminal silently corrupt large pastes: the start and
-end arrive intact while the middle is truncated or collapsed, with no error and nothing to recover the lost
-lines from. Claude Code and Codex compound this by hiding multi-line pastes behind a "lines hidden" collapse
-that conceals the damage. Refuse by default to emit a `PRIME` handoff that exceeds this threshold. Say why,
-then either switch to `DOCUMENT`, whose saved file is immune to paste corruption, or split the material so the
-durable context lives in a tracked artifact and the prompt only points to it. Emit an oversized `PRIME` block
-only when the user explicitly overrides this refusal after being told the risk. The 5 KB figure is
-environment-dependent; treat it as a conservative default the user may raise or lower for their terminal.
+A pasted prompt is size-limited by the terminal, not by the model. Above roughly 4 KB — about 3,000
+characters, or 40–50 lines — many terminals silently corrupt a large paste: the start and end arrive intact
+while the middle is truncated or collapsed, with no error and nothing to recover the lost lines from, and a
+client that folds a multi-line paste behind a collapsed view can hide the damage entirely. Refuse by default
+to emit a `PRIME` handoff that exceeds this threshold. Say why, then either switch to `DOCUMENT`, whose saved
+file is immune to paste corruption, or split the material so the durable context lives in a tracked artifact
+and the prompt only points to it. Emit an oversized `PRIME` block only when the user explicitly overrides this
+refusal after being told the risk. The 4 KB figure is environment-dependent; treat it as a conservative
+default the user may raise or lower for their terminal.
 
 Use `DOCUMENT` when the user asks for a file or the work passes to another machine or person.
 

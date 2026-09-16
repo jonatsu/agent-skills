@@ -30,7 +30,7 @@ The current skill adds:
 - conditional sections for complex work without imposing a fixed template;
 - an ephemerality guardrail requiring durable knowledge to reach a version-controlled artifact before the
   handoff, rather than surviving only in a gitignored note or prompt;
-- a default refusal to emit oversized `PRIME` prompts that terminals silently corrupt on paste; and
+- a default refusal to emit oversized `PRIME` prompts that a terminal can silently corrupt on paste; and
 - explicit carry-forward of standing session-start operating instructions.
 
 The repository owner's session-priming workflow informed these additions. A successful multi-item priming
