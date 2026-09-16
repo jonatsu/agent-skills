@@ -33,14 +33,18 @@ For repositories targeting Claude Code, OpenCode, and Copilot CLI on a filesyste
 | Both real and divergent  | `CLAUDE.md`           | `AGENTS.md`                                        | both, with no defined conflict order |
 | One real and one symlink | same content          | same content                                       | same content                         |
 
+The OpenCode column describes the V1 default install. OpenCode V2 (rolling out 2026-09) discovers `AGENTS.md`
+only and drops the `CLAUDE.md` fallback, so the pair still works there — V2 reads the real `AGENTS.md` and
+ignores the symlink — but a repository that put guidance only in `CLAUDE.md` loses it under V2.
+
 When creating the pair, make `AGENTS.md` real and use `ln -s AGENTS.md CLAUDE.md`. Never use `ln -f` or
 replace an existing real file. If symlinks are unsupported, preserve one canonical source and use the least
 duplicative verified adapter available; report any synchronization burden.
 
 The Claude Code `AGENTS.md` result is repeated user observation, not a controlled measurement. Claude Code
-2.1.239 measurements and current vendor documentation were last checked on 2026-08-25 and 2026-08-26. OpenCode
-and Copilot CLI documentation was read on 2026-08-26 without recorded versions. These facts were not refreshed
-during the 2026-09-02 rewrite because external documentation access was unavailable.
+documentation was verified against version 2.1.269 on 2026-09-16, and its instruction-loading model was
+unchanged between 2.1.239 and 2.1.269. OpenCode and Copilot CLI documentation was re-read on 2026-09-16;
+neither prints a version on its documentation pages, and OpenCode's is versioned only as V1 and V2 (below).
 
 ## Known Client Details
 
@@ -49,25 +53,37 @@ during the 2026-09-02 rewrite because external documentation access was unavaila
 - Uses `CLAUDE.md` repository context in the measured setup.
 - Discovers nested context on demand according to documentation.
 - Parses relative includes to a documented depth of four.
-- Documented path-scoping frontmatter did not load in the 2.1.239 observation. Treat it as unavailable until
-  reverified.
-- Its context inspection command can show loaded memory files. Obtain the current invocation from local help.
+- Path scoping uses a `paths` frontmatter field of glob patterns, not an `applyTo` field; it is documented as
+  loading, and matching follows a symlinked path since 2.1.198. The earlier 2.1.239 non-load observation
+  predates that fix, so re-measure before relying on it in a critical path.
+- `/context` reports the loaded memory files; `/memory` browses auto-memory.
 
 ### OpenCode
 
-- Prefers `AGENTS.md`; `CLAUDE.md` is a fallback only when `AGENTS.md` is absent.
-- Traverses upward from the working directory and does not discover descendant package files.
-- Does not expand file references as runtime includes. An imperative pointer can tell the model to read
-  another file.
-- No command has been confirmed to report the actual loaded instruction set. A config dump is not equivalent.
+Two current major versions differ materially; V1 is still the default install and V2 is rolling out (2026-09).
+
+- **V1:** prefers `AGENTS.md`; `CLAUDE.md` is a fallback only when `AGENTS.md` is absent (disable via
+  `OPENCODE_DISABLE_CLAUDE_CODE`). Traverses upward from the working directory and does not discover descendant
+  package files. Does not expand file references as runtime includes; an imperative pointer can tell the model
+  to read another file.
+- **V2:** discovers `AGENTS.md` only — the `CLAUDE.md` fallback is dropped, so move any `CLAUDE.md`-only
+  guidance into `AGENTS.md`. It also discovers descendant `AGENTS.md` files as the agent reads into
+  subdirectories, nearest-first. Runtime `@`-reference expansion is unverified, and the config `instructions`
+  array is currently unimplemented.
+- Neither version has a confirmed command that reports the actual loaded instruction set; a config dump is not
+  equivalent.
 
 ### Copilot CLI
 
-- Reads both `AGENTS.md` and `CLAUDE.md`, plus `.github/copilot-instructions.md` where applicable.
-- Combines applicable instruction sources and does not define a conflict order.
-- Documents nearest-file behavior, includes, and `applyTo` scoping. The scoping behavior was not independently
-  exercised.
-- Requires a fresh session to pick up instruction-file edits according to the documentation read in 2026-08.
+- Reads `AGENTS.md`, `CLAUDE.md` (and `.claude/CLAUDE.md`), `.github/copilot-instructions.md`, and `GEMINI.md`,
+  plus personal `~/.copilot/copilot-instructions.md` and modular `*.instructions.md` sets.
+- Combines applicable instruction sources and does not define a conflict order; identical copies are deduped.
+- `@relative` includes expand immediately and recursively in `copilot-instructions.md`, `AGENTS.md`, and
+  `CLAUDE.md`, but not in `GEMINI.md` or `*.instructions.md`; absolute and `~/` paths are rejected. `applyTo`
+  glob scoping on `*.instructions.md` frontmatter is documented but was not independently exercised.
+- `/instructions` lists the files discovered for the session and toggles them individually.
+- Requires a fresh session to pick up edits: exit and resume (`copilot --continue`) or start a new one
+  (`/new`).
 
 ## Portable Degradation
 
