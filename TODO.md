@@ -400,13 +400,6 @@ rewrites.
   `AGENTS.md` in this directory already states the rule that settles them: guidance for "a moment nobody
   verbalizes" belongs in `agents/rules/`, and "no wording repairs it". Apply that test to these two before
   drafting any replacement description.
-- **No special safety weight (corrected).** `git-ops` (106) was ranked the most valuable of the 13 on the
-  premise that its confirmation gates stand in for `disable-model-invocation`, so a non-trigger would remove a
-  safety control. That premise is wrong. The root `AGENTS.md` and `docs/findings/git-staging-sweeps.md` record
-  that git-ops safety rests on the staging rule in `agents/rules/` plus the `PreToolUse` guard, not on the
-  skill's gates: measured 2026-09-12, git-ops fired in 0 of 362 Claude sessions, 208 of which ran git commands,
-  so its gates were never in force on that client. A non-trigger therefore removes no safety control. Rewrite
-  it for discoverability alongside the rest of the 13; it carries no extra urgency.
 - **Lower risk — a strong literal tool token is present**, which is the property that demonstrably works for
   `agents-management` (it names `AGENTS.md` and `CLAUDE.md`, and surfaced once those were edited):
   `chezmoi-dotfiles`, `github-ops` (`gh`), `kasetto`, `mise-tools`, `containers` (`Dockerfiles`, `Compose`),
@@ -427,20 +420,6 @@ short band (`opaque-just-task-runner` at 29 chars, `contextual-just-task-runner`
 Two length outliers, unrelated to the above: `grilling` at 614 chars is the only skill over the repository's
 512 soft budget, and `agents-management` at 342 has no `Use when` clause but is the one skill with direct
 evidence of activating anyway.
-
-## `agents-management` Rework Behind `context-architecture` — done 2026-09-16
-
-Completed once `context-architecture` had real use (its checker on this repository in the 2026-09-12 audit;
-the Finnish OCR walk test in `../docs/evaluations/2026-09-12-context-architecture-repair-review.md`). The
-templates were aligned with the named default layout (a `docs/README.md` hub-routing row and an update-triggers
-table; `docs/findings/` named as the default findings tier, existing convention winning);
-`references/loading-model.md`'s client adapters were refreshed to 2026-09-16 (OpenCode split into V1/V2, Claude
-Code 2.1.269, Copilot CLI additions); and both skills went through the deferred `skill-review` pass together —
-verdict, evidence, and coverage limits in
-[../docs/evaluations/2026-09-16-agent-stack-skill-review.md](../docs/evaluations/2026-09-16-agent-stack-skill-review.md).
-The residual open thread is `agents-management` activation, tracked with the description-audit entries above,
-not here. Decision record:
-[../docs/plans/archived/context-architecture-skill.md](../docs/plans/archived/context-architecture-skill.md).
 
 ## Unevaluated Candidate Sources
 
