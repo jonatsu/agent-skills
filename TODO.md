@@ -4,77 +4,13 @@ Operational and future-feature backlog for the skills stack, including candidate
 The completed 2026-09 review's verdicts and evidence are the record in
 [../docs/evaluations/2026-09-shared-skill-review.md](../docs/evaluations/2026-09-shared-skill-review.md), and
 archived reviews still deferred are the rows marked "Review is deferred" in
-[archived/README.md](archived/README.md). The restored embedded skills are tracked below.
+[archived/README.md](archived/README.md). The restored embedded skills' completed review campaign is recorded
+in [../docs/evaluations/2026-09-16-embedded-skill-review-ledger.md](../docs/evaluations/2026-09-16-embedded-skill-review-ledger.md);
+their surviving open work is below, and the embedded research notes (tooling, testing, QEMU candidates) are in
+[../docs/research/embedded-skills/](../docs/research/embedded-skills/).
 Repository-wide items live in [../TODO.md](../TODO.md).
 
-## Embedded Domain — Review Ledger
-
-The five embedded skills were restored on 2026-09-07 with new names. This restoration covers package moves,
-sibling routing, top-level license placement, and required Markdown formatting. It does not establish the
-accuracy of the existing technical guidance or agent activation behavior.
-
-Review one skill at a time using the current `skill-forge` and `skill-review` guidance. Review completion
-does not mean fixes have been applied or behavioral evaluation has passed. Discovery and hardware/build
-behavior remain unmeasured unless a linked review records otherwise.
-
-Original materials are in `~/src/embedded-linux/`. Buildroot sources were located on 2026-09-07:
-`docs/buildroot-manual.pdf` (2026.05, GPL-2.0) and `bootlin-training-materials/buildroot/` (training PDFs
-declare CC BY-SA 3.0). The targeted Buildroot PDF comparison completed on 2026-09-07; see the review's source map.
-Buildroot's attribution record and source-corresponding explanations were repaired on 2026-09-07. Full model-based
-evaluation and project-specific hardware/release qualification remain outstanding.
-
-Buildroot repository survey completed 2026-09-07 across the three subtrees in `~/src/embedded-linux/repos/`.
-[Evidence and conservative proposals](../docs/evaluations/2026-09-07-buildroot-repository-survey.md): refine the existing
-local-source iteration and overlay/artifact checks; add one small image-capacity subsection. The user approved these
-additions, and they are implemented in the repaired Buildroot skill. The other skills' current states are below.
-Buildroot/genimage first-party sources govern adoption; the survey records resolved third-party conflicts and excludes
-unverified fork-specific guidance.
-
-| Skill                                              | Review status                                         | Verdict / remaining work                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Evidence                                                                                                                                                                                                                                                                       |
-| -------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `buildroot-development` (formerly `buildroot-dev`) | Review lite and repairs completed 2026-09-07          | **Ready with risks.** F1–F12 and approved A–C addressed; native package, hook, Kconfig, and image checks pass. Full behavioral evaluation and hardware/release qualification remain pending. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                                                                                                                                                                                                 | [Repair evidence](../docs/evaluations/2026-09-07-buildroot-development-repair.md); [original review](../docs/evaluations/2026-09-07-buildroot-development-review.md)                                                                                                           |
-| `embedded-linux-bringup`                           | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F15 addressed; native DT comparison/overlay and verity image checks pass. Full model evaluation and hardware/release qualification remain deferred. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                                                                                                                                                                                                                 | [Repair evidence](../docs/evaluations/2026-09-07-embedded-linux-bringup-repair.md); [original review](../docs/evaluations/2026-09-07-embedded-linux-bringup-review.md)                                                                                                         |
-| `kas-build-orchestration`                          | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F14 addressed; 16 native/wrapper contract cases pass. **Real container execution finally happened on 2026-09-08** — the skill drove a full `meta-security` build and oeqa run under kas-container, and its method held. Four resulting additions were **applied 2026-09-09**, each confirmed against the 5.3 sources; a fifth reported gap proved to be already documented. See *kas-container Field Notes* below. Model evaluation and release qualification remain deferred. | [Field notes](../docs/research/yocto-security/kas-container-field-notes.md); [repair evidence](../docs/evaluations/2026-09-07-kas-build-orchestration-repair.md); [original review](../docs/evaluations/2026-09-07-kas-build-orchestration-review.md)                          |
-| `u-boot-development`                               | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F17 addressed; native environment, FIT, load-guard, helper and DM checks pass. Historical provenance uncertainty, model behavior and board qualification remain open. Flagged 2026-09-08 for a bounded recheck — see *Re-Review the Other Four Embedded Skills*.                                                                                                                                                                                                               | [Repair evidence](../docs/evaluations/2026-09-07-u-boot-development-repair.md); [original review](../docs/evaluations/2026-09-07-u-boot-development-review.md)                                                                                                                 |
-| `yocto-openembedded-development`                   | Review lite and approved repairs completed 2026-09-07 | **Ready with risks.** F1–F12 addressed and the specification violation cleared. The CC BY-SA adaptation the provenance investigation found in the best-practices reference was re-derived independently on 2026-09-08, resolving the MIT conflict. Packaging/QA coverage added the same day. No Yocto execution or model evaluation.                                                                                                                                                                    | [Follow-up](../docs/evaluations/2026-09-08-yocto-openembedded-development-followup.md); [repair evidence](../docs/evaluations/2026-09-07-yocto-openembedded-development-repair.md); [original review](../docs/evaluations/2026-09-07-yocto-openembedded-development-review.md) |
-
-The `embedded-linux-bringup` review and approved F1–F15 repairs completed on 2026-09-07. The records distinguish
-first-party source checks, targeted PDF comparison, native artifact tests, validator acceptance, and unmeasured behavior.
-The `kas-build-orchestration` review lite completed on 2026-09-07 against kas 5.3 documentation and implementation.
-Approved F1–F14 repairs are complete, including native repository/lock/cleanup/signature checks and wrapper argument
-checks. Actual container/CI execution and model behavior remain unmeasured.
-The `u-boot-development` review and approved F1–F17 repairs completed on 2026-09-07 against upstream v2025.10.
-The bounded provenance investigation records known repair influence and unresolved historical derivation. Native helper,
-environment recovery/persistence, FIT rejection, load-guard and driver-model checks pass; board security/recovery and
-model behavior remain unqualified. The final restored skill, `yocto-openembedded-development`, completed review lite
-and its approved F1–F12 repairs on 2026-09-07, against pinned Poky `yocto-5.0.12` sources and the Honister 3.4
-migration guide. **All five embedded repairs are now complete.** No Yocto build, parse, SDK, sstate or target
-operation was executed, so every technical correction there is source- and documentation-backed only.
-
-The Yocto bounded provenance investigation reached a different conclusion from the one the package previously
-asserted: `references/yocto-best-practices.md` was an established structural adaptation of Belloni's CC BY-SA 3.0
-Bootlin deck, corroborated by an inherited stale command and by the introducing port brief's own instruction to
-rewrite structurally lifted prose and strip attributing framing. **Resolved 2026-09-08 by independent re-derivation,
-keeping MIT.** Six of the ten correspondences had already lapsed through the 2026-09-07 repair; the remaining four
-were rebuilt from primary sources (`bitbake.conf`'s include order, `meta-poky/conf/distro/poky.conf`, the section's
-own correctness-versus-hit-rate thesis, and the pruning tool at the pinned release). Nothing was relicensed, and the
-attribution record is kept permanently rather than closed — see the convention now in `AGENTS.md`.
-A third Bootlin deck (Dautheribes 2024) sits in the same source directory and is named nowhere in the package; no
-source relationship was asserted, because nothing distinctive corresponds.
-
-On 2026-09-08 the third-party skill set
-[awesome-yocto-ai-agent-skills](https://github.com/prashantdivate/awesome-yocto-ai-agent-skills) (MIT, commit
-`0e268dc`) was compared against `yocto-openembedded-development`. Its prose is thinner than ours and none was adopted,
-but it surfaced four genuine coverage gaps, now written from pinned Poky `yocto-5.0.12` sources: packaging
-(`PACKAGES`/`FILES` ordering and the `installed-vs-shipped` error), `PACKAGECONFIG`, `LAYERDEPENDS` naming collections
-rather than directories, and build output not always sitting under `tmp/`. Its compliance, SBOM, CVE and bundled-script
-material was reviewed and rejected as weaker than what the package already carries. **This source is evaluated;
-do not re-survey it.** Attribution for the gap selection is recorded in the skill's `ATTRIBUTIONS.md`.
-
-Full model evaluations, hardware/release qualification, and QEMU skill creation remain separate decisions.
-Buildroot's completed source/deployment commits (`9a512da`, `d56586d`) are preserved.
-
-### Re-Review the Other Four Embedded Skills — Non-Urgent
+## Re-Review the Other Four Embedded Skills — Non-Urgent
 
 **Trigger:** the 2026-09-08 work on `yocto-openembedded-development` found several defects that its completed
 2026-09-07 review had not, so the same classes are worth a bounded second pass over the four skills reviewed in the
@@ -108,123 +44,11 @@ recorded in `ATTRIBUTIONS.md` as reproduced near-verbatim from a 2020 deck, and 
 **A provenance note about a command is also a staleness signal about it.**
 
 Scope: a bounded recheck against pinned upstreams and each package's own description, not new behavioral evaluation.
-Full model evaluation and hardware qualification stay separately deferred as recorded above. Record findings the
+Full model evaluation and hardware qualification stay separately deferred, as recorded in the
+[review-ledger record](../docs/evaluations/2026-09-16-embedded-skill-review-ledger.md). Record findings the
 normal way, in a dated file under `../docs/evaluations/`.
 
-### Yocto Tooling Candidates for the General Skill Review
-
-User-supplied on 2026-09-08 for a later pass over `yocto-openembedded-development`. Metadata below was read from the
-GitHub API the same day; **re-check staleness before adopting any of it**, because a layer that stopped at an old
-release is a liability rather than an asset. None of this is adopted yet, and a skill should route to upstream
-mechanisms before third-party tooling.
-
-| Tool                                                                                                     | What it is                                                              | State on 2026-09-08                         |
-| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------- |
-| [oelint-adv](https://github.com/priv-kweihmann/oelint-adv)                                               | advanced recipe linter, the strongest general candidate here            | 86★ BSD-2-Clause, pushed 2026-09-02         |
-| [yocto-kiss](https://github.com/bootlin/yocto-kiss)                                                      | a deliberately unelaborate working Yocto setup; useful as a baseline    | 206★ MIT, pushed 2026-08-24                 |
-| [vscode-bitbake](https://github.com/yoctoproject/vscode-bitbake)                                         | **first-party** BitBake language support for VS Code                    | 74★, pushed 2026-09-01                      |
-| [bitbake-language-server](https://github.com/Freed-Wu/bitbake-language-server)                           | editor-agnostic LSP alternative to the above                            | 18★ GPL-3.0, pushed 2026-09-07              |
-| [yocto-lens](https://github.com/prashantdivate/yocto-lens)                                               | terminal UI over static analysis, layer validation, patch/licence audit | 22★ MIT, pushed 2026-07-28                  |
-| [meta-buildutils](https://github.com/priv-kweihmann/meta-buildutils)                                     | build-time utility classes                                              | 12★ BSD-2-Clause, pushed 2026-07-21         |
-| [oelint-vscode](https://github.com/priv-kweihmann/oelint-vscode)                                         | editor front end for oelint-adv                                         | 8★, pushed 2026-04-08                       |
-| [meta-osselot](https://github.com/iris-GmbH/meta-osselot)                                                | Osselot licence-compliance integration                                  | 7★ MIT, **pushed 2025-02-18**               |
-| [meta-bitbake-variable-substitution](https://github.com/coreycothrum/meta-bitbake-variable-substitution) | expand BitBake variables from external scripts                          | 3★ MIT, pushed 2026-06-29                   |
-| [bbclient](https://github.com/AngryMane/bbclient)                                                        | utility commands for BitBake                                            | 6★ MIT, **pushed 2023-08-09 — likely dead** |
-
-Konrad Weihmann ([priv-kweihmann](https://github.com/priv-kweihmann)) maintains several more embedded-development
-utilities the user rates highly; worth a scan when this pass happens.
-
-**Partly resolved 2026-09-08.** The security-relevant layers from the same list have been assessed as part of
-the now-complete Yocto security skill set: `sbom-cve-check` is covered in depth by
-`yocto-vulnerability-management`, including the 6.0 `OE_FRAGMENTS` wiring read from upstream. `meta-sca` and
-`meta-quantum-safe` were **not** assessed — the latter is named in the crypto/FIPS entry below as still
-unevaluated.
-
-### Yocto/OpenEmbedded Testing Coverage Is Missing
-
-**Gap identified by the user on 2026-09-08:** `yocto-openembedded-development` says nothing about how to *test* a
-Yocto build or the things it produces. That is a real omission for a skill whose diagnosis lane assumes evidence,
-since the upstream test machinery is where much of that evidence comes from.
-
-Cover the upstream mechanisms first, and confirm each against the release-matched Test Environment Manual:
-
-- `oeqa` and its selftest suite (`oe-selftest`), the layer-level runtime tests, and how a layer supplies its own.
-- `testimage` and `testexport`, and how they reach a target or QEMU.
-- `ptest` — enabling `DISTRO_FEATURES += "ptest"`, the `ptest-runner`, and per-recipe `ptest` packages.
-- `runqemu` as a test harness rather than as a demo.
-- Reproducibility testing (`oe-check-sstate`, the `reproducible` selftest) as a build-integrity check.
-- Where each of these puts results, and what a passing run does *not* prove.
-
-Third-party candidate: [meta-shift](https://github.com/shift-left-test/meta-shift), shift-left testing for Yocto
-(10★ MIT, pushed 2026-08-06). Assess it only after the upstream mechanisms are covered — it is a wrapper around
-tooling the skill should be able to describe unaided.
-
-Open question to settle first: whether this belongs in `yocto-openembedded-development` or in a separate skill.
-Testing spans build-host checks, on-QEMU runtime tests and on-hardware tests, and the last of those already routes
-to `embedded-linux-bringup`, so the seam is not obvious.
-
-**Partly overtaken 2026-09-08, and the seam is now half-answered.** `yocto-security-audit` covers `testimage`,
-`TEST_SUITES` and reading an oeqa result — but only for *security* suites, and it was written from an actual
-run, so its container obstacles (TUN, KVM group, slirp) and its warning about `OETestDepends` chains hiding
-results are measured rather than inferred. `yocto-security-hardening` carries the worked property assertion.
-
-What that leaves for this entry: `oe-selftest`, `ptest` and `ptest-runner`, `testexport`, `runqemu` as a
-harness, and reproducibility testing — none of which is security-specific. Read the two security skills first
-so the general treatment cites them instead of restating the oeqa mechanics, and note that the security set
-already demonstrates the seam working, which argues for a separate testing skill over an expansion of
-`yocto-openembedded-development`.
-
-### Embedded QEMU Skill Candidate
-
-Consider `embedded-qemu-emulation` for repeatable boot–test–debug workflows across embedded Linux projects, independent
-of their build system. LKMC supplies useful patterns: inspectable launch commands, disposable disk state, serial logs,
-debugger attachment, guest-result checks, and isolated concurrent runs. Verify mechanics against QEMU's release-matched
-documentation; do not import LKMC's wrappers or assume arbitrary board images/DTBs work on `virt`. Keep hardware-dependent
-validation and runtime driver diagnosis with `embedded-linux-bringup`. Assess moving its existing QEMU guidance rather
-than duplicating it. Exclude general VM management, desktop virtualization, and cloud workloads. Candidate only;
-creation is not yet authorized. [QEMU machine-model reference](https://www.qemu.org/docs/master/system/arm/virt.html).
-
-### kas-container Field Notes — Applied 2026-09-09
-
-**Done.** Four of the five items recorded on 2026-09-08 were applied to `kas-build-orchestration`; the fifth
-was not a gap. Each applied item was confirmed against the kas 5.3 sources before being written, so the skill
-states a mechanism rather than an anecdote:
-
-| Item                                                                                                                                                                                    | Where it landed                                    |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `local_conf_header` is emitted **sorted by key** (`config.py`'s `_get_conf_header`), distinct from the insertion order merging preserves — the lever for overriding a vendored fragment | reference, *Include Order, Paths, and Replacement* |
-| A layer path escaping the repo root resolves differently native versus containerised, and `kas checkout` reports success anyway                                                         | reference, *Mounts and Ownership*                  |
-| `DL_DIR`/`SSTATE_DIR` reach BitBake via `BB_ENV_PASSTHROUGH_ADDITIONS` (`libkas.py`), so a hard `local_conf_header` assignment silently bypasses a mounted cache                        | reference, *Mounts and Ownership*                  |
-| A build holds `KAS_BUILD_DIR`, and a task-level `ERROR:` is not terminal                                                                                                                | `SKILL.md`, *Mutation and Authorization*           |
-
-**The fifth was a false gap, and the reason is worth keeping.** I recorded the same-repository constraint on
-colon composition as missing after reading only `SKILL.md`; `references/kas-tool.md` already stated it. An
-absence found by a search that never covered where the answer lives is not a finding — the same mistake as the
-`net-tools` misreading in the build probe, twice in one engagement.
-
-Both validators pass. The engagement record stays at
-[field notes](../docs/research/yocto-security/kas-container-field-notes.md), now carrying the correction; the
-working configuration is preserved at
-[`kas-container-meta-security.yml`](../docs/research/yocto-security/kas-container-meta-security.yml).
-
-**Still unmeasured:** whether these additions change agent behaviour. They were written from one engagement on
-one host with Docker, and nothing was re-run against them.
-
-### Send or Retire the meta-security Upstream Defects
-
-**Five defects drafted and deliberately not sent**, deferred by the user on 2026-09-08:
-[the report](../docs/research/yocto-security/meta-security-upstream-defects.md). Two of them are now backed by
-execution rather than source reading.
-
-Defect 3 is the one to send first if any go: `checksec-native` cannot be built, the cause is one unsatisfiable
-`RDEPENDS` entry, the layer's own `buck-security` recipe supplies the fix pattern, and the patch was verified
-by building. Defect 4 — the inverted-assertion pattern across 10 test methods in 5 files — is the most
-valuable and the least ready, because deciding what each test should assert is a maintainer judgement; raise
-it as a question rather than as ten guesses.
-
-Before sending anything, re-check every claim against `master`; all of it was read and run at `scarthgap`.
-
-### Crypto and FIPS Depth for the Yocto Security Set
+## Crypto and FIPS Depth for the Yocto Security Set
 
 Deferred with its cost stated when `yocto-security-hardening` was designed and again when it was written on
 2026-09-08: the skill routes to `meta-wolfssl` as the FIPS-capable option and states its GPL-2.0/commercial
@@ -241,36 +65,6 @@ hardening's configure-and-verify lane. Decide placement as part of the research 
 Related and separately unfinished: post-quantum crypto has no upstream answer either, and the two Yocto-native
 candidates (`meta-oqs`, `meta-quantum-safe`) are both self-described as experimental and have never been
 compared side by side.
-
-## Nix Domain — Remaining Work
-
-The 2026-09-06 nix-domain consolidation is complete except for the items below: three skills promoted from
-`~/src/nix-config` (`direnv-nix-direnv`, `flake-manifest-sync` → `shared/nix/`; `generated-file-verify` →
-`shared/git/`; `colmena-deploy` stays repo-local) and five archived originals fixed per their mapping-verified
-fix lists and restored to `shared/nix/`. Verdicts, evidence, and coverage limits:
-[../docs/evaluations/2026-09-06-nix-domain-restore.md](../docs/evaluations/2026-09-06-nix-domain-restore.md).
-
-- **`nix-wrapper-modules` — deleted from the archive 2026-09-13**, resolving the "restore or delete" branch
-  below in favour of delete. nix-config ported it to `docs/reference/nix-wrapper-modules.md` — a reference
-  rather than a skill, because both wrapper inputs there still have zero consumers and a skill would spend
-  discovery budget in every session on a framework nothing uses. The port was verified against the revision
-  nix-config's lock pins (`7a6279b`) rather than upstream `main`, which independently confirmed two of this
-  entry's fix items: the 795-char description (dropped with the skill format) and the Mode C `configFile`
-  defect. Recoverable from git history at `skills/archived/nix/nix-wrapper-modules/`; the nix-packaging skill
-  stands alone either way, and keeps its own cross-reference to the upstream library.
-- **Deferred full `skill-review` pass** on the eight nix-domain-consolidation skills (five restored + three
-  promoted): all shipped at review lite, so verdicts are ready / ready-with-risks with discovery behavior
-  unmeasured.
-- **Parked named risks** (verified as risks, not defects, during the restore): nix-packaging's Electron
-  dependency list may be dated for current nixpkgs; nix-flakes' deprecation/flag claims assume modern CppNix,
-  Lix parity unverified; the `or`/`?` null-tolerance wording in home-manager was verified only on Determinate
-  Nix 2.34.8; `direnv-nix-direnv`'s `source_url` example still pins nix-direnv 3.1.2 — refresh only after
-  verifying the newer tag's hash.
-- **`nix-dendritic-pattern` — deleted from the archive 2026-09-06**; its value is fully accounted for in
-  nix-config (nine `dendritic-*` skills, six `den-*.md` references, the pin-debt TODO entry). It was the only
-  document verified at den rev `e8e8de1e` (the rev nix-config's lock actually pins, while its live den docs
-  still stamp `2040b613`); nix-config's pin-debt lane can recover it from git history
-  (`skills/archived/nix/nix-dendritic-pattern/`) if needed.
 
 ## `test-engineer` Did Not Trigger on Real Test-Writing Work
 
@@ -431,15 +225,6 @@ from primary sources, record provenance, and decide whether the source overlaps 
   licence and whether it processes locally or uploads: the last Firecrawl package reviewed here was
   `not ready` precisely because it omitted that its OCR path transmits the entire document.
 
-## Python Preference Placement Resolved
-
-The user approved a concern-based Python routing stub on 2026-09-11.
-Everyday defaults belong to `python-style`; specialist Python skills own their procedures and convention policy.
-Language-independent search recovery remains in `agents/rules/tools.md`; general commenting and testing policies remain
-in `agents/rules/workflow.md`. The retired `python-idioms` package stays archived with its provenance intact.
-The [routing review](../docs/evaluations/2026-09-11-python-defaults-routing.md) records the decision and verification limits.
-The [earlier consolidation review](../docs/evaluations/2026-09-06-python-idioms-rule-consolidation.md) preserves its history.
-
 ## Codex Skill-Description Budget
 
 Recheck the warning that Codex shortened skill descriptions to fit its context budget. The 2026-09-02 archival
@@ -447,26 +232,6 @@ reduced the Kasetto-managed common set from 63 skills to 35, of which 25 are rep
 Start a fresh Codex session and record whether the warning remains. If it does, compare the current common set
 with a curated Codex overlay before changing deployment policy. Skill count alone does not establish which
 descriptions consume the budget.
-
-## Technical Design and Planning Evaluation Follow-Up
-
-The bounded 2026-09-04 repair evaluation was accepted as sufficient to deploy `technical-design` and
-`implementation-planning` with `ready with risks` verdicts. Keep the following as future evidence work rather than a
-release gate:
-
-- Complete Codex case 11's confirmed second turn with a workspace-write resume configuration that does not require a
-  full approvals-and-sandbox bypass. Assert that it writes only the separate implementation plan from the accepted
-  design. The first turn already proved that Codex writes only the design and waits for confirmation.
-- Run cases 2, 3, 5, 6, 10, and 12 against the repaired revision when broader regression coverage is warranted. Cases 1,
-  4, 7, 8, 9, and the two-turn handoff already have bounded evidence across Claude Code and Codex, subject to the Codex
-  turn-2 limit above.
-- Evaluate discovery without supplying skill paths: positive design-only and planning-only requests, near-miss
-  brainstorming and review requests, requirements with unresolved architecture, and mixed design-and-plan requests.
-- Add repetitions only when measuring variance would change a decision. The first two rounds consumed an unexpectedly
-  large share of the Codex weekly subscription allowance, so future runs should report the live allowance before
-  expanding coverage.
-- Consider OpenCode and Copilot only when their behavior could change the portable-package decision. Deployment alone
-  does not establish behavioral portability.
 
 ## Portable Skill-Fixture Harness
 
@@ -543,12 +308,6 @@ carries the full reasoning behind each item here.
 Five specialist descriptions remain available across repositories. Recheck their cost against the Codex description
 budget when measuring discovery. `python-idioms` is archived by consolidation decision; evaluating its activation is no
 longer a prerequisite for retirement. The predecessor's evidence remains in `../docs/findings/skill-discovery-limits.md`.
-
-## OpenCode Reflect Ownership
-
-Keep `reflect` under `claude/` while `oh-my-opencode-slim` installs and replaces OpenCode's separate copy.
-Re-evaluate this only if that plugin is removed or its skill installation can be disabled. Do not deploy the
-repository copy to OpenCode on top of a directory Kasetto does not own.
 
 ## Dedicated GitHub Actions Skill
 
