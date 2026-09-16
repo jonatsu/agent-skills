@@ -1,7 +1,8 @@
 # Compose Managed by systemd
 
 Load the `systemd` skill for unit semantics, target-version checks, installation paths, and live-host authority. This
-reference covers only the boundary between a Compose project, Docker's container supervision, and a systemd unit.
+reference covers only the boundary between a Compose project, Docker's container supervision, and a systemd unit. For a
+Podman workload under systemd, prefer Quadlet over this oneshot-Compose pattern; see `references/podman-differences.md`.
 
 ## Choose Ownership Deliberately
 

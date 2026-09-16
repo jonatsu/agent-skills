@@ -1,6 +1,6 @@
 ---
 name: containers
-description: Build, run, diagnose, and secure Docker and OCI containers. Use for Dockerfiles, Compose applications, container runtime settings, image scanning and publication, or Kubernetes workload hardening. Excludes general Kubernetes cluster administration.
+description: Build, run, diagnose, and secure Docker, Podman, and OCI containers. Use for Dockerfiles or Containerfiles, Compose applications, rootless containers, Quadlet systemd units, container runtime settings, image scanning and publication, or Kubernetes workload hardening. Excludes general Kubernetes cluster administration.
 license: MIT
 compatibility: Requires the container, registry, scanner, or Kubernetes tools used by the target project.
 metadata:
@@ -10,8 +10,10 @@ metadata:
 # Containers
 
 Use this skill for container images, Dockerfiles, Compose applications, container runtime settings, image supply chains,
-and workload-side Kubernetes controls. Use the `systemd` skill as well when a Compose deployment is managed by systemd.
-This skill does not cover general cluster administration, application security, or unrelated CI design.
+and workload-side Kubernetes controls. Guidance is written for Docker and applies to Podman except where
+`references/podman-differences.md` overrides it; read that reference for rootless operation, the compose providers, and
+Quadlet. Use the `systemd` skill as well when a Compose deployment or Quadlet unit is managed by systemd. This skill
+does not cover general cluster administration, application security, or unrelated CI design.
 
 Treat the target tool's installed help and official documentation as the authority. Container and orchestration features
 change across Docker Engine, Docker Compose, containerd, Kubernetes, scanners, registries, and operating systems. Record
@@ -44,11 +46,13 @@ Determine only the facts needed for the active branch:
 - artifact and operation: Dockerfile, image, Compose project, running container, registry object, or Kubernetes
   workload;
 - environment: development, CI, staging, production, or incident diagnosis;
-- runtime and platform: rootful or rootless engine, Linux or Windows containers, target architectures, and orchestrator;
+- runtime and platform: engine (Docker or Podman), rootful or rootless, Linux or Windows containers, target
+  architectures, and orchestrator;
 - state and data: current objects, persistent mounts, published ports, credentials, and rollback path; and
 - project policy: accepted registries, vulnerability thresholds, signing identity, and deployment authority.
 
-Prefer `docker version`, `docker compose version`, and the relevant command's `--help` over assumed version support.
+Prefer `docker version`, `docker compose version`, `podman info`, and the relevant command's `--help` over assumed
+version support; Podman's defaults have shifted across major versions.
 Use `docker compose config --quiet` for validation when rendered configuration could contain secrets. Inspect effective
 runtime settings rather than inferring them from a Dockerfile alone.
 
@@ -64,6 +68,7 @@ Read the branch reference before making its decisions:
 | Container build and publication in CI           | `references/ci-cd.md`                                   |
 | Kubernetes workload hardening                   | `references/kubernetes-pod-security.md`                 |
 | Compose managed by systemd                      | `references/compose-systemd.md` and the `systemd` skill |
+| Podman: rootless, compose providers, Quadlet    | `references/podman-differences.md`                      |
 | Current specifications and tool documentation   | `references/official-docs.md`                           |
 
 The remaining references provide additional examples but do not override this workflow or current official
