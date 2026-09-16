@@ -26,6 +26,14 @@ repository knowledge earns the recurring context cost.
 
 - `<what to do, or never do>`: `<failure symptom or consequence>`
 
+## Documentation
+
+Route to the hub; do not inline what belongs in a genre beneath it.
+
+| File | What it holds | Read when |
+|---|---|---|
+| `docs/README.md` | the documentation hub: one row per genre | `<the genres a reader here needs>` |
+
 ## Findings
 
 Open the matching file when the symptom appears.
@@ -41,7 +49,20 @@ Open the matching file before working in its area.
 | Read before you touch | File | Holds |
 |---|---|---|
 | `<path or glob>` | `<instruction file>` | `<scope>` |
+
+## Update triggers
+
+When the left changes, update the right in the same change.
+
+| When this changes | Update |
+|---|---|
+| `<source of truth>` | `<doc or file that must resync>` |
 ```
+
+The floor routes to `docs/README.md` and to the findings and scoped-instruction files above; it does not
+enumerate the genres beneath the hub. Which documents exist and how they are organized is owned by
+`context-architecture`'s [named default layout](../../context-architecture/references/default-layout.md); the
+default findings tier is `docs/findings/`, and an existing repository convention wins over both.
 
 Delete sections that would contain a runner transcription, directory listing, generic advice, or README
 summary. The fillable version is `../assets/AGENTS.template.md`.

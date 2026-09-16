@@ -55,14 +55,24 @@ findings file below rather than in every session's context. Relocate it; never d
 
 - `<what to do, or never do>`: `<what it looks like when it bites>`
 
+## Documentation
+
+\<Delete if the repository has no `docs/` tree yet. Otherwise route to the hub in one row rather than inlining
+what belongs in a genre beneath it. `context-architecture` owns which documents exist and how they are
+organized; point here, do not enumerate genres.>
+
+| File             | What it holds                            | Read when                                                   |
+| ---------------- | ---------------------------------------- | ----------------------------------------------------------- |
+| `docs/README.md` | the documentation hub: one row per genre | you need reference, specs, decisions, plans, or evaluations |
+
 ## Findings
 
-\<Delete unless a gotcha above has evidence worth keeping. Otherwise put one file per subject under a
-directory this repository chooses, each holding the measurements, superseded arrangements, and reasoning
-behind the rules above.
+\<Delete unless a gotcha above has evidence worth keeping. Otherwise put one file per subject in the findings
+tier, each holding the measurements, superseded arrangements, and reasoning behind the rules above.
 
 Index them by symptom rather than by subject. An agent that recognizes what it is looking at will open the
-file; an agent reading a list of topics has no reason to.>
+file; an agent reading a list of topics has no reason to. The named default layout puts these under
+`docs/findings/`; an existing repository convention wins.>
 
 Open the matching file when the symptom appears. Every rule above stands without it; these hold the evidence.
 
@@ -81,3 +91,12 @@ description of automatic loading.
 | Read before you touch | File     | Holds             |
 | --------------------- | -------- | ----------------- |
 | `<path or glob>`      | `<file>` | `<what is in it>` |
+
+## Update triggers
+
+\<Delete if nothing here drifts against a source. Otherwise: freshness is part of done-ness, so when the left
+changes, update the right in the same change.>
+
+| When this changes   | Update                           |
+| ------------------- | -------------------------------- |
+| `<source of truth>` | `<doc or file that must resync>` |

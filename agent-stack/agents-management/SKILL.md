@@ -85,7 +85,8 @@ obligation must leave the instruction file no longer than it found it, or state 
 Every passage in a bloated instruction file passed the other two tests on the day it arrived, so neither one
 can detect accumulation. A file that only grows becomes an incident log whose rules compete for attention with
 narrative that no longer changes any decision. Satisfy it by relocating detail, never by cutting a qualifier
-the reader must not get wrong.
+the reader must not get wrong and never by compressing clear guidance into cryptic density: the target is the
+shortest wording that stays clear and complete, not the shortest wording.
 
 ## Completion
 
