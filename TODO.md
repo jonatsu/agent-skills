@@ -400,9 +400,13 @@ rewrites.
   `AGENTS.md` in this directory already states the rule that settles them: guidance for "a moment nobody
   verbalizes" belongs in `agents/rules/`, and "no wording repairs it". Apply that test to these two before
   drafting any replacement description.
-- **Real cost if missed.** `git-ops` (106) carries the confirmation gates that stand in for
-  `disable-model-invocation`, so a non-trigger means the guidance is absent exactly when a destructive command
-  runs. That makes it the most valuable of the 13 to get right, independent of how easy it is.
+- **No special safety weight (corrected).** `git-ops` (106) was ranked the most valuable of the 13 on the
+  premise that its confirmation gates stand in for `disable-model-invocation`, so a non-trigger would remove a
+  safety control. That premise is wrong. The root `AGENTS.md` and `docs/findings/git-staging-sweeps.md` record
+  that git-ops safety rests on the staging rule in `agents/rules/` plus the `PreToolUse` guard, not on the
+  skill's gates: measured 2026-09-12, git-ops fired in 0 of 362 Claude sessions, 208 of which ran git commands,
+  so its gates were never in force on that client. A non-trigger therefore removes no safety control. Rewrite
+  it for discoverability alongside the rest of the 13; it carries no extra urgency.
 - **Lower risk — a strong literal tool token is present**, which is the property that demonstrably works for
   `agents-management` (it names `AGENTS.md` and `CLAUDE.md`, and surfaced once those were edited):
   `chezmoi-dotfiles`, `github-ops` (`gh`), `kasetto`, `mise-tools`, `containers` (`Dockerfiles`, `Compose`),
