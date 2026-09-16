@@ -26,8 +26,12 @@ The current skill adds:
 - a mandatory scan for undocumented preferences, agreements, nuances, rejected approaches, scope, and
   unfinished reasoning;
 - paste-ready `PRIME` and saved `DOCUMENT` delivery modes;
-- verification requirements for factual state included in a handoff; and
-- conditional sections for complex work without imposing a fixed template.
+- verification requirements for factual state included in a handoff;
+- conditional sections for complex work without imposing a fixed template;
+- an ephemerality guardrail requiring durable knowledge to reach a version-controlled artifact before the
+  handoff, rather than surviving only in a gitignored note or prompt;
+- a default refusal to emit oversized `PRIME` prompts that terminals silently corrupt on paste; and
+- explicit carry-forward of standing session-start operating instructions.
 
 The repository owner's session-priming workflow informed these additions. A successful multi-item priming
 brief supplied the initial stateful shape, and later routine skill-review handoffs exposed the need for a

@@ -14,6 +14,19 @@ that cannot be recovered from the repository, issue tracker, plans, or current m
 Do not recap the conversation or inventory everything inspected. Cite durable artifacts and let the recipient
 read them.
 
+## A Handoff Is Ephemeral
+
+A handoff is disposable transfer state, never a system of record. A `PRIME` prompt exists only until the
+terminal buffer clears; a `DOCUMENT` saved under `.scratch/`, a temporary directory, or any other gitignored
+path can be reclaimed or lost before the next session opens it. Treat every handoff as if it may not survive.
+
+A handoff must therefore never be the only home for anything the work depends on. A decision, agreement,
+constraint, or piece of derived context that outlives the session belongs in a durable, version-controlled
+artifact — a plan, specification, ADR, glossary, or committed note — written before or alongside the handoff,
+not deferred to it. The handoff points to those artifacts; it does not stand in for them. When the session
+produced durable knowledge that is still only in a gitignored handoff or the conversation, record it in a
+tracked document first, then write the handoff that points to it.
+
 ## Choose the Smallest Sufficient Handoff
 
 Use a **pointer handoff** when the recipient can recover the work state and only needs a clear next task. This
@@ -32,7 +45,11 @@ switch to a stateful handoff when that context no longer fits clearly in the poi
 
 Before writing either form, deliberately check what would disappear with this session:
 
-- user preferences, corrections, and instructions stated during the work;
+- standing operating instructions the user set for the session, especially at its start — a required tool or
+  method such as "use sequential-thinking for all complex design work", a scope limit, or a working
+  convention; these bind the continuing work too and are among the most frequently dropped, so carry them
+  forward in the recipient's own terms rather than paraphrasing them away;
+- user preferences, corrections, and one-off instructions stated during the work;
 - decisions and agreements that have not been recorded elsewhere, including the reason that settled them;
 - nuances, exceptions, and boundaries that affect how the next task should be interpreted;
 - rejected approaches and dead ends whose repetition would cost meaningful time;
@@ -110,6 +127,16 @@ Read `references/example-brief.md` only when a substantial stateful handoff need
 Use `PRIME` when the same work continues in a fresh context. Return one fenced block that the user can paste
 as the first message. Do not save it to disk.
 
+A pasted prompt is size-limited by the terminal, not by the model. Above roughly 5 KB — about 4,000
+characters, or 50–60 lines — terminals such as Windows Terminal silently corrupt large pastes: the start and
+end arrive intact while the middle is truncated or collapsed, with no error and nothing to recover the lost
+lines from. Claude Code and Codex compound this by hiding multi-line pastes behind a "lines hidden" collapse
+that conceals the damage. Refuse by default to emit a `PRIME` handoff that exceeds this threshold. Say why,
+then either switch to `DOCUMENT`, whose saved file is immune to paste corruption, or split the material so the
+durable context lives in a tracked artifact and the prompt only points to it. Emit an oversized `PRIME` block
+only when the user explicitly overrides this refusal after being told the risk. The 5 KB figure is
+environment-dependent; treat it as a conservative default the user may raise or lower for their terminal.
+
 Use `DOCUMENT` when the user asks for a file or the work passes to another machine or person.
 
 Write to the path the user names. When the work passes to another machine or person and no path was named,
@@ -135,6 +162,10 @@ rather than its value.
 Before delivery, confirm:
 
 - the next action is obvious on a skim;
+- any durable decision or context the work depends on is recorded in a git-tracked artifact, not left to
+  survive only in this handoff;
+- standing operating instructions the user set for the session are carried forward in the recipient's terms;
+- a `PRIME` handoff is within the paste-size limit, or the user has overridden the refusal knowingly;
 - the session-only context scan was performed and every material result survived;
 - every included fact was verified or labeled unverified;
 - durable material is cited rather than copied;
