@@ -56,7 +56,7 @@ fail loudly. That failure is how you confirm a removal actually pruned.
 Both skill validators over one package:
 
 ```console
-$ just skill-check skills/shared/git/git-ops
+$ just skill-check skills/shared/dev-tooling/git-ops
 Agent Skills specification (skills-ref)
 
 1 checked, 0 failed
@@ -174,7 +174,7 @@ is written. Codex likewise receives `shared/` only; its built-in `.system` skill
 Kasetto-managed ones and are excluded by exact path from the ownership gate.
 
 The [scoped Python rule](../agents/rules/python.md) routes work by concern.
-[python-style](shared/development/python-style/SKILL.md) owns everyday coding defaults;
+[python-style](shared/python/python-style/SKILL.md) owns everyday coding defaults;
 specialist Python skills own their procedures. Each skill preserves established project conventions and requires
 evidence of harm before recommending an unsolicited correction.
 
@@ -183,18 +183,18 @@ evidence of harm before recommending an unsolicited correction.
 Skills live at `shared/<domain>/<skill>/`; one flat directory had stopped being a list anyone could read.
 `kasetto/base.yaml` is the authoritative list of domains, one entry each.
 
-| Domain         | Holds                                                                  |
-| -------------- | ---------------------------------------------------------------------- |
-| `agent-stack/` | Authoring the setup itself — skills, prompts, agent instruction files  |
-| `context/`     | Context and token economy: handoffs, compression, token budgets        |
-| `design/`      | Shaping ideas, requirements, and technical design before work is built |
-| `development/` | Doing the work: debugging, testing, dev-environment tooling            |
-| `embedded/`    | Embedded Linux bring-up, Buildroot, kas, U-Boot, Yocto/OpenEmbedded    |
-| `git/`         | Git, GitHub, and repository hygiene                                    |
-| `nix/`         | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv        |
-| `ops/`         | Machines and runtimes: containers, systemd, dotfiles                   |
-| `review/`      | Reviewing code, designs, skills, and specification conformance         |
-| `writing/`     | Human-facing prose                                                     |
+| Domain                   | Holds                                                                                           |
+| ------------------------ | ----------------------------------------------------------------------------------------------- |
+| `agent-stack/`           | The setup itself — skills, prompts, agent instruction files, context economy, the CC safety net |
+| `engineering/`           | Shaping ideas, requirements, and technical design before work is built                          |
+| `python/`                | Python craft: style, typing, testing, async, architecture, project management                   |
+| `dev-tooling/`           | Everyday dev tooling: shells, task runners, ast-grep, Git, GitHub, repo hygiene                 |
+| `review/`                | Reviewing code, designs, skills, and specification conformance                                  |
+| `testing-and-qa/`        | Verifying behaviour: debugging, TDD, test engineering                                           |
+| `nix/`                   | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv                                 |
+| `system-administration/` | Machines and runtimes: containers, systemd, networking, dotfiles                                |
+| `embedded-linux/`        | Embedded Linux bring-up, Buildroot, kas, U-Boot, Yocto/OpenEmbedded                             |
+| `technical-writing/`     | Human-facing prose                                                                              |
 
 **The domain level exists only in this repository.** Kasetto deploys flat, so every agent reads
 `<skills-dir>/<skill>/` and no skill needs to know where its source lives. Two consequences:
@@ -276,7 +276,7 @@ is Apache-2.0 per its upstream and ships `LICENSE.upstream` alongside. Do not as
 declares otherwise.
 
 Where an upstream licence would block the use we need, the skill is replaced by an independently written one
-rather than adapted. `shared/git/git-ops` is the worked example: its predecessor was SUL 1.0,
+rather than adapted. `shared/dev-tooling/git-ops` is the worked example: its predecessor was SUL 1.0,
 personal/non-commercial only.
 
 ## External references on skill authoring
