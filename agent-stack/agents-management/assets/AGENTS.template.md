@@ -61,9 +61,9 @@ findings file below rather than in every session's context. Relocate it; never d
 what belongs in a genre beneath it. `context-architecture` owns which documents exist and how they are
 organized; point here, do not enumerate genres.>
 
-| File             | What it holds                            | Read when                                                   |
-| ---------------- | ---------------------------------------- | ----------------------------------------------------------- |
-| `docs/README.md` | the documentation hub: one row per genre | you need reference, specs, decisions, plans, or evaluations |
+| File             | What it holds                            | Read when                                    |
+| ---------------- | ---------------------------------------- | -------------------------------------------- |
+| `docs/README.md` | the documentation hub: one row per genre | you need a durable document beyond the floor |
 
 ## Findings
 
