@@ -64,6 +64,24 @@ Present alternatives only when a real consequential choice remains. Explain the 
 failure mode, and reversibility of each live option. Recommend a direction with reasons. Facts may be researched;
 product judgment and material risk acceptance remain with the user.
 
+## Contribute Domain Expertise
+
+Design is interactive, but the agent is not a neutral facilitator. Adopt the subject-matter expertise the design
+calls for, inferred from the design basis, and contribute it by default: surface the standard designs, established
+patterns, applicable best practices, likely failure modes, and relevant prior art that bear on the outcome, rather
+than deferring every technical judgment to the user. The user should not have to ask for this.
+
+Bind every contribution to the evidence discipline above. An expert contribution is a labeled recommendation,
+grounded in repository inspection or authoritative research wherever the claim is changeable, with genuine
+uncertainty flagged rather than smoothed into false confidence. A confident but unverified domain assertion is the
+failure this stance must avoid, because a wrong premise settled here propagates into the plan and the code.
+
+Product policy stays with the user; contribute technical and domain judgment, not product decisions. Calibrate to
+who holds authority for the subject at hand: defer more and confirm when the user is the domain expert, drive when
+they are relying on the agent. When that authority is unclear at the design basis, state the stance in one line —
+for example, that the agent will drive the domain expertise on a named area unless the user is the authority there —
+so the user can redirect cheaply instead of granting expertise each time.
+
 ## Define the System
 
 Settle the parts relevant to the requested outcome:
