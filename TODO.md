@@ -428,16 +428,19 @@ Two length outliers, unrelated to the above: `grilling` at 614 chars is the only
 512 soft budget, and `agents-management` at 342 has no `Use when` clause but is the one skill with direct
 evidence of activating anyway.
 
-## `agents-management` Rework Behind `context-architecture`
+## `agents-management` Rework Behind `context-architecture` — done 2026-09-16
 
-Deferred by the 2026-09-06 grilling (decision record:
-[../docs/plans/archived/context-architecture-skill.md](../docs/plans/archived/context-architecture-skill.md)):
-once
-`context-architecture` has survived first real use, align `agents-management`'s templates with the named
-default layout, refresh `references/loading-model.md`'s client adapters, and run both skills through the
-deferred `skill-review` pass together. The minimal routing edits (description ownership line, initialize and
-audit branch pointers) already shipped with the new skill; the templates deliberately did not, so they conform
-to an exercised layout rather than a new one.
+Completed once `context-architecture` had real use (its checker on this repository in the 2026-09-12 audit;
+the Finnish OCR walk test in `../docs/evaluations/2026-09-12-context-architecture-repair-review.md`). The
+templates were aligned with the named default layout (a `docs/README.md` hub-routing row and an update-triggers
+table; `docs/findings/` named as the default findings tier, existing convention winning);
+`references/loading-model.md`'s client adapters were refreshed to 2026-09-16 (OpenCode split into V1/V2, Claude
+Code 2.1.269, Copilot CLI additions); and both skills went through the deferred `skill-review` pass together —
+verdict, evidence, and coverage limits in
+[../docs/evaluations/2026-09-16-agent-stack-skill-review.md](../docs/evaluations/2026-09-16-agent-stack-skill-review.md).
+The residual open thread is `agents-management` activation, tracked with the description-audit entries above,
+not here. Decision record:
+[../docs/plans/archived/context-architecture-skill.md](../docs/plans/archived/context-architecture-skill.md).
 
 ## Unevaluated Candidate Sources
 
