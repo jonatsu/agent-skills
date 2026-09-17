@@ -196,7 +196,10 @@ Validate through the same justfile and working directory the user will use:
 3. Compare `just --list` and `just --groups` against the interface the change intended, including each
    module's own listing.
 4. Preview each changed execution path with `just --dry-run`, including representative parameters and relevant
-   module paths.
+   module paths. When the change was meant to preserve behavior, capture `just --summary` and the `--dry-run`
+   output of every affected recipe before and after, and diff them. Identical output is the evidence that a
+   restructuring changed only structure; each remaining difference is then something to justify individually
+   rather than a whole file to re-read.
 5. Execute safe representative recipes when authorized, and verify their outputs, exit statuses, dependencies,
    and working directories.
 6. Exercise expected failure paths when the change affects validation, parameters, platform branches, or
