@@ -49,7 +49,7 @@ first fails, and accepts a path relative to wherever you are.
 - Delete a domain's `kasetto/base.yaml` entry in the same source commit that empties it. Git cannot preserve an
   empty directory, and Kasetto rejects a configured domain that is absent on a fresh clone.
 - Ask what a user would have to say for a proposed skill to load, before writing it. Guidance that applies
-  whenever someone writes code, or at any other moment nobody verbalizes, belongs in `agents/rules/` instead.
+  whenever someone writes code, or at any other moment nobody verbalizes, belongs in `agents/shared/rules/` instead.
   A skill for such a moment does not activate, and no wording repairs it.
 
 **Never:**

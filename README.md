@@ -173,7 +173,7 @@ different agent. Add the group, and a `kasetto/copilot-extra/` config, the first
 is written. Codex likewise receives `shared/` only; its built-in `.system` skills sit beside the
 Kasetto-managed ones and are excluded by exact path from the ownership gate.
 
-The [scoped Python rule](../agents/rules/python.md) routes work by concern.
+The [scoped Python rule](../agents/shared/rules/python.md) routes work by concern.
 [python-style](shared/python/python-style/SKILL.md) owns everyday coding defaults;
 specialist Python skills own their procedures. Each skill preserves established project conventions and requires
 evidence of harm before recommending an unsolicited correction.
