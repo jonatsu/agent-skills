@@ -68,6 +68,11 @@ Use assets as starting points after inspecting the repository:
   EditorConfig checking, YAML and Markdown formatting and linting, a local invisible-character check for
   Markdown, ShellCheck, and shfmt. Use the complete profile when the user requests the preferred baseline. Make
   only the requested delta when extending an established configuration.
+- `.shellcheckrc`: The companion to the ShellCheck hook above, and the one place its options belong — the hook,
+  an editor extension, and a direct CLI run all read it, so per-tool arguments drift apart. The bundled profile
+  enables every optional check and disables two by name, with the reason attached to each. Adopting it in an
+  established repository turns the whole shell tree red at once; the file's own comments carry the sweep
+  procedure and the trap that makes a sweep look finished when it is not.
 - Community files: Use the bundled contribution, security, conduct, pull-request, and issue templates when
   their workflow applies. Replace every placeholder and remove irrelevant sections.
 
@@ -151,7 +156,7 @@ than changing them without authorization.
 - Community templates: `CONTRIBUTING.template.md`, `SECURITY.template.md`,
   `CODE_OF_CONDUCT.template.md`, `PULL_REQUEST_TEMPLATE.md`, and `ISSUE_TEMPLATE/*`
 - Repository configuration: `.editorconfig`, `.gitattributes`, `.pre-commit-config.yaml`,
-  `.markdownlint-cli2.jsonc`, `.mdformat.toml`, `.yamlfmt.yaml`, and `.yamllint.yaml`
+  `.markdownlint-cli2.jsonc`, `.mdformat.toml`, `.shellcheckrc`, `.yamlfmt.yaml`, and `.yamllint.yaml`
 
 ## Provenance
 
