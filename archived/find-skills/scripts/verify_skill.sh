@@ -51,14 +51,14 @@ block() {
 
 usage() {
   cat << EOF
-$SCRIPT_NAME $VERSION — local static safety checks for an agent skill.
+${SCRIPT_NAME} ${VERSION} — local static safety checks for an agent skill.
 
 Usage:
-  $SCRIPT_NAME <skill-dir>       Verify the skill directory before install
-  $SCRIPT_NAME --help            Show this help
-  $SCRIPT_NAME --version         Show version
+  ${SCRIPT_NAME} <skill-dir>       Verify the skill directory before install
+  ${SCRIPT_NAME} --help            Show this help
+  ${SCRIPT_NAME} --version         Show version
 
-Exit codes: 0 clean, 1 warnings, 2 blockers, $EX_USAGE usage error.
+Exit codes: 0 clean, 1 warnings, 2 blockers, ${EX_USAGE} usage error.
 Optional tools (used when present): betterleaks, gitleaks, trufflehog, shellcheck, semgrep.
 EOF
 }
@@ -81,10 +81,10 @@ check_hidden_unicode() {
   local range='[\x{200b}-\x{200f}\x{202a}-\x{202e}\x{2066}-\x{2069}\x{feff}]'
 
   if printf '' | grep -qP '' 2> /dev/null; then
-    mapfile -t hits < <(grep -rlP "$range" -- "$dir" 2> /dev/null || true)
+    mapfile -t hits < <(grep -rlP "${range}" -- "${dir}" 2> /dev/null || true)
   elif command -v python3 > /dev/null 2>&1; then
     mapfile -t hits < <(
-      python3 - "$dir" << 'PY' || true
+      python3 - "${dir}" << 'PY' || true
 import os, sys
 bad = set(range(0x200b,0x2010)) | set(range(0x202a,0x202f)) | set(range(0x2066,0x206a)) | {0xfeff}
 for root, _, files in os.walk(sys.argv[1]):
@@ -118,22 +118,25 @@ PY
 check_secrets() {
   local dir="$1"
   if command -v betterleaks > /dev/null 2>&1; then
-    if run_guarded betterleaks dir "$dir" > /dev/null 2>&1; then
+    # shellcheck disable=SC2310 # scanner probe; both outcomes are handled below.
+    if run_guarded betterleaks dir "${dir}" > /dev/null 2>&1; then
       ok "no secrets (betterleaks)"
     else
-      block "betterleaks flagged potential secrets — inspect with: betterleaks dir '$dir' -v"
+      block "betterleaks flagged potential secrets — inspect with: betterleaks dir '${dir}' -v"
     fi
   elif command -v gitleaks > /dev/null 2>&1; then
-    if run_guarded gitleaks detect --no-git --no-banner --source "$dir" > /dev/null 2>&1; then
+    # shellcheck disable=SC2310 # scanner probe; both outcomes are handled below.
+    if run_guarded gitleaks detect --no-git --no-banner --source "${dir}" > /dev/null 2>&1; then
       ok "no secrets (gitleaks)"
     else
-      block "gitleaks flagged potential secrets — inspect with: gitleaks detect --no-git --source '$dir' -v"
+      block "gitleaks flagged potential secrets — inspect with: gitleaks detect --no-git --source '${dir}' -v"
     fi
   elif command -v trufflehog > /dev/null 2>&1; then
     local out
-    out="$(run_guarded trufflehog --no-update filesystem "$dir" 2> /dev/null || true)"
-    if [[ -n "$out" ]]; then
-      block "trufflehog flagged potential secrets — inspect with: trufflehog filesystem '$dir'"
+    # shellcheck disable=SC2310 # status is discarded by design; output is captured and tested next.
+    out="$(run_guarded trufflehog --no-update filesystem "${dir}" 2> /dev/null || true)"
+    if [[ -n "${out}" ]]; then
+      block "trufflehog flagged potential secrets — inspect with: trufflehog filesystem '${dir}'"
     else
       ok "no secrets (trufflehog)"
     fi
@@ -150,7 +153,7 @@ check_dangerous_patterns() {
   # curl|bash, wget|sh, base64 -d | sh — remote code execution
   mapfile -t exec_hits < <(
     grep -rInE '(curl|wget)[^|]*\|[[:space:]]*(sudo[[:space:]]+)?(ba)?sh|base64[[:space:]]+(-d|--decode)[^|]*\|[^|]*sh' \
-      -- "$dir" 2> /dev/null || true
+      -- "${dir}" 2> /dev/null || true
   )
   if ((${#exec_hits[@]})); then
     block "remote fetch-and-execute pattern (curl|bash / base64|sh):"
@@ -162,7 +165,7 @@ check_dangerous_patterns() {
   # credential/secret paths near network commands — needs human review
   mapfile -t exfil_hits < <(
     grep -rIlnE '\.ssh/|\.aws/credentials|\.env|id_rsa|GITHUB_TOKEN|SECRET|PASSWORD' \
-      -- "$dir" 2> /dev/null \
+      -- "${dir}" 2> /dev/null \
       | xargs -r grep -lE 'curl|wget|nc |ncat|/dev/tcp' 2> /dev/null || true
   )
   if ((${#exfil_hits[@]})); then
@@ -177,11 +180,12 @@ check_dangerous_patterns() {
 check_bundled_scripts() {
   local dir="$1"
   local -a sh_files=()
-  mapfile -d '' sh_files < <(find "$dir" -type f -name '*.sh' -print0 2> /dev/null || true)
+  mapfile -d '' sh_files < <(find "${dir}" -type f -name '*.sh' -print0 2> /dev/null || true)
 
   if ((${#sh_files[@]} == 0)); then
     ok "no bundled shell scripts"
   elif command -v shellcheck > /dev/null 2>&1; then
+    # shellcheck disable=SC2310 # scanner probe; both outcomes are handled below.
     if run_guarded shellcheck --severity=warning "${sh_files[@]}" > /dev/null 2>&1; then
       ok "bundled shell scripts pass shellcheck"
     else
@@ -192,10 +196,11 @@ check_bundled_scripts() {
   fi
 
   if command -v semgrep > /dev/null 2>&1; then
-    if run_guarded semgrep --error --quiet --config auto "$dir" > /dev/null 2>&1; then
+    # shellcheck disable=SC2310 # scanner probe; both outcomes are handled below.
+    if run_guarded semgrep --error --quiet --config auto "${dir}" > /dev/null 2>&1; then
       ok "no semgrep findings"
     else
-      warn "semgrep reported findings — run: semgrep --config auto '$dir'"
+      warn "semgrep reported findings — run: semgrep --config auto '${dir}'"
     fi
   fi
 }
@@ -209,38 +214,39 @@ main() {
       return 0
       ;;
     --version)
-      printf '%s %s\n' "$SCRIPT_NAME" "$VERSION"
+      printf '%s %s\n' "${SCRIPT_NAME}" "${VERSION}"
       return 0
       ;;
     "")
-      printf '%s: missing <skill-dir>\n\n' "$SCRIPT_NAME" >&2
+      printf '%s: missing <skill-dir>\n\n' "${SCRIPT_NAME}" >&2
       usage >&2
-      return "$EX_USAGE"
+      return "${EX_USAGE}"
       ;;
+    *) ;;
   esac
 
   local dir="$1"
-  if [[ ! -d "$dir" ]]; then
-    printf '%s: not a directory: %s\n' "$SCRIPT_NAME" "$dir" >&2
-    return "$EX_USAGE"
+  if [[ ! -d "${dir}" ]]; then
+    printf '%s: not a directory: %s\n' "${SCRIPT_NAME}" "${dir}" >&2
+    return "${EX_USAGE}"
   fi
-  if [[ ! -e "$dir/SKILL.md" ]]; then
+  if [[ ! -e "${dir}/SKILL.md" ]]; then
     warn "no SKILL.md at the directory root — is this a skill?"
   fi
 
-  printf '%s %s — checking: %s\n' "$SCRIPT_NAME" "$VERSION" "$dir"
+  printf '%s %s — checking: %s\n' "${SCRIPT_NAME}" "${VERSION}" "${dir}"
 
   section "hidden Unicode"
-  check_hidden_unicode "$dir"
+  check_hidden_unicode "${dir}"
   section "secrets"
-  check_secrets "$dir"
+  check_secrets "${dir}"
   section "dangerous patterns"
-  check_dangerous_patterns "$dir"
+  check_dangerous_patterns "${dir}"
   section "bundled scripts"
-  check_bundled_scripts "$dir"
+  check_bundled_scripts "${dir}"
 
   printf '\n== summary ==\n  %d blocker(s), %d warning(s)\n' \
-    "$findings_block" "$findings_warn"
+    "${findings_block}" "${findings_warn}"
 
   if ((findings_block > 0)); then
     printf '  VERDICT: UNSAFE — do not install.\n'
@@ -255,4 +261,5 @@ main() {
 
 # `|| exit` keeps the intentional non-zero verdict (1/2/64) from tripping the
 # ERR trap, which is meant only for genuine internal faults.
+# shellcheck disable=SC2310 # status is forwarded via exit $?, not swallowed.
 main "$@" || exit $?
