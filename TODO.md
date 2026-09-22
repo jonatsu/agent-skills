@@ -203,11 +203,6 @@ sources, record provenance, and decide whether the source overlaps an existing s
 
 - [wshobson/conductor](https://github.com/wshobson/agents/tree/main/plugins/conductor): inspect as a plugin,
   including agent definitions and commands Kasetto would not deploy as skills.
-- [firecrawl/pdf-inspector](https://github.com/firecrawl/pdf-inspector): a candidate third converter for
-  `shared/context/document-conversion`, which currently routes two cases (bounding-boxes/coordinates, and
-  scanned/image-only PDFs) to nothing it owns. Read it against that routing table before adding a third branch,
-  and check the licence and whether it processes locally or uploads — the last Firecrawl package here was
-  `not ready` precisely for omitting that its OCR path transmits the whole document.
 
 ## Dedicated GitHub Actions Skill
 

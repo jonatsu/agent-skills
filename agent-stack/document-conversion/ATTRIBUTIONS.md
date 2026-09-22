@@ -73,3 +73,35 @@ Both are documented subjects of this skill rather than sources it draws from.
 Both upstream projects supply behavior this skill describes. Their documentation was read to verify the API
 surfaces, extras, exit codes, release dates, and package versions asserted here. No Microsoft or Firecrawl
 prose, code, or assets are copied into this package.
+
+## Influencing Source — pdf-inspector
+
+- Original author: Firecrawl
+- Source: [firecrawl/pdf-inspector](https://github.com/firecrawl/pdf-inspector)
+- Source revision: `v1.23.0` (`7a3401129cfc647816fa469d4ee6d153e5a793aa`)
+- Source license: MIT
+- Relationship: documentation influenced independently written guidance; no wording, code, or assets copied
+
+The repository documentation was evaluated on 2026-09-22 before pdf-inspector became the third branch in this
+skill's routing table. It established the boundary between anydoc's embedded PDF path and pdf-inspector's
+standalone classification, page selection, positioned text, region extraction, and selective local OCR APIs.
+It also supplied the page-index, coordinate-frame, OCR-runtime, model-download, and hosted-fallback boundaries
+recorded in `references/pdf_inspector.md`.
+
+## Influencing Source — writing-for-agents
+
+- Original author: Matt Pocock
+- Source: [mattpocock/skills](https://github.com/mattpocock/skills),
+  `skills/productivity/writing-for-agents/`
+- Source revision: `c55ee46073ed923f86ce59a5eb3b6d895095d1b7`
+- Source license: MIT
+- Relationship: writing principles applied to independently written guidance; no wording, code, or assets copied
+
+The source was read on 2026-09-22 at the user's direction. Its context-pointer, information-hierarchy,
+co-location, completion-criterion, single-source, and pruning principles shaped this revision. They kept
+converter selection in `SKILL.md`, moved pdf-inspector branch detail behind one conditional pointer, and gave
+the reference checkable completion criteria.
+
+Both new sources influenced independently written guidance. The existing `LICENSE.upstream` remains the
+license of the originally vendored K-Dense package; no material from either source was copied or redistributed,
+so neither license text is added as another upstream file.
