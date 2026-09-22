@@ -80,9 +80,7 @@ class CheckContextArchitectureTests(unittest.TestCase):
         self.assertIn("docs/child.md: unreachable", result.stdout)
 
     def test_incidental_backticked_path_is_not_a_structural_route(self) -> None:
-        _write(
-            self.root, "docs/index.md", "# Index\n\nCompare behavior with `child.md`.\n"
-        )
+        _write(self.root, "docs/index.md", "# Index\n\nCompare behavior with `child.md`.\n")
         _write(self.root, "docs/child.md", "# Child\n")
 
         result = _run(self.root)

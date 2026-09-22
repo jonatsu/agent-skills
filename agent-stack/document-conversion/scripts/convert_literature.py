@@ -7,7 +7,7 @@ import argparse
 import json
 import re
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from hashlib import sha256
 from importlib.metadata import version
 from pathlib import Path
@@ -16,10 +16,7 @@ from urllib.parse import quote
 
 from markitdown import MarkItDown
 
-
-FILENAME_PATTERN = re.compile(
-    r"^(?P<author>.+?)_(?P<year>(?:19|20)\d{2})_(?P<title>.+)$"
-)
+FILENAME_PATTERN = re.compile(r"^(?P<author>.+?)_(?P<year>(?:19|20)\d{2})_(?P<title>.+)$")
 
 
 @dataclass(slots=True)
@@ -202,7 +199,7 @@ def convert_paper(
             raise ValueError("conversion produced empty Markdown")
 
         title = (result.title or "").strip() or inferred_title
-        converted_at = datetime.now(timezone.utc).isoformat()
+        converted_at = datetime.now(UTC).isoformat()
         document = render_document(
             result.markdown,
             title=title,
@@ -260,7 +257,7 @@ def create_index(records: list[LiteratureRecord], output_dir: Path) -> None:
     lines = [
         "# Literature Index",
         "",
-        f"Generated: {datetime.now(timezone.utc).isoformat()}",
+        f"Generated: {datetime.now(UTC).isoformat()}",
         f"Documents: {len(eligible)}",
         "",
     ]

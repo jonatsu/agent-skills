@@ -300,15 +300,11 @@ def check_supersession(doc: Doc, report: Report) -> None:
     link = doc.front.get("superseded-by")
     if lifecycle == "superseded":
         if not isinstance(link, str) or not link:
-            report.error(
-                f"{doc.rel}: `superseded-by` is required when lifecycle is superseded"
-            )
+            report.error(f"{doc.rel}: `superseded-by` is required when lifecycle is superseded")
         elif not (doc.path.parent / link).exists():
             report.error(f"{doc.rel}: `superseded-by` target {link} not found")
     elif link is not None:
-        report.error(
-            f"{doc.rel}: `superseded-by` is only allowed on a superseded document"
-        )
+        report.error(f"{doc.rel}: `superseded-by` is only allowed on a superseded document")
 
     back = doc.front.get("supersedes")
     if back is None:
@@ -467,9 +463,7 @@ def check_ownership(docs: list[Doc], report: Report) -> None:
             claimed.setdefault(claim, []).append(doc.rel)
     for claim, holders in sorted(claimed.items()):
         if len(holders) > 1:
-            report.error(
-                f"ownership collision on '{claim}': claimed by {', '.join(holders)}"
-            )
+            report.error(f"ownership collision on '{claim}': claimed by {', '.join(holders)}")
 
 
 def render_index(docs: list[Doc]) -> str:
@@ -677,9 +671,7 @@ def section_is_fork_pointer(section: list[str], child: Path) -> bool:
         return False
     if any(line.strip() and not line.lstrip().startswith(">") for line in body):
         return False
-    targets = {
-        Path(target).name for line in body for target in MARKDOWN_LINK.findall(line)
-    }
+    targets = {Path(target).name for line in body for target in MARKDOWN_LINK.findall(line)}
     return child.name in targets
 
 
@@ -748,11 +740,10 @@ def verify_fork(spec: str, child: Path, rev: str, report: Report) -> bool:
     _, _, body_start = split_frontmatter(child_lines)
     want = trim_blanks(section)
     have = trim_blanks(child_lines[body_start:])
-    for number, (left, right) in enumerate(zip(want, have), start=1):
+    for number, (left, right) in enumerate(zip(want, have, strict=False), start=1):
         if left != right:
             report.error(
-                f"fork mismatch at body line {number}: {parent} has {left!r}, "
-                f"{child} has {right!r}"
+                f"fork mismatch at body line {number}: {parent} has {left!r}, {child} has {right!r}"
             )
             baseline_hint()
             return False
@@ -853,9 +844,7 @@ def render_survey(docs: list[Doc]) -> str:
     for doc in sorted(docs, key=lambda d: d.rel):
         state = "frontmatter present" if doc.front else "no frontmatter"
         sections = find_sections(doc)
-        lines.append(
-            f"{doc.rel} -- {len(doc.lines)} lines, {state}, {len(sections)} sections"
-        )
+        lines.append(f"{doc.rel} -- {len(doc.lines)} lines, {state}, {len(sections)} sections")
         for heading, _, length in sections:
             flag = "FORK" if length > SECTION_WARN_LINES else "    "
             lines.append(f"  {flag}  {length:>5}  {heading}")
@@ -905,9 +894,7 @@ def run_contract_checks(
     # read-only gate passes --check-index precisely so it does not write, and
     # warning it for not writing teaches the reader to skim the real findings.
     if len(docs) >= 2 and index is None and check_index is None:
-        report.warn(
-            "corpus has 2+ documents and no index was generated; re-run with --index"
-        )
+        report.warn("corpus has 2+ documents and no index was generated; re-run with --index")
     if index is not None:
         write_index(index, render_index(docs), report)
     if check_index is not None:

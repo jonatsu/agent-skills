@@ -225,11 +225,7 @@ def _routing_rows(document_text: str) -> list[RoutingRow]:
             -1,
         )
         trigger_hit = next(
-            (
-                i
-                for i, cell in enumerate(cells)
-                if ROUTE_TRIGGER_HEADER.match(cell.lower())
-            ),
+            (i for i, cell in enumerate(cells) if ROUTE_TRIGGER_HEADER.match(cell.lower())),
             -1,
         )
         if target_hit >= 0 and trigger_hit >= 0:
@@ -336,9 +332,7 @@ def _candidates(
     return selected
 
 
-def check_reachability(
-    candidates: list[tuple[str, Path]], reachable: set[Path]
-) -> list[Finding]:
+def check_reachability(candidates: list[tuple[str, Path]], reachable: set[Path]) -> list[Finding]:
     """Report living documents no structural route reaches.
 
     Dated records are exempt: they are reached by browsing their genre directory
@@ -376,8 +370,7 @@ def check_line_references(candidates: list[tuple[str, Path]]) -> list[Finding]:
         findings.extend(
             Finding(
                 relative,
-                f"line-number reference {match.group(0)!r} will rot; "
-                "point at a stable anchor",
+                f"line-number reference {match.group(0)!r} will rot; point at a stable anchor",
             )
             for match in LINE_REF.finditer(text)
         )
@@ -405,15 +398,11 @@ def check_trigger_cells(floor: Path, root: Path) -> list[Finding]:
     ]
 
 
-def _scan(
-    root: Path, docs_dirs: tuple[str, ...], excludes: tuple[str, ...]
-) -> list[Finding]:
+def _scan(root: Path, docs_dirs: tuple[str, ...], excludes: tuple[str, ...]) -> list[Finding]:
     """Run every system-level check over one repository."""
     floor = _find_floor(root)
     if floor is None:
-        return [
-            Finding(".", f"no floor file found (looked for {', '.join(FLOOR_NAMES)})")
-        ]
+        return [Finding(".", f"no floor file found (looked for {', '.join(FLOOR_NAMES)})")]
 
     routing_roots = _routing_roots(root, excludes)
     reachable, findings = _reachable(routing_roots, root)

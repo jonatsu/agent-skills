@@ -20,7 +20,6 @@ from importlib.metadata import (
 )
 from typing import Any
 
-
 ANYDOC_TARGET_VERSION = "0.2.4"
 MARKITDOWN_TARGET_VERSION = "0.1.7"
 
@@ -134,9 +133,7 @@ def discover_plugins() -> list[dict[str, Any]]:
                 "name": point.name,
                 "module": point.value,
                 "distribution": (
-                    point.dist.name
-                    if getattr(point, "dist", None) is not None
-                    else None
+                    point.dist.name if getattr(point, "dist", None) is not None else None
                 ),
             }
             for point in entry_points(group="markitdown.plugin")
@@ -178,11 +175,7 @@ def print_human_readable(report: dict[str, Any]) -> None:
 
     print(f"Python: {report['python']}")
 
-    print(
-        "anydoc: "
-        f"{anydoc['version'] or 'not usable'} "
-        f"(skill target: {targets['anydoc']})"
-    )
+    print(f"anydoc: {anydoc['version'] or 'not usable'} (skill target: {targets['anydoc']})")
     if anydoc["error"]:
         print(f"  {anydoc['error']}")
         if anydoc["npx_fallback"]:
@@ -269,9 +262,7 @@ def main() -> int:
         return 0
 
     targets = report["target_versions"]
-    mismatched = [
-        name for name in usable if report[name]["version"] not in (None, targets[name])
-    ]
+    mismatched = [name for name in usable if report[name]["version"] not in (None, targets[name])]
     if mismatched:
         print(
             f"Version mismatch for {', '.join(mismatched)}; "

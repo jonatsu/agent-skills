@@ -45,9 +45,7 @@ BUNDLED_DIRECTORIES = ("references", "scripts", "assets", "evals")
 FENCED_BLOCK_RE = re.compile(r"^```.*?^```", re.DOTALL | re.MULTILINE)
 MARKDOWN_LINK_RE = re.compile(r"\]\(([^)\s]+)")
 BUNDLED_PATH_RE = re.compile(
-    r"(?<![\w./-])((?:"
-    + "|".join(BUNDLED_DIRECTORIES)
-    + r")/[\w.:@+-]+(?:/[\w.:@+-]+)*)"
+    r"(?<![\w./-])((?:" + "|".join(BUNDLED_DIRECTORIES) + r")/[\w.:@+-]+(?:/[\w.:@+-]+)*)"
 )
 EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "ftp://", "#", "/", "<")
 
@@ -100,8 +98,7 @@ def check_bundled_references(skill_path: Path, body: str) -> list[str]:
             )
         elif not (skill_path / reference).exists():
             errors.append(
-                f"SKILL.md references {reference!r} but no such file ships with "
-                "the skill"
+                f"SKILL.md references {reference!r} but no such file ships with the skill"
             )
     return errors
 
@@ -133,18 +130,14 @@ def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
 
     match = FRONTMATTER_RE.match(content)
     if not match:
-        return [
-            "cannot inspect local policy because YAML frontmatter is invalid"
-        ], warnings
+        return ["cannot inspect local policy because YAML frontmatter is invalid"], warnings
 
     try:
         frontmatter = yaml.safe_load(match.group(1))
     except yaml.YAMLError as error:
         return [f"cannot inspect local policy: {error}"], warnings
     if not isinstance(frontmatter, dict):
-        return [
-            "cannot inspect local policy because frontmatter is not a mapping"
-        ], warnings
+        return ["cannot inspect local policy because frontmatter is not a mapping"], warnings
 
     metadata = frontmatter.get("metadata")
     if not isinstance(metadata, dict):
@@ -156,20 +149,15 @@ def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
     if not str(frontmatter.get("license", "")).strip():
         errors.append("top-level license must identify the applicable license")
     if "license" in metadata:
-        errors.append(
-            "move metadata.license to the Agent Skills top-level license field"
-        )
+        errors.append("move metadata.license to the Agent Skills top-level license field")
 
     body = content[match.end() :]
 
     scope = metadata.get("scope")
     if scope not in (None, "repo-local"):
-        errors.append(
-            "metadata.scope must be absent for portable skills or 'repo-local'"
-        )
-    if scope == "repo-local":
-        if "repository" not in "\n".join(body.splitlines()[:12]).lower():
-            errors.append("repo-local skill must name its repository near the start")
+        errors.append("metadata.scope must be absent for portable skills or 'repo-local'")
+    if scope == "repo-local" and "repository" not in "\n".join(body.splitlines()[:12]).lower():
+        errors.append("repo-local skill must name its repository near the start")
 
     errors.extend(check_bundled_references(skill_path, body))
 
@@ -188,9 +176,7 @@ def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
             attribution_text = ""
         for placeholder in PLACEHOLDERS:
             if placeholder in attribution_text:
-                errors.append(
-                    f"ATTRIBUTIONS.md contains scaffold placeholder {placeholder!r}"
-                )
+                errors.append(f"ATTRIBUTIONS.md contains scaffold placeholder {placeholder!r}")
 
     for placeholder in PLACEHOLDERS:
         if placeholder in content:

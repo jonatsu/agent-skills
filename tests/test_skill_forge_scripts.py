@@ -78,9 +78,7 @@ class InitSkillTests(unittest.TestCase):
             )
 
             self.assertEqual(result.returncode, 1)
-            self.assertIn(
-                "lowercase letters, digits, and single hyphens", result.stderr
-            )
+            self.assertIn("lowercase letters, digits, and single hyphens", result.stderr)
 
     def test_missing_author_reports_configuration_failure(self) -> None:
         environment = os.environ.copy()
@@ -262,9 +260,7 @@ class BundledReferenceTests(unittest.TestCase):
             skill_directory = Path(temporary_directory) / "sample-skill"
             _write_skill(skill_directory, "Read [the guide](references/guide.md).")
             (skill_directory / "references").mkdir()
-            (skill_directory / "references" / "guide.md").write_text(
-                "# Guide\n", encoding="utf-8"
-            )
+            (skill_directory / "references" / "guide.md").write_text("# Guide\n", encoding="utf-8")
 
             result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
 
@@ -275,9 +271,7 @@ class BundledReferenceTests(unittest.TestCase):
             skill_directory = Path(temporary_directory) / "sample-skill"
             _write_skill(skill_directory, "Read [part two](references/guide.md#two).")
             (skill_directory / "references").mkdir()
-            (skill_directory / "references" / "guide.md").write_text(
-                "# Guide\n", encoding="utf-8"
-            )
+            (skill_directory / "references" / "guide.md").write_text("# Guide\n", encoding="utf-8")
 
             result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
 
@@ -286,9 +280,7 @@ class BundledReferenceTests(unittest.TestCase):
     def test_fenced_example_path_is_not_a_promise(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             skill_directory = Path(temporary_directory) / "sample-skill"
-            _write_skill(
-                skill_directory, "```bash\ncat references/example-output.md\n```"
-            )
+            _write_skill(skill_directory, "```bash\ncat references/example-output.md\n```")
 
             result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
 

@@ -54,9 +54,7 @@ def run_checks(root: Path) -> cc.Report:
     """Load and check every document under root, as main() does."""
     report = cc.Report()
     docs = [
-        doc
-        for path in cc.collect(root, None)
-        if (doc := cc.load(path, root, report)) is not None
+        doc for path in cc.collect(root, None) if (doc := cc.load(path, root, report)) is not None
     ]
     for doc in docs:
         cc.check_fields(doc, report)
@@ -267,12 +265,8 @@ class HandlingTests(TempCorpus):
             if (doc := cc.load(path, self.root, report)) is not None
         ]
         rendered = cc.render_index(docs)
-        self.assertIn(
-            "| Owns | Document | Type | Lifecycle | Locked | Handling |", rendered
-        )
-        self.assertIn(
-            "| alpha | a.md | design | active | no | customer-confidential |", rendered
-        )
+        self.assertIn("| Owns | Document | Type | Lifecycle | Locked | Handling |", rendered)
+        self.assertIn("| alpha | a.md | design | active | no | customer-confidential |", rendered)
         self.assertIn("| beta | b.md | design | active | no | - |", rendered)
 
 
@@ -290,9 +284,7 @@ class SupersessionTests(TempCorpus):
         self.assertIn("target gone.md not found", joined(run_checks(self.root).errors))
 
     def test_pointer_resolves_to_a_real_file(self) -> None:
-        doc = VALID.replace("active", "superseded").replace(
-            "owns:", "superseded-by: b.md\nowns:"
-        )
+        doc = VALID.replace("active", "superseded").replace("owns:", "superseded-by: b.md\nowns:")
         write(self.root, "a.md", doc)
         write(self.root, "b.md", VALID.replace("- alpha", "- beta"))
         self.assertEqual(run_checks(self.root).errors, [])
@@ -362,9 +354,7 @@ class AmendmentTests(TempCorpus):
         # exactly one marker made that case unrepresentable, so an amendment
         # marked in three places had to be split into three near-duplicates.
         doc = with_amendments(entries=1, markers=1)
-        doc = doc.replace(
-            "# Alpha", "# Alpha\n\nagain [amended A1]\n\nthird [amended A1]"
-        )
+        doc = doc.replace("# Alpha", "# Alpha\n\nagain [amended A1]\n\nthird [amended A1]")
         write(self.root, "a.md", doc)
         self.assertEqual(run_checks(self.root).errors, [])
 
@@ -514,9 +504,7 @@ class MainTests(TempCorpus):
 
     def test_missing_index_directory_is_a_usage_error(self) -> None:
         write(self.root, "a.md", VALID)
-        code, _ = self.run_main(
-            str(self.root), "--index", str(self.root / "x" / "i.md")
-        )
+        code, _ = self.run_main(str(self.root), "--index", str(self.root / "x" / "i.md"))
         self.assertEqual(code, cc.EXIT_BAD_USAGE)
 
     def test_index_is_written_and_excluded_from_the_scan(self) -> None:
@@ -678,9 +666,7 @@ class CompareIndexTests(TempCorpus):
 class SectionExtractionTests(unittest.TestCase):
     def test_deeper_heading_does_not_end_the_section(self) -> None:
         lines = ["## A", "one", "### Inner", "two", "## B", "three"]
-        self.assertEqual(
-            cc.extract_section(lines, "## A"), ["## A", "one", "### Inner", "two"]
-        )
+        self.assertEqual(cc.extract_section(lines, "## A"), ["## A", "one", "### Inner", "two"])
 
     def test_last_section_runs_to_end_of_file(self) -> None:
         lines = ["## A", "one", "## B", "two", "three"]
@@ -855,9 +841,7 @@ class VerifyForkTests(TempCorpus):
         # The normal case: you fork the document you were just editing, so the
         # parent is dirty and `--since HEAD` compares against a version that
         # predates the session. Without the hint this reads as a botched fork.
-        write(
-            self.root, "parent.md", PARENT_BEFORE_FORK.replace("first moved", "edited")
-        )
+        write(self.root, "parent.md", PARENT_BEFORE_FORK.replace("first moved", "edited"))
         ok, report, _ = self.verify(FORKED_CHILD.replace("first moved", "edited"))
         self.assertFalse(ok)
         self.assertIn("fork mismatch at body line", joined(report.errors))

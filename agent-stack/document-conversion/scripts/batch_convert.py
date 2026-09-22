@@ -10,15 +10,14 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
-from importlib.metadata import version
 from collections.abc import Iterable
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
+from importlib.metadata import version
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 from markitdown import MarkItDown
-
 
 DEFAULT_EXTENSIONS = (
     ".csv",
@@ -84,8 +83,7 @@ def discover_files(
         (
             path
             for path in iterator
-            if path.suffix.lower() in extensions
-            and (path.is_file() or path.is_symlink())
+            if path.suffix.lower() in extensions and (path.is_file() or path.is_symlink())
         ),
         key=lambda path: path.as_posix(),
     )
@@ -194,7 +192,7 @@ def write_manifest(
 ) -> None:
     """Write deterministic conversion metadata without source contents."""
     payload = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "markitdown_version": version("markitdown"),
         "input_dir": str(input_dir),
         "output_dir": str(output_dir),

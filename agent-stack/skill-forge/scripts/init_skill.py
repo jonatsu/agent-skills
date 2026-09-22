@@ -113,9 +113,7 @@ def init_skill(
         )
         return None
     if scope == "repo-local" and not repository:
-        print(
-            "Error: --repository is required with --scope repo-local.", file=sys.stderr
-        )
+        print("Error: --repository is required with --scope repo-local.", file=sys.stderr)
         return None
 
     skill_dir = Path(path).resolve() / skill_name
@@ -161,9 +159,7 @@ def main() -> None:
         default="portable",
         help="portable omits metadata.scope; repo-local sets it and needs --repository",
     )
-    parser.add_argument(
-        "--repository", help="repository name; required for repo-local skills"
-    )
+    parser.add_argument("--repository", help="repository name; required for repo-local skills")
     args = parser.parse_args()
 
     author = args.author or discover_author()

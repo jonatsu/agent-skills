@@ -19,9 +19,7 @@ def load_defaults(path: Path) -> dict[str, int]:
         try:
             defaults[key.strip()] = int(raw_value.strip())
         except ValueError as error:
-            raise ValueError(
-                f"{path}:{line_number}: value must be an integer"
-            ) from error
+            raise ValueError(f"{path}:{line_number}: value must be an integer") from error
     return defaults
 
 

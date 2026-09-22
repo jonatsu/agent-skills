@@ -128,9 +128,7 @@ def check_links(
         try:
             resolved = target.relative_to(config.root.resolve()).as_posix()
         except ValueError:
-            findings.append(
-                Finding("escapes", relative, f"{reference} resolves outside the root")
-            )
+            findings.append(Finding("escapes", relative, f"{reference} resolves outside the root"))
             continue
         referenced.add(resolved)
         if not target.is_file():
@@ -323,9 +321,7 @@ def build_parser() -> argparse.ArgumentParser:
     """Construct the command-line interface."""
     parser = argparse.ArgumentParser(
         prog="check_agent_context.py",
-        description=(
-            "Report instruction files that outgrew their budget or lost their evidence."
-        ),
+        description=("Report instruction files that outgrew their budget or lost their evidence."),
         epilog=(
             "Findings: dangling (an evidence link that does not resolve), "
             "orphaned (an evidence file nothing reaches), oversize (over budget), "
@@ -338,9 +334,7 @@ def build_parser() -> argparse.ArgumentParser:
             "Example: check_agent_context.py . --budget-for AGENTS.md=2400"
         ),
     )
-    parser.add_argument(
-        "root", nargs="?", default=".", help="repository root (default: .)"
-    )
+    parser.add_argument("root", nargs="?", default=".", help="repository root (default: .)")
     parser.add_argument(
         "--budget",
         type=int,
@@ -378,9 +372,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def report_text(
-    findings: Sequence[Finding], warnings: Sequence[Finding], checked: int
-) -> None:
+def report_text(findings: Sequence[Finding], warnings: Sequence[Finding], checked: int) -> None:
     """Write the human-readable report to stdout."""
     for finding in findings:
         print(f"{finding.kind:<10} {finding.path}: {finding.detail}")
@@ -431,8 +423,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if findings:
         print(
-            "Relocate evidence into the evidence directory and index it by "
-            "symptom, then re-run.",
+            "Relocate evidence into the evidence directory and index it by symptom, then re-run.",
             file=sys.stderr,
         )
         return EXIT_FINDINGS
