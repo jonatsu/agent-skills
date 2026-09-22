@@ -33,7 +33,8 @@ entries.
 A remote-sourced skill fails this check rather than being skipped. Neither skill validator can see a package
 that has no copy under `skills/` — `find` is how they discover work — so a remote source deploys with nothing
 checking it. Vendor the package into `skills/shared/<domain>/`, or name its URL in
-`allowed_remote_sources` in `scripts/check-skill-deploy-drift.sh` with a dated reason.
+`REMOTE_SOURCE_ALLOWANCES` in `src/tools/skill-checks/skill_deployment/remote_sources.py` with an ISO date and
+reason.
 
 One skill, itemised per destination. Use this rather than a hand-written `diff -rq`, which silently checks
 only the destinations you remembered to list:

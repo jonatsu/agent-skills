@@ -39,7 +39,7 @@ first fails, and accepts a path relative to wherever you are.
 - Load `kasetto` before adding, editing, moving, archiving, restoring, removing, deploying, or verifying a
   skill. Its portable tool guidance complements this file's hook and lock workflow.
 - Keep a skill's `description` an inline YAML scalar. Neither validator catches a folded one;
-  `scripts/check-skill-descriptions.sh` does.
+  `just skills-descriptions` does.
 - Record a review's verdict, evidence, and coverage limits in a dated file under `../docs/evaluations/` in the
   same work, and clear the "Review is deferred" note in `archived/README.md` when a deferred review completes.
 - Keep an `ATTRIBUTIONS.md` source entry permanently, restated in the past tense once the material is replaced.
@@ -102,7 +102,7 @@ exit code against what you are proving:
   lock entry, so that failure is the confirmation.
 - **A skill added from a remote source:** expect exit 1 and an `UNVALIDATED` line. Neither skill validator can
   see a package with no copy under `skills/`, so the gate demands a decision: vendor it, or allowlist its URL
-  in `scripts/check-skill-deploy-drift.sh`.
+  in `src/tools/skill-checks/skill_deployment/remote_sources.py` with an ISO date and reason.
 
 Neither answer is available from a hand-rolled loop, which checks only the destinations you remembered to
 list and cannot tell a pruned skill from a mistyped name.
