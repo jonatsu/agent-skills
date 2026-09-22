@@ -1,7 +1,7 @@
 # Skills
 
-Single source of truth for my agent skills, deployed as real copies to Claude Code, OpenCode, GitHub Copilot
-CLI and Codex. Edit a skill here once, commit, and every agent picks it up.
+Single source of truth for my agent skills, deployed as real copies to Claude Code, GitHub Copilot CLI and
+Codex. Edit a skill here once, commit, and every supported agent picks it up.
 
 [Kasetto](https://github.com/pivoshenko/kasetto) (`kst`) does the deploying. It reads the declarative configs
 under `kasetto/`, resolves each source, installs real copies into each agent's skills directory, and records
@@ -10,8 +10,8 @@ what it installed in a committed `kasetto.lock`. No central store, no symlink la
 ```text
 this repo (source of truth)
   ├─ shared/<domain>/                hand-crafted skills (local sources)
-  ├─ claude/  opencode/              these two groups stay flat
-  └─ kasetto/ configs ──kst sync──▶  ~/.config/{claude,opencode}/skills/   (real copies, flat)
+  ├─ claude/                         agent-specific skills (flat)
+  └─ kasetto/ configs ──kst sync──▶  ~/.config/claude/skills/   (real copies, flat)
                                      ~/.copilot/skills/  ~/.codex/skills/
                                      tracked by kasetto/**/kasetto.lock
 ```
@@ -27,28 +27,19 @@ Skills are one part of the repository — see [../README.md](../README.md) for t
 
 `just skills-deployed` reads every destination and compares each deployed copy against its committed source:
 
-```console
-$ just skills-deployed
-238 compared, 0 drifted, 0 stray .bak, 0 pending, 0 remote-allowed, 0 unvalidated, 0 unresolved
-```
+Run `just skills-deployed` and require zero drift, pending files, backups, unvalidated sources, or unresolved
+entries.
 
 A remote-sourced skill fails this check rather than being skipped. Neither skill validator can see a package
-that has no copy under `skills/` — `find` is how they discover work — so a remote source deploys to all four
-agents with nothing checking it. Vendor the package into `skills/shared/<domain>/`, or name its URL in
+that has no copy under `skills/` — `find` is how they discover work — so a remote source deploys with nothing
+checking it. Vendor the package into `skills/shared/<domain>/`, or name its URL in
 `allowed_remote_sources` in `scripts/check-skill-deploy-drift.sh` with a dated reason.
 
 One skill, itemised per destination. Use this rather than a hand-written `diff -rq`, which silently checks
 only the destinations you remembered to list:
 
-```console
-$ just skills-deployed --skill git-ops --verbose
-ok         git-ops                       /home/user/.config/claude/skills/git-ops
-ok         git-ops                       /home/user/.codex/skills/git-ops
-ok         git-ops                       /home/user/.copilot/skills/git-ops
-ok         git-ops                       /home/user/.config/opencode/skills/git-ops
-
-4 compared, 0 drifted, 0 stray .bak, 0 pending, 0 remote-allowed, 0 unvalidated, 0 unresolved
-```
+Run `just skills-deployed --skill git-ops --verbose`; require one `ok` line for every locked destination and
+zero drift, pending files, backups, unvalidated sources, or unresolved entries.
 
 A name no lock carries exits 2 rather than passing vacuously, so a typo and a genuinely pruned skill both
 fail loudly. That failure is how you confirm a removal actually pruned.
@@ -77,8 +68,8 @@ the `skill-forge` skill for authoring conventions and `skill-review` for reviews
 ### Editing a skill
 
 Edit the files and commit. The hook maps the commit's changed paths to Kasetto scopes and redeploys them, so
-edits go live in every agent. Every file in the package counts — `references/` and `scripts/` propagate the
-same as `SKILL.md`.
+edits go live in every supported agent. Every file in the package counts — `references/` and `scripts/`
+propagate the same as `SKILL.md`.
 
 Then run **`just skills-sync`**. The redeploy rewrites the scope's `kasetto.lock`, leaving it dirty in an
 otherwise clean tree; the recipe settles it with a warm redeploy and a `chore(kasetto):` commit of the locks
@@ -91,8 +82,8 @@ Skipping it is safe in the moment — the skills are already live — but a stal
 
 ### Adding a skill
 
-Create `shared/<domain>/<name>/SKILL.md`, or a flat directory under `claude/`/`opencode/` if the skill is
-coupled to that agent. Then `git add` and commit; that is the whole procedure. The configs discover group
+Create `shared/<domain>/<name>/SKILL.md`, or a flat directory under `claude/` if the skill is Claude-coupled.
+Then `git add` and commit; that is the whole procedure. The configs discover group
 members through `skills: "*"`, so no config edit is needed and the hook deploys the new skill.
 
 **A new domain is the one case that does need a config edit:** add a matching `source: ../../shared` /
@@ -131,7 +122,7 @@ git clone git@github.com:jonatsu/agent-setup.git ~/src/agent-setup
 cd ~/src/agent-setup
 cargo install kasetto            # provides `kst`
 pre-commit install               # pre-commit checks plus the post-commit redeploy hook
-just deploy                      # skills to every agent, plus the dotbot map
+just deploy                      # skills to supported agents, plus the dotbot map
 ```
 
 `just deploy` is skills *and* the dotbot map, which is what puts the Copilot CLI configuration in `~/.copilot`
@@ -147,7 +138,7 @@ succeed, and the token is cheap insurance. Add sources and it stops being option
 current set rather than assuming either extreme.
 
 ```bash
-just deploy-skills                       # skills only: every config to every agent
+just deploy-skills                       # skills only: every supported target
 ./scripts/kasetto-deploy.sh --dry-run    # preview without writing
 ./scripts/kasetto-deploy.sh --check      # audit each lock against its config (CI drift gate)
 ```
@@ -157,15 +148,11 @@ just deploy-skills                       # skills only: every config to every ag
 Each skill is a directory with a `SKILL.md`, plus optional `references/`, `scripts/` and `ATTRIBUTIONS.md`.
 Hand-crafted skills are grouped by which agents get them.
 
-| Group       | Deployed to                                  | Contents                                                         |
-| ----------- | -------------------------------------------- | ---------------------------------------------------------------- |
-| `shared/`   | Claude Code + OpenCode + Copilot CLI + Codex | Agent-agnostic skills, organised by domain one level down        |
-| `claude/`   | Claude Code only                             | Claude-coupled skills. Flat: too few to need a taxonomy          |
-| `opencode/` | OpenCode only                                | OpenCode-coupled skills. Flat for the same reason                |
-| `archived/` | nothing                                      | Kept for reference. See [archived/README.md](archived/README.md) |
-
-`opencode/` is currently empty, and git does not track empty directories, so the group is absent from a fresh
-clone until the next OpenCode-only skill recreates it. Its Kasetto scope is kept anyway.
+| Group       | Deployed to                       | Contents                                                         |
+| ----------- | --------------------------------- | ---------------------------------------------------------------- |
+| `shared/`   | Claude Code + Copilot CLI + Codex | Agent-agnostic skills, organised by domain one level down        |
+| `claude/`   | Claude Code only                  | Claude-coupled skills. Flat: too few to need a taxonomy          |
+| `archived/` | nothing                           | Kept for reference. See [archived/README.md](archived/README.md) |
 
 There is no `copilot/` group. Copilot CLI gets `shared/` and nothing else, because the Claude-only skills are
 about `CLAUDE.md`, `.claude/agents` and Claude subagents — deploying them there would ship skills describing a
@@ -196,7 +183,7 @@ Skills live at `shared/<domain>/<skill>/`; one flat directory had stopped being 
 | `embedded-linux/`        | Embedded Linux bring-up, Buildroot, kas, U-Boot, Yocto/OpenEmbedded                             |
 | `technical-writing/`     | Human-facing prose                                                                              |
 
-**The domain level exists only in this repository.** Kasetto deploys flat, so every agent reads
+**The domain level exists only in this repository.** Kasetto deploys flat, so every supported agent reads
 `<skills-dir>/<skill>/` and no skill needs to know where its source lives. Two consequences:
 
 - **A skill name must stay unique across every domain.** The lock records no domain, so its keys are

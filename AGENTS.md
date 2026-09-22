@@ -66,6 +66,14 @@ first fails, and accepts a path relative to wherever you are.
   remembered.
 - Edit a deployed copy directly.
 
+## Git Safety
+
+`git-ops` deliberately remains model-invokable: `disable-model-invocation: true` would withhold its guidance,
+not prevent an agent from running Git commands. Safety relies on the always-loaded staging rule and deterministic
+guards rather than the skill's confirmation gates. Claude Code's `PreToolUse` guard enforces the stateful checks;
+Codex and Copilot CLI use cc-safety-net `local-overrides` for bulk `add`, `commit -a`, and `push --delete`.
+The stateful denials remain Claude-only. Read `../docs/findings/git-staging-sweeps.md` for the failure evidence.
+
 ## Archive Without Losing Structure
 
 - Keep every package file intact. Leave its `SKILL.md`, references, scripts, attribution, and upstream license
@@ -73,7 +81,7 @@ first fails, and accepts a path relative to wherever you are.
 - Move an individual package to `archived/<skill>/`. When archiving an entire shared domain, preserve the
   domain as `archived/<domain>/<skill>/` rather than flattening its packages.
 - Add `ARCHIVED.md` inside each moved package and update `archived/README.md`.
-- Prune deployed copies with `./scripts/kasetto-deploy.sh`, then inspect all four destinations.
+- Prune deployed copies with `./scripts/kasetto-deploy.sh`, then inspect every locked destination.
 
 ## Verify Moves and Removals Explicitly
 
@@ -81,7 +89,7 @@ After any move, archive, or removal:
 
 1. Commit source changes separately from generated locks.
 2. Run `./scripts/kasetto-deploy.sh` even if the post-commit hook reported success.
-3. Confirm the removed name is absent from the Claude, OpenCode, Copilot, and Codex skill directories.
+3. Confirm the removed name is absent from every locked destination.
 4. Run `just skills-sync` for the required lock-only follow-up commit.
 5. Run `just skills-deployed`; require zero drift, pending files, stray backups, and unresolved entries.
 
