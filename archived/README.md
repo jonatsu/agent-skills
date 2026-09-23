@@ -86,13 +86,12 @@ directory deleted from disk, `kst` did not error — it reported
 lock rather than the disk. A bare `--update` re-resolved correctly and reported
 `removed`.
 
-**So an archived skill stays deployed until someone runs that command**, and two
-things that look like they would catch it do not:
+**So an archived skill stays deployed until someone runs that command**, and
+`git status` does not catch it because the orphan is outside this repository.
 
-- `just skills-owned` skips `~/.config/opencode/skills` entirely — a
-  `skip_targets` entry in `scripts/check-skill-ownership.sh` while the OpenCode
-  side is reworked.
-- `git status` shows nothing, because the orphan is outside this repository.
+The 2026-08-26 incident occurred in the former OpenCode scope, which was retired
+from this repository on 2026-09-23. Its ownership exclusion no longer exists;
+the Kasetto last-sibling behavior remains relevant to every active scope.
 
 Confirm the prune with `ls` against the destination, never with `git status`.
 

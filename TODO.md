@@ -61,9 +61,8 @@ and `allowed-tools` appears once (`claude-code-setup-audit`). The one skill that
 must be reconstructed.
 
 `git-ops` is settled the other way: the flag never stopped `git push`, it only withheld guidance at the moment
-the command ran. Safety there rests on the staging rule in `agents/rules/` plus the `PreToolUse` guard — not on
-the skill's confirmation gates (`git-ops` fired in 0 of 362 sessions) — and OpenCode ignores the key. What
-remains is the audit, not that case.
+the command ran. Safety there rests on the staging rule in `agents/rules/` plus the `PreToolUse` guard, not on
+the skill's confirmation gates (`git-ops` fired in 0 of 362 sessions). What remains is the audit, not that case.
 
 Ownership is the constraint: only owned skills can be edited, since an upstream frontmatter change is
 overwritten on the next sync. Derive the owned set from `skills/kasetto/*.yaml` and the locks at audit time;
@@ -74,8 +73,7 @@ earlier figures go stale within days.
    (writes files and creates symlinks), `reflect`, `chezmoi-dotfiles`.
 2. Decide the bar. `disable-model-invocation: true` costs real capability — right for "installs code from the
    internet", arguably wrong for "writes a doc file".
-3. Verify OpenCode's handling before touching anything in `shared/` (those deploy to four agents; the key may
-   be inert or rejected elsewhere).
+3. Verify that every supported client accepts the chosen metadata before touching anything in `shared/`.
 4. Record the convention in `AGENTS.md` so new skills are classified at authoring time.
 
 Open sub-question: whether tightening `allowed-tools` rides along with this or stays separate.
@@ -104,7 +102,7 @@ Open work:
 - Decide whether to set `attribution.commit: ""` in this repository's deployed Claude Code settings, and
   whether `includeGitInstructions: false` removes wanted behavior along with the trailer.
 - Locate the Copilot CLI configuration file and record its path before setting anything there.
-- Check OpenCode and Codex for equivalent switches; neither was scanned.
+- Check Codex for an equivalent switch; it was not scanned.
 
 ## Portable Skill-Fixture Harness
 
