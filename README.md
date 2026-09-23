@@ -31,8 +31,8 @@ Run `just skills-deployed` and require zero drift, pending files, backups, unval
 entries.
 
 A remote-sourced skill fails this check rather than being skipped. Neither skill validator can see a package
-that has no copy under `skills/` — `find` is how they discover work — so a remote source deploys with nothing
-checking it. Vendor the package into `skills/shared/<domain>/`, or name its URL in
+that has no copy under `skills/`, because both discover work from that source tree. A remote source therefore
+deploys with nothing checking it. Vendor the package into `skills/shared/<domain>/`, or name its URL in
 `REMOTE_SOURCE_ALLOWANCES` in `src/tools/skill-checks/skill_deployment/remote_sources.py` with an ISO date and
 reason.
 
