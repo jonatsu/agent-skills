@@ -1,4 +1,4 @@
-# ast-grep Rule Reference
+# ast-grep rule reference
 
 Rule syntax for `ast-grep scan`. A rule is a declarative condition an AST node must satisfy. Rules come in
 three categories:
@@ -194,6 +194,19 @@ rule:
           pattern: try { $$$ } catch ($E) { $$$ }
           stopBy: end
 ```
+
+See [examples.md](examples.md) for larger Python audits and rewrites adapted from the official catalog.
+
+## Rule Lifecycle and JSON Output
+
+Use `ast-grep new rule` to scaffold a reusable rule and `ast-grep test` to run its snapshot cases. Keep the
+small matching and non-matching examples with the rule so a later edit proves both sides of its boundary.
+
+`run --json` and `scan --json` emit a bare match array. `range.start.line` is 0-based. A `$$$REST` capture
+appears under `metaVariables.multi` and includes unnamed separator nodes. For example,
+`console.log($ARG, $$$REST)` against `console.log("value", 1, 2)` captures `1`, `,`, and `2`, not two
+arguments. Filter node kinds before counting. Use `--json=compact` for one line per run or `--json=stream` for
+one object per match.
 
 ## When a Rule Matches Nothing
 

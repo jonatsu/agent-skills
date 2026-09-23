@@ -176,7 +176,8 @@ Skills live at `shared/<domain>/<skill>/`; one flat directory had stopped being 
 | `agent-stack/`           | The setup itself — skills, prompts, agent instruction files, context economy, the CC safety net |
 | `engineering/`           | Shaping ideas, requirements, and technical design before work is built                          |
 | `python/`                | Python craft: style, typing, testing, async, architecture, project management                   |
-| `dev-tooling/`           | Everyday dev tooling: shells, task runners, ast-grep, Git, GitHub, repo hygiene                 |
+| `dev-tooling/`           | Everyday dev tooling: shells, task runners, Git, GitHub, repo hygiene                           |
+| `tools/`                 | Focused tool use and structural navigation, currently ast-grep                                  |
 | `review/`                | Reviewing code, designs, skills, and specification conformance                                  |
 | `testing-and-qa/`        | Verifying behaviour: debugging, TDD, test engineering                                           |
 | `nix/`                   | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv                                 |
