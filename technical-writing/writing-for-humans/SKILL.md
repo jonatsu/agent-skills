@@ -308,12 +308,26 @@ Load `references/rewrites.md` when the size of an edit is the question rather th
 skill's rules through paired before-and-after passages of technical prose, which is what settles how far to
 cut once a mark is identified.
 
-## Deliver the Result
+## Deliver a Reader-Ready Result
 
-Before delivery, scan the completed prose for AI-writing artifacts and remove every confirmed mark. Read it
-once as a reader rather than as an editor, then search specifically for the five that most often survive a
-rewrite, each of which an edit elsewhere can reintroduce: a not-X-but-Y contrast, a closer that restates its
-paragraph, an em dash, a list of three, and a bold run.
+A result is **reader-ready** when a complete reading pass confirms all of these conditions:
+
+- each section and paragraph leads with the point the reader needs;
+- explanations precede the terms, conclusions, and instructions that depend on them;
+- relationships between claims are stated rather than left for the reader to reconstruct;
+- connected ideas flow through paragraphs, while lists contain genuinely discrete items;
+- every unfamiliar term or identifier receives enough context at first use;
+- every confirmed AI-writing artifact has been removed; and
+- every supported claim, condition, qualification, and normative requirement has survived the revision.
+
+Read the complete result as its intended reader. When any condition fails, revise the affected passage and run
+the complete reader-ready pass again. A material revision can expose or introduce another defect.
+
+Finish when one complete pass finds no material defect. Leave working prose unchanged; revision serves the
+reader rather than demonstrating that editing occurred.
+
+After the reader-ready pass, search for the five artifacts that most often survive revision: a not-X-but-Y
+contrast, a closer that restates its paragraph, an em dash, an unearned list of three, and a bold run.
 
 Use the same pass to check what the edit dropped. A change of shape is where a claim goes missing, so after
 merging a triad, cutting a closer, or unbolding a labelled list, verify that every fact, number, ranking, and

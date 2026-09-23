@@ -133,6 +133,20 @@ effect-versus-commit-subject distinction, and the omission rules are this skill'
 The decision about whether a project warrants a changelog defers to `context-architecture`, which owns it as a
 conditional addition to a repository's documentation layout. This reference covers composition only.
 
+## Evidence Workflow and Agent-Facing Instruction Design
+
+[Eren Suner, "Agent Skill for Documentation"](https://www.skillfully.sh/blog/agent-skill-for-documentation),
+published 2026-05-17 and read 2026-09-23, informed the authority-map workflow, explicit source-conflict handling,
+classification of confirmed, assumed, unknown, and conflicting information, and delivery of unresolved evidence
+gaps. The article states no content license. The retained ideas are expressed independently; no text, example, or
+structure was copied or adapted.
+
+[Matt Pocock's `writing-for-agents`](https://github.com/mattpocock/skills/blob/c55ee46073ed923f86ce59a5eb3b6d895095d1b7/skills/productivity/writing-for-agents/SKILL.md)
+(Copyright (c) 2026 Matt Pocock, MIT) informed the use of the `authority map`, `locator`, and `reader-ready`
+leading words, the checkable completion criteria, and the single-owner pointer from this skill to
+`writing-for-humans`. Every instruction and example is independently written; no upstream text was copied or
+adapted.
+
 Material changes from peizh/tech-writing include:
 
 - Folded a short documentation-type taxonomy into the "choose the right

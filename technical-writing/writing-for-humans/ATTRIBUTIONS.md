@@ -60,6 +60,11 @@ adaptation, and AI-mark diagnosis.
 The MIT license texts remain in `LICENSE.upstream`, fetched on 2026-08-24 except for the `Anbeeld/WRITING.md`
 text, fetched on 2026-09-06.
 
+[Matt Pocock's `writing-for-agents`](https://github.com/mattpocock/skills/blob/c55ee46073ed923f86ce59a5eb3b6d895095d1b7/skills/productivity/writing-for-agents/SKILL.md),
+pinned at `c55ee46073ed923f86ce59a5eb3b6d895095d1b7` (Copyright (c) 2026 Matt Pocock, MIT), informed the
+`reader-ready` leading word, its checkable completion criterion, and the rule that a material revision restarts
+the complete reader pass. The instructions are independently written; no upstream text was copied or adapted.
+
 ## ASD-STE100 as an Inspirational Source
 
 ASD-STE100 Simplified Technical English, Issue 9 (2025-01-15), was read directly on 2026-09-04 and informed the

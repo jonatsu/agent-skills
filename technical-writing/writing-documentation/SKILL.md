@@ -27,8 +27,8 @@ style of the set it joins.
 Its guidance is general. Where a passage names commands, code, or interfaces, treat it as the technical case
 of a general rule and apply the rule to whatever the document's subject actually is.
 
-Use `writing-for-humans` for prose-level drafting, editing, and review. That skill owns the sentence and the
-paragraph, and it applies to text that is not documentation at all.
+Use `writing-for-humans` after the document's claims and structure settle. That skill owns the reader-ready
+completion gate for sentences, paragraphs, and the complete prose pass.
 
 ## Establish the Reader and Outcome
 
@@ -57,6 +57,35 @@ Ask a focused question when the missing reader, outcome, or product fact would m
 document's form or claims.
 
 Flag unsupported assertions, ambiguity, missing prerequisites, and factual gaps. Do not silently remove them.
+
+## Build the Authority Map
+
+An **authority map** records which source governs each consequential class of claim in the document.
+
+Build it before drafting:
+
+1. List the claims whose accuracy affects the reader's understanding or action.
+2. Identify the governing source for each class of claim.
+3. Classify the available information as confirmed, assumed, unknown, or conflicting.
+4. Resolve material unknowns and conflicts, or carry them visibly into the delivery.
+
+Derive authority from the project and the document's subject. Common mappings include:
+
+- current implementation and schemas for current behavior;
+- accepted requirements and decisions for intended behavior; and
+- released artifacts for shipped behavior.
+
+Use these mappings only when the project does not establish a different authority. Existing documentation can
+establish terminology and house style without proving that a changed behavior remains current.
+
+When plausible sources conflict, state the conflict and continue work that does not depend on it. Ask a focused
+question when the unresolved claim would materially change the document.
+
+Keep working notes outside the reader-facing document unless the reader needs them. In the delivery, name every
+consequential claim that remains unverified and every required check that was not performed.
+
+The authority map is complete when every consequential claim is either supported by its governing source or
+reported as unresolved.
 
 ## Match an Established House Style
 
@@ -124,6 +153,46 @@ front door itself with `writing-readmes`.
   diagrams that readers need to act on.
 - Surface missing facts rather than inventing examples, commands, limits, or recovery steps.
 
+## Make Identifiers Serve the Reader
+
+An internal identifier is a locator, not an explanation. Write the document so its meaning survives when an
+identifier changes or disappears.
+
+Do not organize explanatory prose around requirement, decision, issue, test, milestone, or ledger keys. Do not
+use an opaque identifier as the subject of a claim, a substitute for a description, or the sole content of a
+status item.
+
+Lead with the behavior, decision, condition, or consequence. Add a typed identifier afterward only when the
+reader needs traceability:
+
+- Write `The importer keeps unverified records isolated (decision A-003).`
+- Write `Migration stops when the repository contains an unknown state (requirement R-4).`
+- Avoid `A-003 is confirmed.`
+- Avoid `R-4 blocks migration.`
+
+A short reference such as `decision A-003` is useful only after the surrounding text establishes what the
+decision means. Omit the identifier when the reader does not need to follow it to its source.
+
+Tables, checklists, and status lists may retain identifiers for lookup. Every retained row must also state its
+meaning in plain language:
+
+| Identifier | Meaning                                                     | Status   |
+| ---------- | ----------------------------------------------------------- | -------- |
+| R-4        | Reject repositories whose state cannot be classified safely | Complete |
+
+A key-only status list is incomplete because it makes the reader resolve every item elsewhere.
+
+Keep identifiers that the reader must use directly, including API fields, configuration keys, error codes, and
+formal traceability keys. Introduce each identifier with its meaning before relying on it. An established
+numbered series may keep an identifier in its title when the title also states the subject, as in
+`ADR-0014: Store rendered reports in object storage`.
+
+The identifier pass is complete when:
+
+1. every sentence, list item, and table row is understandable without resolving an internal key elsewhere;
+2. every retained identifier serves a concrete traceability or lookup need; and
+3. changing or removing an identifier requires updating its locator, not restructuring the explanation.
+
 ## Write a Decision Record
 
 Write one when all three hold: the decision is **hard to reverse** (changing your mind later costs real work),
@@ -180,6 +249,17 @@ the first line must still have the instruction, not the rationale.
 
 Put a safety instruction before the step it protects, never after.
 
+## Finish the Document
+
+A correct structure is an intermediate result.
+
+1. Settle the document's claims, examples, mode, and organization.
+2. Apply `writing-for-humans` to the complete draft.
+3. Resolve every defect found by its **reader-ready** pass.
+4. Repeat that pass after each material revision.
+
+The document is complete when it is reader-ready and every remaining evidence gap is visible in the delivery.
+
 ## Review
 
 Check:
@@ -189,6 +269,7 @@ Check:
 - Can the reader find the outcome, prerequisites, constraints, and next action?
 - Does the document assume more reader knowledge than the identified reader has?
 - Does each example, step, interface detail, and failure path match the subject as it actually is?
+- Does the document explain its subject independently of its internal identifiers?
 - Do tutorials provide visible progress and a usable result?
 - Do references mirror what they describe and cover its important limits and failures?
 - Do explanations and decision records make the relevant reasoning and consequences visible?
