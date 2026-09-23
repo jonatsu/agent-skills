@@ -134,8 +134,8 @@ traceability.
 
 ## Present but not established
 
-`/home/user/src/embedded-linux/docs/yocto-project/` also holds Jérémie Dautheribes, "10 best practices for Yocto"
-(Bootlin, Toulouse meetup 2024, CC BY-SA 3.0). It shares themes with this skill — "don't overuse `local.conf`", "don't
+The investigation also covered Jérémie Dautheribes, "10 best practices for Yocto" (Bootlin, Toulouse meetup
+2024, CC BY-SA 3.0). It shares themes with this skill — "don't overuse `local.conf`", "don't
 use Poky in production" — but the investigation found no distinctive correspondence in wording, sequencing, examples or
 command choices beyond what the Belloni deck already accounts for. Shared subject matter between two decks by the same
 organization is not evidence of copying, so **no source relationship is asserted here.** It is recorded only so a later
