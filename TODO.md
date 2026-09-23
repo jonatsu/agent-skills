@@ -23,7 +23,7 @@ re-runs it; the trustworthy inputs are `skillUsage.lastUsedAt` (written only on 
 
 Read the full-description skills as the clean test cases — a non-trigger there is the real evidence the
 description-activation entries below are waiting for: `context-architecture`, `context-compression`,
-`flake-manifest-sync`, `generated-file-verify`, `git-ops`, `github-ops`, `repo-management`. The 21 skills set
+`generated-file-verify`, `git-ops`, `github-ops`, `repo-management`. The 21 skills set
 to `name-only` are reached mainly by explicit name, so a future zero on them means "never asked for by name".
 
 ## `test-engineer` Activation Datapoint

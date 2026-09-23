@@ -1,6 +1,6 @@
 ---
 name: nix-flakes
-description: "Nix Flakes foundational reference for creating, managing, and debugging flake-based Nix configurations. Use when creating a flake, adding inputs, managing flake.lock, using nix build/develop/run/profile, setting up devShells, configuring flake outputs, or troubleshooting flake evaluation. Triggers on: flake.nix, flake.lock, nix build, nix develop, nix flake, flake-parts, inputs, outputs, devShell, nixpkgs, overlays, nix profile."
+description: "Create, change, and debug flake-based Nix configurations. Use for flake.nix or flake.lock, adding or updating inputs, outputs, flake-parts, devShells, overlays, nix build/develop/run/profile, evaluation failures, or a generated flake manifest such as flake-file.nix that must be changed through its source module and regeneration command."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -44,6 +44,7 @@ Nix Flakes Progress:
   - [ ] 1.1 Does a flake.nix already exist?
   - [ ] 1.2 Is this a new flake or modifying existing?
   - [ ] 1.3 Does the project use flake-parts? (check for mkFlake)
+  - [ ] 1.4 Is flake.nix generated from another source?
 - [ ] Step 2: Work with inputs
 - [ ] Step 3: Work with outputs
 - [ ] Step 4: Run flake commands
@@ -58,6 +59,12 @@ Ask: Is this a new flake or an existing one?
 - Existing flake → read `flake.nix` to understand structure
 - Check for `flake-parts` → look for `flake-parts.lib.mkFlake` in outputs
 - Check for `import-tree` → look for `inputs.import-tree` (dendritic pattern indicator)
+- Check the `flake.nix` header and repository documentation for a generator, source module, or a warning not
+  to edit the file directly.
+
+When `flake.nix` or an equivalent input manifest is generated, do not edit its generated region. Read
+[references/generated-flake-manifests.md](references/generated-flake-manifests.md), change the authoritative
+source module, regenerate, and inspect the complete result. Otherwise, edit `flake.nix` normally.
 
 If the project uses a dendritic-pattern framework (e.g. den), `flake.nix` is a minimal dependency manifest and
 all logic lives in `modules/`. Look for a dendritic skill in the configuration repository itself before working
@@ -349,6 +356,7 @@ installation and usage examples.
 ## Pre-Delivery Checklist
 
 - [ ] `flake.nix` has valid syntax (`nix flake show` succeeds)
+- [ ] A generated manifest was regenerated from its source and its complete diff was reviewed, when applicable
 - [ ] All inputs have `follows` where applicable
 - [ ] `flake.lock` is committed
 - [ ] `nix flake check` passes
