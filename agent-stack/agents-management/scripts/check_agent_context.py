@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""Report instruction files that outgrew their budget or lost their evidence.
+"""Report instruction files that lost their evidence, or grew past budget.
 
 Instruction files load on every session, so their size is a recurring cost and
 their oldest rules are the first a model stops reading. Accretion is invisible
 to any per-addition test, because every passage was justified on the day it
-arrived. This measures the file rather than the edit.
+arrived. This measures the file rather than the edit. The size ceiling is a
+non-blocking advisory: instruction quality outweighs brevity, so an oversize
+file is reported as a warning and never fails the run. The evidence checks
+(dangling links, orphaned findings) are what fail it.
 
 Stdlib only, so the skill stays portable: no package manager, no repository
 commands, and no assumption that the tree is a Git checkout.
@@ -279,7 +282,8 @@ def run_checks(config: Config) -> tuple[list[Finding], list[Finding], int]:
     """Scan the tree.
 
     Returns:
-        Failing findings, date warnings, and the number of files measured.
+        Failing findings, advisory warnings (oversize and dated lines), and the
+        number of files measured.
     """
     findings: list[Finding] = []
     warnings: list[Finding] = []
@@ -294,7 +298,7 @@ def run_checks(config: Config) -> tuple[list[Finding], list[Finding], int]:
             continue
         checked += 1
         findings.extend(check_links(relative, path, text, config, referenced))
-        findings.extend(check_budget(relative, text, config))
+        warnings.extend(check_budget(relative, text, config))
         warnings.extend(check_dates(relative, text))
 
     findings.extend(follow_index_hop(config, referenced))
@@ -321,15 +325,15 @@ def build_parser() -> argparse.ArgumentParser:
     """Construct the command-line interface."""
     parser = argparse.ArgumentParser(
         prog="check_agent_context.py",
-        description=("Report instruction files that outgrew their budget or lost their evidence."),
+        description=("Report instruction files that lost their evidence, or grew past budget."),
         epilog=(
             "Findings: dangling (an evidence link that does not resolve), "
-            "orphaned (an evidence file nothing reaches), oversize (over budget), "
+            "orphaned (an evidence file nothing reaches), "
             "escapes (a link leaving the root), unreadable. An evidence file "
             "counts as reached when an instruction file names it, or when "
             f"{' or '.join(INDEX_NAMES)} in the evidence directory does and an "
-            "instruction file names that index. Dated lines are "
-            "reported as warnings and never fail the run. "
+            "instruction file names that index. Oversize files and dated lines "
+            "are reported as warnings and never fail the run. "
             "Exit 0 clean, 1 findings, 2 bad invocation. "
             "Example: check_agent_context.py . --budget-for AGENTS.md=2400"
         ),
@@ -380,7 +384,7 @@ def report_text(findings: Sequence[Finding], warnings: Sequence[Finding], checke
         print(f"{warning.kind:<10} {warning.path}:{warning.detail}")
     print(
         f"\n{checked} instruction file(s) checked, {len(findings)} finding(s), "
-        f"{len(warnings)} dated line(s) to review"
+        f"{len(warnings)} advisory warning(s) to review"
     )
 
 

@@ -159,10 +159,10 @@ class CheckAgentContextTests(unittest.TestCase):
         self.assertEqual(result.returncode, EXIT_FINDINGS)
         self.assertIn("dangling   docs/findings/README.md", result.stdout)
 
-    def test_file_over_budget_fails(self) -> None:
+    def test_file_over_budget_warns_without_failing(self) -> None:
         _write(self.root, "AGENTS.md", "word " * 50)
         result = _run(str(self.root), "--budget", "10")
-        self.assertEqual(result.returncode, EXIT_FINDINGS)
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
         self.assertIn("oversize", result.stdout)
         self.assertIn("budget 10", result.stdout)
 
@@ -170,7 +170,7 @@ class CheckAgentContextTests(unittest.TestCase):
         _write(self.root, "AGENTS.md", "word " * 50)
         _write(self.root, "sub/AGENTS.md", "word " * 50)
         result = _run(str(self.root), "--budget", "10", "--budget-for", "AGENTS.md=100")
-        self.assertEqual(result.returncode, EXIT_FINDINGS)
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
         self.assertIn("oversize   sub/AGENTS.md", result.stdout)
         self.assertNotIn("oversize   AGENTS.md", result.stdout)
 
@@ -221,7 +221,7 @@ class CheckAgentContextTests(unittest.TestCase):
         result = _run(str(self.root))
         self.assertEqual(result.returncode, EXIT_OK, result.stdout)
         self.assertIn("dated", result.stdout)
-        self.assertIn("1 dated line(s) to review", result.stdout)
+        self.assertIn("1 advisory warning(s) to review", result.stdout)
 
     def test_missing_evidence_directory_is_skipped(self) -> None:
         _write(self.root, "AGENTS.md", "No evidence here.\n")
