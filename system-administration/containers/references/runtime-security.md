@@ -13,6 +13,13 @@ diagnosis.
 Membership in a rootful Docker daemon's control group commonly grants root-equivalent host power. Do not present a
 service account with Docker socket access as a meaningful host privilege boundary.
 
+## Replace Deployed Containers
+
+Apply application, package, and image-configuration changes through version-controlled inputs, then build, qualify, and
+deploy a new image. Use `exec` only for authorized diagnosis or one-off recovery; changes made inside a running
+container, or captured with `docker commit`, are not a deployment source. Preserve the previous verified digest and
+establish data compatibility before relying on rollback.
+
 ## Harden from a Compatible Baseline
 
 For a typical Linux application workload, test these controls together:
@@ -27,6 +34,13 @@ For a typical Linux application workload, test these controls together:
 
 Device plugins, low-level networking, debuggers, init systems, and infrastructure workloads may need exceptions. Keep
 the exception local to that service and test it on the target host.
+
+## Bound Runtime Logs
+
+Prefer application logs on standard output and standard error so the runtime's logging path captures them. Inspect the
+effective logging driver, delivery mode, and storage destination. Set rotation or retention limits from the expected
+rate and operational policy; an unbounded local log can exhaust host storage. Recreate affected containers after a
+driver or option change, and verify that operators can still retrieve the required history.
 
 ## Keep the Runtime Seccomp Default
 

@@ -60,16 +60,16 @@ runtime settings rather than inferring them from a Dockerfile alone.
 
 Read the branch reference before making its decisions:
 
-| Branch                                          | Reference                                               |
-| ----------------------------------------------- | ------------------------------------------------------- |
-| Dockerfile, build context, base image, BuildKit | `references/dockerfile-patterns.md`                     |
-| Compose modeling, lifecycle, health, and data   | `references/docker-compose.md`                          |
-| Runtime isolation, scanning, SBOMs, and signing | `references/runtime-security.md`                        |
-| Container build and publication in CI           | `references/ci-cd.md`                                   |
-| Kubernetes workload hardening                   | `references/kubernetes-pod-security.md`                 |
-| Compose managed by systemd                      | `references/compose-systemd.md` and the `systemd` skill |
-| Podman: rootless, compose providers, Quadlet    | `references/podman-differences.md`                      |
-| Current specifications and tool documentation   | `references/official-docs.md`                           |
+| Branch                                                             | Reference                                               |
+| ------------------------------------------------------------------ | ------------------------------------------------------- |
+| Dockerfile, build context, base image, BuildKit                    | `references/dockerfile-patterns.md`                     |
+| Compose modeling, lifecycle, health, and data                      | `references/docker-compose.md`                          |
+| Runtime isolation, replacement, logging, and supply-chain security | `references/runtime-security.md`                        |
+| Container build and publication in CI                              | `references/ci-cd.md`                                   |
+| Kubernetes workload hardening                                      | `references/kubernetes-pod-security.md`                 |
+| Compose managed by systemd                                         | `references/compose-systemd.md` and the `systemd` skill |
+| Podman: rootless, compose providers, Quadlet                       | `references/podman-differences.md`                      |
+| Current specifications and tool documentation                      | `references/official-docs.md`                           |
 
 The remaining references provide additional examples but do not override this workflow or current official
 documentation.

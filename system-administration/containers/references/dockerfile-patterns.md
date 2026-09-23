@@ -12,6 +12,14 @@ as a substitute for reviewing it.
 Keep sensitive files outside the context where practical. Use `.dockerignore` to exclude repository metadata, local
 credentials, environment files, editor state, test artifacts, and dependency directories that the build does not need.
 
+## Order for Cache Reuse
+
+Order inputs by how often they invalidate. Copy dependency manifests and lock files, install locked dependencies, then
+copy frequently changing source when the build tool supports that separation. Keep a package-index refresh, package
+installation, and cache cleanup in the same `RUN` instruction when later deletion would otherwise leave the removed
+bytes in an earlier layer. Keep unrelated commands separate when combining them would obscure failures or waste cache
+reuse; layer count alone is not an optimization target.
+
 ## Separate Build and Runtime Concerns
 
 Use multiple stages when compilers, package managers, source, or development dependencies are unnecessary at runtime.

@@ -14,6 +14,10 @@ For each accepted finding, record the identifier, affected component, reason, ow
 upstream tracking location. Keep ignore files narrow and machine-readable when the scanner supports it. Re-run the scan
 after base-image or dependency updates.
 
+Re-evaluate retained and deployed digests as vulnerability data changes, even when the image bytes do not. Use
+continuous registry analysis or scheduled rescans that cover the artifacts still in use. Record the scanner and database
+snapshot, route new actionable findings to an owner, and apply the project's response policy.
+
 Treat a clean result as evidence for that scanner, database snapshot, configuration, image, and platform. It does not
 prove that the image is vulnerability-free.
 
