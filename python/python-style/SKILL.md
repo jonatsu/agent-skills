@@ -8,8 +8,19 @@ metadata:
 
 # Python Style
 
-Everyday Python defaults for code whose conventions are not already settled. Tool configuration belongs to
-`python-project-management`; this skill owns the coding choices that need judgment.
+Everyday Python defaults for code whose conventions are not already settled. This skill owns the coding choices
+that need judgment, including value types, logging, and docstrings, and hands each detailed subject to its
+specialist. Load the specialist when the task reaches its subject:
+
+| Subject                                                           | Skill                       |
+| ----------------------------------------------------------------- | --------------------------- |
+| Tool configuration, dependencies, and HTTP or CLI library choices | `python-project-management` |
+| Annotation interfaces and type-checker problems                   | `python-typing`             |
+| Boundary validation, exception design, and translation            | `python-error-handling`     |
+| Module layout, package boundaries, and import direction           | `python-architecture`       |
+| Asynchronous code and asynchronous resource lifetimes             | `python-async-patterns`     |
+| Parallel CPU work with threads, processes, or joblib              | `python-parallelism`        |
+| Tests and test configuration                                      | `python-testing`            |
 
 ## Respect Project Conventions
 
@@ -26,15 +37,15 @@ An explicit modernization or conventions review permits broader recommendations.
 ## Readable Code
 
 Use descriptive names and consistent domain vocabulary. Qualify generic symbols and filenames when context is ambiguous;
-do not rename working interfaces just to improve isolated search results. Keep identifying literals intact where practical.
-Explain non-obvious behavior in searchable language.
+keep a working interface's name, since better isolated search results alone do not justify a rename. Keep
+identifying literals intact where practical. Explain non-obvious behavior in searchable language.
 
 Prefer straightforward control flow and guard clauses when they reduce nesting. Split functions when responsibilities
-or control flow warrant it. Avoid speculative abstractions and configuration options.
+or control flow warrant it. Build abstractions and configuration options for present needs only.
 
 Annotate function parameters and returns. Use built-in generics and union syntax supported by the project's Python floor.
-Let local inference handle obvious variables. Avoid wildcard imports. For type interfaces and checker problems, use
-`python-typing`; let the project's formatter and linter settle mechanical style.
+Let local inference handle obvious variables. Import names explicitly rather than with a wildcard. Let the project's
+formatter and linter settle mechanical style.
 
 Write Google-style docstrings for public APIs when no documentation convention exists. Include `Args`, `Returns`, and
 `Raises` when they explain behavior beyond the signature. Document units, constraints, ownership, and side effects;
@@ -48,7 +59,7 @@ when updates are part of its model. Create mutable defaults per call or instance
 
 Use domain types for dates, money, and structured values. Add wrappers when they protect meaningful invariants.
 Prefer enums for closed sets with named states; preserve explicit serialized values when they form an external contract.
-Use ordinary mappings where a model adds no useful contract. Boundary validation belongs to `python-error-handling`.
+Use ordinary mappings where a model adds no useful contract.
 
 For timestamps representing instants, use aware datetimes and normalize to UTC for storage and instant arithmetic.
 Construct current timestamps with `datetime.now(UTC)` on Python 3.11+, or `datetime.now(timezone.utc)` on older versions.
@@ -61,17 +72,16 @@ Naivety alone is not proof of a defect; an ambiguous instant or incorrect conver
 ## Resources and Diagnostics
 
 Prefer existing helpers, then standard-library solutions, before adding dependencies. Select a library only when the
-task needs its capability. HTTP and CLI library choices belong to `python-project-management`.
+task needs its capability.
 
 Prefer `pathlib.Path` for filesystem operations. Specify UTF-8 for text unless the format requires another encoding.
 Use context managers for resources this code owns when the API supports them. Respect caller-owned lifetimes;
-use `try/finally` when a context manager does not fit. Asynchronous lifetimes belong to `python-async-patterns`.
+use `try/finally` when a context manager does not fit.
 
 Prefer f-strings for ordinary interpolation. Keep parameterized APIs for logging and other structured operations.
 Use stdlib `logging.getLogger(__name__)` as the logging baseline, with arguments passed separately for deferred formatting.
 Let applications configure handlers. Choose structured logging when consumers need structured fields, and preserve the
 project's logging stack. Reserve terminal output for intentional CLI interaction and results.
 
-Handle relevant edge cases explicitly. For exception design and translation, use `python-error-handling`.
 Prefer subprocess argument lists. Use `check=True` when nonzero exit means failure; otherwise inspect the result.
 Use a shell only when its semantics are needed, with deliberate handling of arguments and untrusted input.
