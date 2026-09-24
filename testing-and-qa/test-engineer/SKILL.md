@@ -95,6 +95,8 @@ alone would score a missing package as broken code.
 | Suite is green                 | Exit status read, skips counted   | Nothing scrolled past in red  |
 | Tests would catch a regression | Mutants introduced and killed     | The suite passing             |
 
+In a Python project, generate the mutants with mutmut rather than by hand; `python-testing` has the setup.
+
 ## Boundaries
 
 MAY:
