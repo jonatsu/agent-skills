@@ -138,8 +138,12 @@ class QuickValidateTests(unittest.TestCase):
                 text=True,
                 env={
                     **os.environ,
-                    "MISE_CACHE_DIR": str(SKILLS_ROOT / ".cache" / "mise" / "cache"),
-                    "MISE_STATE_DIR": str(SKILLS_ROOT / ".cache" / "mise" / "state"),
+                    # Keep mise's state out of the repository: its trusted-configs
+                    # entries are symlinks to config roots, including the repository
+                    # itself, and a link cycle inside the tree hangs tools that follow
+                    # symlinks while walking it, such as markdownlint-cli2.
+                    "MISE_CACHE_DIR": str(Path(temporary_directory) / "mise" / "cache"),
+                    "MISE_STATE_DIR": str(Path(temporary_directory) / "mise" / "state"),
                 },
             )
 
