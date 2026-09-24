@@ -12,8 +12,8 @@ metadata:
 How code rejects bad input, reports failure, and survives partial failure. The shape of the boundary, not the
 mechanics of `try`.
 
-Type annotations that make absence explicit are `python-typing`. Asserting on failures in tests is
-`python-testing`.
+Annotations, including those that make absence explicit, are `python-typing`'s. Internal value types and
+logging setup are `python-style`'s. Asserting on failures in tests is `python-testing`'s.
 
 ## Respect Project Conventions
 
@@ -30,7 +30,7 @@ An explicit modernization or conventions review permits broader recommendations.
 ## Validate at the Boundary, Then Trust
 
 Check external input once, where it enters, and convert it to something the rest of the program can rely on.
-Code inside the boundary should not re-check.
+Code inside the boundary trusts what it receives.
 
 ```python
 def export(rows: list[dict], format_name: str) -> bytes:
@@ -39,7 +39,7 @@ def export(rows: list[dict], format_name: str) -> bytes:
 ```
 
 A boundary is anywhere data arrives from outside your control: a request handler, a CLI argument, a config
-file, a queue message, a third-party response, a database row with a nullable column.
+file or environment variable, a queue message, a third-party response, a database row with a nullable column.
 
 **Convert to a domain type at the boundary rather than passing strings inward.** A function taking
 `OutputFormat` cannot receive `"jsno"`; a function taking `str` can, and will, from somewhere far away.
@@ -58,19 +58,20 @@ class OutputFormat(Enum):
             raise ValueError(f"unknown format {raw!r}; expected one of: {valid}") from exc
 ```
 
-Note the `from exc`, and see the chaining section below for why.
+The `from exc` marks a translation; the chaining section below explains what it changes.
 
 ## Configuration Is a Boundary Too
 
-Configuration arrives from outside the program, so it gets the same treatment as any other external input:
-validated once, at the edge, and converted to something the rest of the program can trust.
-
 ```python
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(hide_input_in_errors=True)
+
     database_url: str
     api_token: SecretStr
     request_timeout: float = 5.0
 ```
+
+The example uses `pydantic-settings`, the default for environment settings when a settings model is needed.
 
 Load it once at startup and pass it down. Reading `os.environ` deep in the call tree hides a dependency the
 caller cannot see, cannot substitute in a test, and cannot discover before the code path runs.
@@ -78,9 +79,13 @@ caller cannot see, cannot substitute in a test, and cannot discover before the c
 Fail at startup rather than at first use. A settings model validated on construction gives that for free: a
 missing variable becomes a startup error naming the field, instead of a `KeyError` an hour into a batch job.
 
-Type a secret as `SecretStr` so it is redacted from logs, reprs, and tracebacks, and call `.get_secret_value()`
-only at the point of use. An unredacted token reaches a log the first time an exception renders the settings
-object, which is exactly when the traceback gets pasted somewhere.
+Type a secret as `SecretStr` so its `repr`, `str`, and JSON dump show `**********`, and call
+`.get_secret_value()` only at the point of use. An unredacted token reaches a log the first time an exception
+renders the settings object, which is exactly when the traceback gets pasted somewhere.
+
+`SecretStr` protects a value only after validation succeeds. A failed validation's `ValidationError` echoes the
+raw input by default, so a missing `database_url` prints the `api_token` beside it in plain text.
+`hide_input_in_errors=True`, as in the model above, keeps the field name and drops the input.
 
 Keep secrets and environment-specific values out of the repository and out of defaults. Ship a `.env.example`
 listing the names with no values, so the required set is discoverable without the values leaking.
@@ -106,9 +111,8 @@ stop immediately when a later check depends on the value that just failed, or wh
 something it should not.
 
 For complex external schemas, prefer Pydantic v2 when the project has no established validation library.
-Use `pydantic-settings` for environment settings when needed. Verify coercion, unknown-field behavior, and error paths
-against the boundary's contract. Simple scalar checks and ordinary mappings do not require a model or new dependency.
-Keep internal value-type choices in `python-style` and typing-only interfaces in `python-typing`.
+Verify coercion, unknown-field behavior, and error paths
+against the boundary's contract. Simple scalar checks and ordinary mappings need no model or new dependency.
 
 ## Choose the Exception
 
@@ -140,8 +144,8 @@ class PaymentDeclined(BillingError):
 **Carry the data as attributes, not only in the message.** A caller that has to parse your message string to
 find the transaction id is coupled to your wording.
 
-Do not build a deep hierarchy in advance. Two levels — a package base and the specific errors — covers almost
-everything; add depth when a caller genuinely needs to catch a middle layer.
+Start with two levels, a package base and the specific errors; that covers almost everything. Add a middle
+layer when a caller genuinely needs to catch it.
 
 ## Chaining Is Automatic, and `from` Still Matters
 
@@ -161,17 +165,9 @@ while handling it. Use it when translating an exception, which is the case in al
 cannot act on — a `KeyError` from your own lookup table becoming a clean `ConfigError` — and wrong whenever a
 debugger would want the detail.
 
-**Never swallow silently.**
-
-```python
-try:
-    value = parse(raw)
-except ValueError:
-    pass          # the program now continues with `value` unbound or stale
-```
-
-If a failure really is expected and ignorable, say so with `contextlib.suppress`, which is greppable and
-scoped:
+Every handler logs, re-raises, translates, or visibly suppresses; an `except ...: pass` leaves the program
+running on an unbound or stale value. When a failure really is expected and ignorable, say so with
+`contextlib.suppress`, which is greppable and scoped:
 
 ```python
 with suppress(FileNotFoundError):
@@ -188,8 +184,9 @@ worker loop that must survive one bad item. Both should log the exception with i
 message.
 
 **`except Exception` does not catch `KeyboardInterrupt`, `SystemExit`, or `asyncio.CancelledError`**, because
-those derive from `BaseException`. That is deliberate — never widen to `except BaseException` to "be safe", or
-you will catch shutdown signals and hang.
+those derive from `BaseException`. That is deliberate: keep a broad catch at `except Exception`, because
+`except BaseException` also catches shutdown and cancellation, and a handler that does not re-raise them
+leaves the process hanging instead of exiting.
 
 ## Partial Failure
 
@@ -210,8 +207,8 @@ def process_all(items: Sequence[Item]) -> BatchResult:
     return BatchResult(succeeded=succeeded, failed=failed)
 ```
 
-Return the failures; do not log and drop them. The caller decides whether a 3% failure rate is acceptable, and
-it cannot decide from a log line.
+Return the failures to the caller rather than only logging them. The caller decides whether a 3% failure rate
+is acceptable, and it cannot decide from a log line.
 
 Then make the caller confront it: a result type whose failures are easy to ignore will be ignored. Raising
 when `failed` is non-empty, unless the caller passed something like `partial_ok=True`, is often the safer
@@ -242,11 +239,12 @@ raise ConfigError(f"config error in {path}: missing required key 'database.url'"
 ```
 
 Include the offending value with `!r`, so `""` and `" "` are distinguishable. Include the identifier a reader
-can search for: a path, a key, an id. Start the message with a stable literal prefix so a message copied out
-of a log can be grepped back to its raise site — do not build the identifying part by interpolation.
+can search for: a path, a key, an id. Start the message with a stable literal prefix, and keep that
+identifying part literal rather than interpolated, so a message copied out of a log can be grepped back to its
+raise site.
 
-Do not put remediation in the exception when the caller is code. Do put it in the message when the caller is a
-person at a terminal.
+Put remediation in the message when the reader is a person at a terminal; leave it out when the caller is code,
+which acts on the exception type and attributes.
 
 ## Before Calling Error Handling Done
 

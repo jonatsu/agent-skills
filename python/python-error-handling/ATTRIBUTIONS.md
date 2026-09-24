@@ -55,3 +55,9 @@ Reviewed Integralist's `.claude/rules/python.md` in `Integralist/agent-skills` a
 The comparison informed conditional boundary-model guidance while preserving simple validation paths.
 The expression is independent; no upstream text or code is copied or adapted.
 No license covering these rules was found in the pinned tree; the MCP component has separate licensing.
+
+## Corrections, 2026-09-24
+
+- Verified on 2026-09-24 with pydantic 2.13.5 and pydantic-settings 2.15.0 on CPython 3.12.14, plus the
+  pydantic `ConfigDict` docs: a failed settings validation echoes raw inputs, including a `SecretStr` field's
+  plain value, unless `hide_input_in_errors=True`.
