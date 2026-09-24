@@ -83,6 +83,11 @@ task invocations, `mise install`, and `mise watch` automatically trust active co
 user's authority covers the config behavior and persistent trust transition. Run `mise trust <config>` only
 when the selected mode requires explicit trust and the user authorized that persistent state change.
 
+Never point `MISE_STATE_DIR` or `MISE_CACHE_DIR` inside a project, including when isolating mise in a test. The
+state directory's `trusted-configs/` holds a symlink to each trusted config's root, so state kept inside the
+project plants a link back to it. Tools that follow symlinks while walking the tree, such as markdownlint-cli2,
+then never finish, and ignore files do not stop the walk. Use a temporary directory outside the project.
+
 `mise exec` defaults `exec_auto_install` to true. Before using it for diagnosis or verification, inspect
 installed tools with `mise ls`. When installation is not authorized, set `MISE_EXEC_AUTO_INSTALL=false` for
 that process and stop if the required tool is absent. This control does not make config safe; combine it with
