@@ -72,6 +72,9 @@ Do not gather a standard Git inventory unless the handoff needs those facts. Vol
 expressed as an instruction to inspect it, such as `run git status -sb`, than as a snapshot that will become
 stale.
 
+In a repository, name the commit the stateful brief was verified against. Unlike a working-tree snapshot, it
+stays true, and `git log <commit>..HEAD` shows the recipient what moved since.
+
 Name the command behind a verification claim and state what the check did not cover when that limit matters.
 Never write "should work" as completed state.
 
@@ -101,7 +104,7 @@ checks already defined by the cited workflow.
 
 ## Stateful Handoff
 
-Lead with `NEXT`: the immediate task and a concrete completion condition. Add only the sections that carry
+Lead with `NEXT`: exactly one immediate task and a concrete completion condition. Add only the sections that carry
 material content:
 
 - `CONTEXT`: session-only preferences, decisions, nuances, rejected options, and unfinished reasoning.
@@ -119,6 +122,8 @@ headings are not a formal interface.
 
 Point to plans, specifications, issues, ADRs, commits, and code instead of reproducing them. Record a file
 inspected and left unchanged only when the conclusion prevents a likely or expensive repeated investigation.
+Reduce a log, diff, or subagent report to the conclusion the recipient needs, and point to the full output
+where it survives.
 
 Read `references/example-brief.md` only when a substantial stateful handoff needs a worked shape.
 
@@ -168,6 +173,7 @@ Before delivery, confirm:
 - a `PRIME` handoff is within the paste-size limit, or the user has overridden the refusal knowingly;
 - the session-only context scan was performed and every material result survived;
 - every included fact was verified or labeled unverified;
+- a stateful handoff in a repository names the commit it was verified against;
 - durable material is cited rather than copied;
 - no line exists merely because it was easy to collect;
 - deliberately excluded work is visible when omission could be misread; and

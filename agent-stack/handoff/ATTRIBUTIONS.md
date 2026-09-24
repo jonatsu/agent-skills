@@ -45,6 +45,13 @@ from its own publisher's repository. Two ideas were evaluated. Scaling length to
 independently and remains credited here. Avoiding handoffs that merely summarize an earlier handoff was not
 carried into this skill.
 
+The context-checkpoint rule in `samcdavid/dotfiles`, at `claude/rules/context-checkpoint.md` in commit
+`d43480376d0361998a4f3f565944882cd52906bb` (2026-09-03), was also evaluated. That repository declares no
+license, so no text was copied. Three of its ideas were adopted and expressed independently: naming the commit
+a stateful brief was verified against, limiting `NEXT` to exactly one task, and reducing raw logs, diffs, and
+subagent reports to their conclusions. Its fixed context-token budget was rejected because it depends on one
+harness and one model's context size.
+
 ## Upstream License
 
 The upstream source is used under the MIT License. The verbatim license text ships as `LICENSE.upstream`;
