@@ -1,14 +1,10 @@
 # Migration Checklist
 
-Read this when the user has asked to move an existing project onto uv and ruff. Do not start a migration that
-was not requested.
-
 ## Before Touching Anything
 
 - [ ] Commit or branch first, so the migration is one reviewable diff and is trivially abandonable.
-- [ ] Decide the layout: `src/` or flat. A flat layout needs `[tool.uv.build-backend] module-root = ""`.
-- [ ] Commit `uv.lock` for reproducible development and CI, including for libraries. Test library compatibility ranges
-  separately; consumers use published metadata rather than this lock.
+- [ ] Decide the layout, `src/` or flat, using `python-architecture`. A flat layout needs
+  `[tool.uv.build-backend] module-root = ""`.
 - [ ] Record the current interpreter floor. `requires-python` has to match what the code already assumes.
 
 ## Bring Dependencies Across
@@ -102,14 +98,5 @@ Use `python-typing` for the strictness ladder and per-module progression; keep c
 
 ## Verify
 
-```bash
-uv sync --all-groups
-uv run ruff format --check .
-uv run ruff check .
-uv run mypy src/          # use the project's own package path
-uv run pytest
-uv run pip-audit
-uv build          # only if the project is distributed
-```
-
-The migration is done when this sequence passes from a clean checkout, not when the files are deleted.
+The migration is done when every item under Before Calling Setup Done in `SKILL.md` holds from a clean
+checkout, not when the old files are deleted.

@@ -1,7 +1,6 @@
 # Gates: Where Checks Run
 
-Read this when wiring a project's checks or working out how an existing project runs them. Dependency auditing
-and update policy are in [dependency-maintenance.md](dependency-maintenance.md).
+Dependency auditing and update policy are in [dependency-maintenance.md](dependency-maintenance.md).
 
 ## What Each Tool Catches
 
@@ -17,11 +16,6 @@ and update policy are in [dependency-maintenance.md](dependency-maintenance.md).
 
 Adopt ruff and mypy always. Add the shell and workflow tools when the repository actually contains shell
 scripts or GitHub Actions workflows; a hook over files that do not exist is noise.
-
-**Check how the project already runs each tool before invoking or configuring it.** Look at
-`.pre-commit-config.yaml`, the CI workflows, and any `justfile`, `Makefile` or `tox.ini`. Each tool is an
-ordinary command, and a project may run it as a hook, in CI, through a task runner, on demand, or in several
-of those. Match what is there rather than assuming an arrangement.
 
 ## Hook Configuration
 
@@ -120,8 +114,10 @@ zizmor .github/workflows/
 actionlint catches what will fail at run time: invalid triggers, undefined inputs, shell syntax inside `run:`
 blocks, bad action references. zizmor catches what will not fail but should worry you.
 
-The finding you will see first is `excessive-permissions`. Workflows default to broad write access, so declare
-what each one needs:
+The finding you will see first is `excessive-permissions`. A workflow with no `permissions` block gets the
+repository's default token permissions, which may be read-write for every scope. GitHub's docs say a new personal
+repository defaults to read-only `contents` and `packages`, while an organization repository inherits the
+organization's setting (checked 2026-09-24). Declare what each workflow needs:
 
 ```yaml
 permissions:
@@ -153,8 +149,8 @@ Run the same commands a developer runs, asserting the lock is current:
 - run: uv lock --check
 ```
 
-`--locked` fails when the lock does not match `pyproject.toml`. `--frozen` does not: it installs the stale
-lock and exits 0. Verified against uv 0.12.5.
+Use `--locked`, not `--frozen`, for the install step; the difference is under Environments in
+[uv-commands.md](uv-commands.md).
 
 ## Installing the Tools
 

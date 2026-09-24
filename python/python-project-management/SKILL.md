@@ -13,17 +13,18 @@ Set up a Python project once, then keep it current. This skill owns the project'
 `pyproject.toml`, dependency management with uv, lint and format configuration, pre-commit and CI wiring,
 dependency updates and audits, version bumps, and migration off legacy tooling.
 
-It does not own test authoring or test configuration, which is `python-testing`, nor type-checker usage, which
-is `python-typing`. Both are named where the boundary matters below.
+Test authoring and test configuration, including `[tool.pytest.ini_options]` and `[tool.coverage.*]`, belong
+to `python-testing`. Type-checker usage and `[tool.mypy]` belong to `python-typing`. This skill names only the
+dependency groups and the commands that run them.
 
 ## Respect Project Conventions
 
 Use these defaults for new projects. In established projects, follow declared conventions and consistent local practice,
 including for new files and modules. Check both before filling an undecided choice.
 
-Do not recommend changes merely because these defaults differ. Recommend corrections supported by incorrect behavior,
-security vulnerabilities, or concrete reliability or maintenance harm. Explain the evidence, consequence, and smallest
-remedy. A different tool, layout, style, or supported syntax is not itself a defect.
+Recommend a correction only when it is supported by incorrect behavior, a security vulnerability, or concrete
+reliability or maintenance harm; a different tool, layout, style, or supported syntax is a preference, not a
+defect. Explain the evidence, consequence, and smallest remedy.
 
 Apply fixes within the authorized task; otherwise report the recommendation without changing the project.
 An explicit modernization or conventions review permits broader recommendations.
@@ -58,26 +59,26 @@ later. Default to mypy and pre-commit, and say why when you propose either alter
 
 Use the latest stable CPython supported by the target environment and required dependencies.
 Choose the supported Python floor deliberately; the examples' version numbers are placeholders for that decision.
-Use uv for dependencies and environments, Ruff for linting and formatting, and mypy for type checking.
-Use pytest for new test suites and pip-audit before deployment. Preserve existing runners and checking scopes.
+Use the tools in the table above, with pytest for new test suites and pip-audit before deployment.
 Prefer `uv_build` for distributable pure-Python packages; use a compatible backend for specialized builds.
 
 Add runtime libraries only for capabilities the project needs. For new HTTP-client use, prefer Pydantic's `httpx2`
 as both dependency and import. Verify its current API and required integrations before adopting it.
-Preserve existing HTTP clients. For a CLI that benefits from a framework, prefer Typer and keep its command layer thin.
-Small dependency-free CLIs can use `argparse`. Logging and value-type defaults belong to `python-style`;
-validation library choices belong to `python-error-handling`.
+For a CLI that benefits from a framework, prefer Typer; small dependency-free CLIs can use `argparse`.
+Logging and value-type defaults belong to `python-style`; validation library choices belong to
+`python-error-handling`; entry-point structure belongs to `python-architecture`.
 
 ## Change Dependencies in a uv Project
 
 Prefer `uv add` and `uv remove`: they update project metadata and the lock together.
 Deliberate metadata edits are valid; follow them with `uv lock` and verify the resulting resolution.
 `uv sync` normally updates an outdated lock from project metadata. Use `--locked` in CI to reject drift.
-Never edit `uv.lock` by hand. Choose version constraints for compatibility rather than requiring exact pins universally.
+Change `uv.lock` only through uv commands; never edit it by hand. Choose version constraints for compatibility
+rather than requiring exact pins universally.
 
-Run commands through the established task runner or `uv run`. An activated environment is also valid;
-do not replace an established workflow merely to change the invocation. Dependency-free scripts can use an interpreter
-directly. These commands describe uv projects, not a migration instruction for projects using another manager.
+Run commands the way the project already does: its task runner, an activated environment, or `uv run`.
+Dependency-free scripts can use an interpreter directly. These commands apply to uv projects; a project on
+another manager moves to uv only through an authorized migration.
 
 ```bash
 uv add httpx2                     # when an HTTP client is needed
@@ -87,7 +88,8 @@ uv sync --all-groups              # install everything the lock describes
 uv run pytest                     # run inside the project environment
 ```
 
-Full command reference: [uv-commands.md](references/uv-commands.md).
+Read [uv-commands.md](references/uv-commands.md) for a uv command not shown here, the `--locked` versus
+`--frozen` difference, interpreter selection, or uv's environment variables.
 
 ## Minimal Project
 
@@ -108,12 +110,13 @@ For a package or library, add the configuration that makes the project checkable
 ```bash
 uv init --package myproject
 cd myproject
-uv add --group dev ruff mypy
+uv add --group lint ruff mypy
 uv add --group test pytest pytest-cov
-uv sync --all-groups
+uv add --group audit pip-audit
 ```
 
-Then write the configuration. The essential shape:
+Then write the rest of the configuration, including the `dev` group that includes the other three, and run
+`uv sync --all-groups`. The essential shape:
 
 ```toml
 [project]
@@ -148,26 +151,22 @@ select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
 `[project.optional-dependencies]` is for optional *runtime* features a user opts into, and is the wrong place
 for development tools.
 
-Complete configuration reference, including per-file ignores, coverage, and the flat-layout build root:
-[pyproject-reference.md](references/pyproject-reference.md).
-
-**Test configuration belongs to `python-testing`.** Put `[tool.pytest.ini_options]` and `[tool.coverage.*]`
-there rather than deciding them here; this skill only names the `test` dependency group. **Type-checker
-configuration belongs to `python-typing`** for the same reason.
+Read [pyproject-reference.md](references/pyproject-reference.md) when the project needs more than this shape:
+optional runtime extras, entry points, project URLs, a flat layout, optional Ruff families, or the shape for a
+library, application, or CLI.
 
 ## Ruff Owns the Style Rules
 
 Start with `E4`, `E7`, `E9`, `F`, `I`, `B`, and `UP` for basic errors, import sorting, bug risks, and supported syntax.
 Use four-space indentation and a 120-character line limit when the project has no formatting convention.
 Add other rule families only when their findings justify the cost. `ALL` also adopts new rules on upgrades;
-[Ruff recommends a small starting set](https://docs.astral.sh/ruff/linter/#rule-selection).
+[Ruff recommends a small starting set](https://docs.astral.sh/ruff/linter/#rule-selection). Before enabling
+`D`, `S`, or `TC`, read the optional-rules section of the configuration reference: each needs an exception.
 
 Fix causes before suppressing findings. When a suppression is justified, name the rule with `# noqa: RULE_CODE`
 and explain the non-obvious reason. Keep file-level exceptions narrow and remove obsolete suppressions.
-The configuration reference covers optional docstring and type-import rules and their exceptions.
 
-Configuring ruff is how this project's style preferences get enforced at the moment code is written. Anything
-ruff can decide belongs in this configuration rather than in prose an agent has to remember.
+Put anything ruff can decide into its configuration rather than into prose an agent has to remember.
 
 ## Wire the Gates
 
@@ -185,35 +184,26 @@ uv run pip-audit
 `.pre-commit-config.yaml`, the CI workflows, and any `justfile`, `Makefile` or `tox.ini`. A tool may be a
 hook, a CI step, a task-runner recipe, an on-demand command, or several of those. Match what is there.
 
-Hook configuration, secret scanning, workflow auditing, and the CI shape are in
-[security-setup.md](references/security-setup.md).
+Read [security-setup.md](references/security-setup.md) when adding pre-commit hooks, a mypy hook, secret
+scanning, workflow auditing, or a CI job.
 
 ## Keep It Current
 
-Setup is the smaller half. Dependency updates, lock refreshes, vulnerability audits, version bumps, and
-publishing are in [dependency-maintenance.md](references/dependency-maintenance.md). Read it when the project
-already exists and the request is about keeping it healthy rather than starting it.
+Read [dependency-maintenance.md](references/dependency-maintenance.md) when the project already exists and the
+request is about keeping it healthy: lock refreshes, dependency updates, vulnerability audits, version bumps,
+or publishing.
 
 ## Migrating Off Legacy Tooling
 
-Only when the user asks. The order that avoids a broken intermediate state:
-
-1. `uv init --bare` in the existing project to create `pyproject.toml` without touching the source layout.
-2. Add each dependency with `uv add`, reviewing rather than bulk-importing. A `requirements.txt` line can
-   carry a constraint or an editable install that does not translate.
-3. Move development tools to `uv add --group dev`.
-4. Copy non-dependency metadata into `[project]`.
-5. Replace flake8, black and isort with ruff, then run `uv run ruff check --fix .` and `uv run ruff format .`.
-6. Delete the superseded files and configuration tables.
-7. Verify: sync, lint, type-check, test, audit, and build.
-
-Step-by-step cleanup, the artifacts to delete, the `.gitignore` additions, and the automatic modernization
-passes are in [migration-checklist.md](references/migration-checklist.md).
+Migrate only when the user asks. Follow [migration-checklist.md](references/migration-checklist.md) in order:
+it brings dependencies across before replacing linters and deletes superseded files last, so no intermediate
+state is broken. Review each `requirements.txt` line rather than bulk-importing it, because a line can carry a
+constraint or an editable install that does not translate.
 
 ## Before Calling Setup Done
 
 1. Does `uv sync --all-groups` succeed from a clean checkout?
-2. Do lint, format-check, type-check and tests all run through `uv run`?
+2. Does every command under Wire the Gates pass, run the way the project runs it?
 3. Is `uv.lock` committed for reproducible development and CI, including for a library?
 4. Does `requires-python` match what ruff and the type checker target?
 5. Does the project build, if it is meant to be distributed?

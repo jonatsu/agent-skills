@@ -1,10 +1,6 @@
 # pyproject.toml Reference
 
-Complete configuration reference. Read this when the shape in `SKILL.md` is not enough: optional runtime
-extras, entry points, per-file lint ignores, coverage, or a flat layout.
-
-Prefer `uv add` and `uv remove` for dependency changes in uv projects.
-After deliberate metadata edits, run `uv lock` and review the resolution. Never edit the lockfile manually.
+Complete configuration reference, for when the shape in `SKILL.md` is not enough.
 
 ## Complete Example
 
@@ -64,8 +60,8 @@ docstring-code-format = true
 
 ```
 
-`[tool.pytest.ini_options]` and `[tool.coverage.*]` are deliberately absent: `python-testing` owns both, and
-`[tool.mypy]` belongs to `python-typing`. Each table has exactly one home so the two cannot drift apart.
+`[tool.pytest.ini_options]`, `[tool.coverage.*]` and `[tool.mypy]` are deliberately absent; `SKILL.md` names
+the skills that own them.
 
 ## Section Notes
 
@@ -87,8 +83,8 @@ see them and resolvers may consider them.
 
 ### `[build-system]`
 
-`uv_build` is the simplest backend that covers most projects. Prefer a static `version` over VCS-derived
-dynamic versioning unless the release process actually needs it.
+`uv_build` is the simplest backend that covers most projects. Keep `version` static unless the release process
+actually needs a VCS-derived version: dynamic versioning makes the built artifact depend on checkout state.
 
 ```toml
 [build-system]

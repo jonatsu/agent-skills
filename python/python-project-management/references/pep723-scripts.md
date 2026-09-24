@@ -1,8 +1,7 @@
 # PEP 723 Inline Script Metadata
 
-Read this when the deliverable is a single file that needs third-party packages. PEP 723 puts the dependency
-metadata in the script itself, so there is no `requirements.txt`, no project directory, and nothing for a
-reader to install first.
+PEP 723 puts the dependency metadata in the script itself, so there is no `requirements.txt`, no project
+directory, and nothing for a reader to install first.
 
 ## When It Fits
 
@@ -10,7 +9,9 @@ Use it for a single-file script with dependencies, a piece of automation, or a u
 that has to stay self-contained.
 
 Use a `pyproject.toml` project instead once the code spans more than one file, becomes a reusable library, or
-needs dependency groups, editable installs, or local path dependencies.
+needs dependency groups, which script metadata cannot hold. Convert it with `uv init --bare` and move the
+dependencies across. Local path and editable dependencies do work: `uv add --script` records them under
+`[tool.uv.sources]` in the block. Verified against uv 0.12.10 on 2026-09-24.
 
 ## The Format
 
@@ -86,8 +87,3 @@ confuse a caller reading the script's output or logs.
 - Use a floor, `>=3.11`, not a pin, `==3.11`.
 - Let `uv add --script` write the dependency entries rather than typing versions by hand.
 - Keep the docstring: a self-contained script has no README to explain it.
-
-## Limits
-
-No dependency groups, no editable installs, and no local path dependencies. A script needing any of those has
-outgrown the format; convert it with `uv init --bare` and move the dependencies across.

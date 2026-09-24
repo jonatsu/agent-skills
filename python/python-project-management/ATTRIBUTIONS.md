@@ -66,3 +66,14 @@ The HTTP-client preference moved from the author's scoped Python rule, as approv
 That rule recorded idea influence from Tim Vink's `dot_claude/rules/httpx2.md`:
 <https://github.com/timvink/dotfiles/blob/main/dot_claude/rules/httpx2.md>.
 The historical record did not pin a revision or establish that source's license; no additional text was copied from it.
+
+## Fact Corrections, 2026-09-24
+
+- `pip-audit --locked` reads `pylock*.toml`, not `uv.lock`: read in pip-audit 2.10.1's `_cli.py` and run in a
+  scratch uv 0.12.10 project, where it failed without an exported `pylock.toml` and passed with one.
+- PEP 723 scripts accept local path and editable dependencies through `[tool.uv.sources]` but not dependency
+  groups: run with `uv add --script` in uv 0.12.10.
+- Default `GITHUB_TOKEN` permissions depend on repository and organization settings: GitHub's "Managing GitHub
+  Actions settings for a repository" page, read on this date.
+- The Full Project commands now create the `lint`, `test` and `audit` groups the example configuration
+  includes; the `include-group` layout synced in a scratch uv 0.12.10 project.

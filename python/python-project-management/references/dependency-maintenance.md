@@ -1,8 +1,5 @@
 # Dependency Maintenance and Releases
 
-Read this when the project already exists and the work is keeping it healthy: refreshing the lock, taking
-updates, auditing for vulnerabilities, bumping the version, or publishing.
-
 ## Refreshing the Lock
 
 ```bash
@@ -35,18 +32,20 @@ and the lock no longer describes it.
 
 ```bash
 uv run pip-audit          # audit the current environment
-uv run pip-audit --locked .   # audit from uv.lock rather than the installed environment
+uv export --format pylock.toml -o pylock.toml && uv run pip-audit --locked .   # audit the lock instead
 uv run pip-audit --fix    # upgrade vulnerable packages where a fix exists
 ```
+
+`pip-audit --locked` reads `pylock.toml` or `pylock.*.toml`, not `uv.lock`, and exits 1 with
+`no lockfiles found` when neither exists; export the lock first. Verified against pip-audit 2.10.1 and
+uv 0.12.10 on 2026-09-24.
 
 When it reports something:
 
 1. Check whether the advisory reaches your usage. Many affect a code path a project never calls.
 2. If it does, take the fix: `uv add 'package>=<fixed version>'`, then `uv sync` and rerun the audit.
-3. If no fix exists, decide deliberately: accept the risk with a note, pin away from the affected version, or
-   replace the dependency. Record which, because the next reader will ask.
-
-Never silence an advisory to make a gate green without recording the reason.
+3. If no fix exists, decide deliberately: accept the risk, pin away from the affected version, or replace the
+   dependency. Record the decision and its reason, including for any advisory ignored to keep a gate green.
 
 ## Automated Updates
 
@@ -55,7 +54,6 @@ Dependabot opens pull requests for outdated dependencies on a schedule. `.github
 ```yaml
 version: 2
 updates:
-  # `uv`, not `pip`: only this ecosystem updates uv.lock
   - package-ecosystem: uv
     directory: /
     schedule:
@@ -108,12 +106,8 @@ uv version --bump minor   # 0.1.1 -> 0.2.0
 uv version --bump major   # 0.2.0 -> 1.0.0
 ```
 
-Semantic versioning as users read it: major for a breaking change, minor for a backward-compatible addition,
-patch for a fix. Before 1.0 the guarantees are weaker, and saying so in the README is worth more than
-pretending otherwise.
-
-Keep the version static in `[project]` unless the release process genuinely needs a VCS-derived version.
-Dynamic versioning makes the built artifact depend on checkout state, which is a bad trade for most projects.
+Before 1.0 the compatibility guarantees are weaker; say so in the README. Static versus VCS-derived versions
+are covered under `[build-system]` in [pyproject-reference.md](pyproject-reference.md).
 
 ## Publishing
 
@@ -135,19 +129,7 @@ The order that avoids a bad release:
 A published version is immutable. PyPI will not let you replace it, only yank it, so the scratch-install step
 is the cheapest insurance available.
 
-Prefer a trusted-publisher configuration in CI over a long-lived API token in repository secrets.
-
 ## Routine Health Check
 
-```bash
-uv lock --check
-uv sync --all-groups
-uv run ruff format --check .
-uv run ruff check .
-uv run mypy src/          # use the project's own package path
-uv run pytest
-uv run pip-audit
-```
-
-Run this before a release, after taking a batch of dependency updates, and when returning to a project that
-has been idle.
+Run `uv lock --check`, then `uv sync --all-groups`, then every command under Wire the Gates in `SKILL.md`.
+Do it before a release, after taking a batch of dependency updates, and when returning to an idle project.

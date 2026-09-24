@@ -1,11 +1,5 @@
 # uv Command Reference
 
-Read this for the command that does what you need. uv manages packages, dependencies, virtual environments and
-Python versions in one tool, replacing pip, virtualenv, pip-tools, pipx and pyenv.
-
-Prefer the established task runner or `uv run <cmd>` for project commands.
-An activated environment is valid too; preserve an established invocation workflow.
-
 ## Projects
 
 | Command                    | Effect                                                     |
@@ -81,15 +75,8 @@ uv python pin 3.12            # writes .python-version
 
 ## Scripts
 
-```bash
-uv init --script myscript.py
-uv add --script myscript.py httpx
-uv remove --script myscript.py httpx
-uv lock --script myscript.py   # writes myscript.py.lock
-uv run myscript.py
-```
-
-See [pep723-scripts.md](pep723-scripts.md) for the inline metadata format.
+Script commands (`uv init --script`, `uv add --script`, `uv lock --script`) are in
+[pep723-scripts.md](pep723-scripts.md), with the inline metadata format.
 
 ## Building and Publishing
 
@@ -129,27 +116,7 @@ discoverable, a path cannot, and a path exported machine-wide breaks every proje
 `UV_PYTHON_PREFERENCE` (`only-managed`, `managed`, `system`, `only-system`) decides where uv may look but
 never overrides an explicit request.
 
-## Common Workflows
-
-```bash
-# New application
-uv init myapp && cd myapp
-uv add fastapi uvicorn
-uv add --group dev ruff mypy pytest
-uv sync --all-groups
-
-# Adopt uv in an existing project
-uv init --bare
-uv add httpx rich
-uv add --group dev ruff mypy
-
-# Reproducible CI install
-uv sync --locked --all-groups
-```
-
 ## Notes
 
-- uv caches aggressively; the first resolve of a dependency set is the slow one.
 - `uv cache clean` when the cache grows past what you want to keep.
 - A nonzero exit from `uv sync --locked` needs its diagnostic read: lock drift, installation, and network failures differ.
-  After deliberate metadata edits, run `uv lock` and review the resolution before committing.
