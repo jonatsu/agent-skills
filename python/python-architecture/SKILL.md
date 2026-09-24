@@ -9,9 +9,10 @@ metadata:
 # Python Architecture
 
 Where code lives, and what may depend on what. How the code inside a module is written belongs to the other
-Python skills: `python-typing` for annotations, `python-error-handling` for boundaries, `python-testing` for
-the tests themselves. Project tooling and `pyproject.toml` belong to `python-project-management`; this skill
-owns only the layout decisions that tooling then has to match.
+Python skills: `python-style` for everyday code, `python-typing` for annotations, `python-error-handling` for
+validation and failure, `python-testing` for the tests themselves. Project tooling and `pyproject.toml`
+belong to `python-project-management`; this skill owns only the layout decisions that tooling then has to
+match.
 
 ## Respect Project Conventions
 
@@ -59,12 +60,12 @@ Name a package for the capability it owns — `billing`, `recognition` — not f
 `helpers`, `utils`, `models`, and `common` describe a filing decision rather than a responsibility, so they
 attract anything that does not obviously belong elsewhere and stop being searchable once they do.
 
-Split a package into subpackages when its modules form groups that do not reference each other. Do not create a
-subpackage for a single module.
+Split a package into subpackages when its modules form groups that do not reference each other, and give each
+subpackage more than one module.
 
 ## Keep Dependencies Acyclic
 
-Prefer dependencies that point one direction. For new designs, avoid direct and transitive import cycles.
+Point dependencies one direction, so a new design has no direct or transitive import cycle.
 
 When an import cycle causes a failure or its repair is authorized, work through these in order:
 
@@ -75,10 +76,11 @@ When an import cycle causes a failure or its repair is authorized, work through 
 3. **Is one side substitutable?** Declare the seam as a `Protocol` and inject the implementation, so the caller
    never imports the default one.
 
-A function-local import can defer initialization successfully; it does not necessarily move a failure to first call.
-Use it deliberately for optional dependencies, startup cost, or a documented import-order constraint.
-When a cycle causes failures or concrete maintenance harm, recommend the smallest repair and test the relevant import
-and call order. Do not restructure working imports merely because they are local to a function.
+A function-local import runs at call time, so it hides a cycle only while nothing calls the function during
+either module's initialization; a call at import time still fails with
+`cannot import name ... from partially initialized module`. Use it deliberately for optional dependencies,
+startup cost, or a documented import-order constraint. When a cycle causes failures or concrete maintenance
+harm, recommend the smallest repair and test the relevant import and call order.
 
 ## Give `__init__.py` a Job or Leave It Empty
 
@@ -103,8 +105,8 @@ Tests inside the package, run with `pytest --pyargs mypkg`, are the alternative 
 deliberately. Choose one and apply it consistently; a project with both has two answers to where a new test
 goes.
 
-`python-testing` owns what follows from this layout: `--import-mode=importlib`, test-file basename uniqueness,
-and the `conftest.py` rules.
+`python-testing` owns the pytest side of this layout: `--import-mode=importlib`, `pythonpath` for a `src/`
+layout, and where shared fixtures go in `conftest.py`.
 
 ## Keep Entry Points Thin
 
@@ -116,7 +118,7 @@ The command-line layer parses and validates arguments, then calls into the packa
 command parsing and process exit behavior so callers and tests can invoke it directly.
 
 For complex internal algorithms, expose a focused internal module interface when that improves cohesion and testing.
-Do not create a new public API solely to avoid testing an underscore-prefixed helper. `python-testing` owns that choice.
+Keep public API for real callers; whether to test an underscore-prefixed helper directly is `python-testing`'s choice.
 
 ## Layer an Application, and Point Dependencies One Way
 
@@ -132,7 +134,8 @@ external system directly. Where a boundary needs a type that describes the contr
 core, not in the layer that happens to use it first.
 
 Record the intended layering in the repository's own documentation, and treat an import that violates it as a
-defect rather than a shortcut — nothing else will catch it.
+defect rather than a shortcut. The interpreter and the type checker both accept such an import, so only a
+review or an import-contract tool such as `import-linter`'s `layers` contract will catch it.
 
 ## Before Calling Structural Work Done
 

@@ -46,3 +46,10 @@ Reviewed Integralist's `.claude/rules/python.md` in `Integralist/agent-skills` a
 The comparison informed the qualified guidance on focused internal module interfaces for complex logic.
 The expression is independent; no upstream text or code is copied or adapted.
 No license covering these rules was found in the pinned tree; the MCP component has separate licensing.
+
+## Corrections, 2026-09-24
+
+- Verified on 2026-09-24 by a probe package on CPython 3.12.14, `import-linter` 2.15 and its docs, and
+  `python-testing`'s own text: a function-local import still fails when called during a cycle's
+  initialization; `import-linter` layer contracts can enforce layering; `python-testing` does not cover
+  test-file basename uniqueness, so the pointer no longer claims it.
