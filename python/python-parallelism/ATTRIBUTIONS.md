@@ -50,3 +50,8 @@ Measured on CPython 3.12.14, 10 cores, on 2026-09-15, rather than taken from doc
 - **Neither interpreter here is a free-threaded build.** `sysconfig.get_config_var("Py_GIL_DISABLED")` is false
   on both 3.12.14 and 3.13.15, so the GIL results above describe the default build, which is what
   `python3` gives you.
+
+2026-09-24 corrections: an unguarded pool under `spawn` raises the bootstrapping `RuntimeError` in each worker,
+then `BrokenProcessPool` (`ProcessPoolExecutor`) or a hang (`multiprocessing.Pool`), measured on 3.12.14 and
+3.13.15; `chunksize` is ignored by `ThreadPoolExecutor` (`Executor.map` docstring); `Py_GIL_DISABLED` reports
+build support only, with `sys._is_gil_enabled()` the runtime check (Python free-threading HOWTO).

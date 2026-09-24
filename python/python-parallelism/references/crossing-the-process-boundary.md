@@ -1,7 +1,7 @@
 # Crossing the Process Boundary
 
-Read this before writing a process pool. Workers are separate interpreters: the function, its arguments and its
-results travel by pickle, and nothing else is shared. Four consequences break code that works in one process.
+Workers are separate interpreters: the function, its arguments and its results travel by pickle, and nothing
+else is shared. Four consequences break code that works in one process.
 
 ## Not Everything Can Be Sent
 
@@ -74,7 +74,8 @@ memory, made without running its imports again.
 
 That is fast, and it is also why a forked child can inherit a lock held by a thread that does not exist in the
 child — which deadlocks, intermittently, usually under load and rarely in testing. Any program that combines
-threads with `fork` has this exposure. `spawn` starts a fresh interpreter and has no such inheritance; it is
+threads with `fork` has this exposure; from 3.12, `os.fork()` emits a `DeprecationWarning` when it detects
+other threads. `spawn` starts a fresh interpreter and has no such inheritance; it is
 the default on macOS and Windows, which is one reason a pool that works on Linux can behave differently there.
 
 ```python
@@ -85,8 +86,12 @@ Choose `spawn` or `forkserver` for any program that also uses threads. CPython i
 changes the Linux default to `forkserver` — so code that only works under `fork` is on borrowed time. Confirm
 the default for the versions you target with `mp.get_start_method()` rather than assuming either.
 
-Under `spawn`, the child re-imports the main module. **Module-level code that creates a pool then runs again in
-every worker**, which spawns processes without end. Guard the entry point:
+Under `spawn` or `forkserver`, the child re-imports the main module. **Module-level code that creates a pool
+then runs again in every worker**, and each worker's attempt to start processes raises a `RuntimeError` that
+begins "An attempt has been made to start a new process before the current process has finished its
+bootstrapping phase". Measured on CPython 3.12.14 and 3.13.15 under `spawn`: a `ProcessPoolExecutor` then
+fails with `BrokenProcessPool`, while a `multiprocessing.Pool` keeps replacing its dying workers and hangs.
+Guard the entry point:
 
 ```python
 if __name__ == "__main__":

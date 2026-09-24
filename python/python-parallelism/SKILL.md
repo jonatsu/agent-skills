@@ -1,6 +1,6 @@
 ---
 name: python-parallelism
-description: Use every CPU core from Python with threads, processes and joblib. Use when work is too slow and might parallelize, choosing between threads and processes, running a parameter sweep or batch job, fixing a pool that hangs or cannot pickle its argument, or deciding whether parallelism will pay for itself at all.
+description: Use every CPU core from Python with threads, processes and joblib. Use when slow work might parallelize and you must decide whether it will pay, choosing between threads and processes, running a parameter sweep or batch job, or fixing a pool that hangs or cannot pickle its argument.
 license: MIT
 compatibility: Measurements and examples target Python 3.12+. The free-threading notes concern 3.13+ free-threaded builds, which are a separate interpreter build from the default one.
 metadata:
@@ -10,8 +10,8 @@ metadata:
 # Python Parallelism
 
 Using more than one core: choosing threads or processes, paying the overhead knowingly, and the failure modes
-that only appear once work crosses a process boundary. Concurrency for **waiting** — network calls, sockets,
-long-lived services — is `python-async-patterns`, which is this skill's sibling at the I/O boundary.
+that only appear once work crosses a process boundary. Work built on asyncio, including handing a blocking call
+off a running event loop, is `python-async-patterns`.
 
 ## Respect Project Conventions
 
@@ -37,20 +37,15 @@ trivial tasks through a `ProcessPoolExecutor` ran 1348x slower than the same wor
 arithmetic that cost nothing.
 
 That is the normal outcome for small tasks, not a pathological case. A task must be long enough that the
-per-task round trip disappears next to it; roughly, milliseconds of work per task, not microseconds. When the
-tasks are inherently small, chunk them (below) rather than abandoning the idea.
+per-task round trip disappears next to it: milliseconds of work per task, not microseconds. When the tasks are
+inherently small, chunk them (below).
 
 ## Threads or Processes: the GIL Decides
 
 On a default CPython build, the Global Interpreter Lock lets one thread execute Python bytecode at a time.
-Threads therefore overlap **waiting**, never Python-level **computing**. Measured on 3.12.14 over four tasks:
-
-| Workload                           | Sequential | ThreadPool | ProcessPool | What it means                      |
-| ---------------------------------- | ---------- | ---------- | ----------- | ---------------------------------- |
-| Pure-Python arithmetic (CPU-bound) | 0.220s     | 0.218s     | 0.060s      | Threads 1.01x, processes 3.70x     |
-| Blocking `time.sleep` (I/O-bound)  | 1.200s     | 0.301s     | —           | Threads 3.99x; processes pointless |
-
-The rule that falls out:
+Threads therefore overlap **waiting**, never Python-level **computing**. Measured on 3.12.14 over four tasks,
+pure-Python arithmetic ran 1.01x faster on threads and 3.70x on processes, while blocking `time.sleep` calls ran
+3.99x faster on threads. The rule that falls out:
 
 | The work is                                             | Use                                          |
 | ------------------------------------------------------- | -------------------------------------------- |
@@ -67,13 +62,16 @@ code. Time it both ways; the answer depends on the array sizes, not on the libra
 **Free-threaded builds change this rule, and they are a different interpreter.** From 3.13 CPython ships an
 optional build with no GIL, where threads do parallelize CPU-bound Python. It is not what `python3` gives you
 unless you installed it deliberately — verified on the 3.12.14 and 3.13.15 builds here, both report
-`sysconfig.get_config_var("Py_GIL_DISABLED")` as false. Check the build before claiming either behavior, and
-keep writing code that is correct on both.
+`sysconfig.get_config_var("Py_GIL_DISABLED")` as false. That variable says only that the build supports free
+threading: a free-threaded interpreter re-enables the GIL at runtime when it imports an extension module not
+marked as supporting free threading, or when `PYTHON_GIL` or `-X gil` asks for it. Check
+`sys._is_gil_enabled()` (3.13+) in the running process before claiming either behavior, and keep writing code
+that is correct on both.
 
 ## Use concurrent.futures
 
-`concurrent.futures` is the default API. `ThreadPoolExecutor` and `ProcessPoolExecutor` are interchangeable, so
-testing the other hypothesis is a one-word edit — which is exactly what the table above asks you to do.
+`concurrent.futures` is the default API. `ThreadPoolExecutor` and `ProcessPoolExecutor` share one interface, so
+testing the other hypothesis is a one-word edit, as long as the payload pickles.
 
 ```python
 with ProcessPoolExecutor() as pool:
@@ -95,11 +93,12 @@ with ProcessPoolExecutor() as pool:
 ```
 
 **An exception in a worker is re-raised at `future.result()`, not where it was raised.** Nothing surfaces until
-you call `result()`, so a loop that never does silently discards every failure. `pool.map` re-raises at
-iteration instead, which is why the loop above exists.
+you call `result()`, so a loop that never does silently discards every failure. `pool.map` raises the first
+failure, in input order, when iteration reaches it, and cancels the calls not yet started; the loop above keeps
+every other result and names the failing input.
 
-Prefer the default worker count. `ProcessPoolExecutor()` uses the machine's cores; naming a number hard-codes
-one machine's shape into the program.
+Prefer the default worker count. `ProcessPoolExecutor()` uses the CPUs available to the process; naming a
+number hard-codes one machine's shape into the program.
 
 ## Chunk Small Tasks
 
@@ -114,9 +113,9 @@ with ProcessPoolExecutor() as pool:
     results = [r for chunk in pool.map(solve_chunk, chunks) for r in chunk]
 ```
 
-`pool.map` also takes `chunksize`, which batches dispatch without changing your function — try it first, since
-it costs one argument. Explicit chunking wins when the chunk can do something smarter than a loop, such as one
-vectorized NumPy call over the whole batch.
+A process pool's `map` also takes `chunksize`, which batches dispatch without changing your function; try it
+first, since it costs one argument. `ThreadPoolExecutor.map` ignores it. Explicit chunking wins when the chunk
+can do something smarter than a loop, such as one vectorized NumPy call over the whole batch.
 
 ## joblib for Scientific Batches
 
@@ -132,38 +131,35 @@ code, memory-mapping of large NumPy arrays between workers, and `Memory` for on-
 Reach for it when a project already has it or wants those features; `concurrent.futures` is the standard-library
 answer and needs no dependency.
 
-Do not work from the summary above. Joblib's own documentation is organized as three separate things, and
-which one you want depends on the question:
+Before relying on any of that, read joblib's own documentation, which splits by question:
 
-| You need                               | Read                                                                                 |
-| -------------------------------------- | ------------------------------------------------------------------------------------ |
-| How a feature works and when to use it | [User guide](https://joblib.readthedocs.io/en/stable/user_guide/index.html)          |
-| An exact current signature or argument | [API reference](https://joblib.readthedocs.io/en/stable/references.html)             |
-| A worked version of an awkward case    | [Examples gallery](https://joblib.readthedocs.io/en/stable/auto_examples/index.html) |
-
-The user guide's "Embarrassingly parallel for loops" page is the one that covers backends and `n_jobs`
-properly; the API reference is where its `Parallel`, `delayed` and `Memory` signatures are pinned down.
+| You need                                             | Read                                                                                                  |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Backends, `n_jobs`, and when to use each             | [Embarrassingly parallel for loops](https://joblib.readthedocs.io/en/stable/user_guide/parallel.html) |
+| An exact `Parallel`, `delayed` or `Memory` signature | [API reference](https://joblib.readthedocs.io/en/stable/references.html)                              |
+| A worked version of an awkward case                  | [Examples gallery](https://joblib.readthedocs.io/en/stable/auto_examples/index.html)                  |
 
 ## Failure Modes
 
 Arguments, return values and the function itself cross a process boundary by pickle, and workers do not share
 memory. That breaks things that work fine in one process — unpicklable arguments, lost global state, correlated
-random streams, and deadlocks inherited across `fork`. Those, with their measured error messages, are in
-[crossing-the-process-boundary.md](references/crossing-the-process-boundary.md). **Read it before writing a
-process pool**, because the first three fail at the moment of parallelizing and the fourth fails intermittently
-in production.
+random streams, and deadlocks inherited across `fork`. **Read
+[crossing-the-process-boundary.md](references/crossing-the-process-boundary.md) before writing a process
+pool**, or when one fails in a way the table below does not explain. The first three fail at the moment of
+parallelizing and the fourth fails intermittently in production; the reference has their measured error
+messages and fixes.
 
 ## Diagnosing
 
 | Symptom                                        | Look at                                                            |
 | ---------------------------------------------- | ------------------------------------------------------------------ |
-| Parallel is slower than sequential             | Tasks too small; chunk them, or do not parallelize                 |
+| Parallel is slower than sequential             | Tasks too small; chunk them, or stay sequential                    |
 | Threads gave no speedup at all                 | CPU-bound work under the GIL; use processes                        |
 | `Can't get local object ...`                   | A lambda or nested function sent to a process pool                 |
 | `Can't pickle ...` on an argument or result    | An open file, connection, lock or closure in the payload           |
 | Failures vanish, results look short            | `future.result()` never called; exceptions stay in the future      |
 | Workers all produce identical "random" results | One seed inherited by every worker                                 |
-| Hangs on start, or spawns endless processes    | Pool created at import time with no `if __name__ == "__main__"`    |
+| `BrokenProcessPool`, or a hang, under `spawn`  | Pool created at import time with no `if __name__ == "__main__"`    |
 | Memory blows up with worker count              | A large argument copied per worker; memory-map it or share by path |
 
 ## Before Calling Parallel Code Done
