@@ -4,9 +4,11 @@ Read this when setting up pytest in a project, adding coverage, or working out w
 
 ## Where Configuration Lives
 
-pytest reads the first of these it finds: `pytest.ini`, `pyproject.toml`, `tox.ini`, `setup.cfg`. A project
-with more than one can be reading a file you are not editing. The run header prints the resolved `rootdir`
-and `inifile`, and `pytest --collect-only -q` shows them without running anything.
+pytest searches upward from the invocation directory and takes the first match: a `pytest.ini`, even an empty
+one, or a `pyproject.toml`, `tox.ini`, or `setup.cfg` that holds a pytest section. A project with more than
+one, or one nested inside another project, can be reading a file you are not editing. The run header prints
+the resolved `rootdir` and `configfile`, and `pytest --collect-only -q` shows them without running anything.
+An empty `pytest.ini` beside the tests stops the search.
 
 In `pyproject.toml` the table is `[tool.pytest.ini_options]`.
 
@@ -145,9 +147,6 @@ With a `src/` layout, either install the package (`pip install -e .` or the proj
 | `pytest -k "expiry and not slow"` | Select by name expression            |
 | `pytest --durations=10`           | The ten slowest tests                |
 | `pytest -p no:randomly`           | Disable a plugin for one run         |
-
-`--collect-only` and `-rs` are the two that answer "did my test actually run", which is a different question
-from "did it pass".
 
 ## Plugins Worth Knowing
 

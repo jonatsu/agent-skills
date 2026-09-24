@@ -2,23 +2,7 @@
 
 Read this when one behavior needs many inputs, or when the interesting inputs are the ones nobody thought of.
 
-## parametrize
-
-```python
-@pytest.mark.parametrize(
-    ("raw", "expected"),
-    [
-        ("1", 1),
-        ("-1", -1),
-        ("0", 0),
-    ],
-)
-def test_parses_an_integer(raw, expected):
-    assert parse_int(raw) == expected
-```
-
-Each case is a separate test with its own pass or fail, so one bad input does not mask the others, and a
-failure names the case rather than a loop index.
+`SKILL.md` shows the basic `parametrize` form.
 
 ## Readable Case Names
 

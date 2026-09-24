@@ -99,9 +99,8 @@ assertion: a coroutine that was created but never awaited counts as called and n
 
 Two behaviors worth knowing:
 
-- **`MagicMock` autospecs async methods.** Patching an object with `unittest.mock.patch` and `autospec=True`
-  gives `AsyncMock` for its coroutine functions and `MagicMock` for the rest, so a plain patch usually does
-  the right thing.
+- **Autospec picks the right double.** Patching an object with `unittest.mock.patch` and `autospec=True`
+  gives `AsyncMock` for its coroutine functions and `MagicMock` for the rest.
 - **A bare `MagicMock` returns a `MagicMock`, not an awaitable.** Awaiting it raises `TypeError`. That error
   means the double is the wrong kind, not that the code is wrong.
 
@@ -165,9 +164,8 @@ async def test_cleans_up_when_cancelled():
 If that test hangs or reports no exception, the code under test is catching `CancelledError` without
 re-raising. `python-async-patterns` covers why that is wrong; this is how to catch it.
 
-**Do not sleep in real time to make an ordering test pass.** A `sleep(0.5)` is a slow test and a flaky one.
-Synchronize on the thing itself: an `asyncio.Event`, awaiting the task, or `asyncio.sleep(0)` to yield one
-scheduling turn.
+**Synchronize an ordering test on the event itself:** an `asyncio.Event`, awaiting the task, or
+`asyncio.sleep(0)` to yield one scheduling turn. A real-time `sleep(0.5)` makes the test slow and flaky.
 
 ## Time, and Why It Is Worse in Async Tests
 

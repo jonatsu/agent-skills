@@ -40,11 +40,10 @@ Before writing or running anything, find out what this project already does:
   about to write may already exist in a plugin the project has.
 - **Where tests live and how they are named.** Match the existing layout rather than introducing a second one.
 - **What the existing tests look like.** Their fixture style, naming, and level of mocking are the house
-  conventions, and they outrank every default below.
+  conventions.
 
-Commands in this skill are written as bare `pytest`. If the project wraps it, use the wrapper.
-For a new suite, use pytest. Preserve an established unittest or other test framework instead of converting tests
-as a side effect; load pytest-specific guidance only when applicable.
+Commands in this skill are written as bare `pytest`. If the project wraps it, use the wrapper. A project on
+unittest or another framework keeps it; apply the pytest-specific guidance only where pytest runs.
 
 ## The Shape of a Test
 
@@ -120,30 +119,23 @@ When a parser or decoder needs a longer, coverage-guided search than Hypothesis 
 
 ## Async Tests Need a Plugin, and Silence Is the Failure Mode
 
-**An async test with no async plugin installed does not necessarily fail. On pytest 7.4.4 and 8.3.5 it is
-skipped with a warning and the run exits 0.** Measured 2026-09-04: a file whose only test was
-`async def test_x(): assert False` reported `1 skipped, 1 warning` and exit status 0 on both. On pytest 9.1.1
-the same file fails and names the candidate plugins.
-
-So on pytest 8 or earlier, an entire async suite can appear green while never having run. Check for skips
-before trusting an async run:
+**On pytest 8 and earlier, an async test with no async plugin is skipped with a warning and the run exits 0.**
+A whole async suite can look green without ever running; pytest 9 fails instead. Check for skips before
+trusting an async run:
 
 ```bash
 pytest -q -rs        # report skipped tests and the reason
 ```
 
-The rest — choosing between pytest-asyncio and anyio, `AsyncMock`, faking HTTP, and testing cancellation and
-timeouts — is in [async-testing.md](references/async-testing.md). Read it before writing the first async test
-in a project.
+Read [async-testing.md](references/async-testing.md) before writing the first async test in a project. It
+covers the measurements, choosing between pytest-asyncio and anyio, `AsyncMock`, faking HTTP, and testing
+cancellation and timeouts.
 
 ## Configuration
 
-pytest reads `[tool.pytest.ini_options]` in `pyproject.toml`, not `[tool.pytest]`.
-
-**A bare `[tool.pytest]` table is silently ignored by pytest 8 and earlier.** Measured 2026-09-04: identical
-settings with a bogus flag in `addopts` were honoured by pytest 9.1.1, which errored on the flag, and ignored
-by 8.3.5, which passed clean. A coverage threshold written under the wrong table name reports success while
-never running.
+**Write pytest settings under `[tool.pytest.ini_options]` in `pyproject.toml`.** pytest 8 and earlier
+silently ignore a bare `[tool.pytest]` table, so a coverage threshold written there reports success while never
+running.
 
 ```toml
 [tool.pytest.ini_options]
@@ -153,7 +145,8 @@ markers = ["slow: takes more than a second", "integration: needs a real dependen
 ```
 
 `--strict-markers` turns a typo'd marker into an error instead of a silent no-op. Coverage settings, marker
-registration, and the rest: [pytest-configuration.md](references/pytest-configuration.md).
+registration, the measurements behind the table-name rule, and the rest:
+[pytest-configuration.md](references/pytest-configuration.md).
 
 ## Faking a Boundary, and Not Faking Anything Else
 
@@ -166,9 +159,6 @@ Prefer the narrowest fake that works, in this order:
 2. **A built-in fixture.** `tmp_path` for the filesystem, `monkeypatch` for environment and attributes.
 3. **A fake implementation** the project already has, or a small one you write.
 4. **`unittest.mock`**, when you must assert on the interaction itself.
-
-Test levels have their own rules about mocking, and those are `test-engineer`'s. This is only about how to
-express the fake once the level is decided.
 
 ## When a Test Does Not Run
 
