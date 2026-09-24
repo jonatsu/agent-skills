@@ -1,6 +1,6 @@
 ---
 name: python-testing
-description: "Write Python tests with pytest and its ecosystem. Use when writing or fixing tests, choosing fixtures, parametrizing cases, faking a boundary, testing async code, configuring pytest or coverage, or working out why a test does not run. Triggers on: pytest, conftest.py, test_*.py, fixture, parametrize, monkeypatch, tmp_path, pytest.ini_options."
+description: "Write Python tests with pytest and its ecosystem. Use when writing or fixing tests, choosing fixtures, parametrizing cases, faking a boundary, testing async code, configuring pytest or coverage, working out why a test does not run, mutation-testing a Python suite, or fuzzing a Python parser. Triggers on: pytest, conftest.py, test_*.py, fixture, parametrize, monkeypatch, tmp_path, pytest.ini_options, mutmut, atheris."
 license: MIT
 compatibility: Assumes pytest. Plugins named here are installed per project; check what the project already has before adding one.
 metadata:
@@ -115,6 +115,8 @@ def test_parses_an_integer(value, expected):
 
 Each case is a separate test with its own result, so one failure does not hide the others. Cases, `ids`,
 stacking, and property-based testing with Hypothesis: [parametrize-and-property.md](references/parametrize-and-property.md).
+When a parser or decoder needs a longer, coverage-guided search than Hypothesis gives, fuzz it with atheris:
+[fuzzing.md](references/fuzzing.md).
 
 ## Async Tests Need a Plugin, and Silence Is the Failure Mode
 
@@ -186,7 +188,8 @@ Symptoms and where to look:
 
 ## Before Calling a Test Done
 
-1. Does it fail when the behavior it pins is broken? Break the code once and confirm.
+1. Does it fail when the behavior it pins is broken? Break the code once and confirm. To ask that of a whole
+   module or suite, run mutmut rather than mutating by hand: [mutation-testing.md](references/mutation-testing.md).
 2. Does the failure message identify the cause without opening the test?
 3. Does it pass in a full run and in isolation, in either order?
 4. Does it avoid asserting on incidental detail: dict ordering, log wording, wall-clock time?

@@ -45,8 +45,21 @@ Measured on 2026-09-04 on this machine rather than taken from documentation:
 
 Named with a link and a one-line purpose, with no vendored API surface: aioresponses, RESPX,
 pytest-httpserver, freezegun, time-machine, pytest-docker, testcontainers-python, Hypothesis, pytest-cov,
-pytest-xdist, pytest-randomly, pytest-timeout, pytest-mock, pytest-subtests. Third-party interfaces move, so
-the upstream link is the authority rather than any summary here.
+pytest-xdist, pytest-randomly, pytest-timeout, pytest-mock, pytest-subtests, mutmut, atheris. Third-party
+interfaces move, so the upstream link is the authority rather than any summary here.
+
+## Mutation Testing and Fuzzing, 2026-09-24
+
+`references/mutation-testing.md` and `references/fuzzing.md` are independently written from runs on this
+machine against a copy of this repository's `skill_source/descriptions.py` and its tests: mutmut 3.8.0 and
+atheris 3.1.0 on Python 3.12, installed ephemerally with `uv run --with`. The counts, survivors, throughput
+figures, and the configuration-shadowing failure are observed results. mutmut's configuration keys and file
+lookup order were read from its installed `configuration.py`.
+
+Candidates considered and not adopted: GitLab's `pythonfuzz`, whose hosting feature GitLab deprecated in 18.0
+as unmaintained, and the PyPI `fuzzing` package, last released in 2015 for Python 3.3 to 3.5. cosmic-ray and
+poodle are maintained mutation tools that were not trialled. The OSS-Fuzz Python integration guide is linked
+as further reading; no text from it is carried.
 
 ## Python Defaults Review, 2026-09-11
 
