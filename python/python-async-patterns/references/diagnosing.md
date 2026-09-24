@@ -1,7 +1,5 @@
 # Diagnosing Async Failures
 
-Read this when async code hangs, stalls, leaks, or runs slower than the synchronous version it replaced.
-
 ## Debug Mode First
 
 ```bash
@@ -118,8 +116,7 @@ script entry point and belongs only there.
 which is not a property asyncio provides, and the failures it buys you — a task resumed inside another task's
 frame — are much harder to read than the `RuntimeError` it silenced. If a synchronous caller genuinely must
 drive async work while a loop runs elsewhere, run the coroutine on that loop from its own thread with
-`asyncio.run_coroutine_threadsafe`, or restructure so the boundary sits at the entry point. This is the
-"stay fully sync or fully async along a call path" rule in `SKILL.md` arriving as an exception.
+`asyncio.run_coroutine_threadsafe`, or restructure so the boundary sits at the entry point.
 
 ## Loop Mismatch
 
@@ -136,7 +133,7 @@ Create loop-bound objects inside the coroutine that uses them, or in a lifespan 
 ## Leaks
 
 **Connections.** Creating an `aiohttp.ClientSession` or `httpx.AsyncClient` per request discards the pool and
-eventually exhausts file descriptors. Create one, reuse it, close it on shutdown.
+eventually exhausts file descriptors.
 
 **Tasks.** `len(asyncio.all_tasks())` growing over time means tasks are being created faster than they finish.
 

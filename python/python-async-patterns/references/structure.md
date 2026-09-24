@@ -1,8 +1,5 @@
 # Structuring Async Code
 
-Read this when the work is a pipeline, a long-lived service, or a resource that has to be acquired and
-released, rather than a batch of independent calls.
-
 ## Async Context Managers
 
 `async with` is how an async resource gets released even when the body raises.
@@ -241,7 +238,7 @@ async def with_retries(operation, attempts: int = 3, base: float = 0.5):
 
 Jitter matters at scale: without it, every client that failed at the same moment retries at the same moment.
 
-Retry only what is safe to repeat. A read is usually idempotent; a payment is not. Do not retry a
-`CancelledError` — that is a shutdown signal, not a transient failure.
+Retry only what is safe to repeat: a read is usually idempotent; a payment is not. Catch the transient
+exception types by name, so that a `CancelledError`, which is a shutdown signal, propagates.
 
 [tenacity](https://github.com/jd/tenacity) implements this and more if the project already has it.

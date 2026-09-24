@@ -1,6 +1,6 @@
 ---
 name: python-async-patterns
-description: Write and fix concurrent Python with asyncio. Use when deciding whether async helps at all, running work concurrently, adding timeouts or cancellation, offloading blocking or CPU-bound calls, building async context managers and iterators, or diagnosing a hung or blocked event loop.
+description: Write and fix concurrent Python with asyncio. Use when deciding whether async helps at all, running tasks concurrently, adding timeouts or cancellation, offloading a blocking call from the event loop, building async context managers and iterators, or diagnosing a hung or blocked event loop.
 license: MIT
 compatibility: Examples target Python 3.11+, where TaskGroup and asyncio.timeout exist. Fallbacks for older versions are noted where they differ.
 metadata:
@@ -10,7 +10,8 @@ metadata:
 # Python Async Patterns
 
 Concurrency with asyncio: structuring it, bounding it, cancelling it, and finding out why it stalled. Testing
-async code is `python-testing`. Using more than one core for CPU-bound work is `python-parallelism`.
+async code is `python-testing`. This skill hands work off the event loop; choosing threads or processes for
+that work, and running the pool, is `python-parallelism`.
 
 ## Respect Project Conventions
 
@@ -32,7 +33,7 @@ wins only when that thing is usually blocked on I/O.
 | Workload                                          | Use                                                         |
 | ------------------------------------------------- | ----------------------------------------------------------- |
 | Many concurrent network or database calls         | asyncio                                                     |
-| CPU-bound computation                             | `ProcessPoolExecutor`, or a library that releases the GIL   |
+| CPU-bound computation                             | Not asyncio: `python-parallelism`                           |
 | Mixed I/O and CPU                                 | asyncio, with the CPU work offloaded to a thread or process |
 | A handful of sequential calls, a short script     | Plain synchronous code                                      |
 | One request at a time, blocking library available | Plain synchronous code                                      |
@@ -57,8 +58,8 @@ async def fetch_all(urls: list[str]) -> list[Response]:
     return [t.result() for t in tasks]
 ```
 
-This shows the grouping only. A real `fetch` needs a timeout and the fan-out needs a bound; both are in the
-next section, and the checklist at the end requires them.
+This shows the grouping only: a real `fetch` also needs a timeout and a concurrency bound, both in the next
+section.
 
 Handle the failures with `except*`:
 
@@ -75,22 +76,18 @@ except* ValueError as eg:
 
 ### Why Not gather
 
-`asyncio.gather` is still correct for simple cases, but its failure behavior surprises people. Measured on
-CPython 3.13.15: when one coroutine raises, `gather` propagates that exception immediately **and leaves the
-other tasks running**. A sibling scheduled to finish later still finished after the exception had already
-propagated.
-
-That is a leak: work continues after the caller has moved on, holding connections and possibly writing
-somewhere, with nothing awaiting its result. `TaskGroup` cancels siblings instead, which is almost always what
-was meant.
+When one coroutine raises, `asyncio.gather` propagates that exception immediately **and leaves the other tasks
+running**. That is a leak: work continues after the caller has moved on, holding connections and possibly
+writing somewhere, with nothing awaiting its result. `TaskGroup` cancels siblings instead, which is almost
+always what was meant.
 
 ```python
 results = await asyncio.gather(*coros, return_exceptions=True)
 ```
 
 `return_exceptions=True` returns exceptions inline as results rather than raising, so the call always
-completes. Use it when you genuinely want every result including the failures, and remember that you must then
-inspect the list — `isinstance(r, Exception)` — because nothing raises on your behalf.
+completes. Use it when you want every result including the failures, then inspect the list with
+`isinstance(r, Exception)`, because nothing raises on your behalf.
 
 Reach for `gather` when you want a list of results from a fixed set of coroutines and no cancellation
 semantics. Reach for `TaskGroup` the rest of the time.
@@ -100,11 +97,11 @@ semantics. Reach for `TaskGroup` the rest of the time.
 Neither `TaskGroup` nor `gather` gives you a result before the whole batch is ready. `asyncio.as_completed`
 yields each awaitable in completion order, which is what you want to stream results, show progress, or stop
 early on the first good answer. **Its interface changed in 3.13, and the two versions call for different
-code.** Measured on CPython 3.12.14 and 3.13.15:
+code.**
 
 **On 3.12 and earlier** it is a plain generator that yields opaque coroutine wrappers, not the tasks you passed
-in. `async for` over it raises `TypeError`, and the wrapper tells you nothing about which input it came from,
-so the returned value is your only clue. Carry the identity in the result:
+in. `async for` over it raises `TypeError`, and the wrapper does not say which input it came from, so carry the
+identity in the result:
 
 ```python
 for wrapper in asyncio.as_completed(coros):
@@ -112,16 +109,15 @@ for wrapper in asyncio.as_completed(coros):
     record(name, value)
 ```
 
-**On 3.13 and later** it is also an async iterator, and iterating it that way yields the **original** task
-objects. The identity is right there, so the workaround above is unnecessary:
+**On 3.13 and later** it is also an async iterator, and `async for` yields the **original** task objects:
 
 ```python
 async for task in asyncio.as_completed(tasks):
     record(await task)
 ```
 
-The 3.12 form still works on 3.13 — including the opaque wrappers, which the *synchronous* iterator still
-yields there. Write the 3.12 form when the code must run on both; switch only where 3.13 is the floor.
+The synchronous iterator still yields wrappers on 3.13, so the 3.12 form runs on both. Write it when the code
+must support 3.12; use `async for` where 3.13 is the floor.
 
 Either way, `as_completed` inherits `gather`'s leak: on both versions, when one task raises, the exception
 propagates and **the siblings keep running**. Wrap the loop in a `TaskGroup`, or cancel the rest yourself once
@@ -155,10 +151,10 @@ async with asyncio.timeout(30):              # the caller's budget for the whole
                 raise
 ```
 
-Nested `asyncio.timeout` blocks compose, measured on CPython 3.12.14 and 3.13.15: the inner one firing raises
-`TimeoutError` inside the block, leaving the loop in control, and the outer one firing cuts the whole thing off
-mid-attempt at its own deadline. Retrying inside an outer budget is therefore bounded by it, which is the
-point — retries without one multiply the worst case by the attempt count.
+Nested `asyncio.timeout` blocks compose: the inner one firing raises `TimeoutError` inside the block, leaving
+the loop in control, and the outer one firing cuts the whole thing off mid-attempt at its own deadline. The
+outer budget therefore bounds the retries, which without one multiply the worst case by the attempt count.
+Backoff, jitter, and which failures are safe to retry are in [structure.md](references/structure.md).
 
 Bound concurrency too. Ten thousand tasks against one API is a denial-of-service attack on your own
 dependency:
@@ -206,55 +202,53 @@ except asyncio.CancelledError:
     raise
 ```
 
-Verified on CPython 3.12.14 and 3.13.15: the shielded coroutine completed after its awaiting task had been
-cancelled.
+`shield` protects the **inner** coroutine, not the `await` on it: the awaiting task still receives
+`CancelledError` at that line, so the `await` can raise while `commit()` keeps running detached. Shield only
+the cleanup step that genuinely cannot be abandoned, and give it a timeout; a shielded task body is something
+shutdown cannot stop.
 
-Read what `shield` actually protects. It protects the **inner** coroutine, not the `await` on it: the awaiting
-task still receives `CancelledError` at that line, so the `await` can raise while `commit()` keeps running
-detached. Give it a timeout, keep it to work that genuinely cannot be abandoned, and never shield the main body
-of a task — that is how you build something shutdown cannot stop.
-
-## Never Block the Loop
+## Keep Blocking Calls Off the Loop
 
 One blocking call stalls every task in the process. `time.sleep`, `requests.get`, a synchronous database
 driver, `open().read()` on a slow disk, and any CPU-heavy loop all do it.
 
 ```python
-result = await asyncio.to_thread(blocking_call, arg)          # I/O-bound blocking library
+result = await asyncio.to_thread(blocking_call, arg)          # blocking I/O library, default thread pool
 
-with ProcessPoolExecutor() as pool:                           # CPU-bound
-    loop = asyncio.get_running_loop()
-    result = await loop.run_in_executor(pool, cpu_heavy, arg)
+loop = asyncio.get_running_loop()
+result = await loop.run_in_executor(pool, cpu_heavy, arg)     # CPU-bound: a long-lived process pool
 ```
 
-`asyncio.to_thread` (3.9+) suits a blocking I/O library with no async equivalent.
-For sustained CPU parallelism on GIL-enabled CPython, prefer a process pool. Threads can suit native code that releases
-the GIL or a compatible free-threaded runtime. Check the workload and runtime before choosing an executor.
+`asyncio.to_thread` (3.9+) suits a blocking I/O library with no async equivalent. Create a process pool once
+and reuse it rather than per call; whether the work wants threads or processes is `python-parallelism`'s
+question. `run_in_executor` drops `contextvars`, which [structure.md](references/structure.md) covers.
 
 Run with `PYTHONASYNCIODEBUG=1` during development. The loop then logs any callback that takes too long, which
 finds accidental blocking that reading the code does not.
 
 ## Structure
 
-Async context managers and iterators, background task lifetime, queues, producer-consumer shapes, and carrying
-request context across tasks with `contextvars` are in [structure.md](references/structure.md). Read it when
-the work is a pipeline or a long-lived service rather than a batch of calls.
+Read [structure.md](references/structure.md) when the work is a pipeline, a long-lived service, or a resource
+to acquire and release, rather than a batch of calls. It covers async context managers and iterators,
+background task ownership, queues and backpressure, graceful shutdown, synchronization primitives, request
+context with `contextvars`, and retries.
 
 ## Diagnosing
 
-| Symptom                                      | Look at                                                      |
-| -------------------------------------------- | ------------------------------------------------------------ |
-| Nothing runs concurrently                    | Awaiting each call in a loop instead of scheduling first     |
-| Whole process stalls                         | A blocking call on the loop; run with `PYTHONASYNCIODEBUG=1` |
-| Hangs on shutdown or Ctrl-C                  | `CancelledError` caught without re-raising                   |
-| `coroutine ... was never awaited`            | A coroutine created and dropped; nothing ran                 |
-| Work continues after an error                | `gather` without `TaskGroup`; siblings are not cancelled     |
-| `attached to a different loop`               | An object created under one loop used under another          |
-| `cannot be called from a running event loop` | `asyncio.run` in a notebook, test or handler; just `await`   |
-| Unbounded memory or connection errors        | No semaphore, or a client created per request                |
+| Symptom                                      | Look at                                                    |
+| -------------------------------------------- | ---------------------------------------------------------- |
+| Nothing runs concurrently                    | Awaiting each call in a loop instead of scheduling first   |
+| Whole process stalls                         | A blocking call on the loop; run in debug mode             |
+| Hangs on shutdown or Ctrl-C                  | `CancelledError` caught without re-raising                 |
+| `coroutine ... was never awaited`            | A coroutine created and dropped; nothing ran               |
+| Work continues after an error                | `gather` without `TaskGroup`; siblings are not cancelled   |
+| `attached to a different loop`               | An object created under one loop used under another        |
+| `cannot be called from a running event loop` | `asyncio.run` in a notebook, test or handler; just `await` |
+| Unbounded memory or connection errors        | No semaphore, or a client created per request              |
 
-Deeper diagnosis, including `asyncio.all_tasks` snapshots and reading a stalled loop, is in
-[diagnosing.md](references/diagnosing.md).
+Read [diagnosing.md](references/diagnosing.md) when the row's fix does not resolve the symptom, when the
+symptom is not listed, or when async code runs slower than the synchronous version. It covers `asyncio.all_tasks`
+snapshots, `py-spy`, and each row in depth.
 
 ## The Ecosystem
 
@@ -269,9 +263,8 @@ Prefer the standard library. Reach for these when they solve a problem you actua
 | [aiofiles](https://github.com/Tinche/aiofiles)                                           | File I/O offloaded to a thread pool behind an async API                           |
 | [httpx](https://github.com/encode/httpx), [aiohttp](https://github.com/aio-libs/aiohttp) | Async HTTP clients                                                                |
 
-Check the upstream documentation for the current API rather than trusting a summary. Note that Trio is a
-different runtime, not a library you add to an asyncio program; anyio is the way to write code that runs on
-both.
+Check the upstream documentation for the current API rather than trusting a summary. Trio replaces asyncio
+rather than adding to it, so an asyncio program adopts anyio to support both.
 
 ## Before Calling Async Code Done
 
