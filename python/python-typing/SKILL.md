@@ -13,8 +13,9 @@ Annotations that a type checker can act on, and the checker itself. This skill i
 capable writer stalls: variance, Protocols, narrowing the checker refuses to follow, and getting an existing
 codebase to pass strict mode.
 
-Ordinary signature defaults live in `python-style`. Use this skill for annotation interfaces, checker configuration,
-and problems the checker exposes.
+Ordinary signature defaults and value types live in `python-style`, runtime validation of external data in
+`python-error-handling`, and wiring the checker into hooks and CI in `python-project-management`. Use this skill
+for annotation interfaces, checker configuration, and problems the checker exposes.
 
 ## Respect Project Conventions
 
@@ -38,12 +39,12 @@ An explicit modernization or conventions review permits broader recommendations.
 - **Which Python version it targets.** That decides whether PEP 695 syntax, `Self`, and `override` are
   available.
 
-Never tighten a project's checker configuration as a side effect of another task.
+Leave the checker configuration as you found it unless the task is to change it; tightening it as a side effect
+of another task turns that task into a migration.
 
 ## Generics
 
-Use built-in collection annotations and union syntax supported by the project's Python floor.
-Import abstract collection interfaces from `collections.abc` when supported by that floor.
+Import abstract collection interfaces from `collections.abc` when the project's Python floor supports them.
 Accept the capabilities a function needs: use `Sequence` for indexing and `Iterable` for iteration alone.
 
 Python 3.12 (PEP 695) declares type parameters inline. No `TypeVar` import, and the scope is explicit:
@@ -60,9 +61,6 @@ def first[T](items: Sequence[T]) -> T | None:
     return items[0] if items else None
 ```
 
-Verified with mypy 2.3.1 under `--strict`: `Box(1).get()` reveals `int`, and `first(["a"])` reveals
-`str | None`.
-
 Before 3.12, the same thing with an explicit `TypeVar`:
 
 ```python
@@ -72,20 +70,14 @@ class Box(Generic[T]):
     ...
 ```
 
-Both forms are correct; use whichever the project's floor allows. Do not mix them in one file.
+Both forms are correct; use whichever the project's floor allows, and keep one form per file.
 
-**Bound a type parameter when the code calls methods on it**, or the checker has to assume `object`:
+Bound a type parameter when the code calls methods on it, or the checker has to assume `object`. Prefer a
+bound (`T: float`) to a constraint (`T: (int, str)`): a constraint solves to one of the listed types exactly,
+losing any subtype, so reach for it only when the implementation genuinely branches on which it received.
 
-```python
-def largest[T: float](items: Sequence[T]) -> T: ...          # bound: T is float or a subtype
-def parse[T: (int, str)](raw: str, kind: type[T]) -> T: ...  # constraint: exactly int or exactly str
-```
-
-Prefer a bound. A constraint solves to one of the listed types exactly, losing any subtype, so reach for it
-only when the implementation genuinely branches on which it received. Both forms, and a `Comparable` protocol
-to bind against, are in [generics.md](references/generics.md).
-
-Variance, `ParamSpec`, `TypeVarTuple` and overloads are also there.
+Read [generics.md](references/generics.md) when a generic signature rejects a call that looks correct, or when
+writing bounds, variance, `Self`, overloads, `ParamSpec`, `TypedDict`, or type aliases.
 
 ## Protocols Over Inheritance
 
@@ -107,7 +99,7 @@ That is the point: the caller is not forced to import your base class.
 | `Protocol` | You consume something and only care about its shape                                |
 | ABC        | You provide a base class with shared implementation, and want an explicit registry |
 
-Protocols are the right default for a function parameter. Reach for an ABC when there is behavior to inherit.
+Protocols are the right default for a function parameter.
 
 Add `@runtime_checkable` only if you need `isinstance`, and know that it checks method names only, not
 signatures.
@@ -125,9 +117,11 @@ def process(user_id: str) -> UserData:
 ```
 
 `isinstance`, `is None`, `assert`, and a truthiness check all narrow. What does not narrow is a check the
-checker cannot connect to the value: a helper returning `bool`, a lookup in a dict, or a flag set earlier.
+checker cannot connect to the value: a helper returning `bool`, or a `dict.get()` check followed by a
+subscript. A condition stored in a local flag first narrows under pyright but not under mypy.
 
-For a predicate, choose `TypeIs` (3.13+) when the narrowed type is compatible with the input type.
+To make a helper narrow, give it a `TypeIs` or `TypeGuard` return. Choose `TypeIs` (3.13+) when the narrowed
+type is compatible with the input type.
 For an invariant container narrowing such as `list[object]` to `list[str]`, use `TypeGuard`:
 
 ```python
@@ -155,11 +149,10 @@ def describe(color: Color) -> str:
             assert_never(color)
 ```
 
-Verified with mypy 2.3.1: adding `Color.GREEN` to the enum without adding a branch produces
+Adding `Color.GREEN` to the enum without adding a branch makes mypy report
 `Argument 1 to "assert_never" has incompatible type "Literal[Color.GREEN]"; expected "Never"`. It names the
-case you forgot, which is why this beats a `raise ValueError` default.
-
-Use it wherever an enum or a discriminated union is matched and every case must be handled.
+case you forgot, which is why this beats a `raise ValueError` default wherever an enum or a discriminated
+union is matched and every case must be handled.
 
 ## Any
 
@@ -173,8 +166,8 @@ Legitimate uses:
 - A deliberate escape hatch with a comment saying why.
 
 Prefer the narrower option where one exists. `object` when you accept anything but will check before using it.
-`dict[str, Any]` rather than bare `Any` for a payload whose shape is partly known. A `TypedDict` or a
-validation library once the shape is known at all.
+`dict[str, Any]` rather than bare `Any` for a payload whose shape is partly known. A `TypedDict` once the
+shape is known at all.
 
 Confine `Any` to the boundary. Convert to a real type immediately, and everything inward stays checked.
 
@@ -187,16 +180,13 @@ mypy src/
 pyright src/
 ```
 
-A useful starting configuration, and the per-module ladder for a codebase that does not pass yet, are in
-[checker-setup.md](references/checker-setup.md). Read it before turning on `strict` anywhere that has
-existing code.
+Read [checker-setup.md](references/checker-setup.md) before turning on `strict` anywhere that has existing
+code, when setting up a checker, when writing a suppression, or when the checker and the code disagree. It
+holds the starting configuration, the per-module ladder, and the debugging order.
 
-Two habits worth having:
-
-- **`reveal_type(x)`** makes the checker print what it thinks a value is. It is the fastest way to find where
-  an inference went wrong, and it needs no import.
-- **Never add a bare `# type: ignore`.** Use `# type: ignore[error-code]` so the suppression stops working
-  when the error changes, and enable `warn_unused_ignores` so stale ones get reported.
+Write every suppression as `# type: ignore[error-code]`, so it stops working when the error changes; mypy's
+`strict` already reports stale ones through `warn_unused_ignores`. pyright honours any `# type: ignore` as
+a blanket suppression, whatever code the brackets name.
 
 ## Common Complaints
 
@@ -207,11 +197,9 @@ Two habits worth having:
 | `Returning Any from function declared to return X`                    | An untyped dependency is leaking; convert at the boundary           |
 | `Argument has incompatible type "list[Dog]"; expected "list[Animal]"` | `list` is invariant; take `Sequence[Animal]`                        |
 | `Cannot determine type of "x"`                                        | Circular inference; annotate the attribute explicitly               |
-| `Module has no attribute` on a real attribute                         | Missing stubs; install the `types-*` package                        |
+| `Library stubs not installed for "x"`                                 | Missing stubs; install the `types-*` package                        |
+| `Module has no attribute` on a real attribute                         | The type information omits it: stale stubs, or a runtime attribute  |
 | `Need type annotation for "x"`                                        | Inference had nothing to work from                                  |
-
-Variance, the `list` versus `Sequence` rule, and the rest of the container guidance are in
-[generics.md](references/generics.md).
 
 ## Before Calling Typing Work Done
 

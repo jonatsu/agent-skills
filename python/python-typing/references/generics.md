@@ -27,9 +27,9 @@ def total_weight(animals: Sequence[Animal]) -> float:      # accepts list[Dog]
 | Read a mapping                | `Mapping[K, V]`                           | Covariant in `V` |
 | Mutate the caller's container | `list[T]`, `dict[K, V]`, `MutableMapping` | Invariant        |
 
-**Take the narrowest capability you use.** A parameter typed `Sequence` rather than `list` accepts tuples and
-any other sequence, documents that the function does not mutate, and stops the variance error before it
-happens. Return concrete types (`list[str]`), accept abstract ones (`Sequence[str]`).
+A parameter typed `Sequence` rather than `list` accepts tuples and any other sequence, documents that the
+function does not mutate, and stops the variance error before it happens. Return concrete types
+(`list[str]`), accept abstract ones (`Sequence[str]`).
 
 Callables are contravariant in their parameters and covariant in their return: a `Callable[[Animal], Dog]` is
 usable where `Callable[[Dog], Animal]` is expected. This is why a handler taking a broader input type is
@@ -66,9 +66,6 @@ def parse[T: (int, str)](raw: str, kind: type[T]) -> T: ...   # constraint: T is
 A **bound** admits any subtype and keeps the specific type in the result. A **constraint** admits only the
 listed types, and the checker solves for one of them exactly — a subclass of `int` resolves to `int`, losing
 the subtype.
-
-Prefer a bound. Reach for constraints only when the implementation genuinely branches on which of a fixed set
-it received.
 
 Bound to a Protocol when the code calls methods:
 
@@ -112,8 +109,8 @@ implementation runs; the overloads are signatures only.
 
 Order matters: the checker takes the first matching overload, so put the more specific signatures first.
 
-Do not reach for overloads when a union return would do. Three overloads to avoid one `| None` is a cost with
-no benefit.
+Use a union return when callers can handle every member of it; three overloads to avoid one `| None` is a
+cost with no benefit.
 
 ## ParamSpec: Decorators That Preserve Signatures
 
@@ -151,11 +148,10 @@ class UserPayload(TypedDict):
 ```
 
 `NotRequired` marks optional keys; `total=False` makes every key optional. A `TypedDict` is checked
-structurally at type-check time only — it is a plain `dict` at runtime and validates nothing. Use a validation
-library when the data arrives from outside the program.
+structurally at type-check time only; it is a plain `dict` at runtime and validates nothing, so external data
+still needs validating at the boundary.
 
-Prefer a real class, or an `attrs`/dataclass value type, when the thing has behavior or invariants. `TypedDict`
-is for data that genuinely is a dict.
+`TypedDict` is for data that genuinely is a dict. Give a thing with behavior or invariants a class.
 
 ## Type Aliases
 

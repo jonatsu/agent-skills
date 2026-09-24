@@ -27,12 +27,13 @@ warn_unused_ignores = true
 `strict = true` is a bundle. Turning it on for a codebase that has never been checked produces thousands of
 errors, which is why projects abandon it on day one.
 
-Two settings are worth naming even inside `strict`:
+Two settings are worth naming explicitly:
 
 - **`warn_unused_ignores`** reports a `# type: ignore` that no longer suppresses anything, so suppressions get
-  removed when the underlying problem is fixed rather than accumulating forever.
+  removed when the underlying problem is fixed rather than accumulating forever. `strict` already enables it;
+  list it anyway so it stays on if `strict` is later dropped.
 - **`warn_unreachable`** flags code the checker proves cannot run, which is usually a narrowing bug or a
-  condition that is always false.
+  condition that is always false. `strict` does not enable it.
 
 ### Adopting Strict Gradually
 
@@ -51,8 +52,7 @@ ignore_errors = true
 The exemption list is then a visible, shrinking backlog. The alternative — global leniency — has no such list,
 and nothing ever tightens.
 
-Annotate test function signatures too. Preserve explicitly configured exceptions in existing projects;
-introduce new exceptions only as part of an authorized typing migration.
+Annotate test function signatures too.
 
 ### Third-Party Libraries Without Types
 
@@ -85,8 +85,9 @@ typeCheckingMode = "strict"
 include = ["src"]
 ```
 
-Modes are `off`, `basic`, `standard` and `strict`. Per-directory overrides use `executionEnvironments`, and
-`reportMissingTypeStubs` is the setting that most often needs relaxing early.
+Modes are `off`, `basic`, `standard` and `strict`. For gradual adoption, set a lenient mode globally and list
+the paths that already pass in the `strict` array. Per-directory rule overrides use `executionEnvironments`,
+and `reportMissingTypeStubs`, an error only in strict mode, is the setting that most often needs relaxing early.
 
 pyright understands some inference that mypy does not, and vice versa. Code that passes one is not guaranteed
 to pass the other.
@@ -97,11 +98,14 @@ to pass the other.
 result = legacy_call()  # type: ignore[no-any-return]
 ```
 
-Always name the error code. A bare `# type: ignore` hides every present and future error on that line,
-including ones introduced later by an unrelated change.
+A bare `# type: ignore` hides every present and future error on that line, including ones introduced later by
+an unrelated change.
 
-pyright's equivalent is `# pyright: ignore[reportGeneralTypeIssues]`, and it ignores mypy's comments. A project
-running both needs both forms, which is another reason to run one.
+pyright honours `# type: ignore` by default (`enableTypeIgnoreComments`), but as a blanket suppression that
+disregards the bracketed code, so a mypy-coded comment silences every pyright error on its line. pyright's own
+form, `# pyright: ignore[reportGeneralTypeIssues]`, names its rule. basedpyright ignores `# type: ignore` in its
+default and `recommended` modes but honours it under `typeCheckingMode = "strict"`. A project running two
+checkers pays for both conventions, which is another reason to run one.
 
 For a whole file, `# mypy: ignore-errors` at the top is preferable to a per-line sweep — it is one visible
 marker rather than fifty invisible ones, and it greps.
@@ -111,8 +115,7 @@ marker rather than fifty invisible ones, and it greps.
 Check `src/`, not the whole tree. Checking generated code, vendored code and build output produces errors
 nobody will act on.
 
-Where the checker runs is a per-project decision. Look at what the project already does before adding it
-anywhere; `python-project-management` covers wiring it into gates, including why a file-scoped invocation
+Before adding the checker to a hook or CI step, load `python-project-management`: a file-scoped invocation
 sees a different program than a full run.
 
 ## Debugging a Disagreement

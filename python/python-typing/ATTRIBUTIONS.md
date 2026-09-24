@@ -51,3 +51,12 @@ Reviewed Integralist's `.claude/rules/python.md` in `Integralist/agent-skills` a
 The comparison informed the guidance on abstract collection imports and parameter capabilities.
 The expression is independent; no upstream text or code is copied or adapted.
 No license covering these rules was found in the pinned tree; the MCP component has separate licensing.
+
+## Corrections, 2026-09-24
+
+- Verified on 2026-09-24 with pyright 1.1.414, basedpyright 1.40.1 and mypy 2.3.1 on probe files, plus the
+  pyright configuration docs: pyright honours any `# type: ignore` as a blanket suppression (it does not
+  ignore mypy's comments), basedpyright does not in its default and `recommended` modes but does under
+  `strict`; a flag-stored condition narrows in pyright only; missing
+  stubs report `Library stubs not installed` rather than `Module has no attribute`; `--strict` enables
+  `warn_unused_ignores` but not `warn_unreachable`.
