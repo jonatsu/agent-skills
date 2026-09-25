@@ -1,6 +1,6 @@
 ---
 name: chezmoi-dotfiles
-description: Manage dotfiles with chezmoi. Use when editing, applying, or syncing managed files; resolving source/target drift or overwritten local changes; or working on chezmoi templates, encrypted files, .chezmoiignore, .chezmoiscripts, and run_once_ scripts.
+description: Manage dotfiles with chezmoi. Use when setting up a new machine; adding, editing, re-adding, forgetting, applying, or syncing managed files; resolving source/target drift; or working on chezmoi templates, encrypted files, ignores, and scripts.
 license: MIT
 compatibility: Requires chezmoi. Git is required for source repositories that use Git.
 metadata:
@@ -22,10 +22,9 @@ Read the repository and machine instructions before changing files. Determine:
 - whether the source directory uses Git, templates, encryption, scripts, or automatic apply and push;
 - whether the actual file contains changes that chezmoi did not write.
 
-Inspect automatic Git behavior with `chezmoi dump-config` before changing source state. If `git.autoPush` is
-enabled and the user has not authorized publishing, stop before a source-changing command. If
-`git.autoCommit` is enabled and the user has not authorized a commit, stop before a source-changing command.
-Do not treat automatic Git configuration as authorization.
+Inspect automatic Git behavior with `chezmoi dump-config` before changing source state. If `git.autoCommit` or
+`git.autoPush` would commit or publish without authorization, stop before a source-changing command. The
+configuration does not supply authorization.
 
 Inspect `chezmoi status [target]...` before choosing a direction. Its columns are:
 
@@ -38,6 +37,17 @@ actual state with the rendered target: removed lines come from the actual file a
 target state.
 
 ## Choose the Change Direction
+
+### Add a New Target
+
+When an actual file should become managed, inspect it for secrets and check whether its parent directory is
+already managed. Use `chezmoi add <target>` for an ordinary file, or select `--template` or `--encrypt` when
+needed. Adding an already managed target replaces its source state with the actual file, so check its status
+and source diff before doing so. After adding, inspect `chezmoi source-path <target>` and the source repository
+diff, then verify the rendered target.
+
+For a target that does not yet exist, use `chezmoi add --new <target>` after checking the installed help. A
+directory add recurses by default, so limit its scope before it captures unrelated files.
 
 ### Change Source State, Then Apply
 
@@ -63,13 +73,24 @@ the affected targets and the user's authority.
 
 Use this path when the actual file contains the desired change:
 
-1. Inspect `chezmoi status <target>` and `chezmoi source-path <target>`.
-2. Run `chezmoi re-add <target>` for a managed non-template file.
-3. Inspect the source repository diff and confirm that only the intended source path changed.
+1. Inspect `chezmoi status <target>`, `chezmoi diff <target>`, and `chezmoi source-path <target>` to confirm
+   that the actual file is the version to preserve.
+2. Run `chezmoi re-add <target>` for a modified managed file. It preserves an `encrypted_` attribute but does
+   not overwrite templates or re-add non-file entries.
+3. Inspect the source repository diff and `chezmoi diff <target>`. Confirm that only the intended source path
+   changed and that the rendered result matches the desired actual file.
 
-Current `re-add` does not overwrite templates. Update a template with `chezmoi edit <target>` or reconcile it
-with `chezmoi merge <target>`, then preview and apply the rendered result. Check live help when supporting an
-older chezmoi version.
+With no target, `chezmoi re-add` captures every modified managed file. A directory target recurses by default;
+use `--recursive=false` when that recursion is unwanted. Review each affected path and automatic Git behavior
+before either broad form. Update a template with `chezmoi edit <target>` or reconcile it with
+`chezmoi merge <target>`, then preview and apply the rendered result.
+
+### Stop Managing a Target
+
+Use `chezmoi forget <target>` when the target should remain in the home directory but leave source state. Check
+that it is managed, name the exact target, and review the source repository diff afterward. `forget` cannot
+remove an external; change its owning external declaration instead. Confirm the actual file still exists.
+Keep interactive confirmation unless the specific operation and target have already been authorized.
 
 ### Reconcile Divergence
 
@@ -104,8 +125,14 @@ run it with dirty source work. Use `chezmoi update --apply=false` to pull withou
 different side effects; inspect it before execution.
 
 Before committing, inspect the index and source diff. Stage explicit source paths only. Push only when the
-user has authorized publishing to the resolved remote and branch. Automatic `git.autoCommit` or
-`git.autoPush` configuration does not supply missing authorization.
+user has authorized publishing to the resolved remote and branch.
+
+## Set Up a New Machine
+
+For a new machine or first source initialization, read [references/bootstrap.md](references/bootstrap.md)
+before running `chezmoi init`. Resolve the source repository, config template, local changes, secrets, and
+scripts before applying. Treat `init --apply` as an apply operation with the same target and side-effect checks
+as an ordinary apply.
 
 ## Templates, Scripts, and Ignores
 
@@ -129,6 +156,11 @@ Scripts that call chezmoi should use the executable path supplied by chezmoi:
 "$CHEZMOI_EXECUTABLE" age decrypt ...
 ```
 
+Chezmoi computes source, destination, and target states before running `run_before_` scripts. Externals are
+updated later with target entries, so a `run_before_` script must not depend on a newly applied external. Put
+that work in `run_after_`. Do not let an apply script change source or destination state while chezmoi is
+running; chezmoi's behavior is undefined if those states change during the run.
+
 `run_once_` records each successfully executed rendered-content hash. A changed rendered script can run
 again, even with the same filename. `chezmoi state delete-bucket --bucket=scriptState` clears the history for
 all `run_once_` scripts, so disclose that broad effect and obtain approval before using it.
@@ -149,6 +181,12 @@ Never store plaintext credentials in source state. Prefer password-manager templ
 
 Treat rendered output, diffs, logs, and temporary merge files as sensitive when templates or encrypted files
 produce secrets. Do not publish source changes until secret checks and the staged diff are clean.
+
+## Diagnose Problems
+
+When configuration, dependencies, or unexpected chezmoi behavior need diagnosis, run `chezmoi doctor` and
+inspect its findings before changing source or target state. Use `chezmoi doctor --no-network` when network
+access is not authorized or needed.
 
 ## Completion
 
