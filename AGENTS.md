@@ -8,7 +8,7 @@ Read the focused source before acting:
 - `archived/README.md` defines the archive procedure and recovery commands, and its "Review is deferred" rows
   are the record of which reviews are still outstanding.
 - `TODO.md` holds operational and future-feature backlog and unevaluated candidate sources.
-- `../docs/evaluations/2026-09-shared-skill-review.md` holds the completed review's verdicts, evidence, and
+- `../docs/evaluations/skills/2026-09-shared-skill-review.md` holds the completed review's verdicts, evidence, and
   coverage limits. It is a dated record, not a ledger; do not add status to it.
 
 ## Commands
@@ -40,8 +40,9 @@ first fails, and accepts a path relative to wherever you are.
   skill. Its portable tool guidance complements this file's hook and lock workflow.
 - Keep a skill's `description` an inline YAML scalar. Neither validator catches a folded one;
   `just skills-descriptions` does.
-- Record a review's verdict, evidence, and coverage limits in a dated file under `../docs/evaluations/` in the
-  same work, and clear the "Review is deferred" note in `archived/README.md` when a deferred review completes.
+- Record a review's verdict, evidence, and coverage limits in a dated file under
+  `../docs/evaluations/skills/` in the same work, and clear the "Review is deferred" note in
+  `archived/README.md` when a deferred review completes.
 - Keep an `ATTRIBUTIONS.md` source entry permanently, restated in the past tense once the material is replaced.
   Rewriting or independently re-deriving adapted material changes the current revision only; the revisions that
   carried it stay in git history, so deleting the entry hides a relationship a later reader still needs. This is why

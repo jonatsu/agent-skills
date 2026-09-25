@@ -30,7 +30,7 @@ survey, and static review catalogue are not retained.
 
 ## Planning-Skill Evaluation
 
-- Evidence record: `docs/evaluations/technical-design-planning-initial.md`
+- Evidence record: `docs/evaluations/skills/technical-design-planning-initial.md`
 - Source commits: initial evidence `75c7ada`, repaired skills `716a68f`, accepted repair evidence `75b331d`, and client
   invocation record `1d35960`
 - Relationship: direct local execution evidence

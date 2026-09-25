@@ -75,7 +75,7 @@ adapted. Its Claude-specific runner, viewer, fixed counts, subagent workflow, an
 excluded.
 
 The same revision incorporates lessons from this repository's `docs/plans/evaluation/prompt-eval-harness.md` and
-`docs/evaluations/technical-design-planning-initial.md`. Those records supplied the preflight, permission,
+`docs/evaluations/skills/technical-design-planning-initial.md`. Those records supplied the preflight, permission,
 future-turn isolation, durable trace, failure classification, continuation, and model-allowance requirements.
 They are same-author project evidence rather than third-party material.
 

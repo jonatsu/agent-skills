@@ -75,8 +75,8 @@ many. Then route it:
 | A missing check, lint rule, or hook             | the repository's gates                                                     |
 | Nothing exists that would have prevented it     | a new skill, or an accepted cost stated as such                            |
 
-Record the review under `docs/evaluations/YYYY-MM-DD-<subject>.md` as a dated record. It states what was true
-against one corpus on one day; never rewrite one to match a later run.
+Record the review under `docs/evaluations/skills/YYYY-MM-DD-<subject>.md` as a dated record. It states what
+was true against one corpus on one day; never rewrite one to match a later run.
 
 ## Never
 

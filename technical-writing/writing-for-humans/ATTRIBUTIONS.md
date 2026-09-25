@@ -37,7 +37,7 @@ adaptation, and AI-mark diagnosis.
   skill's stance on evidence and its language-general scope, for the same reasons recorded against
   `Anbeeld/WRITING.md` below. Upstream's sentence-case heading rule is declined because it contradicts this
   skill's heading convention. Its bold rule was adopted only after measurement, recorded in
-  `docs/evaluations/2026-09-09-humanizer-prose-comparison.md`.
+  `docs/evaluations/skills/2026-09-09-humanizer-prose-comparison.md`.
 
 - [jpeggdev/humanize-writing](https://github.com/jpeggdev/humanize-writing) informed the warning that
   specificity rules can pressure a writer to invent details. MIT, Copyright (c) 2025 jpeggdev.

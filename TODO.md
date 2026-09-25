@@ -1,11 +1,11 @@
 # Skills Future Work
 
 Operational and future-feature backlog for the skills stack, including candidate sources not yet evaluated.
-The completed 2026-09 review's verdicts and evidence are the record in
-[../docs/evaluations/2026-09-shared-skill-review.md](../docs/evaluations/2026-09-shared-skill-review.md), and
+The completed 2026-09 review's verdicts and evidence are in the
+[shared-skill review](../docs/evaluations/skills/2026-09-shared-skill-review.md), and
 archived reviews still deferred are the rows marked "Review is deferred" in
 [archived/README.md](archived/README.md). The restored embedded skills' completed review campaign is recorded
-in [../docs/evaluations/2026-09-16-embedded-skill-review-ledger.md](../docs/evaluations/2026-09-16-embedded-skill-review-ledger.md);
+in [../docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md](../docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md);
 their surviving open work is below, and the embedded research notes (tooling, testing, QEMU candidates) are in
 [../docs/research/embedded-skills/](../docs/research/embedded-skills/).
 Repository-wide items live in [../TODO.md](../TODO.md). Roughly high-priority first; the settled/low-priority
@@ -57,7 +57,7 @@ already concluded.
 ## Description Activation Is Unmeasured
 
 The 2026-09 audit rewrote 13 short capability-only descriptions to carry activation clauses and triggers
-(completed 2026-09-07; findings in ../docs/evaluations/2026-09-07-skill-description-audit.md, edits in git
+(completed 2026-09-07; findings in ../docs/evaluations/skills/2026-09-07-skill-description-audit.md, edits in git
 history). Whether the wording drives activation is unmeasured and nothing depends on settling it. Two of the
 13 describe a situation a user never names — `systematic-debugging` and `repo-management`; if they still do
 not activate on work they cover, move their behavior to `agents/rules/` per this directory's AGENTS.md ("no
@@ -188,8 +188,8 @@ Check for these four classes, each of which occurred in the Yocto package:
 
 Scope: a bounded recheck against pinned upstreams and each package's description, not new behavioral
 evaluation (that and hardware qualification stay deferred per the
-[review-ledger record](../docs/evaluations/2026-09-16-embedded-skill-review-ledger.md)). Record findings in a
-dated file under `../docs/evaluations/`.
+[review-ledger record](../docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md)). Record findings in a
+dated file under `../docs/evaluations/skills/`.
 
 ## Crypto and FIPS Depth for the Yocto Security Set
 
@@ -241,7 +241,7 @@ but routes nothing).
 `microsoft/skills`' `continual-learning` reached a two-tier split independently (global for tool patterns and
 cross-project conventions, repo-local for project conventions). **Treat it as convergent evidence that the gap
 is structural, not as a component to adopt** — its storage is a Copilot-hook-driven SQLite database, not Claude
-Code's model; nothing was used (provenance in `../docs/evaluations/2026-09-shared-skill-review.md`).
+Code's model; nothing was used (provenance in `../docs/evaluations/skills/2026-09-shared-skill-review.md`).
 
 Open questions:
 

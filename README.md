@@ -22,6 +22,8 @@ half of this document is about detecting that. And this file describes the *mech
 [AGENTS.md](AGENTS.md) sets the rules an agent must follow here and wins wherever the two overlap.
 
 Skills are one part of the repository — see [../README.md](../README.md) for the rest.
+Skill reviews, comparisons, and repair evidence live under
+[../docs/evaluations/skills/](../docs/evaluations/skills/); the dated records preserve their original verdicts.
 
 ## Does it work
 
