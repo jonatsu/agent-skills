@@ -34,19 +34,33 @@ it from the other.
 
 ## Separate Structural Routes From References
 
-A file target in the destination cell of a trigger-keyed table creates a structural route. The default uses
-`File` and `Read when`; symptom indexes may use `Symptom` and `Read`, and scoped pointers may put a
-`Read before` condition before their `File` column. **That vocabulary is exhaustive, and a table outside it
-routes nothing while looking perfectly serviceable** — a readable `Item | Where` table is invisible to the
-checker and to an agent scanning for the pattern. Rename the columns rather than inventing a synonym.
+A trigger-keyed list item is the default structural route. Keep the trigger and Markdown document link on its
+first physical line, and put the link immediately after the separating colon. Wrap only the purpose text that
+follows. Use one of these exhaustive leading phrases:
 
-Outside such a table, use a Markdown link alone on its line
+```markdown
+- Read when <condition>: [<document>](<path>.md) <purpose>.
+- Read before <condition>: [<document>](<path>.md) <purpose>.
+- If you <condition>: [<document>](<path>.md) <purpose>.
+- Symptom <condition>: [<document>](<path>.md) <purpose>.
+```
+
+The list form keeps each route independently editable. Adding or widening one entry does not reformat its
+neighbors.
+
+Trigger-keyed tables remain structural routes when a compact matrix is worth coupled formatting. A target
+column must be named `File` or `Read`; a trigger column must start with `Read when`, `Symptom`, `Read before`,
+or `If you`. **That vocabulary is exhaustive, and a table outside it routes nothing while looking perfectly
+serviceable.** A readable `Item | Where` table is invisible to the checker and to an agent scanning for the
+pattern. Rename the columns rather than inventing a synonym.
+
+Outside the trigger-keyed forms, use a Markdown link alone on its line
 when the current document should act as a parent index for the target. Put the load condition or relationship
 immediately before that link, so the parent explains why the child belongs in this context. The same child may
 have more than one parent when each route serves a distinct task.
 
 An inline Markdown link cites related material; it does not make that material reachable from the floor.
-Likewise, a backticked `.md` path outside a routing-table file cell is only an identifier. This distinction
+Likewise, a backticked `.md` path outside a routing-table target cell is only an identifier. This distinction
 keeps incidental mentions from satisfying the reachability check and lets an index expose focused child
 routes without copying their contents into the floor.
 
@@ -60,7 +74,7 @@ should leave with a correct, if shallow, model — never a wrong one.
 
 Half of agent navigation is text search. Quote error messages verbatim rather than paraphrasing them; backtick
 every path, binary, option, and identifier; prefer distinctive literal names over generic descriptions. A
-symptom table that paraphrases its symptoms is invisible to the agent grepping the actual error.
+symptom route that paraphrases its symptoms is invisible to the agent grepping the actual error.
 
 ## Pointers in the Most Durable Form
 
@@ -103,9 +117,9 @@ not check keep their existing status — do not silently launder them into verif
 ## Checkable Subset
 
 The package checker enforces: every living load-at-need document reachable through structural routes from the
-routing roots (dated records are reached by browsing their genre directory and are exempt), trigger cells
+routing roots (dated records are reached by browsing their genre directory and are exempt), trigger conditions
 present and non-topical (heuristically: non-empty), and no line-number references in living unpinned
-documents. It recognizes trigger-keyed routing-table target cells and standalone Markdown inclusion links as
-structural; inline links and incidental backticked paths remain references. An audit additionally reads for:
-cold-start violations, genre mixing, missing stamps, missing authority lines, inventory counts, and
-paraphrased error messages.
+documents. It recognizes trigger-keyed list items, compatible routing-table rows, and standalone Markdown
+inclusion links as structural. Inline links and incidental backticked paths remain references. An audit
+additionally reads for cold-start violations, genre mixing, missing stamps, missing authority lines,
+inventory counts, and paraphrased error messages.

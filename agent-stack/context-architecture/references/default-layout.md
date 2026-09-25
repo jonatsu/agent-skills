@@ -10,7 +10,7 @@ AGENTS.md              # the floor: always-loaded rules + routing index (CLAUDE.
 TODO.md                # open-work ledger, incl. decisions closed on evidence so they are not re-litigated
 BACKLOG.md             # wanted work nothing depends on yet; splits off TODO.md when deferrals accumulate
 docs/
-  README.md            # the hub: one routing table, one row per genre, reached from the floor
+  README.md            # the hub: one routing index, one entry per genre, reached from the floor
   reference/           # living "how it works now" write-ups; resync to code
   specs/               # accepted intended behavior and its proposed revisions
   decisions/           # frozen, dated decision records (ADR-like); amended, never rewritten
@@ -24,18 +24,18 @@ docs/
 ```
 
 `TODO.md` and `BACKLOG.md` are root ledgers: self-justifying by name and exempt from routing, which is why
-they are named here rather than left to improvisation. A ledger under a different name needs a floor row.
+they are named here rather than left to improvisation. A ledger under a different name needs a floor route.
 
 ## The Good-Enough Starting Point
 
 For a repository with nothing, three genres beat nine. Everything else arrives through the growth order below.
 
 ```text
-AGENTS.md              # floor: identity, never-miss rules, ONE routing table, commands
+AGENTS.md              # floor: identity, never-miss rules, one routing index, commands
 README.md              # humans
 TODO.md                # open work
 docs/
-  README.md            # hub: one row per genre, and what each genre may not mix with
+  README.md            # hub: one entry per genre, and what each genre may not mix with
   findings/
     README.md          # symptom index
   plans/
@@ -49,7 +49,7 @@ Two rules keep it working, and both are cheap now and expensive later:
 - **A directory's index is created in the same change as the directory.** An index retrofitted once the floor
   is already over budget gets written to fit a word count rather than to route.
 - **The floor routes to `docs/README.md` and to nothing beneath it**, except symptoms an agent meets while
-  already in trouble and that belong to no subtree. Those keep a direct floor row; see
+  already in trouble and that belong to no subtree. Those keep a direct floor route; see
   `agents-management` for that split.
 
 ## What a Subtree Earns, and When
@@ -90,28 +90,21 @@ scope; disagreement with current code is a gap to reconcile, not automatic evide
 ## The Floor Contract
 
 `AGENTS.md` carries, in order: an identity paragraph (what this repository is, three to five lines), the hard
-rules (each traceable to a failure it prevents), the routing table, the commands block, and an update-triggers
-table (when X changes, touch Y — freshness is part of done-ness). The routing table's shape:
+rules (each traceable to a failure it prevents), the routing index, the commands block, and an update-triggers
+table (when X changes, touch Y — freshness is part of done-ness). Use one list item per route:
 
 ```markdown
-| File | What it holds | Read when |
+- Read when <condition>: [<document>](<path>.md) <purpose>.
 ```
 
-The header words are part of the checker contract, not illustrative labels. A target column must be named
-`File` or `Read` (case-insensitive). A trigger column must start with `Read when`, `Symptom`, `Read before`, or
-`If you`. Keep that vocabulary narrow: a `Document` or `Directory` column does not establish structural
-reachability merely because its cells contain links, and the checker reports such a near miss at the table.
+The leading phrase, condition, and Markdown link must remain on the first physical line. Use `Read when`,
+`Symptom`, `Read before`, or `If you`; the checker treats another phrase as ordinary prose. Routing tables
+remain supported when a compact matrix earns coupled formatting, but their exact headers are a compatibility
+contract rather than the default. [Writing rules](writing-rules.md) defines both forms.
 
-**A table routes only when it carries both columns**, and this applies to every genre index as much as to the
-floor. A target column beside a topic column — `| File | What it decided |` — describes a set of documents
-without saying when to open one, which is the thing a route is for. The checker reports that near miss too,
-once such a table links two or more documents, so the diagnostic lands at the table rather than surfacing later
-as children that happen to be reachable by some other link.
-
-Every living document the system wants found has a structural route from this table. Give a destination a
-direct row only when the floor reader must choose it there; route a related group through one focused index
-when separate rows would tax unrelated sessions. The read-when cell is a trigger condition, not a topic, and
-links deeper in the route must use the structural forms in [writing-rules.md](writing-rules.md).
+Every living document the system wants found has a structural route from this index. Give a destination a
+direct entry only when the floor reader must choose it there; route a related group through one focused index
+when separate entries would tax unrelated sessions. The trigger is a condition, not a topic.
 
 ## Lazy Growth Order
 
@@ -132,7 +125,7 @@ A small repository is complete with the floor alone. Add, in each case on first 
 
 Conditional additions that are never part of the default: a changelog (add when change history stops being
 recoverable from commit messages alone), repository-local skills (route through `skill-forge`; add a floor
-routing row for each), and generated documents (each needs a named generator, a regenerate command in the
+routing entry for each), and generated documents (each needs a named generator, a regenerate command in the
 floor's commands block, and a never-hand-edit marker in its header).
 
 ## Lifecycle Duties

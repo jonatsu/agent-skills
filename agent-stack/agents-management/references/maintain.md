@@ -30,7 +30,7 @@ Use these defaults where their conditions hold:
 - Never auto-resolve divergent real files. Present retain-A, retain-B, and merge options with their content
   consequences.
 - Keep agent-agnostic scoped guidance in a vendor-neutral location when practical.
-- Use imperative root pointers for auxiliary rules because runtime include and nested discovery differ.
+- Use trigger-keyed root routes for auxiliary rules because runtime include and nested discovery differ.
 - Keep shared centralized rules only when several directories genuinely own them; avoid link-to-link chains.
 - Separate generated blocks from hand-maintained knowledge before regeneration.
 

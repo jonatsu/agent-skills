@@ -57,13 +57,12 @@ findings file below rather than in every session's context. Relocate it; never d
 
 ## Documentation
 
-\<Delete if the repository has no `docs/` tree yet. Otherwise route to the hub in one row rather than inlining
+\<Delete if the repository has no `docs/` tree yet. Otherwise route to the hub once rather than inlining
 what belongs in a genre beneath it. `context-architecture` owns which documents exist and how they are
 organized; point here, do not enumerate genres.>
 
-| File             | What it holds                            | Read when                                    |
-| ---------------- | ---------------------------------------- | -------------------------------------------- |
-| `docs/README.md` | the documentation hub: one row per genre | you need a durable document beyond the floor |
+- Read when you need durable documentation beyond the floor: [`docs/README.md`](docs/README.md) routes by
+  genre.
 
 ## Findings
 
@@ -76,21 +75,17 @@ file; an agent reading a list of topics has no reason to. The named default layo
 
 Open the matching file when the symptom appears. Every rule above stands without it; these hold the evidence.
 
-| Symptom                                 | Read                          |
-| --------------------------------------- | ----------------------------- |
-| `<what the agent observes going wrong>` | `<path to the findings file>` |
+- Symptom `<what the agent observes going wrong>`: [`<finding>`](docs/findings/example.md) holds the evidence.
 
 ## Pointers
 
-\<Delete if the repo has no auxiliary instruction files. Otherwise: use this table to guide agents that do
+\<Delete if the repo has no auxiliary instruction files. Otherwise: use this list to guide agents that do
 not parse includes or discover nested files. Verify the pointer behavior for each target agent.>
 
-Open the matching file yourself before working in its area. Treat this table as the instruction rather than a
+Open the matching file yourself before working in its area. Treat this list as the instruction rather than a
 description of automatic loading.
 
-| Read before you touch | File     | Holds             |
-| --------------------- | -------- | ----------------- |
-| `<path or glob>`      | `<file>` | `<what is in it>` |
+- Read before touching `<path or glob>`: [`<instruction file>`](path/to/AGENTS.md) covers `<scope>`.
 
 ## Update triggers
 

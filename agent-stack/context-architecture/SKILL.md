@@ -1,6 +1,6 @@
 ---
 name: context-architecture
-description: "Design, restructure, or audit a repository's agent-facing context system — which documents exist, how they are organized, indexed, and kept true — including a named default documentation layout for repositories without one. Use when setting up agent docs, deciding where knowledge should live, restructuring or sharding context files, or measuring navigation efficiency with a walk test. Instruction-file internals route to agents-management. Triggers on: agent docs, context map, docs layout, walk test."
+description: "Design, restructure, or audit a repository's agent-facing context system: document layout, genres, routing, sharding, truth maintenance, and walk-test measurement. Use its named default layout when a repository has none. Instruction-file internals route to agents-management."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -53,10 +53,10 @@ Five concerns, in order of leverage. Topology is deliberately last.
    becoming an incident log.
 
    **A floor over its budget is a routing defect until routing is proven clean.** Diagnose before trimming:
-   trimming under budget pressure deletes meaning a word at a time, while moving one table can free hundreds of
+   trimming under budget pressure deletes meaning a word at a time, while moving one route block can free hundreds of
    words and make its contents more reachable. When a section does move, the never-miss obligation stays as one
    imperative line and its trigger, exceptions and rationale go to the hub — "archive before reporting done"
-   stays, the archiving trigger table leaves.
+   stays, while its trigger details leave.
 
    Routing is the first lever but not always an available one: a ruleset loaded at user or machine scope has
    no hub to route to, because no second file loads in every session of every harness. There the register and
@@ -81,7 +81,7 @@ Five concerns, in order of leverage. Topology is deliberately last.
    (no secrets, no speculation, no unverified recall); schedule consolidation and pruning, not only appending.
 
 5. **Lazy topology.** Hub-and-spoke. Put a destination directly in the floor only when the agent must choose it
-   there; route related destinations through a read-when hub before direct rows crowd the floor. Shard a hub
+   there; route related destinations through a read-when hub before direct entries crowd the floor. Shard a hub
    only when its own index no longer fits one comfortable read. Graphs emerge from evidence; never design one
    up front.
 
@@ -100,12 +100,11 @@ Five concerns, in order of leverage. Topology is deliberately last.
 
 Run `scripts/check_context_architecture.py <repository-root>` after any change and resolve every finding. It
 measures the system level: documents no structural route reaches, routing entries without a trigger condition,
-and line-number references that rot. A structural route is a target in a trigger-keyed routing table or a
-standalone Markdown inclusion link; inline links and incidental backticked paths do not establish reachability.
-In a routing table, the target header is exactly `File` or `Read` (case-insensitive), and the trigger header
-starts with `Read when`, `Symptom`, `Read before`, or `If you`. Other target words such as `Document` and
-`Directory` deliberately do not count; the checker reports that near miss at the table as well as any resulting
-unreachable documents.
+and line-number references that rot. The default structural route is a trigger-keyed list item whose first
+physical line starts with `Read when`, `Symptom`, `Read before`, or `If you`, then names the condition and a
+Markdown document link. A trigger-keyed routing table or standalone Markdown inclusion link also routes for
+compatibility. Inline links and incidental backticked paths do not establish reachability. See
+[references/writing-rules.md](references/writing-rules.md) for the exact forms and table headers.
 Pair it with `agents-management`'s `check_agent_context.py` for the instruction-file level; neither substitutes
 for the other. Propose wiring both into the repository's gates.
 

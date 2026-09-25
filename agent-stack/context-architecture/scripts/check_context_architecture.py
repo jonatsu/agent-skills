@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Report system-level context defects: unreachable docs, blank routing, rotting references.
 
-The floor file's routing table is the contract that every agent-facing document
+The floor file's routing entries are the contract that every agent-facing document
 can be found from a cold start. This measures that contract from the outside:
-a document no structural route reaches is invisible at need, a routing row
+a document no structural route reaches is invisible at need, a routing entry
 without a trigger condition cannot be a load/skip classifier, and a
 line-number reference is stale before it is read.
 
@@ -29,7 +29,7 @@ from typing import NamedTuple
 FLOOR_NAMES = ("AGENTS.md", "CLAUDE.md")
 DEFAULT_DOCS_DIRS = ("docs",)
 
-# Root-level files that are self-justifying and need no routing row. The ledger
+# Root-level files that are self-justifying and need no routing entry. The ledger
 # pair is a documented default-layout contract protected by behavioral tests.
 DEFAULT_ROOT_EXEMPT = (
     "README.md",
@@ -55,7 +55,7 @@ DEFAULT_EXCLUDES = (
 FROZEN_DIR_GLOBS = ("*/decisions/*", "*/evaluations/*")
 
 # Dated-record genres are reached by browsing their directory when their moment
-# comes, not by per-file routing rows; requiring a row per record is noise. The
+# comes, not by per-file routing entries; requiring an entry per record is noise. The
 # orphan check binds only living, load-at-need documents.
 RECORD_DIR_GLOBS = (
     "*/decisions/*",
@@ -73,8 +73,13 @@ PIN_REV = re.compile(r"`[0-9a-f]{7,40}`")
 
 # A Markdown link target, and a backticked path accepted only in a routing-table file cell.
 MD_LINK = re.compile(r"\]\(([^)#\s]+\.md)(?:#[^)]*)?\)")
+MD_DOCUMENT_LINK = re.compile(r"\[[^]\n]+\]\(([^)#\s]+\.md)(?:#[^)]*)?\)")
 MD_BACKTICK = re.compile(r"`([^`\s]+\.md)`")
 STANDALONE_MD_LINK = re.compile(r"^\s*\[[^]\n]+\]\(([^)#\s]+\.md)(?:#[^)]*)?\)\s*$")
+ROUTE_LIST_PREFIX = re.compile(
+    r"^\s*-\s+(?:read when|read before|if you|symptom)\b(?P<rest>.*)$",
+    re.IGNORECASE,
+)
 ROUTE_TARGET_HEADERS = {"file", "read"}
 # Linked rows before a trigger-less table is read as an index rather than content.
 MINIMUM_ROUTED_ROWS = 2
@@ -101,18 +106,20 @@ class Finding(NamedTuple):
     message: str
 
 
-class RoutingRow(NamedTuple):
-    """One row of a routing table whose headers the checker recognizes.
+class RoutingEntry(NamedTuple):
+    """One trigger-keyed route whose form the checker recognizes.
 
     Attributes:
-        lineno: 1-based line the row sits on, so a finding can name it.
-        target: The cell naming the destination document.
-        trigger: The cell stating when to read that destination.
+        lineno: 1-based line the route starts on, so a finding can name it.
+        target: The text containing the destination document link or path.
+        trigger: The condition for reading that destination.
+        form: The recognized Markdown structure, either ``table`` or ``list``.
     """
 
     lineno: int
     target: str
     trigger: str
+    form: str
 
 
 def _excluded(rel_posix: str, excludes: tuple[str, ...]) -> bool:
@@ -142,9 +149,11 @@ def _structural_paths(text: str, base: Path, root: Path) -> set[Path]:
         for line in text.splitlines()
         if (match := STANDALONE_MD_LINK.fullmatch(line))
     ]
-    for row in _routing_rows(text):
-        raw_paths.extend(match.group(1) for match in MD_LINK.finditer(row.target))
-        raw_paths.extend(match.group(1) for match in MD_BACKTICK.finditer(row.target))
+    for entry in _routing_entries(text):
+        if not entry.trigger:
+            continue
+        raw_paths.extend(match.group(1) for match in MD_LINK.finditer(entry.target))
+        raw_paths.extend(match.group(1) for match in MD_BACKTICK.finditer(entry.target))
 
     for raw in raw_paths:
         for origin in (base, root):
@@ -208,9 +217,9 @@ def _relative(path: Path, root: Path) -> str:
         return path.as_posix()
 
 
-def _routing_rows(document_text: str) -> list[RoutingRow]:
+def _routing_table_entries(document_text: str) -> list[RoutingEntry]:
     """Return the rows of every routing table whose headers are recognized."""
-    rows: list[RoutingRow] = []
+    entries: list[RoutingEntry] = []
     in_table = False
     target_index = -1
     trigger_index = -1
@@ -236,8 +245,38 @@ def _routing_rows(document_text: str) -> list[RoutingRow]:
         if in_table and set(stripped) <= {"|", "-", " ", ":"}:
             continue  # separator row
         if in_table and max(target_index, trigger_index) < len(cells):
-            rows.append(RoutingRow(lineno, cells[target_index], cells[trigger_index]))
-    return rows
+            entries.append(RoutingEntry(lineno, cells[target_index], cells[trigger_index], "table"))
+    return entries
+
+
+def _routing_list_entries(document_text: str) -> list[RoutingEntry]:
+    """Return trigger-keyed list items that contain a Markdown document link."""
+    entries: list[RoutingEntry] = []
+    for lineno, line in enumerate(document_text.splitlines(), start=1):
+        match = ROUTE_LIST_PREFIX.fullmatch(line)
+        if match is None:
+            continue
+        rest = match.group("rest")
+        target_link = MD_DOCUMENT_LINK.search(rest)
+        if target_link is None:
+            continue
+        separator = rest.rfind(":", 0, target_link.start())
+        if separator < 0 or rest[separator + 1 : target_link.start()].strip():
+            continue
+        entries.append(
+            RoutingEntry(
+                lineno,
+                rest[separator + 1 :].strip(),
+                rest[:separator].strip(),
+                "list",
+            )
+        )
+    return entries
+
+
+def _routing_entries(document_text: str) -> list[RoutingEntry]:
+    """Return every recognized trigger-keyed table row and list item."""
+    return _routing_table_entries(document_text) + _routing_list_entries(document_text)
 
 
 def _linked_target_rows(lines: list[str], start: int, target_index: int) -> int:
@@ -336,12 +375,12 @@ def check_reachability(candidates: list[tuple[str, Path]], reachable: set[Path])
     """Report living documents no structural route reaches.
 
     Dated records are exempt: they are reached by browsing their genre directory
-    when their moment comes, so a routing row per record would be noise.
+    when their moment comes, so a routing entry per record would be noise.
     """
     return [
         Finding(
             relative,
-            "unreachable: no routing-table row or standalone inclusion link reaches here",
+            "unreachable: no trigger-keyed route or standalone inclusion link reaches here",
         )
         for relative, path in candidates
         if path.resolve() not in reachable and not _excluded(relative, RECORD_DIR_GLOBS)
@@ -377,24 +416,21 @@ def check_line_references(candidates: list[tuple[str, Path]]) -> list[Finding]:
     return findings
 
 
-def check_trigger_cells(floor: Path, root: Path) -> list[Finding]:
-    """Report floor routing rows with nothing in their trigger cell.
+def check_route_triggers(document_text: str, relative: str) -> list[Finding]:
+    """Report recognized routing entries with no trigger condition.
 
-    A row without a trigger condition cannot act as a load/skip classifier, which
-    is the only job the routing table has.
+    An entry without a trigger condition cannot act as a load/skip classifier,
+    which is the only job a route has.
     """
-    relative = _relative(floor, root)
-    try:
-        text = floor.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError) as error:
-        return [Finding(relative, f"unreadable: {error}")]
     return [
         Finding(
             relative,
-            f"line {row.lineno}: routing row {row.target!r} has an empty trigger cell",
+            f"line {entry.lineno}: routing list item has an empty trigger condition"
+            if entry.form == "list"
+            else f"line {entry.lineno}: routing row {entry.target!r} has an empty trigger cell",
         )
-        for row in _routing_rows(text)
-        if not row.trigger
+        for entry in _routing_entries(document_text)
+        if not entry.trigger
     ]
 
 
@@ -416,10 +452,10 @@ def _scan(root: Path, docs_dirs: tuple[str, ...], excludes: tuple[str, ...]) -> 
         except (OSError, UnicodeDecodeError):
             continue  # reachability and line-reference checks own unreadable-file findings
         findings.extend(check_routing_table_headers(text, _relative(path, root)))
+        findings.extend(check_route_triggers(text, _relative(path, root)))
 
     findings.extend(check_reachability(candidates, reachable))
     findings.extend(check_line_references(candidates))
-    findings.extend(check_trigger_cells(floor, root))
     return findings
 
 

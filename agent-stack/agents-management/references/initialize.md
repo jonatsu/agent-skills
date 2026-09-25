@@ -39,8 +39,8 @@ Use [templates.md](templates.md) and `../assets/AGENTS.template.md` only when th
 every unused section and placeholder.
 
 Create the canonical file without replacing existing content. Create symlinks without force. Keep
-hand-maintained text outside marked generated regions. For scoped files, add a root pointer that tells the
-agent when and what to read.
+hand-maintained text outside marked generated regions. For scoped files, add a trigger-keyed root route that
+tells the agent when and what to read.
 
 Do not create `.claude/rules`, `.github/instructions`, `.github/copilot-instructions.md`, or any comparable
 client-specific surface unless a target-client requirement and repository need justify it.
@@ -52,7 +52,7 @@ Verify that:
 - every intended client reaches the appropriate context through a documented or observed path;
 - every symlink resolves and remains inside the intended repository boundary;
 - all referenced commands and paths exist;
-- nested rules have a root pointer where a target client does not descend;
+- nested rules have a trigger-keyed root route where a target client does not descend;
 - no conflicting instructions or placeholders remain; and
 - `llms.txt`, when requested, contains only resolving documentation links.
 

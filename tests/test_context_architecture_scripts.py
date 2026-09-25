@@ -158,6 +158,96 @@ class CheckContextArchitectureTests(unittest.TestCase):
         self.assertEqual(result.returncode, EXIT_OK, result.stdout)
         self.assertEqual(result.stdout.strip(), "clean")
 
+    def test_trigger_keyed_list_item_is_a_structural_route(self) -> None:
+        _write(
+            self.root,
+            "AGENTS.md",
+            "# Root\n\n"
+            "- Read before changing service configuration: "
+            "[Service instructions](docs/service.md) cover deployment boundaries.\n",
+        )
+        _write(self.root, "docs/service.md", "# Service\n")
+
+        result = _run(self.root)
+
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+        self.assertEqual(result.stdout.strip(), "clean")
+
+    def test_each_supported_list_trigger_is_a_structural_route(self) -> None:
+        _write(
+            self.root,
+            "AGENTS.md",
+            "# Root\n\n"
+            "- Read when the build changes: [Build](docs/build.md).\n"
+            "- Read before editing docs: [Docs](docs/documentation.md).\n"
+            "- If you see configuration drift: [Drift](docs/drift.md).\n"
+            "- Symptom error: generated output is stale: [Stale output](docs/stale.md).\n",
+        )
+        for name in ("build", "documentation", "drift", "stale"):
+            _write(self.root, f"docs/{name}.md", f"# {name.title()}\n")
+
+        result = _run(self.root)
+
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+        self.assertEqual(result.stdout.strip(), "clean")
+
+    def test_trigger_keyed_list_item_requires_a_condition(self) -> None:
+        _write(
+            self.root,
+            "AGENTS.md",
+            "# Root\n\n- Read before: [Service instructions](docs/service.md).\n",
+        )
+        _write(self.root, "docs/service.md", "# Service\n")
+
+        result = _run(self.root)
+
+        self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
+        self.assertIn("routing list item has an empty trigger condition", result.stdout)
+        self.assertIn("docs/service.md: unreachable", result.stdout)
+
+    def test_routing_table_row_requires_a_trigger_condition(self) -> None:
+        _write(
+            self.root,
+            "AGENTS.md",
+            "# Root\n\n"
+            "| Read when | File |\n"
+            "| --- | --- |\n"
+            "| | [Service instructions](docs/service.md) |\n",
+        )
+        _write(self.root, "docs/service.md", "# Service\n")
+
+        result = _run(self.root)
+
+        self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
+        self.assertIn("has an empty trigger cell", result.stdout)
+        self.assertIn("docs/service.md: unreachable", result.stdout)
+
+    def test_ordinary_list_link_is_not_a_structural_route(self) -> None:
+        _write(
+            self.root,
+            "docs/index.md",
+            "# Index\n\n- See [Child](child.md) for background.\n",
+        )
+        _write(self.root, "docs/child.md", "# Child\n")
+
+        result = _run(self.root)
+
+        self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
+        self.assertIn("docs/child.md: unreachable", result.stdout)
+
+    def test_trigger_and_link_must_share_the_first_physical_line(self) -> None:
+        _write(
+            self.root,
+            "docs/index.md",
+            "# Index\n\n- Read when changing the child:\n  [Child](child.md) has the details.\n",
+        )
+        _write(self.root, "docs/child.md", "# Child\n")
+
+        result = _run(self.root)
+
+        self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
+        self.assertIn("docs/child.md: unreachable", result.stdout)
+
     def test_root_ledgers_are_exempt_without_exempting_other_root_files(self) -> None:
         _write(self.root, "BACKLOG.md", "# Backlog\n")
         _write(self.root, "NOTES.md", "# Notes\n")

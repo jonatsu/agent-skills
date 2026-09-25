@@ -64,7 +64,7 @@ Two current major versions differ materially; V1 is still the default install an
 
 - **V1:** prefers `AGENTS.md`; `CLAUDE.md` is a fallback only when `AGENTS.md` is absent (disable via
   `OPENCODE_DISABLE_CLAUDE_CODE`). Traverses upward from the working directory and does not discover descendant
-  package files. Does not expand file references as runtime includes; an imperative pointer can tell the model
+  package files. Does not expand file references as runtime includes; a trigger-keyed route can tell the model
   to read another file.
 - **V2:** discovers `AGENTS.md` only — the `CLAUDE.md` fallback is dropped, so move any `CLAUDE.md`-only
   guidance into `AGENTS.md`. It also discovers descendant `AGENTS.md` files as the agent reads into
@@ -91,9 +91,9 @@ For an unfamiliar client, discover its capabilities before adding an adapter. Ke
 vendor-neutral canonical source when compatible. Add another filename or vendor-specific directory only when
 verified as necessary.
 
-When include expansion or nested discovery is unknown, use an imperative pointer in the canonical root file
-that names the trigger and target path. A pointer is guidance rather than guaranteed runtime loading, so
+When include expansion or nested discovery is unknown, use a trigger-keyed route in the canonical root file
+that names the condition and target path. A route is guidance rather than guaranteed runtime loading, so
 report that limitation. Avoid unverified path-scoping frontmatter.
 
 Nested files need their own verified adapters. For the known three-client target, place a real `AGENTS.md` and
-sibling `CLAUDE.md` symlink in each relevant package, then add a root pointer for clients that do not descend.
+sibling `CLAUDE.md` symlink in each relevant package, then add a root route for clients that do not descend.

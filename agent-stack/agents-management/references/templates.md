@@ -30,25 +30,20 @@ repository knowledge earns the recurring context cost.
 
 Route to the hub; do not inline what belongs in a genre beneath it.
 
-| File | What it holds | Read when |
-|---|---|---|
-| `docs/README.md` | the documentation hub: one row per genre | `<the genres a reader here needs>` |
+- Read when `<the reader needs durable documentation beyond the floor>`: [documentation hub](docs/README.md)
+  routes by genre.
 
 ## Findings
 
 Open the matching file when the symptom appears.
 
-| Symptom | Read |
-|---|---|
-| `<what the agent observes going wrong>` | `<findings file>` |
+- Symptom `<what the agent observes going wrong>`: [`<finding>`](docs/findings/example.md) holds the evidence.
 
 ## Pointers
 
 Open the matching file before working in its area.
 
-| Read before you touch | File | Holds |
-|---|---|---|
-| `<path or glob>` | `<instruction file>` | `<scope>` |
+- Read before touching `<path or glob>`: [`<instruction file>`](path/to/AGENTS.md) covers `<scope>`.
 
 ## Update triggers
 
@@ -75,7 +70,7 @@ starts work, while `Findings` sends it to evidence after something has already g
 ## Package File
 
 Use a package file when its instructions differ materially from the root. Add the verified filename adapter
-beside it and an imperative pointer in the root file.
+beside it and a trigger-keyed route in the root file.
 
 ```markdown
 # <Package Name>
