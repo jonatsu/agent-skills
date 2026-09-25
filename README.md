@@ -29,20 +29,19 @@ Skill reviews, comparisons, and repair evidence live under
 
 `just skills-deployed` reads every destination and compares each deployed copy against its committed source:
 
-Run `just skills-deployed` and require zero drift, pending files, backups, unvalidated sources, or unresolved
+Run `just skills-deployed` and require zero drift, pending files, backups, remote mismatches, or unresolved
 entries.
 
-A remote-sourced skill fails this check rather than being skipped. Neither skill validator can see a package
-that has no copy under `skills/`, because both discover work from that source tree. A remote source therefore
-deploys with nothing checking it. Vendor the package into `skills/shared/<domain>/`, or name its URL in
-`REMOTE_SOURCE_ALLOWANCES` in `src/tools/skill-checks/skill_deployment/remote_sources.py` with an ISO date and
-reason.
+A remote-sourced skill has no copy under `skills/`, so neither skill validator can see it. Its protection is
+approval instead: every remote source is pinned to a reviewed commit recorded in
+`kasetto/third-party-skills.yaml`, and `just skills-deployed` reports `REMOTE-MISMATCH` when a deployed remote
+skill's lock is not at that commit.
 
 One skill, itemised per destination. Use this rather than a hand-written `diff -rq`, which silently checks
 only the destinations you remembered to list:
 
 Run `just skills-deployed --skill git-ops --verbose`; require one `ok` line for every locked destination and
-zero drift, pending files, backups, unvalidated sources, or unresolved entries.
+zero drift, pending files, backups, remote mismatches, or unresolved entries.
 
 A name no lock carries exits 2 rather than passing vacuously, so a typo and a genuinely pruned skill both
 fail loudly. That failure is how you confirm a removal actually pruned.
@@ -96,16 +95,30 @@ supported. The reverse holds too: removing the last skill from a domain must rem
 the same commit, because a configured domain that does not exist fails the sync outright — and since git does
 not track empty directories, that failure surfaces on someone's next clone rather than here.
 
-A third-party skill used as-is is not vendored: add a source entry to `kasetto/base.yaml` and it stays
-upstream-updatable. Vendor a copy into a group only when it is *forked* — materially modified and no longer
-tracking upstream — which trades upstream updates for the right to fix the skill.
+A third-party skill used as-is is not vendored: it stays a remote source entry in `kasetto/base.yaml`, pinned
+to the upstream commit you reviewed. Vendor a copy into a group only when it is *forked* — materially modified
+and no longer tracking upstream — which trades upstream updates for the right to fix the skill.
 
-**A new remote source also needs an allowlist entry, in the same commit.** Neither skill validator can see a
-package that has no copy under `skills/`, so `just skills-deployed` fails with `UNVALIDATED` until you record
-the decision. Review the package first: read the upstream `LICENSE`, check for scripts and hidden Unicode, and
-note the commit you reviewed. Then add its exact source URL to `REMOTE_SOURCE_ALLOWANCES` in
-`src/tools/skill-checks/skill_deployment/remote_sources.py`, with an ISO date and a reason that names that
-commit.
+### Adding or updating a third-party skill
+
+Approval and pin change together, in one commit, and the pre-commit hook enforces it:
+
+1. Review the upstream skill at one commit: read the repository's `LICENSE`, check for scripts and hidden
+   Unicode, and note the full 40-character commit id.
+2. In `kasetto/base.yaml`, set the entry's `ref:` to that commit. Do not add `branch:`; Kasetto ignores it once
+   `ref:` is set.
+3. In `kasetto/third-party-skills.yaml`, add or update the entry keyed by the exact same URL: the same
+   `commit`, the upstream `branch` to watch, a quoted ISO `reviewed_on` date, and a `reason` that says what you
+   reviewed.
+4. Commit both files. `just skills-sources` runs as a pre-commit hook and rejects a remote source that is
+   unpinned, unapproved, or pinned to a different commit, and an approval whose source is gone, before the
+   post-commit deploy can run.
+5. Confirm with `just skills-deployed`. The post-commit deploy does not yet re-resolve a changed pin, so a
+   `REMOTE-MISMATCH` here means the locks still hold the old revision. Relock only that source in each scope
+   that deploys it, for example `cd kasetto/claude && kst lock --project --config kasetto.yaml -P <skill>`,
+   then run `just skills-sync`. Without `--project`, `kst lock` writes a global lock instead.
+
+Removing a third-party skill removes its `base.yaml` entry and its approval in the same commit.
 
 ### Removing a skill
 

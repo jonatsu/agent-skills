@@ -101,9 +101,9 @@ exit code against what you are proving:
   explicit rather than an absence of output.
 - **A name that should be gone:** expect exit 2, `no lock entry names the skill`. A removed skill leaves no
   lock entry, so that failure is the confirmation.
-- **A skill added from a remote source:** expect exit 1 and an `UNVALIDATED` line. Neither skill validator can
-  see a package with no copy under `skills/`, so the gate demands a decision: vendor it, or allowlist its URL
-  in `src/tools/skill-checks/skill_deployment/remote_sources.py` with an ISO date and reason.
+- **A skill added from a remote source:** expect one `remote` line per destination and exit 0. Exit 1 with a
+  `REMOTE-MISMATCH` line means a lock is not at the commit approved in `kasetto/third-party-skills.yaml`;
+  `README.md` "Adding or updating a third-party skill" has the relock step.
 
 Neither answer is available from a hand-rolled loop, which checks only the destinations you remembered to
 list and cannot tell a pruned skill from a mistyped name.
