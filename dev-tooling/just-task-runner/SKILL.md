@@ -1,6 +1,6 @@
 ---
 name: just-task-runner
-description: Create, maintain, organize, and debug justfiles that expose repeatable project commands. Use when adding or changing recipes, parameters, dependencies, or shell settings; when a justfile has grown long or hard to read and needs grouping or splitting into imports or modules; when investigating Just parsing, quoting, working-directory, or recipe failures; or when validating recipe behavior. Use mise-tools for mise tasks and toolchain configuration.
+description: Create, organize, debug, and run justfiles for repeatable project commands. Use when changing recipes, parameters, dependencies, or shell settings; splitting a long justfile into imports or modules; diagnosing Just parsing, quoting, working-directory, or execution failures; validating recipe behavior; or running Just recipes in GitHub Actions. Use mise-tools for mise tasks and toolchain configuration.
 license: MIT
 compatibility: Just is required for local parsing, formatting, and runtime verification.
 metadata:
@@ -13,9 +13,7 @@ Treat a justfile as a thin project interface over commands the project already o
 task names, structure, shell choices, and validation conventions. Do not impose a universal recipe catalogue,
 layout, default recipe, shell, or dotenv policy.
 
-This skill carries decisions and mechanisms. The attribute, setting, function, and constant tables, and the
-version each feature landed in, live in the manual. Read them from there rather than from memory or from a
-remembered list, and do not search for the manual — these are its addresses:
+Check feature syntax and minimum versions in the manual instead of relying on memory:
 
 - `just --man` renders the manual for the installed version, which is the one that matters. Prefer it.
 - <https://just.systems/man/en/print.html> is the entire current manual as one page. Fetch this when reading
@@ -25,14 +23,14 @@ remembered list, and do not search for the manual — these are its addresses:
 ## Establish the Context
 
 Read the applicable repository instructions and the target justfile. Follow its imports and modules when they
-affect the requested work. Inspect package manifests, scripts, and continuous-integration configuration only
-as needed to understand the commands that recipes should expose.
+affect the requested work. Inspect package manifests, scripts, and continuous-integration configuration when
+they affect the requested recipes.
 
 Record `just --version` before relying on version-sensitive syntax; much of what follows arrived in a specific
 release. If Just is unavailable, state that local validation cannot be performed.
 
-Just is a command runner rather than an incremental build system. Do not recommend replacing an established
-task runner or build system unless the user asked for that decision.
+Just runs project commands; it does not track build inputs and outputs. Keep an established build system in
+charge of its own work unless the user asks to replace it.
 
 ## Inspect and Run Recipes Safely
 
@@ -72,9 +70,8 @@ Climb a rung only when its trigger has fired, and name the trigger when proposin
 | The file is too long to read, but its definitions belong to one namespace              | `import`                                                       |
 | A subdirectory owns a lifecycle of its own, or names need a prefix to stay unambiguous | `mod`                                                          |
 
-Sectioning a justfile with comment banners is the common mistake here. A banner organizes the source for
-whoever opens it and is invisible to `just --list` and `just --groups`, which is where a caller looks. Use
-groups, which also carry into `--list --unsorted` in file order.
+Comment banners help source readers but do not appear in `just --list` or `just --groups`. Use groups when
+callers need that organization; `--list --unsorted` retains their file order.
 
 Groups and modules compose but solve different problems: a group organizes one file's listing, a module splits
 namespace and file. A justfile that has just gained modules usually needs fewer groups, not the same groups
@@ -142,8 +139,9 @@ Treat `{{ ... }}` as text inserted before the recipe shell parses the command, s
 whitespace or quotes splits into several shell words. Three mechanisms fix it, and the trade-off picks between
 them:
 
-- quoting the interpolation, or `quote()`, keeps Just's undefined-variable check but breaks on a value
-  containing the quote character;
+- manually quoting the interpolation keeps Just's undefined-variable check but breaks when a value contains
+  the enclosing quote character; `quote()` also keeps the check and escapes single quotes for Bourne-compatible
+  shells;
 - `set positional-arguments` with `"$@"` preserves arbitrary boundaries, and is the choice when a recipe takes
   values it does not control; and
 - exporting the parameter with `set export` or a `$` prefix handles any value but defeats the
@@ -164,7 +162,25 @@ incomplete key is a correctness defect rather than a performance one. Do not int
 asked for it.
 
 When the recipe contains non-trivial Bash or POSIX shell behavior, apply the relevant shell skill to that body.
-When the task concerns mise tasks or toolchain configuration rather than Just, use the mise skill.
+When the task concerns mise tasks or toolchain configuration, use the mise skill.
+
+## Run Recipes in GitHub Actions
+
+When a workflow needs Just, inspect its existing tool installation and version policy. If it does not already
+install Just, use [extractions/setup-just](https://github.com/extractions/setup-just) before the first `just`
+step. Check the action's current README for the release tag and inputs rather than copying a remembered version.
+Set `just-version` when the project pins its toolchain or needs a minimum feature; the action otherwise selects
+the latest matching Just release. For a basic workflow with checkout already configured:
+
+```yaml
+steps:
+  - uses: extractions/setup-just@v4
+  - run: just check
+```
+
+Keep the workflow's working directory and environment consistent with local invocation. Preview the recipe
+and its dependencies before placing it in CI, especially when it writes, deploys, or needs secrets. Verify the
+workflow's selected Just version supports the justfile syntax.
 
 ## Diagnose Failures
 
