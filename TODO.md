@@ -155,8 +155,9 @@ decision justify it:
 The independently written `context-compression` replacement has durable fixtures and static validation; its
 model evaluation is deferred to protect the weekly allowance. When allowance and a decision justify it:
 
-- Run the six package cases on one client first, comparing with no skill and the archived `semantic-compression`
-  baseline where it applies.
+- Run the six package cases on one client first, comparing with no skill and, where useful, the
+  [original semantic-compression skill](https://github.com/can1357/oh-my-pi/blob/a1a07fa9e13073e1f48c5422e76e2aac5b524b49/.omp/skills/semantic-compression/SKILL.md)
+  at the pinned upstream commit.
 - Treat any changed negation, authority, alternative, condition, quantity, chronology, attribution, uncertainty,
   or exact identifier as a fatal failure regardless of aggregate quality.
 - Require visible deletion of safe scaffolding in `safe-grammar-deletion`; check `superseded-state` for

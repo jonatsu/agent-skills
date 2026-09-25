@@ -28,7 +28,6 @@ The 2026-09 review campaign's own ledger is retired; its verdicts and evidence a
 | `headroom-management` | 2026-08-26 | The Headroom proxy it manages was rejected, so the skill governs a tool this setup no longer runs. See its `ARCHIVED.md`. |
 | `idea-forge` | 2026-09-02 | Replaced by portable `brainstorming` after behavioral evaluation and independent review completed 2026-09-04. Retained intact as historical evidence and an evaluation baseline. See its `ARCHIVED.md`. |
 | `lean-ctx` | 2026-08-27 | lean-ctx was removed from this setup, so every `ctx_*` trigger in the skill names a tool that no longer exists. Its three locally-measured reference files are why this is an archive rather than a deletion, and its Apache-2.0 `LICENSE.upstream`/`NOTICE.upstream` must stay with the directory. See its `ARCHIVED.md`. |
-| `semantic-compression` | 2026-09-02 | Reviewed and replaced by the independently written `shared/context/context-compression` skill. The archived package remains the historical behavior and provenance baseline. See its `ARCHIVED.md`. |
 | `system-prompts` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 | `token-optimiser` | 2026-09-02 | Temporarily removed from deployment because it is not currently in use. Review is deferred. See its `ARCHIVED.md`. |
 

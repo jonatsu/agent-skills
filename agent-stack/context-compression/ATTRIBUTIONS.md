@@ -11,18 +11,16 @@ No external prose, examples, code, or assets are copied, adapted, translated, or
 the independently expressed workflow, deletion boundaries, failure model, or evaluation contract. Their licenses do not
 govern this original expression, so the package needs no `LICENSE.upstream`.
 
-## Archived Local Predecessor
+## Can Bölük's Semantic Compression
 
-- Package: `skills/archived/semantic-compression/`
-- Original upstream author: Can Bölük
-- Upstream project: [can1357/oh-my-pi](https://github.com/can1357/oh-my-pi)
-- Source path: `.omp/skills/semantic-compression/SKILL.md`
+- Author: Can Bölük
+- Source: [semantic-compression in can1357/oh-my-pi](https://github.com/can1357/oh-my-pi/blob/a1a07fa9e13073e1f48c5422e76e2aac5b524b49/.omp/skills/semantic-compression/SKILL.md)
 - Source commit: `a1a07fa9e13073e1f48c5422e76e2aac5b524b49`
-- Upstream license: MIT
-- Relationship: idea-level influence through the archived local adaptation
+- License: MIT
+- Relationship: idea-level influence from the original upstream skill, independently expressed
 
-The predecessor established that explicit grammatical deletion categories produce behavior that generic requests for
-concision do not. Its unconditional deletion stance also supplied the primary failure to correct. This skill retains an
+The upstream skill established that explicit grammatical deletion categories produce behavior that generic requests for
+concision do not. Its unconditional deletion tiers also supplied the primary failure to correct. This skill retains an
 explicit catalogue but makes every grammatical category conditional on preserved relationships and downstream checks.
 
 ## Agent Skills for Context Engineering
