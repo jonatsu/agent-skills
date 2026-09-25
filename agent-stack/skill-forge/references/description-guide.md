@@ -3,6 +3,22 @@
 The description is the specification-defined routing pointer. It states what the skill does and when to use it.
 Clients may preload, rank, display, or ignore it differently, so verify each declared client's behavior.
 
+## Invocation and Scope
+
+Use the invocation goal established during authoring. For an agent-selected skill, start from realistic user
+requests for the job, including requests that do not name the skill or its tool. Put the most useful request
+cue early. A file name or symptom earns space when it distinguishes work the skill actually handles, not
+because that artifact happens to be present during unrelated work.
+
+For explicit-only use, state the opt-in job without cues from ordinary surrounding work. Verify the intended
+client's explicit invocation mechanism; restrictive wording alone does not enforce it. If the skill's job
+supports both goals and the user has not chosen one, settle that choice before drafting.
+
+For a portable skill, describe user tasks without relying on surrounding paths, configuration, installed
+tools, clients, or repository conventions. Name a tool intrinsic to the job when it explains the capability,
+without implying it is installed. For a repository-specific skill, name the repository and use local artifacts
+only when they distinguish a request in its supported scope.
+
 ## Method
 
 1. State the capability in concrete terms.
@@ -17,8 +33,8 @@ Clients may preload, rank, display, or ignore it differently, so verify each dec
 Distinct branches earn separate trigger language. Synonyms for the same branch usually do not. Long lists blur
 boundaries and attract false positives. They also consume shared routing context in clients that preload descriptions.
 
-Record whether each target supports automatic selection, explicit invocation, or both. An automatic path needs
-realistic user intent. An explicit path needs the invocation form that the client actually accepts.
+Imperative phrasing can help an agent recognize a condition, but the absence of a literal `Use when` is not a
+defect by itself. Check the request branches and near misses, not a fixed sentence pattern.
 
 ## Form and Length
 

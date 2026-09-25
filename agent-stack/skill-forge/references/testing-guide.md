@@ -62,15 +62,19 @@ Add quantitative budgets where they make these boundaries enforceable or detect 
 of a numerical budget does not relax the default requirement for lean execution. Keep checks proportional:
 a small, self-contained skill needs no loading manifest merely to satisfy this criterion.
 
-## Prepare Discovery Cases When Routing Changed
+## Prepare Discovery Cases for New or Changed Routing
 
-Prepare cases for a client where the agent chooses among registered skills. The later full evaluation must not
-provide the target skill path or instruct the agent to load it. Prefer an observable load signal when the
-client exposes one.
+Prepare cases when creating a skill or changing its invocation route, even without an observed activation
+failure. For an agent-selected skill, test a client where the agent chooses among registered skills. The later
+full evaluation must not provide the target skill path or instruct the agent to load it. Prefer an observable
+load signal when the client exposes one.
 
-Use realistic positive requests, close negative requests, and ambiguous cases. Positive cases should include
-requests stated by outcome without the skill's exact terminology. Negative cases should share nearby terms or
-artifacts while requiring another capability.
+For agent selection, use realistic positive requests, close negative requests, and ambiguous cases. Positive
+cases should include requests stated by outcome without the skill's exact terminology. Negative cases should
+share nearby terms or artifacts while requiring another capability.
+
+For explicit-only use, include a deliberate invocation and near misses from ordinary surrounding work. Test
+the client's enforcement mechanism separately from the description wording; one cannot prove the other.
 
 Some clients expose no trustworthy load signal. Record that limitation for independent behavioral review. Do
 not infer non-activation from the final answer alone.

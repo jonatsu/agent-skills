@@ -41,6 +41,60 @@
       ]
     },
     {
+      "id": "portable-agent-selected-description",
+      "prompt": "Create a portable skill from our completed procedure for diagnosing the first compiler error in a supplied build log. The agent should select it when a user asks for build-failure diagnosis without naming the skill. No repository, client, installed command, or local path is guaranteed. Draft the initial description and package; do not run a model evaluation.",
+      "behavior": "Write an initial self-selection route for a portable job without ambient environment assumptions.",
+      "outcomes": [
+        "Keeps portability separate from the decision to allow agent selection.",
+        "Describes the supported diagnosis request in user terms without requiring the skill name.",
+        "Does not rely on an installed tool, local path, configuration, repository convention, or particular client.",
+        "Prepares a relevant positive request and a close request outside the skill's scope for later discovery testing.",
+        "Treats static wording checks as author-side evidence, not measured activation."
+      ]
+    },
+    {
+      "id": "repo-local-agent-selected-description",
+      "prompt": "Create a repository-specific Agent Skill for agent-setup's agent-configuration renderer. The skill should be selected when a user asks to change how that repository renders agent instructions, even if they do not name the skill. It must not trigger merely because an unrelated task touches a Markdown file. Draft its initial description and scope metadata without inventing repository commands.",
+      "behavior": "Use a repository-bound request cue for agent selection without treating ambient file presence as intent.",
+      "outcomes": [
+        "Sets the workflow's repo-local scope metadata and names the repository near the start of the body.",
+        "Makes the repository's rendering job legible in the description without requiring the skill name.",
+        "Rejects a generic Markdown-file trigger that would select the skill for unrelated edits.",
+        "Leaves unverified repository commands out of the candidate and reports the missing evidence."
+      ]
+    },
+    {
+      "id": "portable-explicit-only-description",
+      "prompt": "Create a portable skill for a deliberate report-publication review. I want to invoke it explicitly, never because the agent happens to see a report. No client has been selected yet. Draft the initial description and state what must be verified before promising explicit-only behavior.",
+      "behavior": "Keep explicit-only invocation independent of portable scope and separate wording from enforcement.",
+      "outcomes": [
+        "Describes the opt-in publication-review job without ambient report-file triggers.",
+        "Does not claim that description wording alone prevents automatic selection.",
+        "Names the client-specific invocation mechanism as an unresolved verification requirement.",
+        "Keeps the portable core free of assumptions about a client or installed environment."
+      ]
+    },
+    {
+      "id": "repo-local-explicit-only-description",
+      "prompt": "Create a repository-specific skill for agent-setup's release audit. I want to invoke the audit deliberately, not whenever an unrelated change touches a release file. Draft the first description and scope metadata; the target client is not yet chosen.",
+      "behavior": "Combine repository-local scope with an explicit-only invocation goal.",
+      "outcomes": [
+        "Names the repository and sets repo-local scope metadata without treating that scope as an invocation policy.",
+        "Describes the opt-in audit rather than ambient release-file activity.",
+        "Does not claim explicit-only enforcement until the target client's mechanism is verified."
+      ]
+    },
+    {
+      "id": "ambiguous-invocation-goal",
+      "prompt": "Turn our incident-triage procedure into an Agent Skill. It might help whenever a user asks about an incident, but we also sometimes invoke review procedures deliberately. The source procedure and target repository are available; I have not chosen how this skill should be invoked.",
+      "behavior": "Resolve the user-owned invocation goal before writing routing metadata.",
+      "outcomes": [
+        "Recognizes that both agent selection and explicit-only use are plausible from the supplied job.",
+        "Asks whether the user wants self-selection or deliberate invocation before settling the description.",
+        "Continues any independent contract or package analysis without inventing the invocation choice."
+      ]
+    },
+    {
       "id": "client-specific-extension",
       "prompt": "Update this otherwise portable skill for Codex. Add the current OpenAI user-interface metadata requested by the user, but keep the skill usable by clients that ignore that extension.",
       "required_inputs": [

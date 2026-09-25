@@ -32,6 +32,12 @@
       "reason": "The user asks to create a skill from completed work."
     },
     {
+      "id": "design-initial-invocation",
+      "prompt": "Create a new Agent Skill from this completed workflow. Write its first description so an agent can select it when users ask for the supported task without naming the skill.",
+      "should_trigger": true,
+      "reason": "Initial invocation design and description writing belong to skill authoring."
+    },
+    {
       "id": "restructure-skill-package",
       "prompt": "Restructure this SKILL.md so the shared workflow stays concise and provider-specific details load only when needed.",
       "should_trigger": true,
@@ -44,10 +50,16 @@
       "reason": "The user asks to repair a skill's client portability."
     },
     {
+      "id": "repair-package-loadability",
+      "prompt": "This Agent Skill cannot load because its SKILL.md links a missing bundled reference. Fix the package and validate it.",
+      "should_trigger": true,
+      "reason": "The user asks to repair skill package structure and resource reachability."
+    },
+    {
       "id": "repair-skill-discovery",
       "prompt": "Fix this Agent Skill description; intended requests do not select it, while unrelated requests do.",
-      "should_trigger": true,
-      "reason": "The user asks to repair a skill's routing metadata."
+      "should_trigger": false,
+      "reason": "A focused existing-description repair belongs to optimizing-descriptions."
     },
     {
       "id": "record-skill-provenance",

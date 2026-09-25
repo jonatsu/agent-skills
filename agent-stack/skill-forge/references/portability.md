@@ -18,9 +18,10 @@ Portable is the default when `metadata.scope` is absent. Portable skills:
 - may require a tool intrinsic to their purpose;
 - declare material runtime requirements in `compatibility`;
 - refer to bundled files with relative paths from the skill root;
-- avoid authoring-machine paths, usernames, package-manager assumptions, and repository-local commands;
+- make no assumptions about surrounding paths, configuration, installed tools, clients, or repository
+  conventions;
 - check optional surrounding tools before using them; and
-- report unavailable required dependencies clearly.
+- check required intrinsic dependencies before use and report their absence clearly.
 
 A named dependency is legitimate when the skill is about that tool or cannot perform its stated capability
 without it. Do not force a misleading fallback merely to appear tool-agnostic.

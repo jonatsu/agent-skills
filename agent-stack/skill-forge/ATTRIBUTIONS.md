@@ -81,6 +81,19 @@ The source files are under `docs/skill-creation/` at Agent Skills repository com
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). This skill reorganizes, condenses, and adapts the
 guidance to its existing workflow and terminology; it does not reproduce the pages verbatim.
 
+## mizchi's Optimizing Descriptions
+
+- Author: mizchi.
+- Source: [`optimizing-descriptions/SKILL.md`](https://github.com/mizchi/skills/blob/a41865b34b78f2675a6c73178377a5bcc1b492c6/optimizing-descriptions/SKILL.md).
+- Revision: `a41865b34b78f2675a6c73178377a5bcc1b492c6`.
+- License status: the pinned repository README says skills without an individual license default to MIT at
+  the owner's discretion; this skill has no top-level license field or bundled `LICENSE.txt`.
+- Influence: the distinction between agent selection and deliberate invocation prompted clearer initial
+  authoring guidance. This skill treats invocation independently of portable or repository-specific scope.
+
+The updated wording and cases are independently written. No mizchi prose, examples, code, templates, or
+client-specific deployment procedure is copied or adapted.
+
 ## OpenAI Skill Creator
 
 The 2026-09-04 revision consulted the

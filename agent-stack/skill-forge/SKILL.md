@@ -1,6 +1,6 @@
 ---
 name: skill-forge
-description: "Create and update Agent Skills for one or more AI agents. Use when turning completed work into a skill, writing or restructuring SKILL.md and bundled resources, repairing discovery or portability, or recording licensing and provenance. Not for reviewing a finished skill or running comparative skill evaluations."
+description: "Create and update Agent Skills for one or more AI agents. Use when turning completed work into a skill, designing its initial invocation and description, writing or restructuring SKILL.md and bundled resources, repairing package loadability or portability, or recording licensing and provenance. Not for focused audits of existing descriptions or independent skill reviews."
 license: MIT
 compatibility: The bundled validators require Python 3.11+, uv, and dependency access on their first run.
 metadata:
@@ -73,18 +73,23 @@ Before adding guidance, ask whether the agent can recover it from an authoritati
 that source when it is accurate and available during use. Include the information when the source is
 unavailable, unreliable, or the skill must preserve non-obvious judgment that the source does not express.
 
-### 2. Choose the Scope and Clients
+### 2. Choose Scope, Invocation, and Clients
 
 Portable is the default and needs no scope metadata. A portable skill may require tools intrinsic to its job,
-but it must declare relevant environment requirements in `compatibility` and must not assume authoring-machine
-paths, repository commands, or undeclared surrounding tools.
+but it cannot assume any surrounding paths, configuration, installed tools, client, or repository conventions.
+Declare intrinsic requirements in `compatibility`, check them when used, and report missing dependencies.
 
 A repository-specific skill must set `metadata.scope: repo-local`, name the repository near the start of its
 body, and may rely on that repository's paths, commands, and conventions.
 
-Identify how each declared client can load the skill. An automatically selected skill needs a realistic
-request-time intent. An explicitly selected skill needs a reliable invocation path. A habit with neither path
-belongs in always-loaded instructions or another deliberately loaded artifact.
+Choose the invocation goal separately from scope. Decide from the job and representative user requests whether
+the agent should select the skill or the user should invoke it explicitly. If both goals remain plausible and
+the choice changes routing, ask the user. An agent-selected skill needs a realistic request-time intent; an
+explicit-only skill needs a verified client mechanism, because description wording alone does not enforce that
+policy. A habit with neither path belongs in always-loaded instructions or another deliberately loaded artifact.
+
+Identify how each declared client can load the skill under that goal. Do not infer invocation policy from a
+portable or repository-specific label.
 
 Do not generalize one client's discovery result to another client. When a real invocation path exists, repair
 weak routing instead of abandoning the skill. When no declared client can load the behavior reliably, change
@@ -209,10 +214,11 @@ selects them instead of presenting an undifferentiated menu of alternatives.
 Keep a non-obvious prerequisite or gotcha in `SKILL.md` when the agent must know it before it can recognize the
 condition for loading a reference. Move later branch detail behind a conditional pointer.
 
-Descriptions state what the skill does and when it applies. Cover each distinct trigger branch once. Add an
-exclusion only when it prevents likely misrouting. Read
-[references/description-guide.md](references/description-guide.md) when creating a description or repairing
-discovery behavior.
+Write the initial description from the invocation goal chosen in step 2. For agent selection, name the job
+and each distinct request branch once in terms a user might use, including requests that do not name the skill.
+For explicit-only use, describe the opt-in job without ambient triggers. Add an exclusion only when it prevents
+likely misrouting. Read [references/description-guide.md](references/description-guide.md) for the drafting
+method and checks.
 
 Identify the dominant likely failure mode. Add an Iron Law only when one absolute constraint is the right
 control. Use questions when they focus attention on a concrete decision. Add anti-patterns only when they
