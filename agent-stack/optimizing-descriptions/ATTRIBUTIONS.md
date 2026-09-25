@@ -22,6 +22,6 @@
 
 - Source: [Optimizing skill descriptions](https://github.com/agentskills/agentskills/blob/b8d2613ac050aa4aa8bfb2cf28380d81cdfcd1ca/docs/skill-creation/optimizing-descriptions.mdx)
 - Revision: `b8d2613ac050aa4aa8bfb2cf28380d81cdfcd1ca`
-- License: Apache-2.0, from the repository's `LICENSE` at that revision.
+- License: CC BY 4.0, from the repository's `docs/LICENSE` at that revision.
 - Influence: realistic positive and near-miss queries, held-out validation, and measured trigger rates in an
   optional client-specific evaluation. The skill links to the live guide for procedural detail.
