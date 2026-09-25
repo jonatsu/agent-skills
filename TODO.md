@@ -11,6 +11,19 @@ their surviving open work is below, and the embedded research notes (tooling, te
 Repository-wide items live in [../TODO.md](../TODO.md). Roughly high-priority first; the settled/low-priority
 entries sit at the bottom.
 
+## High Priority: Move Remote-Source Trust Out of Python Source
+
+`REMOTE_SOURCE_ALLOWANCES` in `src/tools/skill-checks/skill_deployment/remote_sources.py` hardcodes which remote
+skill repositories are trusted. Trust is data, not code: approving a source should not require editing a
+Python module, and the list should sit next to the source declarations it governs. Move the allowances into a
+declarative file beside `kasetto/base.yaml` (URL, reviewed commit, ISO date, reason), and have the checker load
+it through one fail-closed module. The 2026-09-25 softaworks gap shows the cost: the source was added to
+`base.yaml` with nothing prompting the second, hidden edit.
+
+Coordinate with the APM trial in
+[../docs/evaluations/2026-09-25-agent-package-manager.md](../docs/evaluations/2026-09-25-agent-package-manager.md):
+APM's `apm-policy.yml` source allowlist may replace this check outright.
+
 ## Skills With No Usage — Recheck After 2026-10-08
 
 The 2026-09-08 measurement (738 transcripts plus `skillUsage` in `.claude.json`) is not usable: the set was
