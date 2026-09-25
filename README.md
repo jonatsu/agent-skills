@@ -98,6 +98,13 @@ A third-party skill used as-is is not vendored: add a source entry to `kasetto/b
 upstream-updatable. Vendor a copy into a group only when it is *forked* — materially modified and no longer
 tracking upstream — which trades upstream updates for the right to fix the skill.
 
+**A new remote source also needs an allowlist entry, in the same commit.** Neither skill validator can see a
+package that has no copy under `skills/`, so `just skills-deployed` fails with `UNVALIDATED` until you record
+the decision. Review the package first: read the upstream `LICENSE`, check for scripts and hidden Unicode, and
+note the commit you reviewed. Then add its exact source URL to `REMOTE_SOURCE_ALLOWANCES` in
+`src/tools/skill-checks/skill_deployment/remote_sources.py`, with an ISO date and a reason that names that
+commit.
+
 ### Removing a skill
 
 `git rm` the directory and commit. The hook drops it from the lock and prunes the live copies. Settle the
@@ -134,7 +141,7 @@ rate-limited, so set a `GITHUB_TOKEN` first. It exits non-zero and is safe to re
 the lock and touch no network.
 
 **This is the only place that requirement is stated.** How much it matters scales with how many remote sources
-`base.yaml` declares: with the single pinned source it carries today, an unauthenticated clone will usually
+`base.yaml` declares: with the few remote sources it carries today, an unauthenticated clone will usually
 succeed, and the token is cheap insurance. Add sources and it stops being optional. Read `base.yaml` for the
 current set rather than assuming either extreme.
 
