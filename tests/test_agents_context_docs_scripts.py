@@ -1,4 +1,4 @@
-"""Behavioral tests for Agents Management's bundled command-line script."""
+"""Behavioral tests for the Agents Context Docs skill's bundled command-line script."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ CHECK_SCRIPT = (
     / "skills"
     / "shared"
     / "agent-stack"
-    / "agents-management"
+    / "agents-context-docs"
     / "scripts"
     / "check_agent_context.py"
 )

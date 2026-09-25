@@ -69,7 +69,7 @@ overwritten on the next sync. Derive the owned set from `skills/kasetto/*.yaml` 
 earlier figures go stale within days.
 
 1. Audit owned skills by actual behavior: which install or execute third-party code, write outside the working
-   tree, mutate git history or remotes, or transmit data externally. Prior candidates: `agents-management`
+   tree, mutate git history or remotes, or transmit data externally. Prior candidates: `agents-context-docs`
    (writes files and creates symlinks), `reflect`, `chezmoi-dotfiles`.
 2. Decide the bar. `disable-model-invocation: true` costs real capability — right for "installs code from the
    internet", arguably wrong for "writes a doc file".

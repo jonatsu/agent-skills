@@ -1,6 +1,6 @@
 ---
 name: context-architecture
-description: "Design, restructure, or audit a repository's agent-facing context system: document layout, genres, routing, sharding, truth maintenance, and walk-test measurement. Use its named default layout when a repository has none. Instruction-file internals route to agents-management."
+description: "Design, restructure, or audit a repository's agent-facing context system: document layout, genres, routing, sharding, truth maintenance, and walk-test measurement. Use its named default layout when a repository has none. Instruction-file internals route to agents-context-docs."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -17,7 +17,7 @@ task, plus the maintenance cost of keeping that assembly correct as the reposito
 
 This skill owns the system level: which documents exist, the genre each belongs to, how the floor file routes
 to them, when to shard, and how the whole is measured. Instruction-file internals — writing and maintaining
-`AGENTS.md`/`CLAUDE.md` content, scoped instructions, `llms.txt` — belong to `agents-management`; invoke it as
+`AGENTS.md`/`CLAUDE.md` content, scoped instructions, `llms.txt` — belong to `agents-context-docs`; invoke it as
 the executor for those files. Extracting a repeated procedure into a skill belongs to `skill-forge`.
 
 Repository facts are the authority for current behavior. Accepted requirements are the authority for intended
@@ -28,17 +28,18 @@ existing repository's established conventions outrank this skill's defaults.
 
 - **Design:** the repository has no established layout, or a new area needs one. Read
   [references/default-layout.md](references/default-layout.md), apply it lazily (create a directory on first
-  need, never for completeness), then hand instruction-file creation to `agents-management`.
+  need, never for completeness), then hand instruction-file creation to `agents-context-docs`.
 - **Restructure:** an existing context system misroutes, bloats, or mixes genres. Diagnose against the model
   below before moving anything; propose structural moves rather than silently applying them, and preserve
   stable anchors other documents cite.
 - **Audit:** assess navigation efficiency and coverage without assuming edits are wanted. Run the checker
   (below), read [references/walk-test.md](references/walk-test.md) for the behavioral measurement, and delegate
-  instruction-file internals to `agents-management`'s audit branch. Coverage is a separate question from
-  navigation, and the walk test cannot ask it: compare the decisions the repository visibly made — framework and
-  dependency choices, data models, authentication strategies, anything expensive to reverse — against the
-  records in its decisions genre, and report an unrecorded one as a gap. Deliver findings by severity with
-  evidence; record measurements as a dated file in the repository's evaluations genre.
+  instruction-file internals to the `agents-context-docs` skill's audit branch. Coverage is a separate
+  question from navigation, and the walk test cannot ask it: compare the decisions the repository visibly
+  made — framework and dependency choices, data models, authentication strategies, anything expensive to
+  reverse — against the records in its decisions genre, and report an unrecorded one as a gap. Deliver
+  findings by severity with evidence; record measurements as a dated file in the repository's evaluations
+  genre.
 
 Read [references/writing-rules.md](references/writing-rules.md) before writing or reviewing any agent-facing
 document in any branch.
@@ -49,8 +50,8 @@ Five concerns, in order of leverage. Topology is deliberately last.
 
 1. **Floor discipline.** The always-loaded file taxes every session of every agent. It carries only never-miss
    rules and the routing index; everything else is a pointer. Grow it from observed failures — every floor
-   rule should trace to a failure it prevents — and apply `agents-management`'s accretion test to keep it from
-   becoming an incident log.
+   rule should trace to a failure it prevents. Apply the `agents-context-docs` skill's accretion test to keep
+   the floor from becoming an incident log.
 
    **A floor over its budget is a routing defect until routing is proven clean.** Diagnose before trimming:
    trimming under budget pressure deletes meaning a word at a time, while moving one route block can free hundreds of
@@ -105,8 +106,8 @@ physical line starts with `Read when`, `Symptom`, `Read before`, or `If you`, th
 Markdown document link. A trigger-keyed routing table or standalone Markdown inclusion link also routes for
 compatibility. Inline links and incidental backticked paths do not establish reachability. See
 [references/writing-rules.md](references/writing-rules.md) for the exact forms and table headers.
-Pair it with `agents-management`'s `check_agent_context.py` for the instruction-file level; neither substitutes
-for the other. Propose wiring both into the repository's gates.
+Pair it with the `agents-context-docs` skill's `check_agent_context.py` for the instruction-file level;
+neither substitutes for the other. Propose wiring both into the repository's gates.
 
 **Run both before calling a restructure done, because they can be made to disagree.** Moving an evidence index
 off the floor satisfies this checker and, unless the instruction file still routes to the index, orphans every

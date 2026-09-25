@@ -8,7 +8,7 @@ without a trigger condition cannot be a load/skip classifier, and a
 line-number reference is stale before it is read.
 
 Instruction-file internals (size budgets, evidence indexing) belong to
-agents-management's check_agent_context.py; run both. Stdlib only, so the
+the agents-context-docs skill's check_agent_context.py; run both. Stdlib only, so the
 skill stays portable: no package manager, no repository commands, and no
 assumption that the tree is a Git checkout.
 

@@ -14,7 +14,7 @@ Repository evidence and explicit user choices take precedence when they conflict
 
 This skill owns baseline files, repository-local hygiene hooks, community templates, and read-only hygiene
 audits. Use `git-ops` for commits, branch or worktree operations, history investigation, recovery, and history
-rewriting. Use `agents-management` for agent instruction files.
+rewriting. Use `agents-context-docs` for agent instruction files.
 
 ## Choose the Task
 

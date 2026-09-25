@@ -26,7 +26,8 @@ Nearby work has different owners:
 
 - Use the relevant authoring capability when no prompt exists and no behavioral baseline can be supplied.
 - Use static review when the question is whether a prompt is well designed but no failing behavior exists.
-- Use `agents-management` for repository `AGENTS.md`, `CLAUDE.md`, scoped instructions, or `llms.txt` maintenance.
+- Use `agents-context-docs` for repository `AGENTS.md`, `CLAUDE.md`, scoped instructions, or `llms.txt`
+  maintenance.
 - Use `skill-forge` for `SKILL.md` and Agent Skill packages.
 
 The user may authorize both diagnosis and repair in one request. A review-only request does not authorize editing the

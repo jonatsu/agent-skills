@@ -2,7 +2,7 @@
 
 ## Current Skill
 
-- Skill: `agents-management`
+- Skill: `agents-context-docs`
 - Current author and adapter: Joonas Onatsu
 - Current license: Apache License 2.0, inherited from upstream
 - Status: substantially modified and merged from one upstream-derived skill and one original skill

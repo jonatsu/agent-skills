@@ -50,7 +50,7 @@ Two rules keep it working, and both are cheap now and expensive later:
   is already over budget gets written to fit a word count rather than to route.
 - **The floor routes to `docs/README.md` and to nothing beneath it**, except symptoms an agent meets while
   already in trouble and that belong to no subtree. Those keep a direct floor route; see
-  `agents-management` for that split.
+  `agents-context-docs` for that split.
 
 ## What a Subtree Earns, and When
 

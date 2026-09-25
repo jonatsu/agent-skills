@@ -285,7 +285,7 @@ Only `just skills-deployed` reads the destination.
 ## Licensing
 
 Repository `LICENSE` is MIT and covers the original works here. A skill may carry its own license in its
-top-level frontmatter `license` field with provenance and changes in `ATTRIBUTIONS.md` — `agents-management`
+top-level frontmatter `license` field with provenance and changes in `ATTRIBUTIONS.md` — `agents-context-docs`
 is Apache-2.0 per its upstream and ships `LICENSE.upstream` alongside. Do not assume MIT for a skill that
 declares otherwise.
 
