@@ -101,7 +101,10 @@ and no longer tracking upstream — which trades upstream updates for the right 
 
 ### Adding or updating a third-party skill
 
-Approval and pin change together, in one commit, and the pre-commit hook enforces it:
+Pinned sources never update on their own. `just skills-updates` reports which approved skills changed upstream
+since their approved commit, counting only files under each skill's own folder; it needs network, and
+`GITHUB_TOKEN` avoids GitHub's rate limit. Approval and pin then change together, in one commit, and the
+pre-commit hook enforces it:
 
 1. Review the upstream skill at one commit: read the repository's `LICENSE`, check for scripts and hidden
    Unicode, and note the full 40-character commit id.
