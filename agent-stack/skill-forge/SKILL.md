@@ -34,10 +34,8 @@ Establish:
 - the concrete task the skill enables;
 - representative requests and successful outcomes;
 - the decisions or knowledge a capable agent lacks without the skill;
-- the declared target clients and their automatic or explicit invocation paths;
 - the current author and applicable license;
 - whether the work is a new skill, substantial revision, or focused update;
-- whether the skill is portable or repository-specific; and
 - whether reading any external source changed the skill's guidance, workflow, structure, examples,
   terminology, or failure modes, even when every retained idea was expressed independently.
 
@@ -45,14 +43,6 @@ Define one coherent unit of work that composes with other skills. Inventory ever
 workflow, and output the skill would cover. Keep multiple aspects together only when one shared task or
 decision boundary requires them. Shared popularity, one author's environment, possible integration, or
 occasional co-use is insufficient. Split unrelated guidance into separate skills or omit it.
-
-Then identify how each target client can load the skill. An automatically selected skill needs a realistic
-request-time intent. An explicitly selected skill needs a reliable invocation path. A habit with neither path
-belongs in always-loaded instructions or another deliberately loaded artifact.
-
-Do not generalize one client's discovery result to another client. When a real invocation path exists, repair
-weak routing instead of abandoning the skill. When no declared client can load the behavior reliably, change
-the artifact form.
 
 When the relationship between retained aspects is not obvious, state the shared job in the description or
 body so later reviewers do not have to invent the justification.
@@ -91,6 +81,14 @@ paths, repository commands, or undeclared surrounding tools.
 
 A repository-specific skill must set `metadata.scope: repo-local`, name the repository near the start of its
 body, and may rely on that repository's paths, commands, and conventions.
+
+Identify how each declared client can load the skill. An automatically selected skill needs a realistic
+request-time intent. An explicitly selected skill needs a reliable invocation path. A habit with neither path
+belongs in always-loaded instructions or another deliberately loaded artifact.
+
+Do not generalize one client's discovery result to another client. When a real invocation path exists, repair
+weak routing instead of abandoning the skill. When no declared client can load the behavior reliably, change
+the artifact form.
 
 Read [references/portability.md](references/portability.md) when the skill names clients, tools, paths,
 environment requirements, repository commands, or product metadata.

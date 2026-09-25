@@ -22,9 +22,9 @@ realistic user intent. An explicit path needs the invocation form that the clien
 
 ## Form and Length
 
-Write the description as an inline scalar on one logical line. Some deployment tooling mishandles folded
-(`>-`) and literal (`|`) block scalars, and a repository that has hit such a defect states the constraint and
-its owner in its own instructions. Check for a repository rule before choosing a block scalar.
+Follow the target repository's scalar convention. An inline value on one logical line is a simple default;
+some deployment tooling mishandles folded (`>-`) and literal (`|`) block scalars. Check the repository's
+rules before using either form.
 
 Budget the description by length, never by line width. A column ceiling such as markdownlint's MD013 governs
 wrapped prose; a description cannot wrap while it stays an inline scalar, and Markdown tooling commonly treats
@@ -59,7 +59,9 @@ description: Build and maintain Just command-runner files for repeatable project
 - The description names both capability and activation conditions.
 - Every trigger phrase represents a distinct supported branch.
 - A representative unrelated request does not appear to match.
-- A request phrased by user outcome can activate the skill without requiring the tool or artifact name.
+- For agent-selected skills, a request phrased by user outcome can select the skill without its exact name.
+- For explicit-only skills, the description avoids ambient triggers and the client provides a verified
+  invocation path.
 - Every declared client has a verified automatic or explicit path for intended use.
 - Specialized names carry enough context for routing without unnecessary definitions.
 - The body contains no routing guidance that arrived too late to affect activation.
