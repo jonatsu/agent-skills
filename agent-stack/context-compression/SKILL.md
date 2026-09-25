@@ -8,12 +8,12 @@ metadata:
 
 # Context Compression
 
-Compress context for a known downstream model task. The compressed text is lossy. Keeping every omitted byte available
-through an exact reference makes the workflow reversible while the summary remains lossy. Never claim semantic
-equivalence merely because the compressed text sounds plausible.
+Compress context for a known downstream model task. The compressed text is lossy, so retain the original
+source through validation. When later recovery may be needed, provide an exact reference the downstream
+consumer can access. Plausible compressed text is not proof of equivalent meaning.
 
-Keep the source until the compressed context passes its preservation checks. Optimize total tokens needed to complete
-the downstream task, including re-reading and recovery, rather than minimizing this one input at any cost.
+Optimize total tokens needed to complete the downstream task, including re-reading, rather than minimizing
+this one input at any cost.
 
 ## Establish the Compression Contract
 
@@ -28,7 +28,7 @@ Before deleting content, identify:
 Ask for a missing task or consequential preservation requirement. When only the exact budget is missing, a conservative
 first pass may proceed if the source remains available; state the achieved size instead of inventing a target.
 
-Use another skill when compression is not the actual job:
+Route by the requested deliverable:
 
 - use `handoff` when the deliverable is a continuity brief for another session, agent, machine, or person;
 - use `prompt-optimizer` when observed behavior requires changing prompt instructions; and
@@ -40,7 +40,8 @@ licenses, and signed or regulated text.
 
 ## Reduce in Least-Lossy Order
 
-Apply the first sufficient operation, then measure again:
+Try these operations in order. Measure after each one; stop reducing when the result meets the budget, then
+validate preservation:
 
 1. Remove material irrelevant to the downstream task.
 2. Deduplicate repeated facts and explanations.
@@ -63,7 +64,7 @@ rewrite a phrase when the remaining wording or structure still encodes its task-
 - Redundant emphasis: delete `very`, `really`, or similar intensifiers when degree is not evidence or user intent.
 - Articles `a`, `an`, and `the` in unambiguous labels and fragments: `the retry policy` may become `Retry policy`.
 - Copulas `am`, `is`, `are`, `was`, `were`, `be`, `been`, and `being`, plus expletive subjects, when a label carries
-  the relation: `status is blocked` becomes `Status: blocked`.
+  the relation and any task-relevant time: `status is blocked` becomes `Status: blocked`.
 - Complementizer `that` when the clause boundary remains clear: `logs show that retry failed` becomes
   `Logs show retry failed`.
 - Relative pronouns `which`, `that`, `who`, and `whom` when their clauses can become modifiers:
@@ -82,8 +83,8 @@ rewrite a phrase when the remaining wording or structure still encodes its task-
 - Prepositions such as `of`, `for`, `to`, `in`, `on`, `at`, `by`, `with`, `without`, `between`, `among`, `within`,
   `after`, `before`, `over`, `under`, `through`, and `from`: remove them only when layout or labels preserve ownership,
   agency, inclusion, direction, location, and time.
-- Conjunctions `and`, `or`, and `but`: use bullets when they preserve conjunction, and retain markers such as
-  `either/or`, `both`, and `but` when they encode alternatives, combination, or contrast.
+- Conjunctions `and`, `or`, and `but`: use labeled lists such as `all of` and `one of` when layout replaces the
+  words. Retain an explicit contrast marker when it changes the decision.
 
 ### Preserve Unless an Equivalent Marker Remains
 
@@ -108,8 +109,8 @@ Original: Migration may start after approval A or B, but it must not continue wi
 Compact:  Migration: may start after approval A or B; must not continue without verified backup.
 ```
 
-The second result is less grammatical, but it retains permission, sequence, alternatives, contrast, prohibition, and
-the backup condition. `Migration start: approval A B` would not.
+The second result retains permission, sequence, alternatives, contrast, prohibition, and the backup condition.
+`Migration start: approval A B` loses them.
 
 ## Preserve Changing State
 
