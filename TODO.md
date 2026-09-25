@@ -11,18 +11,6 @@ their surviving open work is below, and the embedded research notes (tooling, te
 Repository-wide items live in [../TODO.md](../TODO.md). Roughly high-priority first; the settled/low-priority
 entries sit at the bottom.
 
-## Deploy Does Not Re-resolve a Changed Remote Pin — Awaiting Decision
-
-Bumping a remote source's `ref:` does not reach the locks: the post-commit hook and
-`scripts/kasetto-deploy.sh` name only local skills, and Kasetto keeps an existing lock entry whose content
-hash still matches. `just skills-deployed` then reports `REMOTE-MISMATCH` until someone relocks the source in
-each scope by hand, as `README.md` "Adding or updating a third-party skill" describes. Observed on 2026-09-25,
-when both remote sources were first pinned; the record is the execution record in
-[../docs/plans/archived/remote-source-trust-implementation-plan.md](../docs/plans/archived/remote-source-trust-implementation-plan.md).
-
-The proposed fix is for the deploy script to also name a remote source's skills whenever its `ref:` differs
-from the lock's `source_revision`. It changes `kasetto-deploy.sh`, so it waits for the user's decision.
-
 ## Skills With No Usage — Recheck After 2026-10-08
 
 The 2026-09-08 measurement (738 transcripts plus `skillUsage` in `.claude.json`) is not usable: the set was

@@ -116,10 +116,10 @@ pre-commit hook enforces it:
 4. Commit both files. `just skills-sources` runs as a pre-commit hook and rejects a remote source that is
    unpinned, unapproved, or pinned to a different commit, and an approval whose source is gone, before the
    post-commit deploy can run.
-5. Confirm with `just skills-deployed`. The post-commit deploy does not yet re-resolve a changed pin, so a
-   `REMOTE-MISMATCH` here means the locks still hold the old revision. Relock only that source in each scope
-   that deploys it, for example `cd kasetto/claude && kst lock --project --config kasetto.yaml -P <skill>`,
-   then run `just skills-sync`. Without `--project`, `kst lock` writes a global lock instead.
+5. Run `just skills-sync` for the lock-only follow-up commit, then confirm with `just skills-deployed`. The
+   post-commit deploy relocks any remote skill whose lock lags its new pin, which Kasetto would otherwise skip
+   when the upstream content is identical. A `REMOTE-MISMATCH` here means that deploy did not run or failed;
+   re-run `./scripts/kasetto-deploy.sh`.
 
 Removing a third-party skill removes its `base.yaml` entry and its approval in the same commit.
 

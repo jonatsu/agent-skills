@@ -103,7 +103,7 @@ exit code against what you are proving:
   lock entry, so that failure is the confirmation.
 - **A skill added from a remote source:** expect one `remote` line per destination and exit 0. Exit 1 with a
   `REMOTE-MISMATCH` line means a lock is not at the commit approved in `kasetto/third-party-skills.yaml`;
-  `README.md` "Adding or updating a third-party skill" has the relock step.
+  re-run `./scripts/kasetto-deploy.sh`, which relocks a remote skill whose lock lags its pin.
 
 Neither answer is available from a hand-rolled loop, which checks only the destinations you remembered to
 list and cannot tell a pruned skill from a mistyped name.
