@@ -11,18 +11,17 @@ their surviving open work is below, and the embedded research notes (tooling, te
 Repository-wide items live in [../TODO.md](../TODO.md). Roughly high-priority first; the settled/low-priority
 entries sit at the bottom.
 
-## High Priority: Move Remote-Source Trust Out of Python Source
+## Deploy Does Not Re-resolve a Changed Remote Pin — Awaiting Decision
 
-`REMOTE_SOURCE_ALLOWANCES` in `src/tools/skill-checks/skill_deployment/remote_sources.py` hardcodes which remote
-skill repositories are trusted. Trust is data, not code: approving a source should not require editing a
-Python module, and the list should sit next to the source declarations it governs. Move the allowances into a
-declarative file beside `kasetto/base.yaml` (URL, reviewed commit, ISO date, reason), and have the checker load
-it through one fail-closed module. The 2026-09-25 softaworks gap shows the cost: the source was added to
-`base.yaml` with nothing prompting the second, hidden edit.
+Bumping a remote source's `ref:` does not reach the locks: the post-commit hook and
+`scripts/kasetto-deploy.sh` name only local skills, and Kasetto keeps an existing lock entry whose content
+hash still matches. `just skills-deployed` then reports `REMOTE-MISMATCH` until someone relocks the source in
+each scope by hand, as `README.md` "Adding or updating a third-party skill" describes. Observed on 2026-09-25,
+when both remote sources were first pinned; the record is the execution record in
+[../docs/plans/archived/remote-source-trust-implementation-plan.md](../docs/plans/archived/remote-source-trust-implementation-plan.md).
 
-Coordinate with the APM trial in
-[../docs/evaluations/2026-09-25-agent-package-manager.md](../docs/evaluations/2026-09-25-agent-package-manager.md):
-APM's `apm-policy.yml` source allowlist may replace this check outright.
+The proposed fix is for the deploy script to also name a remote source's skills whenever its `ref:` differs
+from the lock's `source_revision`. It changes `kasetto-deploy.sh`, so it waits for the user's decision.
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
