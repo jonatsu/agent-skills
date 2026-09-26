@@ -1,8 +1,3 @@
-## When to load this file
-
-Load this before installing mise, choosing a shell integration strategy, working in CI, or baking a container
-or system image.
-
 ## Install choices
 
 Default install paths from upstream docs:

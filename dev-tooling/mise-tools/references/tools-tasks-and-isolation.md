@@ -1,7 +1,3 @@
-## When to load this file
-
-Load this before adding tools, tasks, lockfiles, hooks, bootstrap logic, or container-oriented mise workflows.
-
 ## Tool and backend guidance
 
 Prefer explicit, documented backends when they materially improve reproducibility or verification.
@@ -18,6 +14,10 @@ Useful tool options:
 - OS or arch restrictions
 - install-order dependencies
 - postinstall hooks when truly needed
+
+Changing a scalar tool declaration into a `[tools."..."]` subtable changes TOML scope for every declaration
+that follows it. Keep flat siblings before tool subtables and apply the structural verification in
+`config-and-env.md`.
 
 Useful command and override reminders from upstream docs:
 
@@ -80,6 +80,11 @@ Available hooks include `cd`, `enter`, `leave`, `preinstall`, `postinstall`, and
 
 Only use hooks when automatic behavior is essential. Default to tasks first.
 
+Treat install hooks as part of the installer transaction. A postinstall can modify external state, restart a
+service, or interrupt the process that invoked mise. State that effect beside the declaration, propagate hook
+failure unless partial installation is an accepted outcome, and test the hook with fake boundaries before
+running a real install.
+
 ## Lockfile and strict mode
 
 Use `mise.lock` when the environment must reproduce reliably.
@@ -90,17 +95,6 @@ Important points:
 - strict or locked modes should match the team or CI expectation
 - lockfile workflows reduce resolver drift and external API dependence
 - exact pins plus lockfile is the strongest general setup
-
-## Real-repo examples
-
-Real repos can be useful for examples, but never as official guidance.
-
-Reusable ideas gathered during research:
-
-- task-first `mise.toml` files that orchestrate formatting, linting, and test pipelines
-- `dir = "subdir"` task scoping for nested toolchains
-- per-platform templating for native-library paths
-- `auto_install = false` in curated or CI-focused repos
 
 ## Verification commands
 
@@ -119,3 +113,5 @@ Run installation, task, and lockfile-writing commands only when the request auth
 - adding tasks without descriptions or reproducibility expectations
 - using fuzzy versions in a supposedly deterministic CI workflow
 - relying on experimental features without labeling them
+- inserting a tool subtable before later flat siblings and changing their ownership
+- using a postinstall that can restart active work without documenting and testing that effect

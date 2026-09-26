@@ -1,13 +1,7 @@
-## When to load this file
-
-Load this whenever mise behavior is surprising, activation is flaky, tools are not found, trust blocks execution, or CI
-or containers behave differently than local shells.
-
 ## Diagnostic sequence
 
-Start with read-only evidence and select only the commands relevant to the symptom:
-
-Apply the trust, safe-mode, and auto-install gates in `SKILL.md` before any command that loads project config.
+Apply the trust, isolation, safe-mode, and auto-install gates in `SKILL.md`, then select only the read-only
+commands relevant to the symptom:
 
 1. `mise --version`
 2. `mise doctor`
@@ -41,6 +35,16 @@ version only from the config active in the caller's directory. A process the har
 elsewhere — an editor hook, an MCP launcher, a connect-time credential helper — then fails with
 `No version is set for shim: <tool>` even though the tool is installed. Move such a tool to the global
 config; see `SKILL.md`, "Choose Scope and Execution". Observed on mise 2026.9.7.
+
+### Many existing shims report "No version is set" after one TOML edit
+
+Do not follow each shim's suggestion to add a new global declaration. First inspect the edited file's parsed
+`tools` tree. A newly inserted `[tools."backend:configured-tool"]` header can capture every later flat tool
+declaration because TOML retains the table scope. The tools remain installed, but mise no longer sees their
+declarations at the expected paths.
+
+Move flat sibling declarations before the first tool subtable, then verify the structured config, `mise ls`,
+and representative unaffected shims. See `config-and-env.md`, "Preserve TOML ownership".
 
 ### Shell activation works in one shell, fails in another
 
@@ -152,8 +156,3 @@ If the setup uses `mise mcp`, OCI, bootstrap, deps, dotfiles, or task templates,
 - the installed mise version supports them
 - the workflow tolerates experimental behavior
 - the final answer labels them explicitly as experimental
-
-## Example note
-
-This skill also collected real-repo `.miserc.toml` and `mise.toml` patterns for inspiration. Use them only as examples,
-never as proof of official behavior.

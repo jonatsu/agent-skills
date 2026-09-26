@@ -1,10 +1,3 @@
-## When to load this file
-
-Load this only when templating, `MISE_ENV`, platform-specific overlays, or `.miserc.toml` behavior is part of
-the task. This is a focused reference, not core workflow.
-
-## Why this reference exists
-
 Mise supports Tera templating in configuration and environment workflows, but early-init `.miserc.toml` runs
 before normal config loading and therefore has a narrower context. Agents must not assume full project config
 state is available there.
@@ -127,16 +120,6 @@ Important upstream nuance:
 - platform environments affect config-file discovery and lockfile selection
 - they do not populate `mise_env` for templates or subprocesses
 - explicit `MISE_ENV` entries still take precedence over auto platform environments
-
-## Real-repo examples
-
-Useful, but still only examples:
-
-- `auto_env = true` in `.miserc.toml`
-- `ceiling_paths = ["{{ config_root | dirname }}"]` to stop parent-config discovery
-- conditional `.miserc.toml` `env = [...]` based on external env vars for remote or sandbox contexts
-
-These are examples, not proof of official best practice.
 
 ## Footguns
 

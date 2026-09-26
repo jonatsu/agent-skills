@@ -15,25 +15,34 @@ configuration unless the user requested that scope or separately approved it.
 
 ## Route the Task
 
-- For a routine command in an existing project, inspect the active config and run the command through the
-  project's established mise path. Do not impose a setup workflow.
-- For installation, shell activation, CI, bootstrap, or containers, read
-  [references/install-and-activation.md](references/install-and-activation.md).
-- For config layering, environment selection, or parent-config leakage, read
-  [references/config-and-env.md](references/config-and-env.md).
-- For tools, tasks, hooks, lockfiles, or backend choice, read
-  [references/tools-tasks-and-isolation.md](references/tools-tasks-and-isolation.md).
-- For `.miserc.toml`, Tera templates, or platform environments, also read
-  [references/templating-and-early-init.md](references/templating-and-early-init.md).
-- For the `go:` backend, `go.*` settings, or unexpected Go cache paths, read
-  [references/go-backend.md](references/go-backend.md).
-- For surprising behavior or failures, read
-  [references/operations-and-troubleshooting.md](references/operations-and-troubleshooting.md).
+For a routine command in an existing project, inspect the active config and use the project's established
+mise path. Do not impose a setup workflow.
 
-Consult the relevant upstream JSON Schema when adding or changing config keys, field types, or structure, or
-when their validity is uncertain. [references/schemas.md](references/schemas.md) maps config files to schemas.
-Use the installed CLI help and current upstream documentation for version-sensitive behavior instead of
-relying on remembered syntax.
+| Task                                                             | Load                                                                              |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Install or activate mise; configure CI, bootstrap, or containers | [install-and-activation.md](references/install-and-activation.md)                 |
+| Change config scope, environment layers, or discovery boundaries | [config-and-env.md](references/config-and-env.md)                                 |
+| Add tools, tasks, hooks, lockfiles, or backend options           | [tools-tasks-and-isolation.md](references/tools-tasks-and-isolation.md)           |
+| Change TOML keys, types, or structure                            | [schemas.md](references/schemas.md), plus the relevant behavior reference         |
+| Use Tera, `.miserc.toml`, `MISE_ENV`, or platform environments   | [templating-and-early-init.md](references/templating-and-early-init.md)           |
+| Use the `go:` backend or diagnose unexpected Go paths            | [go-backend.md](references/go-backend.md)                                         |
+| Diagnose surprising behavior, missing tools, or broken shims     | [operations-and-troubleshooting.md](references/operations-and-troubleshooting.md) |
+
+Use installed CLI help and current upstream documentation for version-sensitive behavior.
+
+## Preflight Safety
+
+Inspect unfamiliar config and task files as text before running a mise command that loads them. Config can
+execute Tera `exec()` or `read_file()`, environment sources, hooks, and tasks. Use `MISE_SAFE=1` for compatible
+inspection outside the user's trust boundary. Safe mode refuses executable behavior and project environment
+injection; treat that as reduced capability rather than bypassing it.
+
+Keep `MISE_STATE_DIR` and `MISE_CACHE_DIR` outside the project, including in tests. Mise stores trusted-config
+symlinks in its state directory, so project-local state can create a recursive walk through the repository.
+
+`mise exec` enables `exec_auto_install` by default. Inspect installed tools with `mise ls` first. When
+installation is not authorized, set `MISE_EXEC_AUTO_INSTALL=false` and stop if the required tool is absent.
+Combine this with safe mode when the config is untrusted.
 
 ## Choose Scope and Execution
 
@@ -70,28 +79,17 @@ Before storing secrets locally, confirm that version control ignores `mise.local
 authorizes repository ignore changes. If mise is unavailable, installation guidance still applies, but report
 runtime validation as omitted.
 
-## Trust and State Changes
+TOML table headers retain scope until another header begins. When a flat `[tools]` list also contains
+`[tools."backend:configured-tool"]` subtables, place every flat sibling before the first tool subtable. A file
+can parse and match the schema while later tools are silently owned by the wrong table. After structural
+edits, inspect the parsed `tools` tree before executing mise; see `config-and-env.md`.
 
-Inspect unfamiliar project configuration and task files as plain text before running a mise command that loads
-them. Config can execute Tera `exec()` or `read_file()`, environment source directives, hooks, and tasks. When
-the config is outside the user's trust boundary, use `MISE_SAFE=1` for compatible inspection and resolution.
-Safe mode refuses executable behavior and project environment injection; do not bypass that refusal. Treat
-ignored project environment values as reduced capability and report that limitation.
+## Trust and State Changes
 
 Start with `mise trust --show` when trust may explain a failure. In normal mode, `mise exec`, `mise run`, naked
 task invocations, `mise install`, and `mise watch` automatically trust active config. Run them only when the
 user's authority covers the config behavior and persistent trust transition. Run `mise trust <config>` only
 when the selected mode requires explicit trust and the user authorized that persistent state change.
-
-Never point `MISE_STATE_DIR` or `MISE_CACHE_DIR` inside a project, including when isolating mise in a test. The
-state directory's `trusted-configs/` holds a symlink to each trusted config's root, so state kept inside the
-project plants a link back to it. Tools that follow symlinks while walking the tree, such as markdownlint-cli2,
-then never finish, and ignore files do not stop the walk. Use a temporary directory outside the project.
-
-`mise exec` defaults `exec_auto_install` to true. Before using it for diagnosis or verification, inspect
-installed tools with `mise ls`. When installation is not authorized, set `MISE_EXEC_AUTO_INSTALL=false` for
-that process and stop if the required tool is absent. This control does not make config safe; combine it with
-safe mode when the config is untrusted.
 
 Installation, lock updates, shell edits, global config changes, and task execution can change state. Diagnosis
 alone does not authorize them. Inspect first, then perform the smallest state change supported by evidence when
@@ -116,7 +114,14 @@ required scope, and repeat the original reproduction.
 
 ## Verify the Result
 
-Verify the same path the user will use:
+For a config edit, require all of these before completion:
+
+- the file parses and its structured view shows every edited key under the intended owner;
+- `mise ls` still contains an unaffected sibling tool when the edit changed `[tools]` structure;
+- the affected tool or task behaves through the same path the user will use; and
+- verification caused no unauthorized install, trust transition, lock update, or shell edit.
+
+Match runtime verification to the consumer:
 
 - command-scoped automation: `mise exec -- <command>` with the applicable trust and installation authority;
 - interactive activation: a fresh or re-sourced target shell;

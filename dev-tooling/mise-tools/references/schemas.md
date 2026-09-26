@@ -1,24 +1,17 @@
-## When to load this file
-
-Load this before authoring or editing any mise TOML config file when you need to confirm valid keys,
-structure, field types, or allowed values. The schemas are the authoritative structural reference; upstream
-prose docs are the narrative companion.
-
 ## What the schemas are
 
 The mise repository ships JSON Schema definitions for every TOML config file it accepts. They live at
 `https://github.com/jdx/mise/tree/main/schema` and are also published to SchemaStore for IDE/editor
 auto-completion.
 
-Agents SHOULD consult the relevant schema when:
+Consult the relevant schema when:
 
 - authoring a new config file from scratch
 - unsure whether a key exists or what type it accepts
 - validating that a hand-edited TOML file is structurally sound
 - confirming task, plugin, or registry-tool field shapes before suggesting them
 
-Agents MUST NOT reproduce the entire schema contents inline. Fetch the single relevant schema, read the keys
-in question, and move on.
+Fetch one relevant schema and inspect only the keys in question. Do not reproduce the entire schema inline.
 
 ## Schema files and what they cover
 
@@ -78,6 +71,8 @@ For explicit schema binding in editors that require it, point the relevant file 
 
 - Treating the schema as the only documentation: it defines structure, not behavior or intent. Pair with the
   narrative references.
+- Treating schema acceptance as proof of intended TOML ownership. A wrongly nested tool is structurally valid;
+  inspect the parsed tree as described in `config-and-env.md`.
 - Assuming a key absent from the schema is valid just because a repo example used it — it may be experimental,
   deprecated, or plugin-specific.
 - Fetching and holding all six schemas in context at once. Fetch only the one relevant to the file being

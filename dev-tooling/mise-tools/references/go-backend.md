@@ -1,8 +1,3 @@
-## When to load this file
-
-Load this whenever the `go:` backend is involved, whenever a `go.*` setting is being chosen, or whenever Go
-writes files somewhere unexpected — most often `$HOME/go`.
-
 ## What the `go:` backend actually does
 
 It shells out to `go install`. It does not reimplement the Go toolchain, and it requires a `go` already on

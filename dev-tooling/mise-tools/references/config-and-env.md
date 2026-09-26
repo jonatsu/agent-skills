@@ -1,10 +1,3 @@
-## When to load this file
-
-Load this before editing `mise.toml`, `.miserc.toml`, `mise.local.toml`, or any environment-selection logic.
-
-If the task specifically depends on Tera templating, early-init `.miserc.toml` behavior, or
-platform-environment rollout details, also load `references/templating-and-early-init.md`.
-
 ## Config resolution model
 
 Important files:
@@ -23,6 +16,47 @@ Key behavior from upstream docs:
 - individual task definitions replace by task name
 - `MISE_ENV` activates `mise.<env>.toml`
 
+## Preserve TOML ownership
+
+A TOML table header stays active until another header begins. This is valid TOML but assigns the apparent
+sibling to the configured tool:
+
+```toml
+[tools]
+"aqua:plain-tool" = "latest"
+
+[tools."aqua:configured-tool"]
+version = "latest"
+postinstall = "configured-tool completion bash"
+
+"aqua:apparent-sibling" = "latest"
+```
+
+The parsed path of the last key is
+`tools."aqua:configured-tool"."aqua:apparent-sibling"`, not
+`tools."aqua:apparent-sibling"`. Put every flat tool declaration before the first tool subtable:
+
+```toml
+[tools]
+"aqua:plain-tool" = "latest"
+"aqua:actual-sibling" = "latest"
+
+[tools."aqua:configured-tool"]
+version = "latest"
+postinstall = "configured-tool completion bash"
+```
+
+Do not try to reopen `[tools]`; TOML rejects redefining an existing table. A successful parse or schema check
+only proves that the hierarchy is legal. Inspect what owns each key after a structural edit:
+
+```bash
+mise config get --file path/to/mise.toml tools
+```
+
+When another TOML parser is already available, query the exact edited and following sibling paths as a second
+check. Then run `mise ls` and resolve one unaffected sibling through the user's actual shim or `mise exec`
+path. This catches valid but wrongly nested declarations before they disable several tools at once.
+
 ## Safe config-scope choices
 
 - shared repo behavior → `mise.toml`
@@ -40,14 +74,6 @@ Use only for things that must happen before normal config layers fully load, suc
 
 Do not treat this file as the primary place to learn templating rules. Load
 `references/templating-and-early-init.md` for that narrower topic.
-
-Real-repo examples for inspiration only:
-
-- `auto_env = true` for automatic environment selection behavior
-- `ceiling_paths = ["{{ config_root | dirname }}"]` to stop parent-config leakage
-- conditional `env = ["claude-code-web", "dev"]` in `.miserc.toml` based on external env vars
-
-When citing these, label them as examples rather than official guidance.
 
 ## Environment model
 
@@ -114,6 +140,7 @@ reaches tools installed through the `go:` backend.
 - `mise env`
 - `mise trust --show`
 - `mise install --dry-run`
+- `mise config get --file <path> tools` after changing tool-table structure
 
 ## Footguns
 
@@ -122,6 +149,7 @@ reaches tools installed through the `go:` backend.
 - using global config when a project-local file would work
 - forgetting that parent configs can leak in
 - treating fuzzy versions as exact unless lockfile or pins enforce it
+- adding a flat tool declaration after a `[tools."..."]` subtable and silently nesting it under that tool
 - a global `[env]` entry carrying `tools = true`, which no plain project assignment can override
 - assuming `mise exec` gives a clean environment: it overrides only the variables the config declares, so an
   inherited value for anything unmentioned passes straight through
