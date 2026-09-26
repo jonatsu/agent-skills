@@ -305,12 +305,15 @@ Consulted on 2026-08-27 to settle a dispute about how skills should be structure
 reader does not re-find them. Each is pinned, because an unpinned citation to a moving document is not
 evidence.
 
-| Source                                                                                                                          | What it settles                                                                                                                                                                                               | Pinned at        |
-| ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| [Anthropic, *Skill authoring best practices*](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | The platform vendor's own guidance, and the strongest anchor available                                                                                                                                        | read 2026-08-27  |
-| [Claude Code skills reference](https://code.claude.com/docs/en/skills)                                                          | The real frontmatter field list, and which fields belong to which surface                                                                                                                                     | read 2026-08-27  |
-| [mgechev/skills-best-practices](https://github.com/mgechev/skills-best-practices)                                               | A short opinionated distillation that defers to Anthropic's guide                                                                                                                                             | commit `a0bfa56` |
-| [mgechev/skillgrade](https://github.com/mgechev/skillgrade)                                                                     | Not read in depth. An external grading tool that evaluates skills by running them against fixtures with graders; useful as a comparison point for behavioral evaluation, but not treated here as an authority | unpinned         |
+| Source                                                                                                                          | What it settles                                                           | Pinned at        |
+| ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------- |
+| [Anthropic, *Skill authoring best practices*](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) | The platform vendor's own guidance, and the strongest anchor available    | read 2026-08-27  |
+| [Claude Code skills reference](https://code.claude.com/docs/en/skills)                                                          | The real frontmatter field list, and which fields belong to which surface | read 2026-08-27  |
+| [mgechev/skills-best-practices](https://github.com/mgechev/skills-best-practices)                                               | A short opinionated distillation that defers to Anthropic's guide         | commit `a0bfa56` |
+| [mgechev/skillgrade](https://github.com/mgechev/skillgrade)                                                                     | A comparison point for behavioral evaluation, not an authority; see below | unpinned         |
+
+`skillgrade` was not read in depth. It is an external grading tool that evaluates skills by running them against
+fixtures with graders.
 
 The Agent Skills specification is the structural authority. `skill-forge`'s vendored reference validator checks
 that contract; its local validator separately checks this repository's policy. Line counts, reference depth,
