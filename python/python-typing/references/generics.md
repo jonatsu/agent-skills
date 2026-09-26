@@ -56,15 +56,13 @@ accepting it as an argument is an error the checker will point out.
 
 ## Bounds and Constraints
 
-Two different things, easy to confuse.
-
 ```python
 def largest[T: float](values: Sequence[T]) -> T: ...          # bound: T is float or a subtype
 def parse[T: (int, str)](raw: str, kind: type[T]) -> T: ...   # constraint: T is exactly int or exactly str
 ```
 
 A **bound** admits any subtype and keeps the specific type in the result. A **constraint** admits only the
-listed types, and the checker solves for one of them exactly — a subclass of `int` resolves to `int`, losing
+listed types, and the checker solves for one of them exactly: a subclass of `int` resolves to `int`, losing
 the subtype.
 
 Bound to a Protocol when the code calls methods:

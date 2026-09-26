@@ -1,15 +1,13 @@
 # Configuring a Type Checker
 
-Read this before turning on strict mode anywhere that already has code, or when setting up a checker in a
-project that has none.
-
 ## Which Checker
 
-| Checker | Notes                                                                                                                           |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| mypy    | The reference implementation, the most configurable, the widest plugin support                                                  |
-| pyright | Fast, the checker behind Pylance, stricter about some inference by default                                                      |
-| ty      | Astral's checker, very fast, pre-1.0 at the time of writing — check its current version and status before adopting it in a gate |
+| Checker      | Notes                                                                                                   |
+| ------------ | ------------------------------------------------------------------------------------------------------- |
+| mypy         | The reference implementation, the most configurable, the widest plugin support                          |
+| pyright      | Fast, the checker behind Pylance, stricter about some inference by default                              |
+| basedpyright | A pyright fork with stricter defaults, configured in `[tool.basedpyright]`; common as a language server |
+| ty           | Astral's checker, very fast, pre-1.0; check its current version and status before adopting it in a gate |
 
 Use whichever the project already uses. Two checkers in one project means two sets of suppressions and two
 sets of disagreements, so adopt a second one only deliberately.
@@ -49,10 +47,8 @@ module = "myproject.legacy.*"
 ignore_errors = true
 ```
 
-The exemption list is then a visible, shrinking backlog. The alternative — global leniency — has no such list,
-and nothing ever tightens.
-
-Annotate test function signatures too.
+The exemption list is then a visible, shrinking backlog. Global leniency has no such list, so nothing ever
+tightens.
 
 ### Third-Party Libraries Without Types
 
@@ -92,6 +88,34 @@ and `reportMissingTypeStubs`, an error only in strict mode, is the setting that 
 pyright understands some inference that mypy does not, and vice versa. Code that passes one is not guaranteed
 to pass the other.
 
+### Import Roots
+
+pyright and basedpyright resolve imports from the project root and the installed environment, and fail quietly
+on anything else. Three layouts import from elsewhere: script-style tools that import siblings by bare name,
+`src/` packages installed in editable mode, and tests that import `conftest` or a helper from a directory
+without `__init__.py`. The CLI reports them as `reportImplicitRelativeImport` and `reportMissingTypeStubs`.
+The language server does worse: finding references returns only the defining file and misses every
+cross-file use. A project that gates on mypy still runs pyright or basedpyright as its language server, so
+configure the roots there too.
+
+Declare each import root the tests and mypy already use, one execution environment per tool:
+
+```toml
+[tool.basedpyright]
+executionEnvironments = [
+    { root = "tools/renderer" },                                   # script-style: siblings by bare name
+    { root = "tools/merger", extraPaths = ["tools/merger/tests"] }, # tests dir without __init__.py
+    { root = "packages/vault", extraPaths = ["packages/vault/src"] },  # src layout
+]
+```
+
+Use one environment per tool rather than a global `extraPaths`: two tools that each own a `model.py` would
+otherwise resolve `import model` to whichever root comes first. Take the roots from pytest's `pythonpath` and
+the mypy invocations rather than guessing them. The configuration is done when both warning rules count zero
+across the tree and no other rule's count rose; a rule that rises means an import now resolves to the wrong
+module. A language server that has only just started still returns partial references until it finishes
+indexing, so retry before blaming the configuration.
+
 ## Suppressions
 
 ```python
@@ -112,8 +136,8 @@ marker rather than fifty invisible ones, and it greps.
 
 ## What to Check, and When
 
-Check `src/`, not the whole tree. Checking generated code, vendored code and build output produces errors
-nobody will act on.
+Check the source and its tests, with test function signatures annotated too, and exclude the rest of the tree.
+Generated code, vendored code, and build output produce errors nobody will act on.
 
 Before adding the checker to a hook or CI step, load `python-project-management`: a file-scoped invocation
 sees a different program than a full run.

@@ -1,21 +1,18 @@
 ---
 name: python-typing
-description: Resolve Python typing problems and run a type checker. Use when the checker rejects code that looks correct, writing generics or Protocols, narrowing a union it will not follow, deciding where Any is acceptable, configuring mypy or pyright, or making strict mode pass on a codebase that does not yet.
+description: Resolve Python typing problems and run a type checker. Use when the checker rejects code that looks correct, writing generics or Protocols, narrowing a union it will not follow, deciding where Any is acceptable, configuring mypy, pyright or basedpyright, fixing a language server that misses imports or references, or making strict mode pass on a codebase that does not yet.
 license: MIT
-compatibility: Examples target Python 3.12+ for PEP 695 generic syntax, with the older TypeVar form shown where it differs. Verified against mypy 2.3.1.
+compatibility: Examples target Python 3.12+ for PEP 695 generic syntax, with the older TypeVar form shown where it differs. Verified against mypy 2.3.1; import roots verified against basedpyright 1.40.1.
 metadata:
   author: Joonas Onatsu
 ---
 
 # Python Typing
 
-Annotations that a type checker can act on, and the checker itself. This skill is for the cases where a
-capable writer stalls: variance, Protocols, narrowing the checker refuses to follow, and getting an existing
-codebase to pass strict mode.
-
-Ordinary signature defaults and value types live in `python-style`, runtime validation of external data in
-`python-error-handling`, and wiring the checker into hooks and CI in `python-project-management`. Use this skill
-for annotation interfaces, checker configuration, and problems the checker exposes.
+This skill covers the cases where a capable writer stalls: variance, Protocols, narrowing the checker refuses to
+follow, import roots the checker cannot see, and getting an existing codebase to pass strict mode. Ordinary
+signature defaults and value types live in `python-style`, runtime validation of external data in
+`python-error-handling`, and wiring the checker into hooks and CI in `python-project-management`.
 
 ## Respect Project Conventions
 
@@ -31,11 +28,14 @@ An explicit modernization or conventions review permits broader recommendations.
 
 ## Read the Project First
 
-- **Which checker.** mypy, pyright, ty, or none. Look for `[tool.mypy]`, `mypy.ini`, `[tool.pyright]`,
-  `pyrightconfig.json`, `[tool.ty]`, and the CI workflow.
+- **Which checker.** mypy, pyright, basedpyright, ty, or none. Look for `[tool.mypy]`, `mypy.ini`,
+  `[tool.pyright]`, `[tool.basedpyright]`, `pyrightconfig.json`, `[tool.ty]`, and the CI workflow. With none, start
+  a new project on strict mypy.
 - **How strict, and where.** A project often has a strict core and lenient legacy modules. Per-module
   overrides matter more than the global setting.
 - **How it runs.** A direct command, a task recipe, a CI step, a hook, or several. Match what is there.
+- **Where imports resolve from.** Script-style siblings, a `src/` layout, several tools in one repository, or
+  tests without `__init__.py` each add an import root the checker must be told about.
 - **Which Python version it targets.** That decides whether PEP 695 syntax, `Self`, and `override` are
   available.
 
@@ -99,8 +99,6 @@ That is the point: the caller is not forced to import your base class.
 | `Protocol` | You consume something and only care about its shape                                |
 | ABC        | You provide a base class with shared implementation, and want an explicit registry |
 
-Protocols are the right default for a function parameter.
-
 Add `@runtime_checkable` only if you need `isinstance`, and know that it checks method names only, not
 signatures.
 
@@ -120,19 +118,17 @@ def process(user_id: str) -> UserData:
 checker cannot connect to the value: a helper returning `bool`, or a `dict.get()` check followed by a
 subscript. A condition stored in a local flag first narrows under pyright but not under mypy.
 
-To make a helper narrow, give it a `TypeIs` or `TypeGuard` return. Choose `TypeIs` (3.13+) when the narrowed
-type is compatible with the input type.
-For an invariant container narrowing such as `list[object]` to `list[str]`, use `TypeGuard`:
+To make a helper narrow, give it a `TypeIs` or `TypeGuard` return. `TypeIs` (3.13+) narrows both branches, but
+only when the narrowed type is compatible with the input type. `TypeGuard` narrows the positive branch alone,
+and it is the one that handles an invariant container, such as `list[object]` to `list[str]`:
 
 ```python
 def is_str_list(value: list[object]) -> TypeGuard[list[str]]:
     return all(isinstance(item, str) for item in value)
 ```
 
-`TypeIs` narrows in both branches; `TypeGuard` narrows only the positive branch and permits this invariant-list case.
-The [typing documentation](https://docs.python.org/3/library/typing.html#typing.TypeIs) explains the compatibility condition.
-Both are available on older interpreters through `typing_extensions`, which is how a 3.11 or 3.12 project
-uses `TypeIs`.
+The [typing documentation](https://docs.python.org/3/library/typing.html#typing.TypeIs) states the
+compatibility condition. A 3.11 or 3.12 project gets both from `typing_extensions`.
 
 ## Exhaustiveness
 
@@ -173,20 +169,13 @@ Confine `Any` to the boundary. Convert to a real type immediately, and everythin
 
 ## Running the Checker
 
-For a new project, start with strict mypy checking. For an existing project, preserve its checker, scope, and strictness.
+Read [checker-setup.md](references/checker-setup.md) when setting up a checker, before turning on `strict`
+anywhere that has existing code, when a checker or language server misses a project's own imports or
+cross-file references, when writing a suppression, and when the checker and the code disagree. It holds the
+starting configuration, the per-module ladder, import roots, and the debugging order.
 
-```bash
-mypy src/
-pyright src/
-```
-
-Read [checker-setup.md](references/checker-setup.md) before turning on `strict` anywhere that has existing
-code, when setting up a checker, when writing a suppression, or when the checker and the code disagree. It
-holds the starting configuration, the per-module ladder, and the debugging order.
-
-Write every suppression as `# type: ignore[error-code]`, so it stops working when the error changes; mypy's
-`strict` already reports stale ones through `warn_unused_ignores`. pyright honours any `# type: ignore` as
-a blanket suppression, whatever code the brackets name.
+Write every suppression as `# type: ignore[error-code]`, so it stops working when the error changes. Each
+checker honours that form differently; the reference says how.
 
 ## Common Complaints
 
