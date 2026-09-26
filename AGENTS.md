@@ -36,8 +36,8 @@ first fails, and accepts a path relative to wherever you are.
 - Use `skill-forge` when creating, editing, restructuring, or replacing a skill.
 - Use both `skill-review` and `skill-forge` for every skill review. `skill-review` governs assessment and
   evidence; `skill-forge` governs proposed repair shape and any separately authorized edits.
-- Load `kasetto` before adding, editing, moving, archiving, restoring, removing, deploying, or verifying a
-  skill. Its portable tool guidance complements this file's hook and lock workflow.
+- Load `kasetto-skill-tool` before adding, editing, moving, archiving, restoring, removing, deploying, or
+  verifying a skill. Its portable tool guidance complements this file's hook and lock workflow.
 - Keep a skill's `description` an inline YAML scalar. Neither validator catches a folded one;
   `just skills-descriptions` does.
 - Record a review's verdict, evidence, and coverage limits in a dated file under

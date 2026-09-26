@@ -22,7 +22,7 @@ def _repository_root() -> Path:
 
 REPOSITORY_ROOT = _repository_root()
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
-SCRIPT_ROOT = SKILLS_ROOT / "shared" / "agent-stack" / "skill-forge" / "scripts"
+SCRIPT_ROOT = SKILLS_ROOT / "shared" / "agent-skills" / "skill-forge" / "scripts"
 INIT_SCRIPT = SCRIPT_ROOT / "init_skill.py"
 VALIDATE_SCRIPT = SCRIPT_ROOT / "quick_validate.py"
 

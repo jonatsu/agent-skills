@@ -25,7 +25,7 @@ CHECK_SCRIPT = (
     REPOSITORY_ROOT
     / "skills"
     / "shared"
-    / "agent-stack"
+    / "agent-skills"
     / "agents-context-docs"
     / "scripts"
     / "check_agent_context.py"

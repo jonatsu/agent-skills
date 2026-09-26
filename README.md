@@ -49,7 +49,7 @@ fail loudly. That failure is how you confirm a removal actually pruned.
 Both skill validators over one package:
 
 ```console
-$ just skill-check skills/shared/dev-tooling/git-ops
+$ just skill-check skills/shared/tools/git-ops
 Agent Skills specification (skills-ref)
 
 1 checked, 0 failed
@@ -187,7 +187,7 @@ is written. Codex likewise receives `shared/` only; its built-in `.system` skill
 Kasetto-managed ones and are excluded by exact path from the ownership gate.
 
 The [scoped Python rule](../agents/shared/rules/python.md) routes work by concern.
-[python-style](shared/python/python-style/SKILL.md) owns everyday coding defaults;
+[python-style](shared/development/python/python-style/SKILL.md) owns everyday coding defaults;
 specialist Python skills own their procedures. Each skill preserves established project conventions and requires
 evidence of harm before recommending an unsolicited correction.
 
@@ -198,17 +198,23 @@ Skills live at `shared/<domain>/<skill>/`; one flat directory had stopped being 
 
 | Domain                   | Holds                                                                                           |
 | ------------------------ | ----------------------------------------------------------------------------------------------- |
-| `agent-stack/`           | The setup itself — skills, prompts, agent instruction files, context economy, the CC safety net |
+| `agent-skills/`          | The setup itself — skills, prompts, agent instruction files, context economy, the CC safety net |
 | `engineering/`           | Shaping ideas, requirements, and technical design before work is built                          |
-| `python/`                | Python craft: style, typing, testing, async, architecture, project management                   |
-| `dev-tooling/`           | Everyday dev tooling: shells, task runners, Git, GitHub, repo hygiene                           |
-| `tools/`                 | Focused tool use and structural navigation, currently ast-grep                                  |
+| `development/`           | Everyday dev craft: coding standards, shells, containers, generated-file checks                 |
+| `development/python/`    | Python craft: style, typing, testing, async, architecture, project management                   |
+| `development/nix/`       | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv                                 |
+| `tools/`                 | Focused tool use: ast-grep, Git, GitHub, task runners, mise, repo hygiene, dotfiles             |
 | `review/`                | Reviewing code, designs, skills, and specification conformance                                  |
+| `code-health/`           | Codebase health sweeps and repair — the Brooks-based audit, debt, review, sweep and test skills |
 | `testing-and-qa/`        | Verifying behaviour: debugging, TDD, test engineering                                           |
-| `nix/`                   | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv                                 |
-| `system-administration/` | Machines and runtimes: containers, systemd, networking, dotfiles                                |
+| `system-administration/` | Machines and runtimes: systemd, networking                                                      |
 | `embedded-linux/`        | Embedded Linux bring-up, Buildroot, kas, U-Boot, Yocto/OpenEmbedded                             |
 | `technical-writing/`     | Human-facing prose                                                                              |
+
+`development/python/` and `development/nix/` are nested groups: a second directory level under `development/`,
+next to the skills that sit directly in it. Each nested group is its own `base.yaml` entry, since Kasetto
+discovers skills exactly one level under a source root and a `sub-dir: development` entry skips both groups
+silently rather than failing on them.
 
 **The domain level exists only in this repository.** Kasetto deploys flat, so every supported agent reads
 `<skills-dir>/<skill>/` and no skill needs to know where its source lives. Two consequences:
@@ -290,7 +296,7 @@ is Apache-2.0 per its upstream and ships `LICENSE.upstream` alongside. Do not as
 declares otherwise.
 
 Where an upstream licence would block the use we need, the skill is replaced by an independently written one
-rather than adapted. `shared/dev-tooling/git-ops` is the worked example: its predecessor was SUL 1.0,
+rather than adapted. `shared/tools/git-ops` is the worked example: its predecessor was SUL 1.0,
 personal/non-commercial only.
 
 ## External references on skill authoring
