@@ -11,6 +11,36 @@ their surviving open work is below, and the embedded research notes (tooling, te
 Repository-wide items live in [../TODO.md](../TODO.md). Roughly high-priority first; the settled/low-priority
 entries sit at the bottom.
 
+## Description and Prose Pass Ledger
+
+Every skill gets two passes: `skill-descriptions-and-triggers` on its description, and `writing-for-agents`
+over the whole package. A skill missing from this table has had neither, and a blank cell means that pass is
+still open. When a skill passes, add or complete its row in the same change and cite the commit. Rows before
+2026-09-28 were reconstructed from Git history; a pass counts only where a commit message or evaluation record
+names it. The 2026-09-07 description audit predates the description skill and does not count.
+
+| Skill                             | Description pass      | `writing-for-agents` pass                                               |
+| --------------------------------- | --------------------- | ----------------------------------------------------------------------- |
+| `git-commits-and-recovery`        | 2026-09-27, `05ecb1e` | 2026-09-27, `05ecb1e`                                                   |
+| `git-history-investigation`       | 2026-09-27, `8242032` | 2026-09-27, `8242032`                                                   |
+| `using-git-worktrees`             | 2026-09-27, `b10689e` | 2026-09-27, `36bb1b4`                                                   |
+| `session-handoff`                 | 2026-09-28, `f25ae32` | 2026-09-28, `f25ae32`                                                   |
+| `skill-descriptions-and-triggers` | 2026-09-28, `37f34c8` | 2026-09-28, `37f34c8`                                                   |
+| `skill-doctor`                    | 2026-09-28, `da8a0cb` | 2026-09-28, `da8a0cb`                                                   |
+| `skill-review`                    | 2026-09-28, `0067bb4` | 2026-09-28, `0067bb4`, light: tiers, discovery lens, two negations only |
+| `skill-forge`                     | 2026-09-28, `37f34c8` |                                                                         |
+| `context-compression`             |                       | 2026-09-25, `f0f5559f`                                                  |
+| `context-architecture`            |                       | 2026-09-25, `8fce5a79`                                                  |
+| `agents-context-docs`             |                       | 2026-09-25, `8fce5a79`, as `agents-management`                          |
+| `python-architecture`             |                       | 2026-09-24, `4e374bf`                                                   |
+| `python-async-patterns`           |                       | 2026-09-24, `c85d2cf`                                                   |
+| `python-error-handling`           |                       | 2026-09-24, `819aa34`                                                   |
+| `python-parallelism`              |                       | 2026-09-24, `c1d8db7`                                                   |
+| `python-project-management`       |                       | 2026-09-24, `bf1081b`                                                   |
+| `python-style`                    |                       | 2026-09-24, `e47e62d`                                                   |
+| `python-testing`                  |                       | 2026-09-24, `d908951`                                                   |
+| `python-typing`                   |                       | 2026-09-24, `272c8d2`                                                   |
+
 ## Skills With No Usage — Recheck After 2026-10-08
 
 The 2026-09-08 measurement (738 transcripts plus `skillUsage` in `.claude.json`) is not usable: the set was
