@@ -23,9 +23,13 @@ Material changes include:
 - Description rewritten from "Grill the user relentlessly about a plan or design. Use when the user wants to
   stress-test a plan before building, or uses any 'grill' trigger phrases." to a one-question-at-a-time
   framing scoped to proposed designs and explicit user requests.
-- Upstream body preserved verbatim as the opening four paragraphs.
+- Upstream body preserved verbatim as the opening four paragraphs until 2026-09-28, when the skill was renamed
+  `interview-me` and widened from plans and designs to any subject that needs a shared understanding. Those
+  paragraphs now say "the subject" and "decision tree" where upstream says "this plan" and "design tree", and
+  the closing prohibition is stated positively.
 - Sections added below it, all original to this repository: vague-answer handling, a session question budget,
-  stopping criteria, a closing decision record, and an anti-patterns list.
+  stopping criteria, a closing decision record, and an anti-patterns list. The anti-patterns list was folded
+  into the sections it repeated on 2026-09-28.
 - Frontmatter metadata block added (author, license) and upstream provenance moved to this `ATTRIBUTIONS.md`
   per repo skill-forge policy.
 

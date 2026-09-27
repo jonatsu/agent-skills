@@ -1,114 +1,105 @@
 ---
 name: interview-me
-description: One-question-at-a-time grilling interview that stress-tests a proposed design before implementation. Walks each branch of the design tree, recommends an answer per question, forces vague answers to a decision, and closes with a written decision record. Use when the user explicitly asks to be grilled, or to pressure-test, poke holes in, interrogate, or challenge a plan - "grill me", "grill this plan", "pressure-test this", "poke holes in this", "challenge my design", "interrogate this before I build it". NOT for shaping an unformed idea, which is idea-brainstorming, and NOT for reviewing code that already exists.
+description: Interview the user one question at a time until you both share an understanding of a plan, design, problem, requirement, or decision, recommending an answer to each question and closing with a written record of what was decided. Use when asked to grill, interview, pressure-test, or poke holes in something, or to make sure you understand it the same way before acting. Use idea-brainstorming to shape an idea that has no direction yet; not for reviewing existing code.
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down
-each branch of the design tree, resolving dependencies between decisions one-by-one. For each question,
-provide your recommended answer.
+# Interview Me
+
+Interview me relentlessly about every aspect of the subject until we reach a shared understanding. The subject
+can be a plan, a design, a problem, a requirement, a decision, or a concept. Walk down each branch of its
+decision tree, resolving dependencies between decisions one by one. For each question, provide your recommended
+answer.
 
 Ask the questions one at a time, waiting for feedback on each question before continuing. Asking multiple
 questions at once is bewildering.
 
-If a *fact* can be found by exploring the codebase, look it up rather than asking me. The *decisions*, though,
-are mine — put each one to me and wait for my answer.
+If a *fact* can be found by exploring the codebase or the material at hand, look it up rather than asking me.
+The *decisions*, though, are mine: put each one to me and wait for my answer.
 
-Do not enact the plan until I confirm we have reached a shared understanding.
+Act on the subject only after I confirm we have reached a shared understanding.
 
-## Grill something real
+## Interview Something Real
 
-Grilling needs something with shape on the table — a plan, a design doc, a draft, or even a rough idea with a
-discernible direction. A draft is a valid target: grilling sharpens it, and its gaps and soft spots are exactly
-what the questions surface. An explicitly incomplete design handed over from idea-brainstorming is squarely in scope.
+The interview needs something with shape on the table: a plan, a design doc, a draft, a problem statement, or
+even a rough idea with a discernible direction. A draft is a valid target: the interview sharpens it, and its
+gaps and soft spots are exactly what the questions surface. An explicitly incomplete draft handed over from
+`idea-brainstorming` is squarely in scope.
 
-Before the first question, restate what is on the table in two or three sentences — including what is still open
-in it — and confirm I recognize it. Name it as a draft if it is one, so we both know we are hardening it, not
+Before the first question, restate what is on the table in two or three sentences, including what is still open
+in it, and confirm I recognize it. Name it as a draft if it is one, so we both know we are hardening it, not
 ratifying it.
 
-Bounce out only when there is no shape to grill at all: no direction, no candidate approach, just a topic. That
-is idea-brainstorming, not this — say so and ask whether I want to shape the idea first.
+When there is no shape at all (no direction, no candidate approach, just a topic), that is `idea-brainstorming`:
+say so and ask whether I want to shape the idea first.
 
-Read what exists and the code it touches before questioning — the design, and any specification, decision record,
-or design doc it is meant to conform to. A question whose answer is already written wastes a slot in the budget;
-a place where the design contradicts a document it must honor is the sharpest question you have. Bring each such
-contradiction to me as a question, naming the document and the conflict, rather than assuming which side wins.
+Read what already exists before questioning: the subject itself, the code or system it touches, and any
+specification, decision record, or document it must conform to. A question whose answer is already written
+wastes a slot in the budget; a place where the subject contradicts a document it must honor is the sharpest
+question you have. Bring each such contradiction to me as a question, naming the document and the conflict,
+rather than assuming which side wins.
 
-## When the design turns on its words
+## When a Decision Turns on Its Words
 
-If the grilling reveals that a decision hangs on what a term means — two words for one concept, or one word
-stretched over two — that is a domain-model question, not a plan question. Engage the `domain-modeling` skill to
-settle the term and capture it, then carry the settled term back into the interview. Grilling stress-tests the
-decisions; domain-modeling sharpens the language they are stated in.
+If a decision hangs on what a term means (two words for one concept, or one word stretched over two), that is a
+domain-model question. Engage the `domain-modeling` skill to settle the term and capture it, then carry the
+settled term back into the interview.
 
-## Map the branches before you ask
+## Map the Branches Before You Ask
 
-Before the first question, enumerate the decision branches the design contains and order them: dependencies
-first — a choice that constrains later ones — then by risk, the decisions hardest to reverse or most likely to
-be wrong. Show me this map and the rough question count per branch. That map is the "shape up front" the budget
-promises.
+Before the first question, enumerate the decision branches and order them: dependencies first (a choice that
+constrains later ones), then by risk (the decisions hardest to reverse or most likely to be wrong). Show me this
+map and the rough question count per branch; it is the shape of the session up front.
 
 Question in that order. A decision that constrains three others is worth settling before any of them. When an
-answer reshapes the tree — opening a branch or closing one — say so and re-show the map rather than pressing on
-against a stale one.
+answer reshapes the tree, opening a branch or closing one, say so and re-show the map.
 
-If the map already holds more branches than the budget can cover, say so before the first question — do not
-start and hope to fit. Recommend a budget that matches the tree, or a split into sessions, and let me choose.
+## Sharpen a Vague Answer Before Moving On
 
-## Sharpen a vague answer before moving on
+"It depends", "probably", "we'll see" and "maybe later" are the question restated. Ask the follow-up that forces
+a concrete choice, or ask what it depends on and settle that first. A non-committal answer on a load-bearing
+decision is itself worth questioning. Silence on a branch is not agreement: ask.
 
-"It depends", "probably", "we'll see" and "maybe later" are not answers — they are the question restated. Ask
-the follow-up that forces a concrete choice, or ask what it depends on and settle that first. A non-committal
-answer on a load-bearing decision is itself worth grilling.
+If I decline to decide, record the decision as deferred, together with what the deferral costs. A deferred
+decision MUST never read as resolved.
 
-If I decline to decide, that is fine — but MUST record it as deferred, carrying what the deferral costs. NEVER
-let a deferred decision read as resolved.
-
-## Recommend without anchoring
+## Recommend Without Anchoring
 
 Give your recommendation, but on a load-bearing or hard-to-reverse decision state the strongest case *against*
-it in the same breath — the condition under which the other choice wins. A recommendation with no live
+it in the same breath: the condition under which the other choice wins. A recommendation with no live
 alternative is an anchor, and an interview that anchors has tested nothing.
 
 Where a decision is genuinely close, ask for my instinct before you show your pick, then react to it. Order
 matters: your recommendation first shifts my answer; my answer first tests yours.
 
-## Budget the session
+## Budget the Session
 
-Plan for **10–15 questions**. The branch map from the previous section is the shape up front; the budget paces
-walking it, it does not replace it.
+Plan for **10–15 questions**. The budget paces the session; it never defines when the subject is done. Spend
+questions on sharp decisions rather than generic ones, and never leave a branch unresolved because the count ran
+out.
 
-The budget paces the session; it never defines when the design is done. Depth beats coverage means spending
-questions on sharp decisions rather than padding with generic ones — it never means leaving a branch unresolved
-because the count ran out.
+Raise a budget overrun as soon as you see it: when the map already holds more branches than the budget covers,
+or when a branch forks mid-interview. Then put the choice to me: keep going, split the subject across more
+sessions, or narrow its scope. Truncating is my decision to take with its cost in view.
 
-Going past the budget needs my agreement. When you near the budget with branches still open, stop and put the
-choice to me: keep going, split the design across more sessions, or narrow its scope. Truncating is my decision
-to take with its cost in view, never yours to reach by running out. A design tree larger than one budget is a
-signal to re-scope or continue, not to ship half-walked. NEVER overrun silently.
+A branch can only close on settled upstream branches. When one rests on an assumption about an upstream branch
+that is still open, reconcile the two, or mark both `open` together and say which downstream decisions now rest
+on nothing settled.
 
-If mid-interview you see the design is larger than budgeted — a branch forks, or a decision opens a subtree —
-raise it as soon as you spot it, not when the count runs out. Spotting the overrun early and asking to extend is
-expected, not an interruption.
-
-NEVER close with a branch resolved on an assumption about an upstream branch that is still open — that is how a
-session ends self-contradictory. Reconcile the two, or mark both `open` together and say what downstream
-decisions now rest on nothing settled.
-
-## Stop when
+## Stop When
 
 - Every branch is resolved or explicitly deferred.
 - I ask to stop.
-- The remaining questions are blocked on something outside my control — an external dependency, or a
+- The remaining questions are blocked on something outside my control, such as an external dependency or a
   measurement nobody has taken. Blocked is not the same as undecided.
 
-NEVER stop mid-branch without naming which branch is half-finished.
+When stopping mid-branch, name the branch that is half-finished.
 
-## Close with the decision record
+## Close With the Decision Record
 
-Before enacting anything, write the decisions down — wherever this repository already keeps design notes, to a
+Before acting on anything, write the decisions down: wherever this repository already keeps design notes, to a
 file I name, or inline if there is nowhere obvious. One table:
 
 ```markdown
@@ -118,11 +109,5 @@ file I name, or inline if there is nowhere obvious. One table:
 
 Status is `resolved`, `deferred`, or `open`. `open` is a branch we never reached or one whose upstream is
 unsettled; `deferred` is one I reached and chose not to settle, and a deferred row MUST carry what the deferral
-costs. Follow the table with what changed about the plan as a result, then stop for my confirmation.
-
-## Anti-patterns
-
-- Leading the witness: a recommendation with no live alternative. See "Recommend without anchoring".
-- Reading silence on a branch as agreement.
-- Recording a decision I never actually made.
-- Enacting any part of the plan mid-interview.
+costs. Record only decisions I actually made. Follow the table with what changed about the subject as a result,
+then stop for my confirmation.
