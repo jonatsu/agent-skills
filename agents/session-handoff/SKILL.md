@@ -1,12 +1,12 @@
 ---
-name: handoff
+name: session-handoff
 description: Create a work handoff for a fresh session, another agent, machine, or person. Use for a short next-task pointer, a fuller continuity brief, a paste-ready session primer, or a saved handoff document. Excludes durable project documentation and memory capture.
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-# Handoff
+# Session Handoff
 
 A handoff transfers what the recipient needs to continue. Its most valuable content is session-only knowledge
 that cannot be recovered from the repository, issue tracker, plans, or current machine state.

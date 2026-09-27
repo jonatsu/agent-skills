@@ -2,7 +2,7 @@
 
 ## Current Skill
 
-- Skill: `handoff`
+- Skill: `session-handoff`, named `handoff` until 2026-09-28
 - Current author: Joonas Onatsu
 - Current license: MIT, unchanged from upstream
 - Status: adapted from upstream and substantially rewritten

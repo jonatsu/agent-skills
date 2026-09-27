@@ -146,7 +146,7 @@
         "Records purpose, desired outcome, considered branches and current direction, scope, exclusions or parked ideas, constraints or assumptions, bounded design questions, and decision status.",
         "Avoids unearned architecture, interfaces, schemas, file layouts, and task sequencing.",
         "Writes exactly one descriptive fallback draft under docs/plans in the copied workspace, so it can be inspected before cleanup.",
-        "Uses brainstorming rather than a generic handoff workflow to save an active product brainstorm.",
+        "Uses brainstorming rather than the generic session-handoff workflow to save an active product brainstorm.",
         "Routes to requirements specification when journeys or acceptance still need a durable contract, while allowing direct technical design when the bounded direction already supplies them.",
         "Asks one handoff-fidelity confirmation before the next phase, unless a clear user response already supplies it."
       ]

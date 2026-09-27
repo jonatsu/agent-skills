@@ -30,7 +30,7 @@ first pass may proceed if the source remains available; state the achieved size 
 
 Route by the requested deliverable:
 
-- use `handoff` when the deliverable is a continuity brief for another session, agent, machine, or person;
+- use `session-handoff` when the deliverable is a continuity brief for another session, agent, machine, or person;
 - use `prompt-optimizer` when observed behavior requires changing prompt instructions; and
 - use a writing skill when editing human-facing prose for clarity or concision.
 
