@@ -202,6 +202,8 @@ sources, record provenance, and decide whether the source overlaps an existing s
 
 - [wshobson/conductor](https://github.com/wshobson/agents/tree/main/plugins/conductor): inspect as a plugin,
   including agent definitions and commands Kasetto would not deploy as skills.
+- [mkobit/chezmoi-skills](https://github.com/mkobit/chezmoi-skills): compare against our
+  `shared/tools/chezmoi-dotfiles` skill for coverage gaps and better patterns worth writing independently.
 
 ## Dedicated GitHub Actions Skill
 
