@@ -1,12 +1,12 @@
 ---
-name: optimizing-descriptions
+name: skill-descriptions-and-triggers
 description: Audit and improve Agent Skill descriptions for accurate selection. Use when a user asks to review existing SKILL.md descriptions, diagnose missed or false activation, or compare description variants. Not for routine skill authoring.
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-# Optimizing Skill Descriptions
+# Skill Descriptions and Triggers
 
 Improve how an existing skill reaches the requests it can serve, without making it claim work its body does
 not support. A description is a routing pointer: it states the capability and the conditions for reaching the

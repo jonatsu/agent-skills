@@ -59,7 +59,7 @@
       "id": "repair-skill-discovery",
       "prompt": "Fix this Agent Skill description; intended requests do not select it, while unrelated requests do.",
       "should_trigger": false,
-      "reason": "A focused existing-description repair belongs to optimizing-descriptions."
+      "reason": "A focused existing-description repair belongs to skill-descriptions-and-triggers."
     },
     {
       "id": "record-skill-provenance",
