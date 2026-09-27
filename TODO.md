@@ -11,6 +11,17 @@ their surviving open work is below, and the embedded research notes (tooling, te
 Repository-wide items live in [../TODO.md](../TODO.md). Roughly high-priority first; the settled/low-priority
 entries sit at the bottom.
 
+## Decide Which Skills Stay Direct and Which Go Behind the Lazy Server
+
+Urgent, added 2026-09-28. The lazy-skills-server is finished and Codex already uses it; today it serves only
+the `embedded-linux`, `development/nix`, `system-administration`, and `code-health` domains (see the lazy-tier
+comment in `kasetto/base.yaml`). Evaluate the whole set: which skills stay direct, with a minimized description
+in every session's listing, and which move behind the lazy server, reached on demand. Weigh how often each
+fires, whether a request names its subject clearly enough to route through the server, and the listing cost:
+Claude's listing budget was raised to 4% on 2026-09-28 because Haiku sessions were losing most descriptions
+(`../docs/findings/skill-discovery-limits.md`). `docs/plans/agent-management/lazy-skill-loading.md` is the
+design record.
+
 ## Description and Prose Pass Ledger
 
 Every skill gets two passes: `skill-descriptions-and-triggers` on its description, and `writing-for-agents`
@@ -19,27 +30,36 @@ still open. When a skill passes, add or complete its row in the same change and 
 2026-09-28 were reconstructed from Git history; a pass counts only where a commit message or evaluation record
 names it. The 2026-09-07 description audit predates the description skill and does not count.
 
-| Skill                             | Description pass      | `writing-for-agents` pass                                               |
-| --------------------------------- | --------------------- | ----------------------------------------------------------------------- |
-| `git-commits-and-recovery`        | 2026-09-27, `05ecb1e` | 2026-09-27, `05ecb1e`                                                   |
-| `git-history-investigation`       | 2026-09-27, `8242032` | 2026-09-27, `8242032`                                                   |
-| `using-git-worktrees`             | 2026-09-27, `b10689e` | 2026-09-27, `36bb1b4`                                                   |
-| `session-handoff`                 | 2026-09-28, `f25ae32` | 2026-09-28, `f25ae32`                                                   |
-| `skill-descriptions-and-triggers` | 2026-09-28, `37f34c8` | 2026-09-28, `37f34c8`                                                   |
-| `session-skill-audit`             | 2026-09-28, `da8a0cb` | 2026-09-28, `da8a0cb`                                                   |
-| `skill-review`                    | 2026-09-28, `0067bb4` | 2026-09-28, `0067bb4`, light: tiers, discovery lens, two negations only |
-| `skill-forge`                     | 2026-09-28, `37f34c8` |                                                                         |
-| `context-compression`             |                       | 2026-09-25, `f0f5559f`                                                  |
-| `context-architecture`            |                       | 2026-09-25, `8fce5a79`                                                  |
-| `agents-context-docs`             |                       | 2026-09-25, `8fce5a79`, as `agents-management`                          |
-| `python-architecture`             |                       | 2026-09-24, `4e374bf`                                                   |
-| `python-async-patterns`           |                       | 2026-09-24, `c85d2cf`                                                   |
-| `python-error-handling`           |                       | 2026-09-24, `819aa34`                                                   |
-| `python-parallelism`              |                       | 2026-09-24, `c1d8db7`                                                   |
-| `python-project-management`       |                       | 2026-09-24, `bf1081b`                                                   |
-| `python-style`                    |                       | 2026-09-24, `e47e62d`                                                   |
-| `python-testing`                  |                       | 2026-09-24, `d908951`                                                   |
-| `python-typing`                   |                       | 2026-09-24, `272c8d2`                                                   |
+| Skill                             | Description pass                 | `writing-for-agents` pass                                               |
+| --------------------------------- | -------------------------------- | ----------------------------------------------------------------------- |
+| `git-commits-and-recovery`        | 2026-09-27, `05ecb1e`            | 2026-09-27, `05ecb1e`                                                   |
+| `git-history-investigation`       | 2026-09-27, `8242032`            | 2026-09-27, `8242032`                                                   |
+| `using-git-worktrees`             | 2026-09-27, `b10689e`            | 2026-09-27, `36bb1b4`                                                   |
+| `session-handoff`                 | 2026-09-28, `f25ae32`            | 2026-09-28, `f25ae32`                                                   |
+| `skill-descriptions-and-triggers` | 2026-09-28, `37f34c8`            | 2026-09-28, `37f34c8`                                                   |
+| `session-skill-audit`             | 2026-09-28, `da8a0cb`            | 2026-09-28, `da8a0cb`                                                   |
+| `skill-review`                    | 2026-09-28, `0067bb4`            | 2026-09-28, `0067bb4`, light: tiers, discovery lens, two negations only |
+| `skill-forge`                     | 2026-09-28, `37f34c8`            | 2026-09-28, `1666cb1`                                                   |
+| `context-compression`             | 2026-09-28, `2997308`            | 2026-09-25, `f0f5559f`                                                  |
+| `context-architecture`            | 2026-09-28, `2997308`, no change | 2026-09-25, `8fce5a79`                                                  |
+| `agents-context-docs`             | 2026-09-28, `2997308`, no change | 2026-09-25, `8fce5a79`, as `agents-management`                          |
+| `python-architecture`             | 2026-09-28, `2997308`            | 2026-09-24, `4e374bf`                                                   |
+| `python-async-patterns`           | 2026-09-28, `2997308`, no change | 2026-09-24, `c85d2cf`                                                   |
+| `python-error-handling`           | 2026-09-28, `2997308`, no change | 2026-09-24, `819aa34`                                                   |
+| `python-parallelism`              | 2026-09-28, `2997308`, no change | 2026-09-24, `c1d8db7`                                                   |
+| `python-project-management`       | 2026-09-28, `2997308`            | 2026-09-24, `bf1081b`                                                   |
+| `python-style`                    | 2026-09-28, `2997308`            | 2026-09-24, `e47e62d`                                                   |
+| `python-testing`                  | 2026-09-28, `2997308`            | 2026-09-24, `d908951`                                                   |
+| `python-typing`                   | 2026-09-28, `2997308`, no change | 2026-09-24, `272c8d2`                                                   |
+
+## Merge skill-review Into skill-forge as a Review Mode?
+
+Proposed 2026-09-28. `skill-forge` and `skill-review` each state what a skill is judged on (scope coherence, the
+hard gates, the `ready with risks` ceiling), and the two copies can drift apart silently. One skill with an
+authoring mode and a review mode would hold one rubric. The cost is size, against the preference for small
+skills; progressive disclosure could keep the entry file lean by moving each mode's detail behind its own
+reference. Decide by first listing every rule both packages state, since the drift risk sits in that shared
+rubric rather than in the two workflows.
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
