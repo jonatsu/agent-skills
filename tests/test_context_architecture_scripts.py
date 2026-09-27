@@ -8,27 +8,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from skill_locator import skill_directory
 
-def _repository_root() -> Path:
-    result = subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    return Path(result.stdout.strip())
-
-
-REPOSITORY_ROOT = _repository_root()
-CHECK_SCRIPT = (
-    REPOSITORY_ROOT
-    / "skills"
-    / "shared"
-    / "agent-skills"
-    / "context-architecture"
-    / "scripts"
-    / "check_context_architecture.py"
-)
+CHECK_SCRIPT = skill_directory("context-architecture") / "scripts" / "check_context_architecture.py"
 
 EXIT_OK = 0
 EXIT_FINDINGS = 1

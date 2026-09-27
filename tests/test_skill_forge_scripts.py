@@ -9,20 +9,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from skill_locator import REPOSITORY_ROOT, skill_directory
 
-def _repository_root() -> Path:
-    result = subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    return Path(result.stdout.strip())
-
-
-REPOSITORY_ROOT = _repository_root()
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
-SCRIPT_ROOT = SKILLS_ROOT / "shared" / "agent-skills" / "skill-forge" / "scripts"
+SCRIPT_ROOT = skill_directory("skill-forge") / "scripts"
 INIT_SCRIPT = SCRIPT_ROOT / "init_skill.py"
 VALIDATE_SCRIPT = SCRIPT_ROOT / "quick_validate.py"
 
