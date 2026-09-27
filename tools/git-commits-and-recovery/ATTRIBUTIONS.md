@@ -2,15 +2,16 @@
 
 ## Current Skill
 
-- Skill: `git-ops`
+- Skill: `git-commits-and-recovery`, named `git-ops` until 2026-09-27
 - Current author: Joonas Onatsu
 - Current license: MIT
 - Status: original skill containing commit-message guidance adapted from an upstream skill; it formerly also
   carried adapted worktree guidance
 
 Two references were adapted, each from a different upstream, and the sections below name them separately. The
-worktree material has since moved to the `using-git-worktrees` skill. The remaining `git-ops` guidance was
-authored independently for this repository.
+worktree material has since moved to the `using-git-worktrees` skill. The remaining guidance was authored
+independently for this repository, including the history-investigation reference that became the
+`git-history-investigation` skill on 2026-09-27.
 
 ## Original Author and Source: Worktrees
 

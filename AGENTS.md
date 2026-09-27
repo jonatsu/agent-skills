@@ -69,7 +69,7 @@ first fails, and accepts a path relative to wherever you are.
 
 ## Git Safety
 
-`git-ops` deliberately remains model-invokable: `disable-model-invocation: true` would withhold its guidance,
+`git-commits-and-recovery` deliberately remains model-invokable: `disable-model-invocation: true` would withhold its guidance,
 not prevent an agent from running Git commands. Safety relies on the always-loaded staging rule and deterministic
 guards rather than the skill's confirmation gates. Claude Code's `PreToolUse` guard enforces the stateful checks;
 Codex and Copilot CLI use cc-safety-net `local-overrides` for bulk `add`, `commit -a`, and `push --delete`.

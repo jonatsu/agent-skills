@@ -46,6 +46,7 @@ changing for the data the code actually sees.
 ## Quality Gates
 
 Run the repository's own checks, and let each one pass before you commit: the tests, the linter, the type
-checker where the language has one, the build, and the security or secrets scan. The `git-ops` skill owns the
-staging and commit procedure; this list is the bar a commit clears, not a substitute for that procedure. When
-you must ship below the bar, name the failing gate and the reason rather than silencing it.
+checker where the language has one, the build, and the security or secrets scan. The
+`git-commits-and-recovery` skill owns the staging and commit procedure; this list is the bar a commit clears,
+not a substitute for that procedure. When you must ship below the bar, name the failing gate and the reason
+rather than silencing it.

@@ -1,6 +1,5 @@
 # Stashes
 
-Use this reference when setting changes aside with a stash, or when inspecting or recovering stash entries.
 For linked worktrees, use the `using-git-worktrees` skill.
 
 The stash ref belongs to the repository, not one worktree. An entry created in one lane is visible from every
@@ -20,7 +19,9 @@ git stash push -u -m "<why>" -- <paths>
 ```
 
 Use `git stash apply` when recovery should preserve the stash for another attempt. `pop` removes the entry
-after a successful application. Treat conflicts as unresolved work and inspect them before continuing.
+after a successful application, leaving nothing to retry if the result was wrong. A stash applied over a
+conflict is not merged automatically: treat the conflicts as unresolved work and read the conflicting files
+before continuing.
 
 If the environment reserves stash deletion for the user, capture the entry's content and provide the exact
 `git stash drop 'stash@{N}'` command rather than bypassing the control.

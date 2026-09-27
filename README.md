@@ -40,8 +40,8 @@ skill's lock is not at that commit.
 One skill, itemised per destination. Use this rather than a hand-written `diff -rq`, which silently checks
 only the destinations you remembered to list:
 
-Run `just skills-deployed --skill git-ops --verbose`; require one `ok` line for every locked destination and
-zero drift, pending files, backups, remote mismatches, or unresolved entries.
+Run `just skills-deployed --skill git-commits-and-recovery --verbose`; require one `ok` line for every locked
+destination and zero drift, pending files, backups, remote mismatches, or unresolved entries.
 
 A name no lock carries exits 2 rather than passing vacuously, so a typo and a genuinely pruned skill both
 fail loudly. That failure is how you confirm a removal actually pruned.
@@ -49,7 +49,7 @@ fail loudly. That failure is how you confirm a removal actually pruned.
 Both skill validators over one package:
 
 ```console
-$ just skill-check skills/shared/tools/git-ops
+$ just skill-check skills/shared/tools/git-commits-and-recovery
 Agent Skills specification (skills-ref)
 
 1 checked, 0 failed
@@ -305,8 +305,8 @@ is Apache-2.0 per its upstream and ships `LICENSE.upstream` alongside. Do not as
 declares otherwise.
 
 Where an upstream licence would block the use we need, the skill is replaced by an independently written one
-rather than adapted. `shared/tools/git-ops` is the worked example: its predecessor was SUL 1.0,
-personal/non-commercial only.
+rather than adapted. `shared/tools/git-commits-and-recovery` is the worked example: its predecessor was SUL
+1.0, personal/non-commercial only.
 
 ## External references on skill authoring
 

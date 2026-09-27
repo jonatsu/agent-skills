@@ -1,12 +1,11 @@
 # Signed Commits
 
-Load this when a signature will not verify, when `%G?` reports `N` or `U`, or when you must prove a commit
-carries a signature at all. Everything here is about telling those three questions apart because they have
-different answers and the usual mistake is answering the wrong one.
+"Is this commit signed?" and "does its signature verify here?" have different answers, and the usual mistake
+is answering the wrong one.
 
 ## `%G?` Does Not Detect Every SSH Signature
 
-**Do NOT read `%G?` as the answer under SSH signing.** With `gpg.format=ssh` and no
+With `gpg.format=ssh` and no
 `gpg.ssh.allowedSignersFile` configured, a correctly signed commit reports `%G?` = `N` and `--show-signature`
 prints `No signature`. Verified on git 2.43.0, 2026-08-26; git does emit
 `error: gpg.ssh.allowedSignersFile needs to be configured` on stderr, so it is misleading rather than silent.

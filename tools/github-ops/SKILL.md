@@ -1,6 +1,6 @@
 ---
 name: github-ops
-description: Manage GitHub operations with the gh CLI and REST or GraphQL APIs. Use for pull requests, blocked merges, branch protection and rulesets, Actions workflows and runs, authentication or permission failures, rate limits, and incomplete API or search results. Use git-ops for local commits, rebases, and recovery. Excludes general issue triage.
+description: Manage GitHub operations with the gh CLI and REST or GraphQL APIs. Use for pull requests, blocked merges, branch protection and rulesets, Actions workflows and runs, authentication or permission failures, rate limits, and incomplete API or search results. Use git-commits-and-recovery for local commits, rebases, and recovery. Excludes general issue triage.
 license: MIT
 compatibility: Requires GitHub CLI (gh); jq is optional. GitHub Enterprise features vary by server version.
 metadata:
@@ -16,8 +16,8 @@ means what the caller assumes. Check both status and response shape before using
 REST or GraphQL documentation when available. A copied command inventory would drift while still reading as
 authoritative. This package instead records decisions and failure modes that are easy to miss.
 
-Use `git-ops` for local commits, rebases, and recovery, and `using-git-worktrees` for worktrees. General issue
-triage is outside this skill.
+Use `git-commits-and-recovery` for local commits, rebases, and recovery, and `using-git-worktrees` for
+worktrees. General issue triage is outside this skill.
 
 ## Establish the Tool Before Using It
 

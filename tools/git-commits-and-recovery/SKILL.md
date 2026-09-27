@@ -1,13 +1,13 @@
 ---
-name: git-ops
-description: Perform Git operations while preserving uncommitted and unrelated work. Use when staging, committing, pushing, resolving merge conflicts, managing branches or stashes, amending or rewriting history, recovering lost work, or troubleshooting commit hooks and signatures. Not for history questions (git-history-investigation), worktrees (using-git-worktrees), or GitHub pull requests and API work (github-ops).
+name: git-commits-and-recovery
+description: Commit, push, rewrite, and recover Git work without losing uncommitted or unrelated changes. Use when staging or committing, writing a commit message, pushing, resolving merge conflicts, managing branches or stashes, amending, rebasing, or resetting, recovering lost commits or branches, or when a commit hook or signature misbehaves. Not for history questions (git-history-investigation), worktrees (using-git-worktrees), or GitHub pull requests and API work (github-ops).
 license: MIT
 compatibility: Requires Git. Force-push protection with --force-if-includes requires Git 2.30 or newer.
 metadata:
   author: Joonas Onatsu
 ---
 
-# Git Operations
+# Git Commits and Recovery
 
 Preserve the user's work while making the requested Git change. Match the checks to the operation's risk;
 ordinary staging and commits do not need a history-rewrite procedure.
@@ -35,8 +35,7 @@ Assume unrecognized changes belong to another contributor. Commit only changes y
 - Record `HEAD`, worktree state, and index state before editing or staging.
 - Stop if the index contains changes you did not stage. Wait or ask; do not unstage, commit, or rewrite them.
 - Stage a whole path only when every changed hunk is yours. Use `git add -p` for mixed-ownership files, then
-  inspect the staged and unstaged versions separately. Do not then commit that path with a pathspec: step 7
-  re-takes the whole worktree file, committing the foreign hunks you just excluded.
+  inspect the staged and unstaged versions separately, and commit them as step 7's exception describes.
 - If overlapping edits cannot be separated confidently, stop and coordinate. Do not overwrite either version
   to make staging easier.
 - Do not run formatters or generators across files containing foreign changes unless their output can be
@@ -99,7 +98,8 @@ Use this path only when creating a new commit without amending, rewriting, pushi
 
    The exception no ownership check catches, because it is not about ownership: when the index holds what the
    worktree cannot express, a pathspec cannot commit it and reverts it instead. `git rm --cached` stages a
-   deletion while the file stays on disk; `git add -p` stages some hunks of a file that still holds the rest.
+   deletion while the file stays on disk; `git add -p` stages some hunks of a file that still holds the rest,
+   and a pathspec would re-take the whole file, foreign hunks included.
    Both need a pathspec-less `git commit`, after verifying the whole index with
    `git diff --cached --name-status`, because that is the only form that records the index as staged.
    Verified on git 2.43.0, 2026-09-14.

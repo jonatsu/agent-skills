@@ -1,6 +1,6 @@
 # Recovery
 
-Load this when something has already gone wrong. For deciding whether an operation is safe, use the ladder in
+For deciding whether an operation is safe, use the ladder in
 [history-changing-operations.md](history-changing-operations.md) instead. For a removed, refused, or stale
 worktree, use the `using-git-worktrees` skill.
 
@@ -146,25 +146,8 @@ A second `git add -A` here re-stages the sibling lane's edit that caused the col
 
 ## Stash Problems
 
-`git stash list` first, always. An entry you do not recognise probably belongs to another lane, since the
-stash is repository-wide. Read it before touching it:
-
-```bash
-git stash show -p 'stash@{N}'
-```
-
-To recover content without consuming the entry, use `git stash apply` rather than `pop`; `pop` drops the entry
-on success and leaves you with nothing to retry if the merge was wrong.
-
-Where `git stash drop` and `git stash clear` are blocked by the environment, save the content as a patch and
-hand the user the exact command:
-
-```bash
-git stash show -p 'stash@{N}'    # capture the output to a file yourself
-# then ask the user to run:  git stash drop 'stash@{N}'
-```
-
-A stash restored over a conflict is not automatically merged. Read the conflicting files before continuing.
+Read [stashes.md](stashes.md): it covers unrecognized entries, recovering without consuming an entry, and a
+blocked `drop`.
 
 ## Detached HEAD
 

@@ -23,7 +23,7 @@ re-runs it; the trustworthy inputs are `skillUsage.lastUsedAt` (written only on 
 
 Read the full-description skills as the clean test cases — a non-trigger there is the real evidence the
 description-activation entries below are waiting for: `context-architecture`, `context-compression`,
-`generated-file-verify`, `git-ops`, `github-ops`, `repo-management`. The 21 skills set
+`generated-file-verify`, `git-commits-and-recovery`, `github-ops`, `repo-management`. The 21 skills set
 to `name-only` are reached mainly by explicit name, so a future zero on them means "never asked for by name".
 
 ## `test-engineer` Activation Datapoint
@@ -60,9 +60,10 @@ and `allowed-tools` appears once (`claude-code-setup-audit`). The one skill that
 `find-skills` (it installs third-party code), is archived, so the worked example for "when the flag is right"
 must be reconstructed.
 
-`git-ops` is settled the other way: the flag never stopped `git push`, it only withheld guidance at the moment
-the command ran. Safety there rests on the staging rule in `agents/rules/` plus the `PreToolUse` guard, not on
-the skill's confirmation gates (`git-ops` fired in 0 of 362 sessions). What remains is the audit, not that case.
+`git-commits-and-recovery` is settled the other way: the flag never stopped `git push`, it only withheld
+guidance at the moment the command ran. Safety there rests on the staging rule in `agents/rules/` plus the
+`PreToolUse` guard, not on the skill's confirmation gates (as `git-ops`, it fired in 0 of 362 sessions).
+What remains is the audit, not that case.
 
 Ownership is the constraint: only owned skills can be edited, since an upstream frontmatter change is
 overwritten on the next sync. Derive the owned set from `skills/kasetto/*.yaml` and the locks at audit time;
@@ -80,7 +81,7 @@ Open sub-question: whether tightening `allowed-tools` rides along with this or s
 
 ## Harness Switches for Commit Attribution Trailers
 
-`shared/git/git-ops` and the global instruction files forbid an unrequested `Co-Authored-By`/`Signed-off-by`
+`shared/tools/git-commits-and-recovery` and the global instruction files forbid an unrequested `Co-Authored-By`/`Signed-off-by`
 trailer, but a harness that injects the trailer does so from its system prompt, which outranks a skill or a
 memory file. Where a harness exposes a config switch, setting it removes the conflict. Those switches are
 agent-level configuration and MUST NOT be named in the portable skill.

@@ -1,6 +1,6 @@
 ---
 name: using-git-worktrees
-description: Isolate parallel work in Git worktrees, from creation through cleanup. Use when work needs its own checkout so it cannot disturb the current one, such as parallel agents, a second branch alongside the current one, or a plan run in isolation, and when finishing, removing, pruning, or repairing a worktree. Use git-ops for commits, stashes, and history.
+description: Isolate parallel work in Git worktrees, from creation through cleanup. Use when work needs its own checkout so it cannot disturb the current one, such as parallel agents, a second branch alongside the current one, or a plan run in isolation, and when finishing, removing, pruning, or repairing a worktree. Use git-commits-and-recovery for commits, stashes, and history rewriting.
 license: MIT
 compatibility: Requires Git.
 metadata:

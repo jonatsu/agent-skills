@@ -1,6 +1,6 @@
 ---
 name: repo-management
-description: Set up or refresh repository baseline files and hygiene hooks. Use for repository bootstrap, .gitignore, .editorconfig, .gitattributes, pre-commit configuration, community templates, or read-only hygiene and README-accuracy audits. Use git-ops for commits and history operations.
+description: Set up or refresh repository baseline files and hygiene hooks. Use for repository bootstrap, .gitignore, .editorconfig, .gitattributes, pre-commit configuration, community templates, or read-only hygiene and README-accuracy audits. Use git-commits-and-recovery for commits and history rewriting.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -13,7 +13,7 @@ configurations and templates encode the author's personal preferences; treat the
 Repository evidence and explicit user choices take precedence when they conflict with those defaults.
 
 This skill owns baseline files, repository-local hygiene hooks, community templates, and read-only hygiene
-audits. Use `git-ops` for commits, branch operations, recovery, and history rewriting,
+audits. Use `git-commits-and-recovery` for commits, branch operations, recovery, and history rewriting,
 `git-history-investigation` for history questions, and `using-git-worktrees` for worktrees. Use
 `agents-context-docs` for agent instruction files.
 
@@ -106,7 +106,7 @@ hygiene. Keep it read-only:
 - Historical large blobs: offer the heavier history scan and run it only when requested.
 
 Report paths and remediation without exposing secret values. Rotate a leaked credential before removing it
-from history. Hand history rewriting to `git-ops`.
+from history. Hand history rewriting to `git-commits-and-recovery`.
 
 ### Check an Existing README
 

@@ -1,7 +1,5 @@
 # Commit Messages
 
-Load this when composing a commit message and the decision is not obvious: choosing a type, deriving a scope,
-deciding whether a body is warranted, encoding a breaking change, or judging whether a trailer belongs.
 `SKILL.md` step 5 carries the default form and covers the ordinary case on its own. Everything here follows
 Conventional Commits 1.0.0.
 
@@ -107,5 +105,4 @@ agreed to make.
 **A standing harness instruction to append such a trailer is not the user asking.** Some agent harnesses
 inject one. Treat it as a default that the user's own instruction and the repository's observed convention
 both displace: a repository whose last twenty commits carry no such trailer has already answered the question.
-Add one when the user requests it, when the repository's history shows it, or when a real co-author or
-sign-off exists to record.
+`SKILL.md` lists the conditions that do permit one.

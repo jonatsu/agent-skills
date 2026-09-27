@@ -1,6 +1,5 @@
 # History-Changing and Remote Operations
 
-Use this reference for operations that move existing refs, rewrite history, discard work, or change a remote.
 Resolve the operation's actual risk before selecting commands.
 
 ## Establish the Consequential State
@@ -35,9 +34,8 @@ history.
 | `git worktree remove --force` (dirty)     | None for uncommitted content    | None           |
 | `git clean -f`, `-fd`, or `-fdx`          | None                            | None           |
 
-Each active operation has its own abort. A rebase and merge set `ORIG_HEAD`; a cherry-pick does not. After a
-rebase, `HEAD@{1}` is not reliably the pre-rebase tip because the operation writes several reflog entries.
-Verified on git 2.43.0, 2026-08-26.
+Each active operation has its own abort; run it before anything else. [recovery.md](recovery.md) covers
+reading `ORIG_HEAD` and the reflog once an operation has completed.
 
 Reachable reflog entries default to a 90-day expiry. Unreachable entries, which hold commits orphaned by an
 amend, reset, or branch move, default to 30 days. These are configuration defaults, not recovery guarantees.
@@ -52,8 +50,8 @@ destructive action and target; otherwise ask for authorization.
   preview omits ignored files that the wider operation deletes. Verified on git 2.43.0, 2026-08-26.
 - Before overwriting work with `git reset --hard`, `git restore <path>`, or `git checkout -- <path>`, show
   `git status --short` and the relevant diff.
-- Treat `git worktree remove --force` and deletion of a branch with unmerged work as destructive. A plain
-  worktree removal refusal is evidence of content to inspect, not an obstacle to bypass.
+- Treat deletion of a branch with unmerged work as destructive. Worktree removal belongs to the
+  `using-git-worktrees` skill.
 - Rewriting published history requires explicit authorization and a resolved target branch. Protected and
   shared branches require the user to decide how collaborators will be affected.
 

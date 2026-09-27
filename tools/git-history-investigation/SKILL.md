@@ -1,6 +1,6 @@
 ---
 name: git-history-investigation
-description: Answer Git history questions with cited commits, such as who changed a line, when code was added or removed, where a deleted file or function went, or which commit broke a behavior, using blame, pickaxe searches, and bisect. Use git-ops to rewrite history or recover lost work.
+description: Answer Git history questions with cited commits, such as who changed a line, when code was added or removed, where a deleted file or function went, or which commit broke a behavior, using blame, pickaxe searches, and bisect. Use git-commits-and-recovery to rewrite history or recover lost work.
 license: MIT
 compatibility: Requires Git.
 metadata:

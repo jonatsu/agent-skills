@@ -1,10 +1,8 @@
 # Hooks That Rewrite Files During a Commit
 
-Load this when a commit reported `files were modified by this hook`, when a generated artifact is stale after
-a commit that succeeded, or when you must know whether a hook's rewrite actually survived. Everything here is
-about `pre-commit` (the framework) specifically. Under `husky`, `lefthook`, or bare `.git/hooks`, scripts none
-of it applies, because those runners do not stash, so the hook runs against your dirty tree and its rewrite
-survives or fails on its own terms.
+Everything here is about `pre-commit` (the framework) specifically. Under `husky`, `lefthook`, or bare
+`.git/hooks` scripts, none of it applies, because those runners do not stash, so the hook runs against your
+dirty tree and its rewrite survives or fails on its own terms.
 
 Use the active hook, rather than the presence of a configuration file, to decide which framework applies.
 Verify rewritten artifacts by content after the commit.
