@@ -92,8 +92,11 @@ members through `skills: "*"`, so no config edit is needed and the hook deploys 
 `sub-dir: <domain>` / `skills: "*"` entry to `kasetto/base.yaml`, in the same commit that creates the
 directory. Kasetto discovers skills exactly one level under a source root, and `sub-dir: "*"` is not
 supported. The reverse holds too: removing the last skill from a domain must remove its `base.yaml` entry in
-the same commit, because a configured domain that does not exist fails the sync outright — and since git does
-not track empty directories, that failure surfaces on someone's next clone rather than here.
+the same commit, because a configured domain that does not exist fails the deploy outright — and since git does
+not track empty directories, that failure surfaces on someone's next clone rather than here. On this machine it
+can stay hidden: from kasetto 3.9.0 a bare `kst sync` trusts the lock, reports the stale skill `unchanged` and
+exits 0, while `./scripts/kasetto-deploy.sh` (which passes `--update`), a fresh clone's first sync, and
+`just locks` all fail with `source sub-dir not found`. Re-verified on 3.9.0, 2026-09-27.
 
 A third-party skill used as-is is not vendored: it stays a remote source entry in `kasetto/base.yaml`, pinned
 to the upstream commit you reviewed. Vendor a copy into a group only when it is *forked* — materially modified
