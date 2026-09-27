@@ -18,15 +18,16 @@ configuration unless the user requested that scope or separately approved it.
 For a routine command in an existing project, inspect the active config and use the project's established
 mise path. Do not impose a setup workflow.
 
-| Task                                                             | Load                                                                              |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Install or activate mise; configure CI, bootstrap, or containers | [install-and-activation.md](references/install-and-activation.md)                 |
-| Change config scope, environment layers, or discovery boundaries | [config-and-env.md](references/config-and-env.md)                                 |
-| Add tools, tasks, hooks, lockfiles, or backend options           | [tools-tasks-and-isolation.md](references/tools-tasks-and-isolation.md)           |
-| Change TOML keys, types, or structure                            | [schemas.md](references/schemas.md), plus the relevant behavior reference         |
-| Use Tera, `.miserc.toml`, `MISE_ENV`, or platform environments   | [templating-and-early-init.md](references/templating-and-early-init.md)           |
-| Use the `go:` backend or diagnose unexpected Go paths            | [go-backend.md](references/go-backend.md)                                         |
-| Diagnose surprising behavior, missing tools, or broken shims     | [operations-and-troubleshooting.md](references/operations-and-troubleshooting.md) |
+| Task                                                              | Load                                                                              |
+| ----------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Install or activate mise; configure CI, bootstrap, or containers  | [install-and-activation.md](references/install-and-activation.md)                 |
+| Bound a large or slow cold install without throttling daily tasks | [install-and-activation.md](references/install-and-activation.md)                 |
+| Change config scope, environment layers, or discovery boundaries  | [config-and-env.md](references/config-and-env.md)                                 |
+| Add tools, tasks, hooks, lockfiles, or backend options            | [tools-tasks-and-isolation.md](references/tools-tasks-and-isolation.md)           |
+| Change TOML keys, types, or structure                             | [schemas.md](references/schemas.md), plus the relevant behavior reference         |
+| Use Tera, `.miserc.toml`, `MISE_ENV`, or platform environments    | [templating-and-early-init.md](references/templating-and-early-init.md)           |
+| Use the `go:` backend or diagnose unexpected Go paths             | [go-backend.md](references/go-backend.md)                                         |
+| Diagnose surprising behavior, missing tools, or broken shims      | [operations-and-troubleshooting.md](references/operations-and-troubleshooting.md) |
 
 Use installed CLI help and current upstream documentation for version-sensitive behavior.
 

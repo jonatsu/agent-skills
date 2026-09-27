@@ -14,6 +14,34 @@ Prefer:
   (`mise generate install-script --localize --write <path>`)
 - containers with mounted home dirs → system installs with `mise install --system`
 
+## Bound a large or slow cold install
+
+Keep install-specific concurrency and timeout tuning command scoped. The `jobs` setting and `MISE_JOBS` also
+bound ordinary `mise run` task concurrency, so a persistent low value slows unrelated daily work.
+
+For a cold install with many tools or a fragile network, start with two concurrent jobs and two-minute network
+timeouts while preserving caller overrides:
+
+```sh
+MISE_JOBS="${MISE_JOBS:-2}" \
+MISE_HTTP_TIMEOUT="${MISE_HTTP_TIMEOUT:-2m}" \
+MISE_FETCH_REMOTE_VERSIONS_TIMEOUT="${MISE_FETCH_REMOTE_VERSIONS_TIMEOUT:-2m}" \
+mise install
+```
+
+These settings bound different operations:
+
+- `MISE_JOBS` limits concurrent installation work and task execution.
+- `MISE_HTTP_TIMEOUT` limits connection setup and each stalled response read. The read timer resets when data
+  arrives.
+- `MISE_FETCH_REMOTE_VERSIONS_TIMEOUT` limits remote version discovery.
+- `MISE_HTTP_DOWNLOAD_TIMEOUT` limits one artifact's complete download, including retries and backoff.
+
+Inspect the installed version's settings before changing its defaults. Extend the complete-download timeout
+only when that budget fails. Increase a stalled-read or version-discovery timeout from the two-minute recovery
+baseline only when evidence shows that the operation still makes progress; a very long timeout makes a dead
+endpoint look like a slow one.
+
 ## Activation model guide
 
 ### `mise exec -- <command>`
