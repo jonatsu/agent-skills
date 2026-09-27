@@ -5,16 +5,15 @@ unnecessary back-and-forth.
 
 ## Verdicts
 
-Adapted from upstream: the labels and their descriptions are kept, the numeric scores are not. Upstream fed
-them into a weighted composite and a letter grade; this review reports the label and the reason.
+Report the label and the reason.
 
-| Verdict                 | Description                                                                                                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `highly_efficient`      | The agent took a direct path: nothing re-read or re-run, independent steps batched, no work redone.                                        |
-| `mostly_efficient`      | The agent slipped once or twice: a duplicated read, an early retry, or a small correction — with no knock-on cost.                         |
-| `mostly_inefficient`    | The agent wasted effort repeatedly, or caused a round of rework an earlier check would have prevented.                                     |
-| `highly_inefficient`    | The agent's waste dominated the run: the same defect reworked across cycles, repeated user correction, or extended flailing / looping.     |
-| `insufficient_evidence` | The extraction does not show enough of the run to judge. Added here; upstream's efficiency rubric had no such verdict and forced a choice. |
+| Verdict                 | Description                                                                                                                            |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `highly_efficient`      | The agent took a direct path: nothing re-read or re-run, independent steps batched, no work redone.                                    |
+| `mostly_efficient`      | The agent slipped once or twice: a duplicated read, an early retry, or a small correction — with no knock-on cost.                     |
+| `mostly_inefficient`    | The agent wasted effort repeatedly, or caused a round of rework an earlier check would have prevented.                                 |
+| `highly_inefficient`    | The agent's waste dominated the run: the same defect reworked across cycles, repeated user correction, or extended flailing / looping. |
+| `insufficient_evidence` | The extraction does not show enough of the run to judge.                                                                               |
 
 ## Rubric
 

@@ -5,8 +5,6 @@ repository's conventions.
 
 ## Verdicts
 
-Adapted from upstream: the labels and their descriptions are kept, the numeric scores are not.
-
 | Verdict                 | Description                                                                                                                                                                                                                                      |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `approve`               | The agent produced well-designed, correct code that is consistent with repo conventions, adequately tested, and clean of smells; a senior reviewer would approve it outright, with at most trivial nits.                                         |
@@ -58,9 +56,7 @@ The extractor caps machine payloads but never user text, so a user correction is
 diff may not be. Do not infer the absence of a defect from the absence of its diff — that is
 `insufficient_evidence`.
 
-This repository's own conventions are the standard when the session ran here: `attrs` over stdlib dataclasses,
-package data reached by package identity rather than parent arithmetic, and no countable inventory of other
-files in a comment. Check the repository the session actually ran in before applying any of them.
+Read the conventions of the repository the session ran in, from its instruction files, before applying them.
 
 ## Reason
 

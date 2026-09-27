@@ -1,6 +1,6 @@
 ---
 name: skill-doctor
-description: Review real agent session history to find where this setup failed the work, and name the skill or rule repair that would have prevented it. Use to audit how recent sessions actually went, to find recurring waste or code-quality defects across them, to decide which installed skill needs a description or content fix, or to judge whether a skill that never fires should have. Runs the extractor itself. Static review of one skill package is skill-review; writing the repair is skill-forge.
+description: Audit recorded agent sessions to find where agent-setup's skills and rules failed the work, and name the repair that would have prevented it. Use to review how recent sessions went, to find recurring waste or code-quality defects across them, to decide which skill needs a description or content fix, or to judge whether a skill that never fires should have. Use skill-review for a static review of one skill, and skill-forge or skill-descriptions-and-triggers to write the repair.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -12,9 +12,7 @@ metadata:
 Grade what the agent **did**, from sessions that already happened, and convert the result into a repair.
 
 This skill is specific to the `agent-setup` repository: it drives that repository's `just` recipes and proposes
-edits against its skill sources. It scores an axis nothing else here covers — `skill-review` inspects a package
-statically, and the experimental harness compares a candidate against a baseline on fixtures. Neither sees a
-real session.
+edits against its skill sources. It is the only review here that reads real sessions.
 
 **The finding is the product, not the score.** A session that went badly is only interesting once you can name
 what would have prevented it. Every judgment below ends in that name or it is discarded.
@@ -53,48 +51,43 @@ Both rubrics end by requiring a named cause. That clause is the point of the rev
 verdict is positive, because a session that went well because a skill fired is evidence that skill earns its
 place.
 
+Judge a session by its outcome. A session that solved the problem without a skill is a good session: coverage
+says which skills never fire, not that a session should have used one.
+
 ### 3. Ground every reason in the extraction
 
 A reason must cite what the document actually contains — a metric id and its value, a `seq` from the excerpt,
 or a quoted line. A reason that could have been written without reading the document is not evidence; it is the
 model agreeing with itself.
 
-Never promote an absent signal to a positive finding. "No error markers appear" is not "the session
-succeeded", and `skill_observations` reports what was witnessed, never more.
+Treat an absent signal as unknown. "No error markers appear" is not "the session succeeded", and
+`skill_observations` reports what was witnessed, never more.
 
 ### 4. Aggregate across sessions, then route
 
-One bad session is an anecdote. Report a finding when the same cause appears across sessions, and say in how
-many. Then route it:
+One bad session is an anecdote. Report a finding when the same cause appears across sessions, as the named
+cause and the count of sessions that showed it. Labels and counts are the whole result; a letter grade or
+composite score would imply a comparability between runs that no two samples or judges share.
 
-| Cause named by the rubric                       | Goes to                                                                    |
-| ----------------------------------------------- | -------------------------------------------------------------------------- |
-| A skill's description did not match the request | `skill-forge`, description repair                                          |
-| A skill's content is wrong, thin, or misleading | `skill-forge`, content repair                                              |
-| Guidance for a moment nobody verbalizes         | `agents/rules/`, not a skill — a skill for such a moment does not activate |
-| A missing check, lint rule, or hook             | the repository's gates                                                     |
-| Nothing exists that would have prevented it     | a new skill, or an accepted cost stated as such                            |
+Report each harness separately. Claude records an explicit error flag and a typed single-operand read; Codex
+infers errors from output text and batches reads, which costs it delivery attribution, so a lower number may be
+the detector.
+
+Before comparing coverage across harnesses, or calling a silent skill a description defect, check what each
+client was shown. Claude's `skillOverrides` can set a skill to `name-only`, which keeps it installed and
+invocable while withholding its description, and the extractor does not read that setting.
+`docs/findings/session-measurement-thresholds.md` has the evidence.
+
+Then route each finding:
+
+| Cause named by the rubric                       | Goes to                                                                           |
+| ----------------------------------------------- | --------------------------------------------------------------------------------- |
+| A skill's description did not match the request | `skill-descriptions-and-triggers`                                                 |
+| A skill's content is wrong, thin, or misleading | `skill-forge`                                                                     |
+| Guidance for a moment nobody verbalizes         | `agents/shared/rules/`, not a skill — a skill for such a moment does not activate |
+| A missing check, lint rule, or hook             | the repository's gates                                                            |
+| Nothing exists that would have prevented it     | a new skill, or an accepted cost stated as such                                   |
 
 Record the review under `docs/evaluations/skills/YYYY-MM-DD-<subject>.md` as a dated record. It states what
-was true against one corpus on one day; never rewrite one to match a later run.
-
-## Never
-
-- **Emit a letter grade, a composite score, or a rounded number.** The predecessor this replaces derived an
-  A+/A/A- ladder from a four-label judgment over ~12 sessions and reported it to four decimal places. Two runs
-  shared neither sample nor judge state and nothing said the grades were incomparable.
-- **Average across harnesses.** Claude records an explicit error flag and a typed single-operand read; Codex
-  infers errors from output text and batches reads, which costs it delivery attribution. A lower number may be
-  the detector. Report per harness or report nothing.
-- **Compare one harness's coverage to another's without checking what each was offered.** The clients are
-  configured separately. `skillOverrides` in Claude's `settings.json` can set a skill to `name-only`, which
-  leaves it installed and invocable while withholding its description, so it cannot match a request and cannot
-  be repaired by rewriting one. Measured 2026-09-12: 34 skills. The extractor does not read that file, so
-  nothing in its output will warn you — open it yourself before any cross-harness sentence, and before calling
-  any silence a description defect.
-- **Score skill usage as a virtue.** A session that solved the problem without needing a skill is a good
-  session. Coverage says which skills never fire; it does not say a session should have used one.
-- **Edit a deployed skill under `~/.config/*/skills` or `~/.codex/skills`.** The next `kst sync` overwrites it.
-  Every accepted proposal is applied to `skills/shared/<domain>/<skill>/` and deployed from there.
-- **Apply a repair inside the review.** Report first. Repairing is a separate, separately authorized step, and
-  it runs through `skill-forge`.
+was true against one corpus on one day; never rewrite one to match a later run. The review ends at the report:
+each repair is a separately authorized change.
