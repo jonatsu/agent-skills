@@ -33,7 +33,11 @@ first fails, and accepts a path relative to wherever you are.
 
 **Always:**
 
-- Use `skill-forge` when creating, editing, restructuring, or replacing a skill.
+- Use `skill-forge` when creating, editing, restructuring, or replacing a skill, and
+  `skill-descriptions-and-triggers` whenever a description is written or changed.
+- Edit a repo-local skill in `../.agents/skills/<name>/`. The `../.claude/skills/` and `../.github/skills/`
+  entries are symlinks to it and are never edited separately; README's "Repo-local skills" section has the
+  layout.
 - Use both `skill-review` and `skill-forge` for every skill review. `skill-review` governs assessment and
   evidence; `skill-forge` governs proposed repair shape and any separately authorized edits.
 - Load `kasetto-skill-tool` before adding, editing, moving, archiving, restoring, removing, deploying, or

@@ -85,6 +85,7 @@ Skipping it is safe in the moment — the skills are already live — but a stal
 ### Adding a skill
 
 Create `shared/<domain>/<name>/SKILL.md`, or a flat directory under `claude/` if the skill is Claude-coupled.
+A skill that only works in this repository goes under [repo-local skills](#repo-local-skills) instead.
 Then `git add` and commit; that is the whole procedure. The configs discover group
 members through `skills: "*"`, so no config edit is needed and the hook deploys the new skill.
 
@@ -189,6 +190,15 @@ different agent. Add the group, and a `kasetto/copilot-extra/` config, the first
 is written. Codex likewise receives `shared/` only; its built-in `.system` skills sit beside the
 Kasetto-managed ones and are excluded by exact path from the ownership gate.
 
+### Repo-local skills
+
+A skill that only works inside this repository, such as `skill-doctor`, is not deployed globally. Its one real
+directory is `../.agents/skills/<name>/`, where Codex discovers project skills. `../.claude/skills/<name>` and
+`../.github/skills/<name>` are relative symlinks to it, for Claude Code and Copilot CLI. The clients read it
+straight from the checkout, so Kasetto, the locks, and `just skills-deployed` do not cover it, and an edit needs
+no `just skills-sync`. Both validators and the name-uniqueness check still scan it. Claude Code and Codex were
+confirmed to discover `skill-doctor` through this layout on 2026-09-28; Copilot CLI has not been checked yet.
+
 The [scoped Python rule](../agents/shared/rules/python.md) routes work by concern.
 [python-style](shared/development/python/python-style/SKILL.md) owns everyday coding defaults;
 specialist Python skills own their procedures. Each skill preserves established project conventions and requires
@@ -203,7 +213,7 @@ scopes list the lazy ones.
 | Domain                   | Holds                                                                                           |
 | ------------------------ | ----------------------------------------------------------------------------------------------- |
 | `agents/`                | Working with agents: prompts, instruction files, context economy, handoffs, the CC safety net   |
-| `skills-for-skills/`     | Skill lifecycle: authoring, review, descriptions and triggers, session audits, deployment       |
+| `skills-for-skills/`     | Skill lifecycle: authoring, review, descriptions and triggers, deployment                       |
 | `engineering/`           | Shaping ideas, requirements, and technical design before work is built                          |
 | `development/`           | Everyday dev craft: coding standards, shells, containers, generated-file checks                 |
 | `development/python/`    | Python craft: style, typing, testing, async, architecture, project management                   |
