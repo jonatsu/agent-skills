@@ -202,13 +202,14 @@ scopes list the lazy ones.
 
 | Domain                   | Holds                                                                                           |
 | ------------------------ | ----------------------------------------------------------------------------------------------- |
-| `agent-skills/`          | The setup itself — skills, prompts, agent instruction files, context economy, the CC safety net |
+| `agents/`                | Working with agents: prompts, instruction files, context economy, handoffs, the CC safety net   |
+| `skills-for-skills/`     | Skill lifecycle: authoring, review, descriptions and triggers, session audits, deployment       |
 | `engineering/`           | Shaping ideas, requirements, and technical design before work is built                          |
 | `development/`           | Everyday dev craft: coding standards, shells, containers, generated-file checks                 |
 | `development/python/`    | Python craft: style, typing, testing, async, architecture, project management                   |
 | `development/nix/`       | Nix and NixOS: flakes, packaging, secrets, home-manager, direnv                                 |
 | `tools/`                 | Focused tool use: ast-grep, Git, GitHub, task runners, mise, repo hygiene, dotfiles             |
-| `review/`                | Reviewing code, designs, skills, and specification conformance                                  |
+| `review/`                | Reviewing code for security and specification conformance                                       |
 | `code-health/`           | Codebase health sweeps and repair — the Brooks-based audit, debt, review, sweep and test skills |
 | `testing-and-qa/`        | Verifying behaviour: debugging, TDD, test engineering                                           |
 | `system-administration/` | Machines and runtimes: systemd, networking                                                      |
