@@ -192,12 +192,12 @@ Kasetto-managed ones and are excluded by exact path from the ownership gate.
 
 ### Repo-local skills
 
-A skill that only works inside this repository, such as `skill-doctor`, is not deployed globally. Its one real
+A skill that only works inside this repository, such as `session-skill-audit`, is not deployed globally. Its one real
 directory is `../.agents/skills/<name>/`, where Codex discovers project skills. `../.claude/skills/<name>` and
 `../.github/skills/<name>` are relative symlinks to it, for Claude Code and Copilot CLI. The clients read it
 straight from the checkout, so Kasetto, the locks, and `just skills-deployed` do not cover it, and an edit needs
 no `just skills-sync`. Both validators and the name-uniqueness check still scan it. Claude Code and Codex were
-confirmed to discover `skill-doctor` through this layout on 2026-09-28; Copilot CLI has not been checked yet.
+confirmed to discover `session-skill-audit` through this layout on 2026-09-28; Copilot CLI has not been checked yet.
 
 The [scoped Python rule](../agents/shared/rules/python.md) routes work by concern.
 [python-style](shared/development/python/python-style/SKILL.md) owns everyday coding defaults;

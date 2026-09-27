@@ -26,7 +26,7 @@ names it. The 2026-09-07 description audit predates the description skill and do
 | `using-git-worktrees`             | 2026-09-27, `b10689e` | 2026-09-27, `36bb1b4`                                                   |
 | `session-handoff`                 | 2026-09-28, `f25ae32` | 2026-09-28, `f25ae32`                                                   |
 | `skill-descriptions-and-triggers` | 2026-09-28, `37f34c8` | 2026-09-28, `37f34c8`                                                   |
-| `skill-doctor`                    | 2026-09-28, `da8a0cb` | 2026-09-28, `da8a0cb`                                                   |
+| `session-skill-audit`             | 2026-09-28, `da8a0cb` | 2026-09-28, `da8a0cb`                                                   |
 | `skill-review`                    | 2026-09-28, `0067bb4` | 2026-09-28, `0067bb4`, light: tiers, discovery lens, two negations only |
 | `skill-forge`                     | 2026-09-28, `37f34c8` |                                                                         |
 | `context-compression`             |                       | 2026-09-25, `f0f5559f`                                                  |
