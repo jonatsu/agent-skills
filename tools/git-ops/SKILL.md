@@ -1,6 +1,6 @@
 ---
 name: git-ops
-description: Perform Git operations while preserving uncommitted and unrelated work. Use when staging, committing, pushing, resolving merge conflicts, managing branches or stashes, amending or rewriting history, investigating changes with blame or bisect, recovering lost work, or troubleshooting commit hooks and signatures. Use using-git-worktrees for worktrees and github-ops for GitHub pull requests, policies, and API operations.
+description: Perform Git operations while preserving uncommitted and unrelated work. Use when staging, committing, pushing, resolving merge conflicts, managing branches or stashes, amending or rewriting history, recovering lost work, or troubleshooting commit hooks and signatures. Not for history questions (git-history-investigation), worktrees (using-git-worktrees), or GitHub pull requests and API work (github-ops).
 license: MIT
 compatibility: Requires Git. Force-push protection with --force-if-includes requires Git 2.30 or newer.
 metadata:
@@ -63,8 +63,7 @@ When independent lanes need different branches or checkouts, isolate them in lin
   is uncertain, read [references/rewriting-hooks.md](references/rewriting-hooks.md).
 - When work is already missing or Git state was damaged, read [references/recovery.md](references/recovery.md)
   before attempting repair.
-- For Git archaeology, blame, pickaxe searches, bisect, or other history questions, read
-  [references/history-investigation.md](references/history-investigation.md).
+- For blame, pickaxe searches, bisect, or other history questions, use the `git-history-investigation` skill.
 - For missing or unverifiable commit signatures, read
   [references/signed-commits.md](references/signed-commits.md).
 

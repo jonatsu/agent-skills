@@ -1,12 +1,19 @@
-# History Investigation
+---
+name: git-history-investigation
+description: Answer Git history questions with cited commits, such as who changed a line, when code was added or removed, where a deleted file or function went, or which commit broke a behavior, using blame, pickaxe searches, and bisect. Use git-ops to rewrite history or recover lost work.
+license: MIT
+compatibility: Requires Git.
+metadata:
+  author: Joonas Onatsu
+---
 
-Load this when the question is who changed something, when it changed, where deleted code went, or which
-commit changed behavior. Most archaeology commands are read-only. `git bisect` changes the checkout unless
-run with `--no-checkout`, so isolate or authorize that branch explicitly.
+# Git History Investigation
 
-Use `git help log`, `git help blame`, and `git help bisect` for complete syntax on the installed version. The
-examples below preserve non-obvious search sequences and interpretation rules that individual manual pages do
-not provide as one workflow.
+Every answer names a commit hash and the command that produced it. Most of these commands are read-only;
+`git bisect` changes the checkout unless run with `--no-checkout`, so isolate it or get authorization first.
+
+`git help log`, `git help blame`, and `git help bisect` give complete syntax for the installed version. This
+skill keeps the search sequences and interpretation rules that no single manual page gives as one workflow.
 
 ## Pick the Cheapest Tool That Can Answer It
 
@@ -19,15 +26,15 @@ not provide as one workflow.
 | Which commit first broke a deterministic check? | `git bisect`   |
 | Where has my local HEAD been?                   | `git reflog`   |
 
-Order matters: `bisect` costs one build or test run per step, and `log -S` frequently answers the same
-question in one command. Reach for `bisect` when you have a deterministic check and no idea where to look, not
-as a first move.
+`bisect` costs one build or test run per step, and `log -S` often answers the same question in one command.
+Reach for `bisect` when you have a deterministic check and no idea where to look.
 
 ## Git Archaeology
 
 Start with a falsifiable question: the symbol's introduction, a deleted file, a behavior change, a merge
 resolution, or the origin of a specific line. Record the repository root, current commit, refs in scope, path,
-and exact search term. Do not narrow by date or author until evidence supports that boundary.
+and exact search term. Keep the search wide across dates and authors until evidence supports a narrower
+boundary.
 
 Check whether the available history is complete:
 
@@ -62,7 +69,7 @@ Use `-S` for a literal whose occurrence count changed and `-G` for added or remo
 regular expression. Start with `--all` when the relevant branch is unknown, then inspect each candidate with
 `git show`. A match identifies a textual change, not necessarily the commit that caused the reported behavior.
 
-For a merge commit, inspect its parents and compare each parent with the merge result:
+For a merge commit, compare each parent with the merge result:
 
 ```bash
 git show --format=raw --no-patch <merge>
@@ -85,10 +92,10 @@ four claims that often diverge:
 - a commit made the observed check fail.
 
 Use `git blame` to obtain a candidate commit, then inspect that commit and its parent. Use pickaxe or path
-history to move past formatting, copying, and renames. Stop when the evidence supports the requested claim;
-do not turn archaeology into an exhaustive history survey.
+history to move past formatting, copying, and renames. Stop as soon as the evidence supports the requested
+claim.
 
-## The Pickaxe Silently Misses a Pure Rename
+## The Pickaxe Misses a Pure Rename
 
 `-S` counts occurrences **per file pair**, so a commit that only moves code changes no count anywhere and does
 not match. Measured on git 2.43.0, 2026-08-26, on a commit that moved `loadConfig` from `a.c` to `b.c`:
@@ -101,11 +108,8 @@ not match. Measured on git 2.43.0, 2026-08-26, on a commit that moved `loadConfi
 
 The default rename detection records the change as `R100 a.c b.c`, one pair with no content change.
 `--no-renames` splits it into `D a.c` + `A b.c`, two pairs that each change a count, and the pickaxe then
-matches.
-
-**`--pickaxe-all` is not the fix**, and reaching for it here is the common mistake: it changes only which
-files are *displayed* for a commit that already matched, never whether it matches. In the same measurement it
-widened the file list from `a.c` to `a.c main.c` and left the matched commits identical.
+matches. `--no-renames` is the fix; `--pickaxe-all` only changes which files are *displayed* for a commit that
+already matched.
 
 So when `-S` finds an introduction but no removal, suspect a move before concluding the code is still live,
 then re-run with `--no-renames`.
@@ -137,26 +141,24 @@ yields a hash; the answer is usually in `git show <hash>`.
 
 A flaky test makes `git bisect` report a random commit with complete confidence, and nothing in the output
 reveals it. Confirm the check is deterministic by running it twice on the known-bad commit before starting.
-Mark untestable commits skipped rather than guessing at good or bad, and always reset the session when
-finished. An abandoned bisect leaves the repository on an arbitrary detached commit that will be mistaken for
-a real state later.
+Mark untestable commits skipped rather than guessing at good or bad.
 
-Bisect changes refs and normally checks out candidate commits. Require a clean dedicated worktree when tests
-need a checkout, or start with `git bisect start --no-checkout` when the check can operate on `BISECT_HEAD`.
-Record the starting commit and run `git bisect reset` on every exit path.
+Bisect changes refs and normally checks out candidate commits. Run it in a clean dedicated worktree when the
+check needs a checkout (the `using-git-worktrees` skill creates one), or start with
+`git bisect start --no-checkout` when the check can operate on `BISECT_HEAD`. Record the starting commit and
+run `git bisect reset` on every exit path: an abandoned bisect leaves the repository on an arbitrary detached
+commit that is later mistaken for a real state.
 
 Bisect finds where the check *started failing*, which is not always where the defect was introduced: a latent
 bug can be exposed by an unrelated change.
 
 ## Reporting
 
-MUST cite the command and its output. A history answer without a hash is an assertion, not a finding. Include
-the command, the hash and subject, the path, and the diff or line context supporting the claim.
+Include the command, the hash and subject, the path, and the diff or line context supporting the claim. A
+history answer without a hash is an assertion, not a finding.
 
 Where several commits touch the same lines, or blame lands on a reformat, say what remains unproven instead of
-naming the most plausible commit. Where the conclusion rests on a name-matched text search rather than a
-reference-resolving tool, say that too. A claim of "no other callers" from a text search misses dynamic
-dispatch, names built from strings, and callers in languages the search never covered.
+naming the most plausible commit.
 
 ## Primary References
 

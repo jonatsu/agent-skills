@@ -13,8 +13,9 @@ configurations and templates encode the author's personal preferences; treat the
 Repository evidence and explicit user choices take precedence when they conflict with those defaults.
 
 This skill owns baseline files, repository-local hygiene hooks, community templates, and read-only hygiene
-audits. Use `git-ops` for commits, branch operations, history investigation, recovery, and history rewriting,
-and `using-git-worktrees` for worktrees. Use `agents-context-docs` for agent instruction files.
+audits. Use `git-ops` for commits, branch operations, recovery, and history rewriting,
+`git-history-investigation` for history questions, and `using-git-worktrees` for worktrees. Use
+`agents-context-docs` for agent instruction files.
 
 ## Choose the Task
 
