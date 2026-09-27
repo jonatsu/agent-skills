@@ -2,7 +2,7 @@
 
 ## Current skill
 
-- Skill: `reflect`
+- Skill: `session-reflect`, named `reflect` until 2026-09-28
 - Author: Joonas Onatsu
 - License: MIT (this repository's `LICENSE`)
 - Status: original work. This is **not** a fork or a port — three ideas were lifted from the upstream below

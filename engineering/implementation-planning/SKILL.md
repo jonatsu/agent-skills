@@ -35,7 +35,7 @@ When the design is incomplete, record the exact gap, its downstream consequence,
 must resolve it. Stop only the blocked branch; independent, already-designed work may continue. Return missing behavior,
 architecture, interfaces, failure policy, compatibility, or migration strategy to technical design. Return missing or
 contradictory intended behavior and acceptance to `requirements-specification`. Return changed purpose or product scope
-to brainstorming.
+to idea-brainstorming.
 
 Repository inspection may settle implementation-local facts and ordinary techniques already constrained by the design
 and local conventions. Do not use that allowance to hide a public-behavior, compatibility, material-cost, or
@@ -48,9 +48,9 @@ When an accepted specification exists, require the design to name a compatible r
 keeps the affected planning branch blocked until technical design reconciles it.
 
 An accepted design should reach planning already pressure-tested. Where it did not, or where planning itself
-introduces a consequential decision the design's pressure-test did not cover — a migration path, or an ordering with a
-hard-to-reverse step — pressure-test that decision with `grilling` before committing the plan to it. Skip only with a
-stated reason, or at the user's direction.
+introduces a consequential decision the design's pressure-test did not cover — a migration path, or an ordering
+with a hard-to-reverse step — pressure-test that decision with `interview-me` before committing the plan to
+it. Skip only with a stated reason, or at the user's direction.
 
 ## Establish Required Practices
 

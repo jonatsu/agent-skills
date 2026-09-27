@@ -15,8 +15,8 @@ skill is for when you are *changing* the model, not just consuming it.
 
 Reach for this while a design is being shaped and the words for it are still moving: a term means two things, two
 words mean one thing, or a stated relationship has never been tested against a concrete case. It is the active
-counterpart to `grilling`: when a grilling interview surfaces terminology or model decisions, engage this skill
-to capture them; when this skill's questioning widens into a full design interrogation, hand back to `grilling`.
+counterpart to `interview-me`: when an interview-me session surfaces terminology or model decisions, engage this skill
+to capture them; when this skill's questioning widens into a full design interrogation, hand back to `interview-me`.
 
 Not this skill: reviewing an existing model for decay (the `brooks-*` skills), designing system structure,
 interfaces, or data flow (`technical-design`), or fixing product scope and acceptance (`requirements-specification`).

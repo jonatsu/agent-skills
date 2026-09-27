@@ -30,7 +30,7 @@ Retained from upstream, adapted and reworded:
 
 Changed for this repository:
 
-- Frontmatter description rewritten for this repository's routing, with explicit exclusions against `grilling`
+- Frontmatter description rewritten for this repository's routing, with explicit exclusions against `interview-me`
   (which interrogates the user's own design) and `requirements-specification`.
 - The upstream `disable-model-invocation: true` flag was not carried: this skill produces only a Markdown file
   and benefits from ordinary description-based discovery here.

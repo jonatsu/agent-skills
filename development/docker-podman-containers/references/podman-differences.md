@@ -48,7 +48,7 @@ supports. `docker-compose` behavior against the Podman socket is otherwise the `
 Quadlet is a systemd generator: it reads declarative unit files at boot and on `systemctl daemon-reload` and
 generates real `.service` units. It **replaces the deprecated `podman generate systemd`** (that command
 survives for bug fixes only). For a Podman workload managed by systemd, prefer Quadlet over the
-Docker-Compose-oneshot pattern in `compose-systemd.md`; load the `systemd` skill for unit semantics and
+Docker-Compose-oneshot pattern in `compose-systemd.md`; load the `systemd-units` skill for unit semantics and
 target-version checks.
 
 - **Unit file types:** `.container`, `.pod`, `.kube`, `.network`, `.volume`, `.build`, `.image` (and

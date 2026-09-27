@@ -101,7 +101,7 @@ not activate on work they cover, move their behavior to `agents/rules/` per this
 wording repairs" a moment nobody verbalizes) rather than editing the description again. The
 `test-engineer`/`python-testing` datapoint is tracked above.
 
-Separately: `grilling` is over the 512-char soft description budget; trim when convenient.
+Separately: `interview-me` is over the 512-char soft description budget; trim when convenient.
 
 ## Invocation Control Audit
 
@@ -121,7 +121,7 @@ earlier figures go stale within days.
 
 1. Audit owned skills by actual behavior: which install or execute third-party code, write outside the working
    tree, mutate git history or remotes, or transmit data externally. Prior candidates: `agents-context-docs`
-   (writes files and creates symlinks), `reflect`, `chezmoi-dotfiles`.
+   (writes files and creates symlinks), `session-reflect`, `chezmoi-dotfiles`.
 2. Decide the bar. `disable-model-invocation: true` costs real capability — right for "installs code from the
    internet", arguably wrong for "writes a doc file".
 3. Verify that every supported client accepts the chosen metadata before touching anything in `shared/`.
@@ -276,7 +276,7 @@ before changing deployment policy. Skill count alone does not establish which de
 
 Investigate whether the memory store should gain a global tier alongside the per-project silos. Today every
 silo is per project, so a fact true everywhere lands in whichever silo was open and only that project sees it.
-`reflect` works around this in prose (`metadata.scope:` marks the exception for a human reader and the sweep
+`session-reflect` works around this in prose (`metadata.scope:` marks the exception for a human reader and the sweep
 but routes nothing).
 
 `microsoft/skills`' `continual-learning` reached a two-tier split independently (global for tool patterns and

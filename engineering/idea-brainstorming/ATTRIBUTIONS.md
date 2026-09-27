@@ -2,7 +2,7 @@
 
 ## Current Skill
 
-- Skill: `brainstorming`
+- Skill: `idea-brainstorming`, named `brainstorming` until 2026-09-28
 - Current author: Joonas Onatsu
 - Current license: MIT
 - Status: independently rewritten adaptation of an upstream interaction model
@@ -31,7 +31,7 @@ creative task, section-by-section approval, complete-specification workflow, vis
 The predecessor informed early branch generation, scope decomposition, parking tangents, research-backed prior art,
 explicit exclusions, bounded open questions, and selective diagnostics for omissions, assumptions, created complexity,
 dependencies, and irreversible choices. Its seven-phase workflow, repeated gates, fixed verdict vocabulary, line
-budget, and `grilling`-only handoff are not retained.
+budget, and `interview-me`-only handoff are not retained.
 
 ## OpenAI `define-goal`
 

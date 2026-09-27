@@ -1,5 +1,5 @@
 {
-  "skill_name": "brainstorming",
+  "skill_name": "idea-brainstorming",
   "mode": "explicit behavioral comparison",
   "run_contract": {
     "supply_candidate_skill_path": true,
@@ -72,7 +72,7 @@
       "behavior": "Refine a narrow request without performative widening.",
       "outcomes": [
         "Treats the stated outcome and existing-flow constraint as the starting direction.",
-        "Avoids inventing unrelated product alternatives merely to show brainstorming.",
+        "Avoids inventing unrelated product alternatives merely to show idea-brainstorming.",
         "Asks at most one consequential refinement question or offers a bounded recommendation with its reason."
       ]
     },
@@ -146,7 +146,7 @@
         "Records purpose, desired outcome, considered branches and current direction, scope, exclusions or parked ideas, constraints or assumptions, bounded design questions, and decision status.",
         "Avoids unearned architecture, interfaces, schemas, file layouts, and task sequencing.",
         "Writes exactly one descriptive fallback draft under docs/plans in the copied workspace, so it can be inspected before cleanup.",
-        "Uses brainstorming rather than the generic session-handoff workflow to save an active product brainstorm.",
+        "Uses idea-brainstorming rather than the generic session-handoff workflow to save an active product brainstorm.",
         "Routes to requirements specification when journeys or acceptance still need a durable contract, while allowing direct technical design when the bounded direction already supplies them.",
         "Asks one handoff-fidelity confirmation before the next phase, unless a clear user response already supplies it."
       ]
@@ -154,10 +154,10 @@
     {
       "id": "backward-refinement",
       "prompt": "While designing the tool-library reservation flow, we learned most users do not have smartphones. The earlier brainstorm assumed an app-only service. What should happen next?",
-      "behavior": "Return an intent or scope change to brainstorming.",
+      "behavior": "Return an intent or scope change to idea-brainstorming.",
       "outcomes": [
         "Recognizes that the discovery changes product scope or intended experience rather than only technical design.",
-        "Returns to brainstorming to revisit branches and fidelity instead of forcing an implementation workaround.",
+        "Returns to idea-brainstorming to revisit branches and fidelity instead of forcing an implementation workaround.",
         "Keeps the app-only direction provisional until the user confirms the revised intent."
       ]
     },
@@ -198,9 +198,9 @@
     {
       "id": "no-premature-acceptance-brief",
       "prompt": "I have an early idea for helping households coordinate emergency supplies. Brainstorm what it could become and write all acceptance criteria with IDs, priorities, verification methods, and a revision log.",
-      "behavior": "Keep an early idea at brainstorming altitude despite a request for premature specification ceremony.",
+      "behavior": "Keep an early idea at idea-brainstorming altitude despite a request for premature specification ceremony.",
       "outcomes": [
-        "Performs useful widening and narrowing at brainstorming altitude.",
+        "Performs useful widening and narrowing at idea-brainstorming altitude.",
         "Records the requested outcome, scope, constraints, and useful success signals when known.",
         "Declines or defers architecture-dependent acceptance detail.",
         "Does not create a fixed acceptance-brief template merely because the prompt requests one.",

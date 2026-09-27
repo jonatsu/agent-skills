@@ -26,7 +26,7 @@
       "prompt": "Design a retry policy for an internal webhook delivery service. The service already uses an at-least-once queue. A delivery succeeds only on HTTP 2xx; 408, 429, and 5xx are retryable; other 4xx responses are permanent failures. Limit attempts to six over 24 hours, honor Retry-After within that window, prevent concurrent delivery of the same event, and expose final disposition to operators. Produce the technical design, not an implementation plan.",
       "behavior": "Begin technical design directly for a bounded request and keep implementation sequencing out.",
       "outcomes": [
-        "Treats the supplied outcome and scope as sufficient without forcing brainstorming.",
+        "Treats the supplied outcome and scope as sufficient without forcing idea-brainstorming.",
         "Defines attempt identity, retry timing, concurrency control, final disposition, observability, and important failure or recovery paths coherently.",
         "Separates supplied constraints from recommendations or assumptions.",
         "Does not produce task order, commits, source line ranges, or implementation status.",
@@ -34,16 +34,16 @@
       ]
     },
     {
-      "id": "02-brainstorming-handoff",
-      "prompt": "Use the supplied brainstorming draft to design the selected neighborhood tool-library reservation service. Keep the marketplace parked and preserve access for residents without smartphones.",
+      "id": "02-idea-brainstorming-handoff",
+      "prompt": "Use the supplied idea-brainstorming draft to design the selected neighborhood tool-library reservation service. Keep the marketplace parked and preserve access for residents without smartphones.",
       "required_inputs": [
         "A draft recording the selected reservation-queue and volunteer-pickup direction, scope, exclusions, constraints, and open technical questions."
       ],
-      "behavior": "Continue from a design-ready brainstorming draft without reconstructing product intent.",
+      "behavior": "Continue from a design-ready idea-brainstorming draft without reconstructing product intent.",
       "outcomes": [
         "Preserves the draft's selected direction, scope, exclusions, and accessibility constraint.",
         "Uses the draft's open technical questions as design inputs rather than reopening settled product branches.",
-        "Returns to brainstorming if a proposed architecture would exclude residents without smartphones."
+        "Returns to idea-brainstorming if a proposed architecture would exclude residents without smartphones."
       ]
     },
     {
@@ -70,12 +70,12 @@
       ]
     },
     {
-      "id": "05-return-to-brainstorming",
+      "id": "05-return-to-idea-brainstorming",
       "prompt": "While designing an app-only appointment system, research showed the target clinic serves many patients who cannot use smartphones. Continue the design.",
-      "behavior": "Return changed product scope to brainstorming.",
+      "behavior": "Return changed product scope to idea-brainstorming.",
       "outcomes": [
         "Recognizes that channel access changes the intended product experience and scope.",
-        "Stops the affected design branch and returns the product choice to brainstorming.",
+        "Stops the affected design branch and returns the product choice to idea-brainstorming.",
         "Keeps app-only assumptions provisional rather than hiding the gap in an implementation workaround."
       ]
     },
@@ -111,7 +111,7 @@
         "Does not present the limit as desired pricing, entitlement, or contractual policy.",
         "Labels the intended quota as a product decision or provisional assumption.",
         "Continues only design work that does not depend on the unresolved policy.",
-        "Returns an outcome or scope change to brainstorming when the answer changes product intent."
+        "Returns an outcome or scope change to idea-brainstorming when the answer changes product intent."
       ]
     },
     {

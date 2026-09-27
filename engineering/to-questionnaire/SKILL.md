@@ -1,6 +1,6 @@
 ---
 name: to-questionnaire
-description: Turn a decision you cannot answer alone into a Markdown questionnaire for someone who holds the knowledge you lack, to fill in async or in a meeting. Interviews you only about the send - who it goes to and what you need back - then writes questions targeting the gap between what they know and what you need. Use to draft a discovery questionnaire or an async info-gathering document. NOT for grilling your own design (grilling) or writing a requirements spec (requirements-specification).
+description: Turn a decision you cannot answer alone into a Markdown questionnaire for someone who holds the knowledge you lack, to fill in async or in a meeting. Interviews you only about the send - who it goes to and what you need back - then writes questions targeting the gap between what they know and what you need. Use to draft a discovery questionnaire or an async info-gathering document. NOT for being interviewed on your own design (interview-me) or writing a requirements spec (requirements-specification).
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -14,7 +14,7 @@ questionnaire pulls it out of them.
 it goes to, and what they need back. The questions in the document then target the **gap** between what the
 recipient knows and what the user needs — not the subject the user cannot speak to.
 
-This is the inverse of `grilling`. Grilling interrogates the user about their own design; reach for this instead
+This is the inverse of `interview-me`. That skill interviews the user about their own plan or design; reach for this instead
 when the user genuinely cannot answer, because the knowledge lives with someone else. It is not a requirements
 specification (`requirements-specification`): it gathers what one person knows, it does not define a system's
 behavior.

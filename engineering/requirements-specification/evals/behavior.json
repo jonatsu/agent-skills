@@ -104,7 +104,7 @@
       "prompt": "Turn this approved product brief into a feature spec with user journeys and acceptance criteria, but leave architecture for later.",
       "behavior": "Handle ordinary feature-spec language without requiring formal terminology.",
       "outcomes": [
-        "Produces requirements and acceptance rather than brainstorming, technical design, or implementation planning.",
+        "Produces requirements and acceptance rather than idea-brainstorming, technical design, or implementation planning.",
         "Treats the approved brief as the governing intent and does not reopen settled product direction."
       ]
     },

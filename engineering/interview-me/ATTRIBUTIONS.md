@@ -2,7 +2,7 @@
 
 ## Current skill
 
-- Skill: `grilling`
+- Skill: `interview-me`, named `grilling` until 2026-09-28
 - Current author: Joonas Onatsu
 - Current license: MIT
 - Status: adapted from upstream and materially modified

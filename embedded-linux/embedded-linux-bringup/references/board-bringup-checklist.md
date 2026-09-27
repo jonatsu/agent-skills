@@ -74,7 +74,7 @@ journalctl -u app.service -b -n 100 --no-pager
 Use the target's equivalent on BusyBox/SysV systems. Check actual dependencies, executable/interpreter identity,
 working directory, credentials, device permissions, and mounts.
 `systemd-analyze blame` lists elapsed startup times, not a proof of the critical dependency causing delay.
-Route unit authoring to the systemd skill; use [cross-compilation.md](cross-compilation.md) for ELF/ABI failures.
+Route unit authoring to the systemd-units skill; use [cross-compilation.md](cross-compilation.md) for ELF/ABI failures.
 
 ## Faster Iteration with an NFS Root
 

@@ -1,5 +1,5 @@
 ---
-name: containers
+name: docker-podman-containers
 description: Build, run, diagnose, and secure Docker, Podman, and OCI containers. Use for Dockerfiles or Containerfiles, Compose applications, rootless containers, Quadlet systemd units, container runtime settings, image scanning and publication, or Kubernetes workload hardening. Excludes general Kubernetes cluster administration.
 license: MIT
 compatibility: Requires the container, registry, scanner, or Kubernetes tools used by the target project.
@@ -7,12 +7,12 @@ metadata:
   author: Joonas Onatsu
 ---
 
-# Containers
+# Docker and Podman Containers
 
 Use this skill for container images, Dockerfiles, Compose applications, container runtime settings, image supply chains,
 and workload-side Kubernetes controls. Guidance is written for Docker and applies to Podman except where
 `references/podman-differences.md` overrides it; read that reference for rootless operation, the compose providers, and
-Quadlet. Use the `systemd` skill as well when a Compose deployment or Quadlet unit is managed by systemd. This skill
+Quadlet. Use the `systemd-units` skill as well when a Compose deployment or Quadlet unit is managed by systemd. This skill
 does not cover general cluster administration, application security, or unrelated CI design.
 
 Treat the target tool's installed help and official documentation as the authority. Container and orchestration features
@@ -60,16 +60,16 @@ runtime settings rather than inferring them from a Dockerfile alone.
 
 Read the branch reference before making its decisions:
 
-| Branch                                                             | Reference                                               |
-| ------------------------------------------------------------------ | ------------------------------------------------------- |
-| Dockerfile, build context, base image, BuildKit                    | `references/dockerfile-patterns.md`                     |
-| Compose modeling, lifecycle, health, and data                      | `references/docker-compose.md`                          |
-| Runtime isolation, replacement, logging, and supply-chain security | `references/runtime-security.md`                        |
-| Container build and publication in CI                              | `references/ci-cd.md`                                   |
-| Kubernetes workload hardening                                      | `references/kubernetes-pod-security.md`                 |
-| Compose managed by systemd                                         | `references/compose-systemd.md` and the `systemd` skill |
-| Podman: rootless, compose providers, Quadlet                       | `references/podman-differences.md`                      |
-| Current specifications and tool documentation                      | `references/official-docs.md`                           |
+| Branch                                                             | Reference                                                     |
+| ------------------------------------------------------------------ | ------------------------------------------------------------- |
+| Dockerfile, build context, base image, BuildKit                    | `references/dockerfile-patterns.md`                           |
+| Compose modeling, lifecycle, health, and data                      | `references/docker-compose.md`                                |
+| Runtime isolation, replacement, logging, and supply-chain security | `references/runtime-security.md`                              |
+| Container build and publication in CI                              | `references/ci-cd.md`                                         |
+| Kubernetes workload hardening                                      | `references/kubernetes-pod-security.md`                       |
+| Compose managed by systemd                                         | `references/compose-systemd.md` and the `systemd-units` skill |
+| Podman: rootless, compose providers, Quadlet                       | `references/podman-differences.md`                            |
+| Current specifications and tool documentation                      | `references/official-docs.md`                                 |
 
 The remaining references provide additional examples but do not override this workflow or current official
 documentation.

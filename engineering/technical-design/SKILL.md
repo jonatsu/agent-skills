@@ -14,17 +14,18 @@ design.
 
 ## Establish the Design Basis
 
-Read the governing requirements specification, overview or brainstorming draft, repository instructions, relevant
+Read the governing requirements specification, overview or idea-brainstorming draft, repository instructions, relevant
 implementation, tests, interfaces, operations, and prior decisions before asking questions. Recover facts from those
 sources instead of asking the user to repeat them.
 
 Technical design may start from:
 
 - an accepted requirements specification with settled observable behavior and acceptance;
-- a brainstorming draft whose bounded direction already supplies the required observable behavior and constraints; or
+- an idea-brainstorming draft whose bounded direction already supplies the required observable behavior and
+  constraints; or
 - a bounded request whose outcome and scope are explicit enough that widening possibilities would add no value.
 
-Return to brainstorming when a discovery changes the intended outcome, target user, product direction, or scope. Record
+Return to idea-brainstorming when a discovery changes the intended outcome, target user, product direction, or scope. Record
 the conflict and keep the former direction provisional until the user resolves it. Return missing, contradictory, or
 unaccepted user-visible behavior to `requirements-specification`. Do not disguise a product decision as architecture.
 
@@ -46,7 +47,7 @@ Do not add sections for risks that do not apply.
 Implementation and tests establish current technical behavior, not desired product or business policy. Treat target
 users, priorities, pricing, retention rules, compliance duties, and service levels as intended policy only when the user
 or an authoritative product artifact supplies them. Keep unsupported policy provisional or return a changed outcome to
-brainstorming.
+idea-brainstorming.
 
 Keep evidence and judgment distinct:
 
@@ -167,7 +168,7 @@ Before handing the design to implementation planning, check that:
 - assumptions are verified or have a named validation owner; and
 - remaining questions are implementation-local or explicitly deferred with their cost.
 
-Before that confirmation, pressure-test the design with `grilling`: walk its load-bearing and hard-to-reverse
+Before that confirmation, pressure-test the design with `interview-me`: walk its load-bearing and hard-to-reverse
 decisions for the ones a reviewer would challenge, and resolve or explicitly defer each. Skip only with a stated
 reason, or at the user's direction. A design handed to planning un-pressure-tested is the common source of a plan
 built on an unexamined choice.
@@ -182,4 +183,4 @@ conversation, finish the separate design, present its final synthesis, and stop 
 implementation plan only after the user's next clear response accepts that synthesis.
 
 If the check exposes a design gap, continue designing or record the blocker. If it exposes a changed outcome or scope,
-return to brainstorming. Do not hand unresolved architecture to planning merely to keep the workflow moving.
+return to idea-brainstorming. Do not hand unresolved architecture to planning merely to keep the workflow moving.

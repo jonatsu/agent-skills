@@ -1,6 +1,6 @@
 ---
 name: systemd-networking
-description: Configure and troubleshoot Linux networking and DNS with systemd-networkd and systemd-resolved. Use for .network, .netdev, .link, resolved.conf, interface matching, DHCP, routes, bridges, bonds, VLANs, per-link DNS, or unexpected resolver routing. Diagnose with networkctl and resolvectl while checking which network manager owns the configuration. Use systemd for service units and lifecycle problems.
+description: Configure and troubleshoot Linux networking and DNS with systemd-networkd and systemd-resolved. Use for .network, .netdev, .link, resolved.conf, interface matching, DHCP, routes, bridges, bonds, VLANs, per-link DNS, or unexpected resolver routing. Diagnose with networkctl and resolvectl while checking which network manager owns the configuration. Use systemd-units for service units and lifecycle problems.
 license: MIT
 compatibility: Requires Linux with systemd-networkd or systemd-resolved; commands and settings vary by systemd version.
 metadata:
@@ -9,7 +9,7 @@ metadata:
 
 # systemd Networking
 
-Use this skill for systemd-networkd link configuration and systemd-resolved DNS routing. Use the `systemd` skill for
+Use this skill for systemd-networkd link configuration and systemd-resolved DNS routing. Use the `systemd-units` skill for
 unit files, service lifecycle, timers, sockets, hardening, and general journal diagnosis.
 
 Treat the target host's manual pages as authoritative. Record `systemd --version` and consult the installed

@@ -1,5 +1,5 @@
 ---
-name: reflect
+name: session-reflect
 description: On-demand or end-of-session self-improvement sweep. Reviews the session for uncaptured learnings (corrections, stated preferences, avoidable mistakes, repeated commands, reusable patterns, repo-specific discoveries) and routes each to a durable home. Also prunes stale, superseded or duplicate memories, and drains the compaction backlog. Use for /reflect, "capture learnings", "update your rules/skills", "prune memories", or "check pending captures".
 license: MIT
 compatibility: Requires Claude Code. Section 8 additionally requires the PreCompact capture hook.
@@ -7,7 +7,7 @@ metadata:
   author: Joonas Onatsu
 ---
 
-# Reflect — Self-Improvement Sweep
+# Session Reflect — Self-Improvement Sweep
 
 Distill the current session into durable improvements so the same corrections, feedback, and manual work are
 never re-derived. Routing by scope, the graduated ladder, and the autonomy boundary are defined here; this

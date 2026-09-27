@@ -2,7 +2,7 @@
 
 ## Current Skill
 
-- Skill: `containers`
+- Skill: `docker-podman-containers`, named `containers` until 2026-09-28
 - Current author: Joonas Onatsu
 - Current license: MIT
 - Status: original expression informed by an external idea source

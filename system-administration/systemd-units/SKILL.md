@@ -1,5 +1,5 @@
 ---
-name: systemd
+name: systemd-units
 description: Write, review, harden, and debug Linux systemd units. Use for .service, .timer, and .socket files, drop-ins, dependencies, failed system or user services, journal diagnosis, and resource controls. Use systemd-networking for networkd link configuration and resolved DNS routing.
 license: MIT
 compatibility: Requires Linux with systemd and its command-line tools; available directives vary by systemd version.
@@ -7,7 +7,7 @@ metadata:
   author: Joonas Onatsu
 ---
 
-# systemd
+# systemd Units
 
 Use the target system's manual pages and installed tools as the authority. A directive available in upstream's
 latest documentation may not exist on the target host. Start by recording `systemd --version`, then consult the

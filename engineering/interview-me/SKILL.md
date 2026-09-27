@@ -1,6 +1,6 @@
 ---
-name: grilling
-description: One-question-at-a-time grilling interview that stress-tests a proposed design before implementation. Walks each branch of the design tree, recommends an answer per question, forces vague answers to a decision, and closes with a written decision record. Use when the user explicitly asks to be grilled, or to pressure-test, poke holes in, interrogate, or challenge a plan - "grill me", "grill this plan", "pressure-test this", "poke holes in this", "challenge my design", "interrogate this before I build it". NOT for shaping an unformed idea, which is brainstorming, and NOT for reviewing code that already exists.
+name: interview-me
+description: One-question-at-a-time grilling interview that stress-tests a proposed design before implementation. Walks each branch of the design tree, recommends an answer per question, forces vague answers to a decision, and closes with a written decision record. Use when the user explicitly asks to be grilled, or to pressure-test, poke holes in, interrogate, or challenge a plan - "grill me", "grill this plan", "pressure-test this", "poke holes in this", "challenge my design", "interrogate this before I build it". NOT for shaping an unformed idea, which is idea-brainstorming, and NOT for reviewing code that already exists.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -22,14 +22,14 @@ Do not enact the plan until I confirm we have reached a shared understanding.
 
 Grilling needs something with shape on the table — a plan, a design doc, a draft, or even a rough idea with a
 discernible direction. A draft is a valid target: grilling sharpens it, and its gaps and soft spots are exactly
-what the questions surface. An explicitly incomplete design handed over from brainstorming is squarely in scope.
+what the questions surface. An explicitly incomplete design handed over from idea-brainstorming is squarely in scope.
 
 Before the first question, restate what is on the table in two or three sentences — including what is still open
 in it — and confirm I recognize it. Name it as a draft if it is one, so we both know we are hardening it, not
 ratifying it.
 
 Bounce out only when there is no shape to grill at all: no direction, no candidate approach, just a topic. That
-is brainstorming, not this — say so and ask whether I want to shape the idea first.
+is idea-brainstorming, not this — say so and ask whether I want to shape the idea first.
 
 Read what exists and the code it touches before questioning — the design, and any specification, decision record,
 or design doc it is meant to conform to. A question whose answer is already written wastes a slot in the budget;

@@ -14,17 +14,17 @@ observable behavior; it does not describe current code merely because that code 
 
 ## Establish the Specification Basis
 
-Read the governing overview or brainstorming draft, accepted product decisions, relevant current behavior, domain
+Read the governing overview or idea-brainstorming draft, accepted product decisions, relevant current behavior, domain
 evidence, and repository conventions before asking questions. Recover established facts instead of asking the user to
 repeat them.
 
 Specification may start from either:
 
-- an accepted brainstorming direction with a legible purpose, actors, scope, constraints, success signal, and open
+- an accepted idea-brainstorming direction with a legible purpose, actors, scope, constraints, success signal, and open
   requirements questions; or
 - a bounded request that already fixes its purpose and scope but still needs durable behavioral detail or acceptance.
 
-Return to `brainstorming` when the intended outcome, actor, product direction, or scope remains genuinely open. A small,
+Return to `idea-brainstorming` when the intended outcome, actor, product direction, or scope remains genuinely open. A small,
 local change needs no specification artifact when the request already settles its observable result, boundaries, and
 acceptance and no later reader needs a durable contract. Hand that work directly to technical design or implementation
 planning as its remaining decisions require; do not manufacture a miniature PRD.
@@ -141,7 +141,7 @@ supplied that authority.
 
 When an accepted requirement changes, identify the affected specifications, designs, implementation plans, tests,
 documentation, and released behavior. Mark dependent artifacts stale until their owners reconcile the change. Return a
-changed purpose or product scope to brainstorming. Return internal architecture consequences to technical design. Do
+changed purpose or product scope to idea-brainstorming. Return internal architecture consequences to technical design. Do
 not edit the specification after implementation merely to make an accidental behavior look compliant.
 
 When implementation exists and the user asks whether it matches the accepted specification, route the comparison to
