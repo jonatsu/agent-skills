@@ -19,12 +19,8 @@ independent review can reuse.
 
 ## Preflight Without a Model
 
-Run this preflight before review lite. Repeat it before a later model-based test when the package or fixture changed:
-
-1. Materialize required fixture templates in isolation, then run the specification and applicable policy validators.
-2. Confirm the candidate and every promised resource are readable.
-3. Run advertised commands and representative script failure paths.
-4. Use safe temporary inputs and outputs for stateful script checks.
+Run `SKILL.md`'s preflight list before review lite, materializing any fixture templates in an isolated
+workspace first. Repeat it before a later model-based test when the package or fixture changed.
 
 A preflight failure is not skill behavior. Repair the package or fixture before starting the test.
 
@@ -92,10 +88,9 @@ Review the settled package heuristically without starting subagents or model eva
 - whether provenance, licensing, safety, and authority boundaries are complete; and
 - whether the package and author-side checks satisfy their stated completion conditions.
 
-Report hard or material defects and leave the skill unavailable for provisional use. When no material defect
-remains, report `ready with risks`. This status means the package passed author-side inspection while
-behavioral effectiveness remains unproven. Name untested clients and missing discovery evidence as risks. Do
-not claim `ready` from review lite.
+Report hard or material defects and leave the skill unavailable for provisional use. Otherwise name untested
+clients and missing discovery evidence as risks for the handoff described in `SKILL.md`'s Finish and Validate
+step.
 
 Review lite is the default because it is quick and avoids unnecessary model cost. Provisional real use can
 expose failures that become durable cases. It does not replace a controlled comparison.

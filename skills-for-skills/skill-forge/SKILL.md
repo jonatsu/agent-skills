@@ -11,8 +11,7 @@ metadata:
 
 Create or update the smallest skill that reliably changes agent behavior for the requested task.
 
-Produce a reviewable candidate with author-side evidence. Perform review lite by default. Without full
-independent evaluation, report at most `ready with risks` and name the unmeasured behavior.
+Produce a reviewable candidate with author-side evidence. Perform review lite by default.
 
 Use the [Agent Skills specification](https://agentskills.io/specification) as the authority for package
 structure and frontmatter. Do not substitute remembered vendor conventions for the specification.
@@ -36,8 +35,8 @@ Establish:
 - the decisions or knowledge a capable agent lacks without the skill;
 - the current author and applicable license;
 - whether the work is a new skill, substantial revision, or focused update;
-- whether reading any external source changed the skill's guidance, workflow, structure, examples,
-  terminology, or failure modes, even when every retained idea was expressed independently.
+- whether reading any external source changed the skill in a way `references/provenance.md` treats as
+  attribution-bearing.
 
 Define one coherent unit of work that composes with other skills. Inventory every subject, tool, language,
 workflow, and output the skill would cover. Keep multiple aspects together only when one shared task or
@@ -88,23 +87,13 @@ the choice changes routing, ask the user. An agent-selected skill needs a realis
 explicit-only skill needs a verified client mechanism, because description wording alone does not enforce that
 policy. A habit with neither path belongs in always-loaded instructions or another deliberately loaded artifact.
 
-Identify how each declared client can load the skill under that goal. Do not infer invocation policy from a
-portable or repository-specific label.
-
-Do not generalize one client's discovery result to another client. When a real invocation path exists, repair
+Identify how each declared client can load the skill under that goal, and do not generalize one client's
+discovery result to another client. When a real invocation path exists, repair
 weak routing instead of abandoning the skill. When no declared client can load the behavior reliably, change
 the artifact form.
 
 Read [references/portability.md](references/portability.md) when the skill names clients, tools, paths,
 environment requirements, repository commands, or product metadata.
-
-Assess format, runtime, and client portability separately. New portable skills use fields defined by the Agent
-Skills specification. Keep product metadata, invocation syntax, and runner commands in named adapters. Add an
-adapter only for an explicitly targeted client whose current contract is verified.
-
-When the user names no client, target the specification-defined core and make no client-behavior claim.
-An optional adapter must not make the portable core unusable elsewhere. Treat every untested client as a
-coverage limit, not a supported target.
 
 ### 3. Preserve Provenance
 
@@ -112,7 +101,7 @@ This workflow requires every new skill to record its current author in `metadata
 applicable license in the specification's top-level `license` field. These conservative authoring policies may
 exceed a license's legal minimum.
 
-Discover authorship and licensing from authoritative repository or upstream sources. Never guess either.
+Discover authorship and licensing from authoritative repository or upstream sources.
 
 Treat an external source as attribution-bearing when reading it changes what the skill contains. This includes
 adopted ideas, mechanisms, structure, examples, terminology, or failure modes, even when no wording or code is
@@ -137,10 +126,8 @@ state changes, may repeat an operation after uncertain completion, pauses for la
 mutable state with another actor, read
 [references/operational-workflows.md](references/operational-workflows.md).
 
-For those workflows, identify authoritative state, required preconditions and postconditions, permitted
-effects, enforcement ownership, and recovery behavior. Resolve consequential gaps before treating the
-candidate as complete. Scale the contract to the task: a short procedure may express it in a few sentences;
-more complex workflows may need explicit transitions and supporting executable checks.
+For those workflows, settle the contract in [references/operational-workflows.md](references/operational-workflows.md)
+and resolve every consequential gap before treating the candidate as complete.
 
 Design for lean execution and progressive loading by default. Keep shared essentials available and load
 branch-specific instructions, executable modules, and detailed external data when the selected work needs
@@ -217,11 +204,8 @@ condition for loading a reference. Move later branch detail behind a conditional
 Write the initial description with the `skill-descriptions-and-triggers` skill, passing it the scope and
 invocation goal chosen in step 2.
 
-Identify the dominant likely failure mode. Add an Iron Law only when one absolute constraint is the right
-control. Use questions when they focus attention on a concrete decision. Add anti-patterns only when they
-counter a likely or observed model default. Read
-[references/writing-techniques.md](references/writing-techniques.md) when one of those techniques is
-justified.
+Read [references/writing-techniques.md](references/writing-techniques.md) for the conditions that justify an
+Iron Law, a question, or an anti-pattern, and use each only when its condition holds.
 
 Use a checklist only when order or prerequisites matter. Rely on ordinary prose for independent rules and
 judgment. Reuse the user's existing authorization; add a confirmation gate only when the eventual action

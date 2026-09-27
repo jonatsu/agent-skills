@@ -1,12 +1,7 @@
 # Provenance and Licensing
 
-This workflow requires every authored skill to record:
-
-- the current author in `metadata.author`; and
-- the applicable license in the Agent Skills top-level `license` field.
-
-These are conservative authoring policies, not claims about the minimum the law requires. Determine legal
-obligations from the exact source license, the relationship to the source, and the intended distribution.
+These are conservative authoring policies; determine legal obligations from the exact source license and the
+relationship to it.
 
 Use the target repository's license for original work. Use the upstream license for derived work unless its
 terms permit and the author deliberately applies a compatible alternative. Verify licenses from the license
