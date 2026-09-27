@@ -1,6 +1,6 @@
 ---
 name: session-handoff
-description: Create a work handoff for a fresh session, another agent, machine, or person. Use for a short next-task pointer, a fuller continuity brief, a paste-ready session primer, or a saved handoff document. Excludes durable project documentation and memory capture.
+description: Hand over where work stands and what comes next to a fresh session, another agent, a different machine, or a person. Use when wrapping up a session so work continues elsewhere, when context is running low, or when asked for a next-task pointer, a continuity brief, a paste-ready primer for a new session, or a saved handoff document. Not for durable project documentation or memory capture.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -11,21 +11,15 @@ metadata:
 A handoff transfers what the recipient needs to continue. Its most valuable content is session-only knowledge
 that cannot be recovered from the repository, issue tracker, plans, or current machine state.
 
-Do not recap the conversation or inventory everything inspected. Cite durable artifacts and let the recipient
-read them.
-
 ## A Handoff Is Ephemeral
 
 A handoff is disposable transfer state, never a system of record. A `PRIME` prompt exists only until the
 terminal buffer clears; a `DOCUMENT` saved under `.scratch/`, a temporary directory, or any other gitignored
 path can be reclaimed or lost before the next session opens it. Treat every handoff as if it may not survive.
 
-A handoff must therefore never be the only home for anything the work depends on. A decision, agreement,
-constraint, or piece of derived context that outlives the session belongs in a durable, version-controlled
-artifact — a plan, specification, ADR, glossary, or committed note — written before or alongside the handoff,
-not deferred to it. The handoff points to those artifacts; it does not stand in for them. When the session
-produced durable knowledge that is still only in a gitignored handoff or the conversation, record it in a
-tracked document first, then write the handoff that points to it.
+Before writing the handoff, record every decision, agreement, constraint, or piece of derived context that
+outlives the session in a version-controlled artifact, such as a plan, specification, ADR, glossary, or
+committed note. The handoff then points to that artifact.
 
 ## Choose the Smallest Sufficient Handoff
 
@@ -36,19 +30,18 @@ Use a **stateful handoff** when continuity depends on unfinished work, multiple 
 deviations, blocked paths, or substantial session-only context.
 
 Length follows continuity risk. A pointer may be two or three sentences. A stateful handoff may need several
-sections. Do not promote a pointer into a stateful brief merely because more repository facts are available.
+sections. Promote a pointer to a stateful brief for session-only context, never for repository facts the
+recipient can read.
 
 Apply brevity to recoverable context first. Never omit material session-only context to keep a pointer short;
 switch to a stateful handoff when that context no longer fits clearly in the pointer form.
 
-## Preserve Session-Only Context
+## Run the Context-Loss Check
 
-Before writing either form, deliberately check what would disappear with this session:
+Before writing either form, run the context-loss check: list what would disappear with this session.
 
-- standing operating instructions the user set for the session, especially at its start — a required tool or
-  method such as "use sequential-thinking for all complex design work", a scope limit, or a working
-  convention; these bind the continuing work too and are among the most frequently dropped, so carry them
-  forward in the recipient's own terms rather than paraphrasing them away;
+- standing operating instructions the user set for the session, such as a required method ("use
+  sequential-thinking for all complex design work") or a scope limit, carried forward in the user's terms;
 - user preferences, corrections, and one-off instructions stated during the work;
 - decisions and agreements that have not been recorded elsewhere, including the reason that settled them;
 - nuances, exceptions, and boundaries that affect how the next task should be interpreted;
@@ -60,17 +53,16 @@ Include an item only when it changes the recipient's action, decision, or interp
 re-derivation. Preserve the operative detail and its reason. Omit conversational chronology and incidental
 preferences that do not affect the work.
 
-This check is mandatory even for a pointer handoff. If it finds nothing relevant, keep the pointer short; do
-not add a placeholder saying that no context exists.
+Run the context-loss check for a pointer handoff too. When it finds nothing relevant, the pointer stays as it
+is, with no placeholder.
 
 ## Verify Only What You Pass
 
 Confirm every path, branch, commit, command result, or other factual state included in the handoff during the
 current turn. Mark unverified claims as unverified.
 
-Do not gather a standard Git inventory unless the handoff needs those facts. Volatile state is usually better
-expressed as an instruction to inspect it, such as `run git status -sb`, than as a snapshot that will become
-stale.
+Gather only the Git facts the handoff uses. Express volatile state as an instruction to inspect it, such as
+`run git status -sb`, rather than a snapshot that will go stale.
 
 In a repository, name the commit the stateful brief was verified against. Unlike a working-tree snapshot, it
 stays true, and `git log <commit>..HEAD` shows the recipient what moved since.
@@ -81,7 +73,7 @@ Never write "should work" as completed state.
 ## Pointer Handoff
 
 Lead with the next task and its completion condition. Then cite the workflow or artifact the recipient should
-read. Add session-only context only when the context-loss check found something material.
+read. Add session-only context when the context-loss check found something material.
 
 The repository, paths, and artifacts in the examples below are invented.
 
@@ -99,8 +91,8 @@ Review `payments-api` next. Read `docs/review-process.md` and follow its review 
 review to focus on silent retry paths in the payment client; broad endpoint coverage is out of scope.
 ```
 
-A pointer handoff normally needs no headings, repository summary, Git history, file inventory, or list of
-checks already defined by the cited workflow.
+A pointer handoff is plain sentences: the cited workflow already carries the repository summary, history,
+file inventory, and checks.
 
 ## Stateful Handoff
 
@@ -129,8 +121,11 @@ Read `references/example-brief.md` only when a substantial stateful handoff need
 
 ## Delivery Mode
 
+Infer the delivery mode from the request. `PRIME` is the default: use it when the request names no file and no
+other machine or person. Ask only when the request sends the work outside this session without saying where.
+
 Use `PRIME` when the same work continues in a fresh context. Return one fenced block that the user can paste
-as the first message. Do not save it to disk.
+as the first message, and keep it off disk.
 
 A pasted prompt is size-limited by the terminal, not by the model. Above roughly 4 KB — about 3,000
 characters, or 40–50 lines — many terminals silently corrupt a large paste: the start and end arrive intact
@@ -145,19 +140,12 @@ default the user may raise or lower for their terminal.
 Use `DOCUMENT` when the user asks for a file or the work passes to another machine or person.
 
 Write to the path the user names. When the work passes to another machine or person and no path was named,
-ask for one: a temporary directory is the wrong destination there, because the platform reclaims it on reboot
-or by cleanup and the handoff can disappear before its recipient opens it.
-
-A temporary directory suits one narrow case, a short-lived convenience on this machine. Save the Markdown
-under the operating system's temporary directory then. Probe for `mktemp`; if unavailable, use the platform's
-temporary-directory mechanism.
+ask for one, because the platform reclaims a temporary directory and the handoff can vanish before its
+recipient opens it. Use the operating system's temporary directory (via `mktemp` or the platform's equivalent)
+only for a short-lived handoff on this machine.
 
 Read an existing target before writing and do not overwrite it without authorization. Use repository-relative
 paths when the document may travel to another machine, and identify the repository once.
-
-Infer the delivery mode from the request. `PRIME` is the default: use it when the request names no file and no
-other machine or person. The mode is genuinely ambiguous only when the request sends the work outside this
-session without saying where, and that is the case to ask about.
 
 ## Safety and Completion
 
@@ -171,7 +159,7 @@ Before delivery, confirm:
   survive only in this handoff;
 - standing operating instructions the user set for the session are carried forward in the recipient's terms;
 - a `PRIME` handoff is within the paste-size limit, or the user has overridden the refusal knowingly;
-- the session-only context scan was performed and every material result survived;
+- the context-loss check ran and every material result survived;
 - every included fact was verified or labeled unverified;
 - a stateful handoff in a repository names the commit it was verified against;
 - durable material is cited rather than copied;
