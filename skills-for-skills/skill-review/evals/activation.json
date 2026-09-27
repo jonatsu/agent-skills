@@ -34,8 +34,8 @@
     {
       "id": "repair-description",
       "prompt": "Fix this Agent Skill description; it keeps loading for unrelated work.",
-      "should_trigger": true,
-      "reason": "Repairing discovery requires assessment before authoring."
+      "should_trigger": false,
+      "reason": "A description-only repair belongs to skill-descriptions-and-triggers."
     },
     {
       "id": "compare-revisions",

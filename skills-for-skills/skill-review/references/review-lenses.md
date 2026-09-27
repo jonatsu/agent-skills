@@ -5,30 +5,13 @@ technique is a finding only when its absence harms the skill's declared job.
 
 ## Discovery
 
-- Does the description state what the skill does and when it applies?
-- Does it provide enough capability and user-intent context for accurate activation when it names a
-  specialized tool, product, or artifact?
-- Does each trigger phrase represent a distinct supported branch rather than a synonym quota?
-- Could a nearby but unsupported request activate it? Would an intended request fail to activate it?
-- Is routing information trapped in content the declared client exposes only after selection?
-- If invocation is explicitly user-only, is the human-facing description suitable for that mode?
-- Is the description an inline scalar? A folded (`>-`) or literal (`|`) block is a defect wherever the
-  deployment tooling mishandles it, and a repository that has hit that defect says so in its own
-  instructions. Neither the reference validator nor a Markdown linter catches it: linters commonly treat
-  frontmatter as non-content and never inspect it.
-- Is the description's length justified by the branches it carries? Judge length in characters against the
-  specification cap and any repository budget, never against a prose line-width rule such as markdownlint's
-  MD013. A description cannot wrap, so a column ceiling applied to it is a length budget in the wrong units.
-  When a client preloads every description, length is charged to every request. Treat unjustified length as a
-  real cost under that client rather than a universal rule.
+Judge the name and description against the review checks of the `skill-descriptions-and-triggers` skill, which
+owns description guidance. A folded or literal block scalar passes both the reference validator and Markdown
+linters, so check the scalar form by reading it.
 
 During review lite, prepare realistic positive requests, near-miss negatives, and ambiguous cases when
-triggering matters. Test them only during an authorized full evaluation. Do not infer activation quality from
-keywords alone.
-
-“Build and maintain justfiles” is incomplete because it assumes the router already knows what Just provides.
-“Build and maintain Just command-runner files for repeatable project tasks” supplies the missing capability
-and user intent. A description need not define concepts the target agent can reasonably be expected to know.
+triggering matters, and test them only during an authorized full evaluation. Keywords alone say nothing about
+how reliably a skill triggers.
 
 ## Scope Coherence
 

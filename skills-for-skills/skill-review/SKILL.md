@@ -1,6 +1,6 @@
 ---
 name: skill-review
-description: "Review Agent Skills for defects and readiness. Use for review lite, comparative behavioral evaluation, discovery diagnosis, or assessing a skill before an authorized repair. Not for creating a new skill or editing one during a review-only request."
+description: Review an Agent Skill package for defects and readiness, from a static check to a controlled behavioral evaluation. Use when asked whether a skill is correct, effective, or ready to use, when comparing a skill against a baseline, or before an authorized repair. Use skill-descriptions-and-triggers when only the description is in question, and skill-forge to create or edit a skill.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,18 +8,18 @@ metadata:
 
 # Skill Review
 
-Review whether a skill reliably improves agent behavior for its intended job. Do not reward visible structure,
-length, polish, or optional techniques unless they produce a relevant benefit.
+Review whether a skill reliably improves agent behavior for its intended job. Credit structure, length, polish,
+and optional techniques only for the relevant benefit they produce.
 
 Use two review tiers:
 
-1. **Review lite is the default.** Inspect heuristically and run mechanical checks. Do not start subagents or
-   model evaluations.
+1. **Review lite is the default.** Inspect heuristically and run mechanical checks, with no subagents or model
+   runs.
 2. **Full evaluation is optional and strongly recommended.** Run controlled behavioral comparisons when the
    user authorizes their time, model allowance, and side effects.
 
-Without full evaluation, report at most `ready with risks`. This status permits provisional use while behavior
-remains unproven. Only full evaluation can support `ready`.
+Review lite supports at most `ready with risks`, which permits provisional use while behavior remains unproven.
+Only full evaluation can support `ready`.
 
 Keep three judgments separate:
 
@@ -28,8 +28,8 @@ Keep three judgments separate:
    waste?
 3. **Evidence:** What observed behavior supports or contradicts those claims?
 
-A valid package can still be ineffective. A strong static design can still lack behavioral evidence. Do not
-combine these into an aggregate score that hides the distinction.
+A valid package can still be ineffective. A strong static design can still lack behavioral evidence. Report
+the three judgments separately so the distinction stays visible.
 
 ## Review Workflow
 
@@ -83,10 +83,7 @@ validator. Do not let a passing structural check imply behavioral quality.
 
 Always inspect discovery, scope coherence, behavioral value, and lean execution. Apply other lenses where relevant:
 
-- **Discovery:** The name and description communicate the capability, user intent, distinct trigger branches,
-  and likely boundaries. When they name a specialized tool, product, or artifact, they provide enough plain
-  context for accurate activation instead of relying on the name alone. They need not define concepts the
-  target agent can reasonably be expected to know.
+- **Discovery:** The name and description pass the review checks of `skill-descriptions-and-triggers`.
 - **Scope coherence:** Every aspect serves one coherent job. Multiple aspects pass only when the package
   establishes a deliberate shared task or decision boundary that requires them together. Shared popularity,
   one author's environment, possible integration, or occasional co-use is insufficient. Do not invent a
@@ -125,14 +122,14 @@ questions or when checking consistency with applicable authoring conventions.
 ### 4. Choose the Review Tier
 
 Perform review lite unless the user authorizes full evaluation. Review lite combines contract inspection,
-relevant design lenses, package consistency, and mechanical validation. It starts no subagents or model runs.
+relevant design lenses, package consistency, and mechanical validation.
 
 Strongly recommend full evaluation for new skills, substantial rewrites, cross-client claims, unreliable
 discovery, recurring failures, or uncertain context cost. State the likely case count, clients, repetitions,
 time, allowance, side effects, and evidence gain before requesting authority.
 
-The user may defer full evaluation. When review lite finds no material defect, return `ready with risks` for
-provisional use. Preserve observed real-use failures and corrections as cases for later evaluation.
+The user may defer full evaluation. Preserve observed real-use failures and corrections as cases for later
+evaluation.
 
 ### 5. Run Full Evaluation When Authorized
 
