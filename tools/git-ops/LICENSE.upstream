@@ -2,7 +2,7 @@ This skill adapts material from two upstream sources, both MIT licensed. Each li
 verbatim below, under the reference it applies to.
 
 ================================================================================
-Applies to: references/worktrees-and-stashes.md
+Applied to: references/worktrees-and-stashes.md, until that material moved to the using-git-worktrees skill
 Source: obra/superpowers, skill `using-git-worktrees`
 ================================================================================
 

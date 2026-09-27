@@ -5,14 +5,17 @@
 - Skill: `git-ops`
 - Current author: Joonas Onatsu
 - Current license: MIT
-- Status: original skill containing worktree and commit-message guidance adapted from two upstream skills
+- Status: original skill containing commit-message guidance adapted from an upstream skill; it formerly also
+  carried adapted worktree guidance
 
-Two references are adapted, each from a different upstream, and the sections below name them separately. The
-remaining `git-ops` guidance was authored independently for this repository.
+Two references were adapted, each from a different upstream, and the sections below name them separately. The
+worktree material has since moved to the `using-git-worktrees` skill. The remaining `git-ops` guidance was
+authored independently for this repository.
 
 ## Original Author and Source: Worktrees
 
-Applies to `references/worktrees-and-stashes.md`.
+Applied to `references/worktrees-and-stashes.md` until 2026-09-27, when its worktree material moved to the
+`using-git-worktrees` skill and its independently written stash section became `references/stashes.md`.
 
 - Original author: Jesse Vincent
 - Upstream project: [obra/superpowers](https://github.com/obra/superpowers)
@@ -25,10 +28,10 @@ Applies to `references/worktrees-and-stashes.md`.
 ## Adaptation Note: Worktrees
 
 The concurrent worktree workflow in `references/worktrees-and-stashes.md` was informed by the upstream
-`using-git-worktrees` skill. This version integrates worktrees into a broader Git operations skill and was
+`using-git-worktrees` skill. That version integrated worktrees into a broader Git operations skill and was
 rewritten around the official Git worktree model.
 
-Material changes include:
+Material changes included:
 
 - separating portable Git behavior from client-specific worktree management, originally as an explicitly
   labeled Claude Code-only branch and now as a client-neutral pointer;
@@ -73,5 +76,5 @@ Material changes include:
 
 ## Upstream Licenses
 
-Both upstream sources are used under the MIT License. See `LICENSE.upstream`, which preserves each license
-text under the reference it applies to.
+Both upstream sources are MIT licensed. See `LICENSE.upstream`, which preserves each license text under the
+reference it applies or applied to.

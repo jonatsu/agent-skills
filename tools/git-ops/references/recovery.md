@@ -1,7 +1,8 @@
 # Recovery
 
 Load this when something has already gone wrong. For deciding whether an operation is safe, use the ladder in
-[history-changing-operations.md](history-changing-operations.md) instead.
+[history-changing-operations.md](history-changing-operations.md) instead. For a removed, refused, or stale
+worktree, use the `using-git-worktrees` skill.
 
 - [First move, always](#first-move-always)
 - [Commits missing after a reset, rebase or amend](#commits-missing-after-a-reset-rebase-or-amend)
@@ -10,7 +11,6 @@ Load this when something has already gone wrong. For deciding whether an operati
 - [Another lane's work got staged or committed](#another-lanes-work-was-staged-or-committed)
 - [A generated artifact did not move](#a-generated-artifact-did-not-move)
 - [Stash problems](#stash-problems)
-- [Worktree problems](#worktree-problems)
 - [Detached HEAD](#detached-head)
 - [What has no recovery](#what-has-no-recovery)
 
@@ -165,21 +165,6 @@ git stash show -p 'stash@{N}'    # capture the output to a file yourself
 ```
 
 A stash restored over a conflict is not automatically merged. Read the conflicting files before continuing.
-
-## Worktree Problems
-
-**`pwd: error retrieving current directory`, or every command failing at once**: the shell's cwd was removed,
-most likely by a worktree or scratch-directory removal. The repository is fine. Recovery is a `cd` to a live
-directory, issued from outside whatever tool holds the dead cwd.
-
-**A worktree was removed with uncommitted content**: nothing recovers it. Its committed history is still in
-the common object database. `git worktree list` and the branch reflogs will show what the branch pointed at.
-
-**`git worktree remove` refuses**: it is refusing because the tree is dirty. Read what is there before forcing
-it; the refusal is the last thing standing between that work and the case above.
-
-**Stale administrative entries** after a directory was deleted by hand: `git worktree prune`, which touches
-bookkeeping only.
 
 ## Detached HEAD
 

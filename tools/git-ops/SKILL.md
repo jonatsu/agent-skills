@@ -1,6 +1,6 @@
 ---
 name: git-ops
-description: Perform Git operations while preserving uncommitted and unrelated work. Use when staging, committing, pushing, resolving merge conflicts, managing branches, worktrees or stashes, amending or rewriting history, investigating changes with blame or bisect, recovering lost work, or troubleshooting commit hooks and signatures. Use github-ops for GitHub pull requests, policies, and API operations.
+description: Perform Git operations while preserving uncommitted and unrelated work. Use when staging, committing, pushing, resolving merge conflicts, managing branches or stashes, amending or rewriting history, investigating changes with blame or bisect, recovering lost work, or troubleshooting commit hooks and signatures. Use using-git-worktrees for worktrees and github-ops for GitHub pull requests, policies, and API operations.
 license: MIT
 compatibility: Requires Git. Force-push protection with --force-if-includes requires Git 2.30 or newer.
 metadata:
@@ -47,9 +47,8 @@ Assume unrecognized changes belong to another contributor. Commit only changes y
   staged diff. A concurrent commit invalidates the earlier base, diff, and validation evidence.
 - After committing, inspect the recorded commit and report every remaining dirty path.
 
-Use a separate linked worktree when independent lanes need different branches or checkouts. A linked worktree
-isolates its `HEAD`, index, and files, but repository objects, refs, and stashes remain shared. Do not use the
-shared stash as automatic concurrency isolation.
+When independent lanes need different branches or checkouts, isolate them in linked worktrees with the
+`using-git-worktrees` skill. Do not use the shared stash as automatic concurrency isolation.
 
 ## Route by Operation
 
@@ -59,8 +58,7 @@ shared stash as automatic concurrency isolation.
 - Before a destructive operation, push, force-push, amend, reset, rebase, merge, cherry-pick, revert, or
   branch deletion, read
   [references/history-changing-operations.md](references/history-changing-operations.md).
-- For worktree or stash operations, read
-  [references/worktrees-and-stashes.md](references/worktrees-and-stashes.md).
+- For stash operations, read [references/stashes.md](references/stashes.md).
 - When a hook modifies files, a generated artifact remains stale after a commit, or the active hook framework
   is uncertain, read [references/rewriting-hooks.md](references/rewriting-hooks.md).
 - When work is already missing or Git state was damaged, read [references/recovery.md](references/recovery.md)
