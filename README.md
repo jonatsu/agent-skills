@@ -197,7 +197,8 @@ evidence of harm before recommending an unsolicited correction.
 ### Domains within `shared/`
 
 Skills live at `shared/<domain>/<skill>/`; one flat directory had stopped being a list anyone could read.
-`kasetto/base.yaml` is the authoritative list of domains, one entry each.
+`kasetto/base.yaml` lists the eager domains, one entry each, and the `kasetto/lazy/` and `kasetto/claude-lazy/`
+scopes list the lazy ones.
 
 | Domain                   | Holds                                                                                           |
 | ------------------------ | ----------------------------------------------------------------------------------------------- |
@@ -215,9 +216,14 @@ Skills live at `shared/<domain>/<skill>/`; one flat directory had stopped being 
 | `technical-writing/`     | Human-facing prose                                                                              |
 
 `development/python/` and `development/nix/` are nested groups: a second directory level under `development/`,
-next to the skills that sit directly in it. Each nested group is its own `base.yaml` entry, since Kasetto
+next to the skills that sit directly in it. Each nested group is its own Kasetto entry, since Kasetto
 discovers skills exactly one level under a source root and a `sub-dir: development` entry skips both groups
 silently rather than failing on them.
+
+The lazy domains are rarely needed ones. Claude loads them natively, while Codex and Copilot reach them only
+through `lazy-skills-server`, which serves them on demand.
+[Its README](../src/tools/lazy-skills-server/README.md) covers how the tier works and how to move a domain into
+or out of it.
 
 **The domain level exists only in this repository.** Kasetto deploys flat, so every supported agent reads
 `<skills-dir>/<skill>/` and no skill needs to know where its source lives. Two consequences:
