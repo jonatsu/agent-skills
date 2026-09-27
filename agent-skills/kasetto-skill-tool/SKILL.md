@@ -1,8 +1,8 @@
 ---
 name: kasetto-skill-tool
-description: Configure and troubleshoot Kasetto synchronization of AI agent skills, MCP servers, commands, and instructions. Use for kasetto.yaml, kasetto.lock, kst add/remove/sync, source pins, inherited configuration, destination selection, stale deployed copies, lock drift, or assets that fail to update or disappear after removal.
+description: Configure and troubleshoot Kasetto synchronization of AI agent skills, MCP servers, commands, and instructions. Use for kasetto.yaml, kasetto.lock, kst add/remove/sync, source pins, inherited configuration, destination selection, lock drift, or deployed copies that go stale or survive their removal.
 license: MIT
-compatibility: Requires the Kasetto `kst` CLI. Tested against 3.8.0; check runtime help on other versions.
+compatibility: Requires the Kasetto `kst` CLI. Checked against 3.8.0 and 3.9.0; check runtime help on other versions.
 metadata:
   author: Joonas Onatsu
 ---
@@ -49,14 +49,16 @@ as the runtime authorities.
   packages instead of deployed copies. Sync and clean prune only assets tracked by the selected lock, so
   separate configs can share a destination. Preview `kst clean`; it clears every asset in that lock.
 
-## Kasetto 3.8.0 Checks
+## Version-Specific Checks
 
-Apply these locally reproduced checks on 3.8.0 and recheck them on later versions:
+These were reproduced locally on 3.8.0 and again on 3.9.0; recheck them on later versions:
 
 - Keep skill frontmatter `description` on one physical line. Kasetto reads it linewise, so folded or literal
   YAML scalars such as `>-` and `|` are stored as the marker instead of the description.
 - When removing the final skill from a configured `sub-dir`, remove that source entry in the same change. If
-  the directory disappears first, sync fails and keeps the old lock entry and deployed copy.
-- Do not deploy an empty directory inside a skill. Kasetto copies empty directories but does not hash them, so
-  deleting one later can report unchanged and leave the destination directory. Remove it before deployment.
-  If one is already stale, preview `kst clean` for the exact scope, clean, then sync.
+  the directory disappears first, the old lock entry and deployed copy survive. On 3.9.0 a plain `kst sync`
+  trusts the lock and reports `unchanged` with exit 0; only `kst sync --update` and `kst lock --check` fail,
+  with `source sub-dir not found`. Run `kst lock --check` to catch it.
+- Remove empty directories from a skill before deploying it. Kasetto copies them but leaves them out of the
+  hash, so deleting one later reports `unchanged`, even under `--update`, and leaves the destination directory.
+  If one is already stale, preview with `kst clean --dry-run` for the exact scope, clean, then sync.
