@@ -10,12 +10,12 @@ metadata:
 # Using Git Worktrees
 
 A linked worktree gives one lane of work its own files, `HEAD`, and index, so parallel lanes cannot overwrite
-each other's checkout. Detect existing isolation first, then prefer the harness's own worktree mechanism, and
-fall back to `git worktree` only when there is none.
+each other's checkout.
 
 ## 1. Detect Existing Isolation
 
-Check before creating anything:
+Run these before creating anything, even when the answer looks obvious: a harness-created worktree looks like
+an ordinary checkout.
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" && pwd -P)
@@ -97,8 +97,8 @@ credentials, build output, and installed dependencies, do not carry over. Follow
 setup and toolchain. Do not guess a package manager, install dependencies the documentation does not call for,
 or copy secrets from another checkout. Check that required local files exist without printing their contents.
 
-Run the cheapest validation that is relevant to the task. When it fails, report the failures and ask whether
-to proceed or investigate: a failing baseline makes every later failure ambiguous.
+Run the cheapest validation that is relevant to the task, even in a fresh worktree. When it fails, report the
+failures and ask whether to proceed or investigate: a failing baseline makes every later failure ambiguous.
 
 Report:
 
@@ -113,19 +113,10 @@ Worktrees share the object database, branches and other refs, tags, remote-track
 configuration, and the stash. A commit made in one lane is visible in every other lane at once, and a ref or
 configuration change affects all of them. Per-worktree configuration exists only when the repository enables
 `extensions.worktreeConfig`. Recheck shared refs before rebasing, resetting, deleting a branch, integrating, or
-pushing, and do not treat the stash as private to a lane. Locate Git administrative files with
-`git rev-parse --git-path <name>` rather than building a path from `.git`.
+pushing, and do not treat the stash as private to a lane. In a linked worktree `.git` is a file, not a
+directory, so locate Git administrative files with `git rev-parse --git-path <name>`.
 
 ## Finishing, Removing, and Maintaining
 
 Before integrating, removing, moving, locking, or pruning a worktree, or when one has been damaged, read
 [references/finish-and-maintain.md](references/finish-and-maintain.md).
-
-## Common Rationalizations
-
-| Excuse                                                  | Reality                                                                                                        |
-| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| "I'm obviously not in a worktree; no need to check"     | Harness-created worktrees look like ordinary checkouts. Step 1's commands settle it.                           |
-| "`git worktree add` is quicker than the harness's tool" | The harness then cannot see, track, or clean up the worktree.                                                  |
-| "The worktree directory is surely ignored already"      | Run `git check-ignore --no-index`. An unignored directory inside the repository can be staged into the parent. |
-| "The workspace is fresh, so the baseline can wait"      | A failing baseline makes every later failure ambiguous. Proceeding past one is the user's call.                |

@@ -1,8 +1,7 @@
 # Finishing and Maintaining Worktrees
 
-Read this before integrating, removing, moving, locking, or pruning a worktree, or when a worktree has been
-damaged. For a worktree the harness created, read the harness's documentation for its cleanup first, then
-inspect the worktree's status and `git worktree list --porcelain` before touching it by hand.
+For a worktree the harness created, read the harness's documentation for its cleanup first, then inspect the
+worktree's status and `git worktree list --porcelain` before touching it by hand.
 
 ## Finish and Remove Safely
 

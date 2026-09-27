@@ -21,16 +21,18 @@
 
 This package reached its current form in two stages. The upstream skill was first adapted into the `git-ops`
 skill as its worktree reference, rewritten around the official Git worktree model. On 2026-09-27 that material
-moved here as a standalone skill, and the upstream's detect-then-prefer-the-harness flow, name, and
-rationalization table were restored around it.
+moved here as a standalone skill, and the upstream's name and detect-then-prefer-the-harness flow were
+restored around it.
 
 Retained from the upstream: detecting an existing linked worktree before creating one, preferring the
 harness's own worktree mechanism over `git worktree add`, asking before isolating unless a preference is
 declared, the location priority of declared preference over an existing project-local directory, verifying that
-a project-local directory is ignored, recording a baseline, the ready report, and the rationalization table.
+a project-local directory is ignored, recording a baseline, and the ready report.
 
 Material changes include:
 
+- folding the upstream's rationalization table into the steps it guarded, so each reason sits at its point
+  of use rather than in a second copy;
 - removing product-specific tool names so the skill stays portable across agent harnesses;
 - replacing automatic dependency installation with the repository's documented setup, because the upstream
   mapped every `pyproject.toml` to Poetry and every `requirements.txt` to an unscoped `pip install`;
