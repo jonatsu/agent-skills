@@ -90,6 +90,8 @@ guidance to its existing workflow and terminology; it does not reproduce the pag
   the owner's discretion; this skill has no top-level license field or bundled `LICENSE.txt`.
 - Influence: the distinction between agent selection and deliberate invocation prompted clearer initial
   authoring guidance. This skill treats invocation independently of portable or repository-specific scope.
+  The description-drafting part of that guidance lived in `references/description-guide.md` until
+  2026-09-28, when it moved to the `skill-descriptions-and-triggers` skill.
 
 The updated wording and cases are independently written. No mizchi prose, examples, code, templates, or
 client-specific deployment procedure is copied or adapted.

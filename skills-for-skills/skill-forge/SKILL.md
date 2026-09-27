@@ -1,6 +1,6 @@
 ---
 name: skill-forge
-description: "Create and update Agent Skills for one or more AI agents. Use when turning completed work into a skill, designing its initial invocation and description, writing or restructuring SKILL.md and bundled resources, repairing package loadability or portability, or recording licensing and provenance. Not for focused audits of existing descriptions or independent skill reviews."
+description: "Create and update Agent Skills for one or more AI agents. Use when turning completed work into a skill, choosing its scope and invocation, writing or restructuring SKILL.md and bundled resources, repairing package loadability or portability, or recording licensing and provenance. Use skill-descriptions-and-triggers for descriptions and skill-review for independent reviews."
 license: MIT
 compatibility: The bundled validators require Python 3.11+, uv, and dependency access on their first run.
 metadata:
@@ -214,11 +214,8 @@ selects them instead of presenting an undifferentiated menu of alternatives.
 Keep a non-obvious prerequisite or gotcha in `SKILL.md` when the agent must know it before it can recognize the
 condition for loading a reference. Move later branch detail behind a conditional pointer.
 
-Write the initial description from the invocation goal chosen in step 2. For agent selection, name the job
-and each distinct request branch once in terms a user might use, including requests that do not name the skill.
-For explicit-only use, describe the opt-in job without ambient triggers. Add an exclusion only when it prevents
-likely misrouting. Read [references/description-guide.md](references/description-guide.md) for the drafting
-method and checks.
+Write the initial description with the `skill-descriptions-and-triggers` skill, passing it the scope and
+invocation goal chosen in step 2.
 
 Identify the dominant likely failure mode. Add an Iron Law only when one absolute constraint is the right
 control. Use questions when they focus attention on a concrete decision. Add anti-patterns only when they

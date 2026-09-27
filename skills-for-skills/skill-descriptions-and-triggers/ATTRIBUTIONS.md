@@ -7,6 +7,13 @@
 - License: MIT
 - Expression: independently written. No external prose, examples, code, or assets were copied or adapted.
 
+## skill-forge's description guide
+
+- Source: `skill-forge/references/description-guide.md`, same author and license (MIT).
+- Absorbed 2026-09-28, when this skill became the single owner of description work: the drafting steps, the
+  PDF and Just examples, the form and length rules, and the review checks. That guide drew on the Agent Skills
+  pages credited in skill-forge's `ATTRIBUTIONS.md` and on the mizchi skill below.
+
 ## mizchi's optimizing-descriptions skill
 
 - Author: mizchi

@@ -1,6 +1,6 @@
 ---
 name: skill-descriptions-and-triggers
-description: Audit and improve Agent Skill descriptions for accurate selection. Use when a user asks to review existing SKILL.md descriptions, diagnose missed or false activation, or compare description variants. Not for routine skill authoring.
+description: Write, audit, and test Agent Skill descriptions so a skill loads for the requests it serves and stays out of the rest. Use when drafting or revising a description, when a skill fails to trigger or triggers on the wrong requests, or when comparing description variants or measuring trigger rates. Use skill-forge for the rest of the skill package.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,81 +8,122 @@ metadata:
 
 # Skill Descriptions and Triggers
 
-Improve how an existing skill reaches the requests it can serve, without making it claim work its body does
-not support. A description is a routing pointer: it states the capability and the conditions for reaching the
-skill. Work from the target skill's contract and the user's desired invocation behavior, not from a preferred
-sentence formula.
+A description is a skill's routing pointer: it states the capability and the conditions for reaching the skill.
+Write it so the skill triggers on the requests its body serves and on no others. Work from the skill's contract
+and its intended invocation, not from a preferred sentence formula.
 
-This skill handles focused description audits and revisions. Initial description writing belongs with
-authoring the whole skill. A description review alone authorizes a proposed replacement, not edits.
+This skill covers a new skill's first description as well as revisions to an existing one. A review-only
+request authorizes a proposed replacement, not edits.
 
-## Establish the Routing Contract
+## 1. Establish the Routing Contract
 
-Read the target skill's description, body, relevant bundled references, and the target repository's
-instructions. Identify the concrete job, supported request branches, neighboring skills, and consequential
-exclusions. Use real requests or observed missed and false activations when available; otherwise label the
-audit as heuristic.
+Read the target skill's body, its relevant bundled references, any current description, and the target
+repository's instructions. Identify the concrete job, the distinct request branches the body supports, the
+neighboring skills, and the consequential exclusions. Use real requests or observed missed and false triggers
+when available; otherwise label the audit as heuristic.
 
-If the complaint is that a skill never loads, confirm that the target client can discover the installed
-package before attributing the failure to wording. A missing or invalid package needs a packaging or
-deployment repair, not a longer description.
+When the complaint is that a skill never loads, first confirm that the target client can discover the installed
+package. A missing or invalid package needs a packaging or deployment repair, not a longer description.
 
-Determine two independent properties before drafting:
+Settle two independent properties before drafting. When the skill is being authored, reuse the choices that
+work already made.
 
-1. **Scope:** Is the target skill portable across environments, or bound to one repository? Follow the target
+1. **Scope:** Is the skill portable across environments, or bound to one repository? Follow the target
    repository's declared convention rather than treating a metadata field as a universal client control.
-2. **Invocation goal:** Should the agent select it from a realistic user request, or should it be invoked only
-   through an explicit user action? Judge from the job and available evidence. If either goal is plausible and
-   the choice would change routing, ask the user which behavior they want before rewriting.
+2. **Invocation goal:** Should the agent select it from a realistic user request, or should the user invoke it
+   explicitly? Judge from the job and available evidence. When either goal is plausible and the choice would
+   change routing, ask the user before drafting.
 
-These properties do not imply each other. A portable skill can be opt-in, and a repository-specific skill can
-be selected from a request. If the behavior applies at a moment users do not express as an intent, identify
-that discovery limit instead of promising a description repair.
+A portable skill can be opt-in, and a repository-specific skill can be agent-selected. When the behavior applies
+at a moment users never express as a request, report that discovery limit rather than promising a description
+repair.
 
-## Draft for Scope and Invocation
+## 2. Draft the Description
 
-For a **portable target**, describe reusable user tasks without relying on its authoring repository, local
-paths, installed tools, configuration, client, or any other surrounding environment. A tool intrinsic to the
-job may be named to explain the capability, but its presence is not assumed: the skill declares material
-requirements and checks them when used. Keep environment setup and execution detail out of the description.
+Build the description from these steps:
 
-For a **repository-specific target**, name the repository and its bounded task when that helps selection.
-Use local artifact names or paths only when they distinguish a request the skill actually handles. The mere
-presence or modification of a file is not evidence that the user wants the skill's workflow.
+1. State the capability in concrete terms.
+2. When it names a specialized tool, product, or artifact, add the plain context that makes routing accurate:
+   the capability and the user intent the name stands for. Leave out concepts the agent already knows.
+3. List the distinct request branches the body supports, and write each one once in words a user is likely to
+   use, including requests that do not name the skill or its tool. Put the most important trigger first.
+4. Add an exclusion only for a nearby skill or task that could plausibly be misrouted.
+5. Remove implementation detail and instructions that matter only after the skill loads.
 
-For **agent selection from a request**, cover each distinct supported branch once in words a user might use,
-including outcomes that do not name the skill or tool. Put the most important trigger early. Add nearby
-exclusions only when they prevent plausible misrouting; avoid lists of synonyms and unrelated symptoms.
+Claim only branches the body supports. When a request needs a branch the body lacks, narrow the description or
+raise the skill-design question. Synonyms for one branch are one branch; long lists blur boundaries and attract
+false triggers. Imperative wording such as `Use when` can help an agent recognize a condition, but its absence
+alone is not a defect.
 
-For **explicit-only use**, describe the requested opt-in job without ambient triggers. Wording can express
-intent, but it does not enforce an invocation rule. Check whether the target client has an actual explicit-only
-mechanism before claiming that the skill cannot be selected automatically.
+Then fit the draft to its scope and invocation goal:
 
-Do not add a capability to the description just to improve matching. If the body does not support a claimed
-branch, narrow the description or surface the larger skill-design decision. Imperative wording such as
-`Use when` can help, but its absence alone is not a defect.
+- **Portable:** describe reusable user tasks without relying on the authoring repository, local paths, installed
+  tools, configuration, or client. A tool intrinsic to the job may be named to explain the capability; the
+  skill itself declares and checks that requirement.
+- **Repository-specific:** name the repository and its bounded task when that helps selection. Use local
+  artifact names or paths only when they distinguish a request the skill handles; a file being present or
+  modified is not evidence that the user wants the skill's workflow.
+- **Agent-selected:** a request phrased by its outcome, without the skill's name, should still match.
+- **Explicit-only:** describe the opt-in job without cues from surrounding work. Wording expresses intent but
+  does not enforce it, so verify the client's explicit-only mechanism before claiming the skill cannot be
+  selected automatically.
 
-## Review the Candidate
+```yaml
+# Too vague
+description: Helps with PDFs.
 
-Compare the candidate with the current description and explain each material change through a supported
-branch, a realistic missed request, or a close false-trigger request. Preserve effective wording. Check that
-the candidate communicates both what the skill does and when to use it, stays within the Agent Skills
-[description limit](https://agentskills.io/specification), and follows any tighter repository form or length
-policy. Treat static checks as validity and design evidence, not proof of activation.
+# Too broad
+description: Creates, reads, writes, edits, changes, fixes, processes, analyzes, and manages documents and files.
 
-For a review-only request, deliver the exact proposed description and its reasons without editing. When edits
-are authorized, change only the description and required routing metadata. Apply the target repository's
-validators, review the diff, and use its normal deployment procedure. Keep unrelated package changes separate.
+# Discriminating
+description: Extract PDF text and tables, fill forms, and merge files. Use for extraction, forms, or assembly.
 
-## Measure Activation When Authorized
+# Assumes the router already knows the tool
+description: Build and maintain justfiles.
 
-Model runs consume time and allowance. Offer a bounded trigger evaluation when static review leaves a
-consequential routing question; run it only with authorization for that cost and any client side effects.
+# Carries the capability and the user intent
+description: Build and maintain Just command-runner files for repeatable project tasks.
+```
+
+## 3. Fit the Form and Length
+
+Follow the target repository's scalar convention. An inline value on one physical line is the safe default;
+some deployment tooling mishandles folded (`>-`) and literal (`|`) block scalars.
+
+Budget the description by characters, not by line width. It cannot wrap while it stays an inline scalar, and
+Markdown linters commonly skip frontmatter, so a column ceiling does not govern it. The Agent Skills
+[specification](https://agentskills.io/specification) caps a description at 1024 characters, and a repository
+may set a tighter budget. Where a client preloads every description, the whole collection pays that cost on
+every request, so spend it on distinct branches and necessary exclusions.
+
+## 4. Review the Candidate
+
+Check the candidate against each of these, and compare it with the current description when one exists:
+
+- It names both the capability and the conditions that trigger it.
+- Every trigger phrase maps to a distinct branch the body supports.
+- A representative unrelated request, and each close neighbor's typical request, does not appear to match.
+- Specialized names carry enough context for routing, without unneeded definitions.
+- No routing guidance is left in the body, where it arrives too late to affect triggering.
+- Every declared client has a verified automatic or explicit path for the intended use.
+- It meets the specification and any tighter repository form or length policy.
+
+Explain each material change through a supported branch, a realistic missed request, or a close false trigger,
+and keep wording that already works. Static checks are validity and design evidence, not proof of triggering.
+
+For a review-only request, deliver the exact proposed description and its reasons. When edits are authorized,
+change only the description and required routing metadata, run the target repository's validators, review the
+diff, and deploy through its normal procedure. Keep unrelated package changes in a separate change.
+
+## 5. Measure Triggers When Authorized
+
+Model runs cost time and allowance. Offer a bounded trigger evaluation when static review leaves a
+consequential routing question, and run it only with authorization for that cost and any client side effects.
 Follow the [Agent Skills trigger-evaluation method](https://agentskills.io/skill-creation/optimizing-descriptions):
-use realistic should-trigger requests and close should-not-trigger cases, keep validation queries separate
-from revisions, and compare current and candidate descriptions under the same client conditions.
+use realistic should-trigger requests and close should-not-trigger cases, keep validation queries separate from
+revisions, and compare the current and candidate descriptions under the same client conditions.
 
-Verify how that client exposes skill loading before using its logs as evidence. If loading is not observable,
-report the measurement as inconclusive or use a separately justified behavioral probe; absence of a log entry
-alone does not prove non-activation. Report per-client results, the cases and repetitions run, and the
-remaining untested routing behavior. Do not claim that a passing validator or deployment proves discovery.
+Verify how the client exposes skill loading before treating its logs as evidence. When loading is not
+observable, report the measurement as inconclusive or use a separately justified behavioral probe; a missing log
+entry alone does not show the skill failed to trigger. Report results per client, the cases and repetitions
+run, and the routing behavior that remains untested.
