@@ -1,6 +1,6 @@
 ---
 name: context-compression
-description: Compress model-bound reference context or accumulated session state to a stated budget while preserving task-relevant facts, relationships, authority, and uncertainty. Use when supplied context must become materially smaller for another LLM call; not for ordinary human-facing editing, handoff writing, prompt repair, or exact-source preservation.
+description: Compress model-bound reference context or accumulated session state to a stated budget while preserving task-relevant facts, relationships, authority, and uncertainty. Use when supplied context must become materially smaller for another LLM call; not for ordinary human-facing editing, handoff writing, prompt repair, exact-source preservation, or shrinking a repository instruction file to its word budget (agents-context-docs).
 license: MIT
 metadata:
   author: Joonas Onatsu

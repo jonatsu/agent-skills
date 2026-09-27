@@ -1,6 +1,6 @@
 ---
 name: python-architecture
-description: Decide where Python code lives and what may depend on what. Use when starting a project, adding or splitting a module or package, moving code between modules, resolving a circular import, choosing between src and flat layout, deciding what an __init__.py should do, placing tests, adding a console entry point, or reviewing project structure.
+description: Decide where Python code lives and what may depend on what. Use when starting a project, adding or splitting a module or package, moving code between modules, resolving a circular import, choosing between src and flat layout, deciding what an __init__.py should do, placing tests, adding a console entry point, layering an application so dependencies point inward, or reviewing project structure.
 license: MIT
 metadata:
   author: Joonas Onatsu

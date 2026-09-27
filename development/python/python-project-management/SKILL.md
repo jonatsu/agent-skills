@@ -1,6 +1,6 @@
 ---
 name: python-project-management
-description: Set up and maintain a Python project with uv, ruff, and mypy. Use when creating a project or standalone script, configuring pyproject.toml, wiring pre-commit and CI security checks, updating or auditing dependencies, cutting a release, or migrating off pip, Poetry, setup.py, black, flake8, or isort.
+description: Set up and maintain a Python project's tooling with uv and ruff, wiring mypy and pytest into CI. Use when creating a project or standalone script, configuring pyproject.toml, wiring pre-commit and CI security checks, updating or auditing dependencies, cutting a release, or migrating off pip, Poetry, setup.py, black, flake8, or isort.
 license: CC-BY-SA-4.0
 compatibility: Requires uv. Python 3.11+ for the recommended configuration. Optional tools named in references are installed on demand and reported when absent.
 metadata:

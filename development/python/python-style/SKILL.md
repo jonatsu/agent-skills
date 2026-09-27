@@ -1,6 +1,6 @@
 ---
 name: python-style
-description: Write and review readable, idiomatic Python. Use for new Python code, style or conventions reviews, naming, docstrings, value types, datetime semantics, resource handling, or logging. Tool configuration belongs to python-project-management; detailed typing, validation, architecture, async, and testing have specialist skills.
+description: Write and review readable, idiomatic Python. Use for new Python code, style or conventions reviews, naming, docstrings, ordinary signature annotations, value types, datetime semantics, resource handling, or logging. Tool configuration belongs to python-project-management; detailed typing, validation, architecture, async, and testing have specialist skills.
 license: MIT
 metadata:
   author: Joonas Onatsu
