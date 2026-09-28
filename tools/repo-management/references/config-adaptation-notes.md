@@ -31,6 +31,11 @@ adapt it when an established repository already carries deliberate conventions.
 - Keep MD060 table-column styling disabled. A 2026-09-03 markdownlint 0.41.1 probe preserved a three-row table
   under compact and aligned modes and reached a clean second pass, but that narrow case does not outweigh the
   table-content loss observed under 0.41.0.
+- Set mdformat-gfm's `[plugin.tables]` `compact_tables = true`. Padded cells widen to the longest row in the
+  column, so editing one long prose cell repads and rewrites every line of the table; compact tables drop that
+  padding without changing GitHub's rendered output. The setting needs mdformat-gfm 1.0.0 or later. The table
+  rules MD055 (pipe style), MD056 (column count), and MD058 (blank lines around tables) still pass, because
+  compact tables change only cell width, not pipes, column count, or surrounding blank lines.
 - Mirror every Markdown exclusion in pre-commit's `exclude` and markdownlint-cli2's `ignores`. A stale entry
   in either layer silently creates format-only or lint-only coverage.
 - Neither Markdown hook sees a non-breaking space. U+00A0 is not whitespace to a parser, so a nested item or
@@ -85,13 +90,13 @@ adapt it when an established repository already carries deliberate conventions.
 
 ## Bringing a Previously Excluded Document Under the Hooks
 
-Expect a large diff. mdformat unwraps manual soft wraps to the configured width, repads GFM tables, and
-alphabetizes link reference definitions; `+` and `*` bullet markers become `-`. Where markdownlint runs with
-`--fix`, MD034 brackets bare URLs and MD040 requires a language on every fence, so a plain diagram needs a
-`text` tag.
+Expect a large diff. mdformat unwraps manual soft wraps to the configured width, rewrites GFM tables to the
+shipped `compact_tables` style, and alphabetizes link reference definitions; `+` and `*` bullet markers become
+`-`. Where markdownlint runs with `--fix`, MD034 brackets bare URLs and MD040 requires a language on every
+fence, so a plain diagram needs a `text` tag.
 
 The diff is content-preserving, but reading it is not a practical check. Compare the alphanumeric-token
-multiset instead, which is unaffected by rewrapping, table repadding, and reference reordering:
+multiset instead, which is unaffected by rewrapping, table cell rewriting, and reference reordering:
 
 ```sh
 for f in <files>; do
