@@ -42,15 +42,16 @@ options would constrain the idea. A response that asks for user input ends with 
 uncertainties as observations or parked questions for a later turn. Do not ask questions to complete a checklist.
 
 Decompose a request with several independently valuable outcomes before exploring details. Ask which outcome the user
-wants to consider first as the first question after naming them; do not substitute a cross-cutting question. Keep the
-others as named stubs. Do not ask any cross-cutting or secondary question in that response. Combine compatible ideas.
-Park an attractive tangent when it would expand or displace the current purpose; explain why it is deferred.
+wants to consider first as the first question after naming them, and ask no other question, cross-cutting or secondary,
+in that response. Keep the others as named stubs. Combine compatible ideas. Park an attractive tangent when it would
+expand or displace the current purpose; explain why it is deferred.
 
 When the user states a current purpose and mentions another idea as optional or future work, keep the current purpose
 selected and park the optional idea. Do not present it as an equal choice unless the user explicitly asks to expand scope.
 
-Before the user chooses an outcome, do not propose product shapes, architecture, implementation approaches, or a
-recommended direction for a multi-outcome request. Those comparisons speculate across work that has not been selected.
+Before the user chooses an outcome, keep the discussion at the outcome level. Product shapes, architecture,
+implementation approaches, and a recommended direction wait until an outcome is selected, because those comparisons
+speculate across work nobody has chosen yet.
 
 Research facts or prior art when they could change the premise, branch set, or recommendation. Keep factual findings,
 agent recommendations, provisional assumptions, and user decisions distinguishable. Challenge weak premises,
@@ -89,8 +90,9 @@ revised intent.
 ## Draft and Handoff
 
 Synthesize an explicitly incomplete draft when the intended outcome, promising direction, scope, consequential
-constraints, observable success signal, and open questions are legible. It should let a specification writer or
-technical designer continue without reconstructing the conversation or inventing purpose or scope.
+constraints, observable success signal, and open questions can each be written in one sentence without guessing. It
+should let a specification writer or technical designer continue without reconstructing the conversation or
+inventing purpose or scope.
 
 Record the original idea, purpose, intent, desired outcome, branches considered, current direction, scope, exclusions,
 parked ideas, consequential constraints and assumptions, observable success signal, bounded questions for technical
