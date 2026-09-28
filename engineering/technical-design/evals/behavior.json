@@ -214,7 +214,8 @@
         "The reader can identify who reads input, who validates entries and who reports the result.",
         "Runtime steps, diagrams and interface descriptions use consistent component names and error semantics.",
         "Explains rationale in connected prose rather than presenting only labels, paths and obligation lists.",
-        "No timing, state or interface claim contradicts another section."
+        "No timing, state or interface claim contradicts another section.",
+        "Explains each concept once where it is first relied on, and carries no restated context, verification narration or empty section."
       ]
     }
   ]

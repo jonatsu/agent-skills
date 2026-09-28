@@ -29,8 +29,9 @@
 - Upstream license statement: [LICENSE.upstream](LICENSE.upstream), copied from the pinned template revision
 - Relationship: adapted template and section guidance; original fictional example within that structure
 
-The template preserves arc42's twelve-section organization with condensed Markdown prompts, a design-basis
-preamble, and a planning handoff. The guide adapts the section purposes and advice about depth, responsibilities,
+The template preserves arc42's twelve-section numbering and order with condensed Markdown prompts, a design-basis
+and open-items preamble, and a planning handoff. Since 2026-09-28 a section that would carry nothing is omitted
+rather than filled with an applicability line. The guide adapts the section purposes and advice about depth, responsibilities,
 runtime scenarios, rationale and avoiding duplication. The specific online guidance used is linked in that guide.
 These resources and the worked example are distributed under CC BY-SA 4.0. No upstream example prose, diagrams,
 code or system requirements are copied into the fictional catalog design.

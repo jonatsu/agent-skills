@@ -5,7 +5,8 @@ It demonstrates document form, not an inspected repository or measured implement
 The companion worked plan is bundled with the `implementation-planning` skill; locate that skill
 through the available skill catalog rather than assuming a neighboring installation path.
 
-Status: accepted within this example. Format: arc42; no repository design convention exists.
+Status: accepted within this example; once implemented, the code wins and this design follows it.
+Format: arc42; no repository design convention exists. Open items: none.
 
 ## 1. Introduction and Goals
 
@@ -27,8 +28,8 @@ The example's accepted requirements are:
 ### 1.2 Quality Goals
 
 Correctness and source preservation drive the design. A catalog with several invalid entries must
-report all their issues, and a failed check must leave the input unchanged. These goals come from
-R2, R3 and R5; this example has no accepted throughput or file-size target.
+report all their issues (R2, R3), and a failed check must leave the input unchanged (R5). No
+throughput or file-size target is accepted.
 
 ### 1.3 Stakeholders
 
@@ -150,12 +151,9 @@ entry a direct reason for correction while keeping issue order tied to input ord
 
 ## 10. Quality Requirements
 
-R2 and R3 require all entry issues, not early termination at the first invalid entry. A scenario
-containing a non-object, an invalid identifier and a later duplicate must report each affected
-index with the corresponding code.
-
-R4 requires no stdout for input failures. R5 requires unchanged input bytes and no input-write
-attempt on both success and failure paths. No quantitative performance claim is made.
+A catalog containing a non-object, an invalid identifier and a later duplicate reports each
+affected index with its code, rather than stopping at the first invalid entry (R2, R3). After
+both a passing and a failing check, the input's bytes are unchanged and no write was attempted (R5).
 
 ## 11. Risks and Technical Debt
 

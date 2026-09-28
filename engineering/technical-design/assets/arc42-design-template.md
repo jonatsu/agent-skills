@@ -1,11 +1,13 @@
 # <System or change> Design
 
-Status: \<proposed or accepted, with date and acceptance evidence>
+Status: \<proposed or accepted, with date and acceptance evidence; once implemented, the code wins
+and this design is updated to match>
 Design basis: \<governing requirements revision, scope, baseline and documentation convention>
+Open items: \<links to the questions register and task ledger>
 
 <!-- Authoring scaffold: replace prompts, remove these instructions, retain attribution.
-Keep the twelve numbered sections. Tailor depth and subsections; a short applicability statement
-or link is sufficient where no further explanation is needed. Do not invent missing facts. -->
+Keep the section numbers and order; delete a section that would carry nothing. Tailor depth and
+subsections. Do not invent missing facts. -->
 
 ## 1. Introduction and Goals
 
@@ -83,4 +85,5 @@ remaining questions with owners. Keep implementation order, commands and review 
 
 Format adapted from arc42 by Gernot Starke and Peter Hruschka, under
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
-Changes: condensed Markdown prompts, design-basis preamble and planning handoff.
+Changes: condensed Markdown prompts, design-basis and open-items preamble, omission of empty
+sections, and planning handoff.

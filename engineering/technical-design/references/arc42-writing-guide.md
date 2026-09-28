@@ -4,9 +4,9 @@ Use this guide with [the template](../assets/arc42-design-template.md).
 The [worked design](arc42-example.md) demonstrates the intended depth for a small system.
 
 The twelve sections give readers stable places to find information. They do not prescribe equal
-lengths. Preserve the numbered top-level structure for the default format; tailor the subsections.
-A concise applicability statement or link can complete a section. Missing evidence or an unresolved
-requirement must remain visible rather than becoming invented content.
+lengths. Keep the section numbers and their order; omit a section that would carry nothing rather
+than filling it with an applicability line, and tailor the subsections. Missing evidence or an
+unresolved requirement stays visible in the questions register rather than becoming invented content.
 
 ## Establish the Reader's View
 

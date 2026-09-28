@@ -1,6 +1,6 @@
 ---
 name: technical-design
-description: Design how a bounded software system or change should realize accepted requirements before implementation planning. Use for architecture, interfaces, state and data flow, failure handling, compatibility, migration, rollout, or rollback decisions; not for ideation, requirements specification, task sequencing, or reviewing an already settled design.
+description: Design how a bounded software system or change should realize accepted requirements, and write its design document, before implementation planning. Use for architecture, interfaces, state and data flow, failure handling, compatibility, migration, rollout, or rollback decisions, and for writing or revising a design document or arc42 design; not for ideation, requirements specification, task sequencing, or reviewing an already settled design.
 license: MIT AND CC-BY-SA-4.0
 metadata:
   author: Joonas Onatsu
@@ -49,6 +49,10 @@ users, priorities, pricing, retention rules, compliance duties, and service leve
 or an authoritative product artifact supplies them. Keep unsupported policy provisional or return a changed outcome to
 idea-brainstorming.
 
+Check every claim about an upstream or third-party mechanism against its pinned source, never against memory or a
+summary. A wrong premise settled here propagates into the plan and the code. Where no ready component does what the
+design needs, write the custom step as a design task, not as a finding or an open question.
+
 Keep evidence and judgment distinct:
 
 - state current behavior and constraints supported by repository inspection or authoritative research;
@@ -57,13 +61,20 @@ Keep evidence and judgment distinct:
 - identify provisional assumptions and the evidence needed to settle them; and
 - distinguish blocking questions from details that may safely wait for implementation.
 
+Carry that distinction in the document's structure: its status line, the decisions section, one questions register,
+and a marker on each provisional decision. Mark a provisional decision as provisional everywhere it lands, including
+the questions register, where it is assumed rather than resolved. The design text states the design; provenance
+narration such as "verified against" or "confirmed in" belongs in those structures or nowhere.
+
 When a governing specification exists, identify the accepted revision and trace each consequential system guarantee to
-the requirement it realizes. Use existing stable requirement identifiers or anchors; do not invent an ID scheme during
-design. A newer accepted specification makes the affected design provisional until the change is reconciled.
+the requirement it realizes. State the guarantee first and append the requirement's existing identifier or anchor; do
+not invent an ID scheme during design. A newer accepted specification makes the affected design provisional until the
+change is reconciled.
 
 Present alternatives only when a real consequential choice remains. Explain the difference, benefit, cost, likely
 failure mode, and reversibility of each live option. Recommend a direction with reasons. Facts may be researched;
-product judgment and material risk acceptance remain with the user.
+product judgment and material risk acceptance remain with the user. Once decided, the document states each rejected
+alternative directly, with the reason it lost.
 
 ## Contribute Domain Expertise
 
@@ -105,7 +116,7 @@ Implementation planning later orders the work and checks that implement those de
 Name implementation surfaces only when they establish evidence or clarify responsibility. Do not prescribe edit order,
 source line ranges, commits, task assignments, or implementation status.
 
-## Write the Design Artifact
+## Choose the Format
 
 Use arc42 for new technical-design documents by default. Inspect the repository's documentation instructions and
 relevant existing designs first. When continuing a document, preserve its organization. When joining an established
@@ -116,28 +127,41 @@ precedence. Briefly state the selected convention in the design basis; routine m
 
 For arc42, read [the writing guide](references/arc42-writing-guide.md) and use
 [the template](assets/arc42-design-template.md). Read [the worked example](references/arc42-example.md) before the first
-draft to calibrate explanation and depth. Keep the twelve numbered sections in order; tailor subsections and depth.
-Use a short applicability statement or reference where sufficient. Remove authoring prompts from the finished document.
-Do not invent requirements, stakeholders, thresholds, or risks to fill a section. Keep status and governing-source
-links in a short preamble and the planning handoff in an unnumbered appendix.
+draft to calibrate explanation and depth. Keep arc42's section numbers and order, and omit a section that would carry
+nothing, so the numbers stay stable and the reader meets no empty headings. Tailor subsections and depth. Remove
+authoring prompts from the finished document. Do not invent requirements, stakeholders, thresholds, or risks to fill
+a section. Keep status and governing-source links in a short preamble and the planning handoff in an unnumbered
+appendix.
 
 For bounded changes, state the affected boundary and baseline, explain the changed design, and link unchanged system
-documentation. In arc42, sections 1 and 10 summarize or reference accepted requirements; they do not acquire product authority.
-Section 9 links existing decisions rather than duplicating them. An unresolved obligation remains a gap even when its
-template section is present.
+documentation. In arc42, sections 1 and 10 reference accepted requirements rather than restating them, and they do not
+acquire product authority. Section 9 links existing decisions rather than duplicating them. An unresolved obligation
+remains a gap, recorded in the questions register.
+
+A design leads implementation, then follows it: once code exists, the code wins and the design is updated to match.
+The status line says so. Open items live in one questions register and one task ledger, linked from the design, never
+as "not designed" in its text.
+
+## Write for the Reader
+
+A design is read by implementers, reviewers, and later maintainers who were not in the conversation that produced it.
+Write it with `writing-documentation`, and finish with the `writing-for-humans` **reader-ready** pass before the
+handoff. The bar: a first-time reader could re-derive the implementation from the documents alone, and once the design
+is reviewed, any working note behind it is deletable without losing anything an implementer needs.
 
 Orient the reader before introducing detail. Show the structure, explain its important relationships and rationale,
-then describe selected internals. Explain concepts before relying on them. Use the same component names in diagrams,
-responsibility tables, interfaces, and scenarios; name the component responsible for each runtime action. Use prose
-to explain causes and trade-offs, tables for comparison or lookup, and diagrams to make relationships visible.
+then describe selected internals. Explain each concept, mechanism, and component where the design first relies on it,
+once. Use the same component names in diagrams, responsibility tables, interfaces, and scenarios; name the component
+responsible for each runtime action. Use prose to explain causes and trade-offs, tables for comparison or lookup, and
+diagrams to make relationships visible, only where each materially clarifies. Keep every canonical decision
+recoverable in text.
 
 In the handoff, identify invariants, failure modes, and rollout/recovery obligations that need particular scrutiny or
 qualification, with the evidence boundary and owner where known. Link applicable policy or coding constraints instead
 of duplicating their rules. Implementation planning turns these obligations into explicit practice, review, and
 validation steps; keep reviewer scheduling and execution commands out of the design.
 
-Use diagrams, tables, examples, state descriptions, or sequence narratives only when they materially clarify a
-relationship or behavior. Keep every canonical decision recoverable in text.
+## Artifact Path
 
 Resolve the artifact path in this order:
 
@@ -165,22 +189,20 @@ Before handing the design to implementation planning, check that:
 - consequential invariants and prohibited behavior are settled;
 - important success, error, degraded, and recovery paths are defined;
 - relevant compatibility, migration, security, privacy, accessibility, and operational obligations are settled;
-- assumptions are verified or have a named validation owner; and
-- remaining questions are implementation-local or explicitly deferred with their cost.
+- assumptions are verified or have a named validation owner;
+- remaining questions are implementation-local or explicitly deferred with their cost; and
+- the design meets the reader bar in "Write for the Reader" and passes the **reader-ready** pass.
 
 Before that confirmation, pressure-test the design with `interview-me`: walk its load-bearing and hard-to-reverse
 decisions for the ones a reviewer would challenge, and resolve or explicitly defer each. Skip only with a stated
 reason, or at the user's direction. A design handed to planning un-pressure-tested is the common source of a plan
 built on an unexamined choice.
 
-Then ask for one final confirmation that the design matches the user's understanding of the system to be planned. Earlier
-confirmation of individual choices does not replace this shared-understanding check. A clear response to that final
-design synthesis already supplies the confirmation; do not ask the user to repeat it.
-
-The confirmation must follow the complete design synthesis and cover every consequential decision introduced during
-design. A confirmation given before those decisions cannot confirm them. For a request to design and plan in one
-conversation, finish the separate design, present its final synthesis, and stop for this confirmation. Begin the separate
-implementation plan only after the user's next clear response accepts that synthesis.
+Then present the complete design synthesis and ask for one confirmation that it matches the user's understanding of
+the system to be planned. Only a confirmation given after every consequential decision confirms them; earlier
+confirmation of individual choices does not. A clear response to the synthesis is the confirmation, so do not ask the
+user to repeat it. For a request to design and plan in one conversation, stop here, and begin the separate
+implementation plan only after that response.
 
 If the check exposes a design gap, continue designing or record the blocker. If it exposes a changed outcome or scope,
 return to idea-brainstorming. Do not hand unresolved architecture to planning merely to keep the workflow moving.
