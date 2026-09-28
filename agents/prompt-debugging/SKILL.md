@@ -1,6 +1,6 @@
 ---
 name: prompt-debugging
-description: Debug and repair an existing LLM prompt from observed failures using controlled fixtures, traces, and regression runs. Use when a prompt produces wrong, inconsistent, over-cautious, over-compliant, malformed, or costly output, or when comparing prompt revisions; not for authoring a prompt from scratch, static review without failing behavior, repository instruction maintenance, or Agent Skill authoring.
+description: Debug and repair an existing LLM prompt from observed failures using controlled fixtures, traces, and regression runs. Use when a prompt produces wrong, inconsistent, over-cautious, over-compliant, malformed, or costly output, or when comparing prompt revisions; not for writing or improving a prompt without recorded failures (writing-prompts), repository instruction maintenance, or Agent Skill authoring.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -24,8 +24,8 @@ API prompt, instruction file, or few-shot set.
 
 Nearby work has different owners:
 
-- Use the relevant authoring capability when no prompt exists and no behavioral baseline can be supplied.
-- Use static review when the question is whether a prompt is well designed but no failing behavior exists.
+- Use `writing-prompts` when no prompt exists yet, or when the question is whether a prompt is well written but no
+  failing behavior exists.
 - Use `agents-context-docs` for repository `AGENTS.md`, `CLAUDE.md`, scoped instructions, or `llms.txt`
   maintenance.
 - Use `skill-forge` for `SKILL.md` and Agent Skill packages.
