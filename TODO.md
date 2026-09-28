@@ -36,46 +36,36 @@ through `writing-documentation` and the `writing-for-humans` reader-ready pass. 
 sources or status "throughout" turns into per-sentence noise; carry status in the document's structure instead,
 as `requirements-specification` and `technical-design` do.
 
-| Skill                             | Description pass                 | `writing-for-agents` pass                                               |
-| --------------------------------- | -------------------------------- | ----------------------------------------------------------------------- |
-| `git-commits-and-recovery`        | 2026-09-27, `05ecb1e`            | 2026-09-28, `bf0a58d`                                                   |
-| `git-history-investigation`       | 2026-09-27, `8242032`            | 2026-09-27, `8242032`                                                   |
-| `using-git-worktrees`             | 2026-09-27, `b10689e`            | 2026-09-27, `36bb1b4`                                                   |
-| `session-handoff`                 | 2026-09-28, `f25ae32`            | 2026-09-28, `bd1ba4e`                                                   |
-| `skill-descriptions-and-triggers` | 2026-09-28, `37f34c8`            | 2026-09-28, `37f34c8`                                                   |
-| `session-skill-audit`             | 2026-09-28, `da8a0cb`            | 2026-09-28, `da8a0cb`                                                   |
-| `skill-review`                    | 2026-09-28, `0067bb4`            | 2026-09-28, `0067bb4`, light: tiers, discovery lens, two negations only |
-| `skill-forge`                     | 2026-09-28, `37f34c8`            | 2026-09-28, `1666cb1`                                                   |
-| `context-compression`             | 2026-09-28, `2997308`            | 2026-09-25, `f0f5559f`                                                  |
-| `context-architecture`            | 2026-09-28, `2997308`, no change | 2026-09-25, `8fce5a79`                                                  |
-| `agents-context-docs`             | 2026-09-28, `2997308`, no change | 2026-09-28, `7eb012e`                                                   |
-| `python-architecture`             | 2026-09-28, `2997308`            | 2026-09-24, `4e374bf`                                                   |
-| `python-async-patterns`           | 2026-09-28, `2997308`, no change | 2026-09-24, `c85d2cf`                                                   |
-| `python-error-handling`           | 2026-09-28, `2997308`, no change | 2026-09-24, `819aa34`                                                   |
-| `python-parallelism`              | 2026-09-28, `2997308`, no change | 2026-09-24, `c1d8db7`                                                   |
-| `python-project-management`       | 2026-09-28, `2997308`            | 2026-09-24, `bf1081b`                                                   |
-| `python-style`                    | 2026-09-28, `2997308`            | 2026-09-24, `e47e62d`                                                   |
-| `python-testing`                  | 2026-09-28, `2997308`            | 2026-09-24, `d908951`                                                   |
-| `python-typing`                   | 2026-09-28, `2997308`, no change | 2026-09-24, `272c8d2`                                                   |
-| `interview-me`                    | 2026-09-28, `cb64a9b`            | 2026-09-28, `cb64a9b`                                                   |
-| `idea-brainstorming`              | 2026-09-28, `7fd41bd`, no change | 2026-09-28, `7fd41bd`                                                   |
-| `session-reflect`                 | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                                                   |
-| `systemd-units`                   | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                                                   |
-| `docker-podman-containers`        | 2026-09-28, `f92701a`            | 2026-09-28, `f92701a`                                                   |
-| `writing-for-humans`              | 2026-09-28, `e999023`            | 2026-09-28, `e999023`                                                   |
-| `writing-documentation`           | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                                                   |
-| `requirements-specification`      | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                                                   |
-| `technical-design`                | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                                                   |
-| `implementation-planning`         | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                                                   |
-
-## Merge skill-review Into skill-forge as a Review Mode?
-
-Proposed 2026-09-28. `skill-forge` and `skill-review` each state what a skill is judged on (scope coherence, the
-hard gates, the `ready with risks` ceiling), and the two copies can drift apart silently. One skill with an
-authoring mode and a review mode would hold one rubric. The cost is size, against the preference for small
-skills; progressive disclosure could keep the entry file lean by moving each mode's detail behind its own
-reference. Decide by first listing every rule both packages state, since the drift risk sits in that shared
-rubric rather than in the two workflows.
+| Skill                             | Description pass                 | `writing-for-agents` pass                         |
+| --------------------------------- | -------------------------------- | ------------------------------------------------- |
+| `git-commits-and-recovery`        | 2026-09-27, `05ecb1e`            | 2026-09-28, `bf0a58d`                             |
+| `git-history-investigation`       | 2026-09-27, `8242032`            | 2026-09-27, `8242032`                             |
+| `using-git-worktrees`             | 2026-09-27, `b10689e`            | 2026-09-27, `36bb1b4`                             |
+| `session-handoff`                 | 2026-09-28, `f25ae32`            | 2026-09-28, `bd1ba4e`                             |
+| `skill-descriptions-and-triggers` | 2026-09-28, `37f34c8`            | 2026-09-28, `2c0a4ee`                             |
+| `session-skill-audit`             | 2026-09-28, `da8a0cb`            | 2026-09-28, `da8a0cb`                             |
+| `skill-forge`                     | 2026-09-28, `9fe08b0`            | 2026-09-28, `9fe08b0`, merged with `skill-review` |
+| `context-compression`             | 2026-09-28, `2997308`            | 2026-09-25, `f0f5559f`                            |
+| `context-architecture`            | 2026-09-28, `2997308`, no change | 2026-09-25, `8fce5a79`                            |
+| `agents-context-docs`             | 2026-09-28, `2997308`, no change | 2026-09-28, `7eb012e`                             |
+| `python-architecture`             | 2026-09-28, `2997308`            | 2026-09-24, `4e374bf`                             |
+| `python-async-patterns`           | 2026-09-28, `2997308`, no change | 2026-09-24, `c85d2cf`                             |
+| `python-error-handling`           | 2026-09-28, `2997308`, no change | 2026-09-24, `819aa34`                             |
+| `python-parallelism`              | 2026-09-28, `2997308`, no change | 2026-09-24, `c1d8db7`                             |
+| `python-project-management`       | 2026-09-28, `2997308`            | 2026-09-24, `bf1081b`                             |
+| `python-style`                    | 2026-09-28, `2997308`            | 2026-09-24, `e47e62d`                             |
+| `python-testing`                  | 2026-09-28, `2997308`            | 2026-09-24, `d908951`                             |
+| `python-typing`                   | 2026-09-28, `2997308`, no change | 2026-09-24, `272c8d2`                             |
+| `interview-me`                    | 2026-09-28, `cb64a9b`            | 2026-09-28, `cb64a9b`                             |
+| `idea-brainstorming`              | 2026-09-28, `7fd41bd`, no change | 2026-09-28, `7fd41bd`                             |
+| `session-reflect`                 | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                             |
+| `systemd-units`                   | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                             |
+| `docker-podman-containers`        | 2026-09-28, `f92701a`            | 2026-09-28, `f92701a`                             |
+| `writing-for-humans`              | 2026-09-28, `e999023`            | 2026-09-28, `e999023`                             |
+| `writing-documentation`           | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                             |
+| `requirements-specification`      | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
+| `technical-design`                | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                             |
+| `implementation-planning`         | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                             |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 

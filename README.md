@@ -65,7 +65,7 @@ that breaks every repository policy, and the policy validator does not look at f
 
 The edit loop is **edit here → commit → the post-commit hook syncs the touched scope → `just skills-sync`**.
 `pre-commit install` wires that hook (`scripts/sync-skills-kasetto.sh`) alongside the pre-commit checks. Use
-the `skill-forge` skill for authoring conventions and `skill-review` for reviews.
+the `skill-forge` skill for authoring conventions and for reviews.
 
 ### Editing a skill
 

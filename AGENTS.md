@@ -38,8 +38,8 @@ first fails, and accepts a path relative to wherever you are.
 - Edit a repo-local skill in `../.agents/skills/<name>/`. The `../.claude/skills/` and `../.github/skills/`
   entries are symlinks to it and are never edited separately; README's "Repo-local skills" section has the
   layout.
-- Use both `skill-review` and `skill-forge` for every skill review. `skill-review` governs assessment and
-  evidence; `skill-forge` governs proposed repair shape and any separately authorized edits.
+- Use `skill-forge`'s review mode for every skill review. It governs assessment and evidence, and its
+  authoring mode governs the shape of a proposed repair and any separately authorized edit.
 - Load `kasetto-skill-tool` before adding, editing, moving, archiving, restoring, removing, deploying, or
   verifying a skill. Its portable tool guidance complements this file's hook and lock workflow.
 - Keep a skill's `description` an inline YAML scalar. Neither validator catches a folded one;
