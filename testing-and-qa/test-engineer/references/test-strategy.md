@@ -79,10 +79,7 @@ framing is from *Software Engineering at Google*, ch. 11.)
 
 Rules that resolve most arguments:
 
-- MUST NOT mock what you are trying to prove. A test whose collaborators are all mocks proves the mocks agree
-  with each other.
-- Mock at the boundary you do not own (third-party network, payment provider, clock), not at the boundary you
-  do.
+- Mock only where the Suite Health Rules in `SKILL.md` allow: never what you are trying to prove.
 - The same behavior tested at three levels is one behavior with two maintenance liabilities. Choose the
   cheapest level that can actually fail for the right reason.
 - When a behavior is only reachable end-to-end, that is a testability finding (step 6), not a level decision.
@@ -175,28 +172,8 @@ answer. "Not tested" with a reason is a decision; "not tested" silently is a hol
 
 ## Suite health rules
 
-Carry these into the plan, because they decide whether the suite is still trusted a year later.
-
-- A flaky test is a failing test. Quarantine with a deadline and an owner, or delete it. Retry-until-green
-  destroys the signal the suite exists for.
-- Ask what the suite would CATCH, not what it covers. Use an existing mutation tool only in an isolated
-  environment when the task authorizes it. If mutation requires manual production edits or unavailable tooling,
-  report it as a handoff. A mutation nothing kills is a finding, and it separates tests which assert from tests
-  which merely execute.
-- Synchronize on the condition, never on the clock. A fixed sleep is simultaneously too long on the machine
-  that is fast and too short on the one that is loaded, and it is the largest single source of flake. Wait for
-  the state you actually need - the element, the row, the log line, the exit.
-- Bind to the contract, not to the incidental representation: roles and labels over CSS paths, documented
-  fields over positional index, exit codes over stdout formatting. A test that breaks on a rename no user
-  could observe is coupled to the wrong thing, and its failures teach the team to ignore failures.
-- Tests MUST be order-independent and self-seeding. Shared mutable fixtures are the usual cause when they are
-  not.
-- Run the suite where it will be judged. CI differs from a developer machine in fonts, rendering, parallelism,
-  resource contention and network path, so a suite green only locally has not really been run. Where the
-  environments must differ, make the difference explicit and reviewable rather than incidental.
-- Every test names the behavior it protects in its title. `test_case_3` is a test nobody will dare delete or
-  fix.
-- New coverage arrives with the change that needs it. "Tests in a follow-up PR" is the plan's most common lie.
+Carry the Suite Health Rules in `SKILL.md` into the plan: they decide whether the suite is still trusted a year
+later, and a plan that ignores them schedules flaky, order-dependent, or mock-only tests.
 
 ## Deliverable template
 

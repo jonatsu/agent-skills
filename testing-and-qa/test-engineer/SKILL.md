@@ -1,6 +1,6 @@
 ---
 name: test-engineer
-description: "Decide what to test, write the tests, and report evidence they catch real failures. Use when writing or reviewing unit, integration, regression or bug-reproduction tests, when asked whether coverage is adequate or a suite would catch a bug, or when a test is flaky or order-dependent. Not test-first implementation, which is test-driven-development. Triggers on: write tests, regression test, test plan, coverage gap, is this tested, flaky test, mutation testing."
+description: "Design test strategies, then write and run tests with evidence they catch real failures. Use when deciding what to test for a design or change, even before its code exists; when writing regression, bug-reproduction, unit, or integration tests; when asked whether coverage is adequate or a suite would catch a bug; or when a test is flaky. Test-first implementation belongs to test-driven-development."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -16,8 +16,8 @@ production code.
 
 The lane has two halves, and both belong here:
 
-- **Deciding what to test** - risk, levels, oracles, and what is deliberately left uncovered. Output is a
-  plan; no code is written.
+- **Deciding what to test** - risk, levels, oracles, and what is deliberately left uncovered, for existing code
+  or for a design or plan whose code does not exist yet. Output is a plan; no code is written.
 - **Doing it** - writing tests, running them, and reporting what the output actually proves.
 
 Prefer acceptance, behavior, and regression coverage over implementation-detail checks. Tests should describe
@@ -41,8 +41,10 @@ tests that would prove it.
 MUST classify the task before doing anything else:
 
 - `TEST-STRATEGY`: decide **what** to test, at which level, and against which oracle - at any scale, from one
-  change to a whole system. Output is a plan. NEVER writes test code in this mode. Classifying here MUST be
-  followed by loading `references/test-strategy.md` - the method is there, not below.
+  change to a whole system, and before its code exists as readily as after. When there is no code yet, the
+  design, plan, or requirements are the input, and existing coverage is simply empty. Output is a plan. NEVER
+  writes test code in this mode. Classifying here MUST be followed by loading `references/test-strategy.md` -
+  the method is there, not below.
 - `TEST-IMPLEMENTATION`: edit tests, fixtures, helpers, or test-only support.
 - `VALIDATION`: run bounded commands and report exact results.
 - `REGRESSION`: protect behavior that changed or previously broke.
@@ -148,11 +150,15 @@ Applies to `TEST-IMPLEMENTATION`, `VALIDATION`, `REGRESSION`, and `BUG-REPRO`.
 02. Risk: identify behavior, regression, acceptance criteria, and edge cases. Unsure what deserves a test?
     That is `TEST-STRATEGY` - switch modes.
 03. Existing coverage: inspect nearby tests and reuse local conventions.
-04. Framework: establish which runner, assertion library, and mocking library this project actually uses, from
-    its config and its neighboring tests. If it stays unclear, ASK - do not default to the ecosystem's most
-    popular choice. If the framework is unfamiliar, read its own docs or `--help` before writing a line. NEVER
-    invent an assertion API: a hallucinated matcher fails as a syntax error that reads like a broken test.
-05. Test design: prefer observable behavior and meaningful failure messages.
+04. Framework: load the language's testing skill when one is available - `python-testing` for Python,
+    `bash-shell` for Bash, `posix-shell` for portable `sh`, `nix-flakes` for flake checks, and
+    `yocto-security-audit` for a Yocto image's `oeqa` and `testimage` suites. Then establish which runner,
+    assertion library, and mocking library this project actually uses, from its config and its neighboring
+    tests. If it stays unclear, ASK - do not default to the ecosystem's most popular choice. If the framework
+    is unfamiliar, read its own docs or `--help` before writing a line. NEVER invent an assertion API: a
+    hallucinated matcher fails as a syntax error that reads like a broken test.
+05. Test design: apply the Suite Health Rules below. Test at the cheapest level that can fail for the right
+    reason, assert observable behavior, and write failure messages that name what broke.
 06. Red step: for new behavior or bug reproduction, run and record expected fail.
 07. Implementation: edit only tests and test-only support files.
 08. Green step: run the focused test. Broaden validation for cross-cutting risk, repository rules, or an
@@ -164,6 +170,34 @@ Bound the fix-rerun loop. After a small fixed number of attempts on one test - p
 say what it was - STOP and escalate rather than trying again. The escalation MUST carry what was tried, what
 each attempt changed, and the failure it kept producing; "still failing" is not a handoff. An agent that never
 stops retrying burns the budget that diagnosis needed.
+
+## Suite Health Rules
+
+These govern every test this lane writes, and every strategy it plans, because they decide whether the suite is
+still trusted a year later.
+
+- Give each test one behavior, arranged, acted on, and asserted in that order, and a title that names the
+  behavior it protects. `test_case_3` is a test nobody will dare delete or fix.
+- MUST NOT mock what you are trying to prove. Mock at the boundary you do not own (third-party network, payment
+  provider, clock), not at the boundary you do; a test whose collaborators are all mocks proves only that the
+  mocks agree.
+- Tests MUST be order-independent and self-seeding. Shared mutable fixtures are the usual cause when they are
+  not.
+- Synchronize on the condition, never on the clock. A fixed sleep is too long on a fast machine and too short
+  on a loaded one, and it is the largest single source of flake. Wait for the state you need: the element, the
+  row, the log line, the exit.
+- Bind to the contract, not to the incidental representation: roles and labels over CSS paths, documented
+  fields over positional index, exit codes over stdout formatting. A test that breaks on a rename no user could
+  observe teaches the team to ignore failures.
+- A flaky test is a failing test. Quarantine it with a deadline and an owner, or delete it. Retry-until-green
+  destroys the signal the suite exists for.
+- Ask what the suite would CATCH, not what it covers. Use an existing mutation tool only in an isolated
+  environment when the task authorizes it; when mutation needs manual production edits or unavailable tooling,
+  report it as a handoff. A mutation nothing kills is a finding.
+- Run the suite where it will be judged. CI differs from a developer machine in fonts, rendering, parallelism,
+  resource contention, and network path, so a suite green only locally has not really been run. Where the
+  environments must differ, make the difference explicit and reviewable.
+- New coverage arrives with the change that needs it. "Tests in a follow-up PR" is a plan's most common lie.
 
 ## Good Focus / Anti-Patterns
 
