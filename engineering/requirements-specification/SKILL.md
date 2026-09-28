@@ -45,7 +45,7 @@ accepted specification is authoritative for intended observable behavior within 
 documentation remain authoritative for what the system currently does; a disagreement is an implementation gap, a
 requirements change, or stale documentation to reconcile rather than permission to silently rewrite the specification.
 
-Keep these categories distinguishable throughout:
+Keep these categories distinguishable through the document's structure:
 
 - observed current behavior and external facts, with their evidence;
 - accepted user or product decisions;
@@ -53,8 +53,14 @@ Keep these categories distinguishable throughout:
 - provisional assumptions and the evidence or owner that can settle them; and
 - open questions whose answers block acceptance.
 
+Carry them in the status line, a decisions list, one open-questions register, and a marker on each assumed
+requirement. The text of a requirement states the requirement only; provenance narration such as "confirmed with the
+customer" or "verified against the code" belongs in those structures or nowhere.
+
 Only the user or another identified requirements owner may accept or change a consequential requirement. An agent may
-draft, find gaps, and recommend wording; it must not turn its own elaboration into an accepted requirement.
+draft, find gaps, and recommend wording; it must not turn its own elaboration into an accepted requirement. A
+requirement stays unsettled until its owner, often the customer, has reviewed it. Before specifying behavior on a
+role, route, or state that another requirement names, check that it is defined and could work.
 
 ## Specify Observable Behavior
 
@@ -70,9 +76,14 @@ Define only the parts relevant to the outcome:
 - dependencies on external policy, data, services, or other specifications; and
 - assumptions, unresolved requirements, and decision owners.
 
-Write requirements as observable claims. State who encounters what condition and what result must follow. Use examples
-when they settle ambiguity, especially for boundary values, denials, retries, concurrency, ordering, or data isolation.
-Do not use examples to smuggle in an unconfirmed rule.
+Write requirements as observable claims. State who encounters what condition and what result must follow. Where the
+project has no form of its own, write each requirement as one sentence in EARS (the Easy Approach to Requirements
+Syntax) with "shall": `When <trigger>, the <system> shall <response>.` Define each priority by its consequence
+("Critical: the customer cannot ship without it"). A Notes field states what the requirement does not cover and stops;
+it never argues for the requirement.
+
+Use examples when they settle ambiguity, especially for boundary values, denials, retries, concurrency, ordering, or
+data isolation. Do not use examples to smuggle in an unconfirmed rule.
 
 Quantify only when the metric, method, population, and threshold express real success or a supplied constraint. When
 honest measurement is unavailable, use a binary observation or named human judgment rather than decorative precision.
@@ -121,6 +132,16 @@ Resolve the artifact path in this order:
 Use two or three descriptive kebab-case words for the fallback name. For a modular specification, put the overview at
 `docs/specs/<name>/index.md` and keep children in that directory unless an established convention says otherwise.
 
+## Write for the Reader
+
+A specification is read by people who were not in the conversation that produced it: designers, testers, reviewers,
+and the customer. It fails when they cannot read it, however correct its requirements. Write it with
+`writing-documentation`, and finish with the `writing-for-humans` **reader-ready** pass before asking for acceptance.
+
+Explain each domain concept, actor role, and external system where the specification first relies on it, once. State
+scope, governing sources, and versions once, in the preamble. Lead each sentence with the requirement or behavior, and
+append an identifier only where traceability needs it.
+
 ## Review, Accept, and Revise
 
 Before asking for acceptance, check that:
@@ -131,8 +152,9 @@ Before asking for acceptance, check that:
 - acceptance criteria cover the consequential behavior without merely restating it;
 - requirements do not contradict each other or verified external constraints;
 - assumptions and recommendations are not disguised as decisions;
-- cross-specification dependencies and shared requirements have one owner; and
-- remaining questions are explicitly nonblocking or have an owner and consequence.
+- cross-specification dependencies and shared requirements have one owner;
+- remaining questions are explicitly nonblocking or have an owner and consequence; and
+- the complete document passes the `writing-for-humans` **reader-ready** pass.
 
 Present the complete specification synthesis, then ask for one confirmation that it matches the intended behavior. A
 clear response accepting that synthesis is sufficient; do not ask the user to repeat it. Saving a proposed draft does

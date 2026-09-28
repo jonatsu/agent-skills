@@ -28,7 +28,8 @@
       "outcomes": [
         "Preserves the purpose, actors, selected direction, smartphone-access constraint, and marketplace exclusion.",
         "Defines representative success, error, denial, interruption, and recovery behavior where consequential.",
-        "Separates accepted decisions, observed facts, assumptions, recommendations, and blocking questions.",
+        "Separates accepted decisions, observed facts, assumptions, recommendations, and blocking questions through the document's structure rather than per-sentence provenance notes.",
+        "Explains each domain concept and actor role once where first relied on, and states each requirement before any identifier.",
         "Provides evidence-bearing acceptance criteria without choosing architecture, files, commands, or task order.",
         "Keeps the specification proposed until the complete synthesis receives product-authority confirmation."
       ]
