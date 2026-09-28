@@ -29,6 +29,7 @@
         "Traces resumability from the accepted requirement through design to implementation and evidence.",
         "Classifies lost progress after restart as an implementation defect when the governing artifacts are compatible.",
         "Explains the user or operational consequence and names evidence that would close the finding.",
+        "States the resumability requirement in words, not only by identifier.",
         "Does not modify code, tests, specifications, or review systems."
       ]
     },

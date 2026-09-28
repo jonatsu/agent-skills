@@ -12,8 +12,7 @@ Determine whether delivered behavior materially conforms to accepted requirement
 Review outcomes and obligations rather than demanding literal correspondence between prose and code. Classify the cause
 of each mismatch before assigning blame or proposing a repair.
 
-This supplements code, security, test, and operational review; it does not replace them. Fold conformance findings into
-an active review when one exists, otherwise return a standalone findings report.
+This supplements code, security, test, and operational review; it does not replace them.
 
 ## Establish the Review Basis
 
@@ -66,8 +65,8 @@ Check for:
 - required compatibility, migration, rollout, rollback, cleanup, or documentation work that is missing; and
 - verification that is absent, too narrow, unsafe, or incapable of proving its stated claim.
 
-Do not use file presence, substring searches, formatting, typing, builds, clean version-control state, or passing narrow
-unit tests as proof of behavioral conformance. They may support separate structural claims. Report unavailable evidence
+Prove behavioral conformance with behavioral evidence. File presence, substring searches, formatting, typing, builds,
+clean version-control state, and narrow unit tests support structural claims only. Report unavailable evidence
 as a coverage limit rather than assuming either conformance or failure.
 
 Allow implementation-level variation when it preserves the accepted behavior, system guarantees, safety boundaries,
@@ -96,7 +95,8 @@ uncertainty and name the authority or observation that would distinguish them.
 
 Lead with material findings ordered by severity. For each finding include:
 
-- the governing requirement, design guarantee, or plan obligation;
+- the governing requirement, design guarantee, or plan obligation, stated in words, with its identifier in
+  parentheses where one exists;
 - the implementation and evidence inspected;
 - the observed mismatch and its classification;
 - the user, safety, compatibility, operational, or maintenance consequence;
@@ -107,9 +107,10 @@ Use the enclosing review's severity vocabulary and output format when one is est
 line only when that line materially causes or exposes it; broader drift belongs in the review summary. When no enclosing
 review exists, return a standalone report rather than inventing a repository file or external system.
 
-Do not add comments merely to state that an item conforms. Summarize coverage instead: which requirement areas were
-examined, what evidence supports them, and what remained unverified. Do not post to GitHub, change external review state,
-or create files unless the user requested that effect.
+Record conformance as coverage in the summary, not as per-item comments: which requirement areas were examined, what
+evidence supports them, and what remained unverified. Do not post to GitHub, change external review state, or create
+files unless the user requested that effect. Apply `writing-for-humans` and its reader-ready check to a standalone
+report.
 
 ## Preserve Review Authority
 
