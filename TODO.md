@@ -25,8 +25,6 @@ the reader does not share the writer's knowledge, and every document a skill pro
 status "throughout" turns into per-sentence noise; carry status in the document's structure instead.
 `requirements-specification` and `technical-design` show the fix.
 
-- **`git-commits-and-recovery`:** the body states only the why, in one or two short paragraphs. No per-file
-  inventory, restated settings, or requirement keys. Draft, then cut by half.
 - **`interview-me`:** map the decision branches first, give each question its context and a recommendation with
   the strongest case against it, and write the decision ledger as answers land. Batch up to four independent
   decisions into one structured question, each option with a one-line consequence.
@@ -60,7 +58,7 @@ names it. The 2026-09-07 description audit predates the description skill and do
 
 | Skill                             | Description pass                 | `writing-for-agents` pass                                               |
 | --------------------------------- | -------------------------------- | ----------------------------------------------------------------------- |
-| `git-commits-and-recovery`        | 2026-09-27, `05ecb1e`            | 2026-09-27, `05ecb1e`                                                   |
+| `git-commits-and-recovery`        | 2026-09-27, `05ecb1e`            | 2026-09-28, `bf0a58d`                                                   |
 | `git-history-investigation`       | 2026-09-27, `8242032`            | 2026-09-27, `8242032`                                                   |
 | `using-git-worktrees`             | 2026-09-27, `b10689e`            | 2026-09-27, `36bb1b4`                                                   |
 | `session-handoff`                 | 2026-09-28, `f25ae32`            | 2026-09-28, `f25ae32`                                                   |
