@@ -13,6 +13,7 @@ import platform
 import shutil
 import subprocess
 from importlib.metadata import (
+    EntryPoint,
     PackageNotFoundError,
     entry_points,
     metadata,
@@ -125,6 +126,12 @@ def inspect_markitdown() -> dict[str, Any]:
     }
 
 
+def distribution_name(point: EntryPoint) -> str | None:
+    """Return the name of the distribution that declares an entry point, when known."""
+    dist = point.dist
+    return dist.name if dist is not None else None
+
+
 def discover_plugins() -> list[dict[str, Any]]:
     """List MarkItDown plugin entry points without importing any of them."""
     return sorted(
@@ -132,9 +139,7 @@ def discover_plugins() -> list[dict[str, Any]]:
             {
                 "name": point.name,
                 "module": point.value,
-                "distribution": (
-                    point.dist.name if getattr(point, "dist", None) is not None else None
-                ),
+                "distribution": distribution_name(point),
             }
             for point in entry_points(group="markitdown.plugin")
         ),

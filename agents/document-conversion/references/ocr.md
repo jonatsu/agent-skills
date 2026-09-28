@@ -25,14 +25,9 @@ an external provider.
 
 ## Data-Handling Rule
 
-Before using an external service:
-
-- Identify the exact provider, endpoint, region, account, and model/analyzer.
-- Tell the user which source bytes, images, audio, video, and prompts will leave the machine.
-- Confirm that the provider is approved for the source's classification and regulatory requirements.
-- Estimate cost and retention implications.
-- Send only the required files/pages.
-- Never log API keys, bearer tokens, source bytes, or full base64 payloads.
+Run `security.md`'s Preflight Checklist before using an external OCR or vision provider. OCR-specific: each
+selected image or page becomes a separate provider call, so estimate the per-page cost before sending a large
+scanned document.
 
 ## Built-in Image Descriptions
 

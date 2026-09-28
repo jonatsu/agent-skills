@@ -221,14 +221,7 @@ keywords.
 
 ## Converter Priority
 
-Lower values run first:
-
-- Official OCR plugin: `-1.0`
-- Specific built-in formats: `0.0`
-- Generic text/HTML/ZIP converters: `10.0`
-
-Registering a converter before built-ins can change the parser selected for existing formats. Treat priority as part
-of the plugin's security and compatibility review.
+See `api_reference.md`, "Converter Registration" for the priority values and how they interact.
 
 ## Official OCR Plugin
 

@@ -29,6 +29,10 @@ from markitdown.converters import (
 )
 ```
 
+This skill does not document the Azure integrations, here or in the `docintel_*`/`cu_*` constructor keywords
+below; both are recorded from 0.1.6 and were not rechecked at 0.1.7. Confirm against the upstream guide, or
+`file_formats.md`'s Azure sections, before relying on either.
+
 ## `MarkItDown`
 
 ### Constructor
@@ -319,77 +323,20 @@ register_converter(
 ) -> None
 ```
 
-Lower numeric priorities run first. The built-in specific-format priority is `0.0`; generic converters use `10.0`. For
-registrations with equal priority, the most recently registered converter is attempted first.
+Lower numeric priorities run first. The official OCR plugin registers at `-1.0`, the built-in specific-format
+priority is `0.0`, and generic converters use `10.0`. For registrations with equal priority, the most recently
+registered converter is attempted first. Registering a converter before built-ins can change which parser is
+selected for existing formats; treat priority as part of a plugin's security and compatibility review.
 
 `register_page_converter()` is deprecated.
 
-## Custom Converter
+## Custom Converters and Plugins
 
-Version 0.1.x converters operate on binary streams and implement both `accepts()` and `convert()`:
-
-````python
-from typing import Any, BinaryIO
-
-from markitdown import (
-    DocumentConverter,
-    DocumentConverterResult,
-    StreamInfo,
-)
-
-
-class RtfConverter(DocumentConverter):
-    def accepts(
-        self,
-        file_stream: BinaryIO,
-        stream_info: StreamInfo,
-        **kwargs: Any,
-    ) -> bool:
-        return (stream_info.extension or "").lower() == ".rtf"
-
-    def convert(
-        self,
-        file_stream: BinaryIO,
-        stream_info: StreamInfo,
-        **kwargs: Any,
-    ) -> DocumentConverterResult:
-        raw = file_stream.read()
-        # Replace this placeholder with a real, bounded RTF parser.
-        return DocumentConverterResult(
-            markdown=f"```text\n{raw.decode('utf-8', errors='replace')}\n```"
-        )
-````
-
-Do not advance the stream in `accepts()`. If inspection is necessary, save the position with `tell()` and restore it
-with `seek()`.
-
-## Plugin Package Contract
-
-The plugin module exports interface version 1 and a registration function:
-
-```python
-from markitdown import MarkItDown
-
-__plugin_interface_version__ = 1
-
-
-def register_converters(markitdown: MarkItDown, **kwargs) -> None:
-    markitdown.register_converter(RtfConverter())
-```
-
-Register the module through `pyproject.toml`:
-
-```toml
-[project.entry-points."markitdown.plugin"]
-example = "example_markitdown_plugin"
-```
-
-Inspect and install a trusted, pinned plugin, then verify discovery:
-
-```bash
-markitdown --list-plugins
-markitdown --use-plugins input.rtf -o output.md
-```
+A converter implements `accepts()` and `convert()` against `DocumentConverter`, `DocumentConverterResult`, and
+`StreamInfo` (imported above), then registers with `register_converter()` (priority rules are in "Converter
+Registration" above). `mcp_and_plugins.md`, "Plugin Interface Version 1" has the canonical worked example: the
+converter class, the module-level `__plugin_interface_version__` registration, and the `pyproject.toml`
+entry-point stanza.
 
 ## CLI Reference
 

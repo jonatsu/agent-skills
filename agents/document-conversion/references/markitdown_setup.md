@@ -112,9 +112,4 @@ the task requires it.
 
 ## MCP server
 
-```bash
-uv pip install "markitdown==0.1.7" "markitdown-mcp==0.0.1a4"
-markitdown-mcp
-```
-
-`mcp_and_plugins.md` covers transports and their security properties.
+See `mcp_and_plugins.md` for installing, running, and securing MarkItDown's MCP server.

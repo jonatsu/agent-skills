@@ -27,15 +27,9 @@ Potential impacts include:
 
 ## API Risk Levels
 
-| API                  | Input capability                    | Recommended use                      |
-| -------------------- | ----------------------------------- | ------------------------------------ |
-| `convert_local()`    | Local path only                     | Trusted, allowlisted local files     |
-| `convert_stream()`   | Caller-controlled bytes             | Preferred for validated uploads      |
-| `convert_response()` | Existing HTTP response              | After caller-enforced network policy |
-| `convert_uri()`      | `file:`, `data:`, `http:`, `https:` | Trusted and validated URI only       |
-| `convert()`          | Dispatches across all of the above  | Trusted polymorphic input only       |
-
-Use the narrowest API that satisfies the task.
+Use the narrowest conversion method for the task. SKILL.md's Core Operating Rule 1 orders `convert_local()`,
+`convert_stream()`, `convert_response()`, `convert_uri()`, and `convert()` from narrowest to most permissive,
+and names the schemes `convert_uri()` accepts.
 
 ## Local File Controls
 
@@ -139,28 +133,21 @@ For production:
 
 ## Plugins
 
-Plugins are arbitrary Python code loaded through package entry points. They run in the same process and can access its
-files, network, environment, and credentials.
-
-- Keep `enable_plugins=False` by default.
-- Pin and review every plugin.
-- Inspect install/build hooks and transitive dependencies.
-- Run risky plugins in a sandbox with synthetic files.
-- Do not install by hashtag or name similarity alone.
-
-The official `markitdown-ocr` plugin still introduces external LLM calls and expands parser dependencies.
+Plugins are arbitrary Python code loaded through package entry points; they run in the same process as
+MarkItDown and can access its files, network, environment, and credentials. Keep `enable_plugins=False` by
+default, and run `mcp_and_plugins.md`'s "Plugin Trust Checklist" before installing or enabling one. The official
+`markitdown-ocr` plugin still introduces external LLM calls and expands parser dependencies even though it ships
+from the same monorepo.
 
 ## External Processing Map
 
-| Feature                       | What leaves the process                       | Destination                               |
-| ----------------------------- | --------------------------------------------- | ----------------------------------------- |
-| HTTP(S), RSS, Wikipedia, Bing | Request metadata; downloaded response returns | Requested host                            |
-| YouTube conversion            | Page and transcript requests                  | YouTube/transcript service                |
-| Built-in audio transcription  | Recorded audio                                | Google Web Speech via `SpeechRecognition` |
-| LLM image description         | Prompt and base64 image                       | Configured OpenAI-compatible provider     |
-| `markitdown-ocr`              | Prompt plus embedded/full-page images         | Configured vision provider                |
-| Document Intelligence         | Complete selected file                        | Configured Azure resource                 |
-| Content Understanding         | Complete selected document/image/audio/video  | Configured Azure resource                 |
+Destinations for the external paths named in SKILL.md's Core Operating Rule 3:
+
+- MarkItDown's HTTP(S), Wikipedia, RSS, and Bing conversion: the requested host.
+- YouTube conversion: the YouTube/transcript service.
+- LLM image descriptions: the configured OpenAI-compatible provider.
+- `markitdown-ocr`: the configured vision provider.
+- Azure Document Intelligence and Azure Content Understanding: the configured Azure resource.
 
 Do not describe `[all]` as fully offline. It installs capabilities whose use can make network calls.
 

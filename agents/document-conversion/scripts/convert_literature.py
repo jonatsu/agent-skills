@@ -12,9 +12,11 @@ from hashlib import sha256
 from importlib.metadata import version
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from typing import TYPE_CHECKING
 from urllib.parse import quote
 
-from markitdown import MarkItDown
+if TYPE_CHECKING:
+    from markitdown import MarkItDown
 
 FILENAME_PATTERN = re.compile(r"^(?P<author>.+?)_(?P<year>(?:19|20)\d{2})_(?P<title>.+)$")
 
@@ -360,6 +362,13 @@ def main() -> int:
     output_dir = args.output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     package_version = version("markitdown")
+    try:
+        from markitdown import MarkItDown
+    except ModuleNotFoundError:
+        parser.error(
+            "markitdown is not importable by this interpreter; run the script with the "
+            "Python that owns the MarkItDown install (see references/markitdown_setup.md)"
+        )
     converter = MarkItDown()
 
     records: list[LiteratureRecord] = []

@@ -86,6 +86,10 @@ python <skill-root>/scripts/batch_convert.py inputs/ outputs/ --recursive --over
 
 Use a fresh output directory when comparing converter versions.
 
+Building a regression corpus or a per-file quality report from batch output is a matter of what to record, not
+a new technique: record the MarkItDown/plugin versions alongside each result, and extend `--manifest`'s output,
+which already gives a per-file baseline, with those fields.
+
 ## 4. Literature Collection
 
 Input naming convention:
@@ -270,43 +274,3 @@ result = MarkItDown().convert_response(validated_response)
 ```
 
 See `security.md` for the complete SSRF policy. A simple scheme check is not sufficient.
-
-## 11. Deterministic Regression Corpus
-
-Keep a small, redistributable corpus covering:
-
-- Text-native and scanned PDFs
-- DOCX headings/tables/equations
-- PPTX notes/grouped shapes
-- XLSX multiple sheets/merged cells
-- CSV quoted fields and Unicode
-- HTML links/lists/tables
-- EPUB chapters
-- JPEG/PNG metadata
-
-For each fixture, assert:
-
-- Conversion succeeds or fails with the expected category.
-- Required headings/sentinel text are present.
-- No source is unexpectedly routed to network/cloud.
-- Output is UTF-8 and below a reasonable size.
-- Package/plugin versions are recorded.
-
-Avoid asserting a full byte-for-byte Markdown snapshot unless exact formatting stability is required; semantic
-assertions are less brittle.
-
-## 12. Conversion Quality Report
-
-Track per file:
-
-- Source identifier and hash
-- Bytes and extension
-- Converter mode
-- MarkItDown/plugin version
-- Output characters/lines
-- Optional title
-- Warning/failure category
-- Manual validation status
-- External provider/analyzer, if any
-
-The bundled batch manifest provides a baseline for these records.

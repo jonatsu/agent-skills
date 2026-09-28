@@ -16,8 +16,10 @@ from datetime import UTC, datetime
 from importlib.metadata import version
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from typing import TYPE_CHECKING
 
-from markitdown import MarkItDown
+if TYPE_CHECKING:
+    from markitdown import MarkItDown
 
 DEFAULT_EXTENSIONS = (
     ".csv",
@@ -303,6 +305,13 @@ def main() -> int:
         print(
             "WARNING: loading installed MarkItDown plugins into this process",
             file=sys.stderr,
+        )
+    try:
+        from markitdown import MarkItDown
+    except ModuleNotFoundError:
+        parser.error(
+            "markitdown is not importable by this interpreter; run the script with the "
+            "Python that owns the MarkItDown install (see references/markitdown_setup.md)"
         )
     converter = MarkItDown(enable_plugins=args.plugins)
 

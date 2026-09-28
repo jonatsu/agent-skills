@@ -1,6 +1,6 @@
 ---
 name: document-conversion
-description: Convert Office, OpenDocument, RTF, EPUB, CSV, PDF and other documents to Markdown. Use for document contents an agent cannot read directly, batch conversion, PDF classification or coordinates, scanned-page OCR, and the MarkItDown MCP server. Routes among anydoc, pdf-inspector, and MarkItDown.
+description: Convert Office, OpenDocument, RTF, EPUB, CSV, PDF and other documents to Markdown. Use for document contents an agent cannot read directly, batch conversion, PDF classification or coordinates, scanned-page OCR, and the MarkItDown MCP server. Routes among anydoc, pdf-inspector, and MarkItDown. Not for creating or editing documents, or pixel-faithful rendering.
 license: MIT
 compatibility: anydoc 0.2.4 needs Node 20+; pdf-inspector 1.23.0 has Node, Python 3.8+, Rust, and browser builds; MarkItDown 0.1.7 needs Python 3.10+ and uv. Native extraction is local. Model acquisition and the named remote-service workflows use network access.
 metadata:
@@ -31,17 +31,15 @@ Resolve it before running a bundled script; a bare `scripts/…` path only works
 | Need                                                              | Converter                                            |
 | ----------------------------------------------------------------- | ---------------------------------------------------- |
 | Office, OpenDocument, RTF, EPUB, CSV, or ordinary PDF-to-Markdown | **anydoc** — the default; fastest and needs no setup |
-| PDF classification, selected pages, coordinates, or regions       | pdf-inspector                                        |
+| PDF classification, selected pages, coordinates, bounding boxes   | pdf-inspector                                        |
 | Images, audio, video, YouTube, URLs, Wikipedia, RSS, Outlook      | MarkItDown                                           |
 | ZIP archives, or EPUB needing MarkItDown's specific handling      | MarkItDown                                           |
 | An MCP server for a local agent                                   | MarkItDown (`markitdown-mcp`)                        |
 | A scanned, image-only, or mixed PDF                               | pdf-inspector local OCR, or an approved remote path  |
-| Bounding boxes, page coordinates, or region extraction            | pdf-inspector                                        |
 | Page screenshots or pixel-faithful rendering                      | None of these; use a PDF renderer                    |
 | PDF merge, split, form filling, or watermarking                   | None; all three only read                            |
 
-When anydoc and MarkItDown both support the input, prefer anydoc: it is faster, needs no environment, and gives
-one consistent output shape across every format it reads.
+When anydoc and MarkItDown both support the input, anydoc also gives one output shape across every format.
 
 Use one PDF path. anydoc already uses pdf-inspector internally, but exposes only complete Markdown or an
 OCR-required error. Use pdf-inspector directly when the caller needs its richer PDF result or local OCR path.
@@ -53,7 +51,7 @@ structured output.
 Check for the pinned tool first, and fall back only when it is absent:
 
 ```bash
-anydoc --version                    # 0.2.4 here, installed through mise
+anydoc --version                    # an installed anydoc
 npx -y @firecrawl/anydoc --version  # fallback on a machine without it
 ```
 
