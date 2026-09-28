@@ -159,9 +159,9 @@ Prefer authoritative runtime lookup for flags, schemas, versions, inventories, a
 copied information when the source is unavailable during use, unreliable, or lacks the judgment the skill must
 supply. Content that records where an apparent authority is wrong can be high-value expert guidance.
 
-Look for stale caches, duplicated meanings, orphaned resources, authoring-machine assumptions, unnecessary
-dependencies, and instructions that no longer affect behavior. Recommend deletion only after identifying what
-execution path, if any, still depends on the material.
+Look for stale caches, unexplained version pins, duplicated meanings, orphaned resources, authoring-machine
+assumptions, unnecessary dependencies, and instructions that no longer affect behavior. Recommend deletion only
+after identifying what execution path, if any, still depends on the material.
 
 Bundled scripts follow their language's conventions and pass its standard checks. A departure is a finding only
 when it causes a concrete problem, or when the self-contained constraint does not explain it.

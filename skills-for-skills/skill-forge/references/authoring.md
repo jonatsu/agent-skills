@@ -68,6 +68,14 @@ Before adding guidance, check whether the agent can recover it from an authorita
 that source when it is accurate and available during use. Include the information when the source is
 unavailable, unreliable, or silent on the judgment the skill must supply.
 
+**Version facts.** Avoid pinning a tool's version by default. A pin in an install command or a version check in a
+script goes stale within weeks, and makes an agent install an old release on purpose. Record a version as
+*current known* instead: one line per tool naming the version and the date the skill's claims were last checked,
+and the command or document that confirms them, such as `--help` or the changelog. Keep minimum requirements in
+`compatibility`. Pin only where the version is the subject, and state the reason beside the pin: guidance that
+differs per release line, such as Yocto releases; behavior that exists only from a given version; or a known-bad
+release to avoid.
+
 The step is complete when every item in the list above has an answer or a named gap, and each planned rule has
 a grounding.
 

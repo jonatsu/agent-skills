@@ -8,8 +8,8 @@ the same helper, bundle that helper as a script: every run is already paying to 
 is a fresh chance to get it wrong.
 
 Use an existing tool directly for a simple one-off command. Do not bundle a script merely to wrap an available
-command. Pin versions when repeatability matters, and declare runtime prerequisites in `SKILL.md` or
-`compatibility`.
+command. Pin a version only when repeatability requires it, with the reason beside the pin (see *Version facts*
+in `authoring.md`), and declare runtime prerequisites in `SKILL.md` or `compatibility`.
 
 Good candidates include:
 
