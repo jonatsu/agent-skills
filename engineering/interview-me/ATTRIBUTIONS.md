@@ -26,7 +26,9 @@ Material changes include:
 - Upstream body preserved verbatim as the opening four paragraphs until 2026-09-28, when the skill was renamed
   `interview-me` and widened from plans and designs to any subject that needs a shared understanding. Those
   paragraphs now say "the subject" and "decision tree" where upstream says "this plan" and "design tree", and
-  the closing prohibition is stated positively.
+  the closing prohibition is stated positively. On 2026-09-28 the one-question-at-a-time paragraph was
+  rewritten to allow batching simple, independent, non-load-bearing questions, after documentation work in
+  another repository showed batching saved the user's time on simple decisions.
 - Sections added below it, all original to this repository: vague-answer handling, a session question budget,
   stopping criteria, a closing decision record, and an anti-patterns list. The anti-patterns list was folded
   into the sections it repeated on 2026-09-28.

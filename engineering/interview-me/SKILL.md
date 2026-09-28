@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: Interview the user one question at a time until you both share an understanding of a plan, design, problem, requirement, or decision, recommending an answer to each question and closing with a written record of what was decided. Use when asked to grill, interview, pressure-test, or poke holes in something, or to make sure you understand it the same way before acting. Use idea-brainstorming to shape an idea that has no direction yet; not for reviewing existing code.
+description: Interview the user until you both share an understanding of a plan, design, problem, requirement, or decision, one question at a time, batching only simple independent ones, recommending an answer to each and keeping a written record of what was decided. Use when asked to grill, interview, pressure-test, or poke holes in something, or to make sure you understand it the same way before acting. Use idea-brainstorming to shape an idea that has no direction yet; not for reviewing existing code.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -13,8 +13,17 @@ can be a plan, a design, a problem, a requirement, a decision, or a concept. Wal
 decision tree, resolving dependencies between decisions one by one. For each question, provide your recommended
 answer.
 
-Ask the questions one at a time, waiting for feedback on each question before continuing. Asking multiple
-questions at once is bewildering.
+Ask one question at a time by default, and wait for my answer before continuing. Put more than one in a message
+only when every question in it passes all three tests:
+
+- **Simple:** one choice, answerable from the context in its own short paragraph.
+- **Independent:** no answer could change another question's options, recommendation, or relevance. If one
+  answer might reshape the next question, they are connected, so ask them in turn.
+- **Not load-bearing:** none is hard to reverse, and none constrains a later branch.
+
+Keep a batch small enough to follow at a glance. When the client offers a structured multiple-choice question,
+use it, with a one-line consequence for each option. A question that needs more than a short paragraph of
+context goes alone.
 
 If a *fact* can be found by exploring the codebase or the material at hand, look it up rather than asking me.
 The *decisions*, though, are mine: put each one to me and wait for my answer.
@@ -55,6 +64,13 @@ map and the rough question count per branch; it is the shape of the session up f
 
 Question in that order. A decision that constrains three others is worth settling before any of them. When an
 answer reshapes the tree, opening a branch or closing one, say so and re-show the map.
+
+## Make Each Question Answerable on Its Own
+
+Write each question for a reader who was not following your investigation. State the choice in plain words,
+give the context needed to answer it, and explain any term or component it relies on. Put the recommendation and
+the case against it in the same message. A bare identifier or a reference to "the earlier option" makes me
+reconstruct what you already know.
 
 ## Sharpen a Vague Answer Before Moving On
 
@@ -97,17 +113,27 @@ on nothing settled.
 
 When stopping mid-branch, name the branch that is half-finished.
 
-## Close With the Decision Record
+## Keep the Decision Record
 
-Before acting on anything, write the decisions down: wherever this repository already keeps design notes, to a
-file I name, or inline if there is nowhere obvious. One table:
+Decide how to record when you show the branch map, and propose it with the map. For a session that fits the
+question budget, record the decisions at the close. When the map exceeds the budget, when the session is likely to
+span a long working context, or when I ask, keep a running record instead, updated as answers land or after each
+settled branch. Switch to a running record as soon as the questionnaire grows past the budget, and say so.
+
+Write the record wherever this repository already keeps design notes, to a file I name, or inline if there is
+nowhere obvious. One table:
 
 ```markdown
 | Decision | Recommended | Chosen | Why | Status |
 |---|---|---|---|---|
 ```
 
-Status is `resolved`, `deferred`, or `open`. `open` is a branch we never reached or one whose upstream is
-unsettled; `deferred` is one I reached and chose not to settle, and a deferred row MUST carry what the deferral
-costs. Record only decisions I actually made. Follow the table with what changed about the subject as a result,
-then stop for my confirmation.
+Status is `resolved`, `provisional`, `deferred`, or `open`:
+
+- `provisional` is chosen but to be checked later; its row names what settles it. Wherever a provisional
+  decision lands downstream, it stays marked provisional there too.
+- `deferred` is one I reached and chose not to settle, and a deferred row MUST carry what the deferral costs.
+- `open` is a branch we never reached, or one whose upstream is unsettled.
+
+Record only decisions I actually made. Before acting on anything, present the final table, then what changed about
+the subject as a result, and stop for my confirmation.
