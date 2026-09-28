@@ -11,24 +11,6 @@ their surviving open work is below, and the embedded research notes (tooling, te
 Repository-wide items live in [../TODO.md](../TODO.md). Roughly high-priority first; the settled/low-priority
 entries sit at the bottom.
 
-## Apply the [redacted] Documentation Lessons to the Neighbouring Skills
-
-Next in line, added 2026-09-28, before the general pass ledger below. The `writing-documentation` and
-`writing-for-humans` refresh that these build on is done. The lessons come from three weeks of documentation
-work in [redacted], condensed in `~/work/[redacted].git/.workdir/skill-feedback-brief.md`, and each rule
-came from a user correction. The worst symptom was unreadable PRDs, SRSs, and design documents, because the
-prose and document rules were never applied to them. Each skill gets both passes from the ledger below.
-
-Judge each skill against the intent of that refresh, not only its listed item: noise is judged in context,
-the reader does not share the writer's knowledge, and every document a skill produces goes through
-`writing-documentation` and the `writing-for-humans` reader-ready pass. An instruction to annotate sources or
-status "throughout" turns into per-sentence noise; carry status in the document's structure instead.
-`requirements-specification` and `technical-design` show the fix.
-
-- **Delegation guidance** (global rules or the owning skill): Sonnet's added explanations need a fact check;
-  keep parallel subagents on disjoint files; spot-check a subagent's claims before relaying them. Put anything
-  the user must act on after the turn's last tool call, because text before a tool call can be lost.
-
 ## Decide Which Skills Stay Direct and Which Go Behind the Lazy Server
 
 Urgent, added 2026-09-28. The lazy-skills-server is finished and Codex already uses it; today it serves only
@@ -47,6 +29,12 @@ over the whole package. A skill missing from this table has had neither, and a b
 still open. When a skill passes, add or complete its row in the same change and cite the commit. Rows before
 2026-09-28 were reconstructed from Git history; a pass counts only where a commit message or evaluation record
 names it. The 2026-09-07 description audit predates the description skill and does not count.
+
+A skill that produces documents also gets judged against the intent of the 2026-09-28 writing refresh: noise is
+judged in context, the reader does not share the writer's knowledge, and every document the skill produces goes
+through `writing-documentation` and the `writing-for-humans` reader-ready pass. An instruction to annotate
+sources or status "throughout" turns into per-sentence noise; carry status in the document's structure instead,
+as `requirements-specification` and `technical-design` do.
 
 | Skill                             | Description pass                 | `writing-for-agents` pass                                               |
 | --------------------------------- | -------------------------------- | ----------------------------------------------------------------------- |
