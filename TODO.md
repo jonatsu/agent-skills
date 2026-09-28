@@ -82,6 +82,7 @@ as `requirements-specification` and `technical-design` do.
 | `security-review`                 | 2026-09-28, `7f3d35f`            | 2026-09-28, `7f3d35f`                             |
 | `writing-prompts`                 | 2026-09-28, `d55d5dd`, new skill | 2026-09-28, `d55d5dd`, new skill                  |
 | `prompt-debugging`                | 2026-09-28, `d55d5dd`            |                                                   |
+| `document-conversion`             | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
