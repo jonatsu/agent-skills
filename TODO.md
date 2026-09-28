@@ -51,6 +51,11 @@ names it. The 2026-09-07 description audit predates the description skill and do
 | `python-style`                    | 2026-09-28, `2997308`            | 2026-09-24, `e47e62d`                                                   |
 | `python-testing`                  | 2026-09-28, `2997308`            | 2026-09-24, `d908951`                                                   |
 | `python-typing`                   | 2026-09-28, `2997308`, no change | 2026-09-24, `272c8d2`                                                   |
+| `interview-me`                    | 2026-09-28, `152002a`            | 2026-09-28, `152002a`                                                   |
+| `idea-brainstorming`              | 2026-09-28, `7fd41bd`, no change | 2026-09-28, `7fd41bd`                                                   |
+| `session-reflect`                 | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                                                   |
+| `systemd-units`                   | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                                                   |
+| `docker-podman-containers`        | 2026-09-28, `f92701a`            | 2026-09-28, `f92701a`                                                   |
 
 ## Merge skill-review Into skill-forge as a Review Mode?
 
@@ -100,8 +105,6 @@ history). Whether the wording drives activation is unmeasured and nothing depend
 not activate on work they cover, move their behavior to `agents/rules/` per this directory's AGENTS.md ("no
 wording repairs" a moment nobody verbalizes) rather than editing the description again. The
 `test-engineer`/`python-testing` datapoint is tracked above.
-
-Separately: `interview-me` is over the 512-char soft description budget; trim when convenient.
 
 ## Invocation Control Audit
 
