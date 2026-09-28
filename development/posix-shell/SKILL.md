@@ -1,6 +1,6 @@
 ---
 name: posix-shell
-description: Write, review, debug, and test portable POSIX sh scripts and sourced libraries. Use when removing Bashisms, migrating Bash scripts to sh, preserving argument and filename boundaries, handling pipeline failures and traps, or checking compatibility across required shells and systems. Use bash-shell when Bash-specific features are intended; establish the required POSIX baseline before claiming portability.
+description: Write, review, debug, and test portable POSIX sh scripts and sourced libraries. Use when removing Bashisms, migrating Bash scripts to sh, preserving argument and filename boundaries, handling pipeline failures and traps, or checking compatibility across required shells and systems. Use bash-shell when Bash-specific features are intended.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -43,22 +43,14 @@ remain unverified. A script is portable only within its declared standard, utili
 5. Prefer shell builtins when they improve correctness or remove a process. Use an external utility when it
    makes the operation clearer and belongs to the declared baseline. Check optional dependencies at their
    boundary and report when they are unavailable.
-6. Do not introduce a shell-language extension to satisfy a POSIX-only contract. Restructure the operation or
-   report that the requirement cannot be met within the declared baseline. Route an accepted Bash solution to
-   `bash-shell`.
+6. When a POSIX-only contract seems to need an extension, restructure the operation or report that the
+   requirement cannot be met within the declared baseline.
 
 ### Data and Paths
 
-Quote expansions that must remain one argument. Leave an expansion unquoted only when intentional field
-splitting or pathname expansion is part of the interface. Shell variables cannot preserve NUL bytes, and
-command substitution removes trailing newlines, so neither can store an arbitrary filename stream.
-
-Do not assume every utility accepts `--`. Check the applicable POSIX utility specification and required
-implementations. For path operands, reject ambiguous leading-hyphen values or transform a validated relative
-path into an unambiguous form such as `./name` when the utility lacks a portable option terminator.
-
-Before deletion or replacement, resolve the exact target, reject empty or broad roots, confirm ownership or
-authorization, and preserve the original failure status during cleanup.
+Shell variables cannot preserve NUL bytes, and command substitution removes trailing newlines, so neither can
+store an arbitrary filename stream. Read [data-and-path-safety.md](references/data-and-path-safety.md) before
+handling filenames, option terminators, deletion, or replacement.
 
 ### Error Handling
 
@@ -93,7 +85,7 @@ minimum:
 Static analysis and one shell implementation cannot certify POSIX portability. Report the exact standard,
 shells, operating systems, utilities, and failure paths tested, plus every supported boundary left untested.
 
-## Acknowledgements
+## Attributions
 
-See [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md) for the external skill reviewed before this independent
+See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for the external skill reviewed before this independent
 replacement was written.

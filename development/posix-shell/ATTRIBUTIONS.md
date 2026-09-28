@@ -1,4 +1,4 @@
-# Acknowledgements
+# Attributions
 
 This skill is original MIT-licensed work. No upstream prose, code, or examples were copied. The package
 replaces the installed `posix-shell-pro` name with `posix-shell` to describe its scope directly.

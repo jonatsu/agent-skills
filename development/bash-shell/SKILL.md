@@ -43,7 +43,7 @@ silently raise the minimum Bash version.
 
 ### Destructive Operations
 
-IRON LAW: NEVER DELETE OR OVERWRITE FROM AN UNVALIDATED PATH.
+**Iron law:** delete or overwrite only a validated path.
 
 Quoting and `--` prevent specific parsing bugs; they do not make a target safe. Resolve the exact target,
 reject empty or broad roots, confirm it belongs to the operation, preserve the user's authorization boundary,
@@ -74,7 +74,7 @@ need a new test framework, help generator, packaging, logging subsystem, portabi
 
 Report the commands run, their results, and any supported environment or failure path that remains untested.
 
-## Acknowledgements
+## Attributions
 
-See [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md) for upstream idea sources reviewed while designing this
+See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for upstream idea sources reviewed while designing this
 original skill.

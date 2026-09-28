@@ -1,4 +1,4 @@
-# Acknowledgements
+# Attributions
 
 This skill is original MIT-licensed work. No upstream prose, code, identifiers, or examples were copied.
 
