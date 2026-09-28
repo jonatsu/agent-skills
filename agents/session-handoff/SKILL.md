@@ -101,7 +101,8 @@ material content:
 
 - `CONTEXT`: session-only preferences, decisions, nuances, rejected options, and unfinished reasoning.
 - `STATE`: unfinished or completed work whose exact status affects the next action, with verification
-  evidence.
+  evidence. Park uncommitted work as a patch or draft file named here, together with the commit it applies to,
+  so a fresh session can restore it without the original worktree.
 - `READ`: durable artifacts required to act, in reading order, with a stable section or symbol when useful.
 - `LOCKED`: settled decisions and the reason that settled each one.
 - `SCOPE`: deliberately parked or excluded work and why it remains out of bounds.
