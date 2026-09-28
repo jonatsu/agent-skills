@@ -48,7 +48,9 @@ Build the description from these steps:
 3. List the distinct request branches the body supports, and write each one once in words a user is likely to
    use, including requests that do not name the skill or its tool. Put the most important trigger first.
 4. Add an exclusion only for a nearby skill or task that could plausibly be misrouted.
-5. Remove implementation detail and instructions that matter only after the skill loads.
+5. Remove implementation detail and instructions that matter only after the skill loads. Leave out any summary
+   of the skill's workflow: an agent that finds the steps in the description can follow them from there and
+   skip the body, including every step the summary left out.
 
 Claim only branches the body supports. When a request needs a branch the body lacks, narrow the description or
 raise the skill-design question. Synonyms for one branch are one branch; long lists blur boundaries and attract
@@ -122,6 +124,19 @@ consequential routing question, and run it only with authorization for that cost
 Follow the [Agent Skills trigger-evaluation method](https://agentskills.io/skill-creation/optimizing-descriptions):
 use realistic should-trigger requests and close should-not-trigger cases, keep validation queries separate from
 revisions, and compare the current and candidate descriptions under the same client conditions.
+
+Write each should-trigger query as a concrete, substantive request with the detail a real user supplies: the
+files, the context, and the outcome wanted. An agent consults a skill only when the task needs one, so a
+trivial one-step request may load no skill at all and says nothing about the description. Write each
+should-not-trigger query as a near miss that shares vocabulary or artifacts with the skill but needs another
+capability, since an obviously unrelated query passes every description.
+
+Run each query several times, because the same query can trigger on one run and not the next. Set the
+repetition count and the trigger-rate threshold before the runs; three runs with a threshold of 0.5 is a
+workable default. Keep the held-out queries and their scores away from whoever writes the next candidate,
+person or model. A writer who sees them tunes toward those queries, and the held-out score then stops
+measuring whether the description generalizes. Select the candidate by its held-out score, finish with fresh
+queries, and never copy a query's wording into the description to make it pass.
 
 Verify how the client exposes skill loading before treating its logs as evidence. When loading is not
 observable, report the measurement as inconclusive or use a separately justified behavioral probe; a missing log

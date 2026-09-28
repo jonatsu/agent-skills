@@ -32,3 +32,22 @@
 - License: CC BY 4.0, from the repository's `docs/LICENSE` at that revision.
 - Influence: realistic positive and near-miss queries, held-out validation, and measured trigger rates in an
   optional client-specific evaluation. The skill links to the live guide for procedural detail.
+
+## Skill-creator comparison ideas (2026-09-28)
+
+Adopted from the comparison in this repository's
+`docs/research/skill-authoring-sources/skill-creator-comparison.md`. The wording is independently written; no
+prose, code, examples, or prompts were copied or adapted.
+
+- **Anthropic skill-creator plugin**:
+  [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official), path
+  `plugins/skill-creator/skills/skill-creator/` (`SKILL.md`, `scripts/run_eval.py`, `scripts/run_loop.py`),
+  commit `fa59bc9037741ecfa131aa27938272605710d7b2`, Apache-2.0. Influence: the quality bar for trigger
+  queries (concrete, substantive positives; near-miss negatives; trivial one-step requests make poor
+  positives), repeated runs per query against a threshold, and keeping held-out scores away from the writer of
+  the next description. Its `claude -p` harness and stub-command installation are excluded.
+- **obra/superpowers writing-skills**: [obra/superpowers](https://github.com/obra/superpowers), path
+  `skills/writing-skills/SKILL.md`, commit `8ca22dba9a94f28898bbce59f2537ff4d87c747d`, MIT
+  (`Copyright (c) 2025 Jesse Vincent`). Influence: keeping a workflow summary out of the description because an
+  agent may follow the summary instead of the body. This skill keeps the capability statement that superpowers
+  omits.
