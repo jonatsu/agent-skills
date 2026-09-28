@@ -15,15 +15,15 @@ Each entry is a term, a one- or two-sentence definition of what it *is*, and the
 ## Language
 
 **Order**:
-A customer's request to buy goods, from placement through fulfillment.
+A **Customer**'s request to buy goods, from placement through fulfillment.
 _Avoid_: Purchase, transaction
 
 **Invoice**:
-A request for payment sent to a customer after delivery.
+A request for payment sent to a **Customer** after delivery.
 _Avoid_: Bill, payment request
 
 **Customer**:
-A person or organization that places orders.
+A person or organization that places **Orders**.
 _Avoid_: Client, buyer, account
 ```
 
@@ -32,6 +32,9 @@ Rules:
 - **Be opinionated.** When several words name one concept, pick the best and list the rest under `_Avoid_`. A
   glossary that permits every synonym has recorded nothing.
 - **Keep definitions tight.** One or two sentences. Define what the term *is*, not what it does.
+- **Define with words the reader already has.** The reader is a newcomer to the domain. Use plain words or other
+  glossary terms, and bold a glossary term where a definition uses it. Apply `writing-for-humans` to each
+  definition.
 - **Only project-specific terms.** Before adding one, ask whether it is a concept unique to this domain or a
   general programming concept. Only the former belongs, however often the latter is used.
 - **Group under subheadings** when natural clusters emerge; a flat list is fine when the terms cohere.

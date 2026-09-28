@@ -1,25 +1,22 @@
 ---
 name: domain-modeling
-description: Actively build and sharpen a project's domain model and ubiquitous language while designing - challenge conflicting or vague terms, stress-test relationships with concrete scenarios, cross-check claims against code, and capture resolved vocabulary in a living glossary. Use when defining or editing project terminology, a glossary, or bounded-context boundaries. NOT for reviewing an existing model (brooks skills), system architecture (technical-design), or product scope (requirements-specification).
+description: Build and sharpen a project's domain model and ubiquitous language while designing, and keep its glossary current. Use when a term is ambiguous or overloaded, when defining or editing project terminology or a glossary, or when drawing bounded-context boundaries. Not for reviewing an existing model (brooks skills), system architecture (technical-design), or product scope (requirements-specification).
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-Actively build and sharpen the project's domain model as you design. This is the *active* discipline: challenging
-terms, inventing edge-case scenarios, and writing the glossary and its decisions down the moment they crystallize.
-Merely *reading* a glossary for vocabulary is not this skill — that is a one-line habit any work can do. This
-skill is for when you are *changing* the model, not just consuming it.
+# Domain Modeling
 
-## Use this when — and when not
+Build and sharpen the project's domain model while a design is being shaped and its words are still moving: a
+term means two things, two words mean one thing, or a stated relationship has never been tested against a
+concrete case. This skill changes the model; consulting the glossary for vocabulary is ordinary reading and needs
+no skill.
 
-Reach for this while a design is being shaped and the words for it are still moving: a term means two things, two
-words mean one thing, or a stated relationship has never been tested against a concrete case. It is the active
-counterpart to `interview-me`: when an interview-me session surfaces terminology or model decisions, engage this skill
-to capture them; when this skill's questioning widens into a full design interrogation, hand back to `interview-me`.
-
-Not this skill: reviewing an existing model for decay (the `brooks-*` skills), designing system structure,
-interfaces, or data flow (`technical-design`), or fixing product scope and acceptance (`requirements-specification`).
+It is the active counterpart to `interview-me`: when an interview surfaces terminology or model decisions, use
+this skill to capture them; when this skill's questioning widens into a full design interrogation, hand back to
+`interview-me`. Reviewing an existing model for decay is the `brooks-*` skills, system structure is
+`technical-design`, and product scope is `requirements-specification`.
 
 ## During the session
 
@@ -32,16 +29,18 @@ interfaces, or data flow (`technical-design`), or fixing product scope and accep
 - **Cross-check against the code.** When behavior is claimed, check whether the code agrees. Surface a
   contradiction as a question: "The code cancels whole Orders, but you said partial cancellation exists — which
   is right?"
-- **Capture inline, never batched.** The instant a term resolves, write it to the glossary. A decision captured
-  later is a decision remembered wrong.
+- **Capture each term the moment it resolves.** A decision captured later is a decision remembered wrong.
+
+Done when every term whose meaning moved in the session has its glossary entry, and every conflict still open is
+listed back to the user as a question.
 
 ## The glossary is vocabulary only
 
 The glossary defines what a term *is*, in a sentence or two, and names the words to avoid for it. It is not a
 spec, a scratchpad, or a home for implementation decisions — those are code, a design doc, or a decision record.
 A term earns a place only when it is specific to this project's domain; general programming concepts do not
-belong even when the project uses them constantly. The entry shape is in
-[references/glossary-format.md](references/glossary-format.md).
+belong even when the project uses them constantly. Write each definition for a newcomer to the domain. The entry
+shape and its rules are in [references/glossary-format.md](references/glossary-format.md).
 
 ## Where the glossary lives
 
@@ -57,8 +56,6 @@ glossary to carry conflicting definitions. The multi-context layout is in
 
 ## Recording a decision
 
-When the modeling produces a genuine decision — a boundary, an integration pattern between contexts, a
-deliberate deviation — record it as a decision record rather than burying it in the glossary. Use the
-`writing-documentation` skill, which owns the record: it gates records on a three-part test (hard to reverse AND
-surprising without context AND the outcome of a real trade-off) and tiers their weight from a light note to a
-full record. Do not restate that gate here or invent a second template.
+When the modeling produces a genuine decision (a boundary, an integration pattern between contexts, a deliberate
+deviation), record it as a decision record, not in the glossary. `writing-documentation` owns the gate for writing
+one and its forms.

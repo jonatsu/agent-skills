@@ -37,6 +37,8 @@ Changed for this repository:
   three-part gate this repository adopted from the same upstream. See that skill's `ATTRIBUTIONS.md`.
 - Upstream's fixed filenames (`CONTEXT.md`, `CONTEXT-MAP.md`, `docs/adr/`) are treated as illustrative, not
   prescribed: the skill discovers the repository's own convention and falls back to a documented default.
+- A session finish line and a rule that definitions use words a newcomer already has, checked with
+  `writing-for-humans`.
 - Frontmatter description rewritten for this repository's routing, with explicit exclusions against the
   `brooks-*` review skills, `technical-design`, and `requirements-specification`.
 
