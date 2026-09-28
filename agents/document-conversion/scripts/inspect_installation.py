@@ -21,9 +21,6 @@ from importlib.metadata import (
 )
 from typing import Any
 
-ANYDOC_TARGET_VERSION = "0.2.4"
-MARKITDOWN_TARGET_VERSION = "0.1.7"
-
 # Seconds to wait for `anydoc --version`. Generous for a local binary, but bounded:
 # the fallback path resolves through npx, which can reach the network on a cold cache.
 ANYDOC_VERSION_TIMEOUT = 30.0
@@ -150,10 +147,6 @@ def discover_plugins() -> list[dict[str, Any]]:
 def inspect_installation() -> dict[str, Any]:
     """Collect converter, extra, plugin, and executable metadata."""
     return {
-        "target_versions": {
-            "anydoc": ANYDOC_TARGET_VERSION,
-            "markitdown": MARKITDOWN_TARGET_VERSION,
-        },
         "python": platform.python_version(),
         "anydoc": inspect_anydoc(),
         "markitdown": inspect_markitdown(),
@@ -174,23 +167,18 @@ def inspect_installation() -> dict[str, Any]:
 
 def print_human_readable(report: dict[str, Any]) -> None:
     """Write the report to stdout in the form a person reads first."""
-    targets = report["target_versions"]
     anydoc = report["anydoc"]
     markitdown = report["markitdown"]
 
     print(f"Python: {report['python']}")
 
-    print(f"anydoc: {anydoc['version'] or 'not usable'} (skill target: {targets['anydoc']})")
+    print(f"anydoc: {anydoc['version'] or 'not usable'}")
     if anydoc["error"]:
         print(f"  {anydoc['error']}")
         if anydoc["npx_fallback"]:
             print("  npx is available: `npx -y @firecrawl/anydoc` can stand in")
 
-    print(
-        "MarkItDown: "
-        f"{markitdown['version'] or 'not installed'} "
-        f"(skill target: {targets['markitdown']})"
-    )
+    print(f"MarkItDown: {markitdown['version'] or 'not installed'}")
     print(f"  import health: {markitdown['import_error'] or 'OK'}")
 
     extras = markitdown["declared_extras"]
@@ -235,11 +223,6 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Print machine-readable JSON",
     )
-    parser.add_argument(
-        "--allow-version-mismatch",
-        action="store_true",
-        help="Exit successfully when an installed converter differs from the skill target",
-    )
     return parser
 
 
@@ -247,8 +230,7 @@ def main() -> int:
     """Report the installation and exit nonzero when no converter is usable.
 
     A missing converter is not itself a failure: this skill routes between two, and
-    either one alone satisfies most of its job. The version gate applies only to a
-    converter that is actually installed.
+    either one alone satisfies most of its job. Versions are reported, not judged.
     """
     args = build_parser().parse_args()
     report = inspect_installation()
@@ -263,17 +245,6 @@ def main() -> int:
         print("No usable converter: install anydoc or MarkItDown.")
         return 1
 
-    if args.allow_version_mismatch:
-        return 0
-
-    targets = report["target_versions"]
-    mismatched = [name for name in usable if report[name]["version"] not in (None, targets[name])]
-    if mismatched:
-        print(
-            f"Version mismatch for {', '.join(mismatched)}; "
-            "pass --allow-version-mismatch to accept it."
-        )
-        return 1
     return 0
 
 

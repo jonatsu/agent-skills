@@ -2,15 +2,12 @@
 
 ## Official MCP Package
 
-The Microsoft monorepo publishes `markitdown-mcp`. As of July 23, 2026, the package version is `0.0.1a4`; it depends
-on `markitdown[all]>=0.1.1,<0.2.0`.
-
-Pin both packages to ensure the documented converter version:
+The Microsoft monorepo publishes `markitdown-mcp`, which installs a compatible `markitdown[all]`:
 
 ```bash
 uv pip install \
-  "markitdown==0.1.7" \
-  "markitdown-mcp==0.0.1a4"
+  "markitdown" \
+  "markitdown-mcp"
 ```
 
 The server exposes exactly one tool:
@@ -99,7 +96,7 @@ expanding both code-execution and file/network capabilities.
 
 The official guide recommends Docker for desktop-agent use. A secure deployment should:
 
-- Build from a reviewed, pinned `v0.1.7` source checkout.
+- Build from a reviewed source checkout at a release tag your project pins.
 - Run as a non-root user.
 - Mount a narrow input directory read-only.
 - Use a read-only root filesystem when practical.
@@ -114,7 +111,7 @@ docker run --rm -i \
   --read-only \
   --cap-drop ALL \
   -v "/absolute/path/to/documents:/workdir:ro" \
-  markitdown-mcp:0.1.7
+  markitdown-mcp:local
 ```
 
 The conversion URI inside the container would use a path under `/workdir`.
@@ -225,13 +222,13 @@ See `api_reference.md`, "Converter Registration" for the priority values and how
 
 ## Official OCR Plugin
 
-`markitdown-ocr==0.1.0` is an official plugin from the Microsoft monorepo:
+`markitdown-ocr` is an official plugin from the Microsoft monorepo:
 
 ```bash
 uv pip install \
-  "markitdown==0.1.7" \
-  "markitdown-ocr==0.1.0" \
-  "openai==2.41.1"
+  "markitdown" \
+  "markitdown-ocr" \
+  "openai"
 ```
 
 It sends document images/pages to the configured OpenAI-compatible vision provider. Configuration and disclosure
@@ -239,7 +236,7 @@ requirements are in `ocr.md`.
 
 ## Sources
 
-- MCP guide at v0.1.7: <https://github.com/microsoft/markitdown/tree/v0.1.7/packages/markitdown-mcp>
+- MCP guide: <https://github.com/microsoft/markitdown/tree/main/packages/markitdown-mcp>
 - MCP server implementation:
-  <https://github.com/microsoft/markitdown/blob/v0.1.7/packages/markitdown-mcp/src/markitdown_mcp/__main__.py>
-- Sample plugin at v0.1.7: <https://github.com/microsoft/markitdown/tree/v0.1.7/packages/markitdown-sample-plugin>
+  <https://github.com/microsoft/markitdown/blob/main/packages/markitdown-mcp/src/markitdown_mcp/__main__.py>
+- Sample plugin: <https://github.com/microsoft/markitdown/tree/main/packages/markitdown-sample-plugin>

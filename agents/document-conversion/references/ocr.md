@@ -5,8 +5,6 @@ This guide distinguishes two features that are often conflated:
 1. Built-in image metadata/description
 2. Official `markitdown-ocr` vision plugin
 
-All examples target MarkItDown 0.1.7.
-
 MarkItDown also ships Azure Document Intelligence and Azure Content Understanding integrations, behind the
 `az-doc-intel` and `az-content-understanding` extras. They are not documented here; read the upstream guide
 if a task needs cloud layout extraction, structured custom fields, audio, or video.
@@ -41,7 +39,7 @@ client.chat.completions.create(model=..., messages=...)
 Install a reviewed client version:
 
 ```bash
-uv pip install "markitdown[pptx]==0.1.7" "openai==2.41.1"
+uv pip install "markitdown[pptx]" "openai"
 ```
 
 ```python
@@ -77,15 +75,13 @@ Use a provider/model approved by the user; model identifiers and availability ar
 
 ## Official `markitdown-ocr` Plugin
 
-Version 0.1.6 introduced the official monorepo plugin. The published plugin version is 0.1.0.
-
-Install exact versions:
+Install it with its client library:
 
 ```bash
 uv pip install \
-  "markitdown==0.1.7" \
-  "markitdown-ocr==0.1.0" \
-  "openai==2.41.1"
+  "markitdown" \
+  "markitdown-ocr" \
+  "openai"
 ```
 
 Review discovery before activation:
@@ -141,8 +137,8 @@ OCR blocks are inserted using markers similar to:
 
 ### No CLI configuration path
 
-The plugin README shows `--llm-client` and `--llm-model`, but MarkItDown's core CLI parser defines neither, at
-0.1.7 or any earlier release. Use the Python API above rather than copying that CLI example.
+The plugin README shows `--llm-client` and `--llm-model`, but MarkItDown's core CLI parser defines neither;
+check `markitdown --help`. Use the Python API above rather than copying that CLI example.
 
 ## Validation for OCR Output
 
@@ -155,7 +151,7 @@ The plugin README shows `--llm-client` and `--llm-model`, but MarkItDown's core 
 
 ## Sources
 
-- MarkItDown 0.1.7 guide: <https://github.com/microsoft/markitdown/blob/v0.1.7/README.md>
-- OCR plugin 0.1.0: <https://github.com/microsoft/markitdown/tree/v0.1.7/packages/markitdown-ocr>
+- MarkItDown guide: <https://github.com/microsoft/markitdown/blob/main/README.md>
+- OCR plugin: <https://github.com/microsoft/markitdown/tree/main/packages/markitdown-ocr>
 - CLI parser, checked for LLM flags:
-  <https://github.com/microsoft/markitdown/blob/v0.1.7/packages/markitdown/src/markitdown/__main__.py>
+  <https://github.com/microsoft/markitdown/blob/main/packages/markitdown/src/markitdown/__main__.py>

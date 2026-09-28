@@ -111,10 +111,10 @@ MarkItDown does not turn an archive into a safe bundle merely because it process
 
 ## Parser Supply Chain
 
-Use a pinned MarkItDown release:
+Pin MarkItDown in the consuming project's lockfile, at a release no older than the fixes listed below:
 
 ```bash
-uv pip install "markitdown[all]==0.1.7"
+uv pip install "markitdown[all]"
 ```
 
 Relevant release history:
@@ -239,7 +239,7 @@ Useful safe provenance:
 ## Sources
 
 - MarkItDown security guidance:
-  <https://github.com/microsoft/markitdown/blob/v0.1.7/README.md#security-considerations>
+  <https://github.com/microsoft/markitdown/blob/main/README.md#security-considerations>
 - MCP security guidance:
-  <https://github.com/microsoft/markitdown/blob/v0.1.7/packages/markitdown-mcp/README.md#security-considerations>
+  <https://github.com/microsoft/markitdown/blob/main/packages/markitdown-mcp/README.md#security-considerations>
 - Release history: <https://github.com/microsoft/markitdown/releases>

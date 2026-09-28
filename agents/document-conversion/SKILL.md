@@ -2,7 +2,7 @@
 name: document-conversion
 description: Convert Office, OpenDocument, RTF, EPUB, CSV, PDF and other documents to Markdown. Use for document contents an agent cannot read directly, batch conversion, PDF classification or coordinates, scanned-page OCR, and the MarkItDown MCP server. Routes among anydoc, pdf-inspector, and MarkItDown. Not for creating or editing documents, or pixel-faithful rendering.
 license: MIT
-compatibility: anydoc 0.2.4 needs Node 20+; pdf-inspector 1.23.0 has Node, Python 3.8+, Rust, and browser builds; MarkItDown 0.1.7 needs Python 3.10+ and uv. Native extraction is local. Model acquisition and the named remote-service workflows use network access.
+compatibility: anydoc's npx fallback needs Node 20+; pdf-inspector has Node, Python 3.8+, Rust, and browser builds; MarkItDown needs Python 3.10+ and uv. Native extraction is local. Model acquisition and the named remote-service workflows use network access.
 metadata:
   version: "3.1"
   author: Joonas Onatsu
@@ -17,7 +17,7 @@ structure-preserving text for indexing, search and LLM ingestion. None reproduce
 clean conversion is not evidence that nothing was lost.
 
 - **anydoc** — a Rust CLI for Office, OpenDocument, RTF, EPUB, CSV and text-based PDF. Single-digit
-  milliseconds, one serializer for every format, no install step beyond the pinned tool.
+  milliseconds, one serializer for every format, no install step beyond the tool itself.
 - **pdf-inspector** — the PDF engine inside anydoc, used directly for PDF classification, selected pages,
   coordinates, regions, layout signals, and optional selective local OCR.
 - **MarkItDown** — a Python library and CLI covering everything anydoc does not: images, audio, URLs,
@@ -48,14 +48,14 @@ structured output.
 
 ## anydoc
 
-Check for the pinned tool first, and fall back only when it is absent:
+Check for an installed anydoc first, and fall back only when it is absent:
 
 ```bash
 anydoc --version                    # an installed anydoc
 npx -y @firecrawl/anydoc --version  # fallback on a machine without it
 ```
 
-Prefer the installed command. `npx` re-downloads at run time, needs network, and can drift from the pin.
+Prefer the installed command. `npx` re-downloads at run time and needs network.
 
 ```bash
 anydoc report.docx                     # Markdown to stdout
@@ -101,7 +101,7 @@ python3 <skill-root>/scripts/inspect_installation.py
 ```
 
 `inspect_installation.py` reports both converters and runs with neither present. When no suitable MarkItDown
-install exists, `references/markitdown_setup.md` has the venv, extras and version-pinning detail.
+install exists, `references/markitdown_setup.md` has the venv, extras and verification detail.
 
 ```bash
 markitdown report.pdf -o report.md          # trusted local file
@@ -221,7 +221,7 @@ faithful rendering.
 | anydoc exits 3                        | The PDF needs OCR. Apply Rule 3; do not rerun with `--ocr hosted` unprompted          |
 | anydoc exits 2 on stdin CSV           | stdin carries no extension; pass `--format csv`                                       |
 | anydoc exits 1                        | The document is corrupt, encrypted, or not the format detected; try `--format`        |
-| `anydoc: command not found`           | Use the `npx -y @firecrawl/anydoc` fallback, or install the pinned tool               |
+| `anydoc: command not found`           | Use the `npx -y @firecrawl/anydoc` fallback, or install anydoc                        |
 | `MissingDependencyException`          | Install the matching MarkItDown extra, or `[all]`                                     |
 | `UnsupportedFormatException`          | Add `StreamInfo`/CLI hints, install the needed extra, or use another converter        |
 | Empty image output                    | Install ExifTool for metadata, or configure an approved vision client                 |
@@ -236,7 +236,7 @@ faithful rendering.
 
 | File                             | Read when                                                                 |
 | -------------------------------- | ------------------------------------------------------------------------- |
-| `references/markitdown_setup.md` | Installing MarkItDown: venv, extras, pinned versions, verification        |
+| `references/markitdown_setup.md` | Installing MarkItDown: venv, extras, verification                         |
 | `references/pdf_inspector.md`    | PDF classification, pages, coordinates, regions, interfaces and local OCR |
 | `references/api_reference.md`    | Python classes, result object, conversion methods, CLI flags, exceptions  |
 | `references/file_formats.md`     | Exact built-in formats, extras, behavior and limitations                  |
@@ -245,12 +245,16 @@ faithful rendering.
 | `references/security.md`         | Trust boundaries, URI/SSRF controls, archives, plugins, prompt injection  |
 | `references/workflows.md`        | Batch, literature, RAG, stream and validation recipes                     |
 
-## Authoritative Sources
+## Sources and Current Known Versions
+
+The claims in this skill were last checked on 2026-09-28, through the changelogs, against anydoc 0.2.4,
+pdf-inspector 1.25.2, MarkItDown 0.1.8, `markitdown-mcp` 0.0.1a7, and `markitdown-ocr` 0.1.1. On a newer
+install, confirm flags with the tool's `--help` and its changelog before relying on a detail here.
 
 - anydoc: <https://github.com/firecrawl/anydoc>, demo at <https://firecrawl.github.io/anydoc/>
-- pdf-inspector 1.23.0: <https://github.com/firecrawl/pdf-inspector/tree/v1.23.0>
+- pdf-inspector: <https://github.com/firecrawl/pdf-inspector>
 - Firecrawl Parse, the hosted OCR endpoint: <https://firecrawl.dev/parse>
 - MarkItDown project and user guide: <https://github.com/microsoft/markitdown>
-- MarkItDown release 0.1.7: <https://github.com/microsoft/markitdown/releases/tag/v0.1.7>
-- Official OCR plugin: <https://github.com/microsoft/markitdown/tree/v0.1.7/packages/markitdown-ocr>
-- Official MCP server: <https://github.com/microsoft/markitdown/tree/v0.1.7/packages/markitdown-mcp>
+- MarkItDown releases: <https://github.com/microsoft/markitdown/releases>
+- Official OCR plugin: <https://github.com/microsoft/markitdown/tree/main/packages/markitdown-ocr>
+- Official MCP server: <https://github.com/microsoft/markitdown/tree/main/packages/markitdown-mcp>

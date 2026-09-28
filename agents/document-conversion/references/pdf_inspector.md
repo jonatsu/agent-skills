@@ -1,11 +1,11 @@
 # pdf-inspector
 
-Read this reference when a PDF task needs more than ordinary anydoc conversion. It targets pdf-inspector
-1.23.0. Check the installed version and its help before relying on flags after an upgrade.
+Read this reference when a PDF task needs more than ordinary anydoc conversion. Check the installed
+version and its `--help` before relying on flags; SKILL.md's Sources section records the version last checked.
 
 ## Relationship to anydoc
 
-anydoc 0.2.4 uses pdf-inspector for PDFs. It returns complete Markdown when native extraction succeeds on every
+anydoc uses pdf-inspector for PDFs. It returns complete Markdown when native extraction succeeds on every
 page, and exits 3 when pages still need OCR. It hides classification details, page-level diagnostics,
 coordinates, regions, layout signals, and local OCR.
 
@@ -24,15 +24,15 @@ results. One PDF path is complete; running both repeats the PDF parse.
 The packages share a Rust core, but the command names and exposed options differ. Consult the selected binding's
 reference for its complete API.
 
-Prefer a pinned installation already present. These commands identify the two CLI distributions:
+Prefer an installation already present. These commands identify the two CLI distributions:
 
 ```bash
-npx -y @firecrawl/pdf-inspector@1.23.0 --version  # Node CLI: pdf-inspector
-cargo install pdf-inspector --version 1.23.0      # Rust CLIs: pdf2md and detect-pdf
+npx -y @firecrawl/pdf-inspector --version  # Node CLI: pdf-inspector
+cargo install pdf-inspector                       # Rust CLIs: pdf2md and detect-pdf
 ```
 
 The `npx` form downloads a native package and needs network access. The Cargo form builds from source and needs
-Rust 1.88+. Python 3.8+ wheels and Node native packages cover the platforms listed in the pinned upstream docs;
+Rust 1.88+. Python 3.8+ wheels and Node native packages cover the platforms listed in the upstream docs;
 other Python targets build from source.
 
 ## Command-Line Workflows
@@ -101,8 +101,8 @@ CMap gaps, and page-level OCR reasons alongside non-empty Markdown; each can sho
 ## Selective Local OCR
 
 Native extraction needs no OCR runtime. Selective local OCR needs compatible PDFium and ONNX Runtime shared
-libraries plus the pinned PP-OCRv6 Small model set. The validated 1.23.0 runtime uses Firecrawl PDFium
-`native-v7988`, ONNX Runtime 1.27.0, and model revision `oar-ocr-v0.7.0`.
+libraries plus the PP-OCRv6 Small model set. The upstream OCR runtime document lists the PDFium, ONNX Runtime,
+and model revisions each release expects.
 
 Without offline mode and a populated model directory, the first routed page downloads and SHA-256-verifies
 about 31 MB of model artifacts. Native extraction and local OCR keep PDF content on the machine. Missing
@@ -139,9 +139,9 @@ isolated process.
 
 ## Authoritative Sources
 
-- Release 1.23.0: <https://github.com/firecrawl/pdf-inspector/tree/v1.23.0>
-- Python API: <https://github.com/firecrawl/pdf-inspector/blob/v1.23.0/docs/python.md>
-- Node API: <https://github.com/firecrawl/pdf-inspector/blob/v1.23.0/napi/README.md>
-- Rust API and CLIs: <https://github.com/firecrawl/pdf-inspector/blob/v1.23.0/docs/rust-api.md>
-- OCR runtime: <https://github.com/firecrawl/pdf-inspector/blob/v1.23.0/docs/ocr-runtime.md>
-- WebAssembly API: <https://github.com/firecrawl/pdf-inspector/blob/v1.23.0/wasm/README.md>
+- Releases: <https://github.com/firecrawl/pdf-inspector/releases>
+- Python API: <https://github.com/firecrawl/pdf-inspector/blob/main/docs/python.md>
+- Node API: <https://github.com/firecrawl/pdf-inspector/blob/main/napi/README.md>
+- Rust API and CLIs: <https://github.com/firecrawl/pdf-inspector/blob/main/docs/rust-api.md>
+- OCR runtime: <https://github.com/firecrawl/pdf-inspector/blob/main/docs/ocr-runtime.md>
+- WebAssembly API: <https://github.com/firecrawl/pdf-inspector/blob/main/wasm/README.md>

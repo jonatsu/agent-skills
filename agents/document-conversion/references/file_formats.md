@@ -1,19 +1,19 @@
 # File Formats and Conversion Behavior
 
-This reference targets Microsoft MarkItDown 0.1.7. "Built-in" means the converter ships in the `markitdown` package;
+"Built-in" means the converter ships in the `markitdown` package;
 some built-ins still require an optional dependency extra.
 
 ## Installation by Format
 
 ```bash
 # Full built-in feature set
-uv pip install "markitdown[all]==0.1.7"
+uv pip install "markitdown[all]"
 
 # Common document subset
-uv pip install "markitdown[pdf,docx,pptx,xlsx]==0.1.7"
+uv pip install "markitdown[pdf,docx,pptx,xlsx]"
 
 # Minimal package; suitable for core text/HTML/CSV/ZIP/EPUB/IPYNB paths
-uv pip install "markitdown==0.1.7"
+uv pip install "markitdown"
 ```
 
 ## Built-in Converter Matrix
@@ -58,14 +58,13 @@ result = MarkItDown().convert_local("paper.pdf")
 print(result.markdown)
 ```
 
-Use for born-digital PDFs where text is selectable. MarkItDown 0.1.5 improved aligned/wide table output and partially
-numbered lists; 0.1.6 fixed linear memory growth across PDF pages.
+Use for born-digital PDFs where text is selectable.
 
 ### Scanned PDFs
 
 Choose one:
 
-1. `markitdown-ocr==0.1.0` with an approved vision provider
+1. `markitdown-ocr` with an approved vision provider
 2. Azure Document Intelligence
 3. Azure Content Understanding
 4. A local OCR/layout parser when content cannot leave the environment
@@ -86,7 +85,7 @@ Do not claim OCR was performed unless the selected path actually supplied it.
 Install:
 
 ```bash
-uv pip install "markitdown[docx]==0.1.7"
+uv pip install "markitdown[docx]"
 ```
 
 Version 0.1.2 added DOCX math-equation rendering. Conversion is semantic, not page-layout preserving.
@@ -114,7 +113,7 @@ result = converter.convert_local("manuscript.docx")
 Install:
 
 ```bash
-uv pip install "markitdown[pptx]==0.1.7"
+uv pip install "markitdown[pptx]"
 ```
 
 The converter orders shapes to approximate reading order and extracts textual slide content. Optional `llm_client`,
@@ -134,7 +133,7 @@ Validate:
 Install:
 
 ```bash
-uv pip install "markitdown[xlsx,xls]==0.1.7"
+uv pip install "markitdown[xlsx,xls]"
 ```
 
 The result is useful for textual review and LLM ingestion, but it is not a workbook round trip.
@@ -175,7 +174,7 @@ Vision descriptions and OCR are external-processing paths; see `ocr.md`.
 Accepted extensions are `.wav`, `.mp3`, `.m4a`, and `.mp4`.
 
 ```bash
-uv pip install "markitdown[audio-transcription]==0.1.7"
+uv pip install "markitdown[audio-transcription]"
 ```
 
 The implementation converts supported audio to a `SpeechRecognition` input and calls `recognize_google()`. This is not
@@ -186,7 +185,7 @@ The converter does not provide speaker diarization, timestamps, confidence value
 ## YouTube
 
 ```bash
-uv pip install "markitdown[youtube-transcription]==0.1.7"
+uv pip install "markitdown[youtube-transcription]"
 markitdown "https://www.youtube.com/watch?v=VIDEO_ID" -o transcript.md
 ```
 
@@ -239,8 +238,8 @@ size, and timeout controls. See `security.md`.
 
 ## Azure Document Intelligence Format Set
 
-This skill does not document the Azure integrations; the format sets below are recorded from 0.1.6 and were
-not rechecked at 0.1.7. Confirm against the upstream guide before relying on either.
+This skill does not document the Azure integrations; the format sets below are recorded from an older release
+and were not rechecked. Confirm against the upstream guide before relying on either.
 
 The Document Intelligence integration supports:
 
@@ -289,7 +288,7 @@ markitdown < upload.bin -x .pdf -m application/pdf -o output.md
 
 ## Source Basis
 
-- Official 0.1.6 README: <https://github.com/microsoft/markitdown/blob/v0.1.7/README.md>
+- Official README: <https://github.com/microsoft/markitdown/blob/main/README.md>
 - Built-in converter registry:
-  <https://github.com/microsoft/markitdown/blob/v0.1.7/packages/markitdown/src/markitdown/_markitdown.py>
+  <https://github.com/microsoft/markitdown/blob/main/packages/markitdown/src/markitdown/_markitdown.py>
 - Release history: <https://github.com/microsoft/markitdown/releases>

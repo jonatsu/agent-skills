@@ -1,8 +1,6 @@
-# MarkItDown 0.1.7 API Reference
+# MarkItDown API Reference
 
-Verified against the `v0.1.6` source tag and installed package on July 23, 2026. The conversion methods, result
-object, and CLI parser were rechecked against `v0.1.7` on September 13, 2026; that release carries bug fixes
-only, with no API, extras, or flag changes.
+SKILL.md's Sources section records the version these claims were last checked against.
 
 ## Public Imports
 
@@ -30,7 +28,7 @@ from markitdown.converters import (
 ```
 
 This skill does not document the Azure integrations, here or in the `docintel_*`/`cu_*` constructor keywords
-below; both are recorded from 0.1.6 and were not rechecked at 0.1.7. Confirm against the upstream guide, or
+below; both are recorded from an older release and were not rechecked. Confirm against the upstream guide, or
 `file_formats.md`'s Azure sections, before relying on either.
 
 ## `MarkItDown`
@@ -306,7 +304,7 @@ from markitdown import (
 try:
     result = MarkItDown().convert_local("input.pdf")
 except MissingDependencyException:
-    print("Install markitdown[pdf]==0.1.7")
+    print("Install the markitdown[pdf] extra")
 except UnsupportedFormatException:
     print("No converter accepted this input")
 except FileConversionException as exc:
@@ -365,11 +363,11 @@ If `filename` is omitted, MarkItDown reads binary input from stdin.
 
 Document Intelligence and Content Understanding are mutually exclusive in one CLI invocation.
 
-The core parser does **not** expose `--llm-client` or `--llm-model`, at 0.1.7 or any earlier release. Configure image
+The core parser does **not** expose `--llm-client` or `--llm-model`; check `markitdown --help`. Configure image
 descriptions or the OCR plugin through Python.
 
 ## Source Basis
 
-- v0.1.7 package API: <https://github.com/microsoft/markitdown/tree/v0.1.7/packages/markitdown/src/markitdown>
-- v0.1.7 CLI: <https://github.com/microsoft/markitdown/blob/v0.1.7/packages/markitdown/src/markitdown/__main__.py>
-- v0.1.7 sample plugin: <https://github.com/microsoft/markitdown/tree/v0.1.7/packages/markitdown-sample-plugin>
+- Package API: <https://github.com/microsoft/markitdown/tree/main/packages/markitdown/src/markitdown>
+- CLI: <https://github.com/microsoft/markitdown/blob/main/packages/markitdown/src/markitdown/__main__.py>
+- Sample plugin: <https://github.com/microsoft/markitdown/tree/main/packages/markitdown-sample-plugin>

@@ -1,9 +1,9 @@
 # MarkItDown Setup
 
-Read this when `SKILL.md` sends you here to install or verify MarkItDown. anydoc needs no setup beyond the
-pinned tool, so nothing here applies to it.
+Read this when `SKILL.md` sends you here to install or verify MarkItDown. anydoc needs no setup beyond an
+installed tool, so nothing here applies to it.
 
-This skill targets **MarkItDown 0.1.7**, released 29 July 2026. New code should use `result.markdown`;
+New code should use `result.markdown`;
 `result.text_content` remains only as a soft-deprecated compatibility alias.
 
 ## Check before installing
@@ -15,9 +15,8 @@ python3 <skill-root>/scripts/inspect_installation.py
 
 `inspect_installation.py` runs without either converter present and reports both, plus the extras, plugin
 entry points and external executables available. It exits non-zero only when **neither** converter is
-usable, because either one alone satisfies most of this skill's job. The version gate applies to a converter
-that is actually installed: an installed converter that is not the skill's target version also exits
-non-zero, so pass `--allow-version-mismatch` when a nearby release is acceptable.
+usable, because either one alone satisfies most of this skill's job. It reports each installed converter's version
+without judging it; compare against SKILL.md's Sources section when a detail here looks wrong.
 
 **A CLI on `PATH` is not the same as an importable library.** The bundled conversion scripts do
 `import markitdown`, so they need an interpreter that can see the package. A `markitdown` installed through
@@ -40,7 +39,7 @@ Check it before relying on it: `inspect_installation.py` under that interpreter 
 ephemeral environment instead:
 
 ```bash
-uv run --with "markitdown[all]==0.1.7" python <skill-root>/scripts/batch_convert.py documents/ markdown/
+uv run --with "markitdown[all]" python <skill-root>/scripts/batch_convert.py documents/ markdown/
 ```
 
 ## Install
@@ -53,16 +52,16 @@ source .venv/bin/activate
 Every built-in feature:
 
 ```bash
-uv pip install "markitdown[all]==0.1.7"
+uv pip install "markitdown[all]"
 ```
 
 Or only the converters the task needs:
 
 ```bash
-uv pip install "markitdown[pdf,docx,pptx,xlsx]==0.1.7"
+uv pip install "markitdown[pdf,docx,pptx,xlsx]"
 ```
 
-Available extras in 0.1.7:
+Available extras (confirm against the installed package's metadata):
 
 - `pptx`, `docx`, `xlsx`, `xls`, `pdf` and `outlook`
 - `audio-transcription` and `youtube-transcription`

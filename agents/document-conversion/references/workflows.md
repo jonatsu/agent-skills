@@ -1,6 +1,6 @@
 # Practical Workflows
 
-All workflows target MarkItDown 0.1.7 and use `.markdown`, not the legacy `.text_content` alias.
+All workflows use `.markdown`, not the legacy `.text_content` alias.
 
 ## 1. One Trusted Local Document
 
@@ -80,7 +80,7 @@ Properties:
 Retry failed files after installing the missing format extra:
 
 ```bash
-uv pip install "markitdown[pdf,docx,pptx,xlsx]==0.1.7"
+uv pip install "markitdown[pdf,docx,pptx,xlsx]"
 python <skill-root>/scripts/batch_convert.py inputs/ outputs/ --recursive --overwrite
 ```
 
@@ -124,7 +124,7 @@ author: "Smith"
 year: "2025"
 source: "incoming/Smith_2025_Example_Title.pdf"
 converted_at: "2026-07-23T17:00:00+00:00"
-markitdown_version: "0.1.7"
+markitdown_version: "<installed version>"
 ---
 ```
 
