@@ -1,6 +1,6 @@
 ---
 name: security-review
-description: Review code, configuration, and infrastructure for exploitable security defects. Use for a security review, vulnerability hunt, threat model, OWASP assessment, or hardening pass over a diff, a component, or a whole repository, and whenever a change touches authentication, authorization, secrets, input parsing, deserialization, file uploads, outbound requests, or agent tool-use surfaces. Language- and framework-agnostic. Reports findings first and changes no file until the user approves specific fixes.
+description: Review code, configuration, and infrastructure for exploitable security defects. Use for a security review, vulnerability hunt, threat model, OWASP assessment, or hardening pass over a diff, a component, or a whole repository, and whenever a change touches authentication, authorization, secrets, input parsing, deserialization, file uploads, outbound requests, or agent tool-use surfaces.
 license: MIT
 compatibility: Requires `rg` and `fd` for discovery. Uses the project's own audit tooling where it is configured, and prefers `betterleaks` over `gitleaks` for secret scanning; both are optional.
 metadata:
@@ -91,9 +91,8 @@ line?
 
 ### 5. Sweep the vulnerability classes
 
-Read the reference for every surface the scope actually contains, before writing any finding about that
-surface. Do not load the ones the scope does not contain, and do not skip this step because the defect looks
-familiar. The references carry the exceptions that separate a finding from a false positive, and a review that
+Read the reference for every surface the scope contains, and only those, before writing any finding about that
+surface. The references carry the exceptions that separate a finding from a false positive, and a review that
 never opens one is working from recall.
 
 | Surface in the code                                             | Read                                      |
@@ -143,7 +142,8 @@ Severity describes impact once exploitability is established.
 
 ### 8. Report
 
-Follow the output contract below.
+Follow the output contract below. Done when every trust boundary from step 2 has been through steps 3 to 5, or
+is named under Coverage Limits with the reason it was not.
 
 ## Common False Positives
 
@@ -184,6 +184,10 @@ Record the controls that are working. A report that lists only gaps reads as ref
 State your coverage limits: what you did not read, which tool you could not run, and which question you could
 not settle.
 
+Write the report for a developer who is not a security specialist. Name each vulnerability class in words at
+first use, such as server-side request forgery (SSRF), and apply `writing-for-humans` and its reader-ready check
+before delivering.
+
 ## Output Contract
 
 ```markdown
@@ -196,7 +200,7 @@ Counts by severity. Coverage limits.
 
 ### Findings
 
-#### [SEC-001] <Vulnerability class> — <Severity>
+#### <Vulnerability class> in <component> — <Severity> (SEC-001)
 
 - **Location**: `path/to/file.ext:120`
 - **Confidence**: High
@@ -207,7 +211,7 @@ Counts by severity. Coverage limits.
 
 ### Needs Verification
 
-#### [VER-001] <Potential issue>
+#### <Potential issue> (VER-001)
 
 - **Location**: `path/to/file.ext:88`
 - **Open question**: exactly what a maintainer must confirm
