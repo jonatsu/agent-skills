@@ -1,12 +1,12 @@
 ---
-name: prompt-optimizer
-description: Diagnose and repair an existing LLM prompt from observed failures using controlled fixtures, traces, and regression runs. Use when a prompt produces wrong, inconsistent, over-cautious, over-compliant, malformed, or costly output, or when comparing prompt revisions; not for authoring a prompt from scratch, static review without failing behavior, repository instruction maintenance, or Agent Skill authoring.
+name: prompt-debugging
+description: Debug and repair an existing LLM prompt from observed failures using controlled fixtures, traces, and regression runs. Use when a prompt produces wrong, inconsistent, over-cautious, over-compliant, malformed, or costly output, or when comparing prompt revisions; not for authoring a prompt from scratch, static review without failing behavior, repository instruction maintenance, or Agent Skill authoring.
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-# Prompt Optimizer
+# Prompt Debugging
 
 Repair an existing prompt by turning observed failure into reproducible evidence, one falsifiable hypothesis, and the
 smallest verified prompt change.

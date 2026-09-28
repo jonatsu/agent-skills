@@ -1,5 +1,5 @@
 {
-  "skill_name": "prompt-optimizer",
+  "skill_name": "prompt-debugging",
   "mode": "explicit behavioral evaluation",
   "run_contract": {
     "supply_candidate_skill_path": true,

@@ -2,7 +2,7 @@
 
 ## Current Skill
 
-- Skill: `prompt-optimizer`
+- Skill: `prompt-debugging`, renamed from `prompt-optimizer` on 2026-09-28
 - Current author: Joonas Onatsu
 - Current license: MIT
 - Status: independently rewritten from local evaluation evidence and archived predecessors

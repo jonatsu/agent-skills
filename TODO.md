@@ -184,10 +184,11 @@ manual setup exposed failures that should become deterministic preflight checks:
 - Distinguish command-line validation, permission failures, missing dependencies, and malformed fixtures from
   candidate behavior; never count a harness failure as a model repetition or skill failure.
 
-## Prompt Optimizer Behavioral Evaluation
+## Prompt Debugging Behavioral Evaluation
 
-`prompt-optimizer` is statically `ready with risks`; its workflow and fixtures derive from observed failures,
-but it has not been exercised as a skill (deferred to protect the weekly Codex allowance). When allowance and a
+`prompt-debugging` (renamed from `prompt-optimizer` on 2026-09-28) is statically `ready with risks`; its workflow
+and fixtures derive from observed failures, but it has not been exercised as a skill (deferred to protect the
+weekly Codex allowance). When allowance and a
 decision justify it:
 
 - Run the seven package cases in Claude Code and Codex with the skill supplied explicitly; require correct
