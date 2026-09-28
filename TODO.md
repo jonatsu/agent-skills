@@ -92,6 +92,7 @@ as `requirements-specification` and `technical-design` do.
 | `just-task-runner`                | 2026-09-28, `8976754`, no change | 2026-09-28, `8976754`                             |
 | `kasetto-skill-tool`              | 2026-09-28, `f4bcb13`            | 2026-09-28, `f4bcb13`                             |
 | `chezmoi-dotfiles`                | 2026-09-28, no change            | 2026-09-28, no change                             |
+| `mise-tools`                      | 2026-09-28, `9ae6e8a`            | 2026-09-28, `9ae6e8a`                             |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
