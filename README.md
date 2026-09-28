@@ -159,7 +159,8 @@ just deploy                      # skills to supported agents, plus the dotbot m
 > [!IMPORTANT]
 > `just skills-hook` is per clone, and a clone set up before 2026-09-28 needs it too. Git does not version hooks,
 > so pulling never installs one, and an older clone's pre-commit post-commit script now does nothing. Without
-> the hook, skill commits are never deployed and nothing warns until `just skills-deployed` reports drift.
+> the hook, skill commits are never deployed. `just skills-hook-check`, part of `just check`, fails until it is
+> installed.
 
 `just deploy` is skills *and* the dotbot map, which is what puts the Copilot CLI configuration in `~/.copilot`
 and the knowledge-vault tooling in `~/.local/share/`. Skills alone are `just deploy-skills`.
