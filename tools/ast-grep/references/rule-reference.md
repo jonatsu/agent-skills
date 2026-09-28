@@ -210,8 +210,5 @@ one object per match.
 
 ## When a Rule Matches Nothing
 
-1. Dump the real structure with `--debug-query=cst` before adjusting the rule.
-2. Add `stopBy: end` to every relational rule.
-3. Check each `kind` against that dump, not against the grammar you expect.
-4. Confirm each metavariable is the whole text of its node.
-5. Strip the rule to its simplest positive part, then add conditions back one at a time.
+Work through SKILL.md's "When a Pattern Matches Nothing" checklist; it applies to rules unchanged. Dump the
+real structure with `--debug-query=cst` before adjusting the rule.

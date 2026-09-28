@@ -2,7 +2,7 @@
 name: ast-grep
 description: Search, map, and rewrite code structurally with ast-grep, matching Abstract Syntax Tree shapes rather than text. Use when exploring unfamiliar files or directories, outlining long code or Markdown before a ranged read, locating constructs text search cannot express, writing or debugging patterns and YAML rules, or applying mechanical changes across files. Use outline for mapping and run or scan for matching and rewriting.
 license: MIT
-compatibility: Requires the ast-grep CLI (`ast-grep`, also installed as `sg`). Documented against 0.45.3.
+compatibility: Requires the ast-grep CLI (`ast-grep`, also installed as `sg`). Documented against 0.45.3 on 2026-09-12; confirm flags with `ast-grep <command> --help`.
 metadata:
   author: Joonas Onatsu
 ---
@@ -44,6 +44,7 @@ the heading outline to choose a range, then edit that range with an ordinary tex
 3. Test the simplest pattern or rule against a small example known to contain a match.
 4. Run it on the real target and inspect the matches or preview diff critically.
 5. Apply a rewrite only after confirming its scope and the working tree state.
+6. After applying, rerun the pattern to confirm no match remains, then run the project's checks.
 
 ```bash
 ast-grep outline <path>
