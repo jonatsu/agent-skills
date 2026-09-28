@@ -1,6 +1,6 @@
 ---
 name: kasetto-skill-tool
-description: Configure and troubleshoot Kasetto synchronization of AI agent skills, MCP servers, commands, and instructions. Use for kasetto.yaml, kasetto.lock, kst add/remove/sync, source pins, inherited configuration, destination selection, lock drift, or deployed copies that go stale or survive their removal.
+description: Configure and troubleshoot Kasetto synchronization of AI agent skills, MCP servers, commands, and instructions. Use for kasetto.yaml, kasetto.lock, kst add/remove/sync, source pins, inherited configuration, destination selection, lock drift, or deployed copies that go stale or survive their removal. Not for writing or reviewing the skill itself (skill-forge).
 license: MIT
 compatibility: Requires the Kasetto `kst` CLI. Checked against 3.8.0 and 3.9.0; check runtime help on other versions.
 metadata:
