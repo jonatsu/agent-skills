@@ -1,6 +1,6 @@
 ---
 name: systemd-units
-description: Write, review, harden, and debug Linux systemd units. Use for .service, .timer, and .socket files, drop-ins, dependencies, failed system or user services, journal diagnosis, and resource controls. Use systemd-networking for networkd link configuration and resolved DNS routing.
+description: Write, review, harden, and debug Linux systemd units. Use for .service, .timer, and .socket files, drop-ins, dependencies, failed system or user services, journal diagnosis, and resource controls. Use systemd-networking for networkd link configuration and resolved DNS routing. Route Podman or Docker Quadlet-generated units to docker-podman-containers.
 license: MIT
 compatibility: Requires Linux with systemd and its command-line tools; available directives vary by systemd version.
 metadata:
@@ -66,7 +66,9 @@ Choose directives from the program's actual lifecycle and dependencies:
 - Confirm whether a socket-activated program accepts inherited file descriptors. A `.socket` unit cannot make an
   arbitrary daemon socket-aware.
 - Use directory directives such as `StateDirectory=` when systemd should create and own service storage. Avoid
-  embedding secrets in `Environment=` because unit properties and process environments may expose them.
+  embedding secrets in `Environment=`, because unit properties and process environments may expose them; use
+  `LoadCredential=` or `LoadCredentialEncrypted=`, or an `EnvironmentFile=` readable only by the service,
+  instead.
 
 Do not copy a generic hardening block into a service. Start with the service's required files, devices, address
 families, capabilities, syscalls, writable paths, and runtime behavior. Add restrictions incrementally and exercise
