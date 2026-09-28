@@ -83,6 +83,8 @@ as `requirements-specification` and `technical-design` do.
 | `writing-prompts`                 | 2026-09-28, `d55d5dd`, new skill | 2026-09-28, `d55d5dd`, new skill                  |
 | `prompt-debugging`                | 2026-09-28, `d55d5dd`            |                                                   |
 | `document-conversion`             | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
+| `github-ops`                      | 2026-09-28, `7c7a61f`, no change | 2026-09-28, `7c7a61f`                             |
+| `repo-management`                 | 2026-09-28, `ac88c49`, no change | 2026-09-28, `ac88c49`                             |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
