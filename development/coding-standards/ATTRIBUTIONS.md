@@ -34,6 +34,11 @@ whether wording is copied.
 - [samcdavid/dotfiles](https://github.com/samcdavid/dotfiles/blob/d5474888639bfcabd45cf2362b2e91fc1890cad7/claude/rules/comment-style.md),
   `claude/rules/comment-style.md` at `d547488`: the why-versus-how framing and the rename-instead-of-commenting
   rule in `references/comments.md`.
+- [affaan-m/ECC](https://github.com/affaan-m/ECC/blob/d29cf651c795869f733669c33e3d33dfd8307d10/skills/coding-standards/SKILL.md),
+  `skills/coding-standards/SKILL.md` at `d29cf65` (MIT), compared on 2026-09-28: the subjects of the Formatting
+  subsection, the type-system escape-hatch sentence, premature optimization in the KISS principle, and the
+  sequential-await and over-fetching items in the performance checklist of `references/solid-and-quality.md`.
+  Its framework-specific material and its examples were not adopted.
 
 Licenses were not audited because no material was copied, adapted, or vendored, so no `LICENSE.upstream` applies.
 Were any source text later copied into this package, its license would have to be checked and preserved first.

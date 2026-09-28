@@ -35,7 +35,9 @@ does not catch:
 - Blocking I/O on an asynchronous path, such as a synchronous read or a subprocess call that stalls the event
   loop.
 - Excessive allocation in a hot path, where a reused buffer or a streamed result would hold memory flat.
-- A missing bound on a result set: paginate or limit a query that can grow without one.
+- A missing bound on a result set: paginate or limit a query that can grow without one, or that fetches more
+  fields than it uses.
+- Independent asynchronous calls awaited one after another where they could run concurrently.
 - An algorithm that is quadratic where the data reaches a size that a linear or logarithmic approach would keep
   cheap.
 - A missed cache: a pure, repeated, expensive computation whose input rarely changes.

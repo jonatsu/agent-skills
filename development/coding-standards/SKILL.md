@@ -1,6 +1,6 @@
 ---
 name: coding-standards
-description: "Write and refactor code to language-agnostic standards. Use before writing a new file or function, when starting a refactor, or when applying quality gates before a commit. Triggers on: coding standards, code conventions, clean code, apply SOLID, refactor this, naming conventions, comment style, error-handling or logging standards, quality gate before commit. Not language-specific style (python-style); not reviewing an existing diff or PR (brooks-review); not test authoring (test-engineer)."
+description: "Write, refactor, and check code against language-agnostic standards: design principles, naming, comments, formatting, types, errors, logging, and code smells. Use before writing a new file or function, when refactoring, when applying the quality gate before a commit, or when checking a change against these standards. Language-specific style belongs to that language's skill (python-style), a broad PR or design review to brooks-review, and writing tests to test-engineer."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -28,7 +28,8 @@ A language-specific rule always wins over a default here where the two differ.
 
 ## Principles
 
-- KISS: choose the simplest design that meets the stated requirements and fits the environment.
+- KISS: choose the simplest design that meets the stated requirements and fits the environment. Prefer the
+  obvious solution over a clever or prematurely optimized one, and optimize only against a measurement.
 - Scope: change only what the task asks for. A bug fix leaves the surrounding code alone. Make an incidental fix
   only when something is plainly broken and the correct behavior is already settled, and keep it local and
   reversible. Trace every change to the request or a necessary consequence of it, and fix any failure your own
@@ -41,9 +42,6 @@ A language-specific rule always wins over a default here where the two differ.
   editing both copies. DRY governs knowledge, not lines that look alike; couple two things only when they share
   one reason to change. Same business logic in two places must be fixed; similar code that may evolve apart is
   left alone.
-
-Give a function a name rather than passing a long anonymous closure, since a name helps both the reader and the
-stack trace. Keep closures short where they are idiomatic.
 
 ## Immutability
 
@@ -59,7 +57,8 @@ runtime. Model a constrained value as an enum or a newtype rather than a bare st
 discriminated union where a value carries a variant tag. In a typed language, annotate public signatures and
 boundaries, and let inference cover the obvious locals. Expose the smallest public API that meets the need, and
 default to private. Accept an interface or trait as a parameter, and return a concrete type. Depend on
-abstractions rather than concrete implementations at a module boundary.
+abstractions rather than concrete implementations at a module boundary. Treat an escape from the type system,
+such as `any`, an unchecked cast, or a suppressed checker error, as a cost to justify in a comment.
 
 ## Code Organization
 
@@ -87,6 +86,12 @@ the same limits. The exception is bulk that is data rather than authored logic, 
 snapshots, fixtures, vendored sources, or a large inline test corpus, where the size is content to store rather
 than code to read.
 
+### Formatting
+
+Let the project's formatter and linter decide layout, and match the surrounding style where none is configured.
+Format only the lines your change touches: a reformatted file buries the real change in the diff and collides
+with concurrent work.
+
 ## Naming
 
 Give everything a descriptive, intention-revealing name, so the name says what the thing holds or does without
@@ -96,6 +101,9 @@ claim that reads as a question, such as `isLoading`, `hasError`, or `canSubmit`,
 or package convention. Keep constants and types visually distinct from ordinary values where the language draws
 that distinction. A language-specific rule overrides this where a pattern is not idiomatic, and casing and
 framework prefixes belong to that rule.
+
+Give a function a name rather than passing a long anonymous closure, since a name helps both the reader and the
+stack trace. Keep closures short where they are idiomatic.
 
 ## Comments
 
@@ -151,7 +159,7 @@ and file content.
 
 Handle every error by class. Recover from what is absent or partial by falling back to a documented default.
 Fail closed on what is present but invalid: a wrong type, an out-of-range value, an unknown key. Name the
-offending key and the shape you expected. Do not re-throw the same error without adding context. Surface each
+offending key and the shape you expected. When you re-raise an error, add the context the caller lacks. Surface each
 failure where its user will see it, phrased so they can act on it, and record the technical detail where an
 operator can find it. In a CLI or other single-artifact tool, write a clear message to stderr and exit nonzero;
 in a service or UI, show a user-facing message and log the full context.

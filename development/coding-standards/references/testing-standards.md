@@ -1,8 +1,6 @@
 # Testing Standards
 
-Load this when writing tests, judging whether coverage is adequate, or planning what to test. For test-first
-implementation of a specific behavior, load `test-driven-development`. For test strategy, coverage judgment, and
-adversarial validation, load `test-engineer`.
+Load this when writing tests, judging whether coverage is adequate, or planning what to test.
 
 ## What to Test
 
