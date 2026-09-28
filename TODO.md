@@ -11,16 +11,34 @@ their surviving open work is below, and the embedded research notes (tooling, te
 Repository-wide items live in [../TODO.md](../TODO.md) and [../BACKLOG.md](../BACKLOG.md). Roughly
 high-priority first; the settled/low-priority entries sit at the bottom.
 
-## Decide Which Skills Stay Direct and Which Go Behind the Lazy Server
+## Move the Specialized Skills Behind the Lazy Server
 
-Urgent, added 2026-09-28. The lazy-skills-server is finished and Codex already uses it; today it serves only
-the `embedded-linux`, `development/nix`, `system-administration`, and `code-health` domains (see the lazy-tier
-comment in `kasetto/base.yaml`). Evaluate the whole set: which skills stay direct, with a minimized description
-in every session's listing, and which move behind the lazy server, reached on demand. Weigh how often each
-fires, whether a request names its subject clearly enough to route through the server, and the listing cost:
-Claude's listing budget was raised to 4% on 2026-09-28 because Haiku sessions were losing most descriptions
-(`../docs/findings/skill-discovery-limits.md`). `docs/plans/agent-management/lazy-skill-loading.md` is the
-design record.
+Urgent, added 2026-09-28; the split was decided the same day, and the directory moves are still to do. Today
+the lazy server serves only `embedded-linux`, `development/nix`, `system-administration`, and `code-health` (see
+the lazy-tier comment in `kasetto/base.yaml`). `docs/plans/agent-management/lazy-skill-loading.md` is the
+design record, and `../docs/findings/skill-discovery-limits.md` explains why a skill nobody asks for by name
+must stay direct.
+
+The rule: a skill stays direct when almost every repository or session needs it, and a specialized skill, such
+as a language, a named tool, or a rare method, goes lazy. The move affects Codex and Copilot only; Claude keeps
+installing every skill natively.
+
+Direct, 31 skills: `writing-for-humans`, `writing-documentation`, `writing-readmes`, `writing-for-agents`,
+`agents-context-docs`, `context-architecture`, `session-handoff`, `dispatching-subagents`, `writing-prompts`,
+`context-compression`, `bash-shell`, `posix-shell`, `git-commits-and-recovery`, `git-history-investigation`,
+`using-git-worktrees`, `repo-management`, `github-ops`, `ast-grep`, `coding-standards`, `systematic-debugging`,
+`test-driven-development`, `incremental-implementation`, `test-engineer`, `idea-brainstorming`,
+`requirements-specification`, `technical-design`, `implementation-planning`, `domain-modeling`, `interview-me`,
+`security-review`, and `spec-conformance-review`.
+
+Newly lazy, 20 skills, joining the 22 already there: all eight Python skills, `chezmoi-dotfiles`, `mise-tools`,
+`just-task-runner`, `docker-podman-containers`, `document-conversion`, `cc-safety-net`, `skill-forge`,
+`skill-descriptions-and-triggers`, `kasetto-skill-tool`, `prompt-debugging`, `to-questionnaire`, and the
+remote `mermaid-diagrams` entry.
+
+A lazy skill whose domain stays direct moves one directory deeper into a subgroup, as `development/nix` sits
+inside `development`, because Kasetto discovers skills exactly one level under a configured `sub-dir`. The
+subgroup names are still to decide.
 
 The same decision answers Codex's warning that it shortened skill descriptions to fit its context budget.
 Before changing policy for Codex, start a fresh Codex session and record whether the warning remains; skill
