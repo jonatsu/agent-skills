@@ -68,14 +68,16 @@ Use assets as starting points after inspecting the repository:
 - `.pre-commit-config.yaml`: The bundled asset is the full preferred profile: pre-commit-hooks, Betterleaks,
   EditorConfig checking, YAML and Markdown formatting and linting, a local invisible-character check for
   Markdown, ShellCheck, and shfmt. Use the complete profile when the user requests the preferred baseline. Make
-  only the requested delta when extending an established configuration.
+  only the requested delta when extending an established configuration. The bundled hook revisions are a
+  snapshot: run `pre-commit autoupdate` before first use, unless the user or repository pins them for a reason.
 - `.shellcheckrc`: The companion to the ShellCheck hook above, and the one place its options belong — the hook,
   an editor extension, and a direct CLI run all read it, so per-tool arguments drift apart. The bundled profile
   enables every optional check and disables two by name, with the reason attached to each. Adopting it in an
   established repository turns the whole shell tree red at once; the file's own comments carry the sweep
   procedure and the trap that makes a sweep look finished when it is not.
 - Community files: Use the bundled contribution, security, conduct, pull-request, and issue templates when
-  their workflow applies. Replace every placeholder and remove irrelevant sections.
+  their workflow applies. Replace every placeholder, remove irrelevant sections, and apply `writing-for-humans`
+  to the text you write.
 
 Read [config-adaptation-notes.md](references/config-adaptation-notes.md) before copying or changing a
 configuration asset.
@@ -129,13 +131,11 @@ behavior. Update a “Last reviewed” date only after verifying the content it 
 
 - Never choose a license, visibility, governance model, runtime, or framework for the user.
 - Never invent project names, badges, links, contacts, commands, or supported versions.
-- Never replace an existing healthy file merely to match a template.
 - Never present a staged-diff secrets hook as a history scan.
 - Never enable both Betterleaks and Gitleaks. Retain Betterleaks by default unless the repository or user
   selects Gitleaks.
 - Never apply GitHub settings, dependency automation, CI, releases, or history rewrites as an implied part of
   repository setup.
-- Never leave template placeholders in delivered files.
 
 ## Verify Completion
 
