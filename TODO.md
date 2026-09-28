@@ -8,8 +8,8 @@ archived reviews still deferred are the rows marked "Review is deferred" in
 in [../docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md](../docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md);
 their surviving open work is below, and the embedded research notes (tooling, testing, QEMU candidates) are in
 [../docs/research/embedded-skills/](../docs/research/embedded-skills/).
-Repository-wide items live in [../TODO.md](../TODO.md). Roughly high-priority first; the settled/low-priority
-entries sit at the bottom.
+Repository-wide items live in [../TODO.md](../TODO.md) and [../BACKLOG.md](../BACKLOG.md). Roughly
+high-priority first; the settled/low-priority entries sit at the bottom.
 
 ## Decide Which Skills Stay Direct and Which Go Behind the Lazy Server
 
@@ -21,6 +21,12 @@ fires, whether a request names its subject clearly enough to route through the s
 Claude's listing budget was raised to 4% on 2026-09-28 because Haiku sessions were losing most descriptions
 (`../docs/findings/skill-discovery-limits.md`). `docs/plans/agent-management/lazy-skill-loading.md` is the
 design record.
+
+The same decision answers Codex's warning that it shortened skill descriptions to fit its context budget.
+Before changing policy for Codex, start a fresh Codex session and record whether the warning remains; skill
+count alone does not show which descriptions consume the budget. Keep `skills.max_context_tokens = 2000`: the
+Codex configuration reference documents only `path` and `enabled` under `skills.config`, with no description
+override or name-only mode (checked 2026-09-12).
 
 ## Description and Prose Pass Ledger
 
@@ -143,32 +149,6 @@ earlier figures go stale within days.
 
 Open sub-question: whether tightening `allowed-tools` rides along with this or stays separate.
 
-## Harness Switches for Commit Attribution Trailers
-
-`shared/tools/git-commits-and-recovery` and the global instruction files forbid an unrequested `Co-Authored-By`/`Signed-off-by`
-trailer, but a harness that injects the trailer does so from its system prompt, which outranks a skill or a
-memory file. Where a harness exposes a config switch, setting it removes the conflict. Those switches are
-agent-level configuration and MUST NOT be named in the portable skill.
-
-Measured 2026-09-03 by scanning the installed binaries, since the published settings docs no longer cover
-attribution:
-
-| Agent                     | Key                                              | Effect                                                                                                                      |
-| ------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
-| Claude Code 2.1.239       | `attribution.commit` (string)                    | Attribution text for commits, including any trailers. An empty string hides attribution                                     |
-| Claude Code 2.1.239       | `attribution.pr` (string)                        | The same for pull request descriptions                                                                                      |
-| Claude Code 2.1.239       | `attribution.sessionUrl` (boolean, default true) | Appends the `Claude-Session` trailer and PR-body link for web and Remote Control sessions                                   |
-| Claude Code 2.1.239       | `includeCoAuthoredBy` (boolean, default true)    | Deprecated by the binary's own description in favour of `attribution`. Prefer `attribution.commit: ""`                      |
-| Claude Code 2.1.239       | `includeGitInstructions` (boolean, default true) | Includes the built-in commit and PR workflow instructions in the system prompt. This is the injection the skill argues with |
-| GitHub Copilot CLI 1.0.80 | `includeCoAuthoredBy` (boolean)                  | Declared in `sdk/index.d.ts` alongside other terminal settings. The config file was not located under `~/.copilot`          |
-
-Open work:
-
-- Decide whether to set `attribution.commit: ""` in this repository's deployed Claude Code settings, and
-  whether `includeGitInstructions: false` removes wanted behavior along with the trailer.
-- Locate the Copilot CLI configuration file and record its path before setting anything there.
-- Check Codex for an equivalent switch; it was not scanned.
-
 ## Portable Skill-Fixture Harness
 
 Evaluate and design a portable runner for package-local skill fixtures before the next multi-client suite. The
@@ -280,12 +260,6 @@ expression language). Do not keep expanding the orientation file into a referenc
 
 Write independently from primary sources: `netresearch/github-project-skill` uses CC-BY-SA-4.0 for prose
 despite MIT for scripts and assets, so its prose cannot be lifted into this MIT repository.
-
-## Codex Skill-Description Budget
-
-Recheck the warning that Codex shortened skill descriptions to fit its context budget. Start a fresh Codex
-session and record whether it remains; if it does, compare the current common set with a curated Codex overlay
-before changing deployment policy. Skill count alone does not establish which descriptions consume the budget.
 
 ## Two-Tier Memory Scoping
 
