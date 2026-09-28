@@ -11,6 +11,39 @@ their surviving open work is below, and the embedded research notes (tooling, te
 Repository-wide items live in [../TODO.md](../TODO.md). Roughly high-priority first; the settled/low-priority
 entries sit at the bottom.
 
+## Apply the [redacted] Documentation Lessons to the Neighbouring Skills
+
+Next in line, added 2026-09-28, before the general pass ledger below. The `writing-documentation` and
+`writing-for-humans` refresh that these build on is done. The lessons come from three weeks of documentation
+work in [redacted], condensed in `~/work/[redacted].git/.workdir/skill-feedback-brief.md`, and each rule
+came from a user correction. The worst symptom was unreadable PRDs, SRSs, and design documents, because the
+prose and document rules were never applied to them. Each skill gets both passes from the ledger below.
+
+- **`requirements-specification` and `technical-design`:** route every document they produce through
+  `writing-documentation` and the `writing-for-humans` reader-ready pass. Neither skill names either one today.
+- **`requirements-specification`:** the requirements tone for obligations and limits (`SHALL` in EARS patterns,
+  priorities defined by consequence, a Notes field that states limits and never argues). Treat a requirement as
+  unsettled until the customer has reviewed it, and check that a role or route it relies on is defined and could
+  work.
+- **`technical-design`:** a design is living and two-way; its opener says the code wins once implemented. Every
+  decision states each rejected option with the reason it lost. Mark provisional decisions as provisional
+  wherever they land. Where no ready component exists, write the custom step as a task rather than a finding.
+  Check claims about upstream mechanisms against the pinned source. Quality bar: a first-time reader re-derives
+  the implementation from the documents alone, and the working note behind the design is deletable after review.
+- **`git-commits-and-recovery`:** the body states only the why, in one or two short paragraphs. No per-file
+  inventory, restated settings, or requirement keys. Draft, then cut by half.
+- **`interview-me`:** map the decision branches first, give each question its context and a recommendation with
+  the strongest case against it, and write the decision ledger as answers land. Batch up to four independent
+  decisions into one structured question, each option with a one-line consequence.
+- **`writing-for-agents`:** park uncommitted work as a patch plus a resume file with a next-action line; keep
+  every ledger true at each boundary; close the loop on each style correction by updating guidelines and memory
+  in the same turn. Delegated passes need the approved passages, the full guidelines, and the source locations.
+- **`agents-context-docs`:** a date recording who decided what, and when, in a ledger row is intended rather
+  than drift; its advisory date warning should say so.
+- **Delegation guidance** (global rules or the owning skill): Sonnet's added explanations need a fact check;
+  keep parallel subagents on disjoint files; spot-check a subagent's claims before relaying them. Put anything
+  the user must act on after the turn's last tool call, because text before a tool call can be lost.
+
 ## Decide Which Skills Stay Direct and Which Go Behind the Lazy Server
 
 Urgent, added 2026-09-28. The lazy-skills-server is finished and Codex already uses it; today it serves only
@@ -56,6 +89,8 @@ names it. The 2026-09-07 description audit predates the description skill and do
 | `session-reflect`                 | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                                                   |
 | `systemd-units`                   | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                                                   |
 | `docker-podman-containers`        | 2026-09-28, `f92701a`            | 2026-09-28, `f92701a`                                                   |
+| `writing-for-humans`              | 2026-09-28, `e999023`            | 2026-09-28, `e999023`                                                   |
+| `writing-documentation`           | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                                                   |
 
 ## Merge skill-review Into skill-forge as a Review Mode?
 
