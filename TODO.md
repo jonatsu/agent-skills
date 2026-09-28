@@ -11,39 +11,22 @@ their surviving open work is below, and the embedded research notes (tooling, te
 Repository-wide items live in [../TODO.md](../TODO.md) and [../BACKLOG.md](../BACKLOG.md). Roughly
 high-priority first; the settled/low-priority entries sit at the bottom.
 
-## Move the Specialized Skills Behind the Lazy Server
+## Probe the Lazy Tier on Codex and Copilot
 
-Urgent, added 2026-09-28; the split was decided the same day, and the directory moves are still to do. Today
-the lazy server serves only `embedded-linux`, `development/nix`, `system-administration`, and `code-health` (see
-the lazy-tier comment in `kasetto/base.yaml`). `docs/plans/agent-management/lazy-skill-loading.md` is the
-design record, and `../docs/findings/skill-discovery-limits.md` explains why a skill nobody asks for by name
-must stay direct.
+Added 2026-09-28, when the specialized skills moved under `shared/lazy/`
+([the plan](../docs/plans/archived/lazy-tier-layout.md) records the split and the layout). Two checks remain,
+and each spends a model call, so each waits for the user's go-ahead:
 
-The rule: a skill stays direct when almost every repository or session needs it, and a specialized skill, such
-as a language, a named tool, or a rare method, goes lazy. The move affects Codex and Copilot only; Claude keeps
-installing every skill natively.
+- Start a fresh Codex session and record whether its warning that it shortened skill descriptions remains. The
+  direct set still carries about 12,000 characters of descriptions, so the warning is expected. Keep
+  `skills.max_context_tokens = 2000` until that is measured: the Codex configuration reference documents only
+  `path` and `enabled` under `skills.config`, with no description override or name-only mode (checked
+  2026-09-12).
+- Give Codex, and Copilot once it has quota, a request that needs a moved skill, such as a Python style
+  question, and record whether it calls `find_skills` or `load_skill` unprompted. The root `TODO.md` item on
+  closing the lazy-skill-loading plan runs the same Copilot probe; do both in one session.
 
-Direct, 31 skills: `writing-for-humans`, `writing-documentation`, `writing-readmes`, `writing-for-agents`,
-`agents-context-docs`, `context-architecture`, `session-handoff`, `dispatching-subagents`, `writing-prompts`,
-`context-compression`, `bash-shell`, `posix-shell`, `git-commits-and-recovery`, `git-history-investigation`,
-`using-git-worktrees`, `repo-management`, `github-ops`, `ast-grep`, `coding-standards`, `systematic-debugging`,
-`test-driven-development`, `incremental-implementation`, `test-engineer`, `idea-brainstorming`,
-`requirements-specification`, `technical-design`, `implementation-planning`, `domain-modeling`, `interview-me`,
-`security-review`, and `spec-conformance-review`.
-
-Newly lazy, 20 skills, joining the 22 already there: all eight Python skills, `chezmoi-dotfiles`, `mise-tools`,
-`just-task-runner`, `docker-podman-containers`, `document-conversion`, `cc-safety-net`, `skill-forge`,
-`skill-descriptions-and-triggers`, `kasetto-skill-tool`, `prompt-debugging`, `to-questionnaire`, and the
-remote `mermaid-diagrams` entry.
-
-Every lazy skill moves under `shared/lazy/`, keeping its current domain as a subdomain. The units are in
-`../docs/plans/agent-management/lazy-tier-layout.md`. Domain names and skill renames come afterwards.
-
-The same decision answers Codex's warning that it shortened skill descriptions to fit its context budget.
-Before changing policy for Codex, start a fresh Codex session and record whether the warning remains; skill
-count alone does not show which descriptions consume the budget. Keep `skills.max_context_tokens = 2000`: the
-Codex configuration reference documents only `path` and `enabled` under `skills.config`, with no description
-override or name-only mode (checked 2026-09-12).
+The user also plans to revisit the domain names and to rename some skills; neither is scheduled.
 
 ## Description and Prose Pass Ledger
 
@@ -277,7 +260,7 @@ sources, record provenance, and decide whether the source overlaps an existing s
 - [wshobson/conductor](https://github.com/wshobson/agents/tree/main/plugins/conductor): inspect as a plugin,
   including agent definitions and commands Kasetto would not deploy as skills.
 - [mkobit/chezmoi-skills](https://github.com/mkobit/chezmoi-skills): compare against our
-  `shared/tools/chezmoi-dotfiles` skill for coverage gaps and better patterns worth writing independently.
+  `shared/lazy/tools/chezmoi-dotfiles` skill for coverage gaps and better patterns worth writing independently.
 
 ## Dedicated GitHub Actions Skill
 
