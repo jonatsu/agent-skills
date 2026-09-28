@@ -25,10 +25,12 @@ clause: `coding-standards` stops at "Use bef". `codex exec` printed no warning, 
 
 Still open:
 
-- Decide the Codex description cap. `skills.max_context_tokens = 2000` causes the cut above, and the Codex
-  configuration reference documents only `path` and `enabled` under `skills.config`, with no per-skill
-  override or name-only mode (checked 2026-09-12). Raising the cap, or front-loading each description's
-  routing words, are the two ways out; either needs a re-probe.
+- Settle the Codex description cap. The user raised `skills.max_context_tokens` to 3000 the same day to see how
+  it goes. A re-probe then showed Codex cutting every description at the same length, 286–290 characters: 3 of
+  the 30 local direct skills arrive whole, and `repo-management` (295) and `git-history-investigation` (294)
+  lose only their last words. The Codex configuration reference documents only `path` and `enabled` under
+  `skills.config`, with no per-skill override or name-only mode (checked 2026-09-12). The ways out are a
+  higher cap, or descriptions that put their routing words in the first 280 characters.
 - Run the same Python probe on Copilot once it has quota. The root `TODO.md` item on closing the
   lazy-skill-loading plan runs a Copilot probe too; do both in one session.
 
