@@ -2,7 +2,7 @@
 name: cc-safety-net
 description: Operate CC Safety Net — explain why a command was blocked, triage false positives, configure custom rulebooks, manage agent CLI integrations, and diagnose protection. Use when a BLOCKED by CC Safety Net message appears, or when asked whether the guard is working.
 license: MIT
-compatibility: Requires the cc-safety-net CLI on PATH. Verify the running version with `cc-safety-net --version`; guidance here tracks 2.4.1.
+compatibility: Requires the cc-safety-net CLI on PATH. Verify the running version with `cc-safety-net --version`; guidance here tracks 2.4.11.
 metadata:
   author: Joonas Onatsu
 ---
@@ -88,7 +88,8 @@ those only as part of a workflow below.
 3. If a custom rule fired, fix that rulebook: disable or reword it with an override, or edit the
    rule (see configure rules), then re-run `explain` to confirm the new verdict.
 4. If a built-in rule fired, no rule edit can relax it. Check the reason for a documented escape
-   hatch, such as `CC_SAFETY_NET_WORKTREE=1` for local git discards in linked worktrees, or
+   hatch, such as `CC_SAFETY_NET_WORKTREE=1` for local git discards in linked worktrees (git
+   discards in a temp-root repository outside the workspace are already allowed), or
    `rule wrapper add` when a trusted transparent wrapper hid the real command from the analyzer.
    Pass the wrapper name as a separate argv value, or shell-escape it as one argument. If the
    user explicitly wants that built-in rule off, read its id from the `ruleId` field of
@@ -181,14 +182,17 @@ error, so validate against it rather than guessing further fields):
 - `safety.level`: `standard`, `strict`, or `paranoid`. `safety.overrides`: booleans for
   `fail_closed`, `paranoid_rm`, and `paranoid_interpreters` that pin one capability apart from
   the level.
-- `workflow.worktree_mode`: boolean, allows local git discards in linked worktrees.
+- `workflow.worktree_mode`: boolean, allows local git discards in linked worktrees; discards in a
+  temp-root repository outside the workspace need no toggle.
 - `destructive_command_protection` and `secret_protection`: an `enabled` boolean, and per-rule
   `overrides` mapping a built-in rule id (`git.reset-hard`, `secret.basename.env`) to `"on"` or
   `"off"`. Get the id for a blocked command from the `ruleId` field of `explain --json`.
 - `destructive_command_protection.allow_paths`: absolute or `~/` paths where recursive delete
-  targets are permitted. `secret_protection.allow_paths`: exact user-managed paths exempted from
-  secret protection, globs rejected. `secret_protection.deny_paths`: extra paths protected like
-  built-in secrets.
+  targets are permitted. `secret_protection.allow_paths`: exact user-managed files or directories,
+  or a folder followed by `**/` and an exact file name (for example `~/code/**/.env.local`; the
+  folder cannot be home or above it), exempted from built-in secret patterns. Deny paths and
+  Coding CLI protections still win. Other glob forms are rejected.
+  `secret_protection.deny_paths`: extra paths protected like built-in secrets.
 - `audit.retention_days`: days of audit history to keep, user scope only.
 
 1. Inspect the current state: `cc-safety-net status` for the effective policy and the file

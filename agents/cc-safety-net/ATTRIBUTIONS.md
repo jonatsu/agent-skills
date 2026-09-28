@@ -12,13 +12,15 @@
 - Original author: J Liew (`kenryu42`)
 - Upstream project: [kenryu42/cc-safety-net](https://github.com/kenryu42/cc-safety-net)
 - Source path: `skills/cc-safety-net/`
-- Source revision: tag `v2.4.1`
+- Source revision: tag `v2.4.11`, re-vendored 2026-09-28; first vendored at `v2.4.1`
 - Source license: MIT, verbatim in `LICENSE.upstream`
 - Relationship: vendored and adapted
 
 Every file in this package originated upstream except this one. The vendored `SKILL.md` was taken from the
 plugin cache that `cc-safety-net install --codex` wrote on 2026-09-14, and verified byte-identical to the
-`v2.4.1` tag on GitHub before adaptation.
+`v2.4.1` tag on GitHub before adaptation. On 2026-09-28 it was re-vendored to `v2.4.11` by a three-way merge
+of upstream's `v2.4.1` to `v2.4.11` change into this copy, which applied cleanly and kept every local change
+below.
 
 Upstream generates this file from `src/hosts/templates/cc-safety-net.ts` and versions it with the CLI, so its
 content is version-specific rather than evergreen. That is why the revision is pinned to a tag and why
@@ -49,4 +51,7 @@ Local changes since the vendored revision:
 
 [cc-safety-net](https://github.com/kenryu42/cc-safety-net) is the documented subject of this skill rather than
 a source it draws from. Behavior described here was verified against CLI 2.4.0 and plugin 2.4.1 on
-2026-09-14, via `--help`, `rule doc`, `doctor`, `status` and `explain`.
+2026-09-14, via `--help`, `rule doc`, `doctor`, `status` and `explain`. On 2026-09-28 CLI 2.4.11 was
+checked with `--version`, `doctor` and `rule doc`; the two settings clarifications the `v2.4.11` merge
+brought in (temp-root discards and the `**/` form of `secret_protection.allow_paths`) are upstream's text
+and were not exercised here.
