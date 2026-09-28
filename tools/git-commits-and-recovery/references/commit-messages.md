@@ -60,13 +60,32 @@ prefer the second whenever both are available.
 
 ## Body
 
-**Write a body only when the reason for the change is not evident from the subject and the diff.** Begin it
-one blank line after the subject and wrap at 72 columns.
+**Write a body when the subject and the diff leave the reader without the reason for the change, or without an
+understanding of what it does.** Begin it one blank line after the subject and wrap at 72 columns.
 
-A body earns its place by recording something the diff cannot hold: why an obvious alternative was rejected,
-what else the change affects, or which external constraint forced its shape. It does not earn its place by
-restating the diff. A bulleted list of the files touched duplicates `git show --stat`, and unlike that command
-it goes stale the moment the commit is amended or rebased.
+A body carries the two things a reader of history cannot recover from the diff alone:
+
+- **The why:** the problem, why an obvious alternative was rejected, what else the change affects, or which
+  external constraint forced its shape.
+- **The what, when the diff hides it:** in a large diff, a change mixed with mechanical edits, or several related
+  changes in one commit, summarize what changed in behavior or structure. Write it one level above the diff.
+  "Moves retry handling from the client into the queue, so every consumer shares one policy" is a what. A list of
+  the files touched is not.
+
+Keep the body to one or two short paragraphs. Anything else is noise to a reader of history, and three forms
+recur:
+
+- an inventory of files or hunks, which `git show --stat` already gives and which goes stale on amend or rebase;
+- values or settings the diff shows; and
+- process residue: "tests pass", "verified with `just check`", "reviewed". A commit implies its checks ran. A
+  check that could not run belongs in the report to the user, not in history.
+
+Leave internal document keys, such as requirement or decision identifiers, out of the body unless the
+repository's convention calls for them. A reader of history often lacks the document that decodes them.
+Reference an issue or document in a footer, in the repository's form.
+
+Draft the body, then apply the deletion test from `writing-for-humans` to each sentence. A first draft usually
+halves.
 
 ## Breaking Changes
 

@@ -83,8 +83,10 @@ Use this path only when creating a new commit without amending, rewriting, pushi
    unintended. Recheck after interactive staging or concurrent activity.
 
 5. Follow repository commit conventions. Otherwise use Conventional Commits: `<type>(<scope>): <subject>`,
-   imperative, at most 72 characters, no period. When the type, scope, body, a breaking change or a trailer
-   needs a decision, read [references/commit-messages.md](references/commit-messages.md).
+   imperative, at most 72 characters, no period. Write a body when the subject and diff leave the reader
+   without the why, or without the what: a large or mixed diff can hide what actually changed. Keep it to one or
+   two short paragraphs, carrying nothing the diff already shows. When the type, scope, body, a breaking change
+   or a trailer needs a decision, read [references/commit-messages.md](references/commit-messages.md).
 
 6. Run the validation required by the task and repository. Do not invent generic language-specific checks.
 
