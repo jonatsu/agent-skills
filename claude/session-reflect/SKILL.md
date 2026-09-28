@@ -1,6 +1,6 @@
 ---
 name: session-reflect
-description: On-demand or end-of-session self-improvement sweep. Reviews the session for uncaptured learnings (corrections, stated preferences, avoidable mistakes, repeated commands, reusable patterns, repo-specific discoveries) and routes each to a durable home. Also prunes stale, superseded or duplicate memories, and drains the compaction backlog. Use for /reflect, "capture learnings", "update your rules/skills", "prune memories", or "check pending captures".
+description: End-of-session or on-demand sweep that distills this session's uncaptured learnings into durable homes, prunes stale or superseded memories, and drains the compaction backlog. Use for /session-reflect, "capture learnings", "prune memories", or "check pending captures".
 license: MIT
 compatibility: Requires Claude Code. Section 8 additionally requires the PreCompact capture hook.
 metadata:
@@ -63,8 +63,8 @@ captured it.
 | Cross-repo reusable method or role            | Whatever source owns the user-level skills or agents          |
 | Repo-specific reusable method or role         | Repo's `.claude/{skills,agents}`                              |
 
-Don't mix scopes: repo trivia never goes to memory; a preference that spans repositories never gets buried in
-one repo.
+Route each candidate to its own scope: keep a repo-specific fact in the repo, and send a preference that spans
+repositories to memory rather than filing it under the repo it happened to surface in.
 
 **There is no global memory store.** Silos are per project, so a fact true everywhere still lands in whichever
 silo is open, and only that project's sweeps and recalls will ever see it. Nothing filters on frontmatter, so
@@ -73,10 +73,10 @@ such a fact MUST carry its scope in its own description or it is unreachable fro
 **Establish what owns a destination before writing to it.** A user-level skills or agents directory may be a
 deployment artifact rather than a source: a sync tool installs real copies into it and overwrites them on the
 next run, so a capture written there is destroyed without any error. Determine the owner from the environment
-at the time of the capture. Look for a manifest, lock file, or tracked source that claims the directory, and
-check whether the deployed copy is under version control at all. When something owns it, the durable home is
-the source that deploys it and the capture goes there; when nothing claims it, the directory is itself the
-home. NEVER assume either answer from a remembered path or a previous session.
+at the time of the capture, never from a remembered path or a previous session. Look for a manifest, lock
+file, or tracked source that claims the directory, and check whether the deployed copy is under version
+control at all. When something owns it, the durable home is the source that deploys it and the capture goes
+there; when nothing claims it, the directory is itself the home.
 
 **Check the destination before proposing a new artifact.** Read what already lives there — the memory silo,
 the rules file, the repo's `AGENTS.md`, the deployed skills and agents. When something already covers the
@@ -128,8 +128,7 @@ actually observed.
   (`user | feedback | project | reference`), plus a one-line pointer in `MEMORY.md`. Read a neighbouring file
   in the same silo and match its frontmatter rather than a remembered schema — some fields are written by
   tooling and MUST NOT be hand-typed, and a hand-written file that omits them is structurally unlike its
-  neighbours. Check for an existing file that already covers the fact and update it rather than duplicating;
-  delete memories proven wrong.
+  neighbours. Delete memories proven wrong.
 - **Set `metadata.scope:`** when the fact does not belong to the silo holding it — `machine` for a fact about
   this machine, `global` for one true in every repository. Omit it for an ordinary repo-scoped fact, which is
   the default and needs no marker. The field is advisory and nothing filters on it, so a fact that escapes
@@ -202,45 +201,4 @@ wc -l < "${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/hooks/capture-pending.jsonl"
 Include the count in the §6 report even when not draining, so the backlog stays visible instead of
 accumulating silently.
 
-**What this sweep structurally cannot recover.** The first turns of a session carry the task setup, the user's
-constraints, and the architectural decisions that cannot be re-derived — and they are the first thing
-compaction discards. An end-of-session sweep reads what survived, so a constraint lost at compaction is lost
-to this skill too, and its absence is invisible: the summary reads complete. Treat a drained entry as partial
-evidence rather than a full account, and prefer whatever the transcript shows VERBATIM over the compacted
-summary of it. The durable fix is upstream of here — extracting the session's constraints into a persistent
-note while they are still in context — so when a session is heading for compaction with constraints only in
-its early turns, say so at that point rather than trusting this backlog to reconstruct them.
-
-### Process one entry
-
-1. **Check the transcript still exists.** Paths decay as old sessions are cleaned up. If `transcript_path` is
-   gone the entry is unrecoverable — drop it, report it as expired, and move on. NEVER retain a dangling
-   entry.
-2. **NEVER read a transcript in full.** They routinely exceed the context window. Search it for the §1
-   signals, or hand the entry to a subagent that returns only candidates with quoted evidence.
-3. **Route to the entry's own project, not the current one.** Memory is siloed per project, and the correct
-   silo is `<dirname of transcript_path>/memory/` — derive it from the breadcrumb, NEVER assume the open
-   project's silo. A repo-scoped fact belongs in the `AGENTS.md`/`CLAUDE.md` at that entry's `cwd`; if that
-   checkout is absent, defer it rather than guessing.
-4. **Apply §2–§5 unchanged.** A candidate recovered from a transcript still goes through routing, thresholds,
-   and the autonomy boundary.
-
-The iron law holds here too: evidence MUST be quoted from the transcript. A breadcrumb proves a compaction
-happened, not that anything was learned — most yield nothing, and "no candidates" is a correct result for an
-entry.
-
-### Prune
-
-Drop an entry only once it is processed or expired, one `session_id` at a time:
-
-```bash
-sed -i '/"session_id":"<id>"/d' \
-  "${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/hooks/capture-pending.jsonl"
-```
-
-Use the in-place form. The hook may append while the sweep runs, and the familiar read-filter-rewrite shape
-would overwrite the file with a snapshot taken before those appends, silently dropping them.
-
-NEVER truncate or clear the file wholesale — an unprocessed line deleted that way loses its transcript pointer
-permanently. The hook may append while the sweep runs, so re-check the count afterwards and leave anything new
-in place. The file is runtime state and gitignored; never stage it.
+Read [references/compaction-backlog.md](references/compaction-backlog.md) when draining the backlog.
