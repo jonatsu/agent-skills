@@ -10,8 +10,8 @@ sections. -->
 
 ## What's here
 
-| Path              | Purpose          |
-| ----------------- | ---------------- |
+| Path | Purpose |
+| -- | -- |
 | `{{FILE_OR_DIR}}` | {{WHAT_IT_DOES}} |
 
 ## Why this setup

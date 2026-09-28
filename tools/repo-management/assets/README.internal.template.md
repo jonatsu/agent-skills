@@ -26,9 +26,9 @@ drop unused sections. Do not invent contact details or URLs. -->
 
 ### Environment variables
 
-| Variable  | Description     | Where to get it |
-| --------- | --------------- | --------------- |
-| `{{VAR}}` | {{DESCRIPTION}} | {{SOURCE}}      |
+| Variable | Description | Where to get it |
+| -- | -- | -- |
+| `{{VAR}}` | {{DESCRIPTION}} | {{SOURCE}} |
 
 ### Running locally
 
@@ -42,8 +42,8 @@ drop unused sections. Do not invent contact details or URLs. -->
 
 ### Key files
 
-| Path       | Purpose          |
-| ---------- | ---------------- |
+| Path | Purpose |
+| -- | -- |
 | `{{PATH}}` | {{WHAT_IT_DOES}} |
 
 ## Deployment
