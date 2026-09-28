@@ -15,9 +15,7 @@ Useful tool options:
 - install-order dependencies
 - postinstall hooks when truly needed
 
-Changing a scalar tool declaration into a `[tools."..."]` subtable changes TOML scope for every declaration
-that follows it. Keep flat siblings before tool subtables and apply the structural verification in
-`config-and-env.md`.
+Before turning a tool declaration into a subtable, read the TOML-scope rule in `config-and-env.md`.
 
 Useful command and override reminders from upstream docs:
 

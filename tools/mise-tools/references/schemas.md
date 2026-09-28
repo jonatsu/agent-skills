@@ -46,18 +46,6 @@ curl -sL https://raw.githubusercontent.com/jdx/mise/refs/heads/main/schema/mise.
 The schemas are large JSON documents. When consulting one, fetch it and inspect only the section relevant to
 the current task rather than pasting the whole file into context.
 
-## IDE and editor integration
-
-The same schemas are published to SchemaStore, so editors with YAML/TOML schema support (VS Code with the Even
-Better TOML extension, Neovim with schemastore.nvim, JetBrains, etc.) can auto-complete and validate mise
-config files automatically. No manual URL wiring is needed in most editors that respect SchemaStore.
-
-For explicit schema binding in editors that require it, point the relevant file pattern at the raw URL:
-
-- `mise.toml`, `mise.local.toml`, `mise.*.toml` → `mise.json`
-- `.miserc.toml` → `miserc.json`
-- `mise-tasks/*.toml` → `mise-task.json`
-
 ## How schemas relate to other references
 
 - For config resolution, scoping, and layering → `references/config-and-env.md` (schemas define keys; that

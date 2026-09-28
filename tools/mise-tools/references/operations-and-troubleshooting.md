@@ -1,21 +1,7 @@
 ## Diagnostic sequence
 
-Apply the trust, isolation, safe-mode, and auto-install gates in `SKILL.md`, then select only the read-only
-commands relevant to the symptom:
-
-1. `mise --version`
-2. `mise doctor`
-3. `mise cfg`
-4. `mise env`
-5. `mise trust --show`
-6. `mise ls`
-7. `mise tasks` if tasks are involved
-
-Reproduce through `mise exec -- <tool> --version` or `mise run <task>` only when the target, config behavior,
-trust transition, and possible installation are authorized.
-Do not run `mise install` during diagnosis. If evidence identifies missing tools and the user authorized repair,
-preview with `mise install --dry-run` when useful, install the required scope, and repeat the original
-reproduction.
+Follow SKILL.md's "Diagnose Before Repairing" sequence and its trust, safe-mode, and auto-install
+gates. The patterns below map a symptom to its likely cause.
 
 ## Common failure patterns
 

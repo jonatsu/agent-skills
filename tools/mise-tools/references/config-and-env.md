@@ -59,10 +59,8 @@ path. This catches valid but wrongly nested declarations before they disable sev
 
 ## Safe config-scope choices
 
-- shared repo behavior → `mise.toml`
-- local secrets or machine overrides → an ignored `mise.local.toml`
-- environment-specific overlay → `mise.<env>.toml`
-- machine-wide policy only when explicitly requested → global config
+SKILL.md lists the project-level choices. Add machine-wide policy to the global config only when the user
+explicitly requests it.
 
 ## Early-init `.miserc.toml`
 
