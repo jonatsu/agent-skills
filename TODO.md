@@ -25,9 +25,6 @@ the reader does not share the writer's knowledge, and every document a skill pro
 status "throughout" turns into per-sentence noise; carry status in the document's structure instead.
 `requirements-specification` and `technical-design` show the fix.
 
-- **`writing-for-agents`:** park uncommitted work as a patch plus a resume file with a next-action line; keep
-  every ledger true at each boundary; close the loop on each style correction by updating guidelines and memory
-  in the same turn. Delegated passes need the approved passages, the full guidelines, and the source locations.
 - **`agents-context-docs`:** a date recording who decided what, and when, in a ledger row is intended rather
   than drift; its advisory date warning should say so.
 - **Delegation guidance** (global rules or the owning skill): Sonnet's added explanations need a fact check;
@@ -58,7 +55,7 @@ names it. The 2026-09-07 description audit predates the description skill and do
 | `git-commits-and-recovery`        | 2026-09-27, `05ecb1e`            | 2026-09-28, `bf0a58d`                                                   |
 | `git-history-investigation`       | 2026-09-27, `8242032`            | 2026-09-27, `8242032`                                                   |
 | `using-git-worktrees`             | 2026-09-27, `b10689e`            | 2026-09-27, `36bb1b4`                                                   |
-| `session-handoff`                 | 2026-09-28, `f25ae32`            | 2026-09-28, `f25ae32`                                                   |
+| `session-handoff`                 | 2026-09-28, `f25ae32`            | 2026-09-28, `bd1ba4e`                                                   |
 | `skill-descriptions-and-triggers` | 2026-09-28, `37f34c8`            | 2026-09-28, `37f34c8`                                                   |
 | `session-skill-audit`             | 2026-09-28, `da8a0cb`            | 2026-09-28, `da8a0cb`                                                   |
 | `skill-review`                    | 2026-09-28, `0067bb4`            | 2026-09-28, `0067bb4`, light: tiers, discovery lens, two negations only |
