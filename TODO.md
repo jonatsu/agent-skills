@@ -36,9 +36,8 @@ Newly lazy, 20 skills, joining the 22 already there: all eight Python skills, `c
 `skill-descriptions-and-triggers`, `kasetto-skill-tool`, `prompt-debugging`, `to-questionnaire`, and the
 remote `mermaid-diagrams` entry.
 
-A lazy skill whose domain stays direct moves one directory deeper into a subgroup, as `development/nix` sits
-inside `development`, because Kasetto discovers skills exactly one level under a configured `sub-dir`. The
-subgroup names are still to decide.
+Every lazy skill moves under `shared/lazy/`, keeping its current domain as a subdomain. The units are in
+`../docs/plans/agent-management/lazy-tier-layout.md`. Domain names and skill renames come afterwards.
 
 The same decision answers Codex's warning that it shortened skill descriptions to fit its context budget.
 Before changing policy for Codex, start a fresh Codex session and record whether the warning remains; skill
