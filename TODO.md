@@ -25,8 +25,6 @@ the reader does not share the writer's knowledge, and every document a skill pro
 status "throughout" turns into per-sentence noise; carry status in the document's structure instead.
 `requirements-specification` and `technical-design` show the fix.
 
-- **`agents-context-docs`:** a date recording who decided what, and when, in a ledger row is intended rather
-  than drift; its advisory date warning should say so.
 - **Delegation guidance** (global rules or the owning skill): Sonnet's added explanations need a fact check;
   keep parallel subagents on disjoint files; spot-check a subagent's claims before relaying them. Put anything
   the user must act on after the turn's last tool call, because text before a tool call can be lost.
@@ -62,7 +60,7 @@ names it. The 2026-09-07 description audit predates the description skill and do
 | `skill-forge`                     | 2026-09-28, `37f34c8`            | 2026-09-28, `1666cb1`                                                   |
 | `context-compression`             | 2026-09-28, `2997308`            | 2026-09-25, `f0f5559f`                                                  |
 | `context-architecture`            | 2026-09-28, `2997308`, no change | 2026-09-25, `8fce5a79`                                                  |
-| `agents-context-docs`             | 2026-09-28, `2997308`, no change | 2026-09-25, `8fce5a79`, as `agents-management`                          |
+| `agents-context-docs`             | 2026-09-28, `2997308`, no change | 2026-09-28, `7eb012e`                                                   |
 | `python-architecture`             | 2026-09-28, `2997308`            | 2026-09-24, `4e374bf`                                                   |
 | `python-async-patterns`           | 2026-09-28, `2997308`, no change | 2026-09-24, `c85d2cf`                                                   |
 | `python-error-handling`           | 2026-09-28, `2997308`, no change | 2026-09-24, `819aa34`                                                   |
