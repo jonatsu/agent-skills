@@ -63,24 +63,24 @@ that breaks every repository policy, and the policy validator does not look at f
 
 ## Everyday workflow
 
-The edit loop is **edit here → commit → the post-commit hook syncs the touched scope → `just skills-sync`**.
-`pre-commit install` wires that hook (`scripts/sync-skills-kasetto.sh`) alongside the pre-commit checks. Use
-the `skill-forge` skill for authoring conventions and for reviews.
+The edit loop is **edit here → commit → the post-commit hook redeploys the touched scope and amends its lock
+into the commit**. `just skills-hook` installs that hook once per clone; `pre-commit install` covers only the
+pre-commit checks. Use the `skill-forge` skill for authoring conventions and for reviews.
 
 ### Editing a skill
 
-Edit the files and commit. The hook maps the commit's changed paths to Kasetto scopes and redeploys them, so
-edits go live in every supported agent. Every file in the package counts — `references/` and `scripts/`
-propagate the same as `SKILL.md`.
+Edit the files and commit. The hook maps the commit's changed paths to Kasetto scopes and redeploys them from
+HEAD, so committed edits go live in every supported agent and uncommitted ones do not. Every file in the
+package counts: `references/` and `scripts/` propagate the same as `SKILL.md`.
 
-Then run **`just skills-sync`**. The redeploy rewrites the scope's `kasetto.lock`, leaving it dirty in an
-otherwise clean tree; the recipe settles it with a warm redeploy and a `chore(kasetto):` commit of the locks
-alone, staged by explicit path. It never runs `git add -A`, because this checkout is often open in more than
-one agent session, and it refuses outright if the index already holds staged changes it did not put there.
-Skipping it is safe in the moment — the skills are already live — but a stale committed lock defeats the
-`kst lock --check` drift gate the lock exists for.
-
-**A skill edit is always two commits.**
+The redeploy rewrites the scope's `kasetto.lock`, and the hook amends that lock into the commit you just made
+before `git commit` returns, so the hash `git commit` prints is the pre-amend one. When amending is unsafe,
+the hook prints the reason
+and leaves the lock for **`just skills-sync`**, which redeploys from HEAD and records the locks in a separate
+`chore(kasetto):` commit. The reasons are an unfinished merge or rebase, a detached HEAD, a pushed HEAD, or
+another session's uncommitted lock edit. `src/tools/kasetto-sync/README.md` has the full rules. A stale
+committed lock defeats the `kst lock --check` drift gate the lock exists for, so settle one whenever the hook
+asks.
 
 ### Adding a skill
 
@@ -120,17 +120,17 @@ pre-commit hook enforces it:
 4. Commit both files. `just skills-sources` runs as a pre-commit hook and rejects a remote source that is
    unpinned, unapproved, or pinned to a different commit, and an approval whose source is gone, before the
    post-commit deploy can run.
-5. Run `just skills-sync` for the lock-only follow-up commit, then confirm with `just skills-deployed`. The
+5. Confirm with `just skills-deployed`, after `just skills-sync` if the hook left a lock behind. The
    post-commit deploy relocks any remote skill whose lock lags its new pin, which Kasetto would otherwise skip
    when the upstream content is identical. A `REMOTE-MISMATCH` here means that deploy did not run or failed;
-   re-run `./scripts/kasetto-deploy.sh`.
+   run `just skills-sync`.
 
 Removing a third-party skill removes its `base.yaml` entry and its approval in the same commit.
 
 ### Removing a skill
 
-`git rm` the directory and commit. The hook drops it from the lock and prunes the live copies. Settle the
-lock with `just skills-sync`, then confirm the prune with `just skills-deployed --skill <name> --verbose`
+`git rm` the directory and commit. The hook drops it from the lock, amends the lock in, and prunes the live
+copies. Confirm the prune with `just skills-deployed --skill <name> --verbose`
 and its exit-2 answer. Archiving instead of deleting has its own procedure in
 [archived/README.md](archived/README.md).
 
@@ -151,7 +151,8 @@ sources as well — so reach for it only when pulling upstream drift is what you
 git clone git@github.com:jonatsu/agent-setup.git ~/src/agent-setup
 cd ~/src/agent-setup
 cargo install kasetto            # provides `kst`
-pre-commit install               # pre-commit checks plus the post-commit redeploy hook
+pre-commit install               # pre-commit checks
+just skills-hook                 # the post-commit redeploy hook
 just deploy                      # skills to supported agents, plus the dotbot map
 ```
 
@@ -257,8 +258,8 @@ skills cannot ride on the shared base. An extra scope targets the **same destina
 which is safe: `kst sync` prunes only items in its *own* lock, so the two never delete each other's skills,
 nor any pre-existing foreign skill already in the agent's directory.
 
-Two mechanics make the per-directory invocation load-bearing — `scripts/kasetto-deploy.sh` and the post-commit
-hook both `cd` into each config directory before syncing:
+Two mechanics make the per-directory invocation load-bearing. `scripts/kasetto-deploy.sh`, which the
+post-commit hook also runs, `cd`s into each config directory before syncing:
 
 - **Relative local sources resolve against the invoking cwd**, not the config file. That is why `base.yaml`'s
   shared source is `../../shared`, which is correct from `kasetto/<scope>/`.

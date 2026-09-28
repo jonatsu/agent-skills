@@ -20,8 +20,8 @@ just skills-policy             # skill-forge's local policy, whole tree
 just skills-descriptions       # block scalars and length in every description
 just skills-deployed           # deployed skills that no longer match their committed source
 just skills-deployed --skill <name> --verbose   # one skill, itemised per destination
-just skills-sync               # the lock-only follow-up commit every skill commit needs
-./scripts/kasetto-deploy.sh    # redeploy; run it even when the hook reported success
+just skills-sync               # commit a lock the post-commit hook could not amend in, when it says so
+./scripts/kasetto-deploy.sh    # redeploy the worktree, uncommitted edits included; not for settling locks
 ```
 
 **Running only one validator is the mistake the pair exists to prevent.** The specification validator passes a
@@ -86,17 +86,18 @@ The stateful denials remain Claude-only. Read `../docs/findings/git-staging-swee
 - Move an individual package to `archived/<skill>/`. When archiving an entire shared domain, preserve the
   domain as `archived/<domain>/<skill>/` rather than flattening its packages.
 - Add `ARCHIVED.md` inside each moved package and update `archived/README.md`.
-- Prune deployed copies with `./scripts/kasetto-deploy.sh`, then inspect every locked destination.
+- Prune deployed copies with `just skills-sync`, then inspect every locked destination.
 
 ## Verify Moves and Removals Explicitly
 
 After any move, archive, or removal:
 
-1. Commit source changes separately from generated locks.
-2. Run `./scripts/kasetto-deploy.sh` even if the post-commit hook reported success.
+1. Read the hook's output: it either amended the lock into your commit or named why not.
+2. Run `just skills-sync` even if the hook reported success. It redeploys every scope from HEAD, so it prunes
+   what the hook missed, and commits any lock that changed. `./scripts/kasetto-deploy.sh` alone deploys the
+   worktree, including other sessions' uncommitted edits.
 3. Confirm the removed name is absent from every locked destination.
-4. Run `just skills-sync` for the required lock-only follow-up commit.
-5. Run `just skills-deployed`; require zero drift, pending files, stray backups, and unresolved entries.
+4. Run `just skills-deployed`; require zero drift, pending files, stray backups, and unresolved entries.
 
 Use `just skills-deployed --skill <name> --verbose` for step 3 rather than a hand-written diff, and read its
 exit code against what you are proving:
@@ -107,7 +108,7 @@ exit code against what you are proving:
   lock entry, so that failure is the confirmation.
 - **A skill added from a remote source:** expect one `remote` line per destination and exit 0. Exit 1 with a
   `REMOTE-MISMATCH` line means a lock is not at the commit approved in `kasetto/third-party-skills.yaml`;
-  re-run `./scripts/kasetto-deploy.sh`, which relocks a remote skill whose lock lags its pin.
+  re-run `just skills-sync`, which relocks a remote skill whose lock lags its pin and commits the result.
 
 Neither answer is available from a hand-rolled loop, which checks only the destinations you remembered to
 list and cannot tell a pruned skill from a mistyped name.
