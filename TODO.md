@@ -25,9 +25,6 @@ the reader does not share the writer's knowledge, and every document a skill pro
 status "throughout" turns into per-sentence noise; carry status in the document's structure instead.
 `requirements-specification` and `technical-design` show the fix.
 
-- **`interview-me`:** map the decision branches first, give each question its context and a recommendation with
-  the strongest case against it, and write the decision ledger as answers land. Batch up to four independent
-  decisions into one structured question, each option with a one-line consequence.
 - **`writing-for-agents`:** park uncommitted work as a patch plus a resume file with a next-action line; keep
   every ledger true at each boundary; close the loop on each style correction by updating guidelines and memory
   in the same turn. Delegated passes need the approved passages, the full guidelines, and the source locations.
@@ -77,7 +74,7 @@ names it. The 2026-09-07 description audit predates the description skill and do
 | `python-style`                    | 2026-09-28, `2997308`            | 2026-09-24, `e47e62d`                                                   |
 | `python-testing`                  | 2026-09-28, `2997308`            | 2026-09-24, `d908951`                                                   |
 | `python-typing`                   | 2026-09-28, `2997308`, no change | 2026-09-24, `272c8d2`                                                   |
-| `interview-me`                    | 2026-09-28, `152002a`            | 2026-09-28, `152002a`                                                   |
+| `interview-me`                    | 2026-09-28, `cb64a9b`            | 2026-09-28, `cb64a9b`                                                   |
 | `idea-brainstorming`              | 2026-09-28, `7fd41bd`, no change | 2026-09-28, `7fd41bd`                                                   |
 | `session-reflect`                 | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                                                   |
 | `systemd-units`                   | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                                                   |
