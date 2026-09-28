@@ -1,10 +1,12 @@
 ---
 name: to-questionnaire
-description: Turn a decision you cannot answer alone into a Markdown questionnaire for someone who holds the knowledge you lack, to fill in async or in a meeting. Interviews you only about the send - who it goes to and what you need back - then writes questions targeting the gap between what they know and what you need. Use to draft a discovery questionnaire or an async info-gathering document. NOT for being interviewed on your own design (interview-me) or writing a requirements spec (requirements-specification).
+description: Turn a decision you cannot answer alone into a Markdown questionnaire for the person who holds the missing knowledge, to fill in async or walk through in a meeting. Use to draft a discovery questionnaire, a question list for a stakeholder or domain expert, or an async information-gathering document. Not for being interviewed on your own design (interview-me) or writing a requirements spec (requirements-specification).
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
+
+# To Questionnaire
 
 Turn something you cannot answer alone into a **questionnaire**: a Markdown document you hand to one person to
 fill in asynchronously, or work through together in a meeting. The recipient holds knowledge you lack; the
@@ -14,8 +16,8 @@ questionnaire pulls it out of them.
 it goes to, and what they need back. The questions in the document then target the **gap** between what the
 recipient knows and what the user needs — not the subject the user cannot speak to.
 
-This is the inverse of `interview-me`. That skill interviews the user about their own plan or design; reach for this instead
-when the user genuinely cannot answer, because the knowledge lives with someone else. It is not a requirements
+This is the inverse of `interview-me`. That skill interviews the user about their own plan or design; reach for
+this instead when the user genuinely cannot answer, because the knowledge lives with someone else. It is not a requirements
 specification (`requirements-specification`): it gathers what one person knows, it does not define a system's
 behavior.
 
@@ -28,8 +30,11 @@ behavior.
    alone and needs from this person. Done when you have a concrete list of what the user must walk away able to
    do or decide.
 3. **Write the questionnaire.** Draft questions aimed at the gap from steps 1–2, following the structure below.
-   Write it to `to-questionnaire-<slug>.md` in the current directory, slug from the topic, and report the path.
-   Done when the file exists and every item from step 2 is covered by a question.
+   Write each question so the recipient can answer it without the user's context: no internal identifiers or
+   team shorthand, and every term the recipient may not know explained once, at first use. Apply
+   `writing-for-humans` and its reader-ready check to the finished document. Write it where the user says, or
+   to `to-questionnaire-<slug>.md` in the current directory, slug from the topic, and report the path. Done when
+   the file exists, every item from step 2 is covered by a question, and the reader-ready check passes.
 
 ## Document structure
 

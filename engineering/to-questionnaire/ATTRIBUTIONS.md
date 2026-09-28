@@ -34,6 +34,8 @@ Changed for this repository:
   (which interrogates the user's own design) and `requirements-specification`.
 - The upstream `disable-model-invocation: true` flag was not carried: this skill produces only a Markdown file
   and benefits from ordinary description-based discovery here.
+- The writing step requires questions the recipient can answer without the user's context, applies
+  `writing-for-humans` and its reader-ready check, and lets the user choose the output path.
 - The template's example question is illustrative and independent; no other text was copied verbatim.
 
 ## Upstream license
