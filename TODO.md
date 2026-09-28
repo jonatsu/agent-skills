@@ -85,6 +85,8 @@ as `requirements-specification` and `technical-design` do.
 | `document-conversion`             | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
 | `github-ops`                      | 2026-09-28, `7c7a61f`, no change | 2026-09-28, `7c7a61f`                             |
 | `repo-management`                 | 2026-09-28, `ac88c49`, no change | 2026-09-28, `ac88c49`                             |
+| `bash-shell`                      | 2026-09-28, `ef71b3f`, no change | 2026-09-28, `ef71b3f`                             |
+| `posix-shell`                     | 2026-09-28, `ef71b3f`            | 2026-09-28, `ef71b3f`                             |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
