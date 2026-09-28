@@ -82,7 +82,7 @@ survive, as the `Rank` calibration.
 
 ### Rules-audit notebook (local), and its upstream chain
 
-- Source: `~/.config/claude/docs/RULES-AUDIT-NOTEBOOK.md`, dated 2026-08-27 — a
+- Source: `docs/research/claude-config/RULES-AUDIT-NOTEBOOK.md`, dated 2026-08-27 — a
   local document, not published, merging this machine's own rules audit with a
   third-party principles document
 - Upstream half:
