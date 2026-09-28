@@ -12,6 +12,9 @@ metadata:
 A successful `gh` exit status proves that the command ran. It does not prove that the result is complete or
 means what the caller assumes. Check both status and response shape before using output in a decision or gate.
 
+Measurements here were taken on gh 2.98.0 on 2026-08-26. Where a newer `gh` behaves differently, trust its
+`--help` and re-measure.
+
 **This skill does not restate the `gh` CLI surface.** Prefer `gh help`, `gh <cmd> --help`, and the current
 REST or GraphQL documentation when available. A copied command inventory would drift while still reading as
 authoritative. This package instead records decisions and failure modes that are easy to miss.
@@ -42,16 +45,19 @@ Use read-only calls to establish state. Creating, editing, merging, closing, dis
 an API changes GitHub for other people. Perform such an operation only when the user's request authorizes the
 exact repository, resource, and change. Otherwise, report the proposed action or ask for approval.
 
+When writing a pull-request description, issue body, or review reply, state what changed and why, link the
+context, and apply `writing-for-humans`.
+
 ## Recognize Fail-Open Results
 
 Each of these hands a script something that passes a naive check: a non-empty result, a populated field, or a
 plausible count. **The fail-open lives in the caller, not in `gh`.** Some commands exit non-zero, but a caller
-that tests only their output can still interpret failure as data. Measured on gh 2.98.0, 2026-08-26.
+that tests only their output can still interpret failure as data.
 
 **`gh api` writes its error body to stdout.** A 404 puts well-formed JSON such as
 `{"message": "Not Found", "status": "404"}` on **stdout**, a human-readable `gh: Not Found (HTTP 404)` on
 **stderr**, and exits 1. So `result=$(gh api …)` captures the error as though it were data, and
-`[ -n "$result" ]` passes. MUST check the exit status, then validate the success response's shape.
+`[ -n "$result" ]` passes. Check the exit status, then validate the success response's shape.
 
 **An unknown `--json` field is a hard error, and a gate built on one fails open.**
 `gh pr view 1 --repo cli/cli --json reviewThreads` exits 1 with `Unknown JSON field: "reviewThreads"` and
@@ -60,7 +66,7 @@ reads it as "no unresolved threads", and allows every merge. Verify each `--json
 trusting a script built on it.
 
 **Merge fields on a closed PR are stale, not absent.** `cli/cli` PR #1 is `MERGED` and still reports
-`mergeStateStatus: DIRTY`, `mergeable: CONFLICTING`. MUST read `state` first; those fields mean nothing once a
+`mergeStateStatus: DIRTY`, `mergeable: CONFLICTING`. Read `state` first; those fields mean nothing once a
 PR is closed.
 
 **Search runs on its own small budgets, and there are two of them.** Measured: `search` allows **30/min**
@@ -103,7 +109,7 @@ headers, credential type, and endpoint documentation together. Do not infer the 
 
 ## Diagnose Pull Requests and Merge State
 
-`mergeStateStatus` is available through `gh pr view --json mergeStateStatus` as of 2.98.0. It does not
+`mergeStateStatus` is available through `gh pr view --json mergeStateStatus`. It does not
 require a custom GraphQL query. Its values distinguish "conflicting" from "blocked by policy", which is the
 difference between a rebase and a permissions conversation.
 
@@ -147,11 +153,10 @@ Some GitHub features exist only in GraphQL, but **far fewer than the internet sa
 subcommands steadily and the advice does not get retracted. Establish it by measurement, and measure the right
 thing:
 
-> **A noun's help is not the CLI surface. Flags live on the subcommands.** Measured on gh 2.98.0, 2026-08-26:
-> `gh issue --help` contains **zero** occurrences of "sub-issue", while `gh issue edit --help` documents
-> `--add-sub-issue` and `--remove-sub-issue`, and `gh issue create --help` documents `--parent`. They shipped
-> in **v2.94.0 on 2026-06-10**. A grep of the parent noun would have concluded, wrongly and with a measurement
-> to point at, that sub-issues need GraphQL.
+> **A noun's help is not the CLI surface. Flags live on the subcommands.** Measured: `gh issue --help` contains
+> **zero** occurrences of "sub-issue", while `gh issue edit --help` documents `--add-sub-issue` and
+> `--remove-sub-issue`, and `gh issue create --help` documents `--parent`. A grep of the parent noun would have
+> concluded, wrongly and with a measurement to point at, that sub-issues need GraphQL.
 
 So search subcommand help, not the noun's:
 
@@ -166,14 +171,14 @@ done | grep -i "<the thing you want>"
 ```
 
 Three things in that loop are load-bearing, and a hand-written version misses them. **The section header is
-not the same across nouns.** Measured on gh 2.98.0, 2026-08-26: `gh run` and `gh workflow` use
+not the same across nouns.** Measured: `gh run` and `gh workflow` use
 `AVAILABLE COMMANDS`, while `gh issue`, `gh pr`, `gh repo` and `gh release` use `GENERAL COMMANDS` and
 `TARGETED COMMANDS`. A loop keyed on `AVAILABLE COMMANDS` alone iterates **zero times** on the four nouns
 you most want it for, and prints exactly what "no such flag" prints. The `/^[A-Z]/{f=0}` reset stops the
 extraction running past the commands block into `FLAGS` and `LEARN MORE`, and the `gsub` strips the trailing
 colon `gh` puts on each name; without either, every invocation in the loop fails.
 
-**An empty subcommand list MUST be reported as discovery failure, never as "not found".** That guard applies
+**Report an empty subcommand list as discovery failure, not as "not found".** That guard applies
 the status-and-shape rule: a loop that matched nothing and a loop that searched
 everything and found nothing produce identical silence, and only one of them is an answer. Piping through
 `sed` names which subcommand carries the flag, which is the part you actually need next.
@@ -181,7 +186,7 @@ everything and found nothing produce identical silence, and only one of them is 
 **Rule out REST before concluding GraphQL.** "No `gh` subcommand" is a fact about the CLI and says nothing
 about the API beneath it. *Replying* to a review thread has no `gh` verb
 but does have a REST endpoint (`POST /repos/{owner}/{repo}/pulls/{n}/comments/{id}/replies`), reachable with
-`gh api --method POST`. *Resolving* one has neither, and is GraphQL-only as of 2.98.0. Same noun, two
+`gh api --method POST`. *Resolving* one has neither, and is GraphQL-only. Same noun, two
 different answers.
 
 Verified as available without a custom GraphQL query: sub-issues (above), merge-queue enqueueing (`gh pr merge`
@@ -220,32 +225,12 @@ Do not load it for PR, issue, or repository work that never reaches a workflow.
   measured here*. Triggering a limit to observe it is abuse. Checked against the REST rate-limit
   documentation 2026-08-26.
 
-## Anti-Patterns
-
-NEVER:
-
-- Test a `gh api` result for non-emptiness. The error body is JSON on stdout and will pass.
-- Build a gate on a `--json` field without confirming `gh` exposes it; the failure mode is allowing
-  everything.
-- Read `mergeable` or `mergeStateStatus` without checking `state` first.
-- Conclude a branch is unprotected from an empty classic-protection response without also checking rulesets.
-- Treat a search result count as complete. Search has a 1000-result cap, and code search had a 10/minute
-  budget in the measured environment.
-- Force-update an open PR's head ref to its base commit.
-- Decide a 403 is not a rate limit because it was not a 429, or the reverse. Both codes serve both limits;
-  read `retry-after` and the error message.
-- Conclude an operation needs GraphQL from the absence of a `gh` subcommand, without checking REST first.
-- Hand-roll `curl` with a scraped token because `gh` was missing.
-- Transcribe `gh --help` output into a script's comments as though it were a contract; it changes between
-  minor versions.
-- Report a repository-wide finding from one search query without saying which query, and that a search is a
-  lower bound.
-
 ## Before Reporting Done
 
 - Every `gh` call used for a decision or gate had its exit status and response shape checked.
 - Any `--json` field a script depends on was confirmed to exist.
-- Counts from search or unpaginated list endpoints are labelled as lower bounds.
+- Counts from search or unpaginated list endpoints are labelled as lower bounds, naming the query they came
+  from.
 - Claims about protection or policy name whether they came from the classic endpoint, a ruleset, or both.
 - Anything that could not be checked read-only is named as unverified rather than asserted.
 

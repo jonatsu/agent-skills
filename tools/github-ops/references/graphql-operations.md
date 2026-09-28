@@ -87,11 +87,11 @@ Including `rateLimit` in the query itself reports the cost of that same query.
 
 ## Operations Known to Need GraphQL
 
-**This list is short and shrinks.** Measured on gh 2.98.0, 2026-08-26:
+**This list is short and shrinks.** Measured:
 
 - Resolving a review thread needs GraphQL because neither `gh` nor REST exposes the operation.
 - Replying to a review thread uses REST through `gh api`; it has no dedicated `gh` subcommand.
-- Linking a sub-issue uses `gh issue edit --add-sub-issue` or `gh issue create --parent` since v2.94.0.
+- Linking a sub-issue uses `gh issue edit --add-sub-issue` or `gh issue create --parent`.
 - Adding a pull request to a required merge queue uses `gh pr merge`.
 - Reading `mergeStateStatus` uses `gh pr view --json mergeStateStatus`.
 

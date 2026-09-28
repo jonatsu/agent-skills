@@ -57,7 +57,7 @@ A check that is *required* but never runs on this event has the same effect.
 `gh run --help` covers the commands; two things it is easy to miss. Prefer `gh run view <id> --log-failed`
 over the full log, which for a matrix build is enormous. And **both `gh run watch` and `gh run view` take
 `--exit-status`**, which is what makes them usable in a script. Without it they exit 0 when a run finishes,
-including when it finished by failing (verified present on gh 2.98.0, 2026-08-26). Finishing is not passing.
+including when it finished by failing (measured). Finishing is not passing.
 
 For a rerun, GitHub keeps the original event's `GITHUB_SHA` and `GITHUB_REF`. A rerun that still fails after
 the base changed may therefore be testing the original pull-request merge commit. If the user authorized a
