@@ -69,6 +69,8 @@ as `requirements-specification` and `technical-design` do.
 | `implementation-planning`         | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                             |
 | `test-engineer`                   | 2026-09-28, `7702d54`, unnamed   | 2026-09-28, `7702d54` and `add69c3`, unnamed      |
 | `coding-standards`                | 2026-09-28, `73a6774`, unnamed   | 2026-09-28, `73a6774`, unnamed                    |
+| `writing-readmes`                 | 2026-09-28, `1d8e881`            | 2026-09-28, `1d8e881`                             |
+| `to-questionnaire`                | 2026-09-28, `e1f25db`            | 2026-09-28, `e1f25db`                             |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
