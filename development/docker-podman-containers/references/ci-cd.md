@@ -1,7 +1,6 @@
 # Container Delivery in CI
 
-Keep the pipeline specific to the target registry and CI platform. Consult current official action or task
-documentation before choosing inputs or pinned revisions.
+Keep the pipeline specific to the target registry and CI platform.
 
 ## Pipeline Order
 

@@ -19,3 +19,12 @@
 This source prompted guidance about immutable container replacement, cache-aware Dockerfile ordering, bounded runtime
 logging, and recurring vulnerability evaluation. All expression is original and was checked against current official
 Docker documentation; no upstream prose, code, examples, identifiers, data, or assets were copied or adapted.
+
+## Verification Sources
+
+Verification sources establish public facts and are cited near the affected claims. Under this repository's
+provenance policy, verification-only use creates no attribution obligation; they are listed here for traceability.
+
+- Fedora Project Wiki, [`Changes/Podman6`](https://fedoraproject.org/wiki/Changes/Podman6) (read 2026-09-28,
+  revision `oldid=764440`) — the Podman 6.0 removal of slirp4netns, cgroups v1, and BoltDB, the netavark iptables
+  removal, and the `containers.conf`/`storage.conf` rework cited in `references/podman-differences.md`.

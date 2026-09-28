@@ -1,7 +1,6 @@
 # Docker Compose
 
-Use Compose to define a multi-container application and its local resource relationships. Inspect the installed
-`docker compose` version and current Compose specification before using newer fields.
+Use Compose to define a multi-container application and its local resource relationships.
 
 ## Model the Application
 
@@ -63,10 +62,9 @@ result on the target engine because host security modules and rootless mode can 
 
 ## Classify Lifecycle Commands
 
-- `config --quiet`, `ps`, and ordinary log reads inspect the project.
-- `pull`, `build`, `create`, `start`, `up`, `stop`, `restart`, and `exec` change or interact with live state.
-- `down`, `rm`, volume removal, and `up --remove-orphans` remove objects and may affect persistent data.
+Compose commands sort into `SKILL.md`'s "Preserve User Authority" classification: `config --quiet`, `ps`, and ordinary
+log reads inspect; `pull`, `build`, `create`, `start`, `up`, `stop`, `restart`, and `exec` mutate; `down`, `rm`,
+`down --volumes`, and volume removal destroy alongside the commands already named there.
 
 Resolve the project name, files, profiles, services, and volumes before a destructive command. Obtain explicit authority
-when the request did not already name that operation and target. Never place `down --volumes`, orphan removal, or prune
-commands in an ordinary start, reload, or scheduled cleanup path.
+when the request did not already name that operation and target.

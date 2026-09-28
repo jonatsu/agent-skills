@@ -1,12 +1,9 @@
 # Podman Differences
 
-Podman runs the same OCI images and a Docker-compatible CLI, so the Dockerfile, Compose, runtime-security,
-scanning, and CI guidance in the other references applies unchanged unless a point below overrides it. This
-reference covers only where Podman diverges from Docker. Confirm every version-gated behavior against installed
-`--help`, `podman info`, and the official documentation; Podman's defaults have moved across major versions.
-
-Podman is a Docker-compatible CLI, not a guaranteed strict drop-in. Do not assume a Docker command or default
-carries over; check the specific point.
+Podman runs the same OCI images and a Docker-compatible CLI: the Dockerfile, Compose, runtime-security, scanning,
+and CI guidance in the other references applies unchanged except where a point below overrides it. This
+reference covers only where Podman diverges from Docker; check the specific point rather than assuming a Docker
+command or default carries over.
 
 ## Runtime Model
 
@@ -21,11 +18,18 @@ carries over; check the specific point.
 - **Volume mount suffixes Docker lacks:** `:U` recursively chowns the source to the container's UID/GID (slow
   on many-inode volumes); `:z` applies a shared SELinux label, `:Z` a private one. In a pod every container
   shares the pod's SELinux label, so one container's `:Z` exposes the volume to the whole pod.
-- **Rootless networking:** pasta is the default rootless network tool since Podman 5.0 (previously
-  slirp4netns); netavark is the default network backend since 4.0 (CNI is deprecated). pasta copies the host
-  interface IP into the container, so cross-container connectivity can need explicit configuration. Rootless
-  bridge port-forwarding uses `rootlessport`, which does not preserve the client source IP unless
+- **Rootless networking, Podman 5.x default.** pasta is the default rootless network tool since Podman 5.0
+  (previously slirp4netns); netavark is the default network backend since 4.0, with CNI deprecated. pasta copies
+  the host interface IP into the container, so cross-container connectivity can need explicit configuration.
+  Rootless bridge port-forwarding uses `rootlessport`, which does not preserve the client source IP unless
   `rootless_port_forwarder="pasta"` is set (experimental).
+- **Podman 6.0 removes the 5.x fallbacks, accepted for Fedora Linux 45 as of 2026-03-11.** slirp4netns and its
+  `--network-cmd-path` option are removed entirely, so a rootless setup must already run netavark and pasta
+  before upgrading; netavark also drops iptables support in favor of nftables (Fedora's default since Fedora
+  41). The same release drops cgroups v1 support and the BoltDB storage backend (replaced by SQLite as the
+  default since 4.8), and reworks `containers.conf`/`storage.conf` parsing to separate remote-client from server
+  settings. Not yet released: confirm the installed major version before relying on either boundary. Source:
+  Fedora, [_Changes/Podman6_](https://fedoraproject.org/wiki/Changes/Podman6).
 
 ## Compose
 

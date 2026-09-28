@@ -1,7 +1,6 @@
 # Dockerfiles and Builds
 
-Design the image around the target workload and build context. Consult the current Dockerfile and BuildKit references
-for syntax and feature support.
+Design the image around the target workload and build context.
 
 ## Inspect Before Building
 

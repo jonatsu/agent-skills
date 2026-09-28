@@ -1,8 +1,7 @@
 # Image Scanning, SBOMs, and Signing
 
 Use scanners and supply-chain tools already selected by the project. Otherwise choose a maintained tool that supports
-the artifact, registry, output format, and policy engine in use. Read its installed help and official documentation
-before constructing commands because flags and vulnerability databases change.
+the artifact, registry, output format, and policy engine in use.
 
 ## Scan Against Policy
 

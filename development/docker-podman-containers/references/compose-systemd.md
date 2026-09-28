@@ -38,9 +38,9 @@ WantedBy=multi-user.target
 Confirm every directive and Compose option on the target versions. Set a bounded Compose wait timeout when supported and
 derive both systemd timeouts from measured startup and cumulative shutdown behavior.
 
-Do not put `pull`, `--remove-orphans`, `down`, volume removal, image pruning, or builder pruning in the ordinary unit
-lifecycle. Those operations have distinct network, replacement, or deletion effects. Run them through an explicitly
-authorized deployment or maintenance workflow after resolving the project and persistent data.
+A systemd unit adds no exception to `SKILL.md`'s "Preserve User Authority" Destruction classification: route `pull`,
+`--remove-orphans`, `down`, volume removal, image pruning, and builder pruning through the same explicitly authorized
+workflow, not the unit's ordinary start/stop/reload path.
 
 Give long-running services an appropriate Compose restart policy. Do not expect `Restart=` on an exited oneshot unit to
 supervise individual containers. Ensure applications handle dependency loss after startup; Compose startup ordering does

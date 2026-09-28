@@ -1,6 +1,6 @@
 ---
 name: docker-podman-containers
-description: Build, run, diagnose, and secure Docker, Podman, and OCI containers. Use for Dockerfiles or Containerfiles, Compose applications, rootless containers, Quadlet systemd units, container runtime settings, image scanning and publication, or Kubernetes workload hardening. Excludes general Kubernetes cluster administration.
+description: Build, run, diagnose, and secure Docker and Podman containers and OCI images. Use for Dockerfiles or Containerfiles, Compose applications, rootless Podman and Quadlet systemd units, container runtime hardening, image scanning, SBOMs, and signing, container build and publish pipelines in CI, or Kubernetes workload hardening. Excludes general Kubernetes cluster administration, general application security review, and general CI/CD pipeline design unrelated to containers.
 license: MIT
 compatibility: Requires the container, registry, scanner, or Kubernetes tools used by the target project.
 metadata:
@@ -76,14 +76,12 @@ documentation.
 
 ## Apply Proportionate Controls
 
-Start from the workload's actual behavior. A typical network service can often run as a non-root user, drop all Linux
-capabilities, prevent privilege escalation, use the runtime's default seccomp profile, and make its root filesystem
-read-only. Add writable mounts, devices, capabilities, or a different user only when the workload demonstrates the need.
-Record each production relaxation with its reason and validation.
-
-Do not impose one base image, multi-stage build, health check, vulnerability threshold, custom seccomp profile, or
-resource value on every workload. Choose them from compatibility, threat model, operability, and project policy.
-Infrastructure containers, Windows containers, device workloads, and one-shot jobs can require different controls.
+Choose every control, base image, multi-stage build, health check, vulnerability threshold, seccomp profile, and
+resource value from the workload's actual compatibility, threat model, operability, and project policy rather than one
+universal set; add a writable mount, device, capability, or different user only when the workload demonstrates the
+need, and record each production relaxation with its reason and validation. `references/runtime-security.md` gives the
+concrete hardening checklist. Infrastructure containers, Windows containers, device workloads, and one-shot jobs can
+require different controls.
 
 Pin production image references to an immutable digest when the deployment workflow can maintain digest updates. Keep a
 human-readable tag or release record so operators can identify the version. Never invent a digest; resolve it from the
