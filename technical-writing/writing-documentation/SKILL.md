@@ -1,6 +1,6 @@
 ---
 name: writing-documentation
-description: "Design, draft, or review documentation so its reader understands or acts on the first pass, matching an existing house style. Use for tutorials, how-to guides, references, explanations, decisions and ADRs, release notes, runbooks, onboarding, process, and technical documentation. Not for READMEs, quickstarts, or docs landing pages (writing-readmes), requirements specifications, PRDs, or SRSs (requirements-specification), or prose-level editing (writing-for-humans)."
+description: "Design, draft, review, or restructure documentation so its reader understands or acts on the first pass. Use for tutorials, how-to guides, references, explanations, and sorting content by Diátaxis type; specs, PRDs, SRSs, and design documents alongside the skill owning their content; decision records, ADRs, release notes, runbooks, onboarding, and matching a docs set's house style. Not for READMEs, quickstarts, or docs landing pages (writing-readmes), or sentence-level editing (writing-for-humans)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,285 +8,256 @@ metadata:
 
 # Writing Documentation
 
-Use this skill to design, draft, or review documentation of any kind: tutorials, how-to guides, references,
-explanations, design and decision records, release notes, runbooks, and onboarding or process documents.
-Technical documentation for developers is one case among these, not the boundary.
+This skill owns the document: its reader, its type, what belongs in it, where each concept is explained, which
+sources govern its claims, and how a reader reaches it. `writing-for-humans` owns its sentences and paragraphs
+and runs the final **reader-ready** pass. `writing-readmes` owns a project's front door. A document is done when
+its intended reader understands the subject or completes the task on the first pass.
 
-Use `writing-readmes` for a project's front door — the README, the quickstart, the documentation landing page.
-Those are read by a stranger deciding whether to care; everything this skill owns is read by someone who
-already chose the project.
-
-Use `requirements-specification` for product or feature specifications, PRDs, SRSs, requirements, and acceptance
-criteria. Those artifacts own intended observable behavior and its acceptance; this skill does not supply that
-authority model.
-
-The goal is a document that lets its intended reader understand the subject or complete the task on the first
-pass. This skill owns the document: its purpose, reader, organization, examples, document type, and the house
-style of the set it joins.
-
-Its guidance is general. Where a passage names commands, code, or interfaces, treat it as the technical case
-of a general rule and apply the rule to whatever the document's subject actually is.
-
-Use `writing-for-humans` after the document's claims and structure settle. That skill owns the reader-ready
-completion gate for sentences, paragraphs, and the complete prose pass.
+The guidance is general. Where it names commands or interfaces, apply the rule to whatever the document's
+subject actually is.
 
 ## Establish the Reader and Outcome
 
-Derive the reader from the request, the repository, and the document itself. Do not assume a technical reader:
-documentation serves operators, support staff, new team members, and end users as often as it serves
-developers, and the wrong assumed reader is the most expensive error this skill can make.
+Derive the reader from the request, the repository, and the document. Documentation serves operators, support
+staff, newcomers, and end users as often as developers, and a wrong assumed reader is the costliest error this
+skill can make. Unless something establishes otherwise, write for a capable reader who is new to this subject,
+system, and domain.
 
-Unless something establishes otherwise, write for a capable reader who is unfamiliar with the specific
-subject, system, process, and domain.
+**The reader does not share your knowledge.** Everything you learned while working on the subject, from its
+concepts and terms to its abbreviations, components, and conventions, is opaque to them until the document
+explains it. Explain each non-obvious concept, term, or identifier where the document first uses it, and expand
+it enough for the reader to follow what comes next. Explain it once per document; later uses rely on that first
+explanation. "Explain Concepts Where the Reader Meets Them" below says how.
 
 Identify:
 
 - the reader's existing knowledge;
-- the question they need answered or task they need completed;
+- the question they need answered or the task they need completed;
 - the correct outcome, visible result, or decision; and
-- the facts, interfaces, rules, and constraints that require verification.
+- the facts, interfaces, rules, and constraints that need verification.
 
-When the reader's subject knowledge is unknown, take the conservative explanatory path:
-
-- Define subject-specific concepts and terms before relying on them.
-- State assumptions, prerequisites, and consequences that affect correct action.
-- Explain why a step, constraint, or decision matters when the reason is not apparent from the task.
-- Link or separate deeper background rather than interrupting the primary task with general instruction.
-
-Ask a focused question when the missing reader, outcome, or product fact would materially change the
-document's form or claims.
-
-Flag unsupported assertions, ambiguity, missing prerequisites, and factual gaps. Do not silently remove them.
+Ask a focused question when a missing reader, outcome, or product fact would change the document's form or
+claims. Flag unsupported assertions, ambiguity, missing prerequisites, and factual gaps; never remove them
+silently or fill them with a plausible invention.
 
 ## Build the Authority Map
 
-An **authority map** records which source governs each consequential class of claim in the document.
-
-Build it before drafting:
+An **authority map** records which source governs each consequential class of claim. Build it before drafting:
 
 1. List the claims whose accuracy affects the reader's understanding or action.
-2. Identify the governing source for each class of claim.
-3. Classify the available information as confirmed, assumed, unknown, or conflicting.
+2. Name the governing source for each class of claim.
+3. Classify what you hold as confirmed, assumed, unknown, or conflicting.
 4. Resolve material unknowns and conflicts, or carry them visibly into the delivery.
 
-Derive authority from the project and the document's subject. Common mappings include:
+Unless the project establishes otherwise, current implementation and schemas govern current behavior, accepted
+requirements and decisions govern intended behavior, and released artifacts govern shipped behavior. Existing
+documentation establishes terminology and house style, not that a changed behavior is still current.
 
-- current implementation and schemas for current behavior;
-- accepted requirements and decisions for intended behavior; and
-- released artifacts for shipped behavior.
+Check a claim about an upstream mechanism against its pinned source, never against memory or a summary. A
+reference that describes upstream behavior names that source and its version, and the source wins where the two
+disagree.
 
-Use these mappings only when the project does not establish a different authority. Existing documentation can
-establish terminology and house style without proving that a changed behavior remains current.
+When plausible sources conflict, state the conflict and continue the work that does not depend on it. Keep
+working notes out of the reader-facing document. The map is complete when every consequential claim is either
+supported by its governing source or reported as unresolved.
 
-When plausible sources conflict, state the conflict and continue work that does not depend on it. Ask a focused
-question when the unresolved claim would materially change the document.
+## Choose the Document Type
 
-Keep working notes outside the reader-facing document unless the reader needs them. In the delivery, name every
-consequential claim that remains unverified and every required check that was not performed.
+Classify content by the reader's need, using the four types of the Diátaxis framework. Two questions place any
+piece of content:
 
-The authority map is complete when every consequential claim is either supported by its governing source or
-reported as unresolved.
+- Does it inform **action** (what to do) or **understanding** (what is so and why)?
+- Does it serve the reader's **study** (acquiring a skill) or their **work** (applying one)?
+
+| Type         | Informs       | Serves | The reader                              | What tends to leak in  |
+| ------------ | ------------- | ------ | --------------------------------------- | ---------------------- |
+| Tutorial     | Action        | Study  | A learner following a guided lesson     | Explanation            |
+| How-to guide | Action        | Work   | A competent reader doing one real task  | Teaching, reference    |
+| Reference    | Understanding | Work   | Someone looking one fact up mid-task    | Instruction, narrative |
+| Explanation  | Understanding | Study  | Someone stepping back to understand why | Procedure, reference   |
+
+Give each document one primary type. When content of another type appears, move it to a document of that type
+and link to it; never blend the two. Report a classification with its evidence, the sentences or structure that
+place it.
+
+- **Tutorial:** build toward a usable result with visible checkpoints. Explain only what keeps progress clear.
+  Show file placement when it matters.
+- **How-to guide:** address one task for a reader who already has the basics. Put prerequisites, decision forks,
+  expected results, and recovery beside the step they affect.
+- **Reference:** mirror the structure of what it describes. Cover inputs, outputs, options, defaults, limits,
+  and failure cases, each stated plainly enough to look up.
+- **Explanation:** answer one bounded "why" question: context, constraints, alternatives, and trade-offs.
+
+Two further types fall outside the four. A **decision record** makes a decision reviewable after its conditions
+change; see Decision Records below. A **change note** says what changed, who is affected, the required action,
+compatibility effects, and migration or recovery; for a maintained changelog, read
+[references/changelog.md](references/changelog.md).
+
+For a decision record, change note, runbook notice, or executive summary, lead with the action, result, decision,
+or state, and name the owner and deadline when they matter.
+
+## Specs, PRDs, and Design Documents
+
+A requirements specification, PRD, SRS, or technical design has its own content owner:
+`requirements-specification` for intended behavior and acceptance, `technical-design` for how a system realizes
+it. That skill decides what the document must contain. This skill still governs how it reads, and every rule
+here applies to it in full: the authority map, one term per concept, concepts explained where first relied on,
+every sentence carrying information, and the `writing-for-humans` **reader-ready** pass.
+
+A design document meets its bar when a first-time reader could re-derive the implementation from the documents
+alone. Once it passes review, the working notes behind it are deletable without losing anything an implementer
+needs.
 
 ## Match an Established House Style
 
-A document that joins an existing set is judged against that set, not against a general standard. Before
-drafting into one, infer its conventions from the documents already there.
+A document that joins an existing set is judged against that set. Infer the set's conventions from
+representative documents of the same type before drafting into it.
 
-Use representative exemplars from the same document type. One exemplar supports voice matching; require two or
-more before inferring a repeatable convention. A convention drawn from a single document is a coincidence
-until a second one confirms it.
+One exemplar supports voice matching; a repeatable convention needs two or more. Record a compact style profile:
+the covered types and audience, the repeated structure, register, formatting, and terminology, the exemplar
+evidence for each convention, and what the profile does not govern.
 
-Record a compact style profile:
+**Where no set exists, or no convention has two exemplars, the default is `writing-for-humans` and the
+repository's own writing rules.** Never build a house style from a single document.
 
-- the covered document types and audience;
-- repeated structure, register, formatting, and terminology conventions;
-- exemplar evidence for each convention; and
-- aspects the profile does not govern.
+For a numbered series, such as decision records, check its location, file extension, and markup, its numbering
+and filename pattern, and its heading set. Continue the sequence; surface a conflict between two schemes rather
+than picking one.
 
-A numbered series constrains more than voice. For a decision record joining one, check three conventions
-specifically: its location, file extension, and markup; its numbering sequence and filename pattern; and its
-heading set. Continue the existing sequence rather than restarting it or adding a second scheme alongside it,
-and surface a conflict between two schemes rather than silently picking one.
+Repository requirements outrank the profile. The profile outranks this skill's defaults for whatever it covers
+with evidence, because consistency across a set serves the reader more than one improved page.
 
-Apply only supported conventions. Repository requirements outrank the profile, and the source author's voice
-governs wherever the profile is silent. When the profile and this skill's defaults conflict, the profile wins
-for anything it covers with evidence: consistency within a documentation set serves the reader more than an
-isolated improvement to one page.
+## Cut Document-Level Noise
 
-`writing-for-humans` preserves an individual author's voice at the sentence level. This section is the
-document-set counterpart: it governs conventions repeated across many documents.
+`writing-for-humans` defines **noise**: a statement that gives the reader nothing new or useful where they meet
+it. A complex subject makes noise costlier, because each unneeded sentence makes the what, why, and how harder to
+follow. At the document level, noise is content that another section, another document, or the document's type
+already covers. Cut:
 
-## Choose a Document Shape
+- an announcement of what follows; state it instead;
+- a narrated cross-reference ("as the overview describes"); the link alone does that job;
+- a restatement of another section; link to the section that owns the point;
+- text about the document itself or how it came to be written; and
+- history of how a choice was reached; the document describes the current state.
 
-Choose one primary mode. Split and link material when another mode would interrupt the reader's task.
+State the document's scope, versions, and sources once, where it opens, and never repeat them per claim. A
+reference names its upstream source and version in that opening, not beside each fact.
 
-- **Tutorial:** teach a newcomer through a working result. State what they will build, use visible checkpoints,
-  and explain only enough context to keep progress clear.
-- **How-to guide:** help a competent reader complete a specific task. Put prerequisites, decision forks,
-  expected results, and recovery near the action they affect. Link background rather than teaching it inline.
-- **Reference:** support lookup. Mirror the structure of whatever is being described, whether an interface, a
-  system, or a process. Cover inputs, outputs, options, limits, defaults, and failure cases accurately.
-- **Explanation:** answer one bounded why question. Cover context, constraints, alternatives, and trade-offs.
-- **Decision record:** make a decision and its consequences reviewable, and keep it reviewable after the
-  conditions change. Its elements carry their own rules, below.
-- **Change note:** explain what changed, who is affected, required action, compatibility effects, and recovery or
-  migration steps. For a maintained changelog, read [references/changelog.md](references/changelog.md).
+Date a statement only where the date changes its meaning: a revision history, a measurement, an evaluation true
+as of its run, or a record's status line. Elsewhere state the status: "awaits the customer's review", not
+"proposed on 25 September".
 
-A front door may begin with orientation, then link to the mode-specific material its reader needs. Write the
-front door itself with `writing-readmes`.
+Any document that states a decision gives each rejected option directly, with the reason it lost: "Stopping the
+boot instead would leave the device unrecoverable, because…", not "two alternatives were weighed".
+
+## Explain Concepts Where the Reader Meets Them
+
+On first use of a technical concept in each document, spend one or two plain sentences on what it is and what it
+does in this subject, then continue. For example: "IMA, the kernel's Integrity Measurement Architecture, hashes
+each file its policy names into a TPM PCR before the file runs, so the PCR records which software ran; the
+platform seals the disk key to that record." The last clause is what the concept does here. A glossary holds
+the one-line definition, and the document adds why the concept matters here. Repeating the explanation later in
+the same document is noise.
+
+In a reference, say what a setting or feature is for before how it works, and give each one a reader looks up by
+name its own heading.
+
+When one word carries two concepts, give each its own durable name and glossary entry. A word such as
+"manifest" that means three different files in one project misleads every reader who meets it.
+
+When a design or plan covers more than two components, or a flow whose order matters, add a diagram beside the
+text it explains: a flowchart for structure and decisions, a sequence diagram for ordered interactions, a state
+diagram for a lifecycle. In Markdown, use Mermaid unless the set follows another convention. Explain any diagram
+or screenshot the reader must act on, and never rely on color alone.
+
+## Identifiers and Links
+
+Write the document so its meaning survives when an identifier changes or disappears. Lead with the behavior,
+decision, or consequence and append the key only for traceability, as `writing-for-humans` specifies. A table or
+status list may keep identifiers for lookup, provided every row also states its meaning in plain language.
+
+Keep identifiers the reader uses directly: API fields, configuration keys, error codes, and formal traceability
+keys. Introduce each with its meaning. A numbered series may keep its key in a title that also states the
+subject, as in `ADR-0014: Store rendered reports in object storage`.
+
+Link every source the document names. A reader must reach every document they need by following links; one who
+needs a text search to find it has hit a defect.
 
 ## Make the Content Usable
 
-- Put prerequisites, irreversible effects, limits, and caveats before readers encounter them.
-- For decision records, change notes, operational notices, and executive summaries, lead with the action,
-  result, decision, or state. Name the owner and deadline when relevant.
-- Use examples when they settle an important concept, decision, or task. Keep them realistic and omit setup that
-  does not affect the result.
-- Build a tutorial toward a usable result. For an implementation tutorial, show file placement when it
-  matters.
-- Explain consequential decisions and the reasoning behind them, not only the final steps, commands, or code.
-- Validate instructions the reader will follow when the required environment or access is available.
-  Otherwise identify what remains unverified.
-- For errors, failures, and recovery, state the failed condition, known cause, and next action. Name the
-  invalid value, required form, limit, or conflicting state when known.
-- Make informative images understandable without color alone. Use meaningful link text and explain screenshots or
-  diagrams that readers need to act on.
-- Surface missing facts rather than inventing examples, commands, limits, or recovery steps.
+- Put prerequisites, irreversible effects, limits, and caveats before the reader meets them.
+- Use a realistic example where it settles a concept, decision, or task, and omit setup that does not affect it.
+- Validate instructions the reader will follow when the environment or access is available; otherwise name what
+  remains unverified.
+- For a failure, state the failed condition, its known cause, and the next action. Name the invalid value,
+  required form, limit, or conflicting state when known.
+- Use link text that names its target.
 
-## Make Identifiers Serve the Reader
+## Decision Records
 
-An internal identifier is a locator, not an explanation. Write the document so its meaning survives when an
-identifier changes or disappears.
+Write one when a decision is hard to reverse, surprising without context, and the outcome of a real trade-off.
+When any of the three is missing, skip it. Do not wait to be asked: a decision that clears the gate and goes
+unwritten gets argued again.
 
-Do not organize explanatory prose around requirement, decision, issue, test, milestone, or ledger keys. Do not
-use an opaque identifier as the subject of a claim, a substitute for a description, or the sole content of a
-status item.
+Read [references/decision-record.md](references/decision-record.md) before writing one, for the light and full
+forms, freezing and supersession, numbering and file conventions, and a worked example.
 
-Lead with the behavior, decision, condition, or consequence. Add a typed identifier afterward only when the
-reader needs traceability:
+## Notes and Safety Instructions
 
-- Write `The importer keeps unverified records isolated (decision A-003).`
-- Write `Migration stops when the repository contains an unknown state (requirement R-4).`
-- Avoid `A-003 is confirmed.`
-- Avoid `R-4 blocks migration.`
+A reader who misreads either one acts wrongly or gets hurt.
 
-A short reference such as `decision A-003` is useful only after the surrounding text establishes what the
-decision means. Omit the identifier when the reader does not need to follow it to its source.
+**A note carries information only.** An instruction, requirement, limit, tolerance, or step result belongs in
+the step it governs. Verify by deleting every note: a reader must still complete the procedure correctly.
+Anything that fails that test becomes a step.
 
-Tables, checklists, and status lists may retain identifiers for lookup. Every retained row must also state its
-meaning in plain language:
+**Match the signal word to the risk.** A warning signals a risk of injury or death; a caution, a risk of damage
+to equipment, data, or systems. Where both apply, use a warning.
 
-| Identifier | Meaning                                                     | Status   |
-| ---------- | ----------------------------------------------------------- | -------- |
-| R-4        | Reject repositories whose state cannot be classified safely | Complete |
+**Order a safety instruction in three parts:** the signal word, then the command or condition, then the
+consequence of ignoring it. A reader who stops after the first line must still have the instruction. Put it
+before the step it protects.
 
-A key-only status list is incomplete because it makes the reader resolve every item elsewhere.
+## Improve an Existing Set in Place
 
-Keep identifiers that the reader must use directly, including API fields, configuration keys, error codes, and
-formal traceability keys. Introduce each identifier with its meaning before relying on it. An established
-numbered series may keep an identifier in its title when the title also states the subject, as in
-`ADR-0014: Store rendered reports in object storage`.
+Restructure a documentation set from the inside, one piece at a time. Pick one document or section, place it with
+the two type questions, make the single change that serves its reader best, and repeat. A new structure emerges
+from these changes. Never create empty per-type sections or directories up front, and never split a mixed
+document into four files in one move.
 
-The identifier pass is complete when:
+## Review and Finish
 
-1. every sentence, list item, and table row is understandable without resolving an internal key elsewhere;
-2. every retained identifier serves a concrete traceability or lookup need; and
-3. changing or removing an identifier requires updating its locator, not restructuring the explanation.
-
-## Write a Decision Record
-
-Write one when all three hold: the decision is **hard to reverse** (changing your mind later costs real work),
-**surprising without context** (a future reader will meet the result and wonder why it was done this way), and
-**the outcome of a real trade-off** (there were genuine alternatives and you chose one for specific reasons). If
-any one is missing, skip it — an easily reversed decision you will simply reverse, an unsurprising one nobody
-questions, and a decision with no alternative records only that you did the obvious thing. Do not wait to be
-asked: a decision that clears this gate and goes unwritten gets argued again.
-
-Match the record's weight to the decision's blast radius. A record that clears the gate but stays contained
-needs only a **light form** — a title and a few sentences saying what was decided, why, and the main
-alternative you rejected. Most records need no more; the value is capturing *that* a decision was made and *why*,
-not filling in sections.
-
-Escalate to the **full form** when wide later work will be built on the decision — a framework, dependency, data
-model, protocol, authentication or authorization strategy, hosting or build platform, or a cross-boundary
-contract — or when the rejected alternatives carry most of the weight and a reviewer needs them separable. The
-full form carries five elements:
-
-- **Status and date.** Whether the decision is proposed, accepted, superseded, or deprecated, and when it was
-  made. A record without a status cannot be superseded; one without a date cannot be read against the
-  conditions that produced it.
-- **Context.** The problem, the requirements, and the constraints in force at the time.
-- **Decision.** What was chosen, stated plainly enough to act on.
-- **Alternatives, each with the reason it was rejected.** The rejection reason is the load-bearing part,
-  because it is what stops the alternative being proposed again. An alternative listed without one records that
-  you looked, not what you learned.
-- **Consequences in both directions.** What the decision now obliges, and what it lets the reader avoid or
-  stop doing. Include costs that arrive later, such as knowledge the team must acquire.
-
-Freeze a record once it is accepted. When the decision changes, write a new record that references and
-supersedes the old one. Never rewrite or delete the original: it is the evidence for why the earlier choice was
-reasonable under the conditions it was made in, and a series that edits its own history cannot be trusted to
-explain anything.
-
-Read [references/decision-record.md](references/decision-record.md) for numbering and file conventions, the
-common format standards, and a worked example.
-
-## Write Notes and Safety Instructions
-
-These two elements carry their own rules, because a reader who misreads either one acts wrongly or gets hurt.
-
-**A note carries information only.** It must not contain an instruction, a requirement, a limit, a tolerance,
-or the result of a step. Those belong in the step itself, next to the action they govern. Verify by deleting
-every note and confirming a reader can still complete the procedure correctly. Anything that fails that test
-was never a note, and becomes a step.
-
-**Match the signal word to the risk.** A warning signals a risk of injury or death. A caution signals a risk of
-damage to equipment, data, or systems. Where both risks apply at once, use a warning.
-
-**Order a safety instruction in three parts:** the signal word, then the command or the condition the reader
-must satisfy, then the consequence of not obeying. Never open with the explanation. A reader who stops after
-the first line must still have the instruction, not the rationale.
-
-Put a safety instruction before the step it protects, never after.
-
-## Finish the Document
-
-A correct structure is an intermediate result.
-
-1. Settle the document's claims, examples, mode, and organization.
-2. Apply `writing-for-humans` to the complete draft.
-3. Resolve every defect found by its **reader-ready** pass.
+1. Settle the document's claims, type, examples, and organization.
+2. Check it against the list below, and report structural defects before any prose edit.
+3. Apply `writing-for-humans` to the complete draft and resolve every defect its **reader-ready** pass finds.
 4. Repeat that pass after each material revision.
 
-The document is complete when it is reader-ready and every remaining evidence gap is visible in the delivery.
+Check that:
 
-## Review
+- the type matches the reader's need, and no other type has leaked in;
+- a document joining a set follows that set's evidenced conventions;
+- the reader finds the outcome, prerequisites, constraints, and next action without prior knowledge beyond
+  their own;
+- every consequential claim is supported by its governing source or reported as unresolved;
+- every concept is explained where first relied on, and every term names one concept;
+- the document holds no noise, and each decision gives its rejected options with reasons;
+- every example, step, interface detail, and failure path matches the subject as it is;
+- the document reads correctly without resolving any internal identifier elsewhere;
+- every named source is linked, and every needed document is reachable by links;
+- the procedure still works with every note deleted, and each warning or caution matches its risk; and
+- accessibility information and recovery guidance cover what the reader needs.
 
-Check:
+When reviewing a high-stakes document, or delegating any review or readability pass to a subagent, read
+[references/review-sequence.md](references/review-sequence.md) first.
 
-- Does the selected mode match the reader's purpose?
-- When the document joins an existing set, does it follow that set's evidenced conventions?
-- Can the reader find the outcome, prerequisites, constraints, and next action?
-- Does the document assume more reader knowledge than the identified reader has?
-- Does each example, step, interface detail, and failure path match the subject as it actually is?
-- Does the document explain its subject independently of its internal identifiers?
-- Do tutorials provide visible progress and a usable result?
-- Do references mirror what they describe and cover its important limits and failures?
-- Do explanations and decision records make the relevant reasoning and consequences visible?
-- Does each decision record carry a status, a date, the reason every alternative was rejected, and a
-  supersession pointer where one applies?
-- Does the document provide the accessibility information and recovery guidance its reader needs?
-- Does the procedure still work with every note deleted, and does each warning or caution match its risk level?
-
-Flag missing context or structural defects before proposing prose-only edits.
+The document is complete when it is **reader-ready** and every remaining evidence gap is visible in the delivery.
 
 ## Response Modes
 
-- **Draft:** produce the requested document in its selected mode.
-- **Review:** report missing context, structural problems, inaccurate examples, accessibility gaps, and unclear
-  recovery paths before suggesting edits.
-- **Condense:** preserve reader-critical context, decisions, prerequisites, examples, caveats, and recovery
-  guidance while removing redundant material.
-- **Expand:** add confirmed context, examples, constraints, or recovery guidance without inventing them.
+- **Draft:** produce the document in its selected type.
+- **Review:** report missing context, type leaks, structural problems, inaccurate examples, accessibility gaps,
+  and unclear recovery before suggesting edits.
+- **Condense:** remove noise and misplaced content; keep reader-critical context, decisions,
+  prerequisites, examples, caveats, and recovery.
+- **Expand:** add confirmed context, examples, constraints, or recovery, never invented ones.
 
-For an existing file, return text or a diff unless the user requested an in-place edit.
+For an existing file, return text or a diff unless the user asked for an in-place edit.

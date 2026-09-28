@@ -147,6 +147,28 @@ leading words, the checkable completion criteria, and the single-owner pointer f
 `writing-for-humans`. Every instruction and example is independently written; no upstream text was copied or
 adapted.
 
+## Diátaxis Document Types and In-Place Improvement
+
+The 2026-09-28 refresh rebuilt "Choose the Document Type" and added "Improve an Existing Set in Place" after
+reading two sources. Both are licensed CC BY-SA 4.0, so only ideas were taken: every sentence, the table, and
+the examples are independently written, and no text was copied, adapted, or translated.
+
+- [Diátaxis](https://diataxis.fr/) by Daniele Procida, source repository
+  [evildmp/diataxis-documentation-framework](https://github.com/evildmp/diataxis-documentation-framework) at
+  `957c09ca40b4a1edc23874f713e01937d50d54d5`. It supplied the four-type classification this skill already used
+  without credit, the two classifying questions (action or understanding, study or work), the content that
+  typically leaks into each type, and the method of improving a set one piece at a time rather than creating an
+  empty structure first.
+- [keithpatton/diataxis-agent-skill](https://github.com/keithpatton/diataxis-agent-skill) at
+  `5b095a5e7aebe77ce4af855809123e12d92b9efd`. It prompted reporting a classification with its evidence and moving
+  leaked content out rather than blending it. Its fix for a mixed document, splitting it into four files at once,
+  was declined because it contradicts Diátaxis's own advice against restructuring first.
+
+The same refresh added "Cut Document-Level Noise", "Explain Concepts Where the Reader Meets Them", the specification
+and design-document section, the link-reachability rule, and `references/review-sequence.md`. These came from the
+user's own corrections during documentation work in another repository, not from an external source. The light
+and full decision-record forms moved from `SKILL.md` to `references/decision-record.md` unchanged in substance.
+
 Material changes from peizh/tech-writing include:
 
 - Folded a short documentation-type taxonomy into the "choose the right

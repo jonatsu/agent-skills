@@ -1,7 +1,31 @@
 # Decision Records
 
-Detail behind the decision-record shape in `SKILL.md`. Read it when writing a decision record, joining an
-existing series, or choosing a format for a set that has none.
+Read this before writing a decision record, joining an existing series, or choosing a format for a set that has
+none. `SKILL.md` holds the gate that decides whether to write one.
+
+## Match the Record's Weight to the Decision
+
+A record that clears the gate but stays contained needs only the **light form**: a title and a few sentences
+saying what was decided, why, and the main alternative rejected with its reason. Most records need no more. The
+value is recording that a decision was made and why.
+
+Use the **full form** when wide later work builds on the decision, such as a framework, dependency, data model,
+protocol, authentication or authorization strategy, hosting or build platform, or cross-boundary contract. Use it
+too when the rejected alternatives carry most of the weight and a reviewer needs them separable. The full form
+carries five elements:
+
+- **Status and date:** proposed, accepted, superseded, or deprecated, and when. Without a status a record cannot
+  be superseded; without a date it cannot be read against the conditions that produced it.
+- **Context:** the problem, requirements, and constraints in force at the time.
+- **Decision:** what was chosen, plainly enough to act on.
+- **Alternatives, each with the reason it was rejected:** the reason is what stops the alternative being proposed
+  again. An alternative without one records that you looked, not what you learned.
+- **Consequences in both directions:** what the decision obliges, what it lets the reader stop doing, and costs
+  that arrive later, such as knowledge the team must acquire.
+
+Freeze a record once it is accepted. When the decision changes, write a new record that references and
+supersedes the old one, and never rewrite or delete the original. It is the evidence for why the earlier choice
+was reasonable under its conditions.
 
 ## Find the Existing Convention First
 
@@ -39,10 +63,9 @@ of the surrounding documentation set, not this default, when the two differ.
 - **MADR**, which adds explicit decision drivers and itemized options with their pros and cons. Choose it when
   the alternatives carry most of the weight and reviewers need them separable.
 
-Both express the full form's five elements from `SKILL.md`. Neither is better in the abstract. Match the series
-being joined; for a series with no convention, prefer the light form from `SKILL.md` — a title and a few
-sentences — and let a record grow into one of these standards only where its blast radius or its alternatives
-require it.
+Both express the full form's five elements. Neither is better in the abstract. Match the series being joined.
+For a series with no convention, start with the light form and let a record grow into one of these standards only
+where its blast radius or its alternatives require it.
 
 ## Status and Supersession
 
