@@ -43,18 +43,9 @@ dispatches together in one turn so they run concurrently.
 Own the only orchestration layer. A lane does its task itself and dispatches no subagents or reviewers of its
 own; review comes from you, after it reports. While a lane runs, do other work, never the lane's own task.
 
-Every lane reports with one of four statuses. A subagent whose definition already carries this contract needs
-nothing more; any other gets it in its brief, as written here:
-
-```text
-End your report with one status line:
-- DONE: the task is complete and verified.
-- DONE_WITH_CONCERNS: complete, but you doubt its correctness or scope; name the doubt.
-- NEEDS_CONTEXT: you need information you were not given; name it.
-- BLOCKED: you cannot complete the task; say what you tried and what would unblock you.
-Stop and report BLOCKED or NEEDS_CONTEXT rather than guess when the task needs a design decision with
-several valid answers, facts you cannot find, or a restructuring the brief did not anticipate.
-```
+Every lane reports with one of four statuses: `DONE`, `DONE_WITH_CONCERNS`, `NEEDS_CONTEXT`, or `BLOCKED`. A
+subagent whose definition already carries this contract needs nothing more. Any other gets the contract in its
+brief: read [references/status-contract.md](references/status-contract.md) and paste it in verbatim.
 
 ## Act on the Return
 
