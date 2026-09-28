@@ -15,15 +15,15 @@ Include a dependency diagram when it clarifies the flow.
 
 ## Shared Preflight
 
-Name shared environment setup, applicable guidance and common review/check requirements.
-Give reusable requirements anchors so units can name what applies without repeating the instructions.
-Record missing tools or review assignments and the work they block.
+Name shared environment setup, applicable guidance, common checks and the default review gate.
+Give each requirement an anchor. Every unit applies them by default and names only its additions
+and exceptions. Record missing tools or review assignments and the work they block.
 
 ## Unit 1: <Observable Outcome>
 
 ### Outcome and Rationale
 
-Explain what becomes possible, why this unit exists and which design obligations it satisfies.
+Explain what becomes possible and why this unit exists, appending the requirement and design keys it satisfies.
 
 ### Changes
 
@@ -32,12 +32,12 @@ Identify tool-owned generated outputs and how unexpected changes will be inspect
 
 ### Dependencies and Constraints
 
-Name prerequisite units and interfaces, applicable shared preflight requirements, and exceptions.
+Name prerequisite units and interfaces, and any additions to or exceptions from the shared preflight.
 
 ### Verification and Completion
 
 State commands or observations, inputs, expected success and failure results, and evidence limits.
-Identify the review role, timing and blocking criteria. Say what evidence unlocks dependent work.
+Describe the review only where it differs from the shared default gate.
 
 ### Recovery
 

@@ -28,11 +28,11 @@ remains; state that basis instead of manufacturing a design document.
 
 **If unresolved consequential design controls all remaining work, stop after reporting the gaps.** Do not emit a
 conditional implementation plan, turn design decisions into implementation units, or sketch the work that would follow
-each possible answer. Resume planning after the design is settled. When only one branch is blocked, plan only genuinely
-independent, already-designed branches and state the limit.
+each possible answer. Resume planning after the design is settled.
 
 When the design is incomplete, record the exact gap, its downstream consequence, and the design section or owner that
-must resolve it. Stop only the blocked branch; independent, already-designed work may continue. Return missing behavior,
+must resolve it. Stop only the blocked branch: plan genuinely independent, already-designed branches and state the
+limit. Return missing behavior,
 architecture, interfaces, failure policy, compatibility, or migration strategy to technical design. Return missing or
 contradictory intended behavior and acceptance to `requirements-specification`. Return changed purpose or product scope
 to idea-brainstorming.
@@ -61,8 +61,9 @@ Reuse guidance already read in the session unless it changed. Explicit user deci
 outrank skill defaults; a generic recommendation does not authorize an incidental tooling or framework migration.
 
 Define shared environment setup, coding guidance, and review procedures once in a shared preflight section. Give each
-shared requirement a short name or anchor. Each affected unit references the requirements it uses and explains its
-exceptions. Name the skill or authoritative rule, the work that triggers it, and when it must be read before editing
+shared requirement a short name or anchor. Every unit applies the shared preflight requirements by default, including
+the default review gate. A unit names only its additions and exceptions, never the requirements it shares with every
+other unit. Name the skill or authoritative rule, the work that triggers it, and when it must be read before editing
 or verification. An unattached appendix or a general instruction to "follow best practices" is insufficient.
 Record missing required guidance or unavailable tooling as a prerequisite with its owner and downstream effect.
 Require completion evidence for the applicable coding rules and checks, not merely a claim that a skill was loaded.
@@ -97,7 +98,8 @@ Explain how the changes produce the outcome in connected prose, rather than pres
 Within that structure, make these facts recoverable:
 
 - **Outcome:** the behavior, capability, migration state, or visible result;
-- **Requirements and design obligations:** the accepted behavior and technical decisions it satisfies;
+- **Requirements and design obligations:** the accepted behavior and technical decisions it satisfies, stated
+  first, with requirement and design keys appended rather than leading the sentence;
 - **Affected surfaces:** verified files, symbols, configuration, data, documentation, or operational assets;
 - **Dependencies:** prerequisites, consumed and produced interfaces, and downstream unlocks;
 - **Required practices:** applicable skills, coding rules, and the preflight step that applies them;
@@ -176,6 +178,13 @@ Naming a reviewer does not authorize subagent/model calls or their cost. If requ
 record the missing assignment and keep the dependent completion gate open; continue independent authorized work.
 Neither the implementer nor reviewer may waive a consequential requirement or uncovered risk on the user's behalf.
 
+## Write for the Reader
+
+A plan is read by an implementer who was not in the design conversation. Write it with `writing-documentation`, and
+finish with the `writing-for-humans` **reader-ready** pass before calling it ready. Explain each repository-specific
+concept, tool, and convention where the plan first relies on it, once. State the basis revisions and scope once, in
+the preamble.
+
 ## Write and Check the Plan
 
 Keep intended work distinct from execution evidence. The plan states actions and expected observations; the repository's
@@ -200,7 +209,8 @@ its technical realization, and the plan owns execution order.
 
 Before calling the plan ready, check requirement and design coverage, source-revision consistency, dependency order,
 interface consistency, ownership, verified touchpoints, required-practice preflight, review-stage placement, reviewer
-assignment, finding-resolution gates, review cost, verification strength, and final integration evidence. Remove
+assignment, finding-resolution gates, review cost, verification strength, final integration evidence, and the
+reader-ready pass. Remove
 placeholders and expose unavailable checks and unresolved risks. Require the completion record to identify applied
 guidance, reviewed revisions, results, finding dispositions, and unverified obligations. An implementer should not need
 to reconstruct the specification or design conversation.

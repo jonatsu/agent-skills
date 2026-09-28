@@ -201,7 +201,7 @@
       "outcomes": [
         "Starts with an implementation overview explaining the outcome and ordering rationale before detailed paths and commands.",
         "Uses the default work-unit sections for outcome and rationale, changes, dependencies and constraints, verification and completion, and recovery where needed.",
-        "Defines shared preflight and review requirements once, with explicit references and exceptions in affected units.",
+        "Defines shared preflight and review requirements once; units name only their additions and exceptions, never restating the shared defaults.",
         "Provides concrete success and failure observations without claiming planned commands have run."
       ],
       "required_inputs": [
@@ -257,7 +257,8 @@
         "Each substantive unit explains how its changes produce the outcome, not merely which files to touch.",
         "Verification distinguishes parser failure, entry issues and valid input, including the no-input-write guarantee.",
         "A failed check has an actionable interpretation and dependent work remains gated.",
-        "The final integration gate covers the complete CLI behavior rather than only unit completion."
+        "The final integration gate covers the complete CLI behavior rather than only unit completion.",
+        "Each unit states the behavior it delivers before any requirement or design key, and explains each repository-specific term once where first used."
       ],
       "required_inputs": [
         "Supply the accepted design, requirements and repository instructions described in the prompt; use an isolated repository fixture with its actual paths and configured checks. Do not infer acceptance or fabricate inspection."
