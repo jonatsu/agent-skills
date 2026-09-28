@@ -3,6 +3,10 @@
 Use a bundled script when deterministic execution materially improves reliability or avoids repeatedly
 recreating the same operation.
 
+Run traces are the strongest signal. When the traces of several test or real-use runs show each one writing
+the same helper, bundle that helper as a script: every run is already paying to rebuild it, and each rebuild
+is a fresh chance to get it wrong.
+
 Use an existing tool directly for a simple one-off command. Do not bundle a script merely to wrap an available
 command. Pin versions when repeatability matters, and declare runtime prerequisites in `SKILL.md` or
 `compatibility`.
@@ -17,6 +21,13 @@ Good candidates include:
 Keep work in agent instructions when it depends on judgment, varies substantially by context, or is clearer as
 a direct tool call. Determinism alone does not justify a script when the operation is trivial and unlikely to
 recur.
+
+Write each bundled script to its language's established conventions. Use the coding guidance your environment
+supplies for that language, such as installed skills, rules, or a style guide the repository declares, and load
+it before the script's first line. Where no such guidance exists, follow the language's community standard and
+its standard formatter, linter, and type checker. A portable script stays self-contained, so a convention that
+needs a dependency or an import from outside the package yields to that constraint. Say so in a comment where a
+reader would otherwise read it as an oversight.
 
 For every bundled script:
 

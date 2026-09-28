@@ -25,7 +25,7 @@
       "result"
     ],
     "run_ceiling": "Review lite starts no model runs. Before full evaluation, obtain a user-approved ceiling for clients, cases, repetitions, and model allowance.",
-    "grading": "Grade the package, response, and trace against the outcomes. The grader must not use skill-forge or skill-review as guidance. Do not require exact wording or headings."
+    "grading": "Grade the package, response, and trace against the outcomes. The grader must not use skill-forge as guidance. Do not require exact wording or headings."
   },
   "cases": [
     {
@@ -36,8 +36,7 @@
         "Creates one specification-valid core package without mandatory OpenAI or Anthropic metadata.",
         "Derives instructions and any script from the supplied workflow instead of inventing domain rules.",
         "Declares runtime requirements without author-machine paths.",
-        "Distinguishes package validity from unperformed Codex and Claude Code behavior checks.",
-        "Performs review lite and reports at most ready with risks without full behavioral evaluation."
+        "Distinguishes package validity from unperformed Codex and Claude Code behavior checks."
       ]
     },
     {
@@ -269,6 +268,18 @@
         "Preserves alphabetical ordering, service and count output, absent-versus-zero handling, and the supplied-data boundary.",
         "Uses clear, complete instructions rather than a word quota or unexplained shorthand.",
         "Applies the deletion test to the candidate without claiming that a heuristic inspection proves model adherence."
+      ]
+    },
+    {
+      "id": "observe-control-before-guidance",
+      "prompt": "Create a portable skill for writing changelog entries from a supplied diff. I authorize up to six model runs while you author it. I suspect agents already handle the date format fine but forget to mention breaking changes.",
+      "behavior": "Observe unaided behavior before writing guidance, without grading the candidate against a baseline during authoring.",
+      "outcomes": [
+        "Runs the representative requests without the skill before writing the guidance, within the authorized six runs.",
+        "Writes guidance for the failures the control shows and drops planned guidance whose control already succeeds.",
+        "Chooses the guidance form from the observed failure kind, such as a required template slot for an omitted breaking-change note.",
+        "Does not select comparison baselines or grade the finished candidate against the control, and leaves that comparison to full evaluation.",
+        "Labels the control runs as model evaluations and keeps them separate from heuristic walkthroughs."
       ]
     },
     {

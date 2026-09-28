@@ -5,7 +5,9 @@
 - Skill: `skill-forge`
 - Current author: Joonas Onatsu
 - Current license: MIT
-- Status: adapted from upstream and materially modified
+- Status: adapted from upstream and materially modified. Since 2026-09-28 the package also carries the former
+  `skill-review` skill as its review mode; that skill's provenance is recorded under "Merged skill-review"
+  below.
 
 ## Original authors and source
 
@@ -135,3 +137,126 @@ influenced the lean-execution default across instructions, modules, and data, lo
 and preservation of behavior before substantial workflow revisions. The wording, examples, diagram, and
 acceptance fixtures are independently written. No source prose, code, schemas, diagrams, or templates are
 copied or adapted. Existing package license and provenance are preserved.
+
+## Merged skill-review
+
+On 2026-09-28 the separate `skill-review` skill (same author, MIT) merged into this package as its review mode.
+Its workflow became `references/review.md`, its lenses `references/review-lenses.md`, and its behavioral
+evaluation `references/full-evaluation.md`. Its hard gates, review tiers, verdicts, and numeric-rating policy
+became part of the single rubric in `references/rubric.md`. Its `evals/activation.json` cases joined this
+package's activation file, and its `evals/review-quality.json` and four fixtures moved here unchanged in name.
+Every source entry that skill carried moves over below, restated where the merge changed which file holds the
+material.
+
+### Original author and source of skill-review
+
+- Original author: Leonardo Flores
+- Copyright holder: `Copyright (c) 2026 Leonardo Flores`, as stated in upstream's `LICENSE`
+- Upstream project: [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit)
+- Source path: `skills/skill-judge`
+- Exact source revision: unknown. The initial local attribution in commit `165701f` recorded the upstream
+  project, skill path, and MIT license but did not record a commit or tag.
+- Later comparison snapshot: `3027f20f3181758385a1bb8c022d4041dfb4de84`, upstream HEAD as observed on
+  2026-08-27. It predates the local addition and provides an auditable comparison point; it does not establish
+  which revision was originally adapted.
+- License: MIT. The verbatim upstream `LICENSE` ships as `LICENSE.upstream-skill-judge`, renamed from
+  skill-review's `LICENSE.upstream` because this package's `LICENSE.upstream` already carries the
+  sanyuan0704 license. It MUST travel with the skill when it is redistributed or re-deployed. Upstream
+  publishes no `NOTICE` file.
+- License verification: on 2026-08-27, `gh api repos/softaworks/agent-toolkit/license` reported `MIT`, and the
+  `LICENSE` blob itself was fetched and copied byte-for-byte. An earlier inlined copy had omitted the copyright
+  line and was replaced that day.
+
+skill-review retained the upstream skill's purpose and its concern for actionable review, progressive
+disclosure, workflow fit, and concrete evidence, and replaced its fixed structural rubric with a contract-based
+review that separates validity, design judgment, and behavioral evidence. Material changes from upstream:
+
+- Cut the philosophy preamble ("what is a Skill", training-cost tables, the hot-swappable-LoRA analogy) as
+  material the model already holds.
+- Removed the ASCII-art boxes, folding their content into tables and prose.
+- Neutralized provider-specific framing so the skill is agent-agnostic.
+- Consolidated the useful failure-pattern diagnoses into consequence-based questions, now in
+  `references/review-lenses.md`.
+- Rewrote frontmatter to the specification's top-level `license` field and retained `metadata.author`.
+- Retained Expert/Activation/Recoverable/Redundant as qualitative diagnoses, cross-file consistency checks,
+  freedom calibration, the acts-now/acts-safely/still-works questions, evidence legibility, and the portability
+  distinctions.
+- Removed the eight-dimension 120-point grade, line-weighted knowledge ratios, structural quotas, portability
+  score caps, and mandatory praise.
+- Added separate hard gates, consequence-based findings, readiness verdicts, proportional behavioral
+  evaluation, and decision-specific metrics.
+
+### skill-review's full evaluation influences
+
+skill-review's 2026-09-04 revision consulted the
+[Anthropic `skill-creator` package](https://github.com/anthropics/skills/tree/41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f/skills/skill-creator)
+at commit `41bbe19d1a1a7eaab5e7bb9050a417e5c6cffc8f` (Apache-2.0). It influenced the independently written
+guidance for paired baselines, qualitative artifact review, optional blind comparison, and causal analysis
+after comparison, now in `references/full-evaluation.md`. No Anthropic prose, code, schemas, evaluator prompts,
+interface assets, or package conventions were copied or adapted. Its Claude-specific runner, viewer, fixed
+counts, subagent workflow, and `.skill` packaging remain excluded.
+
+The same revision incorporated lessons from this repository's `docs/plans/evaluation/prompt-eval-harness.md`
+and `docs/evaluations/skills/technical-design-planning-initial.md`: the preflight, permission, future-turn
+isolation, durable trace, failure classification, continuation, and model-allowance requirements. Those are
+same-author project evidence rather than third-party material.
+
+### skill-review's operational review and lean execution
+
+Mohammad Bayat's
+[Designing Large Agent Skills as Deterministic, Phase-Oriented Systems](https://www.okbayat.com/writing/essays/phase-oriented-agent-skills-en)
+(`OkBayat/OkBayat.github.io`, `docs/writing/essays/phase-oriented-agent-skills-en.md`, commit
+`9d0ad2e4a0a3793c10335b387b5a3f3d16c41f3b`, consulted 2026-09-15) influenced skill-review's operational-contract,
+recovery, loading, and preservation review criteria through the skill-forge changes recorded above under
+"Operational Workflow Design". The site's [rights statement](https://www.okbayat.com/about/rights) reserves
+rights to original content. The review wording and cases are independently written; no source prose, code,
+diagrams, or templates were copied or adapted.
+
+## Skill-Creator Comparison Ideas (2026-09-28)
+
+The 2026-09-28 merge revision adopted ideas from three sources, compared in this repository's
+`docs/research/skill-authoring-sources/skill-creator-comparison.md`. Every sentence is independently written;
+no prose, code, examples, tables, templates, or evaluator prompts were copied or adapted, so no upstream
+license file is required. Each source's license is recorded for traceability, not because it governs this
+expression.
+
+### Anthropic skill-creator plugin
+
+- Author: Anthropic
+- Project: [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official)
+- Source path: `plugins/skill-creator/skills/skill-creator/` (`SKILL.md`, `agents/grader.md`)
+- Commit: `fa59bc9037741ecfa131aa27938272605710d7b2`
+- License: Apache-2.0, per `plugins/skill-creator/LICENSE` and the skill's `LICENSE.txt`; no `NOTICE` file
+- Ideas retained: grading that fails surface compliance, puts the burden of proof on the assertion, and checks
+  the output's own claims (`references/full-evaluation.md`, "Grade the Right Layer"); bundling a helper as a
+  script when traces show every run rebuilding it (`references/pro-agent.md`); stating the reason beside a
+  constraint instead of capitalized emphasis (`references/writing-techniques.md`); a table of contents for
+  long references (`references/authoring.md`, step 4); observing a no-skill baseline before revising
+  (`references/authoring.md`, step 1). Its Claude-specific runner, subagent arms, viewer, and `.skill`
+  packaging remain excluded.
+
+This is a different repository and commit from the `anthropics/skills@41bbe19` package credited above.
+
+### OpenAI skill-creator
+
+- Project: [openai/skills](https://github.com/openai/skills), path `skills/.system/skill-creator/`
+- Commit: `49f948faa9258a0c61caceaf225e179651397431`, the revision already credited above
+- License: Apache-2.0, per that skill's `LICENSE.txt`; no `NOTICE` file
+- Ideas retained: corroboration for bundling scripts that runs keep rebuilding and for a table of contents on
+  long references. Its product metadata and Codex assumptions remain excluded.
+
+### obra/superpowers writing-skills
+
+- Author: Jesse Vincent
+- Project: [obra/superpowers](https://github.com/obra/superpowers), path `skills/writing-skills/`
+  (`SKILL.md`, `testing-skills-with-subagents.md`)
+- Commit: `8ca22dba9a94f28898bbce59f2537ff4d87c747d`
+- License: MIT, `Copyright (c) 2025 Jesse Vincent`, per the repository's root `LICENSE`
+- Ideas retained: matching the guidance form to the failure it prevents, with recipes free of nuance clauses and
+  exemption clauses treated as unreliable scoping (`references/writing-techniques.md`); observing the unaided
+  failure before writing guidance and dropping guidance whose control already succeeds
+  (`references/authoring.md`, step 1); pressure scenarios with stacked incentives and a forced choice for
+  compliance skills, and treating an agent's own suggestion for clarity as a hypothesis
+  (`references/full-evaluation.md`). Its `anthropic-best-practices.md` was not used, because its license status
+  is unclear. Its persuasion techniques, mandatory per-edit subagent testing, and Claude-specific paths remain
+  excluded.

@@ -32,6 +32,10 @@ workflow also requires the package to ship:
 - `LICENSE.upstream` containing the upstream license text verbatim; and
 - `NOTICE.upstream` when the upstream project supplies one or its license requires preservation.
 
+When a package carries material from more than one upstream, give each further license its own file named for
+its source, such as `LICENSE.upstream-<source>`, and name the file in that source's `ATTRIBUTIONS.md` entry, so
+every copyright notice keeps traveling beside the material it covers.
+
 Start `ATTRIBUTIONS.md` from `assets/ATTRIBUTIONS.template.md` when available. Preserve existing provenance
 artifacts and notices during updates. If the source or license cannot be verified, stop before making an
 authoritative attribution claim and report what is missing.
