@@ -150,9 +150,9 @@ Applies to `TEST-IMPLEMENTATION`, `VALIDATION`, `REGRESSION`, and `BUG-REPRO`.
 02. Risk: identify behavior, regression, acceptance criteria, and edge cases. Unsure what deserves a test?
     That is `TEST-STRATEGY` - switch modes.
 03. Existing coverage: inspect nearby tests and reuse local conventions.
-04. Framework: load the language's testing skill when one is available - `python-testing` for Python,
-    `bash-shell` for Bash, `posix-shell` for portable `sh`, `nix-flakes` for flake checks, and
-    `yocto-security-audit` for a Yocto image's `oeqa` and `testimage` suites. Then establish which runner,
+04. Framework: load `coding-standards`, and the language's testing skill when one is available -
+    `python-testing` for Python, `bash-shell` for Bash, `posix-shell` for portable `sh`, `nix-flakes` for flake
+    checks, and `yocto-security-audit` for a Yocto image's `oeqa` and `testimage` suites. Then establish which runner,
     assertion library, and mocking library this project actually uses, from its config and its neighboring
     tests. If it stays unclear, ASK - do not default to the ecosystem's most popular choice. If the framework
     is unfamiliar, read its own docs or `--help` before writing a line. NEVER invent an assertion API: a
@@ -176,6 +176,11 @@ stops retrying burns the budget that diagnosis needed.
 These govern every test this lane writes, and every strategy it plans, because they decide whether the suite is
 still trusted a year later.
 
+- Tests are code, and a readable suite is the best documentation of what the system does. Hold test code to
+  the `coding-standards` skill as the baseline: clear names, small focused functions, no dead code, comments
+  that explain why. Relax it only where test clarity wins: repeat a short setup inline rather than hide the
+  scenario behind a helper, and write the expected value as a literal, since that literal is the specification
+  rather than a magic number.
 - Give each test one behavior, arranged, acted on, and asserted in that order, and a title that names the
   behavior it protects. `test_case_3` is a test nobody will dare delete or fix.
 - MUST NOT mock what you are trying to prove. Mock at the boundary you do not own (third-party network, payment
