@@ -19,17 +19,14 @@ work in [redacted], condensed in `~/work/[redacted].git/.workdir/skill-feedback-
 came from a user correction. The worst symptom was unreadable PRDs, SRSs, and design documents, because the
 prose and document rules were never applied to them. Each skill gets both passes from the ledger below.
 
-- **`requirements-specification` and `technical-design`:** route every document they produce through
-  `writing-documentation` and the `writing-for-humans` reader-ready pass. Neither skill names either one today.
-- **`requirements-specification`:** the requirements tone for obligations and limits (`SHALL` in EARS patterns,
-  priorities defined by consequence, a Notes field that states limits and never argues). Treat a requirement as
-  unsettled until the customer has reviewed it, and check that a role or route it relies on is defined and could
-  work.
-- **`technical-design`:** a design is living and two-way; its opener says the code wins once implemented. Every
-  decision states each rejected option with the reason it lost. Mark provisional decisions as provisional
-  wherever they land. Where no ready component exists, write the custom step as a task rather than a finding.
-  Check claims about upstream mechanisms against the pinned source. Quality bar: a first-time reader re-derives
-  the implementation from the documents alone, and the working note behind the design is deletable after review.
+Judge each skill against the intent of that refresh, not only its listed item: noise is judged in context,
+the reader does not share the writer's knowledge, and every document a skill produces goes through
+`writing-documentation` and the `writing-for-humans` reader-ready pass. An instruction to annotate sources or
+status "throughout" turns into per-sentence noise; carry status in the document's structure instead.
+`requirements-specification` and `technical-design` show the fix.
+
+- **`implementation-planning`:** it produces plans with the same gap. Route them through the writing skills,
+  and check its worked plan against the noise and first-use rules as `technical-design`'s example was.
 - **`git-commits-and-recovery`:** the body states only the why, in one or two short paragraphs. No per-file
   inventory, restated settings, or requirement keys. Draft, then cut by half.
 - **`interview-me`:** map the decision branches first, give each question its context and a recommendation with
@@ -91,6 +88,8 @@ names it. The 2026-09-07 description audit predates the description skill and do
 | `docker-podman-containers`        | 2026-09-28, `f92701a`            | 2026-09-28, `f92701a`                                                   |
 | `writing-for-humans`              | 2026-09-28, `e999023`            | 2026-09-28, `e999023`                                                   |
 | `writing-documentation`           | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                                                   |
+| `requirements-specification`      | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                                                   |
+| `technical-design`                | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                                                   |
 
 ## Merge skill-review Into skill-forge as a Review Mode?
 
