@@ -106,6 +106,13 @@ This skill retains only the sentence-level rule that an author's voice must not 
   copy editing and AI-mark removal. The upstream license remains in `LICENSE.upstream`, and its notice remains
   in `NOTICE.upstream`.
 
+The 2026-09-28 refresh reorganized the skill around a single guardrails section and folded in the remaining
+rules of the always-loaded writing rule (`agents/shared/rules/writing.md`), which descends from the same
+`agent-style` adaptation: keeping "that", no bold lead-ins, no run of very short bullets, varied sentence
+openings, subordinate clauses for causes and conditions, and reader-facing identifiers. The semicolon-chain,
+shortening, mechanism, backtick, and check-the-replacement rules came from the user's own corrections during
+documentation work in another repository, not from an external source.
+
 ## Removed Influences
 
 The prior package also retained composition, grammar, dash, heading, vocabulary, and document-genre rules from

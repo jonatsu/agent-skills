@@ -1,6 +1,6 @@
 ---
 name: writing-for-humans
-description: "Write, edit, or review technical prose at the sentence and paragraph level in any language, defaulting to English; preserve claims and the author's voice, and actively remove AI-writing artifacts. Use for documentation, reports, issues, commits, agent instructions, and user-facing errors. Not for document structure or house style, which is writing-documentation, and not for fiction, poetry, marketing, or ordinary chat."
+description: "Write, edit, shorten, or review technical prose at the sentence and paragraph level in any language, defaulting to English, preserving every claim and the author's voice and removing AI-writing artifacts. Use for documentation, specs, PRDs, and design documents, reports, issues, commit messages, user-facing errors, and readability or de-bloat passes. Not for document structure or type (writing-documentation), agent instruction files (writing-for-agents), or fiction, poetry, marketing, or chat."
 license: MIT AND CC-BY-4.0
 metadata:
   author: Joonas Onatsu
@@ -8,90 +8,60 @@ metadata:
 
 # Writing for Humans
 
-Use this skill for prose-level decisions in technical writing. Its unit is the sentence and the paragraph, and
-it applies to any prose: documentation, reports, issues, commits, agent instructions, rule files, and
-user-facing errors.
+This skill owns the sentence and the paragraph: whether each sentence adds something the reader needs, and
+whether the reader can take it in on the first pass. `writing-documentation` owns the document around them: its
+type, what belongs in it, and where each concept is explained. A spec, PRD, or design document needs both
+skills, and the skill that owns its content as well.
 
-Write in the language the request, the surrounding text, or the audience establishes. English is the default
-when nothing establishes another, and it is the language this skill's examples and diagnostics are drawn from.
+Write in the language the request, the surrounding text, or the audience establishes, and default to English.
+The rules are language-general unless marked as an English convention. In another language, that language's
+own conventions govern typography, punctuation, capitalization, heading style, and register.
 
-Most rules here are language-general: one term per concept, one topic per paragraph, lead with the point,
-preserve the claim, cut what carries no meaning. Some are English conventions, and they are marked where they
-appear. **In another language, that language's own conventions govern typography, punctuation, capitalization,
-heading style, and register.** Do not carry an English convention into a language that does not share it, and
-say which convention you applied when the choice is not obvious.
+## Guardrails
 
-Use `writing-documentation` as well when the task includes a document's purpose, organization, examples,
-document type, or the house style of a documentation set it joins.
+These bind every draft, edit, and review, and every other rule yields to them.
 
-This skill does not govern fiction, poetry, marketing, narrative nonfiction, quotations, or ordinary chat.
+**Preserve every claim.** When editing supplied prose, keep every supported claim, distinction, condition,
+exception, qualification, and normative requirement. Invent no fact, actor, date, number, cause, citation,
+opinion, or personality. Flag an unsupported assertion or an ambiguity rather than resolving it silently. A gap
+stays a gap: "the sources do not say" is a complete sentence, and a plausible guess written after it is a
+fabrication.
 
-## Establish the Constraints
+**Do the requested task only.** A review reports; it does not rewrite. Shortening removes text that carries
+nothing; it does not drop a condition or a citation. Polishing does not restructure. When the requested depth is
+unclear, make the smallest edit that answers the request.
 
-Identify the artifact, repository conventions, and requested voice before drafting or editing. Introduce
-concepts before relying on them, and define unfamiliar terms and abbreviations before use.
+**Write the relation the source supports.** Where the evidence shows only sequence or co-occurrence, write
+"coincided with" or "was followed by", never "caused". Where the source is specific, write the specific
+relation: "the timeout bounds the retry", never "the timeout is related to the retry". Keep vague wording only
+where the source itself is vague.
 
-When editing supplied prose, preserve every supported claim, distinction, qualification, and normative
-requirement. Do not invent facts, actors, dates, numbers, causes, citations, opinions, or personality.
+**Keep quotations exact.** Keep each quotation visibly quoted and separate. Never repair one silently or use an
+ellipsis to change what the speaker claimed.
 
-**Do not substitute a neighboring task.** A review does not authorize a rewrite. Shortening does not authorize
-dropping a condition, exception, citation, or qualification. Polishing does not authorize restructuring. When
-the requested depth is unclear, make the smallest edit that answers the request.
+**Edit prose only.** Leave code blocks, inline code, frontmatter, link targets, table syntax, identifiers,
+commands, and quotations as they are unless the user includes them in scope. Confirmed AI-writing artifacts are
+the exception, below.
 
-Keep a direct quotation exact and visibly quoted. Do not merge separate quotations into one, repair a quotation
-silently, or use an ellipsis to change what the speaker claimed.
+**Write inclusively.** Use "they" for a person whose pronouns the text does not state, and never infer pronouns
+from a name. Use a gendered term only where the subject requires it.
 
-Write inclusively. Do not use a gender-specific pronoun for a person whose pronouns the text does not state,
-and do not infer them from a name. Use "they". Use a gendered term for a role or person only where the subject
-genuinely requires it.
+## Style and Voice
 
-Flag unsupported assertions and ambiguity rather than resolving them silently.
+The default style is this skill plus the repository's own conventions. It applies whenever nothing else is
+established, which is most of the time.
 
-**Do not assert a cause the source does not support.** Where the evidence shows only sequence or
-co-occurrence, write the weaker relation it does support: "coincided with", "appeared alongside", "was followed
-by". Cut the relation when even that overstates it. This binds an edit as much as a draft, because promoting
-"associated with" to "caused" changes the claim rather than the wording.
+When you edit someone else's prose, keep their register and terminology and add no personality the source lacks.
+That limits your edits; it does not protect a defect.
 
-**Name a relation the source does state.** Those same weak words are a defect in the opposite direction when
-the source is specific. "Associated with", "linked to", "tied to", and "connected with" hide whether someone
-chaired the board, consulted for a month, or filed one patch; "the timeout is related to the retry setting"
-hides whether it bounds the retry, is derived from it, or merely sits nearby. Write the relation the source
-gives. Keep the vague wording only where the source is genuinely vague, and never resolve the vagueness by
-inventing the specific.
+Voice matching overrides the default only with an explicit request and at least one sample. If the sample is
+missing, ask for one. Match the sample's formality, person, terminology, and degree of personality. AI-writing
+artifacts are never voice, so removing them outranks matching.
 
-When editing a file, change prose only. Preserve code blocks, inline code, frontmatter, link targets, table
-syntax, identifiers, commands, and quotations unless the user explicitly includes them in scope. AI-writing
-artifacts are production residue and are the exception: remove confirmed marks without changing the surrounding
-content.
+## Classify the Passage
 
-## Set the Style
-
-**The default style is the rest of this skill, plus the repository's own conventions.** Apply it whenever
-nothing else is established, which is most of the time. Do not look for a voice to match before you write.
-
-When you edit prose someone else wrote, keep their register and their terminology, and add no personality the
-source does not contain. That is a limit on your edits, not a style target. A defect stays a defect, and a
-padded passage does not become correct because its author wrote it that way.
-
-**Voice matching is an override, and it needs two things: an explicit request, and at least one sample.**
-Without both, apply the default and say nothing about voice. If the request arrives without a sample, ask for
-one. Do not infer a voice target from the surrounding text, from the repository, or from what the author seems
-to prefer.
-
-Given both, use the sample as the target. Match its formality, person, terminology, and degree of personality.
-One sample supports matching a voice. Inferring a repeatable convention needs two or more.
-
-Voice never protects everything in the source. AI-writing artifacts are production residue rather than voice,
-so artifact removal outranks voice matching wherever the two conflict. Rewrite the passage and keep the
-author's register; do not defend an artifact as a stylistic choice.
-
-Matching the conventions of an existing documentation set is a document-level job. Use `writing-documentation`
-for that.
-
-## Classify the Passage First
-
-Every passage is procedural or descriptive, and the distinction sets the sentence-length limit. Decide before
-you edit.
+Every passage is procedural or descriptive, and the class sets its sentence limit. Classify the passage in front
+of you, not the document: a how-to guide contains explanation, and a commit message contains instructions.
 
 |           | Procedural                   | Descriptive                        |
 | --------- | ---------------------------- | ---------------------------------- |
@@ -100,254 +70,199 @@ you edit.
 | Limit     | **20 words per sentence**    | **25 words per sentence**          |
 | Unit      | One instruction per sentence | One topic per paragraph            |
 
-This is a property of the passage, not of the document. A how-to guide still contains descriptive explanation,
-and a commit message still contains instructions. Classify what is in front of you.
+The limits are ceilings, and they bind commit bodies and error messages too. Split a sentence over its limit
+unless splitting makes it less clear. A tighter external limit, such as a 72-character commit subject, governs
+where one exists. Never edit verbatim text to fit.
 
-Do not mix the two inside one vertical list.
+Count a code span, identifier, quotation, heading, or title as one word. In a vertical list, the lead-in and each
+item carry their own limit, because the colon closes the lead-in as a period would. Keep procedural and
+descriptive items in separate lists.
 
-**Counting words.** A code span, an identifier, quoted text, a heading, and a title each count as one word,
-however long. In a vertical list, the lead-in and each item carry their own limit rather than summing: the
-colon closes the lead-in as a period would.
+## Cut Noise
 
-The limits bind everywhere this skill applies, commit bodies and error messages included. A tighter external
-constraint governs instead where one exists, such as the 72-character Conventional Commits subject. Verbatim
-text is never edited to fit a limit; the rule against altering quotations already protects it.
+**Noise** is any statement that gives the reader nothing new or useful at the point where they meet it. Judge a
+sentence in its context, never in isolation: ask what it adds for a reader who has read everything before it and
+reads for this text's purpose. Apply the deletion test. Remove the sentence, and if the reader loses nothing they
+need there, it was noise. A true, well-formed sentence is still noise when its context already carries it.
 
-## Write Clear Technical Prose
+Three forms recur in drafted prose:
 
-Prefer active voice when the actor is known and relevant. Use concrete, specific terms and plain language.
-Remove needless words, hedges, clichés, prefabricated phrases, and empty promotion.
+- **Restated context:** a fact the text already established, such as repeating the version or scope its opening
+  set. State scope once, where the text opens.
+- **Process residue:** how the writer checked the text, such as "verified against U-Boot v2026.01", "as
+  confirmed in the source", or "checked on the target". Write the checked fact. Where the reader needs the
+  source, name it once, in a source line or a citation.
+- **A self-cancelling claim:** a statement followed in the same sentence by its retraction, or by a hedge that
+  empties it. Write the claim at the strength the evidence supports, with its real limit stated as a condition.
 
-Express an action with a verb rather than a noun built from one. Write "analyze the log", not "perform an
-analysis of the log".
+Filler clauses, announcements, restating closers, and most AI-writing artifacts below are noise too. Apply the
+test to each clause as well as each sentence.
 
-Use "is", "are", and "has" where they are the true verb. "Serves as", "stands as", "functions as",
-"represents", "boasts", and "features" replace a plain verb with a longer one that adds no information:
-"`config.py` serves as the validation layer" is "`config.py` validates configuration", and "the release
-boasts four new commands" is "the release adds four commands".
+## Sentences
 
-Use one consistent term per concept. Do not rotate synonyms or redefine abbreviations.
+**Lead with the information.** State the claim, action, or result first, and put new or important information
+at the end of the sentence. Keep the subject near its verb and a modifier near what it modifies.
 
-State affirmative claims directly. Avoid rhetorical forms such as “X, not Y” and “not just X, but Y,” and
-their equivalents in the target language.
+**Use the verb that carries the meaning.** Write "analyze the log", not "perform an analysis of the log". Use
+"is", "are", and "has" where they are the true verb: "`config.py` validates configuration", not "`config.py`
+serves as the validation layer". Prefer active voice when the actor is known and relevant.
 
-Prefer simple tenses. **Keep a compound tense where it carries information the simple form cannot.** "The job
-has finished" asserts a current relevance that "the job finished" drops, and losing that changes the claim
-rather than the style. Drop the compound form only when the simple one says the same thing.
+**Name the mechanism.** "The security module releases the key only when the measurements match" beats "measured
+boot seals the key release". Test each sentence by asking whether the reader could act on it.
 
-Do not use an "-ing" form as a verb. The common case is a participial clause hung off a comma, as in "…, making
-it easy to configure", which becomes its own sentence. An "-ing" word is fine as a noun or inside a compound
-noun: "logging", "the mounting bracket".
+**Keep every word the grammar needs.** Keep articles, "that", subjects, and verbs. "Rotary switch to INPUT" is
+shorter and ambiguous. Meet a limit by splitting the sentence, never by compressing its grammar.
 
-Keep a noun cluster to three words, breaking a longer one with a preposition: "the timeout value for the
+**Put a condition before its command.** Write "If the build fails, read the log", with a comma after the
+condition. A reader who meets the condition after the instruction has already acted.
+
+**Write one instruction per procedural sentence.** Two actions share a sentence only when they happen together,
+or when the second is the immediate result of the first.
+
+**Give each concept one term.** Define a term or abbreviation on first use, never rotate synonyms, and never
+redefine an abbreviation. Prefer the precise technical term over shorthand, metaphor, or jargon.
+
+**Link clauses by their real relation.** Put a cause, condition, or qualification in a subordinate clause. Give
+equal ideas parallel clauses. Join two clauses with a colon or a semicolon only where the second explains or
+turns on the first. Never chain semicolons: a sentence that needs two becomes two sentences. The exception is an
+inline list whose items contain commas.
+
+**Prefer simple tenses.** Keep a compound tense where it carries information: "the job has finished" asserts a
+current relevance that "the job finished" drops.
+
+**Use "-ing" words as nouns only.** A participial clause hung off a comma ("…, making it easy to configure")
+becomes its own sentence. "Logging" and "the mounting bracket" are fine.
+
+**Keep a noun cluster to three words.** Break a longer one with a preposition: "the timeout value for the
 connection pool", not "the connection pool timeout configuration value".
 
-**Do not reach for an em dash.** It always has an alternative, and the alternative names the relation the dash
-leaves implicit. Before keeping one, write the version without it: a comma, colon, semicolon, parentheses,
-conjunction, subordinate clause, or full stop. Keep the dash only when that version loses a distinction you can
-state in words. Wanting the effect is not such a loss, and neither is preferring the rhythm.
+**Backtick identifiers, not concepts.** Commands, file names, configuration symbols, and versions (`dm-verity`,
+`v2026.01`) are code. Concepts (secure boot, initramfs) stay prose, and a codename beside a version stays bare.
 
-Never pair em dashes as parentheses, and never use two in one paragraph. Density is the signal a reader
-actually detects, and a single justified dash is not it.
+**Lead with the meaning, then the key.** An internal identifier names a fact without carrying it. Write "Keep
+cached values for five minutes (decision A-003)", not "A-003 is confirmed". A question restates the concrete
+choice rather than its key. A commit hash comes with its subject, and a file reference with the claim it
+supports. Omit a key the reader does not need.
 
-This default holds in every language, because the failure it prevents is a hidden relation rather than an
-English typographic habit.
+**State claims directly.** Write the affirmative claim rather than "not X but Y" against a claim nobody made.
 
-**In prose someone else wrote, an existing dash is the author's.** Treat it as a weak signal that prompts
-inspection of the passage, not as an artifact to strip on sight. Rewrite it only when the passage shows the
-relation was genuinely dodged.
+**Choose the plain word.** Cut hedges, clichés, empty promotion, and prefabricated phrases. In formal English
+documents, write full forms such as "it is" and "does not". Terse commits and error messages may contract.
 
-An en dash in a numeric or date range falls outside this rule, as does a dash a language requires as a
-grammatical construct, such as marking dialogue. Use those where that language uses them.
+**Replace the em dash.** Write the version without it first: a comma, colon, semicolon, parentheses,
+conjunction, or full stop. Keep the dash only when that version loses a distinction you can state in words.
+Never pair dashes as parentheses or use two in one paragraph. In someone else's prose, an existing dash is the
+author's: rewrite it only when the passage shows it dodged a relation. Ranges and dashes a language requires
+grammatically fall outside this rule.
 
-**Count a list of three before keeping it.** Three is the length a model reaches for when the content has no
-length of its own, so the triad arrives by rhythm: "keynotes, panels, and networking opportunities", or three
-parallel examples where one carries the point, or three short facts followed by a lesson. Check that each item
-adds something the others do not. Merge them, develop the strongest, or let the list be two or four when that
-is what the subject has. The parallel-form rule below governs a list the content earned; it does not license
-padding one out to three.
+## Paragraphs, Lists, and Emphasis
 
-In sentences and paragraphs:
+**Give a paragraph one topic,** opened by the sentence that states it, and at most six sentences. Change
+paragraphs when the topic, purpose, speaker, or argumentative stage changes. Vary sentence length. Keep tense
+consistent unless the time relationship changes.
 
-- use parallel grammatical form for coordinate ideas;
-- keep subjects near verbs and modifiers near their referents;
-- place new or important information last when that improves emphasis;
-- split a sentence over its limit unless splitting reduces clarity;
-- vary sentence length;
-- give a paragraph one topic, open it with the sentence that states that topic, and keep it to six sentences;
-- change paragraphs when the topic, purpose, speaker, or argumentative stage changes;
-- keep tense consistent unless the time relationship changes; and
-- use paragraphs for connected ideas and bullets for genuine lists.
+**Open sentences differently.** Two or more sentences in a paragraph never open with the same word, and none
+opens with "Additionally", "Furthermore", "Moreover", or "In addition". Name the real relation instead, or none.
 
-In procedural text, write one instruction per sentence. Two actions share a sentence only when they happen at
-the same time, or when the second is the immediate result of the first.
+**Use prose for connected ideas and lists for discrete items.** Fold items that depend on each other into
+sentences. Never write a run of very short bullets. Give list items parallel grammatical form.
 
-**State a required condition before the command it governs, separated by a comma.** Write "If the build fails,
-read the log", never "Read the log if the build fails". A reader who meets the condition after the instruction
-has already acted on it.
+**Count a list of three.** Three is the length a model reaches for when content has no length of its own. Check
+that each item adds something the others do not, then merge them, develop the strongest, or let the list be two
+or four.
 
-Do not drop a noun, verb, subject, or article to shorten a sentence. "Rotary switch to INPUT" is shorter and
-ambiguous. Meet the limits above by splitting sentences, never by compressing grammar out of them.
+**Spend bold as a budget.** Bold reads as strong only against plain text around it. Bold the shortest span
+carrying a decision, and prefer restructuring to a longer bold run. Never use bold as a lead-in or decoration,
+and never give every list item a bold label. In someone else's prose, dense emphasis prompts inspection, not
+stripping.
 
-Avoid repeated sentence openings, formulaic transitions, manufactured revelations, and routine concluding
-sentences that merely restate the paragraph.
+**Open a section with new information.** A "Performance" heading followed by "Speed matters." spends a line on
+the heading.
 
-**Name the most repeated visible move before delivering.** Inspect it when it appears three or more times, or
-when it dominates two consecutive paragraphs. Inspection may end in no change: a repeated move that carries the
-argument stays.
+**Describe what the subject does now,** not what it replaced. Changelogs, release notes, migration guides, and
+decision records are the exceptions, because change is their subject.
 
-## Apply Artifact-Specific Rules
+**Follow the repository's heading and line-length conventions.** Where none exists, wrap at phrase or clause
+boundaries and use title case for English headings. Other languages usually use sentence case.
 
-For requests, handoffs, and short operational messages, lead with the action, result, decision, or state.
-Name the owner and deadline when relevant. `writing-documentation` carries the same rule for decision records,
-change notes, and executive summaries.
+**Support formal claims with evidence.** Cite a verifiable source, or label the claim as unverified and say so
+at delivery.
 
-Follow the repository's heading convention and Markdown line-length rules. When a repository sets neither,
-wrap prose at phrase or clause boundaries without orphaning a sentence's final word, and use title case for
-English headings. Title case is an English convention: in another language use that language's heading
-convention, which is usually sentence case.
+## Shorten by Removing Noise
 
-Do not open a section with a sentence that restates its heading. A "Performance" heading followed by "Speed
-matters." spends a line on what the heading already said. Begin with the first thing the reader does not
-know.
+Shortening removes noise, as defined above. Readability is the target, never word count. A dense technical text
+often shortens little, because most of its length is content. The remaining lever is structural, which is the
+author's decision.
 
-Describe what the artifact does now, not what it replaced. A comment, docstring, or reference page written
-against the previous approach dates itself the moment the next change lands, and a later reader cannot tell
-whether the comparison still holds. Change logs, release notes, migration guides, and decision records are
-the documents whose subject is change, and are the exception.
+Besides the three recurring forms, the usual noise is a filler clause ("is documented in", "as described above",
+"it is worth noting"), a closer that restates its paragraph, and a sentence announcing the next one.
 
-**Emphasis is relative, so bold is a budget rather than a tool.** A bold span reads as strong only because
-the text around it is not, and a page where every paragraph carries one has no emphasis left, just texture.
-Before adding a mark, look at what is already bold within a screen of it and decide which one the reader most
-needs. Prefer the shortest span that carries the decision, and prefer restructuring over a longer bold run:
-a heading, a shorter paragraph, or the point moved to the front of the sentence.
+Split sentences while shortening, and never merge them. Merging short sentences into a semicolon chain saves
+words and makes the text denser. Protect every word that carries a limit, condition, exception, or
+qualification: a length target reaches for exactly those first.
 
-Do not give every item in a vertical list a bold label. A label earns its bold where the reader scans for it
-and the labels differ in kind. Where a label restates the opening words of its own item, delete the bold or
-turn the list into prose.
+## Remove AI-Writing Artifacts
 
-**In prose someone else wrote, the existing emphasis is the author's.** The same write-versus-edit asymmetry
-applies here as to the em dash: density is a prompt to inspect the passage, not a licence to strip marks on
-sight.
+Remove AI-writing artifacts wherever they appear. They are production residue, never the author's voice.
 
-In formal English documents, prefer full forms such as “it is,” “does not,” and “cannot.” Terse commits and
-error messages may use shorter forms. In another language, apply the equivalent register distinction that
-language draws between formal and terse writing rather than looking for contractions it may not have.
+**One account covers most of them: the sentence signals that a point matters instead of adding to it.** That makes
+it noise, and the deletion test finds it: cut the sentence whose only contribution is "emphasis".
+Reach for this account when a passage reads wrong but matches nothing listed.
 
-Formal factual claims require verifiable evidence or citations. Label unverifiable claims as unverified and
-disclose them when delivering the work.
+Act on one sighting of:
 
-## Remove AI-Writing Marks
+- chat residue, assistant-facing language, and meta-commentary announcing the text;
+- empty promotion, canned transitions, manufactured revelations, and concluding slogans;
+- a negative half nobody claimed ("not just X, but Y"), unless it corrects a belief the reader holds;
+- an aphorism standing in for the claim ("at its core", "the real question is");
+- a run-up announcing the point ("here's the thing") or an objection nobody raised ("to be clear");
+- process residue reporting how the writer checked the text;
+- false agency hiding an actor the source can name;
+- unresolved placeholders ("TBD", "[insert source]") and leaked tool or citation tokens ("oaicite"); and
+- invisible characters or metadata inserted to mark AI-generated text.
 
-Remove AI-writing artifacts whenever they appear. They are production residue and do not belong to the
-author's voice.
+Rewrite the passage while keeping its claims, qualifications, normative force, and voice. Remove a confirmed
+invisible mark without changing visible text, and keep legitimate accessibility, authorship, and application
+metadata.
 
-**One account covers most of them: the sentence signals that a point matters instead of adding to it.** A
-model continues with what fits the widest range of readers and subjects, and staging fits everywhere. Reach
-for the account rather than the lists when a passage reads wrong but matches nothing below. Ask what each
-sentence gives a reader who has already read the one before it, and cut the sentence whose answer is
-"emphasis".
+Treat one dash, adverb, transition, rhetorical question, bold run, stacked qualifier, or repeated opening as a
+prompt to inspect the
+passage, not as a finding. Several sharing a passage are a finding. **Surface style is never evidence of
+authorship:** settle that question from draft history, revision history, or disclosed AI use.
 
-Act immediately on definitive artifacts:
+Outside English, diagnose by category and derive the signatures from the text. A model's tells in one language
+are not translations of its tells in another.
 
-- chat residue and assistant-facing language;
-- meta-commentary that merely announces the text;
-- empty promotional language;
-- canned transitions and repeated rhetorical setups;
-- manufactured revelations or concluding slogans;
-- false agency that hides an identifiable actor;
-- unresolved placeholders such as "[insert source]", "TK", "TBD", or "202X";
-- leaked tool, interface, and citation tokens such as "turn0search0", "oaicite", or "contentReference"; and
-- invisible characters or metadata introduced to mark AI-generated text.
-
-Act on one sighting of these structural moves as well. Each stages a point rather than making it, and none
-needs a second signal to justify a rewrite:
-
-- a negative half nobody claimed, as in "not just X, but Y" or "this is not X, it is Y", including the form
-  split across two sentences and the clipped tail ("…, no guessing"). Keep the contrast where the negative
-  half corrects a belief the reader holds, or where both halves carry information;
-- a closer that restates the paragraph above it, a one-line dramatic fragment, or the same sign-off after
-  every section;
-- an aphorism standing in for the claim: "the real question is", "at its core", "what really matters", "X is
-  the Y of Z", "the architecture of". Write the specific claim instead;
-- a run-up that announces the point instead of making it, including staged candour: "let's dive in", "here's
-  what you need to know", "here's the thing", a standalone "Honestly?";
-- an objection or alternative nobody raised: "to be clear", "don't get me wrong", "a tempting approach would
-  be", "you might think… but". These are usually leftovers from an earlier draft. Keep an objection the text
-  attributes and answers, and an option a reader would genuinely weigh; and
-- a gap filled with a plausible guess. "The sources do not say" is an acceptable sentence. "It likely began
-  in the 1990s", written straight after admitting no source exists, is a fabrication wearing a hedge. Cut the
-  guess or state the gap, and remove knowledge-cutoff disclaimers with it.
-
-Rewrite the affected passage while preserving its claims, qualifications, normative force, and intended voice.
-Remove confirmed invisible marks without changing visible text. Remove format metadata only when its purpose as
-an AI-origin marker is established; preserve legitimate accessibility, authorship, interoperability, and
-application metadata.
-
-Treat weak signals as prompts to inspect the surrounding passage rather than as findings. One dash, adverb,
-transition, rhetorical question, bold run, stacked qualifier, or repeated sentence opening does not establish
-an AI-writing artifact; several sharing a passage do.
-
-**Surface style is not evidence of authorship.** A dash, a semicolon, a clean paragraph, or a word from any
-diagnostic list says nothing about who wrote the text. Settle an authorship question from draft history,
-revision history, source traces, or disclosed AI use. The marks in this skill exist to improve prose, never to
-decide who produced it.
-
-**The categories of AI-writing artifact carry across languages; the words that signal them do not.** Chat
-residue, meta-commentary, empty promotion, canned transitions, manufactured revelation, and false agency all
-appear in any language a model generates. Their lexical signatures are specific to each one, and a model's
-tells in one language are not translations of its tells in another. Outside English, diagnose by category and
-derive the signatures from the text in front of you. Do not translate an English tell and search for the
-result, and do not report a passage as clean merely because the English markers are absent.
-
-Load `references/diagnostics.md` for a long draft, difficult diagnosis, or final cleanup scan. Its categories
-apply to any language; its example strings are English. Use its patterns as evidence, not as a mechanical word
-blocklist.
-
-Load `references/rewrites.md` when the size of an edit is the question rather than its target. It works this
-skill's rules through paired before-and-after passages of technical prose, which is what settles how far to
-cut once a mark is identified.
+Load [references/diagnostics.md](references/diagnostics.md) for a long draft, a difficult diagnosis, or the final
+scan; its categories apply to any language and its examples are English. Load
+[references/rewrites.md](references/rewrites.md) when the size of an edit is the question rather than its
+target.
 
 ## Deliver a Reader-Ready Result
 
-A result is **reader-ready** when a complete reading pass confirms all of these conditions:
+A result is **reader-ready** when one complete reading pass, as its intended reader, confirms that:
 
 - each section and paragraph leads with the point the reader needs;
 - explanations precede the terms, conclusions, and instructions that depend on them;
-- relationships between claims are stated rather than left for the reader to reconstruct;
-- connected ideas flow through paragraphs, while lists contain genuinely discrete items;
-- every unfamiliar term or identifier receives enough context at first use;
-- every confirmed AI-writing artifact has been removed; and
-- every supported claim, condition, qualification, and normative requirement has survived the revision.
+- relationships between claims are stated rather than left for the reader to rebuild;
+- every sentence is within its limit, and none fails the deletion test;
+- every unfamiliar term or identifier has its meaning at first use;
+- every confirmed AI-writing artifact is gone; and
+- every supported claim, condition, qualification, and normative requirement survived.
 
-Read the complete result as its intended reader. When any condition fails, revise the affected passage and run
-the complete reader-ready pass again. A material revision can expose or introduce another defect.
+When a condition fails, revise the passage and run the complete pass again, because a revision can introduce a
+defect. **Check each replacement, not only the defect it removed:** a rewrite of a key-first opener can arrive
+in the passive, and a merged triad can drop a number. Then search once more for the five marks that most often
+survive: a not-X-but-Y contrast, a restating closer, an em dash, an unearned triad, and a bold run. Name the
+most repeated visible move, and inspect it when it appears three or more times or dominates two consecutive
+paragraphs; a repeated move that carries the argument stays.
 
-Finish when one complete pass finds no material defect. Leave working prose unchanged; revision serves the
-reader rather than demonstrating that editing occurred.
+**Leave a working sentence alone.** A limit is a ceiling, not a quota of edits. Check for over-correction as
+well: fabricated informality, variation for its own sake, and roughness added to look handmade.
 
-After the reader-ready pass, search for the five artifacts that most often survive revision: a not-X-but-Y
-contrast, a closer that restates its paragraph, an em dash, an unearned list of three, and a bold run.
+For a rewrite, return the edited text or file change with no change summary, self-review, or confidence
+statement unless asked. For a review, separate proposed prose edits, issues that need the author's input, and
+passages left unchanged because their evidence or intended voice is unclear.
 
-Use the same pass to check what the edit dropped. A change of shape is where a claim goes missing, so after
-merging a triad, cutting a closer, or unbolding a labelled list, verify that every fact, number, ranking, and
-simultaneity claim survived. A lost claim is an error unless a rule above called for cutting it.
-
-**Leave a sentence alone when it already works.** Do not rewrite one to match a neighbour's cadence, to satisfy
-a preference nobody requested, or to show that editing happened. A limit in this skill is a ceiling on the
-prose, not a quota of changes to make, and a passage that meets every rule needs no edit.
-
-Check the finished work for over-correction as well: fabricated informality, variation introduced for its own
-sake, and roughness added to make the prose look handmade. Each is as much an artifact as the marks above.
-
-For a rewrite, return the edited text or requested file change. Do not append a change summary, a self-review,
-or a confidence statement unless the user asked for one.
-
-For a review, separate:
-
-- proposed prose edits;
-- factual, structural, or missing-context issues requiring author input; and
-- passages left unchanged because their evidence or intended voice is unclear.
-
-Clarity may override stylistic defaults when following them would make the prose awkward, misleading, or less
-precise. Scope, factual accuracy, evidence, and claim preservation remain binding.
+Clarity may override a stylistic default that would make the prose awkward, misleading, or less precise. The
+guardrails always bind.

@@ -63,6 +63,39 @@ False agency hides the actor inside a mechanism. This hides a claim behind a cro
 Name the source and keep the claim inside what that source establishes. Where no source exists, attribute the
 claim to whoever is making it, mark it as unsupported, or cut it.
 
+## Noise in Context
+
+These sentences read as fine in isolation and carry nothing where they stand. Each example assumes the text has
+already stated the fact in question.
+
+| Form                  | Example                                                   | Rewrite                                           |
+| --------------------- | --------------------------------------------------------- | ------------------------------------------------- |
+| Restated context      | "In U-Boot v2026.01, the environment is stored twice."    | "The environment is stored twice."                |
+| Process residue       | "The bootcount limit is 3 (verified against the source)." | "The bootcount limit is 3."                       |
+| Self-cancelling claim | "The updater is atomic, although some steps are not."     | "The slot switch is atomic; the download is not." |
+
+The rewrite of a self-cancelling claim states the real limit, so it often needs the author's input. When the
+evidence does not say which steps are atomic, flag the sentence rather than guessing.
+
+## Staged Moves
+
+Each of these stages a point instead of making it, and one sighting justifies a rewrite:
+
+- **A negative half nobody claimed:** "not just X, but Y", "this is not X, it is Y", the same contrast split
+  across two sentences, and the clipped tail ("…, no guessing"). Keep the contrast where the negative half
+  corrects a belief the reader holds, or where both halves carry information.
+- **A closer that restates:** a final sentence repeating its paragraph, a one-line dramatic fragment, or the same
+  sign-off after every section.
+- **An aphorism standing in for the claim:** "the real question is", "at its core", "what really matters", "X is
+  the Y of Z", "the architecture of". Write the specific claim.
+- **A run-up that announces the point:** "let's dive in", "here's what you need to know", "here's the thing",
+  and staged candour such as a standalone "Honestly?".
+- **An objection nobody raised:** "to be clear", "don't get me wrong", "a tempting approach would be", "you might
+  think… but". These are usually leftovers from an earlier draft. Keep an objection the text attributes and
+  answers, and an option a reader would genuinely weigh.
+- **A gap filled with a guess:** "It likely began in the 1990s", written straight after admitting no source
+  exists. Cut the guess or state the gap, and remove knowledge-cutoff disclaimers with it.
+
 ## Clustered Rhetorical Setup
 
 One contrast or rhetorical question may be deliberate. Inspect a passage when several sentences stage a reveal,
