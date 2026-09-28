@@ -14,17 +14,23 @@ high-priority first; the settled/low-priority entries sit at the bottom.
 ## Probe the Lazy Tier on Codex and Copilot
 
 Added 2026-09-28, when the specialized skills moved under `shared/lazy/`
-([the plan](../docs/plans/archived/lazy-tier-layout.md) records the split and the layout). Two checks remain,
-and each spends a model call, so each waits for the user's go-ahead:
+([the plan](../docs/plans/archived/lazy-tier-layout.md) records the split and the layout).
 
-- Start a fresh Codex session and record whether its warning that it shortened skill descriptions remains. The
-  direct set still carries about 12,000 characters of descriptions, so the warning is expected. Keep
-  `skills.max_context_tokens = 2000` until that is measured: the Codex configuration reference documents only
-  `path` and `enabled` under `skills.config`, with no description override or name-only mode (checked
-  2026-09-12).
-- Give Codex, and Copilot once it has quota, a request that needs a moved skill, such as a Python style
-  question, and record whether it calls `find_skills` or `load_skill` unprompted. The root `TODO.md` item on
-  closing the lazy-skill-loading plan runs the same Copilot probe; do both in one session.
+Codex was probed on 2026-09-28 with codex-cli 0.157.0 (`codex exec`, low reasoning effort, a scratch
+workspace, two fresh sessions). Asked to review a Python file's style, it called `find_skills` with "python
+style", then `load_skill` for `python-style`, and answered by that skill. Asked for a commit message, the
+control, it called neither. Its listing held the 31 direct skills and Codex's own system skills, and no lazy
+skill. Every description was cut to 100–170 characters, with a median of 166, so most lose their "Use when"
+clause: `coding-standards` stops at "Use bef". `codex exec` printed no warning, so the cut is silent there.
+
+Still open:
+
+- Decide the Codex description cap. `skills.max_context_tokens = 2000` causes the cut above, and the Codex
+  configuration reference documents only `path` and `enabled` under `skills.config`, with no per-skill
+  override or name-only mode (checked 2026-09-12). Raising the cap, or front-loading each description's
+  routing words, are the two ways out; either needs a re-probe.
+- Run the same Python probe on Copilot once it has quota. The root `TODO.md` item on closing the
+  lazy-skill-loading plan runs a Copilot probe too; do both in one session.
 
 The user also plans to revisit the domain names and to rename some skills; neither is scheduled.
 
