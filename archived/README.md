@@ -23,6 +23,7 @@ The 2026-09 review campaign's own ledger is retired; its verdicts and evidence a
 | Skill | Archived | Why |
 |---|---|---|
 | `anti-rationalization` | 2026-09-02 | Review lite completed 2026-09-07: invalid under current policy, with additional design defects. Remains archived; [review and proposed disposition](../../docs/evaluations/skills/2026-09-07-archived-skill-review-batch-1.md). |
+| `claude-code-setup-audit` | 2026-09-28 | Retired at the user's direction because it saw no use; it had not been through the description or `writing-for-agents` passes. See its `ARCHIVED.md`. |
 | `design-forge` | 2026-09-02 | Temporarily removed from deployment. Its corpus contract and checker remain archived as reference material. Review is deferred. See its `ARCHIVED.md`. |
 | `find-skills` | 2026-09-02 | Retired at the user's direction. Its cross-agent source catalogue, trust model and installation workflow require continuing maintenance against external services and agent interfaces; Codex's system `skill-installer` now covers its narrower installation lane. The security and provenance material remains useful as a reference. See its `ARCHIVED.md`. |
 | `headroom-management` | 2026-08-26 | The Headroom proxy it manages was rejected, so the skill governs a tool this setup no longer runs. See its `ARCHIVED.md`. |

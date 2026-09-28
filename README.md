@@ -353,7 +353,8 @@ Two places these sources are wrong, or narrower than they read:
   pronouns sat inside quoted user utterances (`'my CLAUDE.md is too long'`) — which is exactly what a trigger
   list should contain.
 - Anthropic's ban on `anthropic`/`claude` in a skill name binds claude.ai uploads and the Skills API, not
-  Claude Code. This repository's own `claude-code-setup-audit` deploys and works under that prefix, so
+  Claude Code. This repository's `claude-code-setup-audit`, archived 2026-09-28, deployed and worked under that
+  prefix, so
   `quick_validate.py` warns rather than fails. The warning was not observed during the 2026-09-03 rename, but
   the validator was being reworked concurrently, so treat that as unconfirmed rather than as changed.
 

@@ -28,7 +28,8 @@ Every skill gets two passes: `skill-descriptions-and-triggers` on its descriptio
 over the whole package. A skill missing from this table has had neither, and a blank cell means that pass is
 still open. When a skill passes, add or complete its row in the same change and cite the commit. Rows before
 2026-09-28 were reconstructed from Git history; a pass counts only where a commit message or evaluation record
-names it. The 2026-09-07 description audit predates the description skill and does not count.
+names it. The 2026-09-07 description audit predates the description skill and does not count. A cell marked
+`unnamed` cites a content update whose commit does not name the pass; the user accepted it as that pass.
 
 A skill that produces documents also gets judged against the intent of the 2026-09-28 writing refresh: noise is
 judged in context, the reader does not share the writer's knowledge, and every document the skill produces goes
@@ -66,6 +67,8 @@ as `requirements-specification` and `technical-design` do.
 | `requirements-specification`      | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
 | `technical-design`                | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                             |
 | `implementation-planning`         | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                             |
+| `test-engineer`                   | 2026-09-28, `7702d54`, unnamed   | 2026-09-28, `7702d54` and `add69c3`, unnamed      |
+| `coding-standards`                | 2026-09-28, `73a6774`, unnamed   | 2026-09-28, `73a6774`, unnamed                    |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
@@ -110,9 +113,9 @@ wording repairs" a moment nobody verbalizes) rather than editing the description
 ## Invocation Control Audit
 
 Checked 2026-09-11: no skill under `shared/` or `claude/` sets `disable-model-invocation` or `user-invocable`,
-and `allowed-tools` appears once (`claude-code-setup-audit`). The one skill that rightly restricted invocation,
-`find-skills` (it installs third-party code), is archived, so the worked example for "when the flag is right"
-must be reconstructed.
+and `allowed-tools` appeared once, in `claude-code-setup-audit`, archived 2026-09-28. The one skill that rightly
+restricted invocation, `find-skills` (it installs third-party code), is archived, so the worked example for "when
+the flag is right" must be reconstructed.
 
 `git-commits-and-recovery` is settled the other way: the flag never stopped `git push`, it only withheld
 guidance at the moment the command ran. Safety there rests on the staging rule in `agents/rules/` plus the
