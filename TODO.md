@@ -74,6 +74,8 @@ as `requirements-specification` and `technical-design` do.
 | `domain-modeling`                 | 2026-09-28, `f5cf1f9`            | 2026-09-28, `f5cf1f9`                             |
 | `spec-conformance-review`         | 2026-09-28, `d0bc8da`, no change | 2026-09-28, `d0bc8da`                             |
 | `security-review`                 | 2026-09-28, `7f3d35f`            | 2026-09-28, `7f3d35f`                             |
+| `writing-prompts`                 | 2026-09-28, `d55d5dd`, new skill | 2026-09-28, `d55d5dd`, new skill                  |
+| `prompt-debugging`                | 2026-09-28, `d55d5dd`            |                                                   |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
