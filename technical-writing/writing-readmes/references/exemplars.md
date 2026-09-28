@@ -24,14 +24,13 @@ these documents would force cutting either real content or the aid that makes th
 
 ## Decision Rules
 
-These replace taste with a checkable trigger. Each is derived from where the exemplars diverge, not from where
-they happen to agree.
+SKILL.md states each device's trigger. This section holds the evidence behind it and the finer form detail,
+derived from where the exemplars diverge, not from where they happen to agree.
 
 ### Table of Contents
 
-Earns its place once a reader must scroll past roughly three screens to reach a section they already know they
-want — in practice, **six or more top-level sections**, at least one with enough sub-items to jump past
-siblings. Below that, it is furniture.
+In the exemplars, the three-screen trigger meant **six or more top-level sections**, at least one with enough
+sub-items to jump past siblings.
 
 The *form* follows how self-explanatory the section titles are:
 
@@ -52,9 +51,7 @@ anything the TOC already serves.
 
 ### Badges
 
-One badge per **distinct trust question a skeptical adopter would otherwise check by hand**: will this run on
-my system, is it maintained, does the suite pass, is it licensed how I need, what version ships. No exemplar
-exceeds five in a row. Past about six they stop being scannable.
+No exemplar exceeds five badges in a row. Past about six they stop being scannable.
 
 The absence of a badge is as deliberate as its presence. A config-file project carries no CI badge because it
 has no build; one exemplar leaves its build badge commented out in source rather than advertising a check it
@@ -64,29 +61,21 @@ lump. A bare star count carries no checkable fact and is the weakest instance ob
 
 ### Centered Masthead and HTML
 
-Center only when the opening is a **cluster of three or more stacked elements** — title, link row, badges, hero
-image. Where prose starts within a line or two of the title, left-align; one exemplar does exactly this and
-loses nothing, because its content is dense text and code where centering adds no clarity.
+The stacked cluster behind a centered masthead is title, link row, badges, and hero image. One exemplar
+left-aligns because prose starts within a line or two of the title, and loses nothing: its content is dense
+text and code where centering adds no clarity.
 
-More generally: **reach for HTML when the layout is something GFM cannot express**, and not otherwise. Real
-instances across the set — grouped badge rows, a `<table><td>` used as a bordered content box, `<br>` forcing a
-line break inside a table cell, `<div align="center">` wrapping a Markdown table, `<img width>` signalling
-relative importance, manual `<a id>` anchors recreating footnotes. "Avoid HTML in READMEs" does not survive
-contact with these documents. A document that is fundamentally linear text and code gets nothing from it.
+Real HTML instances across the set — grouped badge rows, a `<table><td>` used as a bordered content box,
+`<br>` forcing a line break inside a table cell, `<div align="center">` wrapping a Markdown table,
+`<img width>` signalling relative importance, manual `<a id>` anchors recreating footnotes.
+"Avoid HTML in READMEs" does not survive contact with these documents.
 
 ### Humor
 
-Two authors arrive independently at the same rule: **humor lives in the motivating sentence before an
-instruction, never inside a bullet, a step, a table cell, or any sentence the reader must act on correctly.**
-
-One confines it entirely to the sections about the project's philosophy and community, and it is wholly absent
-from features, prerequisites, install and troubleshooting — every section consulted under time pressure. The
-other threads it through each command's lead-in, then drops immediately into a dry, joke-free list of exactly
-what the command does. **The dry spec right after the joke is what protects credibility.**
-
-Failure modes the pattern implies: a joke inside an instruction creates real ambiguity about whether a step is
-optional; a joke with no dry description following it leaves the reader with only the joke; an in-joke is safe
-only where the audience's shared knowledge is a safe assumption.
+Two authors arrive independently at SKILL.md's humor rule. One confines it entirely to the sections about the
+project's philosophy and community, and it is wholly absent from features, prerequisites, install and
+troubleshooting. The other threads it through each command's lead-in, then drops immediately into a dry,
+joke-free list of exactly what the command does.
 
 ## Conventions
 
@@ -97,11 +86,9 @@ proof anywhere. The strongest cross-author finding in the set.
 
 **Badges and a tagline precede any structural apparatus.** Identity first, navigation second, content third.
 
-**Never ship a bare code block.** Every author frames every snippet — a sentence saying what it does and why
-you are running it now, or a bold one-line label above it. The label form lets a skimmer read only the bold
-lines and still follow the sequence.
+**Every code block is framed.** Every author frames every snippet, with a sentence or a bold one-line label.
 
-**Spend admonitions on skippable asides, and calibrate the type.** Alerts carry cost warnings, glossary asides,
+**Admonitions carry skippable asides, at calibrated levels.** Alerts carry cost warnings, glossary asides,
 compatibility notes — never a required step, so skimming past one costs nothing. One exemplar uses three
 distinct alert levels for three severities rather than repeating one.
 
@@ -111,8 +98,8 @@ at, resolve it before selling anything.
 
 **Push licence, contributing and support to the bottom.** All nine. None interrupts the document with them.
 
-**Link an unfamiliar tool on first mention rather than describing it.** The reader who knows it skips; the one
-who does not gets the authoritative source instead of a paraphrase that will rot.
+**An unfamiliar tool is linked on first mention, not described.** The reader who knows it skips; the one who
+does not gets the authoritative source instead of a paraphrase that will rot.
 
 ## Choices
 
