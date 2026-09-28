@@ -25,8 +25,6 @@ the reader does not share the writer's knowledge, and every document a skill pro
 status "throughout" turns into per-sentence noise; carry status in the document's structure instead.
 `requirements-specification` and `technical-design` show the fix.
 
-- **`implementation-planning`:** it produces plans with the same gap. Route them through the writing skills,
-  and check its worked plan against the noise and first-use rules as `technical-design`'s example was.
 - **`git-commits-and-recovery`:** the body states only the why, in one or two short paragraphs. No per-file
   inventory, restated settings, or requirement keys. Draft, then cut by half.
 - **`interview-me`:** map the decision branches first, give each question its context and a recommendation with
@@ -90,6 +88,7 @@ names it. The 2026-09-07 description audit predates the description skill and do
 | `writing-documentation`           | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                                                   |
 | `requirements-specification`      | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                                                   |
 | `technical-design`                | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                                                   |
+| `implementation-planning`         | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                                                   |
 
 ## Merge skill-review Into skill-forge as a Review Mode?
 
