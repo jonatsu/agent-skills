@@ -87,6 +87,7 @@ as `requirements-specification` and `technical-design` do.
 | `repo-management`                 | 2026-09-28, `ac88c49`, no change | 2026-09-28, `ac88c49`                             |
 | `bash-shell`                      | 2026-09-28, `ef71b3f`, no change | 2026-09-28, `ef71b3f`                             |
 | `posix-shell`                     | 2026-09-28, `ef71b3f`            | 2026-09-28, `ef71b3f`                             |
+| `cc-safety-net`                   | 2026-09-28, no change            | 2026-09-28, no change, vendored upstream          |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
