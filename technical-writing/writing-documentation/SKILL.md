@@ -104,9 +104,7 @@ it. That skill decides what the document must contain. This skill still governs 
 here applies to it in full: the authority map, one term per concept, concepts explained where first relied on,
 every sentence carrying information, and the `writing-for-humans` **reader-ready** pass.
 
-A design document meets its bar when a first-time reader could re-derive the implementation from the documents
-alone. Once it passes review, the working notes behind it are deletable without losing anything an implementer
-needs.
+`technical-design` sets the bar a design document must meet before its handoff.
 
 ## Match an Established House Style
 

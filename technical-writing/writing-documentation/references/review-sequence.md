@@ -11,8 +11,8 @@ documents and reliably produced documents a first-time reader could implement fr
    Spot-check its most consequential claims yourself before relaying or applying them.
 2. **Review the structure and design.** Use an architecture review, and a security review for a security design.
    Apply the findings.
-3. **Re-review once, focused on what changed.** Then apply the design bar from `SKILL.md`: a first-time reader
-   could re-derive the implementation from the documents alone. Delete the working note once nothing in it is
+3. **Re-review once, focused on what changed.** Then apply the design bar that `technical-design` sets: a first-time
+   reader could re-derive the implementation from the documents alone. Delete the working note once nothing in it is
    still needed.
 4. **Run a readability pass on a draft copy.** The pass applies `writing-for-humans` and writes a revised copy to
    a separate draft file rather than the tracked document. Read the word diff against the guidelines yourself,
