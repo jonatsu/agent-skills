@@ -95,7 +95,10 @@ was not deliberately superseded. Verify referenced paths and commands, link targ
 generated-content boundaries, and the absence of placeholders. Use a fresh or reload-capable session when live
 loading verification is available; otherwise state the limitation.
 
-Then run `scripts/check_agent_context.py <repository-root>` and resolve every finding. It answers the accretion
+Then run `scripts/check_agent_context.py <repository-root>`. Resolve every failing finding, and review each
+advisory warning. A `dated` warning is a prompt, not a defect. Keep a date that records a decision (who decided
+what, and when), such as a decision-ledger row or a rule's origin. Move a date that records a measurement or an
+incident to the evidence file. The checker answers the accretion
 test with a measurement rather than an impression, and it catches the two failures an edit cannot see from its
 own diff: an evidence link that no longer resolves, and an evidence file that nothing reaches. It follows
 exactly one hop through the evidence directory's own index, and only when an instruction file routes to that

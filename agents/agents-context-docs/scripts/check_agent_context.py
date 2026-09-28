@@ -49,6 +49,7 @@ DEFAULT_EXCLUDES = (
 )
 
 ISO_DATE = re.compile(r"\b20\d{2}-\d{2}-\d{2}\b")
+DATED_HINT = "A dated line is fine when it records a decision; move a measurement or incident to the evidence file."
 
 EXIT_OK = 0
 EXIT_FINDINGS = 1
@@ -334,6 +335,7 @@ def build_parser() -> argparse.ArgumentParser:
             f"{' or '.join(INDEX_NAMES)} in the evidence directory does and an "
             "instruction file names that index. Oversize files and dated lines "
             "are reported as warnings and never fail the run. "
+            f"{DATED_HINT} "
             "Exit 0 clean, 1 findings, 2 bad invocation. "
             "Example: check_agent_context.py . --budget-for AGENTS.md=2400"
         ),
@@ -382,6 +384,8 @@ def report_text(findings: Sequence[Finding], warnings: Sequence[Finding], checke
         print(f"{finding.kind:<10} {finding.path}: {finding.detail}")
     for warning in warnings:
         print(f"{warning.kind:<10} {warning.path}:{warning.detail}")
+    if any(warning.kind == "dated" for warning in warnings):
+        print(DATED_HINT)
     print(
         f"\n{checked} instruction file(s) checked, {len(findings)} finding(s), "
         f"{len(warnings)} advisory warning(s) to review"

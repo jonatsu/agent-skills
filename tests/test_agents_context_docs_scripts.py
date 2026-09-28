@@ -204,6 +204,13 @@ class CheckAgentContextTests(unittest.TestCase):
         self.assertEqual(result.returncode, EXIT_OK, result.stdout)
         self.assertIn("dated", result.stdout)
         self.assertIn("1 advisory warning(s) to review", result.stdout)
+        self.assertIn("fine when it records a decision", result.stdout)
+
+    def test_dated_hint_is_absent_without_dated_lines(self) -> None:
+        _write(self.root, "AGENTS.md", "No dates here.\n")
+        result = _run(str(self.root))
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+        self.assertNotIn("fine when it records a decision", result.stdout)
 
     def test_missing_evidence_directory_is_skipped(self) -> None:
         _write(self.root, "AGENTS.md", "No evidence here.\n")
