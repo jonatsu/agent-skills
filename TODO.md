@@ -88,6 +88,10 @@ as `requirements-specification` and `technical-design` do.
 | `bash-shell`                      | 2026-09-28, `ef71b3f`, no change | 2026-09-28, `ef71b3f`                             |
 | `posix-shell`                     | 2026-09-28, `ef71b3f`            | 2026-09-28, `ef71b3f`                             |
 | `cc-safety-net`                   | 2026-09-28, no change            | 2026-09-28, no change, vendored upstream          |
+| `ast-grep`                        | 2026-09-28, `3392f10`, no change | 2026-09-28, `3392f10`                             |
+| `just-task-runner`                | 2026-09-28, `8976754`, no change | 2026-09-28, `8976754`                             |
+| `kasetto-skill-tool`              | 2026-09-28, `f4bcb13`            | 2026-09-28, `f4bcb13`                             |
+| `chezmoi-dotfiles`                | 2026-09-28, no change            | 2026-09-28, no change                             |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
