@@ -231,7 +231,7 @@ each, and the `kasetto/lazy/` and `kasetto/claude-lazy/` scopes list the lazy gr
 | `testing-and-qa/`        | Debugging, TDD, test engineering                                         |                                                              |
 | `system-administration/` |                                                                          | systemd units and networking                                 |
 | `embedded-linux/`        |                                                                          | Bring-up, Buildroot, kas, U-Boot, Yocto/OpenEmbedded         |
-| `technical-writing/`     | Human-facing prose                                                       |                                                              |
+| `technical-writing/`     | Human-facing prose                                                       | draw.io diagrams                                             |
 
 `lazy/development/python/` and `lazy/development/nix/` are nested groups: a second directory level under a
 domain, next to the skills that sit directly in it. Each nested group is its own Kasetto entry, since Kasetto
