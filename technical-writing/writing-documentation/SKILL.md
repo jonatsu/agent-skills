@@ -122,6 +122,11 @@ For a numbered series, such as decision records, check its location, file extens
 and filename pattern, and its heading set. Continue the sequence; surface a conflict between two schemes rather
 than picking one.
 
+Place a new document where the user says, then where the repository's convention puts its type. Where neither
+settles it, use `context-architecture`'s default layout: a how-to guide or runbook goes to `docs/how-to/`, a
+reference or explanation of current behavior to `docs/reference/`, and a decision record to `docs/decisions/`.
+Its "Where a New Document Goes" section places every other type.
+
 Repository requirements outrank the profile. The profile outranks this skill's defaults for whatever it covers
 with evidence, because consistency across a set serves the reader more than one improved page.
 

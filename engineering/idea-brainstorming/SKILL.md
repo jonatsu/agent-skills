@@ -119,7 +119,8 @@ Resolve a saved draft's path in this order:
 3. A governing overview's companion-document map.
 4. A documented repository convention.
 5. One clear convention established by existing plan or design documents.
-6. Otherwise, propose `docs/plans/<name>-draft.md` and ask once.
+6. Otherwise, propose `docs/plans/<name>-draft.md`, its place in `context-architecture`'s default layout, and ask
+   once.
 7. Outside a repository, ask for a destination.
 
 For the fallback, use two or three descriptive kebab-case words plus `-draft.md`. Reuse an existing file only when it is

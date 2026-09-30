@@ -200,7 +200,8 @@ Resolve the plan path in this order:
 3. Follow the governing design's companion-document map.
 4. Follow a documented repository convention.
 5. Follow one clear convention established by existing artifacts.
-6. Otherwise propose `docs/plans/<name>-implementation-plan.md` and ask once.
+6. Otherwise propose `docs/plans/<name>-implementation-plan.md`, its place in `context-architecture`'s default
+   layout, and ask once.
 7. Outside a repository, ask for a destination.
 
 Use two or three descriptive kebab-case words before `-implementation-plan.md` in the fallback. Link the specification,

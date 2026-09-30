@@ -53,7 +53,8 @@ Common patterns appear in these forms:
 | Prefixed and titled | `ADR-014-Store-Reports-In-Object-Storage.rst`   |
 | Dated               | `2026-03-11-store-reports-in-object-storage.md` |
 
-Where no convention exists, use `docs/decisions/` with zero-padded sequential Markdown files. Match the markup
+Where no convention exists, use `docs/decisions/` with zero-padded sequential Markdown files, as
+`context-architecture`'s default layout does. Match the markup
 of the surrounding documentation set, not this default, when the two differ.
 
 ## Format Standards
