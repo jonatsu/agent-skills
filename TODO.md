@@ -278,6 +278,36 @@ sources, record provenance, and decide whether the source overlaps an existing s
   as reference material for the embedded debugging skills; that skill is the example to start from. What the
   fields encode and how babysitter consumes them is unknown.
 
+## Session Backtrace Skill
+
+Build `session-backtrace` in `shared/agents/`: on request ("where are we", "bt"), rebuild the session's task
+stack from its full transcript rather than from the compaction summary, and draw it as a stack with done,
+current, and remaining steps. Feasibility was assessed on 2026-09-30 and deferred by the user. It is a check on
+the task-list, checkpoint, and working-notes rules, and the recovery when a session did not keep them.
+
+Source: ducktape's `skills/backtrace/SKILL.md` at `4ad338af25ea537dc7f817390b2e25c2a7a903f0`
+(<https://github.com/agentydragon/ducktape>), AGPL-3.0, so take ideas only and write the text independently. A
+copy of it is in `.scratch/research/ducktape/backtrace/`, which is scratch and may be gone. Its history
+recovery leans on a `session_logs` skill that was never fetched.
+
+What the assessment established:
+
+- **Size is feasible when tool output is skipped.** This session's transcript was 26 MB across five
+  compactions, and every real user message together came to about 53 KB (about 13,000 tokens). A bundled script
+  prints the spine (user messages, compaction summaries, assistant prose) and the agent reads that in full.
+- **Finding the current transcript is the hard part.** After a compaction, the session ID the agent sees is
+  not the transcript's file name: the working ID `e0d6a72d` belonged to `c7c88a93-….jsonl`. Newest-by-mtime is
+  wrong when sibling sessions share a repository. For Claude, the PreCompact breadcrumb in
+  `~/.config/claude/hooks/capture-pending.jsonl` records each session's ID and `transcript_path`; use it as the
+  anchor. When the transcript stays ambiguous, report a partial backtrace labelled as such.
+- **Harness coverage:** Claude and Codex first. Codex keeps transcripts under `~/.codex/sessions/`.
+  `src/tools/session-scoring/` already parses both formats, but a global skill cannot import a repository
+  tool, so the skill bundles its own stdlib script. Copilot's transcript location and format are unverified.
+- **Risks:** Claude's transcript fields (`isCompactSummary`, `isMeta`, the `compact_boundary` system subtype)
+  are undocumented and can change, so test the script against a real transcript. Transcripts can hold
+  secrets; the output stays local.
+- **Keep it separate from `session-handoff`,** which briefs a different recipient; this answers the user now.
+
 ## Dedicated GitHub Actions Skill
 
 Create a separate GitHub Actions skill if recurring work exceeds the short orientation in
