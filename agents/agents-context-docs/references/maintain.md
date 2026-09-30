@@ -38,7 +38,8 @@ Use these defaults where their conditions hold:
 
 Retain content that provides a verified constraint, rationale, ordering dependency, environment quirk, failure
 mode, or source-of-truth distinction. Remove generic advice, obvious code descriptions, runner transcriptions,
-review-date theatre, and duplicated README content.
+review-date theatre, and duplicated README content. Replace a tutorial on a well-known tool with its name and
+the ways this repository differs.
 
 Retaining content decides only that it survives, not where it lives. Split each retained item by the moment the
 agent needs it. An obligation it must satisfy before it can recognize that anything is wrong stays in the

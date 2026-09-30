@@ -30,7 +30,10 @@ Report each dimension independently when relevant:
 - **Loading and topology:** intended clients receive the right effective context without conflicts, silent
   gaps, or unsupported assumptions.
 - **Content quality:** instructions are verified, specific, actionable, non-duplicative, and
-  behavior-changing, and each earns the cost of being loaded on every session rather than on demand.
+  behavior-changing, and each earns the cost of being loaded on every session rather than on demand. Count MCP
+  tool descriptions and schema field descriptions a repository ships as always-loaded text too: every session
+  using the server pays for them. Some clients never show a server's own instructions to the model, so a tool
+  description that repeats them is not a duplicate.
 - **Whole-ruleset coherence:** precedence, nested scope, examples, templates, and enforcement do not
   contradict the rules.
 - **Maintenance safety:** generated boundaries and update practices preserve hand-written knowledge and avoid
@@ -55,6 +58,9 @@ Always flag:
 
 - an instruction file that has accumulated incident narrative, dated measurements, commit identifiers, or
   superseded-state history in place of imperative rules, and the always-loaded cost that imposes;
+- a file that includes another, such as through an `@path` import, and also restates, summarizes, or points
+  back to the content it includes, so every reader receives it twice;
+- one rule stated several times with rising emphasis, which is one rule paying for many;
 - divergent real files that different clients load;
 - instructions placed at filenames or scopes no target client reads;
 - contradictions among effective rules, examples, templates, or gates;

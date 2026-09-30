@@ -83,3 +83,15 @@ Licensed under the Apache License, Version 2.0. You may obtain a copy at
 <http://www.apache.org/licenses/LICENSE-2.0>. Unless required by applicable law or agreed to in writing,
 software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 ANY KIND, either express or implied. See `LICENSE.upstream` for the complete terms.
+
+### agentydragon/ducktape: `knowledge_hygiene` and `verify_docs`
+
+- Source: <https://github.com/agentydragon/ducktape>, `skills/knowledge_hygiene/` and `skills/verify_docs/`
+- Revision: `4ad338af25ea537dc7f817390b2e25c2a7a903f0`
+- License: AGPL-3.0, as stated in the repository's README
+- Read 2026-09-30
+
+No prose was copied or adapted, because the AGPL-3.0 does not fit this package's license. Independently
+expressed ideas: cost as size times load frequency, the "true in any repository using the tool" test,
+self-duplication through file inclusion, tool and field descriptions as always-loaded text, and a rule
+repeated for emphasis counting as one rule.

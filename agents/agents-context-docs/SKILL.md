@@ -69,16 +69,21 @@ precedence, includes, nesting, reload behavior, or symlink support. Load only th
   conflicting content, explain which clients receive each file, and ask which content should survive.
 - Reuse authorization in the user's request. Ask only when an unresolved choice changes topology, public
   behavior, compatibility, data preservation, cost, or scope.
-- Do not create vendor-specific files merely because the skill recognizes them. Every file must serve a target
-  client or a verified repository need.
+- Create a vendor-specific file only for a target client or a verified repository need; recognizing its name
+  is not a reason.
 - Keep `llms.txt` conditional. It indexes documentation for language models; it is not an instruction file.
 - Report unknown loading behavior and unavailable evidence without blocking useful work for recognized
   capabilities.
 
 For additions, apply two tests. The **cache test** asks whether the agent can recover the fact cheaply from
-the repository or authoritative runtime help. The **behavior test** asks whether the instruction changes
-likely agent behavior. Retain a derivable fact only when it adds a reason, constraint, ordering dependency, or
-failure mode that the source does not show.
+the repository or authoritative runtime help. A passage explaining a tool passes only if it would be false in
+some other repository using that tool; otherwise name the tool and keep only what differs here. The **behavior
+test** asks whether the instruction changes likely agent behavior. Retain a derivable fact only when it adds a
+reason, constraint, ordering dependency, or failure mode that the source does not show.
+
+A passage costs its size times how often it loads. A sentence in a root instruction file is paid by every
+session; the same sentence in a document reached by a pointer is paid only when followed. Weigh every addition
+and every cut by that product.
 
 Those two tests judge a single addition. The **accretion test** judges the file: an edit that adds an
 obligation must leave the instruction file no longer than it found it, or state what it relocated and where.
