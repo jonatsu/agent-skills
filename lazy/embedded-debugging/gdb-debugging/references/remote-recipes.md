@@ -60,5 +60,6 @@ The J-Link's `monitor reset` resets and halts. RTT stays readable on port 19021 
 ## RTOS Awareness
 
 With an RTOS, the debug server can present each task as a GDB thread. OpenOCD enables it with `-rtos <name>` on the
-target, such as `-rtos FreeRTOS` or `-rtos Zephyr`, or `-rtos auto`; the firmware must keep the symbols the server
-looks for. RTOS-specific setup belongs to `mcu-firmware-debugging`.
+target, such as `-rtos FreeRTOS` or `-rtos Zephyr`, or `-rtos auto`. The names are case-sensitive and some differ
+from the manual, and the firmware must keep the symbols the server looks for; `mcu-firmware-debugging`'s RTOS
+reference has both.
