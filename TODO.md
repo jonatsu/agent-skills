@@ -275,8 +275,13 @@ sources, record provenance, and decide whether the source overlaps an existing s
 - [a5c-ai/babysitter](https://github.com/a5c-ai/babysitter): research the `graph` fields in its skills'
   frontmatter and whether our skills should adopt something like them. The user flagged them on 2026-09-30,
   handing over [`jtag-swd-debug`](https://github.com/a5c-ai/babysitter/tree/main/library/specializations/embedded-systems/skills/jtag-swd-debug)
-  as reference material for the embedded debugging skills; that skill is the example to start from. What the
-  fields encode and how babysitter consumes them is unknown.
+  as reference material for the embedded debugging skills; that skill is the example to start from. At commit
+  `feb68abe397acc14f32b34984975c48fedba2b33` (MIT), the fields are typed edges into babysitter's "atlas"
+  knowledge graph: `graph:` lists `domains`, `specializations`, `skillAreas`, and `roles` as prefixed ids such
+  as `skill-area:rtos-programming`. `packages/atlas/scripts/generate-library-nodes.mjs` turns each into an edge
+  such as `lib_requires_skill_area`, `graph-quality.mjs` scores the result, and the target ids live under
+  `packages/atlas/graph/`. Whether anything reads the generated graph at run time is unverified; that, and
+  whether such edges could drive our lazy-skill discovery (`find_skills`), are the open questions.
 
 ## Session Backtrace Skill
 
