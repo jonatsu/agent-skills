@@ -35,6 +35,11 @@ back-feed a target that has its own supply. Two tools act at this tier by defaul
 
 When the user has not stated the target's power arrangement, ask before any command that could enable probe power.
 
+In a repository where hardware work happens, install the probe guard hook bundled with this skill, so the harness
+itself stops the "always ask" commands. It goes into that project's own configuration, never the user's global one.
+[references/probe-guard.md](references/probe-guard.md) has the install steps for Claude Code, Copilot CLI, and Codex,
+and what the guard cannot see.
+
 ## 2. Make the Probe Visible to the Host
 
 On WSL2 only, USB devices belong to Windows until the user attaches them. Detect WSL2 from `/proc/version`
