@@ -109,6 +109,7 @@ as `requirements-specification` and `technical-design` do.
 | `gdb-debugging`                   | 2026-09-30, `0de84b5`, new skill | 2026-09-30, `0de84b5`, new skill                  |
 | `mcu-firmware-debugging`          | 2026-09-30, `b2bcd2f`, new skill | 2026-09-30, `b2bcd2f`, new skill                  |
 | `embedded-linux-debugging`        | 2026-09-30, `8450467`, new skill | 2026-09-30, `8450467`, new skill                  |
+| `serial-console-debugging`        | 2026-09-30, `911b361`, new skill | 2026-09-30, `911b361`, new skill                  |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
