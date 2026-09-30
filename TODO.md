@@ -61,8 +61,8 @@ as `requirements-specification` and `technical-design` do.
 | `session-skill-audit`             | 2026-09-28, `da8a0cb`            | 2026-09-28, `da8a0cb`                             |
 | `skill-forge`                     | 2026-09-28, `9fe08b0`            | 2026-09-28, `9fe08b0`, merged with `skill-review` |
 | `context-compression`             | 2026-09-28, `2997308`            | 2026-09-25, `f0f5559f`                            |
-| `context-architecture`            | 2026-09-28, `2997308`, no change | 2026-09-25, `8fce5a79`                            |
-| `agents-context-docs`             | 2026-09-28, `2997308`, no change | 2026-09-28, `7eb012e`                             |
+| `context-architecture`            | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
+| `agents-context-docs`             | 2026-09-30, `f8435a5`            | 2026-09-30, `f8435a5`                             |
 | `python-architecture`             | 2026-09-28, `2997308`            | 2026-09-24, `4e374bf`                             |
 | `python-async-patterns`           | 2026-09-28, `2997308`, no change | 2026-09-24, `c85d2cf`                             |
 | `python-error-handling`           | 2026-09-28, `2997308`, no change | 2026-09-24, `819aa34`                             |
@@ -83,7 +83,7 @@ as `requirements-specification` and `technical-design` do.
 | `implementation-planning`         | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                             |
 | `test-engineer`                   | 2026-09-28, `7702d54`, unnamed   | 2026-09-28, `7702d54` and `add69c3`, unnamed      |
 | `coding-standards`                | 2026-09-28, `73a6774`, unnamed   | 2026-09-28, `73a6774`, unnamed                    |
-| `writing-readmes`                 | 2026-09-28, `1d8e881`            | 2026-09-28, `1d8e881`                             |
+| `writing-readmes`                 | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
 | `to-questionnaire`                | 2026-09-28, `e1f25db`            | 2026-09-28, `e1f25db`                             |
 | `domain-modeling`                 | 2026-09-28, `f5cf1f9`            | 2026-09-28, `f5cf1f9`                             |
 | `spec-conformance-review`         | 2026-09-28, `d0bc8da`, no change | 2026-09-28, `d0bc8da`                             |
@@ -92,7 +92,7 @@ as `requirements-specification` and `technical-design` do.
 | `prompt-debugging`                | 2026-09-28, `d55d5dd`            |                                                   |
 | `document-conversion`             | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
 | `github-ops`                      | 2026-09-28, `7c7a61f`, no change | 2026-09-28, `7c7a61f`                             |
-| `repo-management`                 | 2026-09-30, `a3cb20e`            | 2026-09-30, `a3cb20e`                             |
+| `repo-management`                 | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
 | `bash-shell`                      | 2026-09-28, `ef71b3f`, no change | 2026-09-28, `ef71b3f`                             |
 | `posix-shell`                     | 2026-09-28, `ef71b3f`            | 2026-09-28, `ef71b3f`                             |
 | `cc-safety-net`                   | 2026-09-28, no change            | 2026-09-28, no change, vendored upstream          |
