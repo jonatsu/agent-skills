@@ -271,6 +271,11 @@ sources, record provenance, and decide whether the source overlaps an existing s
   including agent definitions and commands Kasetto would not deploy as skills.
 - [mkobit/chezmoi-skills](https://github.com/mkobit/chezmoi-skills): compare against our
   `shared/lazy/tools/chezmoi-dotfiles` skill for coverage gaps and better patterns worth writing independently.
+- [a5c-ai/babysitter](https://github.com/a5c-ai/babysitter): research the `graph` fields in its skills'
+  frontmatter and whether our skills should adopt something like them. The user flagged them on 2026-09-30,
+  handing over [`jtag-swd-debug`](https://github.com/a5c-ai/babysitter/tree/main/library/specializations/embedded-systems/skills/jtag-swd-debug)
+  as reference material for the embedded debugging skills; that skill is the example to start from. What the
+  fields encode and how babysitter consumes them is unknown.
 
 ## Dedicated GitHub Actions Skill
 
