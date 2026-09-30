@@ -1,6 +1,6 @@
 ---
 name: repo-management
-description: Set up or refresh repository baseline files and hygiene hooks. Use for repository bootstrap, .gitignore, .editorconfig, .gitattributes, pre-commit configuration, community templates, or read-only hygiene and README-accuracy audits. Use git-commits-and-recovery for commits and history rewriting.
+description: "Set up or refresh repository baseline files and hygiene hooks: bootstrap, .gitignore, .editorconfig, .gitattributes, pre-commit configuration, community templates, and read-only hygiene and README-accuracy audits. Not for tuning an existing repository's linter rules (lint-config-audit) or for commits and history (git-commits-and-recovery)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -13,42 +13,36 @@ configurations and templates encode the author's personal preferences; treat the
 Repository evidence and explicit user choices take precedence when they conflict with those defaults.
 
 This skill owns baseline files, repository-local hygiene hooks, community templates, and read-only hygiene
-audits. Use `git-commits-and-recovery` for commits, branch operations, recovery, and history rewriting,
-`git-history-investigation` for history questions, and `using-git-worktrees` for worktrees. Use
-`agents-context-docs` for agent instruction files.
+audits. Neighbouring work has its own skill: `lint-config-audit` audits and tightens the checkers an
+established repository already runs; `git-commits-and-recovery` owns commits, branches, recovery, and history
+rewriting; `git-history-investigation` answers history questions; `using-git-worktrees` covers worktrees; and
+`agents-context-docs` covers agent instruction files.
 
 ## Choose the Task
 
-- **Targeted change:** Add or revise named baseline files or hooks. Inspect only the affected files, their
-  consumers, and existing repository conventions.
-- **Bootstrap:** Establish a baseline in a new or nearly empty repository.
-- **Refresh:** Compare an established repository with the preferred baseline, then fill approved gaps without
-  regenerating healthy files.
-- **Audit:** Report tracked cruft, stale README claims, or missing hygiene without changing repository state.
-
-A narrow request needs only a narrow inspection. Do not turn a request for one file into a full repository
-audit. For broad or ambiguous work, inspect first and propose a concrete file-level plan before editing.
-
-## Preserve Authorization
-
-Reuse authorization already present in the request. A request naming the files or changes authorizes those
-edits; do not require a second approval for the same scope. Ask when a missing choice would determine the
-license, public behavior, repository visibility, governance model, toolchain, destructive target, or
-outward-facing action.
-
-An assessment or audit remains read-only. Report remediation separately because untracking files, deleting
-content, publishing settings, and rewriting history require their own authority.
+- **Targeted change:** add or revise named baseline files or hooks. Inspect only the affected files, their
+  consumers, and the repository's existing conventions, since a request for one file is not a request for an
+  audit.
+- **Bootstrap:** establish a baseline in a new or nearly empty repository.
+- **Refresh:** compare an established repository with the preferred baseline, then fill approved gaps and
+  leave healthy files as they are.
+- **Audit:** report tracked cruft, stale README claims, or missing hygiene, and change nothing.
 
 ## Work Proportionately
 
 1. Inspect the relevant repository state, existing files, configured checks, and instructions.
-2. Decide whether the request is targeted, bootstrap, refresh, or audit work.
-3. Resolve only choices that the repository and request do not already settle.
-4. For broad work, identify each file to create, adapt, preserve, or skip and obtain approval for unresolved
-   scope. For targeted work, proceed within the supplied authorization.
-5. Apply the smallest coherent delta. Preserve existing content unless replacement is explicitly authorized.
-6. Validate the changed artifacts with their actual consumers and repository checks.
-7. Report completed work, deferred findings, and any external settings that still need user action.
+2. Resolve only the choices that the repository and the request leave open. Ask when a missing choice decides
+   the license, public behavior, repository visibility, governance model, toolchain, a destructive target, or
+   an outward-facing action.
+3. For bootstrap, refresh, or ambiguous work, propose a plan naming each file to create, adapt, preserve, or
+   skip, and get approval for the scope the request did not settle. A request naming its files or changes
+   already authorizes them.
+4. Apply the smallest coherent delta, and keep existing content unless the user authorized replacing it.
+5. Validate each changed artifact with its real consumers and the repository's checks.
+6. Report completed work, deferred findings, and external settings that still need the user's action.
+
+An audit stays read-only through all of this. Report remediation separately, because untracking files,
+deleting content, publishing settings, and rewriting history each need their own authorization.
 
 ## Apply the Preferred Baseline
 
@@ -88,9 +82,10 @@ Treat each formatter and linter pair as a pipeline. Run modifying hooks in confi
 hooks afterward, then repeat the complete sequence. A compatible configuration reaches a fixed point: the
 second pass changes nothing and every checker succeeds.
 
-Do not customize a setting owned by both tools from documentation alone. Exercise a representative fixture
-first. This is especially important for Markdown list markers and numbering, line wrapping, hard line breaks,
-frontmatter, tables, YAML aliases and comments, and shfmt's EditorConfig extensions.
+Change a setting that both tools own only after exercising it on a representative fixture, because the
+documentation of either tool alone does not predict the pair. This matters most for Markdown list markers and
+numbering, line wrapping, hard line breaks, frontmatter, tables, YAML aliases and comments, and shfmt's
+EditorConfig extensions.
 
 Keep explanatory comments attached to retained settings. They record why patches and diffs avoid rewriting,
 Markdown may preserve trailing spaces, Makefiles use tabs, and `[[shell]]` is a shfmt extension rather than a
@@ -102,10 +97,19 @@ Run the full audit only when the user requests an audit, cleanup assessment, or 
 hygiene. Keep it read-only:
 
 - Gitignored but tracked files: `git ls-files -ci --exclude-standard`.
-- Large tracked files: inspect a NUL-safe list without allowing pathnames to become command options.
-- Committed secrets: use `betterleaks git .`, or the repository's established scanner. State that staged-diff
-  hooks do not cover history.
-- Historical large blobs: offer the heavier history scan and run it only when requested.
+
+- Large tracked files: `git ls-files -z | xargs -0 du -k -- | sort -rn | head`. The NUL separators and the
+  `--` keep a file name such as `-big file` from being read as an option.
+
+- Committed secrets: use `betterleaks git .`, or the repository's established scanner.
+
+- Historical large blobs: offer this heavier scan of every object in history, and run it only when requested:
+
+  ```sh
+  git rev-list --objects --all |
+    git cat-file --batch-check='%(objecttype) %(objectsize) %(rest)' |
+    awk '$1 == "blob"' | sort -k2 -rn | head
+  ```
 
 Report paths and remediation without exposing secret values. Rotate a leaked credential before removing it
 from history. Hand history rewriting to `git-commits-and-recovery`.
@@ -129,13 +133,13 @@ behavior. Update a “Last reviewed” date only after verifying the content it 
 
 ## Preserve Safety Boundaries
 
-- Never choose a license, visibility, governance model, runtime, or framework for the user.
-- Never invent project names, badges, links, contacts, commands, or supported versions.
-- Never present a staged-diff secrets hook as a history scan.
-- Never enable both Betterleaks and Gitleaks. Retain Betterleaks by default unless the repository or user
-  selects Gitleaks.
-- Never apply GitHub settings, dependency automation, CI, releases, or history rewrites as an implied part of
-  repository setup.
+- Leave the license, visibility, governance model, runtime, and framework to the user's choice.
+- Take project names, badges, links, contacts, commands, and supported versions from the repository or the
+  user; a placeholder is better than a plausible invention.
+- Describe a staged-diff secrets hook as covering new commits only, never as a history scan.
+- Run one secrets scanner: Betterleaks by default, or Gitleaks when the repository or the user selects it.
+- Treat GitHub settings, dependency automation, CI, releases, and history rewrites as separate requests. List
+  them as follow-ups rather than applying them as part of setup.
 
 ## Verify Completion
 
@@ -148,8 +152,7 @@ Check the exact files changed:
 - repository checks pass without weakening existing gates; and
 - audits changed no repository state.
 
-Report exact validation results and untested environments. List relevant GitHub settings as follow-ups rather
-than changing them without authorization.
+Report exact validation results and untested environments.
 
 ## Assets
 
