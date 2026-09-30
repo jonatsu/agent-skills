@@ -1,6 +1,6 @@
 ---
 name: writing-readmes
-description: "Write, rewrite, or critique a README or other project front door (quickstart, getting-started page, docs landing page) so a stranger sees the point and can start. Use when a README reads flat or template-filled, a project needs one, or someone asks whether one is good. Not for tutorials, how-tos, references, or runbooks (writing-documentation), or for checking claims or scaffolding files (repo-management)."
+description: "Write, rewrite, or critique a README or other project front door (quickstart, getting-started page, docs landing page) so a stranger sees the point and can start. Use when a README reads flat or template-filled, a project needs one, or someone asks whether one is good. Not for tutorials, how-tos, references, or runbooks (writing-documentation), for checking whether its claims are still true (context-architecture), or for scaffolding files (repo-management)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -15,12 +15,12 @@ someone who already chose the project.
 
 - `writing-documentation` owns tutorials, how-to guides, references, explanations, runbooks and decision
   records.
-- `repo-management` owns repository scaffolding, the README templates and audience matrix, and the accuracy
-  audit that checks a README's claims against the tree.
+- `repo-management` owns repository scaffolding and the README templates and audience matrix.
+- `context-architecture` owns the truth audit that checks a README's claims against the tree.
 - `writing-for-humans` owns the sentence and the paragraph, and its reader-ready check closes every draft here.
 
 A review request splits by what is being judged: **does it read well** is this skill, **is it still true** is
-`repo-management`'s audit. A thorough review wants both.
+`context-architecture`'s truth audit. A thorough review wants both.
 
 ## Iron Law
 
@@ -42,8 +42,8 @@ chosen.
   framing, not the facts. Done when every accurate claim of the original survives or is listed as cut with its
   reason, and every Before Delivery item passes.
 - **Critique.** Report against the five questions and the Iron Law, worst first, each finding naming the
-  reader question it fails. Judge quality only, and route factual verification to `repo-management`. Done when
-  every section is mapped to a question or reported as answering none.
+  reader question it fails. Judge quality only, and route factual verification to `context-architecture`'s
+  truth audit. Done when every section is mapped to a question or reported as answering none.
 
 Return text or a diff for an existing file unless the user asked for an in-place edit.
 

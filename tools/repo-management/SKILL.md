@@ -1,6 +1,6 @@
 ---
 name: repo-management
-description: "Set up or refresh repository baseline files and hygiene hooks: bootstrap, .gitignore, .editorconfig, .gitattributes, pre-commit configuration, community templates, and read-only hygiene and README-accuracy audits. Not for tuning an existing repository's linter rules (lint-config-audit) or for commits and history (git-commits-and-recovery)."
+description: "Set up or refresh repository baseline files and hygiene hooks: bootstrap, .gitignore, .editorconfig, .gitattributes, pre-commit configuration, community templates, and read-only audits of tracked cruft, large files, and committed secrets. Not for tuning an existing repository's linter rules (lint-config-audit), checking whether docs are still true (context-architecture), or commits and history (git-commits-and-recovery)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -26,7 +26,7 @@ rewriting; `git-history-investigation` answers history questions; `using-git-wor
 - **Bootstrap:** establish a baseline in a new or nearly empty repository.
 - **Refresh:** compare an established repository with the preferred baseline, then fill approved gaps and
   leave healthy files as they are.
-- **Audit:** report tracked cruft, stale README claims, or missing hygiene, and change nothing.
+- **Audit:** report tracked cruft, large files, committed secrets, or missing hygiene, and change nothing.
 
 ## Work Proportionately
 
@@ -114,22 +114,8 @@ hygiene. Keep it read-only:
 Report paths and remediation without exposing secret values. Rotate a leaked credential before removing it
 from history. Hand history rewriting to `git-commits-and-recovery`.
 
-### Check an Existing README
-
-This check answers **is it still true**, not **does it read well**. A request to review a README for quality —
-whether it reads flat, generic, or fails to make its case — belongs to `writing-readmes`. A thorough review
-runs both.
-
-When README accuracy is in scope, compare concrete claims with authoritative repository evidence:
-
-- commands against task runners, package scripts, build files, and CI workflows;
-- paths and file names against the tree;
-- capabilities and supported versions against code and dependency manifests; and
-- links against their intended targets.
-
-For an audit, report each stale claim and the contradicting evidence. When the user authorizes a README
-update, correct the claim only after deciding whether documentation or implementation represents the intended
-behavior. Update a “Last reviewed” date only after verifying the content it attests to.
+When the audit should also check whether the README or other documents are still true, run
+`context-architecture`'s truth audit alongside it.
 
 ## Preserve Safety Boundaries
 

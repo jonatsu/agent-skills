@@ -36,3 +36,18 @@ rule — were expressed independently, informed by the general framing below.
   context and modular retrieval for large specifications. The genre authority and lazy layout rules are
   independently expressed; no prose, examples, images, templates, code, or assets were copied, and the page's
   license is not relied on.
+- **agentydragon/ducktape, skills `knowledge_hygiene` and `verify_docs`**
+  ([repository](https://github.com/agentydragon/ducktape), revision
+  `4ad338af25ea537dc7f817390b2e25c2a7a903f0`, AGPL-3.0, read 2026-09-30): the truth audit in
+  `references/truth-audit.md`. Adopted ideas: a claim-to-owner map; verifying every checkable claim against its
+  source; the problem classes for volatile mirrors, self-referential counts, misleading status, missing update
+  paths, and knowledge to promote or retire; the "true in any repository using the tool" test; ranking by load
+  frequency; the lettered action menu the user selects from; and the owner of a fact being the file touched
+  when it changes. The AGPL-3.0 does not fit this MIT skill, so no text was copied or adapted; every sentence
+  was written independently. The upstream's priority markers and code-comment sweep were not taken.
+- **softaworks/agent-toolkit, `crafting-effective-readmes`** (MIT, Copyright (c) 2026 Leonardo Flores,
+  revision `011baf4acea99174acb5486a9b662a7e084be63b`): the README accuracy check that `repo-management`
+  adapted from it on 2026-08-25 moved into the truth audit on 2026-09-30. What carries over is its list of
+  claims to check (commands, paths, capabilities and versions, links) and its rule to decide whether the
+  document or the implementation is right before correcting either; `repo-management`'s `ATTRIBUTIONS.md` holds
+  the original record.

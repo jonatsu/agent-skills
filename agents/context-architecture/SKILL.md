@@ -1,6 +1,6 @@
 ---
 name: context-architecture
-description: "Design, restructure, or audit a repository's agent-facing context system: document layout, genres, routing, sharding, truth maintenance, and walk-test measurement. Use its named default layout when a repository has none. Instruction-file internals route to agents-context-docs."
+description: "Design, restructure, or audit a repository's documentation system for agents and maintainers: document layout, genres, routing, sharding, and walk-test measurement. Also checks whether docs, from one README to the whole tree, are still true: stale claims, duplicated or unowned facts, and plans whose status misleads. Use its named default layout when a repository has none. Instruction-file internals route to agents-context-docs."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,17 +8,19 @@ metadata:
 
 # Context Architecture
 
-Build the smallest repository context system that lets a cold-started agent orient, act, and report using only
-the files present. Agent-facing documentation is a retrieval system competing for a finite attention budget,
-not a document set: judge every choice by the expected cost of assembling sufficient, correct context for a
-task, plus the maintenance cost of keeping that assembly correct as the repository changes.
+Build the smallest repository documentation system that lets a cold-started reader orient, act, and report
+using only the files present. The reader is usually an agent and often a new maintainer, and both are served by
+the same design. Documentation is a retrieval system competing for a finite attention budget, not a document
+set: judge every choice by the expected cost of assembling sufficient, correct context for a task, plus the
+maintenance cost of keeping that assembly correct as the repository changes.
 
 ## Scope and Ownership
 
 This skill owns the system level: which documents exist, the genre each belongs to, how the floor file routes
-to them, when to shard, and how the whole is measured. Instruction-file internals — writing and maintaining
-`AGENTS.md`/`CLAUDE.md` content, scoped instructions, `llms.txt` — belong to `agents-context-docs`; invoke it as
-the executor for those files. Extracting a repeated procedure into a skill belongs to `skill-forge`.
+to them, when to shard, whether they still tell the truth, and how the whole is measured. Instruction-file
+internals — writing and maintaining `AGENTS.md`/`CLAUDE.md` content, scoped instructions, `llms.txt` — belong
+to `agents-context-docs`; invoke it as the executor for those files. Extracting a repeated procedure into a
+skill belongs to `skill-forge`.
 
 Repository facts are the authority for current behavior. Accepted requirements are the authority for intended
 observable behavior within their scope. Verify each claim against its applicable authority or label it unverified. An
@@ -40,6 +42,10 @@ existing repository's established conventions outrank this skill's defaults.
   reverse — against the records in its decisions genre, and report an unrecorded one as a gap. Deliver
   findings by severity with evidence; record measurements as a dated file in the repository's evaluations
   genre.
+- **Truth audit:** check whether documents still tell the truth, from one README to the whole tree: stale
+  claims, duplicated or unowned facts, copies of volatile facts, misleading status, and knowledge in the wrong
+  home. Read [references/truth-audit.md](references/truth-audit.md) and follow its steps; it ends in an action
+  menu the user selects from.
 
 Read [references/writing-rules.md](references/writing-rules.md) before writing or reviewing any agent-facing
 document in any branch.
@@ -77,7 +83,8 @@ Five concerns, in order of leverage. Topology is deliberately last.
    [references/default-layout.md](references/default-layout.md). Mixing genres — a living reference inside a
    frozen decision, state notes inside the floor — is the root failure behind most context rot.
 
-4. **Truth maintenance.** One owner per fact; generate what is derivable from code and never hand-edit the
+4. **Truth maintenance.** One owner per fact, and the owner is the file someone must touch when the fact
+   changes; everywhere else carries a pointer. Generate what is derivable from code and never hand-edit the
    output; stamp non-obvious facts with what they were verified against, not just when; gate what enters
    (no secrets, no speculation, no unverified recall); schedule consolidation and pruning, not only appending.
 

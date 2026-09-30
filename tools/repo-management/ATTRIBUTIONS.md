@@ -11,8 +11,9 @@
 
 - Component: the README project-type taxonomy — the audience section matrix in
   `references/readme-by-audience.md` and the audience template assets (`assets/README.oss.template.md`,
-  `README.personal.template.md`, `README.internal.template.md`, `README.config.template.md`) — plus, added
-  2026-08-25, the stale-README check in `SKILL.md`.
+  `README.personal.template.md`, `README.internal.template.md`, `README.config.template.md`) — plus the
+  stale-README check, added to `SKILL.md` on 2026-08-25. On 2026-09-30 that check moved out of this skill
+  into `context-architecture`'s truth audit, whose `ATTRIBUTIONS.md` records the move.
 - Upstream project: [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit), skill
   `crafting-effective-readmes`.
 - Upstream revision: `011baf4acea99174acb5486a9b662a7e084be63b`.
