@@ -61,7 +61,7 @@ as `requirements-specification` and `technical-design` do.
 | `session-skill-audit`             | 2026-09-28, `da8a0cb`            | 2026-09-28, `da8a0cb`                             |
 | `skill-forge`                     | 2026-09-28, `9fe08b0`            | 2026-09-28, `9fe08b0`, merged with `skill-review` |
 | `context-compression`             | 2026-09-28, `2997308`            | 2026-09-25, `f0f5559f`                            |
-| `context-architecture`            | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
+| `context-architecture`            | 2026-09-30, `d586c9d`            | 2026-09-30, `28da2bd`                             |
 | `agents-context-docs`             | 2026-09-30, `f8435a5`            | 2026-09-30, `f8435a5`                             |
 | `python-architecture`             | 2026-09-28, `2997308`            | 2026-09-24, `4e374bf`                             |
 | `python-async-patterns`           | 2026-09-28, `2997308`, no change | 2026-09-24, `c85d2cf`                             |
