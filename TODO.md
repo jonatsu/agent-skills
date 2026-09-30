@@ -92,7 +92,7 @@ as `requirements-specification` and `technical-design` do.
 | `prompt-debugging`                | 2026-09-28, `d55d5dd`            |                                                   |
 | `document-conversion`             | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
 | `github-ops`                      | 2026-09-28, `7c7a61f`, no change | 2026-09-28, `7c7a61f`                             |
-| `repo-management`                 | 2026-09-28, `ac88c49`, no change | 2026-09-28, `ac88c49`                             |
+| `repo-management`                 | 2026-09-30, `a3cb20e`            | 2026-09-30, `a3cb20e`                             |
 | `bash-shell`                      | 2026-09-28, `ef71b3f`, no change | 2026-09-28, `ef71b3f`                             |
 | `posix-shell`                     | 2026-09-28, `ef71b3f`            | 2026-09-28, `ef71b3f`                             |
 | `cc-safety-net`                   | 2026-09-28, no change            | 2026-09-28, no change, vendored upstream          |
@@ -102,6 +102,7 @@ as `requirements-specification` and `technical-design` do.
 | `chezmoi-dotfiles`                | 2026-09-28, no change            | 2026-09-28, no change                             |
 | `mise-tools`                      | 2026-09-28, `9ae6e8a`            | 2026-09-28, `9ae6e8a`                             |
 | `drawio-diagrams`                 | 2026-09-29, `1fe21f2`            | 2026-09-29, `1fe21f2`                             |
+| `lint-config-audit`               | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
