@@ -104,7 +104,7 @@ as `requirements-specification` and `technical-design` do.
 | `drawio-diagrams`                 | 2026-09-29, `1fe21f2`            | 2026-09-29, `1fe21f2`                             |
 | `lint-config-audit`               | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |
 | `note-for-later`                  | 2026-09-30, `b691642`, new skill | 2026-09-30, `b691642`, new skill                  |
-| `debug-hardware`                  | 2026-09-30, `606289f`, new skill | 2026-09-30, `606289f`, new skill                  |
+| `debug-hardware`                  | 2026-09-30, `606289f`, new skill | 2026-09-30, `7ba3a4a`, probe guard hook added     |
 | `debug-server-tools`              | 2026-09-30, `606289f`, new skill | 2026-09-30, `606289f`, new skill                  |
 | `gdb-debugging`                   | 2026-09-30, `0de84b5`, new skill | 2026-09-30, `0de84b5`, new skill                  |
 | `mcu-firmware-debugging`          | 2026-09-30, `b2bcd2f`, new skill | 2026-09-30, `b2bcd2f`, new skill                  |
