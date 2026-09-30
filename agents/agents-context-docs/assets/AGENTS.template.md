@@ -64,6 +64,12 @@ organized; point here, do not enumerate genres.>
 - Read when you need durable documentation beyond the floor: [`docs/README.md`](docs/README.md) routes by
   genre.
 
+\<Keep the next line when the repository has `docs/working-notes/`, and delete it otherwise. An agent writes
+working state without first asking where it belongs, so this is a rule rather than a route.>
+
+- Keep the state of multi-step work in `docs/working-notes/<lane>.md`, listed in
+  [`docs/working-notes/README.md`](docs/working-notes/README.md).
+
 ## Findings
 
 \<Delete unless a gotcha above has evidence worth keeping. Otherwise put one file per subject in the findings

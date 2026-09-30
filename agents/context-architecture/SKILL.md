@@ -30,7 +30,9 @@ existing repository's established conventions outrank this skill's defaults.
 
 - **Design:** the repository has no established layout, or a new area needs one. Read
   [references/default-layout.md](references/default-layout.md), apply it lazily (create a directory on first
-  need, never for completeness), then hand instruction-file creation to `agents-context-docs`.
+  need, never for completeness), then hand instruction-file creation to `agents-context-docs`. The same file
+  answers where a single new document goes, such as working notes, a how-to, or research, when the repository
+  has no convention for it.
 - **Restructure:** an existing context system misroutes, bloats, or mixes genres. Diagnose against the model
   below before moving anything; propose structural moves rather than silently applying them, and preserve
   stable anchors other documents cite.
