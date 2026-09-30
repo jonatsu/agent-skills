@@ -103,6 +103,7 @@ as `requirements-specification` and `technical-design` do.
 | `mise-tools`                      | 2026-09-28, `9ae6e8a`            | 2026-09-28, `9ae6e8a`                             |
 | `drawio-diagrams`                 | 2026-09-29, `1fe21f2`            | 2026-09-29, `1fe21f2`                             |
 | `lint-config-audit`               | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |
+| `note-for-later`                  | 2026-09-30, `b691642`, new skill | 2026-09-30, `b691642`, new skill                  |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
