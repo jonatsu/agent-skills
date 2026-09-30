@@ -102,3 +102,11 @@ requirement; `dtx_diff` was inspected to determine why empty output was not a su
 
 No new guidance was taken from the local LKMC, Linux Lab, or Mastering Embedded Linux Programming collections in this
 repair. Their separate Buildroot survey is not an attribution source for this package's new content.
+
+## Debugging Reference Moved Out, 2026-09-30
+
+`references/debugging.md` moved to the `embedded-linux-debugging` skill as `references/tracing-and-profiling.md`, with
+its kgdb, oops, crash-dump, and gdbserver sections folded into that skill's other references. The Bootlin debugging
+slides entry above, and any retained heyu-233 profiling influence, describe material that now lives there; that skill's
+`ATTRIBUTIONS.md` repeats the relationship. The entries stay here because this package's earlier revisions carried the
+material.

@@ -1,10 +1,11 @@
-# Embedded Linux Debugging
+# Tracing and Profiling on Embedded Linux
 
-Choose the tool from the question: syscall failure, code location, CPU cost, timing, resource leak, or crash state.
-Match symbols and source to the running/captured build. Bound duration and storage, record relevant debug settings,
-and account for timing changes, watchdogs, and pauses before acting on a live target.
+Choose the tool from the question: syscall failure, CPU cost, timing, or resource leak. Match symbols and source to
+the running build. Bound duration and storage, record relevant debug settings, and account for timing changes,
+watchdogs, and pauses before acting on a live target. Debuggers, kgdb, and crash analysis are in `SKILL.md` and the
+other references.
 
-## Syscalls and Userspace Debuggers
+## Syscalls
 
 For an application you are authorized to run or attach to, choose a narrow strace scope and an output file:
 
@@ -18,28 +19,8 @@ Keep the captured return codes and time window; provide a useful excerpt without
 Attaching changes timing, and traces may include application data. Missing files, permission errors, and blocking
 calls can explain userspace behavior without a kernel or DTS edit.
 
-Use cross-GDB with the exact executable and matching target libraries/debug information.
-Set its sysroot to the corresponding development/debug tree, or use supported remote file retrieval when appropriate.
-A sysroot supplies file lookup; it cannot create debug symbols absent from those files.
-
-Prefer gdbserver over an authenticated SSH stdio transport when the target supports it:
-
-```text
-(gdb) file /path/to/matching/unstripped/myapp
-(gdb) set sysroot /path/to/matching/target-sysroot
-(gdb) target remote | ssh -T board gdbserver --once stdio /usr/local/bin/myapp
-(gdb) continue
-```
-
-Use a trusted SSH alias and appropriate target user. Account for this transport's application-stdin limitations.
-For attachment or multi-process sessions, use the installed GDB/gdbserver version's supported mode and explicitly
-end the session. Inspect whether the process should resume or terminate; do not assume disconnect performs recovery.
-
-[gdbserver has no built-in authentication](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Server.html).
-If TCP is necessary, establish actual firewall/network isolation before opening the listener and verify its addresses.
-The hostname part of gdbserver's `host:port` argument is ignored in the documented interface; writing `localhost`
-there is not a loopback security control. Close the listener after use.
-For QEMU's explicit loopback stub, see [deploy-and-iterate.md](deploy-and-iterate.md).
+Yocto's `tools-debug` image feature installs `strace` but not `ltrace`; `ltrace` comes from meta-oe and must be added
+to the image explicitly.
 
 ## CPU Profiling: Select the Subject
 
@@ -108,39 +89,13 @@ For early failures, use the version-supported boot query or module dyndbg parame
 Extra logging changes timing and storage demand. It is less invasive than many code changes, but is not effect-free.
 See [dynamic debug](https://docs.kernel.org/admin-guide/dynamic-debug-howto.html).
 
-## MMIO, kgdb, and kdb
+## MMIO
 
 Prefer driver-owned clock, pinctrl, bus, and subsystem diagnostics over `/dev/mem` access.
 For a necessary raw read, verify the exact register, access width, read semantics, power/clock domain, and ownership
 against the device manual before selecting `devmem`/`devmem2` syntax.
 A read can clear an interrupt or fault. A saved register value is not a general undo for writes.
-Follow the hardware-access contract in `SKILL.md`; no board-independent register address is safe to prescribe here.
-
-For kernel debugging, check KGDB/KDB support, matching `vmlinux`, transport support, and recovery access.
-A serial setup can use `kgdboc=ttyS0,115200 kgdbwait` when that UART and built-in configuration are appropriate.
-`kgdbwait` requires kgdboc to be initialized at the relevant point; modules cannot provide the early built-in path.
-Sharing the console requires coordinating terminal ownership and the debugger connection.
-
-Writing `g` to `/proc/sysrq-trigger` can stop the kernel for debugging. Confirm that a halt and its watchdog consequences
-fit the authorized operation before doing so. Network KGDB transport is not universally available in upstream kernels.
-Follow the selected [kernel debugger documentation](https://docs.kernel.org/process/debugging/kgdb.html).
-
-## Kernel Oops and Crash Dumps
-
-Preserve the panic/oops, kernel build identity, relevant module identities, and available dump before reboot/cleanup.
-Decode against the crashed kernel, not the analysis host's `uname -r` or a different capture kernel:
-
-```bash
-crash /path/to/crashed-kernel/vmlinux /path/to/vmcore
-```
-
-Check that architecture, configuration, symbols, module data, and crash-tool support match the dump.
-Inside crash, `log`, `bt`, `bt -a`, `ps`, and `mod` answer different questions about the captured state.
-For textual stacks, use the matching kernel's `scripts/decode_stacktrace.sh` and its required toolchain/source context.
-Raw-address `addr2line` also requires accounting for relocation/KASLR; an unrelated symbol file can produce plausible noise.
-
-`oops=panic` can turn an oops into a panic, but it does not configure kdump by itself.
-Verify crash-kernel reservation, capture setup, dump destination, and recovery separately before expecting a vmcore.
+No board-independent register address is safe to prescribe here, and a write is always-ask.
 
 ## Memory Leaks and Concurrency
 

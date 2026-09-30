@@ -36,7 +36,7 @@ Resolve video/media node identity, namespace visibility, and capabilities before
    - Driver is built in or its module loads within the authorized diagnostic scope
    - The enumerated bus device has the intended driver; use only device-supported I2C transactions when needed
    - Probe logs show resource acquisition and chip-ID steps (`dmesg | grep <sensor>`; enable `dynamic_debug` on the
-     module for detail — see `debugging.md`)
+     module for detail; `embedded-linux-debugging` covers it)
 3. **Confirm video registration**
    - `/dev/video*` exists
    - `v4l2-ctl --all -d /dev/video0` returns sane information

@@ -27,7 +27,9 @@ applying a command or configuration symbol. Read the relevant reference when ent
 
 Use **embedded-linux-bringup** for kernel/OS DT, runtime drivers, rootfs integrity, OTA integration, and host flashing
 checks. Use **buildroot-development** for `BR2_TARGET_UBOOT_*`, **yocto-openembedded-development** for recipes and
-`UBOOT_CONFIG`, and **kas-build-orchestration** for kas configuration and checkout orchestration.
+`UBOOT_CONFIG`, and **kas-build-orchestration** for kas configuration and checkout orchestration. Use
+**embedded-linux-debugging** to step through U-Boot or SPL with GDB, including reloading symbols after relocation,
+and to decode a U-Boot exception.
 
 ## Workflow
 

@@ -1,6 +1,6 @@
 ---
 name: embedded-linux-bringup
-description: "Bring up and debug embedded Linux targets. Use for DTS/DTB/overlay changes, kernel boot or rootfs failures, driver probe and peripheral faults, V4L2 cameras, cross-compiled binary/ABI problems, tracing and debugging, artifact deployment checks, and verified-rootfs or update-recovery diagnostics. Covers runtime kernel, hardware, and userspace boundaries; route build-system integration and bootloader internals to their specialist skills."
+description: "Bring up and debug embedded Linux targets. Use for DTS/DTB/overlay changes, kernel boot or rootfs failures, driver probe and peripheral faults, V4L2 cameras, cross-compiled binary/ABI problems, artifact deployment checks, and verified-rootfs or update-recovery diagnostics. Covers runtime kernel, hardware, and userspace boundaries; route debugging, tracing, and crash analysis to embedded-linux-debugging, and build-system integration and bootloader internals to their specialist skills."
 license: MIT
 compatibility: Requires access to Linux source/build artifacts and target evidence. Commands depend on host/target tools, kernel configuration, privileges, and the BSP; check these at each branch. Hardware and emulation tests require suitable targets.
 metadata:
@@ -39,7 +39,7 @@ Read the relevant reference when that branch becomes useful; the entire package 
 | Compile, validate, compare, or apply a DTB/overlay               | [Device tree tools](references/device-tree-tooling.md)              |
 | Boot handoff, console, root mount, init, missing device nodes    | [Board bring-up](references/board-bringup-checklist.md)             |
 | Toolchain, SDK, sysroot, cross-build, ELF/ABI mismatch           | [Cross-compilation](references/cross-compilation.md)                |
-| Userspace/kernel debugging, tracing, profiling, crash analysis   | [Debugging](references/debugging.md)                                |
+| Userspace/kernel debugging, tracing, profiling, crash analysis   | The `embedded-linux-debugging` skill                                |
 | Sensor/media graph, video registration, capture, performance     | [Camera and V4L2](references/camera-v4l2.md)                        |
 | Artifact identity and compatible QEMU iteration                  | [Deploy and iterate](references/deploy-and-iterate.md)              |
 | Update installation, boot confirmation, rollback/recovery faults | [Update diagnostics](references/ota-updates.md)                     |
