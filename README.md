@@ -225,7 +225,7 @@ each, and the `kasetto/lazy/` and `kasetto/claude-lazy/` scopes list the lazy gr
 | `development/`           | Coding standards, shells                                                 | Containers                                                   |
 | `development/python/`    |                                                                          | Python style, typing, testing, async, architecture, projects |
 | `development/nix/`       |                                                                          | Nix and NixOS: flakes, packaging, secrets, home-manager      |
-| `tools/`                 | ast-grep, Git, GitHub, repository hygiene                                | Task runners, mise, dotfiles                                 |
+| `tools/`                 | ast-grep, Git, GitHub, repository hygiene                                | Task runners, mise, dotfiles, linter configuration audits    |
 | `review/`                | Security and specification-conformance review                            |                                                              |
 | `code-health/`           |                                                                          | The Brooks-based audit, debt, review, sweep and test skills  |
 | `testing-and-qa/`        | Debugging, TDD, test engineering                                         |                                                              |
