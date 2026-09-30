@@ -217,21 +217,22 @@ Skills live at `shared/<domain>/<skill>/`, or at `shared/lazy/<domain>/<skill>/`
 directory had stopped being a list anyone could read. `kasetto/base.yaml` lists the direct domains, one entry
 each, and the `kasetto/lazy/` and `kasetto/claude-lazy/` scopes list the lazy groups.
 
-| Domain                   | Direct skills                                                                           | Lazy skills, under `lazy/`                                   |
-| ------------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `agents/`                | Prompts, instruction files, context economy, handoffs, deferred work, subagent dispatch | The CC safety net, document conversion, prompt debugging     |
-| `skills-for-skills/`     |                                                                                         | Skill authoring, review, descriptions and triggers, Kasetto  |
-| `engineering/`           | Ideas, requirements, domain models, technical design, planning                          | Stakeholder questionnaires                                   |
-| `development/`           | Coding standards, shells                                                                | Containers                                                   |
-| `development/python/`    |                                                                                         | Python style, typing, testing, async, architecture, projects |
-| `development/nix/`       |                                                                                         | Nix and NixOS: flakes, packaging, secrets, home-manager      |
-| `tools/`                 | ast-grep, Git, GitHub, repository hygiene                                               | Task runners, mise, dotfiles, linter configuration audits    |
-| `review/`                | Security and specification-conformance review                                           |                                                              |
-| `code-health/`           |                                                                                         | The Brooks-based audit, debt, review, sweep and test skills  |
-| `testing-and-qa/`        | Debugging, TDD, test engineering                                                        |                                                              |
-| `system-administration/` |                                                                                         | systemd units and networking                                 |
-| `embedded-linux/`        |                                                                                         | Bring-up, Buildroot, kas, U-Boot, Yocto/OpenEmbedded         |
-| `technical-writing/`     | Human-facing prose                                                                      | draw.io diagrams                                             |
+| Domain                   | Direct skills                                                                           | Lazy skills, under `lazy/`                                                |
+| ------------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `agents/`                | Prompts, instruction files, context economy, handoffs, deferred work, subagent dispatch | The CC safety net, document conversion, prompt debugging                  |
+| `skills-for-skills/`     |                                                                                         | Skill authoring, review, descriptions and triggers, Kasetto               |
+| `engineering/`           | Ideas, requirements, domain models, technical design, planning                          | Stakeholder questionnaires                                                |
+| `development/`           | Coding standards, shells                                                                | Containers                                                                |
+| `development/python/`    |                                                                                         | Python style, typing, testing, async, architecture, projects              |
+| `development/nix/`       |                                                                                         | Nix and NixOS: flakes, packaging, secrets, home-manager                   |
+| `tools/`                 | ast-grep, Git, GitHub, repository hygiene                                               | Task runners, mise, dotfiles, linter configuration audits                 |
+| `review/`                | Security and specification-conformance review                                           |                                                                           |
+| `code-health/`           |                                                                                         | The Brooks-based audit, debt, review, sweep and test skills               |
+| `testing-and-qa/`        | Debugging, TDD, test engineering                                                        |                                                                           |
+| `system-administration/` |                                                                                         | systemd units and networking                                              |
+| `embedded-debugging/`    |                                                                                         | Debug probes and wiring, debug servers (OpenOCD, pyOCD, probe-rs, J-Link) |
+| `embedded-linux/`        |                                                                                         | Bring-up, Buildroot, kas, U-Boot, Yocto/OpenEmbedded                      |
+| `technical-writing/`     | Human-facing prose                                                                      | draw.io diagrams                                                          |
 
 `lazy/development/python/` and `lazy/development/nix/` are nested groups: a second directory level under a
 domain, next to the skills that sit directly in it. Each nested group is its own Kasetto entry, since Kasetto
