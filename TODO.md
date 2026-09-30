@@ -104,6 +104,8 @@ as `requirements-specification` and `technical-design` do.
 | `drawio-diagrams`                 | 2026-09-29, `1fe21f2`            | 2026-09-29, `1fe21f2`                             |
 | `lint-config-audit`               | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |
 | `note-for-later`                  | 2026-09-30, `b691642`, new skill | 2026-09-30, `b691642`, new skill                  |
+| `debug-hardware`                  | 2026-09-30, `606289f`, new skill | 2026-09-30, `606289f`, new skill                  |
+| `debug-server-tools`              | 2026-09-30, `606289f`, new skill | 2026-09-30, `606289f`, new skill                  |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
