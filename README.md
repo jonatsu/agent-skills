@@ -1,7 +1,7 @@
 # Skills
 
-Single source of truth for my agent skills, deployed as real copies to Claude Code, GitHub Copilot CLI and
-Codex. Edit a skill here once, commit, and every supported agent picks it up.
+Single source of truth for my agent skills, deployed as real copies to Claude Code, GitHub Copilot CLI, Codex
+and Oh-My-Pi. Edit a skill here once, commit, and every supported agent picks it up.
 
 [Kasetto](https://github.com/pivoshenko/kasetto) (`kst`) does the deploying. It reads the declarative configs
 under `kasetto/`, resolves each source, installs real copies into each agent's skills directory, and records
@@ -185,11 +185,11 @@ just deploy-skills                       # skills only: every supported target
 Each skill is a directory with a `SKILL.md`, plus optional `references/`, `scripts/` and `ATTRIBUTIONS.md`.
 Hand-crafted skills are grouped by which agents get them.
 
-| Group       | Deployed to                       | Contents                                                         |
-| ----------- | --------------------------------- | ---------------------------------------------------------------- |
-| `shared/`   | Claude Code + Copilot CLI + Codex | Agent-agnostic skills, organised by domain one level down        |
-| `claude/`   | Claude Code only                  | Claude-coupled skills. Flat: too few to need a taxonomy          |
-| `archived/` | nothing                           | Kept for reference. See [archived/README.md](archived/README.md) |
+| Group       | Deployed to                                  | Contents                                                         |
+| ----------- | -------------------------------------------- | ---------------------------------------------------------------- |
+| `shared/`   | Claude Code + Copilot CLI + Codex + Oh-My-Pi | Agent-agnostic skills, organised by domain one level down        |
+| `claude/`   | Claude Code only                             | Claude-coupled skills. Flat: too few to need a taxonomy          |
+| `archived/` | nothing                                      | Kept for reference. See [archived/README.md](archived/README.md) |
 
 There is no `copilot/` group. Copilot CLI gets `shared/` and nothing else, because the Claude-only skills are
 about `CLAUDE.md`, `.claude/agents` and Claude subagents — deploying them there would ship skills describing a
@@ -240,8 +240,8 @@ discovers skills exactly one level under a source root and a `sub-dir: developme
 it silently rather than failing on it.
 
 The lazy tier holds specialized skills: languages, named tools, skill authoring, and rarely requested methods. A
-skill that almost every session needs stays direct. Claude loads the lazy tier natively, while Codex and Copilot
-reach it only through `lazy-skills-server`, which serves it on demand.
+skill that almost every session needs stays direct. Claude loads the lazy tier natively, while Codex, Copilot
+and Oh-My-Pi reach it only through `lazy-skills-server`, which serves it on demand.
 [Its README](../src/tools/lazy-skills-server/README.md) covers how the tier works and how to move a skill into
 or out of it.
 
