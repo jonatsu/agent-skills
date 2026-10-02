@@ -182,12 +182,6 @@ def validate_skill(skill_path: str | Path) -> tuple[list[str], list[str]]:
         if placeholder in content:
             errors.append(f"SKILL.md contains scaffold placeholder {placeholder!r}")
 
-    if not attribution.exists():
-        warnings.append(
-            "source influence cannot be inferred; confirm whether external ideas or "
-            "expression require ATTRIBUTIONS.md"
-        )
-
     return errors, warnings
 
 
