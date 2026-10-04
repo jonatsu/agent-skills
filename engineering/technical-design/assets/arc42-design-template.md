@@ -2,7 +2,8 @@
 
 Status: \<proposed or accepted, with date and acceptance evidence; once implemented, the code wins
 and this design is updated to match>
-Design basis: \<governing requirements revision, scope, baseline and documentation convention>
+Design basis: \<governing spec revision, or the accepted request and the user's decision on a proposed
+spec; scope, baseline and documentation convention>
 Open items: \<links to the questions register and task ledger>
 
 <!-- Authoring scaffold: replace prompts, remove these instructions, retain attribution.

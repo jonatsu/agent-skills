@@ -26,47 +26,49 @@ architecture, interfaces, failure handling, compatibility, or migration choices 
 existing implementation or settled repository convention as design authority when no consequential design decision
 remains; state that basis instead of manufacturing a design document.
 
-**If unresolved consequential design controls all remaining work, stop after reporting the gaps.** Do not emit a
-conditional implementation plan, turn design decisions into implementation units, or sketch the work that would follow
-each possible answer. Resume planning after the design is settled.
-
-When the design is incomplete, record the exact gap, its downstream consequence, and the design section or owner that
-must resolve it. Stop only the blocked branch: plan genuinely independent, already-designed branches and state the
-limit. Return missing behavior,
-architecture, interfaces, failure policy, compatibility, or migration strategy to technical design. Return missing or
-contradictory intended behavior and acceptance to `writing-specs`. Return changed purpose or product scope
-to idea-brainstorming.
+Judge acceptance from the design's substance, not its status label. A document is not accepted for planning when it
+contains consequential recommendations awaiting confirmation, unresolved behavioral or safety obligations, or
+architecture added after the user's latest confirmation. When an accepted specification exists, require the design to
+name a compatible revision; a newer accepted requirement leaves the affected work blocked until technical design
+reconciles it.
 
 Repository inspection may settle implementation-local facts and ordinary techniques already constrained by the design
-and local conventions. Do not use that allowance to hide a public-behavior, compatibility, material-cost, or
-architecture decision.
+and local conventions. A public-behavior, compatibility, material-cost, or architecture decision stays with design even
+when inspection could answer it.
 
-Check acceptance from the design's substance, not its status label. A document is not accepted for planning when it
-contains consequential recommendations awaiting confirmation, unresolved behavioral or safety obligations, or
-architecture added after the user's latest confirmation. Return those gaps to technical design before decomposing work.
-When an accepted specification exists, require the design to name a compatible revision; a newer accepted requirement
-keeps the affected planning branch blocked until technical design reconciles it.
+### Route Design Gaps Back
+
+For each gap, record what is missing, its downstream consequence, and the design section or owner that must resolve
+it. Return missing behavior, architecture, interfaces, failure policy, compatibility, or migration strategy to
+`technical-design`; missing or contradictory intended behavior and acceptance to `writing-specs`; and changed purpose
+or product scope to `idea-brainstorming`.
+
+Then plan only what the gaps leave settled. Plan genuinely independent, already-designed branches, and state the limit
+on the blocked ones. **When unresolved consequential design controls all remaining work, stop after reporting the
+gaps.** Resume once the design is settled, rather than writing a conditional plan, decomposing a design decision into
+units, or sketching the work that would follow each possible answer: that work pre-empts the decision design owns.
 
 An accepted design should reach planning already pressure-tested. Where it did not, or where planning itself
-introduces a consequential decision the design's pressure-test did not cover — a migration path, or an ordering
-with a hard-to-reverse step — pressure-test that decision with `interview-me` before committing the plan to
-it. Skip only with a stated reason, or at the user's direction.
+introduces a consequential decision the design's pressure-test did not cover, such as a migration path or an ordering
+with a hard-to-reverse step, pressure-test that decision with `interview-me` before committing the plan to it. Skip
+only with a stated reason, or at the user's direction.
 
 ## Establish Required Practices
 
-Inspect the applicable repository instructions, language/coding rules, configured checks, and available skill catalog.
-Resolve which guidance applies to the actual work, including packaging, parsing, security, tests, generated artifacts,
-and deployment when relevant. Do not invent skill names, assume authoring-machine paths, or load the full catalog.
-Reuse guidance already read in the session unless it changed. Explicit user decisions and repository requirements
-outrank skill defaults; a generic recommendation does not authorize an incidental tooling or framework migration.
+Inspect the applicable repository instructions, language and coding rules, configured checks, and available skill
+catalog. Resolve which guidance applies to the actual work, including packaging, parsing, security, tests, generated
+artifacts, and deployment when relevant. Name only skills the catalog lists and paths the repository confirms, and load
+only the guidance the work needs. Reuse guidance already read in the session unless it changed. Explicit user decisions
+and repository requirements outrank skill defaults; a generic recommendation does not authorize an incidental tooling or
+framework migration.
 
-Define shared environment setup, coding guidance, and review procedures once in a shared preflight section. Give each
-shared requirement a short name or anchor. Every unit applies the shared preflight requirements by default, including
-the default review gate. A unit names only its additions and exceptions, never the requirements it shares with every
-other unit. Name the skill or authoritative rule, the work that triggers it, and when it must be read before editing
-or verification. An unattached appendix or a general instruction to "follow best practices" is insufficient.
-Record missing required guidance or unavailable tooling as a prerequisite with its owner and downstream effect.
-Require completion evidence for the applicable coding rules and checks, not merely a claim that a skill was loaded.
+Define shared environment setup, coding guidance, and review procedures once, in a shared preflight section, and give
+each requirement a short name or anchor. Every unit applies the shared preflight by default, including the default
+review gate, and names only its own additions and exceptions. For each requirement, name the skill or authoritative
+rule, the work that triggers it, and when it must be read before editing or verification; an unattached appendix or a
+general instruction to "follow best practices" is insufficient. Record missing required guidance or unavailable
+tooling as a prerequisite with its owner and downstream effect. Require completion evidence for the applicable coding
+rules and checks, not merely a claim that a skill was loaded.
 
 ## Map Dependencies Before Ordering
 
@@ -76,8 +78,8 @@ documentation dependencies when the governing design requires them.
 
 Size work units by independently verifiable outcome. Prefer a vertical slice that produces observable behavior. Use a
 foundation unit only when it establishes a meaningful contract or seam and has useful verification of its own. Split
-further when risk, reviewability, or repository workflow requires it; do not split by arbitrary minutes or file count.
-A unit whose title needs an "and" to describe it, or that spans two independent subsystems, is two units.
+further when risk, reviewability, or repository workflow requires it, never by duration or file count. A unit whose
+title needs an "and", or that spans two independent subsystems, is two units.
 
 Order units by dependency and risk rather than imposing universal phases. Parallel work requires disjoint ownership or
 an accepted stable interface. Keep shared files, generated artifacts, and dependency-ordered changes with one owner.
@@ -86,8 +88,9 @@ an accepted stable interface. Keep shared files, generated artifacts, and depend
 
 Use [the plan template](assets/implementation-plan-template.md) unless explicit user instructions or an established
 repository plan convention supplies the structure. Preserve an existing plan's organization when extending it.
-An unrelated document does not establish a plan convention. Read [the worked plan](references/implementation-plan-example.md)
-before the first draft to calibrate detail; its paired design illustrates the design-to-plan boundary.
+An unrelated document does not establish a plan convention. Read
+[the worked plan](references/implementation-plan-example.md) before the first draft to calibrate detail; its
+paired design illustrates the design-to-plan boundary.
 
 Start with a short implementation overview: what changes, how the work reaches the outcome, and which dependencies
 determine the order. Put this explanation before paths and commands. Include a dependency diagram when the flow needs
@@ -112,8 +115,8 @@ Within that structure, make these facts recoverable:
 
 Use exact paths and symbols only after repository inspection establishes them. Prefer stable identities and
 responsibilities to source line ranges. A plan may include focused API declarations, interfaces, schemas, configuration
-fragments, migrations, or non-obvious algorithms when they materially clarify an accepted design. Do not pre-write
-routine complete files or duplicate the future source of truth.
+fragments, migrations, or non-obvious algorithms when they materially clarify an accepted design. Leave routine
+complete files to implementation, because the code becomes their source of truth.
 
 Assign generated files, dependency locks, migrations, documentation, and operational configuration to the unit whose
 outcome requires them. Identify expected generated outputs and the tools that own them. Inspect unexpected changes
@@ -135,9 +138,9 @@ Report unavailable safe evidence instead of substituting an unauthorized live ch
 Behavioral outcomes require behavioral tests or real-system observations. Formatting, linting, typing, builds, syntax
 checks, substring searches, and clean version-control state may be necessary, but they do not prove behavior.
 
-Use test-driven development when a focused automated test can state the changed observable behavior. Do not impose it on
-documentation, mechanical configuration, exploratory integration, or work whose suitable evidence lies at another
-boundary. Follow repository commit policy instead of requiring one commit per work unit.
+Use test-driven development when a focused automated test can state the changed observable behavior. Verify
+documentation, mechanical configuration, exploratory integration, and work whose evidence lies at another boundary at
+that boundary instead. Follow repository commit policy rather than requiring one commit per work unit.
 
 End the complete plan with system-level verification traced through the design to the governing requirements and
 outcome. File existence, task completion, or clean version-control state alone cannot establish completion.
@@ -158,40 +161,48 @@ units and dependency order, not just in a closing recommendation:
    focused checks may suffice unless repository policy requires more. State that choice and its reason.
 4. **After corrections:** the implementer owns repairs; the reviewer checks the changed findings and affected evidence.
    Track severity, location, concrete failure or violated requirement, correction, and blocking status. Required checks
-   and blocking findings must be resolved before the unit closes. Record nonblocking follow-ups with an owner and reason.
-5. **At system completion and operational cutover:** review cross-unit behavior, migration/recovery, packaging, and the
-   applicable qualification evidence. Before consequential external actions, review the exact proposed operation and
-   obtain only authorization not already supplied. Unit approval does not supply deployment or risk acceptance.
+   and blocking findings must be resolved before the unit closes. Record nonblocking follow-ups with an owner and
+   reason.
+5. **At final integration and operational cutover:** review cross-unit behavior, migration and recovery, packaging, and
+   the applicable qualification evidence, and run the separate conformance review below. Before consequential external
+   actions, review the exact proposed operation and obtain only authorization not already supplied. Unit approval does
+   not supply deployment or risk acceptance.
 
-When an accepted requirements specification governs the outcome, make `spec-conformance-review` or an equivalent
-requirements-to-implementation comparison part of the final integration gate. Feed its material findings into the
-existing review record; do not create a parallel approval path.
+Whenever an accepted specification, design, or plan governs the outcome, the final integration gate includes a
+conformance review dispatched separately from the code review, so the code reviewer stays focused on correctness. Its
+reviewer is a fresh subagent, lane, session, or person, and its brief names `spec-conformance-review` and supplies the
+specification, design, and plan locations and the base and head revisions. Record its material findings in the same
+review record as the code review's; both close before the gate does, so the conformance review adds a reviewer, not a
+parallel approval path.
 
-Use one focused independent review per substantive unit and one final integration review for multi-unit changes as
-the default. Prefer compact handoffs containing base/head revisions, the relevant diff/contracts, test evidence, and
-open findings. Reuse the reviewer and unchanged evidence; do not replay full session history or review every file or
-commit separately. Broaden a recheck only for changed scope, new failures, or a concrete dependency impact.
-Scale the strategy to the work instead of imposing independent agents or a full audit on every minor edit.
+By default, plan one focused independent review per substantive unit, then the final integration code review and the
+conformance review for multi-unit changes. Hand each reviewer a compact brief: base and head revisions, the relevant
+diff and contracts, test evidence, and open findings. Reuse the unit reviewer and unchanged evidence across units,
+and broaden a recheck only for changed scope, new failures, or a concrete dependency impact, rather than replaying the
+session or reviewing every file or commit separately. Scale the strategy to the work instead of imposing independent
+agents or a full audit on every minor edit.
 
 Review may be performed by a person, another agent, or a separate session where the environment and authorization allow.
-Naming a reviewer does not authorize subagent/model calls or their cost. If required independent review is unavailable,
-record the missing assignment and keep the dependent completion gate open; continue independent authorized work.
-Neither the implementer nor reviewer may waive a consequential requirement or uncovered risk on the user's behalf.
+Naming a reviewer does not authorize subagent or model calls or their cost. If required independent review is
+unavailable, record the missing assignment and keep the dependent completion gate open; continue independent authorized
+work. Neither the implementer nor reviewer may waive a consequential requirement or uncovered risk on the user's behalf.
 
 ## Write for the Reader
 
-A plan is read by an implementer who was not in the design conversation. Write it with `writing-documentation`, and
-finish with the `writing-for-humans` **reader-ready** pass before calling it ready. Explain each repository-specific
-concept, tool, and convention where the plan first relies on it, once. State the basis revisions and scope once, in
-the preamble.
+A plan is read by an implementer who was not in the design conversation. Write it with `writing-documentation`.
+Explain each repository-specific concept, tool, and convention where the plan first relies on it, once. State the basis
+revisions and scope once, in the preamble. Link the specification, design, and plan while preserving their authority:
+the specification owns intended observable behavior, the design owns its technical realization, and the plan owns
+execution order.
 
-## Write and Check the Plan
+## Record and Place the Plan
 
-Keep intended work distinct from execution evidence. The plan states actions and expected observations; the repository's
-existing tracker or completion-record convention holds actual results, deviations, reviewed revisions, and unresolved
-findings. Link that record rather than creating a competing ledger. If no convention exists, use one clearly separated
-execution-record section in the plan. Do not scatter status through explanatory prose or present expected results as
-observations. Update the intended approach when an authorized adaptation changes it, retaining the reason in the record.
+Keep intended work distinct from execution evidence. The plan states actions and expected observations; the
+repository's existing tracker or completion-record convention holds actual results, deviations, reviewed revisions, and
+unresolved findings. Link that record rather than creating a competing ledger. If no convention exists, use one clearly
+separated execution-record section in the plan. Keep status in that record and write expected results as expectations,
+so explanatory prose never reads as an observation. Update the intended approach when an authorized adaptation changes
+it, retaining the reason in the record.
 
 Resolve the plan path in this order:
 
@@ -204,22 +215,26 @@ Resolve the plan path in this order:
    layout, and ask once.
 7. Outside a repository, ask for a destination.
 
-Use two or three descriptive kebab-case words before `-implementation-plan.md` in the fallback. Link the specification,
-design, and plan while preserving their authority: the specification owns intended observable behavior, the design owns
-its technical realization, and the plan owns execution order.
+Use two or three descriptive kebab-case words before `-implementation-plan.md` in the fallback.
 
-Before calling the plan ready, check requirement and design coverage, source-revision consistency, dependency order,
-interface consistency, ownership, verified touchpoints, required-practice preflight, review-stage placement, reviewer
-assignment, finding-resolution gates, review cost, verification strength, final integration evidence, and the
-reader-ready pass. Remove
-placeholders and expose unavailable checks and unresolved risks. Require the completion record to identify applied
-guidance, reviewed revisions, results, finding dispositions, and unverified obligations. An implementer should not need
-to reconstruct the specification or design conversation.
+## Check the Plan Before Calling It Ready
 
-Read the plan as an unfamiliar implementer: can you identify the first action, explain what it unlocks, understand how
-each unit achieves its outcome, recognize completion, and respond to a failed check? Check that shared preflight
-references resolve and that the final integration gate proves the complete behavior. Headings and command lists alone
-do not establish an actionable plan.
+The plan is ready when each of these holds, with placeholders removed and unavailable checks and unresolved risks
+exposed:
+
+- requirement and design coverage, source-revision consistency, dependency order, interface consistency, ownership, and
+  verified touchpoints;
+- shared preflight references that resolve, and required practices applied through them;
+- review stages placed in the work, reviewers assigned, finding-resolution gates set, and review cost proportionate;
+- verification strong enough for each claim, and a final integration gate that proves the complete behavior and
+  includes the separate conformance review;
+- a completion record that will identify applied guidance, reviewed revisions, results, finding dispositions, and
+  unverified obligations; and
+- the `writing-for-humans` **reader-ready** pass, read as an unfamiliar implementer: the first action and what it
+  unlocks, how each unit achieves its outcome, what completion looks like, and how to respond to a failed check are
+  all clear without reconstructing the specification or design conversation.
+
+Headings and command lists alone do not establish an actionable plan.
 
 Saving or completing a plan does not authorize implementation. Continue only when the user's request already supplied
 that authority; otherwise present the plan and stop before changing the system. When the plan will run as goal-backed or

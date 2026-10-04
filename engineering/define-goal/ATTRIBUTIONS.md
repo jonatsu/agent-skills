@@ -25,8 +25,8 @@ This package is a modified version under section 4 of Apache-2.0. The upstream s
 arms a goal through `get_goal` and `create_goal`. This package keeps its quality bar, its rejection of activity
 goals, its per-work-type quantification heuristics, its clarifying-question guidance, and one adapted example
 pair. It adds the five-part goal form, a condition written for a transcript-reading judge, a placement in the
-engineering pipeline, the durable checkpoint copy, the rules for working toward a goal, and one arming branch
-per harness. The upstream `agents/openai.yaml` interface file was not carried over.
+engineering pipeline, the closing conformance check, the durable checkpoint copy, the rules for working toward a
+goal, and one arming branch per harness. The upstream `agents/openai.yaml` interface file was not carried over.
 
 ## File Provenance
 

@@ -14,44 +14,50 @@ design.
 
 ## Establish the Design Basis
 
-Read the governing requirements specification, overview or idea-brainstorming draft, repository instructions, relevant
-implementation, tests, interfaces, operations, and prior decisions before asking questions. Recover facts from those
-sources instead of asking the user to repeat them.
+Read the governing spec, overview or idea-brainstorming draft, repository instructions, relevant implementation, tests,
+interfaces, operations, and prior decisions before asking questions. Recover facts from those sources instead of asking
+the user to repeat them.
 
 Technical design may start from:
 
-- an accepted requirements specification with settled observable behavior and acceptance;
+- an accepted spec with settled observable behavior and acceptance;
 - an idea-brainstorming draft whose bounded direction already supplies the required observable behavior and
   constraints; or
-- a bounded request whose outcome and scope are explicit enough that widening possibilities would add no value.
+- a bounded request whose outcome and scope are explicit enough that widening possibilities would add no value. Without
+  a spec, the design realizes that accepted request.
 
-Return to idea-brainstorming when a discovery changes the intended outcome, target user, product direction, or scope. Record
-the conflict and keep the former direction provisional until the user resolves it. Return missing, contradictory, or
-unaccepted user-visible behavior to `writing-specs`. Do not disguise a product decision as architecture.
+Product policy belongs to the user and the spec; the design takes it as input. Return to `idea-brainstorming` when a
+discovery changes the intended outcome, target user, product direction, or scope. Record the conflict and keep the
+former direction provisional until the user resolves it. When a spec governs the work, return its missing,
+contradictory, or unaccepted user-visible behavior to `writing-specs`.
 
-When the design introduces or leans on a domain term that is vague or contested — two words for one concept, or one
-word stretched over two — engage `domain-modeling` to settle and record it rather than encoding the ambiguity into
-interfaces and data flow. The language can be settled at whatever stage it surfaces; when design is what exposed it,
-carry the resolved term back into the specification.
+When no spec governs the work and the design starts deciding user-visible behavior, user journeys, or acceptance that
+no spec covers, the design has grown large. Stop deciding that behavior, propose writing a spec with `writing-specs`,
+say why, and let the user decide. Record the decision in the design basis: the spec that now governs, or that the user
+waived it and their reason. A waived spec leaves the accepted request as the basis, and the behavior the design fixes
+stays a labeled recommendation for the user to confirm.
+
+When the design introduces or leans on a domain term that is vague or contested (two words for one concept, or one word
+stretched over two), engage `domain-modeling` to settle and record it rather than encoding the ambiguity into interfaces
+and data flow. When design is what exposed the term, carry the resolved term back into the spec.
 
 ## Investigate Before Deciding
 
 Inspect the surfaces that could change the recommendation. Depending on the subject, establish current responsibilities,
-public and internal interfaces, state and data flow, dependencies, tests, operational behavior, compatibility obligations,
-and relevant prior decisions.
+public and internal interfaces, state and data flow, dependencies, tests, operational behavior, compatibility
+obligations, and relevant prior decisions.
 
 Use the smallest design depth that settles the consequential system choices. Expand the relevant analysis for security,
 authorization, persistent data, migrations, compatibility, external dependencies, material cost, or difficult recovery.
-Do not add sections for risks that do not apply.
 
 Implementation and tests establish current technical behavior, not desired product or business policy. Treat target
 users, priorities, pricing, retention rules, compliance duties, and service levels as intended policy only when the user
 or an authoritative product artifact supplies them. Keep unsupported policy provisional or return a changed outcome to
-idea-brainstorming.
+`idea-brainstorming`.
 
 Check every claim about an upstream or third-party mechanism against its pinned source, never against memory or a
-summary. A wrong premise settled here propagates into the plan and the code. Where no ready component does what the
-design needs, write the custom step as a design task, not as a finding or an open question.
+summary, because a wrong premise settled here propagates into the plan and the code. Where no ready component does what
+the design needs, write the custom step as a design task, not as a finding or an open question.
 
 Keep evidence and judgment distinct:
 
@@ -66,9 +72,9 @@ and a marker on each provisional decision. Mark a provisional decision as provis
 the questions register, where it is assumed rather than resolved. The design text states the design; provenance
 narration such as "verified against" or "confirmed in" belongs in those structures or nowhere.
 
-When a governing specification exists, identify the accepted revision and trace each consequential system guarantee to
-the requirement it realizes. State the guarantee first and append the requirement's existing identifier or anchor; do
-not invent an ID scheme during design. A newer accepted specification makes the affected design provisional until the
+When a governing spec exists, identify the accepted revision and trace each consequential system guarantee to the
+requirement it realizes. State the guarantee first and append the requirement's existing identifier or anchor, reusing
+the spec's own scheme rather than inventing one. A newer accepted spec makes the affected design provisional until the
 change is reconciled.
 
 Present alternatives only when a real consequential choice remains. Explain the difference, benefit, cost, likely
@@ -85,14 +91,12 @@ than deferring every technical judgment to the user. The user should not have to
 
 Bind every contribution to the evidence discipline above. An expert contribution is a labeled recommendation,
 grounded in repository inspection or authoritative research wherever the claim is changeable, with genuine
-uncertainty flagged rather than smoothed into false confidence. A confident but unverified domain assertion is the
-failure this stance must avoid, because a wrong premise settled here propagates into the plan and the code.
+uncertainty flagged rather than smoothed into false confidence.
 
-Product policy stays with the user; contribute technical and domain judgment, not product decisions. Calibrate to
-who holds authority for the subject at hand: defer more and confirm when the user is the domain expert, drive when
-they are relying on the agent. When that authority is unclear at the design basis, state the stance in one line —
-for example, that the agent will drive the domain expertise on a named area unless the user is the authority there —
-so the user can redirect cheaply instead of granting expertise each time.
+Contribute technical and domain judgment, and calibrate to who holds authority for the subject at hand: defer more and
+confirm when the user is the domain expert, drive when they are relying on the agent. When that authority is unclear at
+the design basis, state the stance in one line (for example, that the agent will drive the domain expertise on a named
+area unless the user is the authority there), so the user can redirect cheaply instead of granting expertise each time.
 
 ## Define the System
 
@@ -108,20 +112,20 @@ Settle the parts relevant to the requested outcome:
 - observability, rollout, and rollback when the change requires them.
 
 Translate accepted product harms into system guarantees. Define relevant denial, disclosure, failure, and recovery
-behavior without prescribing verification commands or implementation order.
+behavior; verification commands and implementation order belong to implementation planning.
 
 Technical design decides whether rollout and rollback are required and defines their behavioral and safety obligations.
 Implementation planning later orders the work and checks that implement those decisions.
 
-Name implementation surfaces only when they establish evidence or clarify responsibility. Do not prescribe edit order,
-source line ranges, commits, task assignments, or implementation status.
+Name implementation surfaces only when they establish evidence or clarify responsibility. Leave edit order, source line
+ranges, commits, task assignments, and implementation status to the plan.
 
 ## Choose the Format
 
 Use arc42 for new technical-design documents by default. Inspect the repository's documentation instructions and
 relevant existing designs first. When continuing a document, preserve its organization. When joining an established
-design set, follow its applicable template, terminology, markup, and document boundaries. Use arc42 to check coverage
-within that structure; do not create a parallel design or reorganize existing documents solely to impose arc42.
+design set, follow its applicable template, terminology, markup, and document boundaries, and use arc42 only to check
+coverage within that structure rather than creating a parallel design or reorganizing existing documents to impose it.
 An unrelated README or incidental layout does not establish a design convention. Explicit user instructions take
 precedence. Briefly state the selected convention in the design basis; routine matching needs no separate approval.
 
@@ -129,14 +133,13 @@ For arc42, read [the writing guide](references/arc42-writing-guide.md) and use
 [the template](assets/arc42-design-template.md). Read [the worked example](references/arc42-example.md) before the first
 draft to calibrate explanation and depth. Keep arc42's section numbers and order, and omit a section that would carry
 nothing, so the numbers stay stable and the reader meets no empty headings. Tailor subsections and depth. Remove
-authoring prompts from the finished document. Do not invent requirements, stakeholders, thresholds, or risks to fill
-a section. Keep status and governing-source links in a short preamble and the planning handoff in an unnumbered
-appendix.
+authoring prompts from the finished document. Fill each section only from evidence; a missing requirement, stakeholder,
+threshold, or risk goes to the questions register, never into invented content. Keep status and governing-source links
+in a short preamble and the planning handoff in an unnumbered appendix.
 
 For bounded changes, state the affected boundary and baseline, explain the changed design, and link unchanged system
 documentation. In arc42, sections 1 and 10 reference accepted requirements rather than restating them, and they do not
-acquire product authority. Section 9 links existing decisions rather than duplicating them. An unresolved obligation
-remains a gap, recorded in the questions register.
+acquire product authority. Section 9 links existing decisions rather than duplicating them.
 
 A design leads implementation, then follows it: once code exists, the code wins and the design is updated to match.
 The status line says so. Open items live in one questions register and one task ledger, linked from the design, never
@@ -159,7 +162,7 @@ recoverable in text.
 In the handoff, identify invariants, failure modes, and rollout/recovery obligations that need particular scrutiny or
 qualification, with the evidence boundary and owner where known. Link applicable policy or coding constraints instead
 of duplicating their rules. Implementation planning turns these obligations into explicit practice, review, and
-validation steps; keep reviewer scheduling and execution commands out of the design.
+validation steps, so reviewer scheduling and execution commands stay in the plan.
 
 ## Artifact Path
 
@@ -181,7 +184,9 @@ directory, or an unrelated collision require user direction. Saving a design doe
 
 Before handing the design to implementation planning, check that:
 
-- purpose, scope, and observable behavior still match the governing specification or intent;
+- purpose, scope, and observable behavior still match the governing spec or the accepted request;
+- the design basis names the governing spec, or, where the design fixes user-visible behavior, user journeys, or
+  acceptance that no spec covers, records the user's decision on the proposed spec;
 - consequential requirements map to system guarantees without invented product policy;
 - consequential behavior and architecture no longer require invention;
 - responsibilities, interfaces, and state or data flows agree;
@@ -201,9 +206,9 @@ built on an unexamined choice.
 
 Then present the complete design synthesis and ask for one confirmation that it matches the user's understanding of
 the system to be planned. Only a confirmation given after every consequential decision confirms them; earlier
-confirmation of individual choices does not. A clear response to the synthesis is the confirmation, so do not ask the
-user to repeat it. For a request to design and plan in one conversation, stop here, and begin the separate
-implementation plan only after that response.
+confirmation of individual choices does not. A clear response to the synthesis is the confirmation and needs no
+repetition. For a request to design and plan in one conversation, stop here, and begin the separate implementation plan
+only after that response.
 
 If the check exposes a design gap, continue designing or record the blocker. If it exposes a changed outcome or scope,
-return to idea-brainstorming. Do not hand unresolved architecture to planning merely to keep the workflow moving.
+return to `idea-brainstorming`. Planning receives settled architecture only, even when that stalls the workflow.

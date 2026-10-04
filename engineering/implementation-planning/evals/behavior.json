@@ -179,7 +179,7 @@
         "Names compatible governing specification and design revisions.",
         "Traces work units through design obligations to the existing requirement anchors without duplicating their text.",
         "Maps final behavioral and negative-guarantee evidence to the governing requirements.",
-        "Places a specification-conformance comparison in the final integration review without creating a parallel approval path.",
+        "Places a conformance review in the final integration gate, dispatched separately from the code review with a brief naming `spec-conformance-review`, the specification, design, and plan locations, and the base and head revisions, and records its findings in the same review record rather than a parallel approval path.",
         "Keeps requirements authority, technical realization, and execution order in their separate artifacts."
       ]
     },

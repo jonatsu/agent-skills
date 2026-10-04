@@ -46,6 +46,8 @@ Explain failure interpretation, cleanup or rollback when a specific response is 
 ## Final Integration
 
 Verify the complete outcome against the requirements and design, including cross-unit guarantees.
+Name the final code review, and the separately dispatched conformance review with its brief inputs:
+`spec-conformance-review`, the specification, design and plan locations, and base and head revisions.
 Name qualification and authorization requirements for any operational cutover.
 
 ## Execution Record

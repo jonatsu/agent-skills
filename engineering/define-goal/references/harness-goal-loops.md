@@ -22,7 +22,7 @@ You hold `get_goal`, `create_goal`, and `update_goal`.
   the user to finish, pause, or clear it with `/goal clear` before you create another, because `create_goal`
   fails while an unfinished goal exists. Then call `create_goal` with the five-part goal as the objective, up to
   4,000 characters, condition first. The tool accepts a goal only on an explicit request, and a request to
-  define or set a goal is one. Pass `token_budget` only when the user named a budget.
+  define or set a goal is one. A budget goes in `token_budget`.
 - **Forwarded as:** a hidden continuation turn whenever the thread goes idle with the goal active, carrying the
   objective and an audit to run before claiming completion. The objective is not in the system prompt.
 - **Judged by:** you. Call `update_goal` with `complete` only after every criterion's verification output is in
@@ -40,8 +40,7 @@ is active or during the `/guided-goal` interview.
 - **Set:** outside goal mode, hand the user `/goal set <objective>`, or suggest `/guided-goal`, which interviews
   the user into the same five sections this skill writes: objective, success criteria, verification,
   boundaries, and stop conditions. Inside goal mode, use `goal` with `op: "get"`, then `op: "create"`; `create`
-  fails while a goal exists. Set `token_budget` only when the user named one. Goal mode and plan mode exclude
-  each other.
+  fails while a goal exists. A budget goes in `token_budget`. Goal mode and plan mode exclude each other.
 - **Forwarded as:** a hidden `<goal_context>` message on every prompt, with the objective, budget, audit rules
   and a todo summary, and a hidden continuation prompt shortly after each turn ends.
 - **Judged by:** you, with `op: "complete"` after auditing the repository state against every criterion.
@@ -65,15 +64,15 @@ and absent in plan mode, background sessions, subagents, and non-interactive run
   most recent part of the transcript, so the passing verification output must sit there, near the end. A met or
   impossible verdict clears the goal; after 8 rejected turns in a row the goal pauses, still set.
 - **Ends on:** a met or impossible verdict, the 8-rejection pause, `/goal clear`, or an account or model error.
-  Do not tell the user to run `/goal clear` after success; a met goal clears itself.
+  A met goal clears itself, so success leaves the user nothing to clear.
 - **Subagents:** the judge never runs for them, and they do not see the goal.
 
 ## GitHub Copilot CLI
 
 `/goal` is an alias of `/autopilot`, and you cannot set an objective yourself.
 
-- **Set:** hand the user `/autopilot <objective>`. A credit limit is `--max-ai-credits <N>`, added only when the
-  user named one. A new objective replaces the current one.
+- **Set:** hand the user `/autopilot <objective>`. A credit limit is `--max-ai-credits <N>`. A new objective
+  replaces the current one.
 - **Forwarded as:** a hidden message stating the objective when it is set, and a continuation naming the active
   objective whenever the agent goes idle.
 - **Judged by:** a read-only reviewer subagent, when you call `task_complete`. It weighs your summary against

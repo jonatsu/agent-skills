@@ -9,13 +9,13 @@ metadata:
 # Define Goal
 
 Shape what the user wants into a goal an agent can pursue honestly, then arm it in the harness's goal loop so
-work continues until the evidence exists. A goal names an outcome and the evidence that proves it, never an
-activity. In the engineering pipeline this step follows `implementation-planning` and precedes
-`incremental-implementation`; for a bounded request with no plan, it is the whole of the preparation.
+work continues until the evidence exists. A goal names an outcome and the evidence that proves it. In the
+engineering pipeline this step follows `implementation-planning` and precedes `incremental-implementation`; for
+a bounded request with no plan, it is the whole of the preparation.
 
-Every harness with a goal feature runs the same loop: the user sets an objective, the harness resumes the agent whenever
-it would stop, and something judges whether the objective is met. The objective text is the only part of the
-conversation the loop reliably sends back, so it must carry everything the judge needs.
+Every harness with a goal feature runs the same loop: the user sets an objective, the harness resumes the agent
+whenever it would stop, and something judges whether the objective is met. The objective text is the only part of
+the conversation the loop reliably sends back, so it must carry everything the judge needs.
 
 ## Confirm a Goal Is Wanted
 
@@ -42,10 +42,9 @@ Write the goal in five parts:
 5. **Stop conditions:** when to stop and ask instead of grinding, such as a decision the user owns, a criterion
    proved unreachable, or a boundary that would have to break.
 
-Before arming it, the goal must answer: what will be true, what evidence proves it, what threshold separates
-success from failure, which boundaries matter, and what should halt the work. Rewrite a weak goal when local
-context makes the rewrite safe. An activity goal, such as "make progress", "keep investigating", or "improve
-the tests", becomes an outcome or is not armed.
+The goal is ready to arm when each part is concrete enough that someone outside the session could check it.
+Rewrite a weak goal when local context makes the rewrite safe. Arm only an outcome: rewrite an activity goal, such as
+"make progress", "keep investigating", or "improve the tests", as the outcome it serves.
 
 Make it quantitative where the domain supports it, with numbers that represent real success rather than
 decorative precision:
@@ -68,21 +67,36 @@ Strong: "Reduce checkout API p95 latency below 250 ms on the documented slow pat
 server-side change; verify with `npm run test:checkout` passing and the local latency benchmark showing p95
 under 250 ms in 3 consecutive runs." Weak: "Make checkout faster."
 
+## Carry the Closing Check
+
+When a spec, technical design, or implementation plan governs the work, the goal carries the closing check.
+Add the success criterion "a conformance review against those documents finds no material mismatch", and make
+its verification that review's report. Because the loop re-sends the goal at every stop, the check written here
+still reaches the agent at the end of a long run.
+
+Run the review as its own dispatch: a fresh subagent or review lane whose brief names
+`spec-conformance-review` and supplies each governing document with its revision and the delivered change. The
+code reviewer judges correctness and stays on that job, so its report never stands in for this one. A mismatch
+in the code is work for the loop. A mismatch that needs a document changed is a stop condition, because that
+document's owner decides it.
+
 ## Write the Condition
 
 Compress the goal into one condition of at most 500 characters: the end state, the command whose output proves
-it, the pass signal, the boundary that matters most, and the stop condition. Some judges read only the
-transcript and run no tools, so write a condition that recent command output alone can confirm. Name the
-command and its pass signal, such as "`pytest tests/auth` exits 0", rather than "auth works". Ending with "or
-stop and report when …" lets a judge recognize a goal that cannot be met.
+it, the pass signal, the closing check when one applies, the boundary that matters most, and the stop condition.
+Some judges read only the transcript and run no tools, so write a condition that recent output alone can
+confirm. Name the command and its pass signal, such as "`pytest tests/auth` exits 0", rather than "auth works".
+The closing check fits in one clause, such as "and a separate conformance review against `docs/design/auth.md`
+reports no material mismatch". Ending with "or stop and report when …" lets a judge recognize a goal that
+cannot be met.
 
 ## Arm the Goal
 
 Identify the harness from your own tool list and system prompt, then read
 [references/harness-goal-loops.md](references/harness-goal-loops.md) for how that harness sets, forwards, and
 judges a goal. Some harnesses let only the user set one; there, hand the user the exact command to run with
-the condition filled in. Set a token or credit budget only when the user asked for one. Replace an active goal
-only after the user confirms the old one is finished or abandoned.
+the condition filled in. Set a token or credit budget only when the user named one. Replace an active goal only
+after the user confirms the old one is finished or abandoned.
 
 In every harness, also write the five-part goal into the session's durable checkpoint or the plan's execution
 record. That copy survives a fresh session, and it is the source for every brief written while the goal runs.
@@ -90,7 +104,7 @@ record. That copy survives a fresh session, and it is the source for every brief
 ## Work Toward It
 
 Run the verification as the last step, after the last change, so the passing output is the latest evidence in
-the transcript; a check that passed before a later edit no longer proves anything. No harness passes a goal to
-a subagent, so restate in each brief the criteria that lane owns. When a stop condition fires, stop and report
-which one, with the evidence, rather than working around it. Declare the goal met only when every success
-criterion has its verification output in hand.
+the transcript; a check that passed before a later edit no longer proves anything, the closing review included.
+No harness passes a goal to a subagent, so restate in each brief the criteria that lane owns. When a stop
+condition fires, stop and report which one, with the evidence, rather than working around it. Declare the goal
+met only when every success criterion has its verification output in hand.

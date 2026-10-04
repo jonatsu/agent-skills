@@ -53,8 +53,10 @@ The implementer writes focused behavioral tests, reviews the diff and runs affec
 An independent reviewer examines each substantive unit's exact diff and evidence before dependent
 work begins. Assign that reviewer before starting; if none is available, keep the gate open.
 
-Use one reviewer for the units and final integration. Recheck corrections and affected evidence;
-do not repeat unchanged reviews. The execution record holds actual revisions, results and findings.
+Use one reviewer for the units and the final integration code review. Recheck corrections and
+affected evidence; leave unchanged reviews standing. The final conformance review has its own
+reviewer, as Final Integration describes. The execution record holds actual revisions, results
+and findings.
 Every unit applies P1 and P2.
 
 ## Unit 1: Classified Input Loading
@@ -163,9 +165,14 @@ A failed check blocks completion; it does not justify changing the accepted exit
 
 ## Final Integration
 
-Run `just check` over the integrated change in the isolated checkout. Have the reviewer compare
-the exact revision and collected evidence against R1–R5 and the design contracts, using
-`spec-conformance-review` or an equivalent requirements comparison.
+Run `just check` over the integrated change in the isolated checkout. The P2 reviewer then reviews
+the combined diff for correctness.
+
+Separately, dispatch a fresh conformance reviewer whose brief names `spec-conformance-review` and
+supplies the paired design, this plan, and the base and head revisions. It compares the integrated
+behavior and collected evidence with R1–R5 and the design contracts. This example has no separate
+specification, so the review reports that as a coverage limit. Its findings join the same execution
+record, and both reviews must close before integration does.
 
 Confirm the real command covers all three outcome classes, complete ordered reporting, exact
 identifier equality and source preservation. Resolve blocking findings and record any unverified
