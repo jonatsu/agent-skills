@@ -326,8 +326,14 @@ What the assessment established:
   anchor. When the transcript stays ambiguous, report a partial backtrace labelled as such.
 - **Harness coverage:** Claude and Codex first. Codex keeps transcripts under `~/.codex/sessions/`.
   `src/tools/session-scoring/` already parses both formats, but a global skill cannot import a repository
-  tool, so the skill bundles its own stdlib script. Copilot's transcript location and format are unverified;
-  the Copilot test session in the root `TODO.md` locates them.
+  tool, so the skill bundles its own stdlib script. Copilot CLI 1.0.91 (checked 2026-10-04) keeps one
+  directory per session, `~/.copilot/session-state/<session-id>/`, or under `$COPILOT_HOME`. Its `events.jsonl`
+  holds one event per line with `type`, `data`, `id`, `parentId` and `timestamp`, with types such as
+  `user.message`, `assistant.message`, `tool.execution_start` and `skill.invoked`. Beside it, `workspace.yaml`
+  records the session's `cwd`, `client_name`, timestamps and `summary_count`, which anchors a session to its
+  repository without trusting the newest mtime. `~/.copilot/session-store.db` is a SQLite index with `sessions`,
+  `turns` and a full-text search index. No stored session had been compacted, so the compaction event's form is
+  still unseen.
 - **Risks:** Claude's transcript fields (`isCompactSummary`, `isMeta`, the `compact_boundary` system subtype)
   are undocumented and can change, so test the script against a real transcript. Transcripts can hold
   secrets; the output stays local.
