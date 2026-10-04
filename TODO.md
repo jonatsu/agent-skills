@@ -78,7 +78,7 @@ as `requirements-specification` and `technical-design` do.
 | `idea-brainstorming`              | 2026-09-28, `7fd41bd`, no change | 2026-09-28, `7fd41bd`                             |
 | `session-reflect`                 | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                             |
 | `systemd-units`                   | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                             |
-| `docker-podman-containers`        | 2026-10-04, this commit          | 2026-09-28, `f92701a`                             |
+| `docker-podman-containers`        | 2026-10-04, `3316fdd2`           | 2026-09-28, `f92701a`                             |
 | `writing-for-humans`              | 2026-09-28, `e999023`            | 2026-09-28, `e999023`                             |
 | `writing-documentation`           | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                             |
 | `requirements-specification`      | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
