@@ -63,6 +63,7 @@ Read the branch reference before making its decisions:
 | Branch                                                             | Reference                                                     |
 | ------------------------------------------------------------------ | ------------------------------------------------------------- |
 | Dockerfile, build context, base image, BuildKit                    | `references/dockerfile-patterns.md`                           |
+| Build cache: invalidation, cache mounts, external cache, GC        | `references/build-cache.md`                                   |
 | Compose modeling, lifecycle, health, and data                      | `references/docker-compose.md`                                |
 | Runtime isolation, replacement, logging, and supply-chain security | `references/runtime-security.md`                              |
 | Container build and publication in CI                              | `references/ci-cd.md`                                         |

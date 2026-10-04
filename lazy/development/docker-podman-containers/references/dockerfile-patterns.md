@@ -13,11 +13,11 @@ credentials, environment files, editor state, test artifacts, and dependency dir
 
 ## Order for Cache Reuse
 
-Order inputs by how often they invalidate. Copy dependency manifests and lock files, install locked dependencies, then
-copy frequently changing source when the build tool supports that separation. Keep a package-index refresh, package
-installation, and cache cleanup in the same `RUN` instruction when later deletion would otherwise leave the removed
-bytes in an earlier layer. Keep unrelated commands separate when combining them would obscure failures or waste cache
-reuse; layer count alone is not an optimization target.
+Read `build-cache.md` for step ordering, cache mounts, and external cache. Without a cache mount, keep a
+package-index refresh, package installation, and cache cleanup in the same `RUN` instruction, because a later
+deletion leaves the removed bytes in an earlier layer. With a cache mount, leave the cleanup out, because it
+discards the cache and saves no image space. Keep unrelated commands separate when combining them would obscure
+failures or waste cache reuse; layer count alone is not an optimization target.
 
 ## Separate Build and Runtime Concerns
 

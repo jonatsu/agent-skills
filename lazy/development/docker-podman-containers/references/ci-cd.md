@@ -22,8 +22,9 @@ Pin third-party CI extensions to immutable revisions when the platform supports 
 pins, and review the upstream release before merging an automated update. Never enable automatic merging merely because
 an image or action has a new digest.
 
-Cache package downloads and build layers without placing credentials or generated secrets in the cache. Treat cache
-content from untrusted branches as untrusted input.
+Cache package downloads and build layers without placing credentials or generated secrets in the cache; read
+`build-cache.md` to choose the backend and scope. Treat cache content from untrusted branches as untrusted input:
+let untrusted branches import the main branch cache, but export only to their own cache references.
 
 The pipeline succeeds only when deployment can identify the exact tested digest and verify the required attestations.
 A tag alone does not establish that identity.
