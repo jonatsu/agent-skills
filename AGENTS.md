@@ -8,6 +8,8 @@ Read the focused source before acting:
 - `archived/README.md` defines the archive procedure and recovery commands, and its "Review is deferred" rows
   are the record of which reviews are still outstanding.
 - `TODO.md` holds operational and future-feature backlog and unevaluated candidate sources.
+- `ENGINEERING-PIPELINE.md` states the intended flow of the core engineering skills, from idea to verified
+  work. Read it before changing a pipeline skill's handoff, tier, or scope.
 - `../docs/evaluations/skills/2026-09-shared-skill-review.md` holds the completed review's verdicts, evidence, and
   coverage limits. It is a dated record, not a ledger; do not add status to it.
 

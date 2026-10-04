@@ -221,7 +221,7 @@ each, and the `kasetto/lazy/` and `kasetto/claude-lazy/` scopes list the lazy gr
 | ------------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `agents/`                | Prompts, instruction files, context economy, handoffs, deferred work, subagent dispatch | The CC safety net, document conversion, prompt debugging                  |
 | `skills-for-skills/`     |                                                                                         | Skill authoring, review, descriptions and triggers, Kasetto               |
-| `engineering/`           | Ideas, requirements, domain models, technical design, planning                          | Stakeholder questionnaires                                                |
+| `engineering/`           | Ideas, interviews, requirements, domain models, design, planning, goals, implementation | Stakeholder questionnaires                                                |
 | `development/`           | Coding standards, shells                                                                | Containers                                                                |
 | `development/python/`    |                                                                                         | Python style, typing, testing, async, architecture, projects              |
 | `development/nix/`       |                                                                                         | Nix and NixOS: flakes, packaging, secrets, home-manager                   |
@@ -372,6 +372,8 @@ Two places these sources are wrong, or narrower than they read:
 - [AGENTS.md](AGENTS.md) — the rules for agents working here, and the normative source wherever it overlaps
   with this file
 - [TODO.md](TODO.md) — operational backlog, review ledgers and unevaluated candidate sources
+- [ENGINEERING-PIPELINE.md](ENGINEERING-PIPELINE.md) — how the core engineering skills are meant to hand off,
+  from an idea to verified work
 - [archived/README.md](archived/README.md) — the archive procedure and recovery commands
 - [../README.md](../README.md) — the rest of the repository, including the shared toolchain this directory
   inherits
