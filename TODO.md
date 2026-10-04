@@ -31,8 +31,8 @@ Still open:
   lose only their last words. The Codex configuration reference documents only `path` and `enabled` under
   `skills.config`, with no per-skill override or name-only mode (checked 2026-09-12). The ways out are a
   higher cap, or descriptions that put their routing words in the first 280 characters.
-- Run the same Python probe on Copilot once it has quota. The root `TODO.md` item on closing the
-  lazy-skill-loading plan runs a Copilot probe too; do both in one session.
+- Run the same Python probe on Copilot. It is item 2 of the Copilot test session in the root `TODO.md`, which
+  runs it together with the lazy-skill-loading acceptance probe.
 
 The user also plans to revisit the domain names and to rename some skills; neither is scheduled.
 
@@ -323,7 +323,8 @@ What the assessment established:
   anchor. When the transcript stays ambiguous, report a partial backtrace labelled as such.
 - **Harness coverage:** Claude and Codex first. Codex keeps transcripts under `~/.codex/sessions/`.
   `src/tools/session-scoring/` already parses both formats, but a global skill cannot import a repository
-  tool, so the skill bundles its own stdlib script. Copilot's transcript location and format are unverified.
+  tool, so the skill bundles its own stdlib script. Copilot's transcript location and format are unverified;
+  the Copilot test session in the root `TODO.md` locates them.
 - **Risks:** Claude's transcript fields (`isCompactSummary`, `isMeta`, the `compact_boundary` system subtype)
   are undocumented and can change, so test the script against a real transcript. Transcripts can hold
   secrets; the output stays local.
