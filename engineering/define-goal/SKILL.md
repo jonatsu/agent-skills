@@ -1,6 +1,6 @@
 ---
 name: define-goal
-description: Turn an intention, an accepted plan, or a bounded request into a measurable goal with success criteria, verification evidence, boundaries, and stop conditions, then set it in the harness goal loop (/goal, autopilot, create_goal). Use when asked to define, set, or sharpen a goal, or to make "done" measurable before an unattended run; not for product requirements (requirements-specification), implementation plans (implementation-planning), or tasks done directly.
+description: Turn an intention, a plan, or a request into a measurable goal for an agent run, with the evidence that proves it met, and set it in the goal loop (/goal, /autopilot, create_goal) that keeps the agent working until it is. Use when asked to define, set, or sharpen a goal or objective, to start goal-backed or autopilot work, or to make "done" measurable before an unattended run; not for product acceptance criteria (requirements-specification), implementation plans (implementation-planning), or ordinary tasks.
 license: Apache-2.0
 metadata:
   author: Joonas Onatsu
