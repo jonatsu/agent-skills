@@ -1,6 +1,6 @@
 ---
 name: skill-forge
-description: "Create, edit, review, and evaluate Agent Skills. Use when turning completed work into a skill, writing or restructuring SKILL.md and bundled resources, repairing loadability or portability, or recording provenance, and when judging whether a skill is correct, effective, or ready, from a static check to a behavioral comparison against a baseline. Use skill-descriptions-and-triggers when only the description is in question."
+description: "Create, edit, review, and evaluate Agent Skills. Use when turning completed work into a skill, writing or restructuring SKILL.md and bundled resources, repairing loadability or portability, or recording provenance, and when judging whether a skill is correct, effective, or ready, from a static check to a behavioral comparison against a baseline. Use writing-skill-descriptions when only the description is in question."
 license: MIT
 compatibility: The bundled validators require Python 3.11+, uv, and dependency access on their first run.
 metadata:
@@ -21,7 +21,7 @@ its task, and both modes below serve that one standard.
 - **Review** when the request asks whether a skill is correct, effective, safe, or ready, or compares a skill
   against a revision or baseline. Read [references/review.md](references/review.md) and follow its steps.
 - **Neither** when only a description is in question, whether drafting, auditing, or measuring its triggering.
-  Use the `skill-descriptions-and-triggers` skill instead.
+  Use the `writing-skill-descriptions` skill instead.
 
 When a request names a skill without establishing the job, ask whether the user wants it built or changed, or
 judged. A review request authorizes a report. Switch to authoring for a repair only when the user authorizes

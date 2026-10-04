@@ -50,7 +50,7 @@ design inspection only as far as it helps the repair.
 
 Apply the four always-on lenses, then each other lens the package's content makes relevant:
 
-- **Discovery:** the name and description pass the review checks of the `skill-descriptions-and-triggers`
+- **Discovery:** the name and description pass the review checks of the `writing-skill-descriptions`
   skill.
 - **Scope coherence:** every aspect serves one coherent job under the rule in `SKILL.md`. Judge only the
   purpose the package establishes; an invented unifying purpose hides the defect.

@@ -36,7 +36,7 @@ first fails, and accepts a path relative to wherever you are.
 **Always:**
 
 - Use `skill-forge` when creating, editing, restructuring, or replacing a skill, and
-  `skill-descriptions-and-triggers` whenever a description is written or changed.
+  `writing-skill-descriptions` whenever a description is written or changed.
 - Edit a repo-local skill in `../.agents/skills/<name>/`. The `../.claude/skills/` and `../.github/skills/`
   entries are symlinks to it and are never edited separately; README's "Repo-local skills" section has the
   layout.

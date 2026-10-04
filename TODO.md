@@ -41,7 +41,7 @@ The user also plans to revisit the domain names and to rename some skills; neith
 
 ## Description and Prose Pass Ledger
 
-Every skill gets two passes: `skill-descriptions-and-triggers` on its description, and `writing-for-agents`
+Every skill gets two passes: `writing-skill-descriptions` on its description, and `writing-for-agents`
 over the whole package. A skill missing from this table has had neither, and a blank cell means that pass is
 still open. When a skill passes, add or complete its row in the same change and cite the commit. Rows before
 2026-09-28 were reconstructed from Git history; a pass counts only where a commit message or evaluation record
@@ -54,66 +54,66 @@ through `writing-documentation` and the `writing-for-humans` reader-ready pass. 
 sources or status "throughout" turns into per-sentence noise; carry status in the document's structure instead,
 as `requirements-specification` and `technical-design` do.
 
-| Skill                             | Description pass                 | `writing-for-agents` pass                         |
-| --------------------------------- | -------------------------------- | ------------------------------------------------- |
-| `git-commits-and-recovery`        | 2026-09-27, `05ecb1e`            | 2026-09-28, `bf0a58d`                             |
-| `git-history-investigation`       | 2026-09-27, `8242032`            | 2026-09-27, `8242032`                             |
-| `using-git-worktrees`             | 2026-09-27, `b10689e`            | 2026-09-27, `36bb1b4`                             |
-| `session-handoff`                 | 2026-09-28, `f25ae32`            | 2026-09-28, `bd1ba4e`                             |
-| `skill-descriptions-and-triggers` | 2026-09-28, `37f34c8`            | 2026-09-28, `2c0a4ee`                             |
-| `session-skill-audit`             | 2026-09-28, `da8a0cb`            | 2026-09-28, `da8a0cb`                             |
-| `skill-forge`                     | 2026-09-28, `9fe08b0`            | 2026-09-28, `9fe08b0`, merged with `skill-review` |
-| `context-compression`             | 2026-09-28, `2997308`            | 2026-09-25, `f0f5559f`                            |
-| `context-architecture`            | 2026-09-30, `d586c9d`            | 2026-09-30, `28da2bd`                             |
-| `agents-context-docs`             | 2026-09-30, `f8435a5`            | 2026-09-30, `f8435a5`                             |
-| `python-architecture`             | 2026-09-28, `2997308`            | 2026-09-24, `4e374bf`                             |
-| `python-async-patterns`           | 2026-09-28, `2997308`, no change | 2026-09-24, `c85d2cf`                             |
-| `python-error-handling`           | 2026-09-28, `2997308`, no change | 2026-09-24, `819aa34`                             |
-| `python-parallelism`              | 2026-09-28, `2997308`, no change | 2026-09-24, `c1d8db7`                             |
-| `python-project-management`       | 2026-09-28, `2997308`            | 2026-09-24, `bf1081b`                             |
-| `python-style`                    | 2026-09-28, `2997308`            | 2026-09-24, `e47e62d`                             |
-| `python-testing`                  | 2026-09-28, `2997308`            | 2026-09-24, `d908951`                             |
-| `python-typing`                   | 2026-09-28, `2997308`, no change | 2026-09-24, `272c8d2`                             |
-| `interview-me`                    | 2026-09-28, `cb64a9b`            | 2026-09-28, `cb64a9b`                             |
-| `idea-brainstorming`              | 2026-09-28, `7fd41bd`, no change | 2026-09-28, `7fd41bd`                             |
-| `session-reflect`                 | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                             |
-| `systemd-units`                   | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                             |
-| `docker-podman-containers`        | 2026-10-04, `3316fdd2`           | 2026-09-28, `f92701a`                             |
-| `writing-for-humans`              | 2026-09-28, `e999023`            | 2026-09-28, `e999023`                             |
-| `writing-documentation`           | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                             |
-| `requirements-specification`      | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
-| `technical-design`                | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                             |
-| `implementation-planning`         | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                             |
-| `test-engineer`                   | 2026-09-28, `7702d54`, unnamed   | 2026-09-28, `7702d54` and `add69c3`, unnamed      |
-| `coding-standards`                | 2026-09-28, `73a6774`, unnamed   | 2026-09-28, `73a6774`, unnamed                    |
-| `writing-readmes`                 | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
-| `to-questionnaire`                | 2026-09-28, `e1f25db`            | 2026-09-28, `e1f25db`                             |
-| `domain-modeling`                 | 2026-09-28, `f5cf1f9`            | 2026-09-28, `f5cf1f9`                             |
-| `spec-conformance-review`         | 2026-09-28, `d0bc8da`, no change | 2026-09-28, `d0bc8da`                             |
-| `security-review`                 | 2026-09-28, `7f3d35f`            | 2026-09-28, `7f3d35f`                             |
-| `writing-prompts`                 | 2026-09-28, `d55d5dd`, new skill | 2026-09-28, `d55d5dd`, new skill                  |
-| `prompt-debugging`                | 2026-09-28, `d55d5dd`            |                                                   |
-| `document-conversion`             | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
-| `github-ops`                      | 2026-09-28, `7c7a61f`, no change | 2026-09-28, `7c7a61f`                             |
-| `repo-management`                 | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
-| `bash-shell`                      | 2026-09-28, `ef71b3f`, no change | 2026-09-28, `ef71b3f`                             |
-| `posix-shell`                     | 2026-09-28, `ef71b3f`            | 2026-09-28, `ef71b3f`                             |
-| `cc-safety-net`                   | 2026-09-28, no change            | 2026-09-28, no change, vendored upstream          |
-| `ast-grep`                        | 2026-09-28, `3392f10`, no change | 2026-09-28, `3392f10`                             |
-| `just-task-runner`                | 2026-09-28, `8976754`, no change | 2026-09-28, `8976754`                             |
-| `kasetto-skill-tool`              | 2026-09-28, `f4bcb13`            | 2026-09-28, `f4bcb13`                             |
-| `chezmoi-dotfiles`                | 2026-10-04, `46487dd3`           | 2026-09-28, no change                             |
-| `mise-tools`                      | 2026-09-28, `9ae6e8a`            | 2026-09-28, `9ae6e8a`                             |
-| `drawio-diagrams`                 | 2026-09-29, `1fe21f2`            | 2026-09-29, `1fe21f2`                             |
-| `lint-config-audit`               | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |
-| `note-for-later`                  | 2026-09-30, `b691642`, new skill | 2026-09-30, `b691642`, new skill                  |
-| `debug-hardware`                  | 2026-09-30, `606289f`, new skill | 2026-09-30, `7ba3a4a`, probe guard hook added     |
-| `debug-server-tools`              | 2026-09-30, `606289f`, new skill | 2026-09-30, `606289f`, new skill                  |
-| `gdb-debugging`                   | 2026-09-30, `0de84b5`, new skill | 2026-09-30, `0de84b5`, new skill                  |
-| `mcu-firmware-debugging`          | 2026-09-30, `b2bcd2f`, new skill | 2026-09-30, `b2bcd2f`, new skill                  |
-| `embedded-linux-debugging`        | 2026-09-30, `8450467`, new skill | 2026-09-30, `8450467`, new skill                  |
-| `serial-console-debugging`        | 2026-09-30, `911b361`, new skill | 2026-09-30, `911b361`, new skill                  |
-| `define-goal`                     | 2026-10-04, `2e67ef7e`           | 2026-10-04, `66bec2da`, new                       |
+| Skill                        | Description pass                 | `writing-for-agents` pass                         |
+| ---------------------------- | -------------------------------- | ------------------------------------------------- |
+| `git-commits-and-recovery`   | 2026-09-27, `05ecb1e`            | 2026-09-28, `bf0a58d`                             |
+| `git-history-investigation`  | 2026-09-27, `8242032`            | 2026-09-27, `8242032`                             |
+| `using-git-worktrees`        | 2026-09-27, `b10689e`            | 2026-09-27, `36bb1b4`                             |
+| `session-handoff`            | 2026-09-28, `f25ae32`            | 2026-09-28, `bd1ba4e`                             |
+| `writing-skill-descriptions` | 2026-09-28, `37f34c8`            | 2026-09-28, `2c0a4ee`                             |
+| `session-skill-audit`        | 2026-09-28, `da8a0cb`            | 2026-09-28, `da8a0cb`                             |
+| `skill-forge`                | 2026-09-28, `9fe08b0`            | 2026-09-28, `9fe08b0`, merged with `skill-review` |
+| `context-compression`        | 2026-09-28, `2997308`            | 2026-09-25, `f0f5559f`                            |
+| `context-architecture`       | 2026-09-30, `d586c9d`            | 2026-09-30, `28da2bd`                             |
+| `agents-context-docs`        | 2026-09-30, `f8435a5`            | 2026-09-30, `f8435a5`                             |
+| `python-architecture`        | 2026-09-28, `2997308`            | 2026-09-24, `4e374bf`                             |
+| `python-async-patterns`      | 2026-09-28, `2997308`, no change | 2026-09-24, `c85d2cf`                             |
+| `python-error-handling`      | 2026-09-28, `2997308`, no change | 2026-09-24, `819aa34`                             |
+| `python-parallelism`         | 2026-09-28, `2997308`, no change | 2026-09-24, `c1d8db7`                             |
+| `python-project-management`  | 2026-09-28, `2997308`            | 2026-09-24, `bf1081b`                             |
+| `python-style`               | 2026-09-28, `2997308`            | 2026-09-24, `e47e62d`                             |
+| `python-testing`             | 2026-09-28, `2997308`            | 2026-09-24, `d908951`                             |
+| `python-typing`              | 2026-09-28, `2997308`, no change | 2026-09-24, `272c8d2`                             |
+| `interview-me`               | 2026-09-28, `cb64a9b`            | 2026-09-28, `cb64a9b`                             |
+| `idea-brainstorming`         | 2026-09-28, `7fd41bd`, no change | 2026-09-28, `7fd41bd`                             |
+| `session-reflect`            | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                             |
+| `systemd-units`              | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                             |
+| `docker-podman-containers`   | 2026-10-04, `3316fdd2`           | 2026-09-28, `f92701a`                             |
+| `writing-for-humans`         | 2026-09-28, `e999023`            | 2026-09-28, `e999023`                             |
+| `writing-documentation`      | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                             |
+| `requirements-specification` | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
+| `technical-design`           | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                             |
+| `implementation-planning`    | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                             |
+| `test-engineer`              | 2026-09-28, `7702d54`, unnamed   | 2026-09-28, `7702d54` and `add69c3`, unnamed      |
+| `coding-standards`           | 2026-09-28, `73a6774`, unnamed   | 2026-09-28, `73a6774`, unnamed                    |
+| `writing-readmes`            | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
+| `to-questionnaire`           | 2026-09-28, `e1f25db`            | 2026-09-28, `e1f25db`                             |
+| `domain-modeling`            | 2026-09-28, `f5cf1f9`            | 2026-09-28, `f5cf1f9`                             |
+| `spec-conformance-review`    | 2026-09-28, `d0bc8da`, no change | 2026-09-28, `d0bc8da`                             |
+| `security-review`            | 2026-09-28, `7f3d35f`            | 2026-09-28, `7f3d35f`                             |
+| `writing-prompts`            | 2026-09-28, `d55d5dd`, new skill | 2026-09-28, `d55d5dd`, new skill                  |
+| `prompt-debugging`           | 2026-09-28, `d55d5dd`            |                                                   |
+| `document-conversion`        | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
+| `github-ops`                 | 2026-09-28, `7c7a61f`, no change | 2026-09-28, `7c7a61f`                             |
+| `repo-management`            | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
+| `bash-shell`                 | 2026-09-28, `ef71b3f`, no change | 2026-09-28, `ef71b3f`                             |
+| `posix-shell`                | 2026-09-28, `ef71b3f`            | 2026-09-28, `ef71b3f`                             |
+| `cc-safety-net`              | 2026-09-28, no change            | 2026-09-28, no change, vendored upstream          |
+| `ast-grep`                   | 2026-09-28, `3392f10`, no change | 2026-09-28, `3392f10`                             |
+| `just-task-runner`           | 2026-09-28, `8976754`, no change | 2026-09-28, `8976754`                             |
+| `kasetto-skill-tool`         | 2026-09-28, `f4bcb13`            | 2026-09-28, `f4bcb13`                             |
+| `chezmoi-dotfiles`           | 2026-10-04, `46487dd3`           | 2026-09-28, no change                             |
+| `mise-tools`                 | 2026-09-28, `9ae6e8a`            | 2026-09-28, `9ae6e8a`                             |
+| `drawio-diagrams`            | 2026-09-29, `1fe21f2`            | 2026-09-29, `1fe21f2`                             |
+| `lint-config-audit`          | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |
+| `note-for-later`             | 2026-09-30, `b691642`, new skill | 2026-09-30, `b691642`, new skill                  |
+| `debug-hardware`             | 2026-09-30, `606289f`, new skill | 2026-09-30, `7ba3a4a`, probe guard hook added     |
+| `debug-server-tools`         | 2026-09-30, `606289f`, new skill | 2026-09-30, `606289f`, new skill                  |
+| `gdb-debugging`              | 2026-09-30, `0de84b5`, new skill | 2026-09-30, `0de84b5`, new skill                  |
+| `mcu-firmware-debugging`     | 2026-09-30, `b2bcd2f`, new skill | 2026-09-30, `b2bcd2f`, new skill                  |
+| `embedded-linux-debugging`   | 2026-09-30, `8450467`, new skill | 2026-09-30, `8450467`, new skill                  |
+| `serial-console-debugging`   | 2026-09-30, `911b361`, new skill | 2026-09-30, `911b361`, new skill                  |
+| `define-goal`                | 2026-10-04, `2e67ef7e`           | 2026-10-04, `66bec2da`, new                       |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 

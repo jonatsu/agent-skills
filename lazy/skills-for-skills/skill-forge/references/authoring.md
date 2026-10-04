@@ -195,7 +195,7 @@ needs its reason.
 Keep a non-obvious prerequisite or gotcha in `SKILL.md` when the agent must know it before it can recognize
 the condition for loading a reference. Move later branch detail behind a conditional pointer.
 
-Write the initial description with the `skill-descriptions-and-triggers` skill, passing it the scope and
+Write the initial description with the `writing-skill-descriptions` skill, passing it the scope and
 invocation goal chosen in step 2.
 
 Use a checklist only when order or prerequisites matter; independent rules and judgment read better as prose.

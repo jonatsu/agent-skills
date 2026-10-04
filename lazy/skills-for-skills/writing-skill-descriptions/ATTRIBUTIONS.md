@@ -2,7 +2,8 @@
 
 ## Current skill
 
-- Skill: `skill-descriptions-and-triggers`, named `optimizing-descriptions` until 2026-09-28
+- Skill: `writing-skill-descriptions`, named `optimizing-descriptions` until 2026-09-28 and
+  `skill-descriptions-and-triggers` until 2026-10-04
 - Author: Joonas Onatsu
 - License: MIT
 - Expression: independently written. No external prose, examples, code, or assets were copied or adapted.

@@ -1,5 +1,5 @@
 ---
-name: skill-descriptions-and-triggers
+name: writing-skill-descriptions
 description: Write, audit, and test Agent Skill descriptions so a skill loads for the requests it serves and stays out of the rest. Use when drafting or revising a description, when a skill fails to trigger or triggers on the wrong requests, or when comparing description variants or measuring trigger rates. Use skill-forge for the rest of the skill package.
 license: MIT
 metadata:

@@ -21,7 +21,7 @@ missing technique is a finding only when its absence harms the skill's declared 
 
 ## Discovery
 
-Judge the name and description with the review checks of the `skill-descriptions-and-triggers` skill. Read the
+Judge the name and description with the review checks of the `writing-skill-descriptions` skill. Read the
 scalar form directly: a folded or literal block scalar passes the reference validator and Markdown linters
 alike.
 

@@ -129,7 +129,7 @@ before trusting a negative result. Evidence that the forbidden behavior occurred
 of preferred vocabulary. Report "no observable load signal" rather than claiming non-activation when the
 client hides selection.
 
-The `skill-descriptions-and-triggers` skill owns trigger-rate measurement and description optimization,
+The `writing-skill-descriptions` skill owns trigger-rate measurement and description optimization,
 including repetitions, thresholds, and held-out queries.
 
 ## Evaluate Execution
