@@ -102,7 +102,7 @@ The plan names an independent review after each substantive unit and at final in
 that reviewer differently. Claude Code and Codex share the same ten subagents, `code-reviewer`,
 `security-auditor`, `plan-critic`, and `test-engineer` among them. Oh-My-Pi runs eight of them and keeps its
 built-in `reviewer` and `security-reviewer` in place of `code-reviewer` and `security-auditor`. Copilot CLI has
-no generated custom agents, so it has no review lane of its own.
+one generated custom agent, `code-reviewer`; its other review lanes run as skills in the main session.
 
 ## Skills used at any stage
 
