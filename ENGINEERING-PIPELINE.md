@@ -1,138 +1,144 @@
 # Engineering Pipeline
 
 This document states how the core engineering skills are meant to work together, from an unformed idea to
-verified, merged work. The skills were built one at a time, and each describes its own neighbors; nothing yet
-described the whole. It records intent, written on 2026-10-04 from the skills as they stood and from the user's
-direction that day. It is the reference the pipeline will later be checked against, so where a skill and this
-document disagree, the disagreement is a finding for that check, not a silent correction in either direction.
+verified, merged work. The skills were built one at a time, and each describes only its own neighbors; this is
+the one place that describes the whole. It records intent, from the user's direction on 2026-10-04. Where a skill
+and this document disagree, the disagreement is a finding to resolve, not a silent correction in either
+direction.
 
 No agent loads this file. Agents reach the pipeline through each skill's description and the handoff each skill
 names. The intended reader is whoever changes a pipeline skill or reviews the pipeline as a whole.
 
-## The idea behind it
+## The document chain
 
-Each stage answers one question and leaves one artifact with its own authority. A later stage consumes an
-accepted artifact and never invents what an earlier stage owns: planning does not choose architecture, design
-does not decide product policy, and implementation does not quietly change the plan. When a stage finds its input
-unsettled, it routes back to the stage that owns the gap instead of guessing forward.
+The pipeline is a chain of documents. Each document answers one question, is written by one skill, and is the
+reference that later work is checked against. A later document never decides what an earlier one owns: the
+design does not set product policy, the plan does not choose architecture, and the code does not quietly change
+the plan. When a stage finds an earlier document missing or unsettled, it routes back to the skill that writes it
+instead of guessing forward.
 
-Stages are skipped when their question is already answered. A small bounded request with explicit requirements
-needs no specification, and a change that follows a settled convention needs no design document. Producing an
-artifact only to fill a phase is a cost with no reader. A stage ends with a handoff: the accepted artifact, plus
-one confirmation from the user that it says what they meant. That confirmation is about fidelity; it does not
-authorize the next stage's work unless the user's request already did.
-
-## The stages
+| Document           | What it is                                                               | Written by                   | Used or checked by                   |
+| ------------------ | ------------------------------------------------------------------------ | ---------------------------- | ------------------------------------ |
+| Idea draft         | A direction worth pursuing, with one observable sign of success          | `idea-brainstorming`         | The spec, or the design when no spec |
+| **Spec**           | What the finished product must do, and how its acceptance is judged      | `writing-specs`              | Design, plan, conformance review     |
+| Design             | How the system will do what the spec says, including how it fails        | `technical-design`           | Plan, conformance review             |
+| Plan               | The work in dependency order, each unit with its verification and review | `implementation-planning`    | Build, conformance review            |
+| Goal               | When an unattended run is finished, and the evidence that proves it      | `define-goal`                | The harness goal loop                |
+| Code               | The change itself, landed as small verified commits                      | `incremental-implementation` | Unit review, conformance review      |
+| Conformance report | Whether the code matches the spec, design, and plan, with every mismatch | `spec-conformance-review`    | Closes the work, or sends it back    |
 
 ```mermaid
 flowchart TD
-    idea([Unformed idea or request]) --> explore
-    explore["Explore<br/>idea-brainstorming"] -->|behavior and acceptance still open| specify
-    explore -->|requirements already explicit| design
-    specify["Specify<br/>requirements-specification"] --> design
-    design["Design<br/>technical-design"] -->|pressure-tested with interview-me| plan
-    plan["Plan<br/>implementation-planning"] --> goal
-    plan -->|attended run| build
-    goal["Set the goal<br/>define-goal"] --> build
-    build["Build<br/>incremental-implementation<br/>+ test-driven-development per slice"] --> review
-    review["Review and close<br/>independent unit review<br/>spec-conformance-review at the final gate"] --> done([Verified, merged work])
+    idea([Idea or request]) --> draft[Idea draft<br/>idea-brainstorming]
+    draft --> spec[Spec<br/>writing-specs]
+    draft -->|small, behavior already clear| design
+    spec --> design[Design<br/>technical-design]
+    design -->|grows large: propose a spec| spec
+    design --> plan[Plan<br/>implementation-planning]
+    plan --> goal[Goal<br/>define-goal]
+    plan -->|attended run| code
+    goal --> code[Code<br/>incremental-implementation]
+    code --> report[Conformance report<br/>spec-conformance-review]
+    report --> done([Verified, merged work])
 
+    report -.->|mismatch in the code| code
+    report -.->|mismatch in a document| design
     plan -.->|design gap| design
-    design -.->|purpose or scope changed| explore
-    plan -.->|behavior or acceptance missing| specify
-    review -.->|material finding| build
+    design -.->|purpose or scope changed| draft
 ```
 
-| Stage      | Skill                        | Question it answers                                              | Artifact it owns                                        |
-| ---------- | ---------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
-| Explore    | `idea-brainstorming`         | What problem is worth solving, and in which direction?           | A draft marked incomplete, with one success signal      |
-| Specify    | `requirements-specification` | What observable behavior counts as success, and what is out?     | The requirements specification and its acceptance       |
-| Design     | `technical-design`           | How will the system realize that behavior, and how does it fail? | The design document, often in arc42                     |
-| Plan       | `implementation-planning`    | In what order, verified how, and reviewed by whom?               | The implementation plan and its execution record        |
-| Set a goal | `define-goal`                | What finish line will the run be held to, and how is it proved?  | The goal, set in the harness's goal loop and checkpoint |
-| Build      | `incremental-implementation` | How does the change land without ever leaving the tree broken?   | Small verified commits                                  |
-| Close      | `spec-conformance-review`    | Does what was built match what was specified and designed?       | Review findings in the plan's existing review record    |
+Each document ends with a handoff: the accepted document, plus one confirmation from the user that it says what
+they meant. That confirmation is about fidelity; it does not authorize the next stage's work unless the user's
+request already did. A document is skipped when its question is already answered, because a document written only
+to fill a stage has no reader.
 
-**Explore** widens possibilities, then narrows to a direction. It hands to Specify when user-visible behavior or
-acceptance still needs a durable contract, and straight to Design when the direction is small and its
-requirements are already explicit.
+## The spec
 
-**Specify** fixes intended observable behavior, actors, journeys, constraints, acceptance and non-goals. It
-names no components, files or tasks; those belong downstream.
+The spec is the formal, written statement of what a finished product, app, tool, or feature must do: who uses it,
+what they do with it, the behavior they observe, the constraints it must respect, how acceptance is judged, what
+is out of scope, and who may change the spec. It names no components, files, or tasks; those belong to the design
+and the plan. It is what the conformance review checks the finished work against, so without a spec the closing
+check has only the design and plan to go on.
 
-**Design** realizes the accepted behavior: architecture, interfaces, data flow, failure and recovery,
-compatibility, migration and rollout. Before it hands off, `interview-me` pressure-tests its load-bearing,
-hard-to-reverse decisions, and the user confirms the whole design once.
+Whether to write one is the user's decision. A small change whose behavior is already clear goes straight to
+design. When a design grows large, the agent proposes writing a spec first and the user decides; "large" means
+the design is fixing user-visible behavior, journeys, or acceptance that nobody has written down. The spec lives
+at `docs/specs/<name>.md` unless the repository has its own convention.
 
-**Plan** turns the accepted design into dependency-ordered units, each with its verification and its review
-stage. It places review in the work rather than at the end: before implementation, during it, after each
-substantive unit, after corrections, and at final integration. When a specification governs the outcome, the
-final integration gate includes `spec-conformance-review`.
+## Each stage
 
-**Set the goal** turns the plan's final integration gate, or a bounded request's own result, into a goal: an
-objective, success criteria, the verification that proves them, boundaries, and stop conditions. It then arms
-that goal in the running harness's goal loop, so an unattended run keeps working until the evidence exists. An
-attended run with the user present may skip it.
+**Idea draft.** `idea-brainstorming` widens the possibilities, then narrows to a direction, and saves it as a
+draft marked incomplete. It hands to `writing-specs` when user-visible behavior or acceptance needs a durable
+contract, and straight to `technical-design` when the direction is small and its behavior already clear.
 
-**Build** lands one verified slice at a time, test-first where a focused test can state the result, keeping
-every commit green and reversible.
+**Spec.** `writing-specs` turns an accepted direction into the spec described above. It is ready when a designer
+can realize it without inventing product policy.
 
-**Close** compares the delivered behavior with the accepted specification and design, and feeds material
-findings back into the plan's review record. It supplements code, security, and test review; it replaces none of
+**Design.** `technical-design` decides how the system realizes the spec, or the accepted request when there is no
+spec: architecture, interfaces, data flow, failure and recovery, compatibility, migration, and rollout. Before
+it hands off, `interview-me` pressure-tests its load-bearing, hard-to-reverse decisions, and the user confirms the
+whole design once.
+
+**Plan.** `implementation-planning` turns the accepted design into dependency-ordered units, each with its
+verification and its review stage: before implementation, after each substantive unit, after corrections, and at
+final integration. The final integration gate includes the conformance review.
+
+**Goal.** `define-goal` turns the plan's final gate, or a bounded request's own result, into a goal: an
+objective, success criteria, the verification that proves them, boundaries, and stop conditions. It sets that goal
+in the running harness's goal loop, so an unattended run keeps working until the evidence exists. An attended run
+may skip it.
+
+**Code.** `incremental-implementation` lands one verified slice at a time, test-first through
+`test-driven-development` where a focused test can state the result, keeping every commit green and reversible.
+
+**Conformance report.** `spec-conformance-review` compares the delivered work with the spec, design, and plan,
+classifies each mismatch by cause, and sends it to the owner: a code defect back to implementation, a gap in a
+document back to the skill that writes it. It supplements code, security, and test review; it replaces none of
 them.
+
+## Review lanes
+
+The plan names an independent review after each substantive unit and at final integration. Each harness supplies
+that reviewer differently. Claude Code and Codex share the same ten subagents, `code-reviewer`,
+`security-auditor`, `plan-critic`, and `test-engineer` among them. Oh-My-Pi runs eight of them and keeps its
+built-in `reviewer` and `security-reviewer` in place of `code-reviewer` and `security-auditor`. Copilot CLI has
+no generated custom agents, so it has no review lane of its own.
 
 ## Skills used at any stage
 
-Some skills serve every stage rather than one:
-
-- `interview-me` reaches a shared understanding of a plan, design, problem or decision, one question at a time.
-  Design uses it as its pressure test; any stage can use it when the user's intent is unclear.
-- `domain-modeling` settles terms while a design is still moving, and keeps the glossary current.
+- `interview-me` reaches a shared understanding of a plan, design, problem, or decision, one question at a time.
+  The design stage uses it as its pressure test.
+- `domain-modeling` settles terms while a spec or design is still moving, and keeps the glossary current.
 - `to-questionnaire` turns a decision the user cannot answer alone into questions for whoever can.
-- `test-driven-development` and `test-engineer` supply the tests: the first inside each Build slice, the second
-  for strategy, regression tests, and proof that a change is really done.
-- `systematic-debugging` finds a root cause when Build or Close meets a failure whose cause is unclear.
+- `test-driven-development` and `test-engineer` supply the tests: the first inside each code slice, the second for
+  test strategy, regression tests, and proof that a change is really done.
+- `systematic-debugging` finds the root cause when a failure's cause is unclear.
 - `security-review` joins review when a change touches a trust boundary or the plan's risk calls for it.
-- `writing-documentation` shapes any artifact above for its reader.
-- `session-handoff`, `note-for-later`, `dispatching-subagents` and `writing-prompts` carry the work across
+- `writing-documentation` shapes any document above for its reader.
+- `session-handoff`, `note-for-later`, `dispatching-subagents`, and `writing-prompts` carry the work across
   sessions and lanes. No harness passes a goal to a subagent, so a brief restates the criteria its lane owns.
 
 ## Entry points
 
-The pipeline has more than one door. A new product idea enters at Explore. A request whose behavior is already
-clear enters at Design or, for a change that follows an existing convention, at Plan, where the existing
-implementation serves as the design authority. A bug enters through `systematic-debugging`, then
-`test-driven-development` for the failing test and Build for the fix. A request for goal-backed or autopilot work
-enters at Set the goal, which sends it back to whichever earlier stage owns a missing answer.
+The pipeline has more than one door. A new product idea starts at the idea draft. A request whose behavior is
+already clear starts at the design, or at the plan when it follows an existing convention, which then serves as
+the design. A bug starts with `systematic-debugging`, then `test-driven-development` for the failing test, and
+then code for the fix. A request for goal-backed or autopilot work starts at the goal, which sends it back to
+whichever earlier document is missing.
 
 ## Tiers
 
-Every stage skill sits in the direct tier, so each harness lists it in every session: `idea-brainstorming`,
-`requirements-specification`, `technical-design`, `implementation-planning`, `define-goal` and
+Every skill that writes a document in the chain is in the direct tier, so each harness lists it in every
+session: `idea-brainstorming`, `writing-specs`, `technical-design`, `implementation-planning`, `define-goal`, and
 `incremental-implementation` under `shared/engineering/`, and `spec-conformance-review` under `shared/review/`.
-So do `interview-me`, `domain-modeling`, the testing skills, `systematic-debugging` and `security-review`. Only
-`to-questionnaire` among the pipeline's skills is in the lazy tier, which Codex, Copilot and Oh-My-Pi reach only
-through `lazy-skills-server`. `skills/README.md` explains the two tiers.
+So are `interview-me`, `domain-modeling`, the testing skills, `systematic-debugging`, and `security-review`. Only
+`to-questionnaire` is in the lazy tier, which Codex, Copilot, and Oh-My-Pi reach through `lazy-skills-server`.
+`skills/README.md` explains the two tiers.
 
-## Questions for the pipeline check
+## Where the skills do not yet match
 
-The later check compares every pipeline skill against this document. These questions are already known to need
-an answer there:
-
-- Does each skill's own handoff name the same next stage and the same backward routes as the diagram?
-- Is `spec-conformance-review` reached reliably? Planning schedules it only when a specification governs, and
-  `incremental-implementation` covers the plan-less path; is any route left where accepted requirements exist
-  but nothing calls it?
-- Should the review stages name the independent reviewer in a portable way? Claude Code has dedicated review
-  subagents, and the other harnesses have none, so the plan's "independent reviewer" may mean different things
-  per harness.
-- Does Set the goal belong before every unattended Build, or only when the user asks for goal-backed work, as the
-  skill now says?
-- Are the testing skills placed right? Build names `test-driven-development`, and planning's verification relies
-  on tests, but neither stage names `test-engineer`'s "is this really done" check explicitly.
-- Should a bug-fix path be its own documented route through the stages, or stay an entry point as described
-  above?
-
-The first check ran on 2026-10-04, before any of these was answered:
-[the routing check record](../docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md) holds its
-findings and proposals.
+The [routing check of 2026-10-04](../docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md) compared
+the skills with this intent. In practice the spec is almost never written: in a month of Claude sessions the
+design skill loaded in 22 transcripts and the spec skill in 2. The conformance review loaded only when a brief
+named it, so the closing check rarely runs, and no review lane carries it. Nothing yet prompts a spec when a
+design grows large. The proposals that close these gaps are open decisions, recorded in that check.
