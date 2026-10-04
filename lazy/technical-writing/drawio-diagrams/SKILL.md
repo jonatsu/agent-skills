@@ -2,7 +2,7 @@
 name: drawio-diagrams
 description: Create, edit, and export draw.io (diagrams.net) diagrams as .drawio files or editable .drawio.svg and .drawio.png images. Use when a request names draw.io or diagrams.net, a file has one of those extensions, or a diagram must stay editable in draw.io; not for Mermaid kept in Markdown (mermaid-diagrams).
 license: MIT
-compatibility: Python 3 for the bundled checker. Mermaid conversion, auto-layout, and image export need the draw.io desktop app's command-line interface.
+compatibility: Python 3 for the bundled checker. Mermaid conversion, auto-layout, and image export need the draw.io desktop app's command-line interface. The official draw.io MCP server (@drawio/mcp) is optional; it adds shape-style search, page-level file access, and browser previews.
 metadata:
   author: Joonas Onatsu
 ---
@@ -12,8 +12,9 @@ metadata:
 A draw.io diagram is XML: an `mxfile` holding one `diagram` per page, each with an `mxGraphModel` of cells. You write
 that XML, or have the draw.io command-line interface (CLI) convert Mermaid into it, then check it and export it.
 
-Current known: draw.io desktop 31.5.3, checked 2026-09-29. `drawio --version` and `drawio --help` confirm what the
-installed build supports; the help text is the flag reference.
+Current known: draw.io desktop 31.5.3, checked 2026-09-29, and the draw.io MCP server `@drawio/mcp` 1.6.3, checked
+2026-10-04. `drawio --version` and `drawio --help` confirm what the installed build supports; the help text is the
+flag reference.
 
 `<skill-dir>` in a command means this skill's directory.
 
@@ -44,6 +45,11 @@ against `drawio --help` when an option seems to have no effect.
 Without the CLI, author the XML by hand, check it, and deliver the `.drawio` file. Tell the user that Mermaid
 conversion, auto-layout, and image export need the draw.io desktop app.
 
+Then check for the official draw.io MCP server, `@drawio/mcp`, by its tools `search_shapes`, `list_pages`, `get_page`,
+`set_page`, and `open_drawio_xml`. A client may defer MCP tools behind a tool-search step, so search for those names
+before concluding the server is absent. It is optional: without it, every step below works from the CLI and the
+bundled checker. It neither exports images nor replaces the checker.
+
 ## 3. Author the Diagram
 
 **Mermaid route**, when the CLI is available and Mermaid can express the diagram (flowchart, sequence, class, state,
@@ -68,6 +74,11 @@ The presets are `verticalFlow`, `horizontalFlow`, `verticalTree`, `horizontalTre
 hand, keep to a grid: shapes about 120 by 60, 40 to 60 pixels apart side by side and 80 to 120 between rows. Keep
 labels short, and give color a meaning, such as one fill per tier, rather than decoration.
 
+For a vendor or industry icon (a cloud service, network gear, Kubernetes, P&ID, electrical symbols, a product logo),
+call the MCP server's `search_shapes` with a few keywords, such as `aws lambda`, and copy the returned `style`, `w`, and
+`h` into the cell. A guessed stencil name that does not exist renders as a plain rectangle instead of the icon. Skip
+it for plain flowchart, UML, and ER shapes. The tool sends its keywords to draw.io's icon service.
+
 ## 4. Edit an Existing Diagram
 
 Extract it to plain XML first. A page saved compressed holds Base64 text instead of readable cells, and an image
@@ -80,6 +91,11 @@ python3 <skill-dir>/scripts/drawio_check.py extract diagram.drawio.svg -o work.d
 Edit `work.drawio`. Keep every existing cell id, because edges and layers refer to cells by id. A cell inside a
 container stays positioned relative to that container. Then write the result back in the original format: export
 with `-e` for an image (step 6), or copy the plain XML over a `.drawio` file.
+
+For one page of a multi-page `.drawio` file, the MCP server avoids loading the whole file. `list_pages` names the
+pages, `get_page` returns one page as plain `mxGraphModel` XML, and `set_page` writes a single `<mxGraphModel>` element
+back. It keeps that page's compression and leaves every other page untouched. These tools read only `.drawio` and
+`.xml` paths, so extract an image first as above. Run the checker on the file after `set_page`.
 
 ## 5. Check the Diagram
 
@@ -99,6 +115,10 @@ timeout 120 drawio --disable-gpu -x -f png -b 10 -o /tmp/preview.png name.drawio
 
 The step is done when the checker exits 0 and, where the CLI exists, the preview shows every label whole and no
 shape overlapping another.
+
+When the user wants to look at the diagram in the editor, the MCP server's `open_drawio_xml` opens it in their
+browser. Call it only on that request, because every call opens a new browser tab. Its `postLayout` and `routing`
+options rearrange only the browser copy and never change the file.
 
 ## 6. Export
 
