@@ -39,6 +39,32 @@ Still open:
 
 The user also plans to revisit the domain names and to rename some skills; neither is scheduled.
 
+## Engineering Pipeline Follow-Ups
+
+Added 2026-10-04, left open by the pipeline rewiring that made the skills match
+[ENGINEERING-PIPELINE.md](ENGINEERING-PIPELINE.md) (commits `11925447`, `a0e2d2e2`, `f7e89b7f`; the reasoning is in
+[the routing check](../docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md)).
+
+- **Evals for the two new behaviors.** Neither has a case in its package's `evals/behavior.json`, so a later edit
+  can drop it unnoticed. Add a case to `shared/engineering/technical-design/evals/behavior.json`: a design with no
+  spec that starts deciding user-visible behavior, journeys, or acceptance must stop, propose a spec with
+  `writing-specs`, and record the user's decision in the design basis. Add one to
+  `shared/review/conformance-review/evals/behavior.json`: a change governed by a design and plan but no spec must be
+  compared against those two, with the missing spec reported as a coverage limit, and a change governed by none of
+  the three must be returned as general code review.
+- **Confirm Copilot dispatches the generated `code-reviewer`.** `agents/copilot/agents/code-reviewer.agent.md.j2`
+  renders to `~/.copilot/agents/code-reviewer.agent.md`, but GitHub Copilot CLI 1.0.91 has no command that lists
+  custom agents without a session, so three things are unverified: that it appears in `/agent` and is dispatched
+  as a subagent, that its `tools` allowlist is honored with its MCP servers loaded, and whether
+  `include-custom-instructions: true` also loads the personal `~/.copilot/copilot-instructions.md`. One model run
+  settles them; an unknown tool name in the allowlist fails silently, so check the run's `tool.execution_start`
+  events against the list.
+- **De-duplicate the code-reviewer method.** The review method body exists in three near-identical copies:
+  `agents/claude/agents/code-reviewer.md.j2`, `agents/codex/agents/code-reviewer.toml.j2`, and
+  `agents/copilot/agents/code-reviewer.agent.md.j2`. Move it to one fragment under `agents/shared/agent-fragments/`,
+  included with `include_text` as `prompt-defense-baseline.md` already is, so a change to the method lands in all
+  three harnesses at once. Oh-My-Pi uses its built-in `reviewer` and needs no copy.
+
 ## Description and Prose Pass Ledger
 
 Every skill gets two passes: `writing-skill-descriptions` on its description, and `writing-for-agents`
