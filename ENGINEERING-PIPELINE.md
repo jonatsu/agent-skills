@@ -132,3 +132,7 @@ an answer there:
   on tests, but neither stage names `test-engineer`'s "is this really done" check explicitly.
 - Should a bug-fix path be its own documented route through the stages, or stay an entry point as described
   above?
+
+The first check ran on 2026-10-04, before any of these was answered:
+[the routing check record](../docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md) holds its
+findings and proposals.
