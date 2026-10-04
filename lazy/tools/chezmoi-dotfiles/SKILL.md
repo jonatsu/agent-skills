@@ -1,8 +1,8 @@
 ---
 name: chezmoi-dotfiles
-description: Manage dotfiles with chezmoi. Use when setting up a new machine; adding, editing, re-adding, forgetting, applying, or syncing managed files; resolving source/target drift; or working on chezmoi templates, encrypted files, ignores, and scripts.
+description: Manage dotfiles with chezmoi. Use when setting up a new machine; adding, editing, re-adding, forgetting, applying, or syncing managed files; resolving source/target drift; or working on chezmoi templates, encrypted files, ignores, and scripts; or managing part of a file a program also writes with modify_ scripts, including INI files handled by chezmoi_modify_manager.
 license: MIT
-compatibility: Requires chezmoi. Git is required for source repositories that use Git.
+compatibility: Requires chezmoi. Git is required for source repositories that use Git. chezmoi_modify_manager is optional and needed only for targets whose modify scripts use it.
 metadata:
   author: Joonas Onatsu
 ---
@@ -36,6 +36,10 @@ again. Do not interpret the columns as Git index and worktree status. `chezmoi d
 actual state with the rendered target: removed lines come from the actual file and added lines come from the
 target state.
 
+Check `chezmoi source-path <target>` for each target. When its name starts with `modify_`, the target is
+produced by a modify script, and the add, re-add, and apply rules below change; read
+[Modify Scripts](#modify-scripts) before choosing a direction.
+
 ## Choose the Change Direction
 
 ### Add a New Target
@@ -43,8 +47,8 @@ target state.
 When an actual file should become managed, inspect it for secrets and check whether its parent directory is
 already managed. Use `chezmoi add <target>` for an ordinary file, or select `--template` or `--encrypt` when
 needed. Adding an already managed target replaces its source state with the actual file, so check its status
-and source diff before doing so. After adding, inspect `chezmoi source-path <target>` and the source repository
-diff, then verify the rendered target.
+and source diff before doing so; for a modify-script target that destroys the script. After adding, inspect
+`chezmoi source-path <target>` and the source repository diff, then verify the rendered target.
 
 For a target that does not yet exist, use `chezmoi add --new <target>` after checking the installed help. A
 directory add recurses by default, so limit its scope before it captures unrelated files.
@@ -67,7 +71,8 @@ understand and authorize their side effects before running the preview.
 
 Current chezmoi prompts before overwriting a target modified since chezmoi last wrote it. Preserve that
 protection. Do not add `--force`, suppress interaction, or rely on an unavailable prompt without confirming
-the affected targets and the user's authority.
+the affected targets and the user's authority. Modify-script targets get no prompt at all, so review their
+diff before every apply that includes them.
 
 ### Preserve an Intentional Actual-State Change
 
@@ -76,7 +81,8 @@ Use this path when the actual file contains the desired change:
 1. Inspect `chezmoi status <target>`, `chezmoi diff <target>`, and `chezmoi source-path <target>` to confirm
    that the actual file is the version to preserve.
 2. Run `chezmoi re-add <target>` for a modified managed file. It preserves an `encrypted_` attribute but does
-   not overwrite templates or re-add non-file entries.
+   not overwrite templates or re-add non-file entries. It also skips modify-script targets; capture those as
+   [Modify Scripts](#modify-scripts) describes.
 3. Inspect the source repository diff and `chezmoi diff <target>`. Confirm that only the intended source path
    changed and that the rendered result matches the desired actual file.
 
@@ -133,6 +139,32 @@ For a new machine or first source initialization, read [references/bootstrap.md]
 before running `chezmoi init`. Resolve the source repository, config template, local changes, secrets, and
 scripts before applying. Treat `init --apply` as an apply operation with the same target and side-effect checks
 as an ordinary apply.
+
+## Modify Scripts
+
+A `modify_` source entry is a script, not a copy of the file. It receives the current file on standard input and
+prints the new contents; when the file does not exist, its input is empty and it must print a complete file. Use
+one for a file that a program also writes, when only part of the file should be managed. A script that holds the
+`chezmoi:modify-template` comment is a template run against `.chezmoi.stdin` instead, and must not carry a
+`.tmpl` suffix.
+
+Three plain-chezmoi commands behave differently on these targets, silently and with exit status 0:
+
+- `chezmoi apply` overwrites local changes without the usual prompt, even when `status` reports the target as
+  modified. Review `chezmoi diff <target>` first, and capture any local change worth keeping before applying.
+- `chezmoi re-add` skips the target and captures nothing.
+- `chezmoi add <target>` replaces the modify script with a plain copy of the file, discarding the script's
+  logic.
+
+Capture a change to a modify-script target by editing the script, or the data file it reads, in the source
+directory. Then confirm with `chezmoi cat <target>` and `chezmoi diff <target>` that the script reproduces the
+wanted file. These three behaviors were verified on chezmoi v2.72.2 on 2026-10-04.
+
+When the script's first line names `chezmoi_modify_manager` as its interpreter, the target is an INI file
+managed by that optional tool. Check `command -v chezmoi_modify_manager`. When it is installed, read
+[references/modify-manager.md](references/modify-manager.md) before changing the target. When it is missing,
+apply fails for that target with exit status 127 and leaves the file unchanged; report that, and leave
+installing the tool to the user.
 
 ## Templates, Scripts, and Ignores
 

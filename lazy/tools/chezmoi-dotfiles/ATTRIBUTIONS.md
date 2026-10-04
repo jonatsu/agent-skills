@@ -8,6 +8,15 @@
   were checked against the current documentation and the installed chezmoi help. The skill states those facts
   in its own task-oriented terms.
 
+## chezmoi_modify_manager documentation
+
+- Source: [`docs/src`](https://github.com/VorpalBlade/chezmoi_modify_manager/tree/main/docs/src) at commit
+  `62a4c18afbe478a7e6691101424ac74058593d7a` (read 2026-10-04).
+- License: GPL-3.0, per the repository's `LICENSE.md`.
+- Influence: verification only. `references/modify-manager.md` restates the tool's documented behavior, commands,
+  and directive syntax in its own words. No documentation prose or example configuration was copied; the
+  directive forms shown are the tool's input syntax.
+
 ## Paul Sorensen's chezmoi skill
 
 - Source: [`skills/chezmoi`](https://github.com/paulnsorensen/skillz-that-grillz/tree/main/skills/chezmoi).

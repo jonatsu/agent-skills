@@ -18,3 +18,6 @@ Use the narrowest reference that answers the active question:
 - [Special files](https://www.chezmoi.io/reference/special-files/)
 - [Special directories](https://www.chezmoi.io/reference/special-directories/)
 - [Script behavior](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/)
+- [Modify scripts and externally modified files](https://www.chezmoi.io/user-guide/manage-different-types-of-file/)
+- [chezmoi_modify_manager documentation](https://vorpalblade.github.io/chezmoi_modify_manager/), an optional
+  tool; prefer its installed `--help-syntax` and `--help-transforms` output
