@@ -288,6 +288,16 @@ sources, record provenance, and decide whether the source overlaps an existing s
   such as `lib_requires_skill_area`, `graph-quality.mjs` scores the result, and the target ids live under
   `packages/atlas/graph/`. Whether anything reads the generated graph at run time is unverified; that, and
   whether such edges could drive our lazy-skill discovery (`find_skills`), are the open questions.
+- [openai/skills `define-goal`](https://github.com/openai/skills/tree/main/skills/.curated/define-goal): the user
+  flagged it on 2026-10-04 for evaluation. Read at commit `b0401f07213a66414d84a65cb50c1d226f99485a` (the last
+  change to that path, 2026-05-21): the package holds `SKILL.md`, `LICENSE.txt` (Apache-2.0) and an `agents/`
+  directory that was not read. The skill turns a fuzzy intention into a measurable goal: a concrete outcome,
+  verification evidence, scope bounds, and a stop condition, with heuristics per work type and a rule to reject
+  pure activity goals such as "keep investigating". It then calls the Codex goal tools `get_goal` and
+  `create_goal`, which Claude Code does not have, so adoption means keeping the quality bar and dropping the
+  tool steps. Check overlap with `idea-brainstorming`, `requirements-specification` and the "state the outcome
+  and what done means" rule in the global instructions before writing anything. Adapting it keeps the Apache-2.0
+  licence and needs an `ATTRIBUTIONS.md`.
 
 ## Session Backtrace Skill
 
