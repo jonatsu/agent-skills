@@ -52,7 +52,7 @@ A skill that produces documents also gets judged against the intent of the 2026-
 judged in context, the reader does not share the writer's knowledge, and every document the skill produces goes
 through `writing-documentation` and the `writing-for-humans` reader-ready pass. An instruction to annotate
 sources or status "throughout" turns into per-sentence noise; carry status in the document's structure instead,
-as `requirements-specification` and `technical-design` do.
+as `writing-specs` and `technical-design` do.
 
 | Skill                        | Description pass                 | `writing-for-agents` pass                         |
 | ---------------------------- | -------------------------------- | ------------------------------------------------- |
@@ -81,7 +81,7 @@ as `requirements-specification` and `technical-design` do.
 | `docker-podman-containers`   | 2026-10-04, `3316fdd2`           | 2026-09-28, `f92701a`                             |
 | `writing-for-humans`         | 2026-09-28, `e999023`            | 2026-09-28, `e999023`                             |
 | `writing-documentation`      | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                             |
-| `requirements-specification` | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
+| `writing-specs`              | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
 | `technical-design`           | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                             |
 | `implementation-planning`    | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                             |
 | `test-engineer`              | 2026-09-28, `7702d54`, unnamed   | 2026-09-28, `7702d54` and `add69c3`, unnamed      |

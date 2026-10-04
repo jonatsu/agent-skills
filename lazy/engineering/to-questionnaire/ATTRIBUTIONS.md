@@ -31,7 +31,7 @@ Retained from upstream, adapted and reworded:
 Changed for this repository:
 
 - Frontmatter description rewritten for this repository's routing, with explicit exclusions against `interview-me`
-  (which interrogates the user's own design) and `requirements-specification`.
+  (which interrogates the user's own design) and `writing-specs`.
 - The upstream `disable-model-invocation: true` flag was not carried: this skill produces only a Markdown file
   and benefits from ordinary description-based discovery here.
 - The writing step requires questions the recipient can answer without the user's context, applies

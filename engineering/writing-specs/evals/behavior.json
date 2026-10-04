@@ -1,5 +1,5 @@
 {
-  "skill_name": "requirements-specification",
+  "skill_name": "writing-specs",
   "mode": "explicit behavioral evaluation",
   "run_contract": {
     "supply_candidate_skill_path": true,

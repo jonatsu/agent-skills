@@ -1,6 +1,6 @@
 ---
 name: define-goal
-description: Turn an intention, a plan, or a request into a measurable goal for an agent run, with the evidence that proves it met, and set it in the goal loop (/goal, /autopilot, create_goal) that keeps the agent working until it is. Use when asked to define, set, or sharpen a goal or objective, to start goal-backed or autopilot work, or to make "done" measurable before an unattended run; not for product acceptance criteria (requirements-specification), implementation plans (implementation-planning), or ordinary tasks.
+description: Turn an intention, a plan, or a request into a measurable goal for an agent run, with the evidence that proves it met, and set it in the goal loop (/goal, /autopilot, create_goal) that keeps the agent working until it is. Use when asked to define, set, or sharpen a goal or objective, to start goal-backed or autopilot work, or to make "done" measurable before an unattended run; not for product acceptance criteria (writing-specs), implementation plans (implementation-planning), or ordinary tasks.
 license: Apache-2.0
 metadata:
   author: Joonas Onatsu
@@ -26,7 +26,7 @@ pays for itself only when a loop or a long run needs an explicit finish line.
 Take the outcome from its authority rather than inventing it. An accepted plan supplies the final integration
 gate, a requirements specification supplies acceptance criteria, and a bounded request supplies its own
 result. When the purpose itself is unsettled, return to `idea-brainstorming`; when intended behavior or
-acceptance is open, to `requirements-specification`; when the work spans several dependent units with no plan,
+acceptance is open, to `writing-specs`; when the work spans several dependent units with no plan,
 to `implementation-planning`.
 
 ## Write the Goal

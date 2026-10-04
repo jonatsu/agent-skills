@@ -1,5 +1,5 @@
 ---
-name: requirements-specification
+name: writing-specs
 description: Turn an accepted product direction or bounded request into a reviewable requirements specification defining actors, user journeys, observable behavior, constraints, acceptance, non-goals, and change authority. Use when writing or refining a product or feature spec, PRD, SRS, requirements, user journeys, or acceptance criteria; not for ideation, architecture, implementation planning, or repository instructions.
 license: MIT
 metadata:

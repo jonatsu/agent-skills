@@ -1,6 +1,6 @@
 ---
 name: to-questionnaire
-description: Turn a decision you cannot answer alone into a Markdown questionnaire for the person who holds the missing knowledge, to fill in async or walk through in a meeting. Use to draft a discovery questionnaire, a question list for a stakeholder or domain expert, or an async information-gathering document. Not for being interviewed on your own design (interview-me) or writing a requirements spec (requirements-specification).
+description: Turn a decision you cannot answer alone into a Markdown questionnaire for the person who holds the missing knowledge, to fill in async or walk through in a meeting. Use to draft a discovery questionnaire, a question list for a stakeholder or domain expert, or an async information-gathering document. Not for being interviewed on your own design (interview-me) or writing a requirements spec (writing-specs).
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -18,7 +18,7 @@ recipient knows and what the user needs — not the subject the user cannot spea
 
 This is the inverse of `interview-me`. That skill interviews the user about their own plan or design; reach for
 this instead when the user genuinely cannot answer, because the knowledge lives with someone else. It is not a requirements
-specification (`requirements-specification`): it gathers what one person knows, it does not define a system's
+specification (`writing-specs`): it gathers what one person knows, it does not define a system's
 behavior.
 
 ## Steps

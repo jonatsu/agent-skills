@@ -1,6 +1,6 @@
 ---
 name: domain-modeling
-description: Build and sharpen a project's domain model and ubiquitous language while designing, and keep its glossary current. Use when a term is ambiguous or overloaded, when defining or editing project terminology or a glossary, or when drawing bounded-context boundaries. Not for reviewing an existing model (brooks skills), system architecture (technical-design), or product scope (requirements-specification).
+description: Build and sharpen a project's domain model and ubiquitous language while designing, and keep its glossary current. Use when a term is ambiguous or overloaded, when defining or editing project terminology or a glossary, or when drawing bounded-context boundaries. Not for reviewing an existing model (brooks skills), system architecture (technical-design), or product scope (writing-specs).
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -16,7 +16,7 @@ no skill.
 It is the active counterpart to `interview-me`: when an interview surfaces terminology or model decisions, use
 this skill to capture them; when this skill's questioning widens into a full design interrogation, hand back to
 `interview-me`. Reviewing an existing model for decay is the `brooks-*` skills, system structure is
-`technical-design`, and product scope is `requirements-specification`.
+`technical-design`, and product scope is `writing-specs`.
 
 ## During the session
 

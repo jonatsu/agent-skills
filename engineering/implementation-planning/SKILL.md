@@ -34,7 +34,7 @@ When the design is incomplete, record the exact gap, its downstream consequence,
 must resolve it. Stop only the blocked branch: plan genuinely independent, already-designed branches and state the
 limit. Return missing behavior,
 architecture, interfaces, failure policy, compatibility, or migration strategy to technical design. Return missing or
-contradictory intended behavior and acceptance to `requirements-specification`. Return changed purpose or product scope
+contradictory intended behavior and acceptance to `writing-specs`. Return changed purpose or product scope
 to idea-brainstorming.
 
 Repository inspection may settle implementation-local facts and ordinary techniques already constrained by the design

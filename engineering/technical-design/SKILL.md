@@ -27,7 +27,7 @@ Technical design may start from:
 
 Return to idea-brainstorming when a discovery changes the intended outcome, target user, product direction, or scope. Record
 the conflict and keep the former direction provisional until the user resolves it. Return missing, contradictory, or
-unaccepted user-visible behavior to `requirements-specification`. Do not disguise a product decision as architecture.
+unaccepted user-visible behavior to `writing-specs`. Do not disguise a product decision as architecture.
 
 When the design introduces or leans on a domain term that is vague or contested — two words for one concept, or one
 word stretched over two — engage `domain-modeling` to settle and record it rather than encoding the ambiguity into

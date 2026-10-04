@@ -99,7 +99,7 @@ or state, and name the owner and deadline when they matter.
 ## Specs, PRDs, and Design Documents
 
 A requirements specification, PRD, SRS, or technical design has its own content owner:
-`requirements-specification` for intended behavior and acceptance, `technical-design` for how a system realizes
+`writing-specs` for intended behavior and acceptance, `technical-design` for how a system realizes
 it. That skill decides what the document must contain. This skill still governs how it reads, and every rule
 here applies to it in full: the authority map, one term per concept, concepts explained where first relied on,
 every sentence carrying information, and the `writing-for-humans` **reader-ready** pass.

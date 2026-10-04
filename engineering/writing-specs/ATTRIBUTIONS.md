@@ -2,7 +2,7 @@
 
 ## Current Skill
 
-- Skill: `requirements-specification`
+- Skill: `writing-specs`, named `requirements-specification` until 2026-10-04
 - Current author: Joonas Onatsu
 - Current license: MIT
 - Status: original implementation with independently expressed idea-level influence

@@ -220,7 +220,7 @@
       ]
     },
     {
-      "id": "requirements-specification-handoff",
+      "id": "writing-specs-handoff",
       "prompt": "We chose a shared household emergency-supplies inventory and agreed who it serves and what is out of scope. The user journeys, denial cases, and acceptance behavior are not specified yet. Prepare the next-phase handoff without designing the system.",
       "behavior": "Route an accepted direction with unresolved observable behavior to requirements specification.",
       "outcomes": [

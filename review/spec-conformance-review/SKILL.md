@@ -115,7 +115,7 @@ report.
 ## Preserve Review Authority
 
 Review does not authorize fixes. Report implementation defects before changing code, and route an accepted repair
-through the normal implementation workflow. Route requirements ambiguity or change to `requirements-specification`,
+through the normal implementation workflow. Route requirements ambiguity or change to `writing-specs`,
 technical gaps to `technical-design`, execution and evidence gaps to `implementation-planning` or `test-engineer`, and
 security defects to `security-review`.
 

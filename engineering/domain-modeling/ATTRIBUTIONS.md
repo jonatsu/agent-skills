@@ -40,7 +40,7 @@ Changed for this repository:
 - A session finish line and a rule that definitions use words a newcomer already has, checked with
   `writing-for-humans`.
 - Frontmatter description rewritten for this repository's routing, with explicit exclusions against the
-  `brooks-*` review skills, `technical-design`, and `requirements-specification`.
+  `brooks-*` review skills, `technical-design`, and `writing-specs`.
 
 ## Upstream license
 

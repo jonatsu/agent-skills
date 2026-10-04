@@ -126,7 +126,7 @@ Resolve a saved draft's path in this order:
 For the fallback, use two or three descriptive kebab-case words plus `-draft.md`. Reuse an existing file only when it is
 the same draft. State the resolved location before saving.
 
-Route the handoff to `requirements-specification` when user-visible behavior, journeys, or acceptance still need a
+Route the handoff to `writing-specs` when user-visible behavior, journeys, or acceptance still need a
 durable contract. A small bounded direction whose requirements are already explicit may proceed directly to
 `technical-design`; do not manufacture a specification merely to fill a phase.
 
