@@ -3,6 +3,9 @@
 Make rebuilds reuse work. A cache miss on one step rebuilds that step and every step after it, so the layout of
 the Dockerfile decides how much each change costs. Written for BuildKit; the last section covers Buildah.
 
+Contents: how a step hits or misses, layout, cache mounts, external cache, garbage collection, Podman and
+Buildah, validation.
+
 ## How a Step Hits or Misses
 
 - `COPY`, `ADD`, and `RUN --mount=type=bind` hit when the content and metadata of every input file match. File
@@ -50,6 +53,8 @@ package-manager and compiler steps.
 - Mount the directory the tool actually uses. Ask the tool rather than guessing: `npm config get cache`,
   `yarn cache dir`, `pip cache dir`, `go env GOCACHE GOMODCACHE`. A mount on the wrong path is an empty
   directory that changes nothing, and it fails silently.
+- Write `target` as an absolute path. BuildKit does not expand `~`: `target=~/.npm` mounts at
+  `<WORKDIR>/~/.npm`, not in the user's home directory. Verified on Docker 29.8.2, 2026-10-04.
 - Use `sharing=locked` for tools that need exclusive access to their data, such as apt; concurrent builds then
   wait for each other. The default `shared` lets writers run at once.
 - Give the mount an `id` when several stages or Dockerfiles should share one cache. The `id` defaults to the
