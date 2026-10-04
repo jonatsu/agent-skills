@@ -222,4 +222,5 @@ references resolve and that the final integration gate proves the complete behav
 do not establish an actionable plan.
 
 Saving or completing a plan does not authorize implementation. Continue only when the user's request already supplied
-that authority; otherwise present the plan and stop before changing the system.
+that authority; otherwise present the plan and stop before changing the system. When the plan will run as goal-backed or
+unattended work, turn its final integration gate into a goal with `define-goal` before implementation starts.

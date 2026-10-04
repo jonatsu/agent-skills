@@ -14,7 +14,8 @@ change in hand and is about to start typing.
 
 Take slice boundaries from the plan. When none exists, size each slice by a single observable outcome — one
 endpoint, one component, one migration — and decompose a larger unit with `implementation-planning` before
-starting. This skill governs how you land a slice, not how you choose it.
+starting. This skill governs how you land a slice, not how you choose it. For a long or unattended run, set the
+finish line first with `define-goal`, so the harness keeps working until its evidence exists.
 
 ## Run the Increment Cycle
 
