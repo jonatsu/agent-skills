@@ -25,7 +25,7 @@ instead of guessing forward.
 | Plan               | The work in dependency order, each unit with its verification and review | `implementation-planning`    | Build, conformance review            |
 | Goal               | When an unattended run is finished, and the evidence that proves it      | `define-goal`                | The harness goal loop                |
 | Code               | The change itself, landed as small verified commits                      | `incremental-implementation` | Unit review, conformance review      |
-| Conformance report | Whether the code matches the spec, design, and plan, with every mismatch | `spec-conformance-review`    | Closes the work, or sends it back    |
+| Conformance report | Whether the code matches the spec, design, and plan, with every mismatch | `conformance-review`         | Closes the work, or sends it back    |
 
 ```mermaid
 flowchart TD
@@ -38,7 +38,7 @@ flowchart TD
     plan --> goal[Goal<br/>define-goal]
     plan -->|attended run| code
     goal --> code[Code<br/>incremental-implementation]
-    code --> report[Conformance report<br/>spec-conformance-review]
+    code --> report[Conformance report<br/>conformance-review]
     report --> done([Verified, merged work])
 
     report -.->|mismatch in the code| code
@@ -91,7 +91,7 @@ may skip it.
 **Code.** `incremental-implementation` lands one verified slice at a time, test-first through
 `test-driven-development` where a focused test can state the result, keeping every commit green and reversible.
 
-**Conformance report.** `spec-conformance-review` compares the delivered work with the spec, design, and plan,
+**Conformance report.** `conformance-review` compares the delivered work with the spec, design, and plan,
 classifies each mismatch by cause, and sends it to the owner: a code defect back to implementation, a gap in a
 document back to the skill that writes it. It supplements code, security, and test review; it replaces none of
 them.
@@ -130,7 +130,7 @@ whichever earlier document is missing.
 
 Every skill that writes a document in the chain is in the direct tier, so each harness lists it in every
 session: `idea-brainstorming`, `writing-specs`, `technical-design`, `implementation-planning`, `define-goal`, and
-`incremental-implementation` under `shared/engineering/`, and `spec-conformance-review` under `shared/review/`.
+`incremental-implementation` under `shared/engineering/`, and `conformance-review` under `shared/review/`.
 So are `interview-me`, `domain-modeling`, the testing skills, `systematic-debugging`, and `security-review`. Only
 `to-questionnaire` is in the lazy tier, which Codex, Copilot, and Oh-My-Pi reach through `lazy-skills-server`.
 `skills/README.md` explains the two tiers.

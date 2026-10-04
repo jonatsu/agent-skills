@@ -2,7 +2,7 @@
 
 ## Current Skill
 
-- Skill: `spec-conformance-review`
+- Skill: `conformance-review`, named `spec-conformance-review` until 2026-10-04
 - Current author: Joonas Onatsu
 - Current license: MIT
 - Status: original implementation with independently expressed idea-level influence

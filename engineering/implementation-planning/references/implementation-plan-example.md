@@ -168,10 +168,10 @@ A failed check blocks completion; it does not justify changing the accepted exit
 Run `just check` over the integrated change in the isolated checkout. The P2 reviewer then reviews
 the combined diff for correctness.
 
-Separately, dispatch a fresh conformance reviewer whose brief names `spec-conformance-review` and
+Separately, dispatch a fresh conformance reviewer whose brief names `conformance-review` and
 supplies the paired design, this plan, and the base and head revisions. It compares the integrated
 behavior and collected evidence with R1–R5 and the design contracts. This example has no separate
-specification, so the review reports that as a coverage limit. Its findings join the same execution
+spec, so the review reports that as a coverage limit. Its findings join the same execution
 record, and both reviews must close before integration does.
 
 Confirm the real command covers all three outcome classes, complete ordered reporting, exact

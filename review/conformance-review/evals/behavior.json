@@ -1,5 +1,5 @@
 {
-  "skill_name": "spec-conformance-review",
+  "skill_name": "conformance-review",
   "mode": "explicit behavioral evaluation",
   "run_contract": {
     "supply_candidate_skill_path": true,

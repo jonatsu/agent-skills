@@ -1,6 +1,6 @@
 ---
 name: technical-design
-description: Design how a bounded software system or change should realize accepted requirements, and write its design document, before implementation planning. Use for architecture, interfaces, state and data flow, failure handling, compatibility, migration, rollout, or rollback decisions, and for writing or revising a design document or arc42 design; not for ideation, requirements specification, task sequencing, or reviewing an already settled design.
+description: Design how a bounded software system or change should realize an accepted spec or request, and write its design document, before implementation planning. Use for architecture, interfaces, state and data flow, failure handling, compatibility, migration, rollout, or rollback decisions, and for writing or revising a design document or arc42 design; not for ideation, writing specs, task sequencing, or reviewing an already settled design.
 license: MIT AND CC-BY-SA-4.0
 metadata:
   author: Joonas Onatsu

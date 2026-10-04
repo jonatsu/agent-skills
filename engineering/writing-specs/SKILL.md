@@ -174,7 +174,7 @@ and released behavior. Mark dependent artifacts stale until their owners reconci
 or product scope to `idea-brainstorming`, and internal architecture consequences to `technical-design`.
 
 When implementation exists and the user asks whether it matches the accepted spec, route the comparison to
-`spec-conformance-review`. This skill owns authoring and authorized revision of intended behavior; it does not judge
+`conformance-review`. This skill owns authoring and authorized revision of intended behavior; it does not judge
 implementation evidence.
 
 ## Handoff

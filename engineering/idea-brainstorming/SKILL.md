@@ -1,6 +1,6 @@
 ---
 name: idea-brainstorming
-description: Collaborate on an unformed idea by widening useful possibilities, narrowing a direction, or saving an active brainstorm as an explicitly incomplete specification or design draft. Use for ideation, shaping an early concept, scoping an opportunity, or preparing its next-phase handoff; not for requirements specification, technical design, implementation planning, criticism of a settled plan, or a generic session handoff.
+description: Collaborate on an unformed idea by widening useful possibilities, narrowing a direction, or saving an active brainstorm as an explicitly incomplete spec or design draft. Use for ideation, shaping an early concept, scoping an opportunity, or preparing its next-phase handoff; not for writing specs, technical design, implementation planning, criticism of a settled plan, or a generic session handoff.
 license: MIT
 metadata:
   author: Joonas Onatsu

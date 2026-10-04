@@ -1,14 +1,15 @@
 ---
-name: spec-conformance-review
+name: conformance-review
 description: Compare an implementation, diff, pull request, or release with its accepted spec, technical design, and plan, reporting omissions, contradictions, unplanned scope, stale documents, and missing verification. Use for spec conformance, requirements coverage, “did we build what we specified, designed, or planned?”, or checking work against its spec, design, or plan, including as the final integration review; not for writing specs, work governed by no accepted spec, design, or plan, or implementing fixes.
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-# Specification Conformance Review
+# Conformance Review
 
-Determine whether delivered behavior materially conforms to the accepted specification and its technical realization.
+Determine whether delivered behavior materially conforms to the documents that govern it: the accepted spec, its
+technical design, and the implementation plan.
 Review outcomes and obligations rather than demanding literal correspondence between prose and code. Classify the cause
 of each mismatch before assigning blame or proposing a repair.
 
@@ -16,11 +17,11 @@ This supplements code, security, test, and operational review; it replaces none 
 
 ## Establish the Review Basis
 
-Compare against the accepted specification when one exists, together with its compatible technical design and the
-implementation plan or completion record. Without a specification, compare against the accepted technical design and
-implementation plan, and report the missing specification as a coverage limit: a design and plan say how the system
-realizes intent, not what the product must do, so user-visible behavior and acceptance that only a specification
-would fix stay unverified. When no accepted specification, design, or plan governs the work, conformance has no basis;
+Compare against the accepted spec when one exists, together with its compatible technical design and the
+implementation plan or completion record. Without a spec, compare against the accepted technical design and
+implementation plan, and report the missing spec as a coverage limit: a design and plan say how the system
+realizes intent, not what the product must do, so user-visible behavior and acceptance that only a spec
+would fix stay unverified. When no accepted spec, design, or plan governs the work, conformance has no basis;
 say so and return the request as general code review.
 
 Read those documents, the changed implementation, relevant tests and documentation, and available runtime evidence.
@@ -29,13 +30,13 @@ needed.
 
 Identify the exact revisions or states under comparison. Confirm that each document was accepted by someone with
 authority over it, and that each later document claims compatibility with the one it realizes: the design with the
-specification, the plan with the design. When a document is proposed, ambiguous, or older than a document it depends
+spec, the plan with the design. When a document is proposed, ambiguous, or older than a document it depends
 on, report the authority or revision gap before judging implementation conformance, and continue only the comparisons
 that do not depend on that gap.
 
 Treat each document according to its authority:
 
-- the accepted specification owns intended observable behavior;
+- the accepted spec owns intended observable behavior;
 - technical design owns the selected system guarantees, interfaces, and internal realization;
 - the implementation plan owns execution, migration, rollout, and verification obligations; and
 - code, configuration, deployed artifacts, and observations establish current behavior.
@@ -47,8 +48,8 @@ not prove that two documents describe the same accepted revision.
 
 Extract only concrete commitments relevant to the reviewed scope:
 
-- required user-visible behavior and acceptance criteria, from the specification, or as the design states them
-  when no specification exists;
+- required user-visible behavior and acceptance criteria, from the spec, or as the design states them
+  when no spec exists;
 - prohibited outcomes and negative guarantees;
 - system invariants, interfaces, compatibility, and failure or recovery behavior from technical design;
 - migration, rollout, rollback, cleanup, documentation, and verification obligations from the plan; and
@@ -91,7 +92,7 @@ Assign each material mismatch to the smallest accurate class:
 - **Unplanned scope:** the implementation adds consequential behavior or cost outside accepted scope.
 - **Design gap or stale design:** requirements are accepted, but technical realization is absent, contradictory, or
   based on an older revision.
-- **Specification ambiguity or staleness:** intended behavior cannot be determined, or authorized policy changed without
+- **Spec ambiguity or staleness:** intended behavior cannot be determined, or authorized policy changed without
   a corresponding accepted revision.
 - **Unpropagated accepted deviation:** an authorized implementation change exists, but governing documents and dependent
   evidence were not reconciled.
@@ -125,12 +126,12 @@ GitHub, change external review state, or create files only when the user request
 ## Preserve Review Authority
 
 Review does not authorize fixes. Report implementation defects before changing code, and route an accepted repair
-through the normal implementation workflow. Route requirements ambiguity or change, including a missing specification
+through the normal implementation workflow. Route requirements ambiguity or change, including a missing spec
 the findings show is needed, to `writing-specs`, technical gaps to `technical-design`, execution and evidence gaps to
 `implementation-planning` or `test-engineer`, and security defects to `security-review`.
 
 A conformance review is complete when it states the compared revision of each governing document and of the
 implementation, gives every commitment in the map a disposition (conforms with cited evidence, a classified finding,
-or unverified), and lists the coverage limits, including a missing specification. “No material mismatch found” is
+or unverified), and lists the coverage limits, including a missing spec. “No material mismatch found” is
 supportable only for the examined scope and evidence; it is not proof that the implementation is correct in every
 respect.

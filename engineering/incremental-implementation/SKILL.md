@@ -23,7 +23,7 @@ plan from `implementation-planning` already schedules that review as its final g
 path too. Skip it only with a stated reason, or at the user's direction.
 
 Dispatch the review after the last slice lands, to a fresh subagent or review lane whose brief names
-`spec-conformance-review` and supplies each governing document with its revision and the delivered change. The
+`conformance-review` and supplies each governing document with its revision and the delivered change. The
 code reviewer judges correctness and stays on that job. Fix a mismatch in the code as a new slice, then rerun the
 review. Report a mismatch that needs a document changed to that document's owner instead of editing it.
 

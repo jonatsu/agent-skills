@@ -75,7 +75,7 @@ its verification that review's report. Because the loop re-sends the goal at eve
 still reaches the agent at the end of a long run.
 
 Run the review as its own dispatch: a fresh subagent or review lane whose brief names
-`spec-conformance-review` and supplies each governing document with its revision and the delivered change. The
+`conformance-review` and supplies each governing document with its revision and the delivered change. The
 code reviewer judges correctness and stays on that job, so its report never stands in for this one. A mismatch
 in the code is work for the loop. A mismatch that needs a document changed is a stop condition, because that
 document's owner decides it.

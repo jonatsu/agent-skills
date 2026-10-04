@@ -14,8 +14,8 @@ product or architecture decisions outside the plan.
 
 ## Verify the Design Basis
 
-Read the governing requirements specification and design, repository instructions, relevant implementation, tests,
-interfaces, migrations, operational assets, and configured tooling before decomposing work. Cite the specification and
+Read the governing spec and design, repository instructions, relevant implementation, tests,
+interfaces, migrations, operational assets, and configured tooling before decomposing work. Cite the spec and
 design when they exist, and keep each shared constraint in its authoritative home.
 
 Consume accepted designs in arc42 or the repository's own format without requiring reformatting. Refer to their actual
@@ -28,7 +28,7 @@ remains; state that basis instead of manufacturing a design document.
 
 Judge acceptance from the design's substance, not its status label. A document is not accepted for planning when it
 contains consequential recommendations awaiting confirmation, unresolved behavioral or safety obligations, or
-architecture added after the user's latest confirmation. When an accepted specification exists, require the design to
+architecture added after the user's latest confirmation. When an accepted spec exists, require the design to
 name a compatible revision; a newer accepted requirement leaves the affected work blocked until technical design
 reconciles it.
 
@@ -168,10 +168,10 @@ units and dependency order, not just in a closing recommendation:
    actions, review the exact proposed operation and obtain only authorization not already supplied. Unit approval does
    not supply deployment or risk acceptance.
 
-Whenever an accepted specification, design, or plan governs the outcome, the final integration gate includes a
+Whenever an accepted spec, design, or plan governs the outcome, the final integration gate includes a
 conformance review dispatched separately from the code review, so the code reviewer stays focused on correctness. Its
-reviewer is a fresh subagent, lane, session, or person, and its brief names `spec-conformance-review` and supplies the
-specification, design, and plan locations and the base and head revisions. Record its material findings in the same
+reviewer is a fresh subagent, lane, session, or person, and its brief names `conformance-review` and supplies the
+spec, design, and plan locations and the base and head revisions. Record its material findings in the same
 review record as the code review's; both close before the gate does, so the conformance review adds a reviewer, not a
 parallel approval path.
 
@@ -191,8 +191,8 @@ work. Neither the implementer nor reviewer may waive a consequential requirement
 
 A plan is read by an implementer who was not in the design conversation. Write it with `writing-documentation`.
 Explain each repository-specific concept, tool, and convention where the plan first relies on it, once. State the basis
-revisions and scope once, in the preamble. Link the specification, design, and plan while preserving their authority:
-the specification owns intended observable behavior, the design owns its technical realization, and the plan owns
+revisions and scope once, in the preamble. Link the spec, design, and plan while preserving their authority:
+the spec owns intended observable behavior, the design owns its technical realization, and the plan owns
 execution order.
 
 ## Record and Place the Plan
@@ -232,7 +232,7 @@ exposed:
   unverified obligations; and
 - the `writing-for-humans` **reader-ready** pass, read as an unfamiliar implementer: the first action and what it
   unlocks, how each unit achieves its outcome, what completion looks like, and how to respond to a failed check are
-  all clear without reconstructing the specification or design conversation.
+  all clear without reconstructing the spec or design conversation.
 
 Headings and command lists alone do not establish an actionable plan.
 
