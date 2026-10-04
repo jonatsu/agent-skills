@@ -30,7 +30,9 @@ Docker documentation; no upstream prose, code, examples, identifiers, data, or a
 
 This source prompted the apt cache-mount recipe in `references/apt-cache-mounts.md`, together with its snapshot
 archive pinning. It also prompted the shared operating-system dependency stage, minimum-input copies, and `ARG`
-placement in `references/build-cache.md`. Because the source has no license, only ideas were taken. All
+placement in `references/build-cache.md`. In `references/dockerfile-patterns.md` it prompted the `FROM scratch`
+artifact stage, `WORKDIR` before `USER`, `COPY --chown` in place of a later `chown`, and SSH mounts for private
+dependencies. Because the source has no license, only ideas were taken. All
 expression and every example are original, and no upstream code, comments, or identifiers were copied.
 
 ## Verification Sources
