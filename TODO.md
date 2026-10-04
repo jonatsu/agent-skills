@@ -78,7 +78,7 @@ as `requirements-specification` and `technical-design` do.
 | `idea-brainstorming`              | 2026-09-28, `7fd41bd`, no change | 2026-09-28, `7fd41bd`                             |
 | `session-reflect`                 | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                             |
 | `systemd-units`                   | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                             |
-| `docker-podman-containers`        | 2026-09-28, `f92701a`            | 2026-09-28, `f92701a`                             |
+| `docker-podman-containers`        | 2026-10-04, this commit          | 2026-09-28, `f92701a`                             |
 | `writing-for-humans`              | 2026-09-28, `e999023`            | 2026-09-28, `e999023`                             |
 | `writing-documentation`           | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                             |
 | `requirements-specification`      | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
@@ -102,7 +102,7 @@ as `requirements-specification` and `technical-design` do.
 | `ast-grep`                        | 2026-09-28, `3392f10`, no change | 2026-09-28, `3392f10`                             |
 | `just-task-runner`                | 2026-09-28, `8976754`, no change | 2026-09-28, `8976754`                             |
 | `kasetto-skill-tool`              | 2026-09-28, `f4bcb13`            | 2026-09-28, `f4bcb13`                             |
-| `chezmoi-dotfiles`                | 2026-09-28, no change            | 2026-09-28, no change                             |
+| `chezmoi-dotfiles`                | 2026-10-04, `46487dd3`           | 2026-09-28, no change                             |
 | `mise-tools`                      | 2026-09-28, `9ae6e8a`            | 2026-09-28, `9ae6e8a`                             |
 | `drawio-diagrams`                 | 2026-09-29, `1fe21f2`            | 2026-09-29, `1fe21f2`                             |
 | `lint-config-audit`               | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |

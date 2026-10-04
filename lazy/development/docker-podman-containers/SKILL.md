@@ -1,6 +1,6 @@
 ---
 name: docker-podman-containers
-description: Build, run, diagnose, and secure Docker and Podman containers and OCI images. Use for Dockerfiles or Containerfiles, Compose applications, rootless Podman and Quadlet systemd units, container runtime hardening, image scanning, SBOMs, and signing, container build and publish pipelines in CI, or Kubernetes workload hardening. Excludes general Kubernetes cluster administration, general application security review, and general CI/CD pipeline design unrelated to containers.
+description: Build, run, diagnose, and secure Docker and Podman containers and OCI images. Use for Dockerfiles or Containerfiles, slow builds and the build cache, Compose applications, rootless Podman and Quadlet systemd units, container runtime hardening, image scanning, SBOMs, and signing, container build and publish pipelines in CI, or Kubernetes workload hardening. Excludes general Kubernetes cluster administration, general application security review, and general CI/CD pipeline design unrelated to containers.
 license: MIT
 compatibility: Requires the container, registry, scanner, or Kubernetes tools used by the target project.
 metadata:
