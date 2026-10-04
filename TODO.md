@@ -113,7 +113,7 @@ as `requirements-specification` and `technical-design` do.
 | `mcu-firmware-debugging`          | 2026-09-30, `b2bcd2f`, new skill | 2026-09-30, `b2bcd2f`, new skill                  |
 | `embedded-linux-debugging`        | 2026-09-30, `8450467`, new skill | 2026-09-30, `8450467`, new skill                  |
 | `serial-console-debugging`        | 2026-09-30, `911b361`, new skill | 2026-09-30, `911b361`, new skill                  |
-| `define-goal`                     | 2026-10-04, `66bec2da`, new      | 2026-10-04, `66bec2da`, new                       |
+| `define-goal`                     | 2026-10-04, `2e67ef7e`           | 2026-10-04, `66bec2da`, new                       |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
