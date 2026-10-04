@@ -23,6 +23,11 @@ control, it called neither. Its listing held the 31 direct skills and Codex's ow
 skill. Every description was cut to 100–170 characters, with a median of 166, so most lose their "Use when"
 clause: `coding-standards` stops at "Use bef". `codex exec` printed no warning, so the cut is silent there.
 
+Copilot was probed on 2026-10-04 with GitHub Copilot CLI 1.0.91 (`copilot -p`, its default model, a scratch
+workspace). Asked to review a Python file's style, it called `find_skills` with "python style", then `load_skill`
+for `python-style`. Asked for a commit message, the control, it called neither. Whether Copilot also truncates
+skill descriptions was not checked.
+
 Still open:
 
 - Settle the Codex description cap. The user raised `skills.max_context_tokens` to 3000 the same day to see how
@@ -31,8 +36,6 @@ Still open:
   lose only their last words. The Codex configuration reference documents only `path` and `enabled` under
   `skills.config`, with no per-skill override or name-only mode (checked 2026-09-12). The ways out are a
   higher cap, or descriptions that put their routing words in the first 280 characters.
-- Run the same Python probe on Copilot. It is item 2 of the Copilot test session in the root `TODO.md`, which
-  runs it together with the lazy-skill-loading acceptance probe.
 
 The user also plans to revisit the domain names and to rename some skills; neither is scheduled.
 
