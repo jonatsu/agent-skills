@@ -1,6 +1,6 @@
 ---
 name: dispatching-subagents
-description: Orchestrate work delegated to subagents, from splitting it into lanes and choosing parallel or sequential runs to acting on each report and verifying the combined result. Use before dispatching a non-trivial task or several subagents at once, when fanning out failures or tasks, when a subagent returns blocked or with concerns, or when sending review findings back for a fix. Not for writing the brief (writing-prompts) or isolating checkouts (using-git-worktrees).
+description: Orchestrate delegated work as independent subagent lanes and act on what each returns. Use before dispatching several subagents at once or one substantial task, when a subagent returns blocked, needing context, or with concerns, or when sending review findings back for a fix. Not for writing the brief (writing-prompts) or isolating checkouts (using-git-worktrees).
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -76,7 +76,9 @@ with the findings and the prior report, a smaller task, or the work taken back.
 Before calling delegated work done:
 
 1. Check that no two lanes edited the same code; overlapping edits are resolved by you, not by the last writer.
-2. Run the full test suite once over the combined result.
-3. Spot-check each report's claims against the diff, because lanes make systematic errors a summary hides.
+2. Run the repository's checks once over the combined result when any lane changed code.
+3. Spot-check each report's claims against the diff or the sources it cites, because lanes make systematic
+   errors a summary hides.
 
-Done when the suite passes on the combined tree and every claim you relied on has been checked.
+Done when the checks pass on the combined tree, where any lane changed code, and every claim you relied on has
+been checked.
