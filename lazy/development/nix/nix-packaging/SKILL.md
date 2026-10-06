@@ -1,6 +1,6 @@
 ---
 name: nix-packaging
-description: "Nix packaging — create derivations for source or binary packages, handle library dependencies, autoPatchelfHook, overlays, and flake outputs. Use when packaging .deb/.rpm/.tar.gz/AppImage, writing mkDerivation, finding missing libraries, or creating overlays. Triggers on: nix package, derivation, mkDerivation, autoPatchelf, buildInputs, nativeBuildInputs, fetchurl, fetchFromGitHub, overlay, FHS, makeWrapper, nix-prefetch."
+description: "Package software for Nix as a derivation, from source or from a prebuilt .deb, .rpm, tarball, or AppImage. Use when writing or fixing a mkDerivation, fetching and hashing sources, sorting build and runtime dependencies, fixing a prebuilt binary's missing libraries, or wrapping a program with makeWrapper or an FHS environment. For flake structure and inputs, use nix-flakes."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,39 +8,20 @@ metadata:
 
 # Nix Packaging
 
-IRON LAW: ALWAYS SOURCE FROM THE ORIGINAL ARCHIVE — NEVER FROM PRE-EXTRACTED DIRECTORIES. PRE-EXTRACTED DIRS
-LOSE METADATA, CHECKSUMS, AND REPRODUCIBILITY. THE `src` ATTRIBUTE MUST POINT TO A FETCHED ARCHIVE, NOT A
-LOCAL DIRECTORY.
+For third-party software, point `src` at a fetcher over the original published archive or repository, with its
+hash; a pre-extracted directory loses the checksum and reproducibility. A project's own flake may package its tree
+with `src = ./.` or `lib.fileset`.
 
-## Workflow
+## Step 1: Identify Packaging Type
 
-```text
-Nix Packaging Progress:
-
-- [ ] Step 1: Identify packaging type (binary vs source) ⚠️ REQUIRED
-- [ ] Step 2: Gather source (fetchurl, fetchFromGitHub, etc.)
-- [ ] Step 3: Write derivation
-- [ ] Step 4: Handle dependencies
-- [ ] Step 5: Test the package
-- [ ] Step 6: Add to flake outputs / overlay
-- [ ] Step 7: Verify ⚠️ REQUIRED
-```
-
-## Step 1: Identify Packaging Type ⚠️ REQUIRED
-
-Determine whether the software is distributed as a pre-compiled binary or as source code.
+Decide binary or source from the artifact itself before writing the derivation; the two have different structures.
 
 - **Binary packaging**: `.deb`, `.rpm`, `.AppImage`, tarball with pre-built binaries, or a single
   statically-linked binary. Use `autoPatchelfHook` to fix library paths.
 - **Source packaging**: Source tarball or git repository. Use the project's build system (meson, cmake, cargo,
   go, etc.).
 
-⛔ BLOCKING: Do NOT proceed without confirming the packaging type. Binary and source derivations have
-fundamentally different structures.
-
 ## Step 2: Gather Source
-
-Fetch the original archive. NEVER use a pre-extracted directory.
 
 ```bash
 # For arbitrary URLs
@@ -53,11 +34,12 @@ nix-prefetch-url --unpack https://github.com/owner/repo/archive/v1.0.0.tar.gz
 Common fetchers:
 
 - `fetchurl` — any URL. Requires `url` and `hash`.
-- `fetchFromGitHub` — GitHub repos. Requires `owner`, `repo`, `rev`, `hash`.
+- `fetchFromGitHub` — GitHub repos. Requires `owner`, `repo`, `rev`, `hash`. Pin `rev` to a tag or commit; a
+  branch name moves and breaks reproducibility.
 - `fetchzip` — zip archives. Auto-extracts.
 - `fetchgit` — raw git repos. Use sparingly; prefer `fetchFromGitHub`.
 
-MUST use `lib.fakeHash` only during initial scaffolding. Replace with the real hash before final delivery.
+Use `lib.fakeHash` only while scaffolding: the first build fails and prints the real hash, which replaces it.
 
 ```nix
 # For .zip archives, add unzip to nativeBuildInputs
@@ -176,7 +158,8 @@ stdenv.mkDerivation (finalAttrs: {
 
 The `(finalAttrs: { ... })` argument form is `mkDerivation`'s fixpoint: `finalAttrs.version` refers to the
 final attribute value, so it stays correct under `overrideAttrs`. Prefer it over `rec`, which binds early and
-silently keeps the old value when overridden.
+silently keeps the old value when overridden. A plain attrset has no `version` in scope at all, so `src` cannot
+refer to it.
 
 ### AppImage Packaging
 
@@ -205,8 +188,8 @@ yields the unpacked squashfs tree; copy from it in `extraInstallCommands`.
 
 For a one-off run without packaging: `nix run nixpkgs#appimage-run -- ./app.AppImage`.
 
-Do NOT hand-write an `unpackPhase` that runs `$src --appimage-extract` — files in the Nix store are not
-executable, so it fails; let `appimageTools` do the extraction.
+Let `appimageTools` do the extraction. Files in the Nix store are not executable, so a hand-written `unpackPhase`
+that runs `$src --appimage-extract` fails.
 
 ### Electron Apps
 
@@ -223,8 +206,12 @@ runtime dependency list.
 | `buildInputs`           | Libraries needed at BUILD and RUN time: `gtk3`, `glib`, `mesa`, `openssl`                                                                        |
 | `propagatedBuildInputs` | Libraries needed by consumers of this package at their build time. Use sparingly — only when headers or pkg-config files are required downstream |
 
+`autoPatchelfHook` resolves only libraries listed in `buildInputs`, so put every library a prebuilt binary links
+against there. Reference store content through package interpolation (`${gtk3}/lib`), never a literal
+`/nix/store/...` path.
+
 See [references/library-mapping.md](references/library-mapping.md) for the complete library→package mapping
-and debugging commands.
+and debugging commands. One frequent miss: the package is `libxkbcommon`, not `xorg.libxkbcommon`.
 
 ### makeWrapper Pattern
 
@@ -294,25 +281,23 @@ overlays.default = final: prev: {
 See [references/binary-overlay-pattern.md](references/binary-overlay-pattern.md) for the full
 platform-specific binary overlay pattern with hash conversion.
 
-## Step 7: Verify ⚠️ REQUIRED
+## Step 7: Verify
 
-⛔ BLOCKING: Do NOT deliver the derivation until ALL checks pass.
+Deliver the derivation once every item holds:
 
-```bash
-# Build must succeed
-nix build .#package-name
-
-# Binary must run without missing library errors
-ldd result/bin/* | grep "not found"  # MUST return empty
-
-# Flake check must pass
-nix flake check
-```
+- [ ] `nix build .#package-name` succeeds.
+- [ ] `ldd result/bin/* | grep "not found"` returns nothing; a successful build alone does not prove the binary
+  runs.
+- [ ] `nix flake check` passes.
+- [ ] Every hash is real, not `lib.fakeHash`.
+- [ ] The package is in the flake outputs or an overlay.
+- [ ] `meta` has at least `license` and `description`, plus `platforms` for a multi-platform package and
+  `mainProgram` when it ships several binaries (for `nix run`).
 
 ## FHS Escape Hatch (Last Resort)
 
-Use `buildFHSEnv` ONLY when `autoPatchelfHook` cannot resolve dependencies (e.g., binaries that hardcode
-`/usr/lib` paths or dlopen libraries at runtime):
+Try `autoPatchelfHook` first. Use `buildFHSEnv` when it cannot resolve the dependencies, such as binaries that
+hardcode `/usr/lib` paths or dlopen libraries at runtime:
 
 ```nix
 { buildFHSEnv }:
@@ -323,8 +308,6 @@ buildFHSEnv {
   runScript = "app";
 }
 ```
-
-NEVER use FHS as the first approach. Always attempt `autoPatchelfHook` first.
 
 ## Module-System Wrappers
 
@@ -351,42 +334,6 @@ meta = {
 };
 ```
 
-Users MUST enable unfree packages in their configuration to build. Under a flake, that means config passed to
+Users must enable unfree packages in their configuration to build it. Under a flake, that means config passed to
 `import nixpkgs`, because pure evaluation ignores `NIXPKGS_ALLOW_UNFREE` and `~/.config/nixpkgs/config.nix`.
 See the `nix-flakes` skill for the mechanisms and the evaluation evidence.
-
-## Anti-Patterns
-
-- **Sourcing from pre-extracted directories** instead of original archives. Violates the IRON LAW. Always use
-  `fetchurl`/`fetchFromGitHub`.
-- **Using `autoPatchelfHook` without putting libraries in `buildInputs`**. `autoPatchelfHook` can only find
-  libraries that are in `buildInputs`.
-- **Mixing up `nativeBuildInputs` and `buildInputs`**. Build tools go in `nativeBuildInputs`; runtime
-  libraries go in `buildInputs`.
-- **Using `lib.fakeHash` in final derivation**. Only for initial scaffolding. Replace with real hash before
-  delivery.
-- **Creating FHS environments when `autoPatchelfHook` would work**. FHS is a heavy escape hatch; try
-  `autoPatchelfHook` first.
-- **Hardcoding absolute store paths** instead of using package references (e.g., `${gtk3}/lib` not
-  `/nix/store/abc-gtk3/lib`).
-- **Forgetting to test with `ldd` for missing libraries**. A successful build does not guarantee a runnable
-  binary.
-- **Using `propagatedBuildInputs` when `buildInputs` suffices**. Only propagate when downstream consumers need
-  the library at their build time.
-- **Skipping `nix flake check`**. Broken flakes block users.
-- **Not pinning `rev` in `fetchFromGitHub`**. Unpinned revisions break reproducibility.
-- **Using `xorg.libxkbcommon` instead of `libxkbcommon`** — the correct package is `libxkbcommon`, not
-  `xorg.libxkbcommon`.
-- **Referencing `version` in `src` from a plain attrset** — it is not in scope and fails to evaluate. Use the
-  `(finalAttrs: { ... })` argument to `mkDerivation` and write `finalAttrs.version`; prefer it over `rec`,
-  which binds early and keeps stale values under `overrideAttrs`.
-
-## Pre-Delivery Checklist
-
-- [ ] Source fetched from original archive (not pre-extracted directory)
-- [ ] Hash is real (not `lib.fakeHash`)
-- [ ] Package added to flake outputs or overlay
-- [ ] No hardcoded store paths (all references use `${pkg}` interpolation)
-- [ ] `meta` block present with at minimum `license` and `description`
-- [ ] `meta.platforms` set for multi-platform packages
-- [ ] `meta.mainProgram` set if package has multiple binaries (for `nix run`)
