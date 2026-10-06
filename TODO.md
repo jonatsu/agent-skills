@@ -118,7 +118,7 @@ as `writing-specs` and `technical-design` do.
 | `conformance-review`         | 2026-09-28, `d0bc8da`, no change | 2026-09-28, `d0bc8da`                             |
 | `security-review`            | 2026-09-28, `7f3d35f`            | 2026-09-28, `7f3d35f`                             |
 | `writing-prompts`            | 2026-09-28, `d55d5dd`, new skill | 2026-09-28, `d55d5dd`, new skill                  |
-| `prompt-debugging`           | 2026-09-28, `d55d5dd`            |                                                   |
+| `prompt-debugging`           | 2026-09-28, `d55d5dd`            | 2026-10-06, `7fe44be0`                            |
 | `document-conversion`        | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
 | `github-ops`                 | 2026-09-28, `7c7a61f`, no change | 2026-09-28, `7c7a61f`                             |
 | `repo-management`            | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
@@ -140,6 +140,11 @@ as `writing-specs` and `technical-design` do.
 | `embedded-linux-debugging`   | 2026-09-30, `8450467`, new skill | 2026-09-30, `8450467`, new skill                  |
 | `serial-console-debugging`   | 2026-09-30, `911b361`, new skill | 2026-09-30, `911b361`, new skill                  |
 | `define-goal`                | 2026-10-04, `2e67ef7e`           | 2026-10-04, `66bec2da`, new                       |
+| `dispatching-subagents`      | 2026-10-06, `53799042`           | 2026-10-06, `53799042`                            |
+| `incremental-implementation` | 2026-10-06, `6b63f8c6`           | 2026-10-06, `6b63f8c6`                            |
+| `systematic-debugging`       | 2026-10-06, `4df4e36f`           | 2026-10-06, `4df4e36f`                            |
+| `test-driven-development`    | 2026-10-06, `650df591`           | 2026-10-06, `650df591`                            |
+| `systemd-networking`         | 2026-10-06, `5ed8ca1a`           | 2026-10-06, `5ed8ca1a`                            |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
