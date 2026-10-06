@@ -1,6 +1,6 @@
 ---
 name: nixos-config
-description: "Configure and recover NixOS hosts: flake host wiring, hardware modules, rebuild modes, stateVersion, boot, rollback, and nix-ld. Use when changing a host, diagnosing ignored options or failed builds, recovering boot, or enabling a downloaded binary."
+description: "Configure and recover NixOS hosts. Use when adding or changing a host in a flake, generating hardware configuration, choosing a rebuild mode, setting stateVersion, diagnosing an ignored option or a failed system build, rolling back or recovering an unbootable system, or running a downloaded binary that NixOS cannot execute. User-level dotfiles and programs belong to home-manager."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,19 +8,13 @@ metadata:
 
 # NixOS Config
 
-IRON LAW: SYSTEM CONFIGURATION AND USER CONFIGURATION LIVE IN DIFFERENT MODULE SYSTEMS. `services.*`,
-`boot.*`, `hardware.*`, `networking.*`, and `fileSystems.*` are NixOS modules. Dotfiles, user packages, and
-`programs.*` user config belong to home-manager. Crossing that line produces evaluation failures and config
-that silently does nothing.
+NixOS modules own the system: put `services.*`, `boot.*`, `hardware.*`, `networking.*`, and `fileSystems.*` there.
+Dotfiles, user packages, and `programs.*` user config belong to home-manager; set in the wrong module system, an
+option fails evaluation or does nothing.
 
 > **Using Denful (den)?** Entity declaration and aspect wiring belong to den rather than to this skill; look
 > for a dendritic skill in the configuration repository itself. The option-level guidance below applies
 > either way.
-
-## What this skill is for
-
-NixOS option syntax is well known; the failures below are not. Reach for this when an option is set but has no
-effect, when a rebuild or boot fails, or when standing up a host from scratch.
 
 ## System Mutation Boundary
 
@@ -29,22 +23,10 @@ activation would do without activating it. `switch`, `test`, `boot`, `--rollback
 collection change host state, activate services, change the boot default, or remove recovery material.
 
 Before any state-changing command, identify the target host and action, explain its effect, and obtain the user's
-explicit approval. Prefer `build` or `dry-activate` while validating a change. On a remote host, use `test` only
+explicit approval. Validate a change with `build` or `dry-activate` first. On a remote host, use `test` only
 after approval and keep a recovery path available.
 
-## Workflow
-
-```text
-NixOS Config Progress:
-
-- [ ] Step 1: Wire the host ⚠️ REQUIRED
-- [ ] Step 2: Hardware configuration ⛔ BLOCKING (new hosts)
-- [ ] Step 3: Resolve overlay and pkgs scope
-- [ ] Step 4: Set stateVersion once
-- [ ] Step 5: Build, deploy, verify ⛔ BLOCKING
-```
-
-## Step 1: Wire the Host ⚠️ REQUIRED
+## Step 1: Wire the Host
 
 ```nix
 # flake.nix
@@ -76,35 +58,27 @@ overlays appearing not to apply.
 does not exist as far as `nix` is concerned, and the error names the option, not the missing file. Rule this
 out before debugging module logic.
 
-## Step 2: Hardware Configuration ⛔ BLOCKING
+## Step 2: Hardware Configuration
 
-Generate on the target machine:
+For a new host, generate the file on the target machine before the first build:
 
 ```bash
 nixos-generate-config --root /mnt      # during install
 nixos-generate-config --show-hardware-config > hardware-configuration.nix
 ```
 
-Treat the generated file as a machine-specific, replaceable baseline. Do not casually edit detected filesystem
-UUIDs, mounts, or boot modules: regenerate after hardware changes and compare the result. Put deliberate
-hardware policy or overrides in a separate host-specific module where possible. If a machine-specific correction
-must stay in the generated file, document it so regeneration does not silently erase it.
+Treat the generated file as a machine-specific, replaceable baseline: regenerate it after hardware changes and
+compare the result. Keep deliberate hardware policy and overrides in a separate host module, so regeneration
+leaves them intact. If a machine-specific correction must stay in the generated file, document it so regeneration
+does not silently erase it.
 
 Bootloader choice, LUKS/LVM/impermanence layouts, and cross-compilation notes:
 [references/hardware-and-boot.md](references/hardware-and-boot.md).
 
 ## Step 3: Overlay and pkgs Scope
 
-The most common silent failure in a NixOS + home-manager setup: **an overlay defined in home-manager config
-does nothing when `useGlobalPkgs = true`.** No warning is emitted; the package simply resolves unoverlaid, or
-is not found.
-
-| `useGlobalPkgs` | Overlay defined in              | Effect                           |
-| --------------- | ------------------------------- | -------------------------------- |
-| `true`          | NixOS module `nixpkgs.overlays` | System AND home-manager packages |
-| `true`          | home-manager `nixpkgs.overlays` | **Nothing — silently ignored**   |
-| `false`         | home-manager `nixpkgs.overlays` | home-manager packages only       |
-| `false`         | NixOS module `nixpkgs.overlays` | System packages only             |
+With `home-manager.useGlobalPkgs = true`, define overlays in a NixOS module. Home-manager then reuses the system
+`pkgs`, so an overlay set in home-manager config is silently ignored.
 
 ```nix
 # CORRECT when useGlobalPkgs = true — overlay at the NixOS level
@@ -115,9 +89,11 @@ is not found.
 }
 ```
 
-`useUserPackages = true` installs user packages into the system profile rather than the user's own profile.
-Set it when user packages must be visible to system services or to a display manager started before the user
-session.
+The `home-manager` skill has the full overlay-scope table for both `useGlobalPkgs` settings and what
+`useUserPackages` changes.
+
+Put each package in one place: `environment.systemPackages` when it must exist before login or for system
+services, `home.packages` otherwise. A package in both lands on `PATH` twice with ambiguous precedence.
 
 ## Step 4: stateVersion
 
@@ -125,29 +101,33 @@ session.
 { system.stateVersion = "<release-at-first-install>"; }
 ```
 
-NEVER raise it to match a newer NixOS release. It selects migration behaviour for stateful services
-(databases, `/var` layouts); changing it retroactively tells NixOS that migrations already happened when they
-did not. Set it to the release used at the host's first installation. It is not a "current version" field.
-home-manager has an independent `home.stateVersion` with the same rule.
+Set it once, to the release used at the host's first installation, and keep it there through upgrades. It
+selects migration behaviour for stateful services (databases, `/var` layouts), so raising it tells NixOS that
+migrations already happened when they did not. home-manager has an independent `home.stateVersion` with the
+same rule.
 
-## Step 5: Build, Deploy, Verify ⛔ BLOCKING
+## Step 5: Build, Deploy, Verify
 
 ```bash
-nixos-rebuild switch --flake .#host1
-nixos-rebuild test  --flake .#host1    # activate without touching the boot menu
-nixos-rebuild boot  --flake .#host1    # stage for next boot, do not activate now
+nixos-rebuild build        --flake .#host1   # build only; changes nothing
+nixos-rebuild dry-activate --flake .#host1   # show what activation would restart
+# The commands below change the host; each needs the user's approval
+nixos-rebuild test         --flake .#host1   # activate without touching the boot menu
+nixos-rebuild boot         --flake .#host1   # stage for next boot, do not activate now
+nixos-rebuild switch       --flake .#host1   # activate and make the boot default
 ```
 
-Prefer `test` when a change could break networking or display on a remote or headless host — it leaves the
-previous generation as the boot default, so a power cycle recovers the machine.
+Use `test` or `boot` for a change that could break networking or display on a remote or headless host: the
+previous generation stays the boot default, so a power cycle recovers the machine.
 
-Deployment variants, remote deploys, generation management, and rollback:
-[references/operations.md](references/operations.md).
+The step is done when the build succeeds and the activated host passes the post-deploy checks in
+[references/operations.md](references/operations.md), which also covers deployment variants, remote deploys,
+generation management, and rollback.
 
 ## References
 
-Load one ONLY when its trigger fires. **Do NOT load either to add a service, a package, or an option to a
-working host** — the body covers that.
+Load a reference when its trigger fires; the body covers adding a service, a package, or an option to a working
+host.
 
 | Reference                                                 | Load when                                                                                                |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
@@ -157,27 +137,8 @@ working host** — the body covers that.
 
 The last row lives in the companion `home-manager` skill and resolves only when both are deployed side by
 side; if it is missing, its core is: nested attrsets in `settings`-style options shallow-merge per module —
-they do not deep-merge, so a shared name is replaced wholesale.
-
-## Anti-Patterns
-
-- **Casually editing generated hardware facts** — regeneration can overwrite filesystem UUIDs, mounts, and boot
-  modules. Keep deliberate overrides separately or document why they must remain in the generated file.
-- **Bumping `stateVersion` on an existing host** — it is not a version marker; changing it skips migrations
-  that never ran.
-- **Overlays in home-manager config under `useGlobalPkgs = true`** — silently ignored. Define them in a NixOS
-  module.
-- **Letting home-manager pull its own nixpkgs** — without `inputs.nixpkgs.follows`, you get two `pkgs` sets,
-  doubled builds, and overlays that appear not to apply.
-- **Same package in `environment.systemPackages` and `home.packages`** — two copies on `PATH` with ambiguous
-  precedence. Pick by whether it must exist before login.
-- **`nixos-rebuild switch` on a remote host for a networking change** — use `test` or `boot`, so a reboot
-  recovers the machine.
-- **Adding a module without `git add` in a flake repo** — it is invisible to evaluation, and the error points
-  at the option rather than the file.
-- **`//` to combine two config trees** — `//` is a shallow merge in Nix generally: a shared name is replaced,
-  not merged, so a gated `lib.optionalAttrs` at the outer level silently deletes sibling groups. Use
-  `lib.recursiveUpdate`, or `mkIf` when the value is an option.
+they do not deep-merge, so a shared name is replaced wholesale. The same holds for `//` on any two config trees:
+combine them with `lib.recursiveUpdate`, or `mkIf` when the value is an option.
 
 ## Verifying Options Exist
 
