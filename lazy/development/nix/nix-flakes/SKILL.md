@@ -1,6 +1,6 @@
 ---
 name: nix-flakes
-description: "Create, change, and debug flake-based Nix configurations. Use for flake.nix or flake.lock, adding or updating inputs, outputs, flake-parts, devShells, overlays, nix build/develop/run/profile, evaluation failures, or a generated flake manifest such as flake-file.nix that must be changed through its source module and regeneration command."
+description: "Create, change, and debug flake-based Nix projects. Use for flake.nix or flake.lock, adding, updating, or pinning inputs, defining outputs, overlays, or devShells, flake-parts, nix build, develop, run, or profile, flake evaluation errors, or a generated flake manifest such as flake-file.nix. For packaging a derivation use nix-packaging; for NixOS hosts use nixos-config."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,21 +8,20 @@ metadata:
 
 # Nix Flakes
 
-IRON LAW: NEVER edit `flake.lock` by hand. Use `nix flake update` or `nix flake lock`. Manual edits break
-reproducibility and cause silent evaluation failures.
+Change `flake.lock` only through `nix flake update` or `nix flake lock`; a hand edit breaks reproducibility and
+causes confusing evaluation failures.
 
-IRON LAW 2: New or moved files MUST be `git add`ed (or already tracked) before any flake evaluation can see
-them. `nix build`/`nix eval`/`nix flake check` against a git-backed flake (`.`/`path:.`) copy only files git
-knows about: tracked files are visible — including unstaged, dirty edits — but untracked and ignored files
-are silently invisible. No error at the file itself, just a confusing "attribute ... missing" error at
-whatever *references* it. If a brand-new file/module isn't resolving, run `git status` before debugging the
-Nix logic.
+`git add` every new or moved file before evaluating a git-backed flake (`.` or `path:.`). Evaluation copies only
+files git tracks, dirty edits included; an untracked or ignored file is invisible, and the error is an "attribute
+... missing" at whatever references it, not at the file. When a new file or module does not resolve, run
+`git status` before debugging the Nix logic.
 
 ## Prerequisites
 
-Flakes require experimental features enabled. Add to `/etc/nix/nix.conf` or `~/.config/nix/nix.conf`:
+When a command fails with "experimental Nix feature 'flakes' is disabled", enable the features in
+`/etc/nix/nix.conf` or `~/.config/nix/nix.conf`:
 
-```
+```text
 experimental-features = nix-command flakes
 ```
 
@@ -32,28 +31,9 @@ Or set via NixOS configuration:
 nix.settings.experimental-features = [ "nix-command" "flakes" ];
 ```
 
-Without this, all `nix flake *` and `nix build .#` commands fail with "error: experimental Nix feature
-'flakes' is disabled".
+## Step 1: Identify Flake Context
 
-## Workflow
-
-```text
-Nix Flakes Progress:
-
-- [ ] Step 1: Identify flake context ⚠️ REQUIRED
-  - [ ] 1.1 Does a flake.nix already exist?
-  - [ ] 1.2 Is this a new flake or modifying existing?
-  - [ ] 1.3 Does the project use flake-parts? (check for mkFlake)
-  - [ ] 1.4 Is flake.nix generated from another source?
-- [ ] Step 2: Work with inputs
-- [ ] Step 3: Work with outputs
-- [ ] Step 4: Run flake commands
-- [ ] Step 5: Verify ⚠️ REQUIRED
-```
-
-## Step 1: Identify Flake Context ⚠️ REQUIRED
-
-Ask: Is this a new flake or an existing one?
+Determine from the repository whether this is a new flake or an existing one:
 
 - New flake → `nix flake init` (creates template `flake.nix`)
 - Existing flake → read `flake.nix` to understand structure
@@ -62,7 +42,7 @@ Ask: Is this a new flake or an existing one?
 - Check the `flake.nix` header and repository documentation for a generator, source module, or a warning not
   to edit the file directly.
 
-When `flake.nix` or an equivalent input manifest is generated, do not edit its generated region. Read
+When `flake.nix` or an equivalent input manifest is generated, leave its generated region alone. Read
 [references/generated-flake-manifests.md](references/generated-flake-manifests.md), change the authoritative
 source module, regenerate, and inspect the complete result. Otherwise, edit `flake.nix` normally.
 
@@ -76,11 +56,8 @@ there.
 
 ```nix
 inputs = {
-  # GitHub (fastest, tarball fetch)
+  # GitHub (fastest, tarball fetch); append /<branch-or-tag> or ?rev=<commit> to pin
   nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-  # Specific branch/tag/rev
-  flake-parts.url = "github:hercules-ci/flake-parts";
 
   # Non-flake source (raw source tree)
   some-source = {
@@ -94,44 +71,28 @@ inputs = {
     inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  # Git
+  # Git, GitLab, SourceHut, and a subdirectory
   my-repo.url = "git+https://github.com/owner/repo?ref=main&rev=abc123";
+  gitlab-pkg.url = "gitlab:owner/repo";
+  sourcehut-pkg.url = "sourcehut:~owner/repo";
+  sub-pkg.url = "github:owner/repo?dir=subdir";
 
-  # Path (relative MUST start with ./)
+  # Tarball (direct URL to archive)
+  tarball-pkg.url = "https://example.com/package-1.0.0.tar.gz";
+
+  # Path; a relative one starts with ./
   local-pkg.url = "path:./my-pkg";
 };
 ```
 
 ### Key rules
 
-- MUST use `follows` to deduplicate nixpkgs across inputs — prevents version skew
-- MUST list every input in the `outputs` function signature that you reference
+- Use `follows` to share one nixpkgs across inputs that bring their own; it prevents version skew.
+- List every input you reference in the `outputs` function signature.
 - `flake = false` → input is a plain source path, no flake.nix needed
-- Relative paths MUST start with `./` — bare names are registry lookups
-- Commit `flake.lock` to git for reproducibility
-
-### Additional flake reference types
-
-```nix
-inputs = {
-  # SourceHut
-  sourcehut-pkg.url = "sourcehut:~owner/repo";
-
-  # GitLab
-  gitlab-pkg.url = "gitlab:owner/repo";
-
-  # Tarball (direct URL to archive)
-  tarball-pkg.url = "https://example.com/package-1.0.0.tar.gz";
-
-  # Indirect (registry lookup)
-  nixpkgs.url = "nixpkgs/nixos-unstable";
-
-  # Path with subpath
-  sub-pkg = {
-    url = "github:owner/repo?dir=subdir";
-  };
-};
-```
+- Start relative paths with `./`; a bare name is a registry lookup.
+- Commit `flake.lock` to git for reproducibility.
+- Update one input with `nix flake update <input>`; bare `nix flake update` rewrites every input.
 
 ### Unfree packages under pure evaluation
 
@@ -201,24 +162,6 @@ Set Nix settings scoped to the flake. Any `nix.conf` option may appear here, but
 
 ## Step 3: Work with Outputs
 
-### Standard flake outputs
-
-```nix
-outputs = { self, nixpkgs, ... }@inputs: {
-  # System-keyed outputs
-  packages.x86_64-linux.default = ...;
-  devShells.x86_64-linux.default = ...;
-  apps.x86_64-linux.default = { type = "app"; program = "..."; };
-
-  # Non-system-keyed
-  nixosConfigurations.my-host = nixpkgs.lib.nixosSystem { ... };
-  homeConfigurations.my-user = ...;
-  overlays.default = final: prev: { ... };
-  templates.default = { path = ./template; description = "..."; };
-  checks.x86_64-linux.test-name = ...;
-};
-```
-
 ### flake-parts outputs
 
 ```nix
@@ -238,6 +181,9 @@ outputs = inputs@{ flake-parts, ... }:
 ```
 
 ### Output reference table
+
+Use the current names: `packages.<sys>.default` replaces the deprecated `defaultPackage`, and `overlays.default`
+replaces `overlay`.
 
 | Output                        | Used by                  | Structure                          |
 | ----------------------------- | ------------------------ | ---------------------------------- |
@@ -260,8 +206,8 @@ outputs = inputs@{ flake-parts, ... }:
 
 ### meta.mainProgram
 
-`nix run .#name` resolves the binary to run via `meta.mainProgram`. If a package has multiple binaries, set
-this to avoid ambiguity:
+`nix run .#name` resolves the binary to run via `meta.mainProgram`. Set it on a package with several binaries;
+without it, `nix run` uses the package name as the binary name and may run the wrong one or fail.
 
 ```nix
 meta = {
@@ -269,98 +215,22 @@ meta = {
 };
 ```
 
-Without `meta.mainProgram`, `nix run .#default` uses the package name as the binary name.
-
 ## Step 4: Run Flake Commands
 
-### Build & run
+[references/advanced-commands.md](references/advanced-commands.md) lists the build, run, develop, flake
+management, and profile commands, with installable resolution, output selection syntax, and the key flags.
 
-```bash
-nix build .#name              # Build specific output
-nix build .                   # Build default package
-nix run .#name -- args        # Run app with args
-nix develop .#name            # Enter named devShell
-nix develop -c command args   # Run command in dev env
-```
+## Step 5: Verify
 
-### Flake management
+The work is done when every item holds:
 
-```bash
-nix flake init                # Create flake.nix from template
-nix flake show                # List all outputs
-nix flake check               # Evaluate + run checks
-nix flake metadata            # Show lock info
-nix flake update              # Update ALL inputs (rewrite lock)
-nix flake update nixpkgs      # Update specific input only
-nix flake lock                # Create lock, never update existing
-```
+- [ ] `nix flake show` lists the expected outputs.
+- [ ] `nix flake check` passes.
+- [ ] `nix build .#name` produces the expected output.
+- [ ] `flake.lock` is committed.
+- [ ] `nix flake metadata` shows one nixpkgs, with `follows` set wherever an input brings its own.
+- [ ] No deprecated output names or flags remain.
+- [ ] A generated manifest was regenerated from its source and its complete diff was reviewed, when applicable.
 
-### Profile management
-
-```bash
-nix profile install nixpkgs#hello
-nix profile list
-nix profile remove hello
-nix profile upgrade
-nix profile rollback
-```
-
-### Key flags
-
-| Flag                        | Effect                           |
-| --------------------------- | -------------------------------- |
-| `--impure`                  | Allow mutable paths, `$NIX_PATH` |
-| `--override-input path url` | Override input at eval time      |
-| `--no-write-lock-file`      | Don't write lock                 |
-| `--commit-lock-file`        | Auto-commit lock changes         |
-| `-L`                        | Show full build output           |
-
-### Advanced Commands
-
-See [references/advanced-commands.md](references/advanced-commands.md) for:
-`nix flake prefetch/archive/clone`, `nix profile history/diff-closures/wipe-history`, `nix develop` phase
-shortcuts, installable resolution, output selection syntax, and additional key flags.
-
-## Step 5: Verify ⚠️ REQUIRED
-
-- [ ] `nix flake show` lists expected outputs
-- [ ] `nix flake check` passes without errors
-- [ ] `nix build .#name` produces expected output
-- [ ] `flake.lock` committed to git
-- [ ] No duplicate nixpkgs versions (check `nix flake metadata`)
-
-## Anti-Patterns
-
-- Editing `flake.lock` by hand — breaks reproducibility
-- Omitting `follows` on inputs with their own nixpkgs — causes version skew
-- Using bare names instead of `./` for relative paths — treated as registry lookups
-- Putting logic in `flake.nix` when using dendritic pattern — all logic belongs in `modules/`
-- Using `defaultPackage` (deprecated) instead of `packages.<sys>.default`
-- Forgetting to add new inputs to `outputs` function signature
-- Running `nix flake update` when you only need one input updated — use `nix flake update <input>`
-- **Mixing `nix profile` and `nix-env`** — incompatible internal formats, pick one.
-- **Forgetting `experimental-features`** — all flake commands fail without `nix-command flakes` enabled.
-- **Using deprecated `--recreate-lock-file` or `--update-input`** — replaced by `nix flake update` and
-  `nix flake update <input>`.
-- **Not setting `meta.mainProgram` for multi-binary packages** — `nix run` may fail or run the wrong binary.
-- **Debugging a "missing attribute" eval error by rewriting Nix logic before checking `git status`** — an
-  untracked new file is invisible to flake evaluation and produces exactly this symptom.
-
-## Recommended Tools
-
-### mcp-nixos
-
-MCP server for real-time NixOS ecosystem queries. See [references/mcp-nixos.md](references/mcp-nixos.md) for
-installation and usage examples.
-
-## Pre-Delivery Checklist
-
-- [ ] `flake.nix` has valid syntax (`nix flake show` succeeds)
-- [ ] A generated manifest was regenerated from its source and its complete diff was reviewed, when applicable
-- [ ] All inputs have `follows` where applicable
-- [ ] `flake.lock` is committed
-- [ ] `nix flake check` passes
-- [ ] No deprecated output attributes (`defaultPackage`, `overlay`)
-- [ ] `experimental-features` includes `nix-command flakes`
-- [ ] `meta.mainProgram` set for packages with multiple binaries
-- [ ] No deprecated flags (`--recreate-lock-file`, `--update-input`, `defaultPackage`)
+For live option, package, and binary-cache lookups, use the `mcp-nixos` server:
+[references/mcp-nixos.md](references/mcp-nixos.md).
