@@ -1,6 +1,6 @@
 ---
 name: home-manager
-description: "Configure home-manager user environments: NixOS-module vs standalone mode, home.packages vs programs.*, dotfiles via mkOutOfStoreSymlink, overlay scope under useGlobalPkgs, osConfig access, home.stateVersion, home-manager switch. Use when a setting has no effect or is missing from the generated file, an overlay is ignored, or choosing standalone vs integrated. Triggers on: home.nix, homeConfigurations, useUserPackages, osConfig, xdg.configFile, programs.*.settings, freeform submodule, emptyValue."
+description: "Configure user environments with home-manager, as a NixOS module or standalone. Use when choosing between those modes, adding packages, programs, or dotfiles, when a setting has no effect or is missing from the generated config file, when home-manager ignores an overlay, when reading the host's NixOS config through osConfig, or when setting home.stateVersion. System services and boot belong to nixos-config."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,20 +8,14 @@ metadata:
 
 # Home Manager
 
-IRON LAW: NEVER PUT SYSTEM-LEVEL CONFIGURATION (`services.*`, `hardware.*`, `boot.*`, `networking.*`,
-`fileSystems.*`) IN HOME-MANAGER. Home-manager owns user space only. System configuration belongs to NixOS
-modules; crossing the line yields evaluation failures or config that silently does nothing.
+Home-manager owns user space: packages, dotfiles, and `programs.*`. Put `services.*`, `boot.*`, `hardware.*`,
+`networking.*`, and `fileSystems.*` in NixOS modules; set in home-manager, they fail evaluation or do nothing.
 
 > **Using Denful (den)?** Entity declaration and aspect wiring belong to den rather than to this skill; look
 > for a dendritic skill in the configuration repository itself. The option-level guidance below applies
 > either way.
 
-## What this skill is for
-
-`programs.<name>.enable` syntax is well known; the failures below are not. Reach for this when a home-manager
-setting appears to be ignored, when packages resolve to the wrong version, or when choosing a deployment mode.
-
-## Step 1: Choose the Deployment Mode ⚠️ REQUIRED
+## Step 1: Choose the Deployment Mode
 
 | Mode             | Wiring                                                                            | Use when                                  |
 | ---------------- | --------------------------------------------------------------------------------- | ----------------------------------------- |
@@ -90,8 +84,8 @@ Prefer `programs.<name>.enable` over a raw package: the module generates config 
 integration, and registers user services. Adding the raw package instead gives you the binary and none of
 that, which is why `programs.direnv.enable` works and `home.packages = [ pkgs.direnv ]` appears to do nothing.
 
-**NEVER put the same package in both `environment.systemPackages` and `home.packages`** — two copies land on
-`PATH` with ambiguous precedence, and they can be different versions once an overlay applies to only one.
+Put each package in exactly one of `environment.systemPackages` and `home.packages`. A package in both lands on
+`PATH` twice with ambiguous precedence, and the copies can differ in version once an overlay applies to only one.
 
 ## Step 4: Overlay Scope
 
@@ -124,9 +118,9 @@ Nix store, so every tweak needs a rebuild. Symlink the live path instead:
 }
 ```
 
-MUST use ONLY for native config that Nix does not generate. For Nix-generated files (`programs.*` output,
-templated config) the store copy IS the source of truth and a symlink breaks it. The linked file is no longer
-reproducible — a deliberate trade for iteration speed.
+Use `mkOutOfStoreSymlink` for hand-written config that Nix does not generate. For Nix-generated files
+(`programs.*` output, templated config) the store copy is the source of truth, and a symlink breaks
+regeneration. The linked file is no longer reproducible — a deliberate trade for iteration speed.
 
 ## Step 6: stateVersion and Build
 
@@ -134,8 +128,8 @@ reproducible — a deliberate trade for iteration speed.
 { home.stateVersion = "25.11"; }   # release at FIRST home-manager use
 ```
 
-Independent of `system.stateVersion`, same rule: it selects migration behaviour, not "current version". NEVER
-bump it on an existing home.
+Independent of `system.stateVersion`, same rule: it selects migration behaviour, not "current version". Set it
+once, at the first home-manager use, and keep it there; raising it skips migrations that never ran.
 
 ```bash
 # NixOS module mode
@@ -149,41 +143,20 @@ Verify: no evaluation errors; no system-level options set in home-manager; no pa
 `systemPackages`; overlays at the right level for the `useGlobalPkgs` setting; **and for anything a generator
 renders, the generated file read back — not just a clean eval** (see references/settings-trees-and-merges.md).
 
-## References
+## Settings Trees and Generated Files
 
-Load ONLY when the trigger fires. **Do NOT load it to add a package, a dotfile, or a plain
-`programs.<name>.enable`** — the body covers those.
+Load [settings-trees-and-merges.md](references/settings-trees-and-merges.md) when writing a nested
+`settings`/`configFile` tree, gating part of one, using a third-party module's typed options, or chasing a setting
+that evaluates correctly but is missing from the generated file. A package, a dotfile, or a plain
+`programs.<name>.enable` needs only the body. Its traps, in brief:
 
-| Reference                                                               | Load when                                                                                                                                                                                   |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [settings-trees-and-merges.md](references/settings-trees-and-merges.md) | Writing a nested `settings`/`configFile` tree, gating part of one, using a third-party module's typed options, or a setting that evaluates correctly but is missing from the generated file |
-
-## Anti-Patterns
-
-- **System config in home-manager** — `services.*`, `boot.*`, `networking.*` belong to NixOS modules.
-- **Overlays in home-manager under `useGlobalPkgs = true`** — silently ignored; define them at the NixOS
-  level.
-- **Plain attribute selection on `osConfig` without a null guard** — standalone binds it to `null`, so
-  `osConfig.services.foo` throws `expected a set but found null`. Guard with `osConfig != null` or an
-  attrpath `or` default; `?`/`or` tolerate null, but `builtins.hasAttr` and a split selection do not.
-- **Raw package where a `programs.*` module exists** — you get the binary without config generation, shell
-  integration, or services.
-- **Same package in `systemPackages` and `home.packages`** — ambiguous `PATH` precedence, potentially
-  different versions.
-- **Bumping `home.stateVersion`** — it is not a version marker; changing it skips migrations that never ran.
-- **`mkOutOfStoreSymlink` for Nix-generated files** — the store copy is the source of truth; the symlink
-  breaks regeneration.
-- **Assuming a standalone home can do what an integrated one does** — anything needing root silently does not
-  happen.
-- **`//` to combine two settings trees** — `//` is a shallow merge in Nix generally: it replaces a shared name
-  instead of merging it, silently dropping sibling groups. Gate at the deepest shared name, or use
-  `lib.recursiveUpdate` / `mkIf`.
-- **Setting one field of a `nullOr (submodule …)` group** — the parent flips non-null and every sibling with a
+- **`//` combines two settings trees shallowly** — it replaces a shared name instead of merging it, silently
+  dropping sibling groups. Gate at the deepest shared name, or use `lib.recursiveUpdate` / `mkIf`.
+- **Setting one field of a `nullOr (submodule …)` group** flips the parent non-null, and every sibling with a
   non-null default gets written too, possibly contradicting the program's own default.
-- **Trusting a freeform submodule's type check to catch a misspelled setting** —
-  `freeformType = attrsOf anything` accepts unknown keys silently.
-- **Treating a clean `nix eval` as proof a generated file is right** — eval proves the option is set, nothing
-  about what was rendered.
+- **A freeform submodule's type check accepts misspelled settings** — `freeformType = attrsOf anything` takes
+  unknown keys silently.
+- **A clean `nix eval` proves only that the option is set**, nothing about what was rendered.
 
 ## Verifying Options Exist
 
