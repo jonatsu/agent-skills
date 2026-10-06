@@ -1,6 +1,6 @@
 ---
 name: incremental-implementation
-description: Execute an accepted plan or multi-file change as thin, individually verified slices, keeping the tree green between them. Use when implementing a feature or the next task from a plan, when a change spans several files, when about to write a large batch of code, or when rolling incomplete work out behind a flag; not for planning or slicing the work itself (implementation-planning), test design (test-driven-development), or a single obvious one-file edit.
+description: Execute an accepted plan or multi-file change as thin, individually verified slices, keeping the tree green between them. Use when implementing a feature or the next task from a plan, when a change spans several files, or when rolling incomplete work out behind a flag; not for planning or slicing the work itself (implementation-planning), test design (test-driven-development), or a single obvious one-file edit.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -38,7 +38,8 @@ Land one slice at a time, and finish each before starting the next:
 2. **Verify** it with the repository's own commands, such as tests, build, type check, and lint, running each
    only where a change since its last run could affect its result. Add a test when the behavior has none (see
    `test-driven-development`).
-3. **Commit** the verified slice as one logical change, with a message describing it.
+3. **Commit** the verified slice as one logical change, with a message describing it, where commits are
+   authorized; otherwise leave it as one reviewable, checkpointed unit.
 4. **Carry forward** to the next slice, and revisit a landed one only with cause.
 
 Verify each slice before writing the next: a bug carried past its slice makes every later slice suspect and hides
