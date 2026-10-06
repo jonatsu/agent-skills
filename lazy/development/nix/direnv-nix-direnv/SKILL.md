@@ -1,17 +1,16 @@
 ---
 name: direnv-nix-direnv
-description: "direnv + nix-direnv for Nix devshells: writing and debugging .envrc (use flake / use nix), nix-direnv's cached print-dev-env and GC-root pinning, direnv.toml options, the allow/deny content-hash trust model, and home-manager/NixOS/nix-profile install routes. Use when a devshell won't load or re-evaluates on every cd, when caching or GC-root protection isn't working, or when editing .envrc or direnv.toml. Triggers on: direnv, nix-direnv, .envrc, use flake, direnv allow, .direnv, gcroot, keep-outputs."
+description: "Set up and debug direnv with nix-direnv for cached, garbage-collection-protected Nix development shells. Use when writing or fixing an .envrc with use flake or use nix, when a devshell will not load or re-evaluates on every cd, when caching or GC roots are not working, when configuring direnv.toml or direnv allow trust, or when installing nix-direnv through home-manager, NixOS, or nix profile."
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-IRON LAW: NEVER redefine `use_flake` or `use_nix` inside an `.envrc`. Doing so shadows nix-direnv's
-implementation and silently reverts to direnv's uncached, GC-unprotected form — the devshell re-evaluates on every load,
-becomes garbage-collectable, and every argument on the `use flake`/`use nix` line is discarded. Let nix-direnv's own
-function run; pass options as arguments to it.
-
 # direnv + nix-direnv
+
+Let nix-direnv's own `use_flake` and `use_nix` run, and pass options as arguments to them. An `.envrc` that defines
+either function replaces nix-direnv's version with one that neither caches nor protects the shell's dependencies
+from garbage collection, and the arguments on the `use flake` line are lost.
 
 nix-direnv is a drop-in replacement for direnv's built-in `use_nix`/`use_flake`. Its two jobs — and the only reasons to
 use it over plain direnv — are:
@@ -41,12 +40,14 @@ fi
 use flake
 ```
 
+Each tag has its own sha256; take the hash for the exact tag you pin, or the fetch fails.
+
 **Non-flake** (`shell.nix`/`default.nix`): `use nix`.
 
 Then run `direnv allow`. `flake.nix`, `flake.lock`, `.envrc`, and the direnvrc files are auto-watched — no manual
 `watch_file` needed for those.
 
-## Adding options — pass them to `use flake`, never re-wrap it
+## Adding options as arguments to `use flake`
 
 Extra arguments after the flake expression forward to `nix print-dev-env`:
 
@@ -70,45 +71,36 @@ use nix arg parsing): `references/envrc-stdlib.md`.
 builds), `hide_env_diff = true` (recommended for Nix, which emits a huge env diff), `load_dotenv`, `strict_env` — plus
 the `allow`/`deny` content-hash trust model and the `[whitelist]` footguns: `references/direnv-toml-and-trust.md`.
 
+Read the `.envrc` diff before each `direnv allow`: trust is granted per content version, so the review is the
+control. Grant standing trust with an `exact` whitelist entry; a `prefix` entry over a shared or version-controlled
+tree lets anyone who can write there run code on your `cd`.
+
 ## Install and integration
 
 home-manager (`programs.direnv.nix-direnv.enable`), NixOS, `nix profile`, and the `keep-outputs`/`keep-derivations`
-companion for GC roots: `references/install-and-integration.md`.
+companion for GC roots: `references/install-and-integration.md`. GC protection holds only on a host where that module
+or option is actually active.
 
 ## Diagnosing "won't load / won't cache / keeps rebuilding"
 
 Work top-down; each step isolates a layer:
 
-1. `ls .direnv/` — no `flake-profile-*` symlink + `.rc` file ⇒ nix-direnv isn't caching. Prime suspect: a redefined
-   `use_flake`/`use_nix` in `.envrc` (IRON LAW), or nix-direnv not loaded at all.
-2. `type -t use_flake` in the dir — must resolve to a `function`. If it's nix-direnv's, editing `.envrc` won't have
-   shadowed it.
+1. `ls .direnv/` — no `flake-profile-*` symlink + `.rc` file ⇒ nix-direnv isn't caching. Prime suspect: an `.envrc`
+   that defines its own `use_flake`/`use_nix`, or a hand-rolled `eval "$(nix print-dev-env)"`.
+2. Run `direnv reload` and read its output. nix-direnv logs `nix-direnv: Using cached dev shell` or
+   `nix-direnv: Renewed cache`. When no `nix-direnv:` line appears at all, nix-direnv did not run, so the install
+   or `source_url` is not taking effect. Diagnose from this log: `.envrc` runs in a subshell, so its functions, such
+   as `use_flake` and `nix_direnv_version`, never exist in your interactive shell.
 3. `command -v direnv` + `direnv status` — confirm _which_ direnv is on PATH and that its
    `Loaded RC path`/`warn_timeout` match the config you expect. A mismatch means a different direnv (or config) governs
    the shell than you think you configured.
-4. Re-evaluates every `cd`, no obvious override — check that nix-direnv actually loaded:
-   `has nix_direnv_version && nix_direnv_version` should print a version. If absent, the install/`source_url` isn't
-   taking effect.
-5. Stale env after editing `flake.nix` under `nix_direnv_manual_reload` — that's by design; run the `nix-direnv-reload`
+4. Stale env after editing `flake.nix` under `nix_direnv_manual_reload` — that's by design; run the `nix-direnv-reload`
    shell command.
 
-## Anti-patterns
+## Done
 
-- Redefining `use_flake`/`use_nix`, or hand-rolling `eval "$(nix print-dev-env)"` in `.envrc` — defeats caching _and_ GC
-  roots (the whole point).
-- Putting args on `use flake` while a custom `use_flake` ignores them.
-- Reusing a `source_url` sha256 across nix-direnv versions — each tag has its own hash; a mismatch fails the fetch.
-- Using `[whitelist] prefix` on a shared/VCS directory — anyone with write access to that tree gets arbitrary code
-  execution on `cd`. Prefer `exact`, or plain `direnv allow`.
-- `direnv allow`-ing reflexively without reading the `.envrc` diff — trust is per-content-version by design;
-  rubber-stamping defeats it.
-- Expecting `keep-outputs`/nix-direnv to protect a shell on a host where the option/module isn't actually active.
-
-## Pre-delivery checklist
-
-- [ ] `.envrc` does NOT define `use_flake`/`use_nix`.
-- [ ] Options are passed as args to `use flake`, not baked into a wrapper.
+- [ ] `.envrc` calls `use flake` or `use nix` with any options as arguments, and defines neither function.
 - [ ] After `direnv allow`, `.direnv/` contains a `flake-profile-*` symlink, its `.rc` sibling, and a populated
   `flake-inputs/`.
 - [ ] Any `source_url` pin uses the sha256 that matches its exact tag.
-- [ ] Trust granted via `direnv allow`/`exact` whitelist, not a broad `prefix`.
+- [ ] Trust granted via `direnv allow` or an `exact` whitelist entry.
