@@ -1,6 +1,6 @@
 ---
 name: systemd-networking
-description: Configure and troubleshoot Linux networking and DNS with systemd-networkd and systemd-resolved. Use for .network, .netdev, .link, resolved.conf, interface matching, DHCP, routes, bridges, bonds, VLANs, per-link DNS, or unexpected resolver routing. Diagnose with networkctl and resolvectl while checking which network manager owns the configuration. Use systemd-units for service units and lifecycle problems.
+description: Configure and troubleshoot Linux networking and DNS with systemd-networkd and systemd-resolved. Use for .network, .netdev, .link, resolved.conf, interface matching, DHCP, routes, bridges, bonds, VLANs, per-link DNS, or DNS queries going to the wrong resolver. Use systemd-units for service units and lifecycle problems.
 license: MIT
 compatibility: Requires Linux with systemd-networkd or systemd-resolved; commands and settings vary by systemd version.
 metadata:
@@ -13,22 +13,23 @@ Use this skill for systemd-networkd link configuration and systemd-resolved DNS 
 unit files, service lifecycle, timers, sockets, hardening, and general journal diagnosis.
 
 Treat the target host's manual pages as authoritative. Record `systemd --version` and consult the installed
-`systemd.network(5)`, `systemd.netdev(5)`, `systemd.link(5)`, `networkctl(1)`, `resolved.conf(5)`, and `resolvectl(1)`
-documentation before choosing settings or apply commands.
+`systemd.network(5)`, `systemd.netdev(5)`, `systemd.link(5)`, `networkctl(1)`, `systemd-resolved(8)`,
+`resolved.conf(5)`, and `resolvectl(1)` documentation before choosing settings or apply commands. The
+[upstream systemd manual](https://www.freedesktop.org/software/systemd/man/latest/) covers the latest release only.
 
 ## Establish Ownership and Access
 
 Identify the component that owns each interface and `/etc/resolv.conf` before changing configuration:
 
-```text
+```bash
 networkctl list
 networkctl status INTERFACE
 resolvectl status
 readlink -f /etc/resolv.conf
 ```
 
-Check NetworkManager, netplan, distribution generators, container tooling, or cloud provisioning when present. Do not
-configure the same interface through two managers. Generated files may identify their source; edit the source system
+Check NetworkManager, netplan, distribution generators, container tooling, or cloud provisioning when present. Configure
+each interface through exactly one manager. Generated files may identify their source; edit the source system
 instead of the generated output.
 
 Determine whether the host is local or reached through the interface or DNS path being changed. A remote network
@@ -37,9 +38,9 @@ the request, and ask before applying a change when loss of access remains plausi
 
 ## Configure systemd-networkd
 
-Place persistent administrator files under `/etc/systemd/network/`. Do not edit package-owned files in lower-priority
-directories. Choose filenames after inspecting every configured search directory because matching and lexicographic
-precedence vary by file type.
+Place persistent administrator files under `/etc/systemd/network/`, and override package-owned files in
+lower-priority directories from there; leave the originals alone. Choose filenames after inspecting every
+configured search directory because matching and lexicographic precedence vary by file type.
 
 Keep each file type's responsibility clear:
 
@@ -66,8 +67,8 @@ Apply changes according to file type and installed version:
 - Some virtual-device properties are fixed at creation. Confirm whether the device must be recreated, and treat that
   operation as disruptive.
 
-Do not restart a network manager as a default apply step. Confirm the supported reload path and verify the resulting
-addresses, routes, carrier, and reachability.
+Apply through the supported reload path, and restart a network manager only when that path cannot apply the change.
+Verify the resulting addresses, routes, carrier, and reachability.
 
 ## Configure systemd-resolved
 
@@ -85,7 +86,7 @@ application stack.
 
 Diagnose resolution by comparing configuration with an actual query:
 
-```text
+```bash
 resolvectl status
 resolvectl dns INTERFACE
 resolvectl domain INTERFACE
@@ -98,7 +99,7 @@ whether the upstream resolver, local policy, or zone data caused it.
 
 ## Protect Secrets
 
-Do not place private WireGuard keys or other credentials in output, logs, or world-readable files. Prefer the
+Keep private WireGuard keys and other credentials out of output, logs, and world-readable files. Prefer the
 credential mechanism documented by the installed systemd version. When a file is required, restrict ownership and
 permissions for the account that reads it.
 
@@ -115,9 +116,3 @@ Verify the specific layer changed:
 
 After a remote change, keep the recovery channel available until these checks pass. Report partial validation when
 the environment does not permit a real link, route, DNS, or connectivity test.
-
-## Primary References
-
-- `man systemd.network`, `man systemd.netdev`, `man systemd.link`, and `man networkctl`
-- `man systemd-resolved`, `man resolved.conf`, and `man resolvectl`
-- [Upstream systemd manual](https://www.freedesktop.org/software/systemd/man/latest/)
