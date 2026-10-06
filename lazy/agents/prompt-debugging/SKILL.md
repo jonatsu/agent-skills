@@ -11,24 +11,16 @@ metadata:
 Repair an existing prompt by turning observed failure into reproducible evidence, one falsifiable hypothesis, and the
 smallest verified prompt change.
 
-**Do not edit the prompt until its failure is preserved in an outcome-based fixture and the evaluation harness passes
-preflight.** A response that looks wrong may expose a prompt defect, a broken fixture, an unavailable dependency, a
+**Preserve the failure in an outcome-based fixture, and pass harness preflight, before the first prompt edit.** A
+response that looks wrong may expose a prompt defect, a broken fixture, an unavailable dependency, a
 permission boundary, missing prompt delivery, or model variance. Editing before classifying that layer destroys the
 evidence and often patches the wrong system.
 
 ## Keep the Job Narrow
 
-Use this skill when an existing prompt has produced an observed failure or when the user asks to compare prompt revisions
-against concrete behavior. The target may be a system or developer prompt, agent definition, tool description, task or
-API prompt, instruction file, or few-shot set.
-
-Nearby work has different owners:
-
-- Use `writing-prompts` when no prompt exists yet, or when the question is whether a prompt is well written but no
-  failing behavior exists.
-- Use `agents-context-docs` for repository `AGENTS.md`, `CLAUDE.md`, scoped instructions, or `llms.txt`
-  maintenance.
-- Use `skill-forge` for `SKILL.md` and Agent Skill packages.
+The target is an existing prompt with an observed failure, or a set of prompt revisions to compare against concrete
+behavior: a system or developer prompt, agent definition, tool description, task or API prompt, instruction file, or
+few-shot set.
 
 The user may authorize both diagnosis and repair in one request. A review-only request does not authorize editing the
 prompt, changing a harness, or running cost-incurring evaluations.
@@ -68,9 +60,8 @@ confirmation, answer, or expected output has not passed a multi-turn fixture.
 
 ## Preflight the Harness
 
-Read [references/evaluation-harness.md](references/evaluation-harness.md) before any model run. Complete its preflight
-without invoking a model: resolve paths, create the workspace, verify fixture contents, exercise advertised commands,
-check client flags and permissions, and prove output and trace destinations are writable.
+Read [references/evaluation-harness.md](references/evaluation-harness.md) and complete its preflight before any model
+run.
 
 Use runtime help or current authoritative documentation for client flags, model names, and configuration. Dated command
 lines are evidence about one version, not permanent syntax.
@@ -101,11 +92,12 @@ and fixture failures at their own layer, then reproduce before touching the prom
 
 State one hypothesis linking the observed behavior to one prompt mechanism. Change the smallest instruction, placement,
 boundary, example, or escape hatch that can falsify it. Remove or reconcile any rule the change duplicates or
-contradicts. Do not stack several techniques into one attempt; a passing rerun would not show which change mattered.
+contradicts. Change one mechanism per attempt, so a passing rerun shows which change mattered.
 
-Generalize from the failure category. Do not copy vocabulary from the fixture into the prompt merely to make one case
-pass. Preserve accepted behavior, authority boundaries, downstream formats, and compatibility. Ask before a repair
-changes public behavior, architecture, cost priority, or a working prompt outside the authorized scope.
+Write the repair for the failure category, in the prompt's own terms; fixture vocabulary pasted into the prompt passes
+one case and generalizes to none. Preserve accepted behavior, authority boundaries, downstream formats, and
+compatibility. Ask before a repair changes public behavior, architecture, cost priority, or a working prompt outside
+the authorized scope.
 
 Useful repairs depend on the diagnosis:
 
@@ -122,10 +114,8 @@ Rerun the exact failing case with the repaired prompt. Then run the nearest boun
 exception to a new stop rule, a legitimate approval path after a new gate, or a small case after adding a heavyweight
 workflow.
 
-Keep prompt, fixture, client, model, settings, and environment equivalent unless one is the variable under test. When the
-harness changed, rerun the baseline because the old and new outputs are not directly comparable. Use additional clients
-only when portability affects the decision. Repeat only when variance matters; one deterministic boundary violation can
-be decisive, while one stochastic pass cannot establish reliability.
+Hold every variable but the one under test equal, and rerun the baseline whenever the harness changed. The harness
+reference's "Context Isolation" and "Scale by Decision" sections set when to add clients or repetitions.
 
 Stop when the authorized budget or allowance is reached. Preserve partial evidence and name the missing assertion. Do not
 weaken a fixture or call a harness failure a model pass to finish the run.
