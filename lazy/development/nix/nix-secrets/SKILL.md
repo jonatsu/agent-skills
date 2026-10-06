@@ -1,6 +1,6 @@
 ---
 name: nix-secrets
-description: "Nix secrets management with agenix and sops-nix for NixOS and home-manager. Use when setting up secrets, encrypting secret files, configuring agenix or sops-nix, managing age/SSH keys, rekeying, or wiring a secret into a service or user account. Triggers on: agenix, sops-nix, sops, secrets, age encryption, secret file, rekey, age.secrets, sops.secrets, .sops.yaml, hashedPasswordFile, secret management."
+description: "Manage encrypted secrets in NixOS and home-manager with agenix or sops-nix. Use when choosing between them, generating or converting age or SSH keys, creating or rekeying encrypted secret files, editing .sops.yaml or secrets.nix, or wiring a secret into a service, template, or user password without leaking it into the Nix store."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,30 +8,15 @@ metadata:
 
 # Nix Secrets Management
 
-IRON LAW: NEVER use `builtins.readFile` on secret file paths — this copies secret contents into the
-world-readable Nix store. ALWAYS reference secrets via `config.age.secrets.<name>.path` or
-`config.sops.secrets.<name>.path` so they stay in tmpfs.
+Reference a secret only by its runtime path, `config.age.secrets.<name>.path` or
+`config.sops.secrets.<name>.path`, so it stays in tmpfs. `builtins.readFile` on a secret copies the plaintext into
+the world-readable Nix store.
 
 > **Using a framework layer on top of flake-parts?** How modules get wired into hosts belongs to that
 > framework's own documentation or skills. Secrets are ordinary NixOS/home-manager module options underneath,
 > so everything below applies unchanged.
 
-## Workflow
-
-```text
-Nix Secrets Progress:
-
-- [ ] Step 1: Choose tool ⚠️ REQUIRED
-  - [ ] 1.1 agenix (simpler, SSH keys, one file per secret)?
-  - [ ] 1.2 sops-nix (structured files, multiple backends, templates)?
-- [ ] Step 2: Generate keys
-- [ ] Step 3: Create encrypted secret files
-- [ ] Step 4: Wire into config (NixOS and/or home-manager)
-- [ ] Step 5: Reference secrets in services
-- [ ] Step 6: Verify ⚠️ REQUIRED
-```
-
-## Step 1: Choose Tool ⚠️ REQUIRED
+## Step 1: Choose Tool
 
 ### Decision matrix
 
@@ -64,8 +49,8 @@ ssh-keyscan <hostname>
 curl https://github.com/<username>.keys
 ```
 
-See [references/agenix-options.md](references/agenix-options.md) for threat model and complete option
-reference.
+Use SSH keys without a passphrase in `identityPaths`: activation cannot prompt for one. See
+[references/agenix-options.md](references/agenix-options.md) for the threat model and complete option reference.
 
 ### sops-nix (uses age keys)
 
@@ -82,11 +67,13 @@ nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/
 nix-shell -p ssh-to-age --run 'ssh-keyscan <hostname> | ssh-to-age'
 ```
 
+Add every host that must decrypt a secret to its recipients; a host missing from the list cannot decrypt it.
+
 ## Step 3: Create Encrypted Secret Files
 
 ### agenix
 
-Define recipients in `secrets.nix` (NOT imported into Nix config — just a manifest):
+Define recipients in `secrets.nix`, a manifest the agenix CLI reads; the Nix configuration does not import it:
 
 ```nix
 # secrets.nix
@@ -113,8 +100,8 @@ RULES=custom-secrets.nix agenix -e secret-name.age  # Use custom rules file
 
 The `RULES` environment variable overrides the default `secrets.nix` path.
 
-⚠️ REQUIRED: Confirm recipient/key changes before rekeying. `agenix --rekey` rewrites ALL encrypted files (age
-uses random nonces — every file gets new ciphertext even if plaintext is unchanged).
+Confirm recipient and key changes with the user before rekeying. `agenix --rekey` rewrites every encrypted file
+(age uses random nonces, so each file gets new ciphertext even when its plaintext is unchanged).
 
 ```bash
 agenix --rekey                  # Re-encrypt all after key changes
@@ -137,14 +124,17 @@ creation_rules:
       - *host_server
 ```
 
+Keep all recipients in one `key_groups` entry, as above. More than one entry under `key_groups` turns on Shamir
+secret sharing, which needs a key from every group to decrypt.
+
 Create/edit secret files:
 
 ```bash
 nix-shell -p sops --run "sops secrets/example.yaml"
 ```
 
-⚠️ REQUIRED: Confirm recipient changes before updating keys. `sops updatekeys` re-encrypts the file with all
-current recipients from `.sops.yaml`.
+Confirm recipient changes with the user before updating keys. `sops updatekeys` re-encrypts the file for every
+current recipient in `.sops.yaml`.
 
 ```bash
 nix-shell -p sops --run "sops updatekeys secrets/example.yaml"
@@ -183,6 +173,8 @@ source, not from cached tables.
 
 ## Step 4: Wire into Config
 
+Use one tool per module, or per host, when a configuration carries both agenix and sops-nix.
+
 ### agenix — NixOS
 
 ```nix
@@ -220,7 +212,8 @@ inputs.agenix.url = "github:ryantm/agenix";
 }
 ```
 
-Decryption location: `$XDG_RUNTIME_DIR/agenix`.
+Decryption location: `$XDG_RUNTIME_DIR/agenix`. Home-manager agenix secrets belong to the home-manager user and
+take no `owner` or `group`; declare a service-owned secret in NixOS-level agenix instead.
 
 See [references/agenix-options.md](references/agenix-options.md) for complete option reference and threat
 model.
@@ -243,15 +236,21 @@ inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     # OR: age.generateKey = true;  # Generate if not exists
 
     secrets.example-key = {};
+
+    # A service-owned secret
     secrets."myservice/db_password" = {
       mode = "0440";
       owner = config.users.users.myservice.name;
       restartUnits = [ "myservice.service" ];
-      neededForUsers = true;  # Decrypts to /run/secrets-for-users
     };
+
+    # A user password: decrypted before users exist, so it must stay root-owned
+    secrets.alice-password.neededForUsers = true;  # Decrypts to /run/secrets-for-users
   };
 }
 ```
+
+sops-nix rejects `neededForUsers` on a secret with a non-root `owner` or `group`.
 
 ### sops-nix — home-manager
 
@@ -272,6 +271,9 @@ inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   systemd.user.services.mysync.Unit.After = [ "sops-nix.service" ];
 }
 ```
+
+Home-manager sops-nix has no `restartUnits` or `neededForUsers`; order user services after `sops-nix.service`, as
+above.
 
 ### sops-nix templates (embed secrets in config files)
 
@@ -312,64 +314,35 @@ home-manager, templates).
 
 ## Step 5: Reference Secrets in Services
 
-```nix
-# CORRECT — reference path, secret stays in tmpfs
-services.myservice = {
-  enable = true;
-  passwordFile = config.age.secrets.secret-name.path;
-  # or
-  passwordFile = config.sops.secrets.example-key.path;
-};
+Pass the decrypted `.path`; `.file` is the encrypted source.
 
-users.users.myuser = {
-  isNormalUser = true;
-  hashedPasswordFile = config.age.secrets.user-password.path;
-};
+```nix
+# agenix
+services.myservice.passwordFile = config.age.secrets.secret-name.path;
+users.users.myuser.hashedPasswordFile = config.age.secrets.user-password.path;
 ```
 
-## Step 6: Verify ⚠️ REQUIRED
+```nix
+# sops-nix
+services.myservice.passwordFile = config.sops.secrets.example-key.path;
+users.users.alice.hashedPasswordFile = config.sops.secrets.alice-password.path;
+```
+
+## Step 6: Verify
+
+The work is done when every item holds:
 
 - [ ] Secrets decrypt at activation (`nixos-rebuild switch` or `home-manager switch` succeeds)
 - [ ] Secret files exist at expected paths (`ls /run/agenix/` or `ls /run/secrets/`)
-- [ ] No secrets leaked into the Nix store — build the system, then scan its closure:
+- [ ] Services can read their secret files (owner, group, and mode checked)
+- [ ] Every secret is referenced through `.path`; no `builtins.readFile` or `.file` reaches a secret
+- [ ] The repository holds only encrypted secret files
+- [ ] No secret reached the Nix store — build the system, then scan its closure:
   `nix build .#nixosConfigurations.<host>.config.system.build.toplevel --print-out-paths --no-link`, then
   `nix path-info -r <that-path> | grep -i secret`
   (matches store path *names* only, not file contents — a clean result is necessary, not sufficient)
-- [ ] Services can read secret files (check owner/group/mode)
-- [ ] No `builtins.readFile` on secret paths anywhere in config
-- [ ] No plaintext secrets in repo
-- [ ] Key rotation procedure documented
-- [ ] agenix: no password-protected SSH keys in identityPaths
-- [ ] sops-nix: `useTmpfs = true` if using impermanence
-- [ ] HM agenix: no `owner`/`group` options used (not supported)
-- [ ] HM sops-nix: no `restartUnits`/`neededForUsers` used (not supported)
-
-## Anti-Patterns
-
-- Using `builtins.readFile` on secret paths — leaks contents to world-readable Nix store
-- Storing plaintext secrets in the repo — always encrypt first
-- Forgetting to add host SSH key to recipients — secret won't decrypt on that host
-- Using `config.age.secrets.<name>.file` instead of `.path` in service config — `.file` is the encrypted path,
-  `.path` is the decrypted path
-- Mixing agenix and sops-nix in the same config without clear separation — pick one per module (or per host)
-- Forgetting `neededForUsers = true` for user password secrets — they need early decryption
-- Putting `.sops.yaml` creation rules with `-` before subsequent key types under `key_groups` — triggers
-  Shamir secret sharing
-- **Expecting `owner`/`group` on home-manager agenix secrets** — HM agenix has no owner/group options. Secrets
-  are owned by the HM user. Use NixOS-level agenix for service-owned secrets.
-- **Expecting `restartUnits` on home-manager sops-nix secrets** — HM sops-nix has no restartUnits. Use
-  `systemd.user.services.<name>.Unit.After = [ "sops-nix.service" ]` instead.
-- **Using password-protected SSH keys with agenix** — ssh-agent cannot decrypt age files with
-  password-protected keys. Use unprotected keys or generate age keys directly.
-- **Running rekey without confirming recipient changes** — see confirmation gates in Step 3.
-
-## Pre-Delivery Checklist
-
-- [ ] Tool chosen (agenix or sops-nix)
-- [ ] Keys generated and distributed to hosts/users
-- [ ] Encrypted secret files created and committed
-- [ ] Module imported (agenix or sops-nix NixOS/HM module)
-- [ ] Secrets referenced via `.path` (not `.file`, not `readFile`)
+- [ ] sops-nix with impermanence: `useTmpfs = true`
+- [ ] Key rotation is written down: who holds each key, how to add or revoke a recipient, and the rekey command
 
 ## Reference Files
 
