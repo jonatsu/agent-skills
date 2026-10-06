@@ -145,6 +145,12 @@ as `writing-specs` and `technical-design` do.
 | `systematic-debugging`       | 2026-10-06, `4df4e36f`           | 2026-10-06, `4df4e36f`                            |
 | `test-driven-development`    | 2026-10-06, `650df591`           | 2026-10-06, `650df591`                            |
 | `systemd-networking`         | 2026-10-06, `5ed8ca1a`           | 2026-10-06, `5ed8ca1a`                            |
+| `nix-secrets`                | 2026-10-06, `87752c31`           | 2026-10-06, `87752c31`                            |
+| `direnv-nix-direnv`          | 2026-10-06, `2ef12257`           | 2026-10-06, `2ef12257`                            |
+| `nix-packaging`              | 2026-10-06, `6d6273aa`           | 2026-10-06, `6d6273aa`                            |
+| `nix-flakes`                 | 2026-10-06, `6e19432d`           | 2026-10-06, `6e19432d`                            |
+| `home-manager`               | 2026-10-06, `cc25507a`           | 2026-10-06, `cc25507a`                            |
+| `nixos-config`               | 2026-10-06, `1ff8e87d`           | 2026-10-06, `1ff8e87d`                            |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
