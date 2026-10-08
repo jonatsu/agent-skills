@@ -108,9 +108,10 @@ exit code against what you are proving:
   explicit rather than an absence of output.
 - **A name that should be gone:** expect exit 2, `no lock entry names the skill`. A removed skill leaves no
   lock entry, so that failure is the confirmation.
-- **A skill added from a remote source:** expect one `remote` line per destination and exit 0. Exit 1 with a
-  `REMOTE-MISMATCH` line means a lock is not at the commit approved in `kasetto/third-party-skills.yaml`;
-  re-run `just skills-sync`, which relocks a remote skill whose lock lags its pin and commits the result.
+- **A skill added from a remote source:** expect one `ok` line per destination and exit 0; the copy is compared
+  with the tree at its approved commit. Exit 1 with a `REMOTE-MISMATCH` line means a lock is not at the commit
+  approved in `kasetto/third-party-skills.yaml`; re-run `just skills-sync`, which relocks a remote skill whose
+  lock lags its pin and commits the result.
 
 Neither answer is available from a hand-rolled loop, which checks only the destinations you remembered to
 list and cannot tell a pruned skill from a mistyped name.

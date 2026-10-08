@@ -35,7 +35,7 @@ entries.
 A remote-sourced skill has no copy under `skills/`, so neither skill validator can see it. Its protection is
 approval instead: every remote source is pinned to a reviewed commit recorded in
 `kasetto/third-party-skills.yaml`, and `just skills-deployed` reports `REMOTE-MISMATCH` when a deployed remote
-skill's lock is not at that commit.
+skill's lock is not at that commit, and `DRIFT` when its deployed copy differs from the tree at that commit.
 
 One skill, itemised per destination. Use this rather than a hand-written `diff -rq`, which silently checks
 only the destinations you remembered to list:
