@@ -55,9 +55,9 @@ When the left changes, update the right in the same change.
 ```
 
 The floor routes to `docs/README.md` and to the findings and scoped-instruction files above; it does not
-enumerate the genres beneath the hub. Which documents exist and how they are organized is owned by
-`context-architecture`'s [named default layout](../../context-architecture/references/default-layout.md); the
-default findings tier is `docs/findings/`, and an existing repository convention wins over both.
+enumerate the genres beneath the hub. Which documents exist and how they are organized is owned by the named
+default layout of the `context-architecture` skill; the default findings tier is `docs/findings/`, and an
+existing repository convention wins over both.
 
 Delete sections that would contain a runner transcription, directory listing, generic advice, or README
 summary. The fillable version is `../assets/AGENTS.template.md`.
