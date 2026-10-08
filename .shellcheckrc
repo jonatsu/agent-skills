@@ -1,0 +1,50 @@
+# Shared ShellCheck configuration for the whole repository.
+#
+# ShellCheck auto-discovers this file (the repository root is an ancestor of
+# every script), so the same rules apply everywhere shell scripts are linted:
+#   - the `shellcheck` pre-commit hook (shellcheck-py),
+#   - the VS Code ShellCheck extension (timonwong.shellcheck),
+#   - and any direct `shellcheck` CLI run.
+#
+# Keep options here rather than in per-tool args so there is one source of truth.
+# https://github.com/koalaman/shellcheck/wiki/Ignore
+
+# Set the default shell dialect. This is the fallback for a file ShellCheck
+# cannot classify; it does NOT make a file bash. An executable script still
+# carries its own `#!` line, and a sourced library has no shebang to infer from
+# at all, so give each file its own `# shellcheck shell=bash` directive rather
+# than leaving a reader to look the dialect up.
+shell=bash
+
+# Follow `source`/`.` includes when the target path is resolvable, instead of
+# emitting SC1091 for every sourced file. A path built at runtime is not
+# statically resolvable, so a script that sources one still needs its own
+# `# shellcheck source-path=... source=...` directive naming the target.
+external-sources=true
+
+# Enable all optional checks. The one with real reach is SC2250: `${var}` braces
+# become mandatory everywhere, not merely where they disambiguate. ShellCheck
+# fixes SC2250 itself — `shellcheck -f diff <files> | git apply` — so conforming
+# an existing tree is mechanical rather than a hand edit.
+#
+# Adopting this in an established repository turns every shell file red at once.
+# Enumerate the files the way the linter does, by shebang rather than by
+# extension, or the sweep silently misses extensionless entry points and
+# anything under a dot directory.
+enable=all
+
+# Disable SC2154: "VAR is referenced but not assigned", uppercase variables are
+# environment variables and are set outside of the script.
+disable=SC2154
+
+# Disable SC2312: "Consider invoking this command separately to avoid masking its
+# return value (or use '|| true' to ignore)", errors are checked where relevant
+# and adding "|| true" everywhere hinders readability.
+disable=SC2312
+
+# SC2310 is deliberately NOT disabled, though it looks like SC2312's sibling. It
+# fires when a function is invoked in a condition, which suppresses errexit
+# inside that function. In a script that sets `set -e` that is a real finding
+# rather than noise, so judge each site: restructure where a swallowed failure
+# would be a bug, and otherwise suppress it locally with a comment giving the
+# reason. Switching the check off repository-wide discards the signal.

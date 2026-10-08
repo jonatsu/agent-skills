@@ -1,0 +1,106 @@
+/*
+ * Configuration for MarkdownLint-CLI2:
+ * https://github.com/DavidAnson/markdownlint-cli2
+ *
+ * Example configuration file:
+ * https://github.com/DavidAnson/markdownlint-cli2/blob/main/test/markdownlint-cli2-jsonc-example/.markdownlint-cli2.jsonc
+ */
+{
+  "$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/main/schema/markdownlint-cli2-config-schema.json",
+  "gitignore": true,
+  "noProgress": true,
+  "noBanner": true,
+
+  // Treat YAML front matter as non-content
+  "frontMatter": "^---\\s*(?:\\r\\n|\\r|\\n)[\\s\\S]*?(?:\\r\\n|\\r|\\n)---\\s*(?:\\r\\n|\\r|\\n|$)",
+
+  // For full information on the options and defaults, see:
+  // https://github.com/DavidAnson/markdownlint/tree/main#rules--aliases
+  // https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml
+  "config": {
+    "default": true,
+    "MD003": {
+      "style": "atx",
+    },
+    "ul-style": {
+      "style": "consistent",
+    },
+    "ul-indent": {
+      "indent": 2,
+      "start_indented": false,
+    },
+    "no-hard-tabs": {
+      "code_blocks": false,
+      "spaces_per_tab": 1,
+    },
+    "no-multiple-blanks": {
+      "maximum": 2,
+    },
+    "line-length": {
+      "code_block_line_length": 80,
+      "code_blocks": false,
+      "heading_line_length": 120,
+      "headings": true,
+      "line_length": 120,
+      // Long URLs and indivisible inline literals are not prose wrapping.
+      "stern": false,
+      "strict": false,
+      "tables": false,
+    },
+    // Command transcripts and command-only examples are both intentional.
+    "commands-show-output": false,
+    "blanks-around-headings": {
+      "include_front_matter": false,
+    },
+    "heading-start-left": false,
+    "no-duplicate-heading": {
+      "siblings_only": true,
+    },
+    "single-heading": true,
+    "blanks-around-fences": false,
+    // Angle-bracket placeholders are common in commands and templates.
+    "no-inline-html": false,
+    "no-bare-urls": true,
+    "no-emphasis-as-heading": true,
+    // Do not require guesses about the language of transcript or data fences.
+    "fenced-code-language": false,
+    "first-line-heading": false,
+    "proper-names": false,
+    "code-block-style": {
+      "style": "fenced",
+    },
+    "emphasis-style": {
+      "style": "consistent",
+    },
+    "strong-style": {
+      "style": "consistent",
+    },
+    // mdformat owns list numbering; MD029 disagrees on interrupted lists.
+    "ol-prefix": false,
+    // Spaces can be significant in literals such as `Bearer ` and `> `.
+    "no-space-in-code": false,
+    // Blank quoted lines deliberately separate paragraphs in block quotes.
+    "no-blanks-blockquote": false,
+    // mdformat owns table layout; do not enforce a second table style here.
+    "table-column-style": false,
+  },
+  "globs": ["**/*.md", "**/*.markdown", "**/*.mdown", "**/*.mkdn", "**/*.mdx"],
+  "ignores": [
+    // Archived skills are pending review and are deployed nowhere.
+    "archived/**",
+
+    // Verbatim or vendored third-party material.
+    "**/skill-forge/scripts/skills-ref/**",
+    // brooks-lint skills vendored from github.com/hyhmrright/brooks-lint. Their
+    // guides and shared framework use bold pseudo-headings (MD036) and some long
+    // lines (MD013) throughout; they are kept verbatim, so the hygiene hooks do
+    // not rewrite them. security-review in this domain is authored here and stays linted.
+    "**/brooks-*/**",
+
+    // GitHub issue templates are deployable assets, not repository prose.
+    "**/repo-management/assets/ISSUE_TEMPLATE/**",
+
+    // The Python environment's installed packages carry their own Markdown.
+    ".venv/**",
+  ],
+}

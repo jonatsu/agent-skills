@@ -1,0 +1,8 @@
+# Reviewed 2026-10-09: documentation placeholders in an early revision, not credentials. The Compose
+# reference used the postgres image's stock postgres:postgres login, and nix-secrets showed made-up values
+# (supersecretvalue, anothersecret) that later revisions replaced with placeholders. Each line ignores exactly
+# one finding in one historical commit; any new finding still fails the scan.
+eb06b94c3858096f42303be4c8d4a26714b7b292:nix-secrets/SKILL.md:generic-password:148
+eb06b94c3858096f42303be4c8d4a26714b7b292:containers/references/docker-compose.md:generic-credential-uri:27
+eb06b94c3858096f42303be4c8d4a26714b7b292:containers/references/docker-compose.md:generic-credential-uri:55
+eb06b94c3858096f42303be4c8d4a26714b7b292:containers/references/docker-compose.md:generic-password:38

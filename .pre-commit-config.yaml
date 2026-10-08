@@ -1,0 +1,121 @@
+# Hygiene hooks, carried over from the skills' previous home with their excludes re-based to this root. The
+# skill packages were formatted under exactly these settings, so a full run must change nothing: a hook that
+# rewrote a deployed skill would change what every agent loads.
+default_install_hook_types: [pre-commit]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1000"]
+      - id: check-toml
+      - id: check-yaml
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+  # Secrets scanner over the STAGED DIFF only; CI runs `betterleaks git` over the whole history. The hook is
+  # a golang-language hook, so pre-commit builds it once from source.
+  - repo: https://github.com/betterleaks/betterleaks
+    rev: v1.8.1
+    hooks:
+      - id: betterleaks
+  # mdformat normalizes Markdown structure while preserving deliberate prose line breaks. Archived skills and
+  # verbatim upstream files are excluded because hygiene hooks must not rewrite them.
+  - repo: https://github.com/hukkin/mdformat
+    rev: 1.0.0
+    hooks:
+      - id: mdformat
+        args: ["--wrap", "keep", "--number", "--no-codeformatters"]
+        exclude: >-
+          ^(archived/|(.+/)?skill-forge/scripts/skills-ref/|(.+/)?repo-management/assets/ISSUE_TEMPLATE/|(.+/)?brooks-)
+        additional_dependencies:
+          - mdformat-footnote
+          - mdformat-frontmatter
+          - mdformat-gfm
+          - mdformat-gfm-alerts
+          - mdformat-simple-breaks
+          - mdformat-toc
+          - mdformat-config
+          - mdformat-wikilink
+  # markdownlint owns the 120-column ceiling; its ignores live in .markdownlint-cli2.jsonc.
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.23.2
+    hooks:
+      - id: markdownlint-cli2
+        args: ["--no-globs"]
+  # skill-forge's vendored skills-ref copy is pinned third-party code, outside this repository's lint policy.
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.0
+    hooks:
+      - id: ruff
+        args: ["--fix", "--exit-non-zero-on-fix"]
+        exclude: ^(.+/)?skill-forge/scripts/skills-ref/
+      - id: ruff-format
+        exclude: ^(.+/)?skill-forge/scripts/skills-ref/
+  - repo: local
+    hooks:
+      # U+00A0 in Markdown indentation breaks nested fences without any visible sign.
+      - id: markdown-nbsp-indent
+        name: no non-breaking space in Markdown indentation
+        language: pygrep
+        entry: '^(?:[ \t]|\xc2\xa0)*\xc2\xa0'
+        types_or: [markdown, mdx]
+      - id: shfmt
+        name: shfmt (format shell scripts)
+        entry: shfmt
+        args: ["-i", "2", "-ci", "-bn", "-sr", "-w"]
+        language: system
+        types: [shell]
+      - id: shellcheck
+        name: shellcheck (lint shell scripts)
+        entry: shellcheck
+        language: system
+        types: [shell]
+      - id: mypy-checks
+        name: mypy (skill checks)
+        entry: uv run --frozen mypy
+        language: system
+        files: ^checks/
+        types: [python]
+        pass_filenames: false
+      # The skill checks read the whole tree, so each runs once whenever a file it reads changes.
+      - id: skill-spec
+        name: Agent Skills specification (skills-ref)
+        entry: uv run --frozen skill-checks spec
+        language: system
+        files: (^|/)SKILL\.md$
+        pass_filenames: false
+      - id: skill-policy
+        name: skill-forge local policy
+        entry: uv run --frozen skill-checks policy
+        language: system
+        files: (^|/)(SKILL\.md|quick_validate\.py)$
+        pass_filenames: false
+      - id: skill-descriptions
+        name: skill descriptions are inline and within budget
+        entry: uv run --frozen skill-checks descriptions
+        language: system
+        files: (^|/)SKILL\.md$
+        pass_filenames: false
+      - id: skill-names
+        name: skill names are unique
+        entry: uv run --frozen skill-checks names
+        language: system
+        files: (^|/)SKILL\.md$
+        pass_filenames: false
+      - id: skill-references
+        name: no reference leaves its skill package
+        entry: uv run --frozen skill-checks references
+        language: system
+        types_or: [markdown, python, shell]
+        pass_filenames: false
+      # The repository is public and its history carries only the noreply address.
+      - id: commit-identity
+        name: commit identity is the noreply address
+        entry: uv run --frozen skill-checks identity
+        language: system
+        always_run: true
+        pass_filenames: false
