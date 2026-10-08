@@ -137,7 +137,7 @@ So are `interview-me`, `domain-modeling`, the testing skills, `systematic-debugg
 
 ## Where the skills do not yet match
 
-The [routing check of 2026-10-04](../docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md) compared
+The routing check of 2026-10-04 (agent-setup's `docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md`) compared
 the skills with this intent. In practice the spec is almost never written: in a month of Claude sessions the
 design skill loaded in 22 transcripts and the spec skill in 2. The conformance review loaded only when a brief
 named it, so the closing check rarely runs, and no review lane carries it. Nothing yet prompts a spec when a

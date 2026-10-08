@@ -1,49 +1,19 @@
 # Skills Future Work
 
-Operational and future-feature backlog for the skills stack, including candidate sources not yet evaluated.
-The completed 2026-09 review's verdicts and evidence are in the
-[shared-skill review](../docs/evaluations/skills/2026-09-shared-skill-review.md), and
-archived reviews still deferred are the rows marked "Review is deferred" in
-[archived/README.md](archived/README.md). The restored embedded skills' completed review campaign is recorded
-in [../docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md](../docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md);
-their surviving open work is below, and the embedded research notes (tooling, testing, QEMU candidates) are in
-[../docs/research/embedded-skills/](../docs/research/embedded-skills/).
-Repository-wide items live in [../TODO.md](../TODO.md) and [../BACKLOG.md](../BACKLOG.md). Roughly
-high-priority first; the settled/low-priority entries sit at the bottom.
+The backlog for the skills in this repository, including candidate sources not yet evaluated. Roughly high
+priority first; settled and low-priority entries sit at the bottom.
 
-## Probe the Lazy Tier on Codex and Copilot
-
-Added 2026-09-28, when the specialized skills moved under `shared/lazy/`
-([the plan](../docs/plans/archived/lazy-tier-layout.md) records the split and the layout).
-
-Codex was probed on 2026-09-28 with codex-cli 0.157.0 (`codex exec`, low reasoning effort, a scratch
-workspace, two fresh sessions). Asked to review a Python file's style, it called `find_skills` with "python
-style", then `load_skill` for `python-style`, and answered by that skill. Asked for a commit message, the
-control, it called neither. Its listing held the 31 direct skills and Codex's own system skills, and no lazy
-skill. Every description was cut to 100–170 characters, with a median of 166, so most lose their "Use when"
-clause: `coding-standards` stops at "Use bef". `codex exec` printed no warning, so the cut is silent there.
-
-Copilot was probed on 2026-10-04 with GitHub Copilot CLI 1.0.91 (`copilot -p`, its default model, a scratch
-workspace). Asked to review a Python file's style, it called `find_skills` with "python style", then `load_skill`
-for `python-style`. Asked for a commit message, the control, it called neither. Whether Copilot also truncates
-skill descriptions was not checked.
-
-Still open:
-
-- Settle the Codex description cap. The user raised `skills.max_context_tokens` to 3000 the same day to see how
-  it goes. A re-probe then showed Codex cutting every description at the same length, 286–290 characters: 3 of
-  the 30 local direct skills arrive whole, and `repo-management` (295) and `git-history-investigation` (294)
-  lose only their last words. The Codex configuration reference documents only `path` and `enabled` under
-  `skills.config`, with no per-skill override or name-only mode (checked 2026-09-12). The ways out are a
-  higher cap, or descriptions that put their routing words in the first 280 characters.
-
-The user also plans to revisit the domain names and to rename some skills; neither is scheduled.
+Reviews are recorded in the author's private configuration repository, which also deploys the skills: the
+completed 2026-09 review in its `docs/evaluations/skills/2026-09-shared-skill-review.md`, and the restored
+embedded skills' campaign in `docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md`. References
+below to "agent-setup" name that repository. Archived reviews still deferred are the rows marked "Review is
+deferred" in [archived/README.md](archived/README.md).
 
 ## Engineering Pipeline Follow-Ups
 
 Added 2026-10-04, left open by the pipeline rewiring that made the skills match
 [ENGINEERING-PIPELINE.md](ENGINEERING-PIPELINE.md) (commits `11925447`, `a0e2d2e2`, `f7e89b7f`; the reasoning is in
-[the routing check](../docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md)).
+the routing check (agent-setup's `docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md`)).
 
 - **Evals for the two new behaviors.** Neither has a case in its package's `evals/behavior.json`, so a later edit
   can drop it unnoticed. Add a case to `shared/engineering/technical-design/evals/behavior.json`: a design with no
@@ -173,7 +143,7 @@ On 2026-09-06 a session wrote new pytest integration tests — squarely `test-en
 test skill surfaced in the available-skills listing; they loaded only when named. The cost was real: the
 committed tests carried four defects (the material one order-dependent) that `test-engineer`'s rules name
 directly. Full incident and the `searchable-code` precedent are in
-[../docs/findings/skill-discovery-limits.md](../docs/findings/skill-discovery-limits.md).
+agent-setup's `docs/findings/skill-discovery-limits.md`.
 
 The `test-engineer` and `python-testing` descriptions were edited 2026-09-06 with `Use when` clauses and literal
 triggers (`test-driven-development` was correctly left alone), but **activation was not measured**. The next
@@ -185,7 +155,8 @@ already concluded.
 ## Description Activation Is Unmeasured
 
 The 2026-09 audit rewrote 13 short capability-only descriptions to carry activation clauses and triggers
-(completed 2026-09-07; findings in ../docs/evaluations/skills/2026-09-07-skill-description-audit.md, edits in git
+(completed 2026-09-07; findings in agent-setup's `docs/evaluations/skills/2026-09-07-skill-description-audit.md`,
+edits in git
 history). Whether the wording drives activation is unmeasured and nothing depends on settling it. Two of the
 13 describe a situation a user never names — `systematic-debugging` and `repo-management`; if they still do
 not activate on work they cover, move their behavior to `agents/rules/` per this directory's AGENTS.md ("no
@@ -290,9 +261,9 @@ Check for these four classes, each of which occurred in the Yocto package:
 4. **A tool interface asserted from memory.** Check flags and arity against the pinned `--help` or source.
 
 Scope: a bounded recheck against pinned upstreams and each package's description, not new behavioral
-evaluation (that and hardware qualification stay deferred per the
-[review-ledger record](../docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md)). Record findings in a
-dated file under `../docs/evaluations/skills/`.
+evaluation (that and hardware qualification stay deferred per the review-ledger record, agent-setup's
+`docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md`). Record findings in a dated file under
+agent-setup's `docs/evaluations/skills/`.
 
 ## Crypto and FIPS Depth for the Yocto Security Set
 
@@ -376,27 +347,6 @@ expression language). Do not keep expanding the orientation file into a referenc
 
 Write independently from primary sources: `netresearch/github-project-skill` uses CC-BY-SA-4.0 for prose
 despite MIT for scripts and assets, so its prose cannot be lifted into this MIT repository.
-
-## Two-Tier Memory Scoping
-
-Investigate whether the memory store should gain a global tier alongside the per-project silos. Today every
-silo is per project, so a fact true everywhere lands in whichever silo was open and only that project sees it.
-`session-reflect` works around this in prose (`metadata.scope:` marks the exception for a human reader and the sweep
-but routes nothing).
-
-`microsoft/skills`' `continual-learning` reached a two-tier split independently (global for tool patterns and
-cross-project conventions, repo-local for project conventions). **Treat it as convergent evidence that the gap
-is structural, not as a component to adopt** — its storage is a Copilot-hook-driven SQLite database, not Claude
-Code's model; nothing was used (provenance in `../docs/evaluations/skills/2026-09-shared-skill-review.md`).
-
-Open questions:
-
-- Does a global tier belong in the silos at all, or does silo consolidation (a repository TODO entry that would
-  change what `scope:` means) solve the same problem? Settle that first; it may make this moot.
-- If added, what routes a capture to it — agent judgment at write time, or a filter that actually reads
-  `metadata.scope:`?
-- Is decay wanted? These memories are hand-curated and few, unlike the automatically-populated store whose
-  60-day/hit-count pruning would otherwise be worth copying.
 
 ## Changelog Skill Deferred
 

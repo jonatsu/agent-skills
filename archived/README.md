@@ -14,15 +14,15 @@ whole mechanism; there is no separate opt-out to remember.
 The embedded domain was restored to `../shared/embedded/` on 2026-09-07. Its five skills now use the names
 `buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`, and
 `yocto-openembedded-development`. Their review progress is tracked in
-[../TODO.md](../TODO.md#embedded-domain--review-ledger).
+[../TODO.md](../TODO.md#re-review-the-other-four-embedded-skills--non-urgent).
 
 A row saying "Review is deferred" is the authoritative record that the package's review is still outstanding.
 The 2026-09 review campaign's own ledger is retired; its verdicts and evidence are in
-`../../docs/evaluations/skills/2026-09-shared-skill-review.md`, which records no status.
+agent-setup's `docs/evaluations/skills/2026-09-shared-skill-review.md`, which records no status.
 
 | Skill | Archived | Why |
 |---|---|---|
-| `anti-rationalization` | 2026-09-02 | Review lite completed 2026-09-07: invalid under current policy, with additional design defects. Remains archived; [review and proposed disposition](../../docs/evaluations/skills/2026-09-07-archived-skill-review-batch-1.md). |
+| `anti-rationalization` | 2026-09-02 | Review lite completed 2026-09-07: invalid under current policy, with additional design defects. Remains archived; review and proposed disposition (agent-setup's `docs/evaluations/skills/2026-09-07-archived-skill-review-batch-1.md`). |
 | `claude-code-setup-audit` | 2026-09-28 | Retired at the user's direction because it saw no use; it had not been through the description or `writing-for-agents` passes. See its `ARCHIVED.md`. |
 | `design-forge` | 2026-09-02 | Temporarily removed from deployment. Its corpus contract and checker remain archived as reference material. Review is deferred. See its `ARCHIVED.md`. |
 | `find-skills` | 2026-09-02 | Retired at the user's direction. Its cross-agent source catalogue, trust model and installation workflow require continuing maintenance against external services and agent interfaces; Codex's system `skill-installer` now covers its narrower installation lane. The security and provenance material remains useful as a reference. See its `ARCHIVED.md`. |
