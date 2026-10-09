@@ -338,7 +338,8 @@ despite MIT for scripts and assets, so its prose cannot be lifted into this MIT 
 ## Changelog Skill Deferred
 
 Do not port `examples/skills/changelog` from `MuhammadUsmanGM/claude-code-best-practices` (reviewed and rejected
-2026-09-03). Nothing under `~/src` cuts versioned releases; the one `CHANGELOG.md` is `nix-config`'s, which
+2026-09-03). None of the author's projects cuts versioned releases; the one `CHANGELOG.md` among them is the Nix
+configuration repository's, which
 deliberately uses date headings and verbatim commit subjects rather than the consumer-facing Keep a Changelog
 format the skill would push. Reconsider when a project here starts cutting versioned releases and adopts Keep a
 Changelog for it (most plausibly `knowledge-vault` or `services`).
