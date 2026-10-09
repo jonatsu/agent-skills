@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 from collections.abc import Sequence
@@ -15,7 +16,7 @@ from skill_checks.catalog import (
     find_skill_source,
 )
 from skill_checks.descriptions import check_descriptions, format_description_report
-from skill_checks.identity import IdentityError, wrong_identities
+from skill_checks.identity import IdentityError, wrong_identities, wrong_pushed_identities
 from skill_checks.names import duplicate_names
 from skill_checks.outside_references import check_packages
 from skill_checks.validators import (
@@ -24,6 +25,10 @@ from skill_checks.validators import (
     format_validation_report,
     run_validator,
 )
+
+# pre-commit names the pushed range in these when it runs a pre-push hook.
+PUSH_FROM_VARIABLE = "PRE_COMMIT_FROM_REF"
+PUSH_TO_VARIABLE = "PRE_COMMIT_TO_REF"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -39,6 +44,11 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("names", help="fail when two deployable skills share a name")
     commands.add_parser("references", help="fail on a reference out of a skill package")
     commands.add_parser("identity", help="fail unless Git would commit as the noreply address")
+    pushed = commands.add_parser(
+        "pushed-identity", help="fail when a pushed commit carries another address than the noreply one"
+    )
+    pushed.add_argument("--from-ref", default=os.environ.get(PUSH_FROM_VARIABLE, ""))
+    pushed.add_argument("--to-ref", default=os.environ.get(PUSH_TO_VARIABLE, ""))
     locate = commands.add_parser("locate", help="print one skill's directory by name")
     locate.add_argument("name")
     return parser
@@ -63,6 +73,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     arguments = build_parser().parse_args(argv)
     if arguments.command == "identity":
         return _run_identity()
+    if arguments.command == "pushed-identity":
+        return _run_pushed_identity(arguments.from_ref, arguments.to_ref)
     try:
         root = find_repository_root()
     except SkillCatalogError as error:
@@ -155,6 +167,22 @@ def _run_identity() -> int:
         print(f"FAIL  {problem}", file=sys.stderr)
     if problems:
         print("      set it with: git config user.email <the noreply address>", file=sys.stderr)
+    return 1 if problems else 0
+
+
+def _run_pushed_identity(from_ref: str, to_ref: str) -> int:
+    if not to_ref:
+        print(f"skill-checks: no pushed commit given; set --to-ref or {PUSH_TO_VARIABLE}", file=sys.stderr)
+        return 2
+    try:
+        problems = wrong_pushed_identities(from_ref, to_ref)
+    except IdentityError as error:
+        print(f"skill-checks: {error}", file=sys.stderr)
+        return 2
+    for problem in problems:
+        print(f"FAIL  {problem}", file=sys.stderr)
+    if problems:
+        print("      rewrite those commits' identity before pushing; nothing was pushed", file=sys.stderr)
     return 1 if problems else 0
 
 

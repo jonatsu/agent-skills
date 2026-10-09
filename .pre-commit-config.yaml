@@ -1,7 +1,10 @@
 # Hygiene hooks, carried over from the skills' previous home with their excludes re-based to this root. The
 # skill packages were formatted under exactly these settings, so a full run must change nothing: a hook that
 # rewrote a deployed skill would change what every agent loads.
-default_install_hook_types: [pre-commit]
+# `pre-commit install` wires both stages. Every hook runs at pre-commit unless it names its own stage; only the
+# pushed-identity check runs at pre-push.
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -117,5 +120,14 @@ repos:
         name: commit identity is the noreply address
         entry: uv run --frozen skill-checks identity
         language: system
+        always_run: true
+        pass_filenames: false
+      # Publishing is where a wrong address does harm, and a rebase, a cherry-pick or a clone without hooks
+      # skips the commit-time check; this reads every commit the push would publish.
+      - id: pushed-identity
+        name: pushed commits carry only the noreply address
+        entry: uv run --frozen skill-checks pushed-identity
+        language: system
+        stages: [pre-push]
         always_run: true
         pass_filenames: false

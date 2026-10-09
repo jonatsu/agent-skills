@@ -1,5 +1,6 @@
 """Tests for the duplicate-name and commit-identity checks."""
 
+import os
 import subprocess
 from collections.abc import Callable
 from pathlib import Path
@@ -7,7 +8,12 @@ from pathlib import Path
 import pytest
 
 from skill_checks.catalog import discover_skill_sources
-from skill_checks.identity import NOREPLY_ADDRESS, IdentityError, wrong_identities
+from skill_checks.identity import (
+    NOREPLY_ADDRESS,
+    IdentityError,
+    wrong_identities,
+    wrong_pushed_identities,
+)
 from skill_checks.names import duplicate_names
 
 
@@ -63,3 +69,40 @@ def test_no_configured_identity_is_an_error(
 
     with pytest.raises(IdentityError):
         wrong_identities()
+
+
+def commit(message: str, email: str) -> str:
+    environment = {"GIT_AUTHOR_EMAIL": email, "GIT_COMMITTER_EMAIL": email}
+    subprocess.run(
+        ["git", "commit", "-q", "--allow-empty", "--no-verify", "-m", message],
+        check=True,
+        env={**os.environ, **environment},
+    )
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"], capture_output=True, check=True, text=True
+    ).stdout.strip()
+
+
+def test_a_push_of_noreply_commits_passes(repository: Path) -> None:
+    base = commit("base", NOREPLY_ADDRESS)
+    tip = commit("next", NOREPLY_ADDRESS)
+
+    assert wrong_pushed_identities(base, tip) == ()
+
+
+def test_a_pushed_commit_under_another_address_fails(repository: Path) -> None:
+    base = commit("base", NOREPLY_ADDRESS)
+    commit("leak", "someone@example.com")
+    tip = commit("next", NOREPLY_ADDRESS)
+
+    problems = wrong_pushed_identities(base, tip)
+
+    assert len(problems) == 1
+    assert "another address" in problems[0]
+
+
+def test_a_new_branch_push_checks_every_commit_no_remote_holds(repository: Path) -> None:
+    commit("leak", "someone@example.com")
+    tip = commit("next", NOREPLY_ADDRESS)
+
+    assert len(wrong_pushed_identities("", tip)) == 1
