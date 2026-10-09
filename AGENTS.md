@@ -55,8 +55,9 @@ first fails.
   `writing-skill-descriptions` whenever a description is written or changed.
 - Use `skill-forge`'s review mode for every skill review. It governs assessment and evidence; its authoring
   mode governs the shape of a proposed repair and any separately authorized edit.
-- Keep every skill self-contained: no link, path or script reference may leave its folder. `just check` fails
-  one that does. A script in one skill may be run by this repository's checks, never by another skill.
+- Keep every skill self-contained: no link, path or script reference may leave its folder. `just check` fails a
+  Markdown link or a script path that does, but it matches patterns line by line; check any other reference
+  yourself. A script in one skill may be run by this repository's checks, never by another skill.
 - Keep a skill's `description` one inline YAML scalar. Kasetto records a folded one as its marker character.
 - Keep an `ATTRIBUTIONS.md` source entry permanently, restated in the past tense once the material is
   replaced. The revisions that carried the material stay in history, so deleting the entry hides a

@@ -5,11 +5,14 @@ outside it, and both are checked:
 
 - a Markdown link or image target, inline (`[text](target)`) or reference-style (`[label]: target`), outside a
   fenced code block; a target with a URL scheme or a bare `#anchor` is not a file reference;
-- a path a bundled script builds from its own location: a `../` run in a string, resolved against the script's
-  directory, or a `Path(__file__)` chain of `.parent` or `parents[n]` that climbs above the package.
+- a path a bundled `.py`, `.sh` or `.bash` script builds from its own location: a `../` run in a string,
+  resolved against the script's directory, or a `Path(__file__)` chain of `.parent` or `parents[n]` that climbs
+  above the package.
 
-Plain prose that names a path without linking it is not a reference and passes. An absolute path in a link
-fails, because it points into one machine's checkout.
+Plain prose that names a path without linking it is not a reference and passes. An absolute path, a `~` path
+or a `file:` URL in a link fails, because each points into one machine's files. The check reads lines with
+patterns, not a parser: a link split across lines, an HTML `<a>` or `<img>`, a script without a suffix, and a
+path built any other way pass unchecked.
 """
 
 from __future__ import annotations
@@ -28,6 +31,7 @@ FENCE = re.compile(r"^\s*(```|~~~)")
 INLINE_LINK = re.compile(r"!?\[[^\]\n]*\]\(\s*<?([^)\s>]+)>?(?:\s+\"[^\"]*\")?\s*\)")
 REFERENCE_DEFINITION = re.compile(r"^\s{0,3}\[[^\]\n]+\]:\s*<?(\S+?)>?(?:\s+.*)?$")
 URL_SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
+FILE_URL = re.compile(r"^file:", re.IGNORECASE)
 # A `../` run that opens a string, or that follows a shell directory expansion such as `$(dirname "$0")/` or
 # `${SCRIPT_DIR}/`, both of which stand for the script's own directory.
 SCRIPT_RELATIVE_PATH = re.compile(r"""(?:["'`]|\)/|\}/)((?:\.\./)+[^"'`\s)]*)""")
@@ -87,6 +91,10 @@ def _markdown_violations(package: Path, path: Path, text: str) -> Iterator[Viola
 
 
 def _target_problem(package: Path, base: Path, target: str) -> str | None:
+    if FILE_URL.match(target):
+        return "file URL"
+    if target.startswith("~"):
+        return "home-relative path"
     if URL_SCHEME.match(target) or target.startswith("#"):
         return None
     file_part = target.split("#", 1)[0].split("?", 1)[0]

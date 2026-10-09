@@ -27,6 +27,8 @@ def make_package(root: Path, name: str, files: dict[str, str]) -> Path:
         ("references/a.md", "![diagram](../../../shared.png)\n"),
         ("references/a.md", "[ref]: ../../other/references/x.md\n"),
         ("references/a.md", "See [abs](/home/someone/repo/file.md).\n"),
+        ("references/a.md", "See [home](~/repo/file.md).\n"),
+        ("references/a.md", "See [url](file:///etc/hosts).\n"),
         ("scripts/run.py", "ROOT = Path(__file__).parent.parent.parent\n"),
         ("scripts/run.py", "ROOT = Path(__file__).resolve().parents[2]\n"),
         ("scripts/run.sh", 'source "$(dirname "$0")/../../other/lib.sh"\n'),

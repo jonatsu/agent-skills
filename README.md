@@ -32,8 +32,9 @@ Skill Forge local policy (quick_validate)
 ## Using a skill
 
 Copy a skill's folder, such as `engineering/technical-design/`, into your agent's skills directory, for example
-`~/.claude/skills/` for Claude Code. Each folder is self-contained: nothing in it reaches outside itself, and
-`just check` enforces that. Mind the licence line below; a few skills carry their upstream licence.
+`~/.claude/skills/` for Claude Code. Each folder is self-contained: nothing in it links to or loads a file outside
+itself. `just check` catches the common breaks, a Markdown link or a script path that climbs out of the folder.
+Mind the licensing section below; some skills carry their upstream licence.
 
 To install a whole group with Kasetto, point an entry at this repository, pin a commit, and name the group as
 the `sub-dir`. Kasetto discovers skills exactly one level under that directory, so a nested group such as
