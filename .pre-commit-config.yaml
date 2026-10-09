@@ -58,7 +58,7 @@ repos:
         args: ["--no-globs"]
   # skill-forge's vendored skills-ref copy is pinned third-party code, outside this repository's lint policy.
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 8a948e557ca98afa9489998ad0b85515964df9c4 # frozen: v0.12.0
+    rev: f12be1ebaa5351c1fc76472de98db2c3446c8253 # frozen: v0.16.10
     hooks:
       - id: ruff
         args: ["--fix", "--exit-non-zero-on-fix"]
