@@ -8,7 +8,7 @@ default_stages: [pre-commit]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -19,39 +19,42 @@ repos:
       - id: check-yaml
       - id: mixed-line-ending
         args: ["--fix=lf"]
-  # Secrets scanner over the STAGED DIFF only; CI runs `betterleaks git` over the whole history. The hook is
-  # a golang-language hook, so pre-commit builds it once from source.
+  # Secrets scanner over the STAGED DIFF only, so it finds nothing under --all-files; `just secrets` scans the
+  # whole history. The hook is a golang-language hook, so pre-commit builds it once from source. Revisions
+  # are frozen to commits; Dependabot proposes updates.
   - repo: https://github.com/betterleaks/betterleaks
-    rev: v1.8.1
+    rev: 81aff7a638638aae3a659845d089043e1d8fe9ac # frozen: v1.9.0
     hooks:
       - id: betterleaks
   # mdformat normalizes Markdown structure while preserving deliberate prose line breaks. Archived skills and
   # verbatim upstream files are excluded because hygiene hooks must not rewrite them.
   - repo: https://github.com/hukkin/mdformat
-    rev: 1.0.0
+    rev: 82912cdaea4fb830f751504486a7879c70526547 # frozen: 1.0.0
     hooks:
       - id: mdformat
         args: ["--wrap", "keep", "--number", "--no-codeformatters"]
         exclude: >-
           ^(archived/|(.+/)?skill-forge/scripts/skills-ref/|(.+/)?repo-management/assets/ISSUE_TEMPLATE/|(.+/)?brooks-)
         additional_dependencies:
-          - mdformat-footnote
-          - mdformat-frontmatter
-          - mdformat-gfm
-          - mdformat-gfm-alerts
-          - mdformat-simple-breaks
-          - mdformat-toc
-          - mdformat-config
-          - mdformat-wikilink
+          - mdformat-footnote==0.1.3
+          - mdformat-frontmatter==2.1.2
+          - mdformat-gfm==1.0.0
+          - mdformat-gfm-alerts==2.1.0
+          - mdformat-simple-breaks==0.1.0
+          - mdformat-toc==0.5.0
+          - mdformat-config==0.2.1
+          - mdformat-wikilink==0.3.0
+          - markdown-it-py==4.2.0
+          - mdit-py-plugins==0.6.1
   # markdownlint owns the 120-column ceiling; its ignores live in .markdownlint-cli2.jsonc.
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.23.2
+    rev: b82a6c8896e491b9cb377a99ff3412131920681b # frozen: v0.23.2
     hooks:
       - id: markdownlint-cli2
         args: ["--no-globs"]
   # skill-forge's vendored skills-ref copy is pinned third-party code, outside this repository's lint policy.
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.0
+    rev: 8a948e557ca98afa9489998ad0b85515964df9c4 # frozen: v0.12.0
     hooks:
       - id: ruff
         args: ["--fix", "--exit-non-zero-on-fix"]
@@ -91,11 +94,13 @@ repos:
         language: system
         files: (^|/)SKILL\.md$
         pass_filenames: false
+      # Always runs: the policy also checks that each referenced file exists and that a LICENSE.upstream has
+      # its ATTRIBUTIONS.md, so deleting or renaming one of those breaks it without any SKILL.md changing.
       - id: skill-policy
         name: skill-forge local policy
         entry: uv run --frozen skill-checks policy
         language: system
-        files: (^|/)(SKILL\.md|quick_validate\.py)$
+        always_run: true
         pass_filenames: false
       - id: skill-descriptions
         name: skill descriptions are inline and within budget

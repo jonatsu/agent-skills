@@ -45,7 +45,8 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("references", help="fail on a reference out of a skill package")
     commands.add_parser("identity", help="fail unless Git would commit as the noreply address")
     pushed = commands.add_parser(
-        "pushed-identity", help="fail when a pushed commit carries another address than the noreply one"
+        "pushed-identity",
+        help="fail when a pushed commit carries another address than the noreply one",
     )
     pushed.add_argument("--from-ref", default=os.environ.get(PUSH_FROM_VARIABLE, ""))
     pushed.add_argument("--to-ref", default=os.environ.get(PUSH_TO_VARIABLE, ""))
@@ -172,7 +173,10 @@ def _run_identity() -> int:
 
 def _run_pushed_identity(from_ref: str, to_ref: str) -> int:
     if not to_ref:
-        print(f"skill-checks: no pushed commit given; set --to-ref or {PUSH_TO_VARIABLE}", file=sys.stderr)
+        print(
+            f"skill-checks: no pushed commit given; set --to-ref or {PUSH_TO_VARIABLE}",
+            file=sys.stderr,
+        )
         return 2
     try:
         problems = wrong_pushed_identities(from_ref, to_ref)
@@ -182,7 +186,10 @@ def _run_pushed_identity(from_ref: str, to_ref: str) -> int:
     for problem in problems:
         print(f"FAIL  {problem}", file=sys.stderr)
     if problems:
-        print("      rewrite those commits' identity before pushing; nothing was pushed", file=sys.stderr)
+        print(
+            "      rewrite those commits' identity before pushing; nothing was pushed",
+            file=sys.stderr,
+        )
     return 1 if problems else 0
 
 

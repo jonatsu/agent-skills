@@ -16,7 +16,7 @@ Read the focused source before acting:
 ## Commands
 
 ```bash
-just check                     # every hook over the tree, plus both test suites; run before calling work done
+just check                     # history secrets scan, every hook, both test suites; run before calling work done
 just skill-check <skill-dir>   # both validators over one skill
 uv run --frozen skill-checks spec | policy | descriptions | names | references   # one check, whole tree
 ```

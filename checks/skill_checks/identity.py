@@ -50,7 +50,10 @@ def wrong_pushed_identities(from_ref: str, to_ref: str) -> tuple[str, ...]:
     """
     revisions = [f"{from_ref}..{to_ref}"] if from_ref else [to_ref, "--not", "--remotes"]
     result = subprocess.run(
-        ["git", "log", "--format=%h %ae %ce", *revisions], capture_output=True, text=True, check=False
+        ["git", "log", "--format=%h %ae %ce", *revisions],
+        capture_output=True,
+        text=True,
+        check=False,
     )
     if result.returncode != 0:
         raise IdentityError(f"cannot list the pushed commits: {result.stderr.strip()}")

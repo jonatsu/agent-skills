@@ -1,0 +1,23 @@
+# Weekly update pull requests for every pinned dependency Dependabot can read; mise.toml and mise.lock are
+# bumped by hand with `mise lock`. A formatter update can rewrite skill bytes, so CI's fixed-point run on each
+# pull request decides whether it merges. The cooldown leaves a new release a week to be yanked first.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+  - package-ecosystem: pre-commit
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7

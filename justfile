@@ -3,7 +3,11 @@
 uv := 'uv run --frozen'
 
 # Every check and test; run before calling work done.
-check: hooks test
+check: secrets hooks test
+
+# The whole history scanned for secrets. The betterleaks hook reads only staged changes, so the hooks do not.
+secrets:
+    betterleaks git . --redact --exit-code 1
 
 # Every pre-commit hook over the whole tree.
 hooks:

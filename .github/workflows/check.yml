@@ -1,6 +1,6 @@
-# Every check `just check` runs locally, plus a secrets scan of the whole history. The commit-identity hook is
-# local only: a runner has no committer identity of its own. Actions are pinned by commit; mise pins and
-# checksum-verifies every tool.
+# Every check `just check` runs locally. The secrets scan runs first, so a failing hook cannot skip it. The
+# commit-identity hook is local only, because a runner has no committer identity of its own. Actions are pinned
+# by commit; mise installs only the tool versions and checksums mise.lock records.
 name: check
 
 on:
@@ -14,18 +14,23 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      # Fail rather than resolve a tool version mise.lock does not hold.
+      MISE_LOCKED: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # The whole history, for the secrets scan below.
+          # The whole history, for the secrets scan.
           fetch-depth: 0
           persist-credentials: false
       - uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+        with:
+          version: 2026.10.2
+      - name: Scan the whole history for secrets
+        run: just secrets
       - name: Install the checks
         run: uv sync --frozen
-      - name: Run every check and test
+      - name: Run every hook and test
         env:
           SKIP: commit-identity
-        run: just check
-      - name: Scan the whole history for secrets
-        run: betterleaks git . --exit-code 1
+        run: just hooks test

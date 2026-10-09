@@ -5,7 +5,7 @@ just = "1.58.0"
 shellcheck = "0.11.0"
 shfmt = "3.14.1"
 "pipx:pre-commit" = "4.6.2"
-# The history scan in CI; the pre-commit hook builds its own copy for staged changes.
+# The history scan behind `just secrets`; the pre-commit hook builds its own copy for staged changes.
 "aqua:betterleaks/betterleaks" = "1.9.0"
 
 [settings]
