@@ -46,7 +46,7 @@ A rescue archive of the in-progress Headroom work, dated 2026-08-25, sits outsid
 this repository in the author's local workspace, including a hardened
 `systemd-headroom.service` that invokes a launcher directly instead of running an
 installer through `ExecStart`. Noted 2026-08-26 from `~/.config/claude/TODO.md`;
-not verified to still exist at that path.
+not verified to still exist.
 
 ## Reviving it
 

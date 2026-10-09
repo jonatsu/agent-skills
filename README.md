@@ -87,7 +87,7 @@ the author's setup serves this tier to them through a search server instead.
 The repository is MIT-licensed ([LICENSE](LICENSE)), covering the original work here. A skill adapted from
 elsewhere keeps its upstream licence in its frontmatter `license` field, records the source in its
 `ATTRIBUTIONS.md`, and ships the upstream licence text as `LICENSE.upstream`; 29 skills do. Five skills declare
-a licence other than plain MIT, Apache-2.0 or CC-BY-SA-4.0 among them, so read a skill's `license` field
+a licence other than plain MIT, with Apache-2.0 and CC-BY-SA-4.0 among them, so read a skill's `license` field
 before reusing it. Where an upstream licence would block reuse, the skill was rewritten
 independently rather than adapted; `tools/git-commits-and-recovery` is the worked example.
 
