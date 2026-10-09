@@ -39,16 +39,21 @@ def wrong_identities() -> tuple[str, ...]:
     return tuple(problems)
 
 
-def wrong_pushed_identities(from_ref: str, to_ref: str) -> tuple[str, ...]:
+def wrong_pushed_identities(from_ref: str, to_ref: str, remote: str = "") -> tuple[str, ...]:
     """Return a message for each commit in a push whose author or committer is not the noreply address.
 
-    `from_ref` is the remote's current commit, or empty when the push creates the branch; then every commit
-    reachable from `to_ref` that no remote-tracking ref already holds is checked.
+    `from_ref` is the remote's current commit. It is empty when the push creates the branch, and always on a
+    push that carries the root commit, such as the first push to a new repository. Then every commit
+    reachable from `to_ref` that no tracking ref of `remote` holds is checked, or of any remote when
+    `remote` is empty.
 
     Raises:
         IdentityError: If Git cannot list the pushed commits.
     """
-    revisions = [f"{from_ref}..{to_ref}"] if from_ref else [to_ref, "--not", "--remotes"]
+    if from_ref:
+        revisions = [f"{from_ref}..{to_ref}"]
+    else:
+        revisions = [to_ref, "--not", f"--remotes={remote}" if remote else "--remotes"]
     result = subprocess.run(
         ["git", "log", "--format=%h %ae %ce", *revisions],
         capture_output=True,

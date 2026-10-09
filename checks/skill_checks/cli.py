@@ -26,9 +26,12 @@ from skill_checks.validators import (
     run_validator,
 )
 
-# pre-commit names the pushed range in these when it runs a pre-push hook.
+# pre-commit names the pushed range in the first two when it runs a pre-push hook. A push carrying the root
+# commit, such as the first one to a new repository, gets neither: only the local ref and the remote name.
 PUSH_FROM_VARIABLE = "PRE_COMMIT_FROM_REF"
 PUSH_TO_VARIABLE = "PRE_COMMIT_TO_REF"
+PUSH_LOCAL_VARIABLE = "PRE_COMMIT_LOCAL_BRANCH"
+PUSH_REMOTE_VARIABLE = "PRE_COMMIT_REMOTE_NAME"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -49,7 +52,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="fail when a pushed commit carries another address than the noreply one",
     )
     pushed.add_argument("--from-ref", default=os.environ.get(PUSH_FROM_VARIABLE, ""))
-    pushed.add_argument("--to-ref", default=os.environ.get(PUSH_TO_VARIABLE, ""))
+    pushed.add_argument(
+        "--to-ref",
+        default=os.environ.get(PUSH_TO_VARIABLE) or os.environ.get(PUSH_LOCAL_VARIABLE, ""),
+    )
+    pushed.add_argument("--remote", default=os.environ.get(PUSH_REMOTE_VARIABLE, ""))
     locate = commands.add_parser("locate", help="print one skill's directory by name")
     locate.add_argument("name")
     return parser
@@ -75,7 +82,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if arguments.command == "identity":
         return _run_identity()
     if arguments.command == "pushed-identity":
-        return _run_pushed_identity(arguments.from_ref, arguments.to_ref)
+        return _run_pushed_identity(arguments.from_ref, arguments.to_ref, arguments.remote)
     try:
         root = find_repository_root()
     except SkillCatalogError as error:
@@ -171,15 +178,15 @@ def _run_identity() -> int:
     return 1 if problems else 0
 
 
-def _run_pushed_identity(from_ref: str, to_ref: str) -> int:
+def _run_pushed_identity(from_ref: str, to_ref: str, remote: str) -> int:
     if not to_ref:
         print(
-            f"skill-checks: no pushed commit given; set --to-ref or {PUSH_TO_VARIABLE}",
+            f"skill-checks: no pushed commit given; set --to-ref, {PUSH_TO_VARIABLE} or {PUSH_LOCAL_VARIABLE}",
             file=sys.stderr,
         )
         return 2
     try:
-        problems = wrong_pushed_identities(from_ref, to_ref)
+        problems = wrong_pushed_identities(from_ref, to_ref, remote)
     except IdentityError as error:
         print(f"skill-checks: {error}", file=sys.stderr)
         return 2

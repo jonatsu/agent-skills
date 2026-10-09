@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from skill_checks.catalog import discover_skill_sources
+from skill_checks.cli import main
 from skill_checks.identity import (
     NOREPLY_ADDRESS,
     IdentityError,
@@ -106,3 +107,26 @@ def test_a_new_branch_push_checks_every_commit_no_remote_holds(repository: Path)
     tip = commit("next", NOREPLY_ADDRESS)
 
     assert len(wrong_pushed_identities("", tip)) == 1
+
+
+def test_a_new_branch_push_skips_commits_that_remote_already_holds(repository: Path) -> None:
+    commit("leak", "someone@example.com")
+    subprocess.run(["git", "update-ref", "refs/remotes/probe/main", "HEAD"], check=True)
+    tip = commit("next", NOREPLY_ADDRESS)
+
+    assert wrong_pushed_identities("", tip, "probe") == ()
+    assert len(wrong_pushed_identities("", tip, "other")) == 1
+
+
+@pytest.mark.parametrize(("email", "status"), [(NOREPLY_ADDRESS, 0), ("someone@example.com", 1)])
+def test_a_push_carrying_the_root_commit_is_checked_from_the_local_ref(
+    repository: Path, monkeypatch: pytest.MonkeyPatch, email: str, status: int
+) -> None:
+    commit("root", email)
+    # What pre-commit sets for a push that includes the root commit: no range, only the refs.
+    for name in ("PRE_COMMIT_FROM_REF", "PRE_COMMIT_TO_REF"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("PRE_COMMIT_LOCAL_BRANCH", "HEAD")
+    monkeypatch.setenv("PRE_COMMIT_REMOTE_NAME", "origin")
+
+    assert main(["pushed-identity"]) == status
