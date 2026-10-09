@@ -3,16 +3,14 @@
 Skills kept for reference that no longer deploy anywhere. **Nothing in this
 directory reaches any agent.**
 
-Kasetto discovers skills through three configs that name `skills/shared`,
-`skills/claude` and `skills/opencode` explicitly — nothing globs `skills/*`. A
-directory beside those is therefore invisible to deployment with no exclusion
-list to maintain, and it cannot drift back into a deploy by accident. That is the
-whole mechanism; there is no separate opt-out to remember.
+The configuration that installs these skills names each skill group it deploys
+as a Kasetto `sub-dir`, and none names `archived`. A directory here is therefore
+invisible to deployment, with no exclusion list to maintain.
 
 ## What lives here
 
-The embedded domain was restored to `../shared/embedded/` on 2026-09-07. Its five skills now use the names
-`buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`, and
+The embedded domain was restored on 2026-09-07 and now lives in `../lazy/embedded-linux/`. Its five skills use the
+names `buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`, and
 `yocto-openembedded-development`. Their review progress is tracked in
 [../TODO.md](../TODO.md#re-review-the-other-four-embedded-skills--non-urgent).
 
@@ -26,7 +24,7 @@ agent-setup's `docs/evaluations/skills/2026-09-shared-skill-review.md`, which re
 | `claude-code-setup-audit` | 2026-09-28 | Retired at the user's direction because it saw no use; it had not been through the description or `writing-for-agents` passes. See its `ARCHIVED.md`. |
 | `design-forge` | 2026-09-02 | Temporarily removed from deployment. Its corpus contract and checker remain archived as reference material. Review is deferred. See its `ARCHIVED.md`. |
 | `find-skills` | 2026-09-02 | Retired at the user's direction. Its cross-agent source catalogue, trust model and installation workflow require continuing maintenance against external services and agent interfaces; Codex's system `skill-installer` now covers its narrower installation lane. The security and provenance material remains useful as a reference. See its `ARCHIVED.md`. |
-| `generated-file-verify` | 2026-09-28 | Nix-specific guidance for one repository; merged into `~/src/nix-config`'s own agent memory. See its `ARCHIVED.md`. |
+| `generated-file-verify` | 2026-09-28 | Nix-specific guidance for one repository; merged into the agent memory of the author's Nix configuration repository. See its `ARCHIVED.md`. |
 | `headroom-management` | 2026-08-26 | The Headroom proxy it manages was rejected, so the skill governs a tool this setup no longer runs. See its `ARCHIVED.md`. |
 | `idea-forge` | 2026-09-02 | Replaced by portable `brainstorming` after behavioral evaluation and independent review completed 2026-09-04. Retained intact as historical evidence and an evaluation baseline. See its `ARCHIVED.md`. |
 | `lean-ctx` | 2026-08-27 | lean-ctx was removed from this setup, so every `ctx_*` trigger in the skill names a tool that no longer exists. Its three locally-measured reference files are why this is an archive rather than a deletion, and its Apache-2.0 `LICENSE.upstream`/`NOTICE.upstream` must stay with the directory. See its `ARCHIVED.md`. |
@@ -35,67 +33,17 @@ agent-setup's `docs/evaluations/skills/2026-09-shared-skill-review.md`, which re
 
 ## Archiving a skill
 
-1. `git mv skills/<group>/<name> skills/archived/<name>` — use `git mv` so
-   history and rename detection survive. When archiving a complete shared domain, preserve
-   it as `skills/archived/<domain>/<name>` instead of flattening its skills.
+1. `git mv <group>/<name> archived/<name>`, using `git mv` so history and rename
+   detection survive. When archiving a complete domain, preserve it as
+   `archived/<domain>/<name>` instead of flattening its skills.
 2. Write `ARCHIVED.md` inside the moved skill package: the date, why it was archived,
    what it was deployed to last, and where any successor lives. **Leave
-   `SKILL.md` byte-identical to what was last deployed** — the reference copy is
+   `SKILL.md` byte-identical to what was last deployed**: the reference copy is
    only worth keeping if it is exactly what ran.
 3. Add a row to the table above.
-4. **Prune the deployed copy by hand, then confirm with `ls` against each agent's
-   skills directory.** The post-commit hook will NOT do it — usually without
-   saying so — and the two reasons are worth knowing rather than rediscovering;
-   see below. `git status` cannot see the orphan, because it lives outside this
-   repository.
-5. Update whatever named the skill or domain as live: `skills/README.md`, `skills/kasetto/base.yaml`, the header
-   comment in `scripts/kasetto-deploy.sh`, and any open item in
-   `skills/TODO.md` that planned future work on it.
-
-## The prune step is manual, for two separate reasons
-
-**One of them is silent, and it fires on every archival.** The post-commit hook
-maps a commit's changed paths to Kasetto scopes with `git diff --name-only HEAD~1
-HEAD`, and git's rename detection collapses a 100% rename to its **destination
-path only**. An archival is `skills/shared/…` → `skills/archived/…`, so nothing
-matches `^skills/shared/`, no scope is selected, and the hook exits 0 having done
-nothing — no warning, no output, ~0.02s. Reproduced on `84cd615`
-(`writing-great-skills`), where the skill was still deployed to all three agents
-afterwards; `git diff --no-renames --name-only 84cd615~1 84cd615` shows the four
-source paths the default invocation hides. Tracked in `skills/TODO.md`; the
-candidate fix is `--no-renames` on that diff.
-
-Recovery is `./scripts/kasetto-deploy.sh`, which prunes correctly as long as the
-group still holds a skill to name. That was enough for `writing-great-skills`:
-`0 updated 0 added 1 removed 64 unchanged`, confirmed by `ls`.
-
-**The second reason is loud, and it fires only when archiving empties a group.**
-`scripts/kasetto-deploy.sh` names every local skill in a scope's group as
-`--update <name>...`, because a plain `kst sync` trusts the locked hash and never
-re-reads a local source. When archiving empties a group, there are no names left
-to pass, and the script falls back to a plain sync that **cannot prune**:
-
-```text
-WARN: skills/<group> holds no skills, so no locked sibling can be named.
-WARN: falling back to a plain sync, which cannot prune. Re-resolve by hand:
-WARN:   cd skills/kasetto/<scope> && kst sync --project --update
-```
-
-Verified 2026-08-26 while archiving `headroom-management`: with the source
-directory deleted from disk, `kst` did not error — it reported
-`headroom-management unchanged` and did nothing, because it answered from the
-lock rather than the disk. A bare `--update` re-resolved correctly and reported
-`removed`.
-
-**So an archived skill stays deployed until someone runs that command**, and
-`git status` does not catch it because the orphan is outside this repository.
-
-The 2026-08-26 incident occurred in the former OpenCode scope, which was retired
-from this repository on 2026-09-23. Its ownership exclusion no longer exists;
-the Kasetto last-sibling behavior remains relevant to every active scope.
-
-Confirm the prune with `ls` against the destination, never with `git status`.
-
-A bare `--update` is safe for a scope whose only source is local. **Do not use it
-on a scope carrying remote third-party sources** — it re-resolves moving refs
-there too, which is a different change than the one you meant to make.
+4. Update whatever named the skill or domain as live: `README.md`, and any open item in
+   `TODO.md` that planned future work on it.
+5. The skill leaves the agents when the installing configuration next bumps its pin
+   to this repository. If the archival empties a group, that bump must also drop the
+   group's `sub-dir`, so say so in the commit body. Confirm the removal there, against
+   each agent's skills directory.

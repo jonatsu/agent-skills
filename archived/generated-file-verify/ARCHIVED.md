@@ -1,14 +1,14 @@
 # generated-file-verify — archived 2026-09-28
 
 Archived at the user's direction because its subject belongs to one repository. It was promoted from
-`~/src/nix-config` on 2026-09-06, and every concrete step it carries is Nix: `writeText` and `files.file`
+the author's Nix configuration repository on 2026-09-06, and every concrete step it carries is Nix: `writeText` and `files.file`
 wrappers, per-file `nix flake check` registrations, and `--no-eval-cache`. Its generic description matched
 almost any repository, yet it recorded no `Skill` call in the 30 days before archiving. It had never been through
 the 2026-09-28 description and `writing-for-agents` passes.
 
 ## Where its guidance lives now
 
-`~/src/nix-config/.agents/memory/verification.md` already held two of its four lessons: classify a generator as
+That repository's verification memory file already held two of its four lessons: classify a generator as
 live-derived or static prose before rerunning it, and run a files-generator in a throwaway detached worktree
 first. The other two were added there on 2026-09-28: confirm exactly one generator owns the target file, and
 retry with `--no-eval-cache` before chasing an impossible-looking result as a content bug.

@@ -42,8 +42,8 @@ rewrite; this file is the record that it existed.
 
 ## Related material kept elsewhere
 
-A rescue archive of the in-progress Headroom work sits outside this repository at
-`~/src/context-tools/headroom/rescue-2026-08-25/`, including a hardened
+A rescue archive of the in-progress Headroom work, dated 2026-08-25, sits outside
+this repository in the author's local workspace, including a hardened
 `systemd-headroom.service` that invokes a launcher directly instead of running an
 installer through `ExecStart`. Noted 2026-08-26 from `~/.config/claude/TODO.md`;
 not verified to still exist at that path.

@@ -16,24 +16,12 @@ Added 2026-10-04, left open by the pipeline rewiring that made the skills match
 the routing check (agent-setup's `docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md`)).
 
 - **Evals for the two new behaviors.** Neither has a case in its package's `evals/behavior.json`, so a later edit
-  can drop it unnoticed. Add a case to `shared/engineering/technical-design/evals/behavior.json`: a design with no
+  can drop it unnoticed. Add a case to `engineering/technical-design/evals/behavior.json`: a design with no
   spec that starts deciding user-visible behavior, journeys, or acceptance must stop, propose a spec with
   `writing-specs`, and record the user's decision in the design basis. Add one to
-  `shared/review/conformance-review/evals/behavior.json`: a change governed by a design and plan but no spec must be
+  `review/conformance-review/evals/behavior.json`: a change governed by a design and plan but no spec must be
   compared against those two, with the missing spec reported as a coverage limit, and a change governed by none of
   the three must be returned as general code review.
-- **Confirm Copilot dispatches the generated `code-reviewer`.** `agents/copilot/agents/code-reviewer.agent.md.j2`
-  renders to `~/.copilot/agents/code-reviewer.agent.md`, but GitHub Copilot CLI 1.0.91 has no command that lists
-  custom agents without a session, so three things are unverified: that it appears in `/agent` and is dispatched
-  as a subagent, that its `tools` allowlist is honored with its MCP servers loaded, and whether
-  `include-custom-instructions: true` also loads the personal `~/.copilot/copilot-instructions.md`. One model run
-  settles them; an unknown tool name in the allowlist fails silently, so check the run's `tool.execution_start`
-  events against the list.
-- **De-duplicate the code-reviewer method.** The review method body exists in three near-identical copies:
-  `agents/claude/agents/code-reviewer.md.j2`, `agents/codex/agents/code-reviewer.toml.j2`, and
-  `agents/copilot/agents/code-reviewer.agent.md.j2`. Move it to one fragment under `agents/shared/agent-fragments/`,
-  included with `include_text` as `prompt-defense-baseline.md` already is, so a change to the method lands in all
-  three harnesses at once. Oh-My-Pi uses its built-in `reviewer` and needs no copy.
 
 ## Description and Prose Pass Ledger
 
@@ -159,32 +147,31 @@ The 2026-09 audit rewrote 13 short capability-only descriptions to carry activat
 edits in git
 history). Whether the wording drives activation is unmeasured and nothing depends on settling it. Two of the
 13 describe a situation a user never names — `systematic-debugging` and `repo-management`; if they still do
-not activate on work they cover, move their behavior to `agents/rules/` per this directory's AGENTS.md ("no
-wording repairs" a moment nobody verbalizes) rather than editing the description again. The
+not activate on work they cover, move their behavior into the agents' always-loaded rules in agent-setup, per
+`AGENTS.md` ("no wording repairs" a moment nobody verbalizes), rather than editing the description again. The
 `test-engineer`/`python-testing` datapoint is tracked above.
 
 ## Invocation Control Audit
 
-Checked 2026-09-11: no skill under `shared/` or `claude/` sets `disable-model-invocation` or `user-invocable`,
+Checked 2026-09-11: no skill in this repository sets `disable-model-invocation` or `user-invocable`,
 and `allowed-tools` appeared once, in `claude-code-setup-audit`, archived 2026-09-28. The one skill that rightly
 restricted invocation, `find-skills` (it installs third-party code), is archived, so the worked example for "when
 the flag is right" must be reconstructed.
 
 `git-commits-and-recovery` is settled the other way: the flag never stopped `git push`, it only withheld
-guidance at the moment the command ran. Safety there rests on the staging rule in `agents/rules/` plus the
-`PreToolUse` guard, not on the skill's confirmation gates (as `git-ops`, it fired in 0 of 362 sessions).
+guidance at the moment the command ran. Safety there rests on the staging rule in agent-setup's always-loaded
+rules plus the `PreToolUse` guard, not on the skill's confirmation gates (as `git-ops`, it fired in 0 of 362 sessions).
 What remains is the audit, not that case.
 
-Ownership is the constraint: only owned skills can be edited, since an upstream frontmatter change is
-overwritten on the next sync. Derive the owned set from `skills/kasetto/*.yaml` and the locks at audit time;
-earlier figures go stale within days.
+Ownership is the constraint: only the skills in this repository can be edited. agent-setup also installs
+third-party skills from upstream, and a frontmatter change to one of those is overwritten on the next sync.
 
 1. Audit owned skills by actual behavior: which install or execute third-party code, write outside the working
    tree, mutate git history or remotes, or transmit data externally. Prior candidates: `agents-context-docs`
    (writes files and creates symlinks), `session-reflect`, `chezmoi-dotfiles`.
 2. Decide the bar. `disable-model-invocation: true` costs real capability — right for "installs code from the
    internet", arguably wrong for "writes a doc file".
-3. Verify that every supported client accepts the chosen metadata before touching anything in `shared/`.
+3. Verify that every supported client accepts the chosen metadata before changing any skill.
 4. Record the convention in `AGENTS.md` so new skills are classified at authoring time.
 
 Open sub-question: whether tightening `allowed-tools` rides along with this or stays separate.
@@ -289,7 +276,7 @@ sources, record provenance, and decide whether the source overlaps an existing s
 - [wshobson/conductor](https://github.com/wshobson/agents/tree/main/plugins/conductor): inspect as a plugin,
   including agent definitions and commands Kasetto would not deploy as skills.
 - [mkobit/chezmoi-skills](https://github.com/mkobit/chezmoi-skills): compare against our
-  `shared/lazy/tools/chezmoi-dotfiles` skill for coverage gaps and better patterns worth writing independently.
+  `lazy/tools/chezmoi-dotfiles` skill for coverage gaps and better patterns worth writing independently.
 - [a5c-ai/babysitter](https://github.com/a5c-ai/babysitter): research the `graph` fields in its skills'
   frontmatter and whether our skills should adopt something like them. The user flagged them on 2026-09-30,
   handing over [`jtag-swd-debug`](https://github.com/a5c-ai/babysitter/tree/main/library/specializations/embedded-systems/skills/jtag-swd-debug)
@@ -303,7 +290,7 @@ sources, record provenance, and decide whether the source overlaps an existing s
 
 ## Session Backtrace Skill
 
-Build `session-backtrace` in `shared/agents/`: on request ("where are we", "bt"), rebuild the session's task
+Build `session-backtrace` in `agents/`: on request ("where are we", "bt"), rebuild the session's task
 stack from its full transcript rather than from the compaction summary, and draw it as a stack with done,
 current, and remaining steps. Feasibility was assessed on 2026-09-30 and deferred by the user. It is a check on
 the task-list, checkpoint, and working-notes rules, and the recovery when a session did not keep them.
@@ -341,7 +328,7 @@ What the assessment established:
 ## Dedicated GitHub Actions Skill
 
 Create a separate GitHub Actions skill if recurring work exceeds the short orientation in
-`shared/git/github-ops/references/actions-basics.md` (intended scope: matrix and cache design, self-hosted
+`tools/github-ops/references/actions-basics.md` (intended scope: matrix and cache design, self-hosted
 runners, reusable workflows, composite actions, environments and deployment gates, artifact retention, the
 expression language). Do not keep expanding the orientation file into a reference manual.
 

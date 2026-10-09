@@ -49,8 +49,9 @@ skills:
 
 ## Working on the skills
 
-You need [mise](https://mise.jdx.dev/), [just](https://just.systems/), [pre-commit](https://pre-commit.com/),
-`shellcheck` and `shfmt`. mise provides the pinned Python and uv:
+You need [mise](https://mise.jdx.dev/). `mise install` provides every other tool at the version `mise.lock`
+pins: Python, uv, [just](https://just.systems/), [pre-commit](https://pre-commit.com/), ShellCheck, shfmt and
+[Betterleaks](https://github.com/betterleaks/betterleaks).
 
 ```sh
 mise install
@@ -59,10 +60,11 @@ pre-commit install
 just check
 ```
 
-`just check` runs every pre-commit hook over the tree and both test suites. The hooks include the two skill
-validators, a check that no skill description is a folded YAML scalar, that no two skills share a name, that no
-skill links outside its own folder, a secrets scan, and a check that commits carry the author's GitHub noreply
-address. [AGENTS.md](AGENTS.md) holds the authoring rules: where a new skill goes, how it is reviewed, and how
+`just check` scans the whole history for secrets, then runs every pre-commit hook over the tree and both test
+suites. The hooks include the two skill validators, and checks that no skill description is a folded YAML
+scalar, that no two skills share a name, and that no skill links outside its own folder. `pre-commit install`
+also adds two identity checks, at commit and at push, that fail on any address other than the author's GitHub
+noreply address. [AGENTS.md](AGENTS.md) holds the authoring rules: where a new skill goes, how it is reviewed, and how
 it is licensed.
 
 ## Layout
@@ -82,9 +84,10 @@ the author's setup serves this tier to them through a search server instead.
 ## Licensing
 
 The repository is MIT-licensed ([LICENSE](LICENSE)), covering the original work here. A skill adapted from
-elsewhere keeps its upstream licence in its frontmatter `license` field, with the source recorded in its
-`ATTRIBUTIONS.md`: `agents-context-docs` is Apache-2.0 and ships `LICENSE.upstream`. Do not assume MIT for a
-skill that declares otherwise. Where an upstream licence would block reuse, the skill was rewritten
+elsewhere keeps its upstream licence in its frontmatter `license` field, records the source in its
+`ATTRIBUTIONS.md`, and ships the upstream licence text as `LICENSE.upstream`; 29 skills do. Five skills declare
+a licence other than plain MIT, Apache-2.0 or CC-BY-SA-4.0 among them, so read a skill's `license` field
+before reusing it. Where an upstream licence would block reuse, the skill was rewritten
 independently rather than adapted; `tools/git-commits-and-recovery` is the worked example.
 
 ## External references on skill authoring

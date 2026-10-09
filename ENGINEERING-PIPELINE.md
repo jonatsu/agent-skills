@@ -130,10 +130,10 @@ whichever earlier document is missing.
 
 Every skill that writes a document in the chain is in the direct tier, so each harness lists it in every
 session: `idea-brainstorming`, `writing-specs`, `technical-design`, `implementation-planning`, `define-goal`, and
-`incremental-implementation` under `shared/engineering/`, and `conformance-review` under `shared/review/`.
+`incremental-implementation` under `engineering/`, and `conformance-review` under `review/`.
 So are `interview-me`, `domain-modeling`, the testing skills, `systematic-debugging`, and `security-review`. Only
 `to-questionnaire` is in the lazy tier, which Codex, Copilot, and Oh-My-Pi reach through `lazy-skills-server`.
-`skills/README.md` explains the two tiers.
+`README.md` explains the two tiers.
 
 ## Where the skills do not yet match
 
