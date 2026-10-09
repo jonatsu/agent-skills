@@ -54,7 +54,8 @@ def wrong_pushed_identities(from_ref: str, to_ref: str, remote: str = "") -> tup
         IdentityError: If Git cannot list the commits.
     """
     if remote:
-        revisions = [to_ref, "--branches", "--tags", "--not", f"--remotes={remote}"]
+        held = [from_ref] if from_ref else []
+        revisions = [to_ref, "--branches", "--tags", "--not", *held, f"--remotes={remote}"]
     elif from_ref:
         revisions = [f"{from_ref}..{to_ref}"]
     else:

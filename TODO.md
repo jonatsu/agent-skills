@@ -342,7 +342,7 @@ Do not port `examples/skills/changelog` from `MuhammadUsmanGM/claude-code-best-p
 configuration repository's, which
 deliberately uses date headings and verbatim commit subjects rather than the consumer-facing Keep a Changelog
 format the skill would push. Reconsider when a project here starts cutting versioned releases and adopts Keep a
-Changelog for it (most plausibly `knowledge-vault` or `services`).
+Changelog for it.
 
 Findings worth keeping so the review is not repeated:
 
