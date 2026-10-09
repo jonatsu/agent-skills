@@ -130,3 +130,25 @@ def test_a_push_carrying_the_root_commit_is_checked_from_the_local_ref(
     monkeypatch.setenv("PRE_COMMIT_REMOTE_NAME", "origin")
 
     assert main(["pushed-identity"]) == status
+
+
+def test_a_second_branch_in_the_same_push_is_checked(repository: Path) -> None:
+    base = commit("base", NOREPLY_ADDRESS)
+    subprocess.run(["git", "update-ref", "refs/remotes/origin/main", base], check=True)
+    subprocess.run(["git", "checkout", "-q", "-b", "feature"], check=True)
+    commit("leak", "someone@example.com")
+    subprocess.run(["git", "checkout", "-q", "-"], check=True)
+    tip = commit("next", NOREPLY_ADDRESS)
+
+    # pre-commit names only the first ref, here main; the leak sits on feature.
+    assert len(wrong_pushed_identities(base, tip, "origin")) == 1
+
+
+def test_a_merged_commit_the_remote_already_holds_is_not_rechecked(repository: Path) -> None:
+    base = commit("base", NOREPLY_ADDRESS)
+    bot = commit("update", "bot@example.com")
+    subprocess.run(["git", "update-ref", "refs/remotes/origin/update", bot], check=True)
+    subprocess.run(["git", "update-ref", "refs/remotes/origin/main", base], check=True)
+    tip = commit("next", NOREPLY_ADDRESS)
+
+    assert wrong_pushed_identities(base, tip, "origin") == ()
