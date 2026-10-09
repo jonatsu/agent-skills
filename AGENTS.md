@@ -7,7 +7,7 @@ repository installs them from a pinned commit of this one.
 Read the focused source before acting:
 
 - `README.md` describes the layout and how the skills are used.
-- `ENGINEERING-PIPELINE.md` states the intended flow of the core engineering skills, from idea to verified work.
+- `engineering/README.md` states the intended flow of the core engineering skills, from idea to verified work.
   Read it before changing a pipeline skill's handoff, tier, or scope.
 - `archived/README.md` defines the archive procedure, and its "Review is deferred" rows record which reviews are
   still outstanding.

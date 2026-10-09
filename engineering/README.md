@@ -1,8 +1,9 @@
 # Engineering Pipeline
 
-This document states how the core engineering skills are meant to work together, from an unformed idea to
-verified, merged work. The skills were built one at a time, and each describes only its own neighbors; this is
-the one place that describes the whole. It records intent, from the user's direction on 2026-10-04. Where a skill
+This document states how the core engineering skills are indended to fit and work together, from an vague, unformed
+idea into an actionable one, and from that into a specification, design, plan all the way to completed work. The
+skills were built one at a time, and each describes only its own neighbors; this is
+the one place that describes the whole. Where a skill
 and this document disagree, the disagreement is a finding to resolve, not a silent correction in either
 direction.
 
