@@ -267,6 +267,26 @@ material than to hardening's configure-and-verify lane. Decide placement as part
 Related and unfinished: post-quantum crypto has no upstream answer either; the two Yocto-native candidates
 (`meta-oqs`, `meta-quantum-safe`) are both self-described as experimental and never compared.
 
+## Risk Scan for Third-Party Skills
+
+Vet an upstream skill for risky code before adopting, adapting or re-pinning it. Raised 2026-10-10 by a
+session that evaluated [Skills-Manager](https://github.com/jiweiyeah/Skills-Manager) (v2.2.0, commit
+`bc3c8bd`, MIT) and rejected it as a tool: it has no lockfile, deploys symlinks and hard-codes Claude Code's
+skills path. Its pre-install risk scan, in `crates/core/src/services/risk/`, is the pattern worth keeping:
+
+- It parses the code blocks out of a skill's Markdown and its scripts.
+- It matches them against rules such as `curl | sh`, remote fetches and credential reads.
+- When the rules find nothing but the skill does contain code, it sends the skill to an LLM for a second
+  review.
+- It caches each result per skill revision.
+
+Here it would run on an upstream skill before its material is adapted into this repository. The same scan
+would also serve the pin-time gate in agent-setup, which deploys third-party skills pinned by commit.
+
+Write an independent implementation with rules that fit our own sources. MIT would allow copying the upstream
+rules, but the set is small, and borrowing the pattern avoids the dependency. Keep the LLM step out of
+`just check`, because each run costs a model call.
+
 ## Unevaluated Candidate Sources
 
 Recorded and never fetched, read, or license-checked. The descriptions are path-based inferences, not evidence.
