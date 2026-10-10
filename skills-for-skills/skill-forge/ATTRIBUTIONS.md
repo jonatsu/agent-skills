@@ -154,8 +154,9 @@ material.
 - Copyright holder: `Copyright (c) 2026 Leonardo Flores`, as stated in upstream's `LICENSE`
 - Upstream project: [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit)
 - Source path: `skills/skill-judge`
-- Exact source revision: unknown. The initial local attribution in commit `165701f` recorded the upstream
-  project, skill path, and MIT license but did not record a commit or tag.
+- Exact source revision: unknown. The initial local attribution in commit `165701f` of the author's private
+  configuration repository recorded the upstream project, skill path, and MIT license but did not record a commit
+  or tag.
 - Later comparison snapshot: `3027f20f3181758385a1bb8c022d4041dfb4de84`, upstream HEAD as observed on
   2026-08-27. It predates the local addition and provides an auditable comparison point; it does not establish
   which revision was originally adapted.

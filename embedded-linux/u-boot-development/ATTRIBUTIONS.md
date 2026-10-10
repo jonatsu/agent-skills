@@ -62,9 +62,9 @@ writes. That influence is acknowledged here. The old universal partition-flag re
 written contract requiring the selected updater's actual on-media protocol. The repair does not import the slides'
 example commands, diagrams or sequence as a new adaptation, and does not represent rewording as permission to relicense.
 
-Historical repository commits `26cc26d04c334557be35826fc5c40444dbf9eb6e` and
-`0d2bf671b519283beac24d40fd1382dffd91ee82` introduced the skill and its references as a port from the author's Copilot
-configuration. The old port brief calls U-Boot original but also instructs authors generally to reword restricted
+Commits `26cc26d04c334557be35826fc5c40444dbf9eb6e` and `0d2bf671b519283beac24d40fd1382dffd91ee82` in the
+author's private configuration repository introduced the skill and its references as a port from the author's
+Copilot configuration. The old port brief calls U-Boot original but also instructs authors generally to reword restricted
 material and remove attribution framing. Those statements do not resolve actual derivation. The named original
 `copilot/skills/uboot-dev` package was not available at its recorded path during repair; targeted filename/content
 searches in the remaining `mystuff` tree did not locate it.

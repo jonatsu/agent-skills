@@ -81,9 +81,10 @@ Two further pieces of evidence support adaptation over coincidence:
 - **An inherited defect.** The skill carried `bitbake -c fetchall` — a Dunfell-era command the source uses — forward to
   a Scarthgap baseline where that task no longer exists. An independently written reference checked against a current
   release would not reproduce a stale command from a 2020 deck. (Corrected under F2 in the 2026-09-07 repair.)
-- **The port brief said so.** The skill family's introducing brief (`26cc26d`, `docs/embedded-linux-port/port-brief.md`)
-  instructed: if prose was "lifted (verbatim OR **structurally — same fact selection/sequencing**)" from the CC BY-SA
-  learning sources, rewrite it in original words and remove source-attributing framing such as "Bootlin highlights…".
+- **The port brief said so.** The skill family's introducing brief (`26cc26d` in the author's private
+  configuration repository, `docs/embedded-linux-port/port-brief.md`) instructed: if prose was "lifted
+  (verbatim OR **structurally — same fact selection/sequencing**)" from the CC BY-SA learning sources, rewrite it in
+  original words and remove source-attributing framing such as "Bootlin highlights…".
   That instruction concedes the structural lifting and prescribes exactly the two steps that produced this file's
   earlier, unsupported claim. It is historical evidence of what happened, not authority for the conclusion it reached.
 

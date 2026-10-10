@@ -9,8 +9,8 @@
 
 ## Local Predecessor
 
-- Historical source package: `skills/archived/prompt-optimizer/`
-- Last `SKILL.md` source revision: `a6349707524c10e5047b54fcff4a73e5006590ae`
+- Historical source package: `archived/prompt-optimizer/`
+- Last `SKILL.md` source revision: `305ae8b2be27e2a8764c4a2f3e760d20bb71edc9`
 - Relationship: same-author predecessor, independently rewritten
 
 The predecessor supplied the core constraint that every prompt edit needs a named failure hypothesis and a concrete
@@ -30,9 +30,10 @@ survey, and static review catalogue are not retained.
 
 ## Planning-Skill Evaluation
 
-- Evidence record: `docs/evaluations/skills/technical-design-planning-initial.md`
-- Source commits: initial evidence `75c7ada`, repaired skills `716a68f`, accepted repair evidence `75b331d`, and client
-  invocation record `1d35960`
+- Evidence record: `docs/evaluations/skills/technical-design-planning-initial.md` in the author's private
+  configuration repository
+- Source commits in that repository: initial evidence `75c7ada`, repaired skills `716a68f` (here `40a19e8b`),
+  accepted repair evidence `75b331d` (here `3e810c2a`), and client invocation record `1d35960`
 - Relationship: direct local execution evidence
 
 The evaluation supplied the concrete failure classes retained here: denied candidate reads, conflicting client flags,

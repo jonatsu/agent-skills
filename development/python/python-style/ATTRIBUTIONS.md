@@ -9,12 +9,12 @@
 ## Repository Lineage
 
 The author's scoped Python defaults and archived `python-idioms` informed this focused replacement.
-The archive is preserved at repository commit `0e8fd4266ec659a8db9d1974209a22fb69c13395` under
-`skills/archived/python-idioms/`. Both sources are MIT work by the same author.
+The archive is preserved at commit `6c4fa3b9cbeee6880f7efae7180622d7c3e06890` under
+`archived/python-idioms/`. Both sources are MIT work by the same author.
 
 Retained preferences include searchable naming, useful docstrings, `attrs` with a stdlib exception, and simple control flow.
 The predecessor's findability guidance came from the same author's MIT `searchable-code` skill, recoverable at
-`git show aa34532^:skills/shared/development/searchable-code/SKILL.md`.
+`git show 8431703de957^:development/searchable-code/SKILL.md`.
 Its automatic repair after a failed search is not retained.
 General search recovery and test policy remain outside this skill.
 

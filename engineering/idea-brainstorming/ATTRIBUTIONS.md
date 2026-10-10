@@ -24,8 +24,8 @@ creative task, section-by-section approval, complete-specification workflow, vis
 ## Local Predecessor
 
 - Original author: Joonas Onatsu
-- Source package: `skills/archived/idea-forge/`
-- Archived source revision: `9bedb857c74b566c8499f4cb55dff0d1571db4a6`
+- Source package: `archived/idea-forge/`
+- Archived source revision: `5df7ecb439edbb46de6e3ed8cc854664f15e4a2c`
 - Relationship: independently retained diagnostic ideas
 
 The predecessor informed early branch generation, scope decomposition, parking tangents, research-backed prior art,
