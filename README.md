@@ -78,6 +78,7 @@ it is licensed.
 | `archived/`                 | Retired skills kept for reference and deployed nowhere; `archived/README.md` explains each |
 | `checks/`                   | The checks behind `just check` and their tests                                             |
 | `tests/`                    | Tests for scripts bundled inside skills                                                    |
+| `docs/plans/`               | Design and planning records for skill work; `docs/plans/README.md` lists them              |
 
 The layout says what a skill is about, not how an agent loads it. Which skills an agent lists in every session
 and which it loads on demand is the installer's choice.
