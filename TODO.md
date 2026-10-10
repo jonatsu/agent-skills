@@ -287,6 +287,21 @@ Write an independent implementation with rules that fit our own sources. MIT wou
 rules, but the set is small, and borrowing the pattern avoids the dependency. Keep the LLM step out of
 `just check`, because each run costs a model call.
 
+## Broken Links Between a Skill's Own Files
+
+No check fails a link to a file that is missing inside the package. Raised 2026-10-10 by a session that
+evaluated [ai-agent-kit](https://github.com/ivannikov-pro/ai-agent-kit) (commit `9803f61`, MIT), whose
+`checkLocalLinks` gave the idea. Two checks come close and both miss it:
+
+- `skill-forge`'s `quick_validate.py` (`check_bundled_references`) fails a missing target, but it reads only
+  the `SKILL.md` body. A link from `references/foo.md` to a missing `references/bar.md` passes.
+- `checks/skill_checks/outside_references.py` reads every Markdown file and resolves each link against its own
+  file's directory, but it only rejects targets that leave the package. It never checks that the target exists.
+
+Add the existence check to `outside_references.py`'s `_target_problem`, which already has the resolved path,
+so fenced examples stay exempt through its `FENCE` handling. The estimate is about 40 lines plus tests. Count
+the links that fail today before turning it on, and fix them in the same change so `just check` stays green.
+
 ## Unevaluated Candidate Sources
 
 Recorded and never fetched, read, or license-checked. The descriptions are path-based inferences, not evidence.
