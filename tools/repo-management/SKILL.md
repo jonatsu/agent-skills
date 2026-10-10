@@ -91,6 +91,21 @@ Keep explanatory comments attached to retained settings. They record why patches
 Markdown may preserve trailing spaces, Makefiles use tabs, and `[[shell]]` is a shfmt extension rather than a
 standard EditorConfig section.
 
+### Wrap Markdown Prose With Hard Breaks
+
+The preferred convention wraps Markdown prose at the line limit and ends every line of a paragraph but the last
+with a trailing-backslash hard break (`\`). A soft wrap is short only in the raw file: the rendered page joins it
+into one long line. The backslash, rather than two trailing spaces, stays visible and survives editors that trim
+whitespace. Where a repository already soft-wraps by convention, keep its convention.
+
+Rewrap with `scripts/mdwrap.py` whenever a line-length rule reports long prose, typically right after the
+Markdown hooks are enabled on existing documents. Run it with the files to list the blocks it would change, then
+again with `--write`, then run the hook pipeline twice to its fixed point. Set `--width` to the repository's
+markdownlint `line_length`; it defaults to 120. The script leaves front matter, headings, tables, code,
+reference definitions, HTML blocks and alert markers alone, keeps every code span and link on one line, and keeps
+list, heading, quote and fence markers off the start of a wrapped line. In report mode it exits 1 when a block
+would change, so it can also gate a commit.
+
 ## Run Hygiene Audits When Requested
 
 Run the full audit only when the user requests an audit, cleanup assessment, or broad refresh that includes
@@ -147,6 +162,7 @@ Report exact validation results and untested environments.
   `CODE_OF_CONDUCT.template.md`, `PULL_REQUEST_TEMPLATE.md`, and `ISSUE_TEMPLATE/*`
 - Repository configuration: `.editorconfig`, `.gitattributes`, `.pre-commit-config.yaml`,
   `.markdownlint-cli2.jsonc`, `.mdformat.toml`, `.shellcheckrc`, `.yamlfmt.yaml`, and `.yamllint.yaml`
+- Script: `scripts/mdwrap.py`, the Markdown prose rewrapper; standard library only, tested on Python 3.12 and 3.13
 
 ## Provenance
 

@@ -107,7 +107,8 @@ done
 ```
 
 A token added on purpose, such as a `text` fence tag, is then the only difference; confirm it by diffing the
-sorted token streams.
+sorted token streams. The same check covers a `scripts/mdwrap.py` rewrap, since its hard-break backslashes are
+not alphanumeric.
 
 For a subtree that stays excluded, do not hand-run the formatters over it to make it "pass" a gate that does
 not run there by design. Apply surgical edits only.
