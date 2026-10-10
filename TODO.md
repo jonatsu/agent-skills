@@ -276,7 +276,7 @@ sources, record provenance, and decide whether the source overlaps an existing s
 - [wshobson/conductor](https://github.com/wshobson/agents/tree/main/plugins/conductor): inspect as a plugin,
   including agent definitions and commands Kasetto would not deploy as skills.
 - [mkobit/chezmoi-skills](https://github.com/mkobit/chezmoi-skills): compare against our
-  `lazy/tools/chezmoi-dotfiles` skill for coverage gaps and better patterns worth writing independently.
+  `tools/chezmoi-dotfiles` skill for coverage gaps and better patterns worth writing independently.
 - [a5c-ai/babysitter](https://github.com/a5c-ai/babysitter): research the `graph` fields in its skills'
   frontmatter and whether our skills should adopt something like them. The user flagged them on 2026-09-30,
   handing over [`jtag-swd-debug`](https://github.com/a5c-ai/babysitter/tree/main/library/specializations/embedded-systems/skills/jtag-swd-debug)
@@ -286,7 +286,7 @@ sources, record provenance, and decide whether the source overlaps an existing s
   as `skill-area:rtos-programming`. `packages/atlas/scripts/generate-library-nodes.mjs` turns each into an edge
   such as `lib_requires_skill_area`, `graph-quality.mjs` scores the result, and the target ids live under
   `packages/atlas/graph/`. Whether anything reads the generated graph at run time is unverified; that, and
-  whether such edges could drive our lazy-skill discovery (`find_skills`), are the open questions.
+  whether such edges could drive on-demand skill discovery in the installing setup, are the open questions.
 
 ## Session Backtrace Skill
 

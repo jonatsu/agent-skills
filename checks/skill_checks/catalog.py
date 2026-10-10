@@ -40,8 +40,8 @@ def discover_skill_sources(
 ) -> tuple[SkillSource, ...]:
     """Return named or default-discovered skills in deterministic path order.
 
-    Default discovery covers every deployable group: `<domain>/`, `lazy/<domain>/` at any depth, and
-    `claude/`. Explicit names bypass the exclusions and resolve from the caller's working directory.
+    Default discovery covers every deployable group: `<domain>/` and its nested groups at any depth,
+    and `claude/`. Explicit names bypass the exclusions and resolve from the caller's working directory.
 
     Raises:
         SkillCatalogError: If a named directory is invalid or default discovery is empty.

@@ -127,15 +127,6 @@ the design. A bug starts with `systematic-debugging`, then `test-driven-developm
 then code for the fix. A request for goal-backed or autopilot work starts at the goal, which sends it back to
 whichever earlier document is missing.
 
-## Tiers
-
-Every skill that writes a document in the chain is in the direct tier, so each harness lists it in every
-session: `idea-brainstorming`, `writing-specs`, `technical-design`, `implementation-planning`, `define-goal`, and
-`incremental-implementation` under `engineering/`, and `conformance-review` under `review/`.
-So are `interview-me`, `domain-modeling`, the testing skills, `systematic-debugging`, and `security-review`. Only
-`to-questionnaire` is in the lazy tier, which Codex, Copilot, and Oh-My-Pi reach through `lazy-skills-server`.
-`README.md` explains the two tiers.
-
 ## Where the skills do not yet match
 
 The routing check of 2026-10-04 (agent-setup's `docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md`) compared

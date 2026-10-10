@@ -28,7 +28,7 @@ class RecordingRunner:
 @pytest.fixture
 def tree(tmp_path: Path, write_skill: Callable[[str], Path]) -> Path:
     write_skill("engineering/example")
-    forge = write_skill("lazy/skills-for-skills/skill-forge")
+    forge = write_skill("skills-for-skills/skill-forge")
     (forge / "scripts").mkdir()
     (forge / "scripts/quick_validate.py").write_text("print('ok')\n", encoding="utf-8")
     return tmp_path
@@ -43,7 +43,7 @@ def test_policy_runs_skill_forges_validator_and_parses_its_findings(tree: Path) 
 
     assert runner.calls[0][:2] == (
         sys.executable,
-        str(tree / "lazy/skills-for-skills/skill-forge/scripts/quick_validate.py"),
+        str(tree / "skills-for-skills/skill-forge/scripts/quick_validate.py"),
     )
     assert report.failures == 2
     assert report.warnings == 2
@@ -63,7 +63,7 @@ def test_specification_runs_agentskills_validate_and_keeps_its_output(tree: Path
 
 
 def test_a_missing_policy_validator_is_a_fatal_error(tree: Path) -> None:
-    (tree / "lazy/skills-for-skills/skill-forge/scripts/quick_validate.py").unlink()
+    (tree / "skills-for-skills/skill-forge/scripts/quick_validate.py").unlink()
 
     report = run_validator(ValidatorKind.POLICY, discover_skill_sources(tree), tree)
 

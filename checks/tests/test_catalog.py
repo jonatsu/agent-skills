@@ -21,10 +21,10 @@ def test_discovery_covers_every_deployable_group(
     tmp_path: Path, write_skill: Callable[[str], Path]
 ) -> None:
     domain = write_skill("engineering/technical-design")
-    nested = write_skill("lazy/development/python/python-style")
+    nested = write_skill("development/python/python-style")
     claude = write_skill("claude/session-reflect")
 
-    assert directories(tmp_path) == [claude, domain, nested]
+    assert directories(tmp_path) == [claude, nested, domain]
 
 
 @pytest.mark.parametrize(
@@ -97,7 +97,7 @@ def test_find_skill_source_fails_on_a_missing_or_shared_name(
     tmp_path: Path, write_skill: Callable[[str], Path], name: str, message: str
 ) -> None:
     write_skill("engineering/dup")
-    write_skill("lazy/review/dup")
+    write_skill("development/python/dup")
 
     with pytest.raises(SkillCatalogError, match=message):
         find_skill_source(tmp_path, name)

@@ -9,7 +9,7 @@ invisible to deployment, with no exclusion list to maintain.
 
 ## What lives here
 
-The embedded domain was restored on 2026-09-07 and now lives in `../lazy/embedded-linux/`. Its five skills use the
+The embedded domain was restored on 2026-09-07 and now lives in `../embedded-linux/`. Its five skills use the
 names `buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`, and
 `yocto-openembedded-development`. Their review progress is tracked in
 [../TODO.md](../TODO.md#re-review-the-other-four-embedded-skills--non-urgent).

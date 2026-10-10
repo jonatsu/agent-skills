@@ -38,7 +38,7 @@ Mind the licensing section below; some skills carry their upstream licence.
 
 To install a whole group with Kasetto, point an entry at this repository, pin a commit, and name the group as
 the `sub-dir`. Kasetto discovers skills exactly one level under that directory, so a nested group such as
-`lazy/development/python` needs its own entry:
+`development/python` needs its own entry:
 
 ```yaml
 skills:
@@ -70,17 +70,17 @@ it is licensed.
 
 ## Layout
 
-| Path                     | Holds                                                                                      |
-| ------------------------ | ------------------------------------------------------------------------------------------ |
-| `<domain>/<skill>/`      | Skills almost every session needs, by subject: `agents`, `engineering`, `tools` and others |
-| `lazy/<domain>/<skill>/` | Specialized skills, such as one language or one tool, that agents load only when asked     |
-| `claude/<skill>/`        | Skills that only work in Claude Code                                                       |
-| `archived/`              | Retired skills kept for reference and deployed nowhere; `archived/README.md` explains each |
-| `checks/`                | The checks behind `just check` and their tests                                             |
-| `tests/`                 | Tests for scripts bundled inside skills                                                    |
+| Path                        | Holds                                                                                      |
+| --------------------------- | ------------------------------------------------------------------------------------------ |
+| `<domain>/<skill>/`         | Skills grouped by subject: `agents`, `engineering`, `tools`, `embedded-linux` and others   |
+| `<domain>/<group>/<skill>/` | A closely related set within a domain, such as `development/python`                        |
+| `claude/<skill>/`           | Skills that only work in Claude Code                                                       |
+| `archived/`                 | Retired skills kept for reference and deployed nowhere; `archived/README.md` explains each |
+| `checks/`                   | The checks behind `just check` and their tests                                             |
+| `tests/`                    | Tests for scripts bundled inside skills                                                    |
 
-The `lazy` tier exists because Codex and Copilot load every installed skill's description into each session;
-the author's setup serves this tier to them through a search server instead.
+The layout says what a skill is about, not how an agent loads it. Which skills an agent lists in every session
+and which it loads on demand is the installer's choice.
 
 ## Licensing
 

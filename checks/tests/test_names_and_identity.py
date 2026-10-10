@@ -22,7 +22,7 @@ def test_two_packages_with_one_name_are_reported(
     tmp_path: Path, write_skill: Callable[[str], Path]
 ) -> None:
     first = write_skill("engineering/shared-name")
-    second = write_skill("lazy/review/shared-name")
+    second = write_skill("review/nested/shared-name")
     write_skill("review/unique")
 
     assert duplicate_names(discover_skill_sources(tmp_path)) == {"shared-name": (first, second)}

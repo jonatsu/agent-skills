@@ -8,7 +8,7 @@ Read the focused source before acting:
 
 - `README.md` describes the layout and how the skills are used.
 - `engineering/README.md` states the intended flow of the core engineering skills, from idea to verified work.
-  Read it before changing a pipeline skill's handoff, tier, or scope.
+  Read it before changing a pipeline skill's handoff or scope.
 - `archived/README.md` defines the archive procedure, and its "Review is deferred" rows record which reviews are
   still outstanding.
 - `TODO.md` holds the skill backlog and unevaluated candidate sources.
@@ -41,8 +41,8 @@ first fails.
   `.claude/agents` or Claude subagents, go in `claude/`.
 - **Then by subject.** A skill that fits two domains goes where a reader would look first. **A skill name must
   stay unique across every group**; `just check` fails on a duplicate, because agents receive every skill flat.
-- **Then by tier.** A skill almost every session needs stays direct. A specialized one, such as one language,
-  one named tool, or a rarely requested method, goes under `lazy/` in the same domain.
+- **Never by how it is loaded.** Whether an agent lists a skill in every session or loads it on demand is the
+  installing configuration's choice, made by skill name; no directory here encodes it.
 - **A new group, or emptying one, needs a matching change where the skills are installed.** The installing
   configuration names each group as a Kasetto `sub-dir`, Kasetto finds skills exactly one level below it, and a
   missing or new group fails the next pin bump there. Say so in the commit body.
