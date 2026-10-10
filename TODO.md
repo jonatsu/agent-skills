@@ -228,6 +228,26 @@ model evaluation is deferred to protect the weekly allowance. When allowance and
 - Add a second client only if the first run supports deployment confidence or exposes a model-specific
   uncertainty; report live allowance before repetitions.
 
+## Behavioral Evaluations Left by Completed Plans
+
+These skills shipped with static review only, and their plans closed with the model runs still deferred:
+
+- `skill-forge`, including its review mode, which absorbed `skill-review` on 2026-09-28. The 2026-09-04 refresh
+  left it `ready with risks` with no baseline or candidate run.
+- `idea-brainstorming`, `technical-design` and `implementation-planning`. The 2026-09-04 intent refresh added
+  nine cases to their `evals/behavior.json` files and passed review lite, but no case has been run against a
+  model.
+- `writing-readmes` has no `evals/behavior.json` at all. Write its cases from the skill's observed runs, so a
+  later edit cannot silently undo the five-question order.
+
+## Deferred Engineering Pipeline Designs
+
+The planning and design skills refactor deferred two companions until the pipeline's artifacts stabilized:
+
+- **A visual-plan companion** that renders a canonical Markdown plan for human review, portable across agents.
+- **Document governance**: a lifecycle and maintenance workflow for design records, with the useful parts of the
+  archived `design-forge` corpus contract. Start it only with evidence that the job is needed.
+
 ## Re-Review the Other Four Embedded Skills — Non-Urgent
 
 The 2026-09-08 work on `yocto-openembedded-development` found defects its completed 2026-09-07 review had not,
