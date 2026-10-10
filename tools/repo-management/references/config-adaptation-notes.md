@@ -55,7 +55,9 @@ adapt it when an established repository already carries deliberate conventions.
   and then the whole tree. A pattern that never matches and a pattern that matches everything are
   indistinguishable from a working one on a tree that happens to be clean.
 - Give wrapping to one tool. The shipped profile uses mdformat `wrap = "keep"`; markdownlint supplies the
-  numeric ceiling, and EditorConfig deliberately leaves Markdown line length unset.
+  numeric ceiling, 120 for prose and headings, and EditorConfig deliberately leaves Markdown line length unset.
+  Adopting the profile in a repository with long prose lines reports every one of them at once; rewrap them
+  with `scripts/mdwrap.py` before the first commit under the hooks.
 - Keep mdformat's line ending at `lf` to agree with the global EditorConfig rule. `keep` leaves CRLF Markdown
   unchanged, so editorconfig-checker fails on every pass while mdformat reports success.
 - Do not split an inline code span across physical lines. CommonMark turns its internal line ending into a

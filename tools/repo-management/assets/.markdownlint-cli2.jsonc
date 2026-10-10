@@ -45,13 +45,15 @@
       "maximum": 2,
     },
 
-    // MD013: Enforce a max line length, but not inside code blocks/tables
+    // MD013: Enforce a max line length, but not inside code blocks/tables. Prose wraps at 120 with
+    // trailing-backslash hard breaks, so the rendered page keeps the short lines too; the
+    // repo-management skill's scripts/mdwrap.py rewraps prose to this width.
     "line-length": {
       "code_block_line_length": 80,
       "code_blocks": false,
       "heading_line_length": 120,
       "headings": true,
-      "line_length": 400,
+      "line_length": 120,
       "stern": true,
       "strict": false,
       "tables": false,
