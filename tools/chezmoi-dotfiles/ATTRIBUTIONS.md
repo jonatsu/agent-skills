@@ -1,33 +1,49 @@
 # Attributions
 
-## Chezmoi documentation
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Source: [chezmoi command overview](https://www.chezmoi.io/user-guide/command-overview/) and
-  [reference](https://www.chezmoi.io/reference/).
-- Influence: the command contracts for initialization, adding, re-adding, forgetting, and application order
-  were checked against the current documentation and the installed chezmoi help. The skill states those facts
-  in its own task-oriented terms.
+## First-party Sources
 
-## chezmoi_modify_manager documentation
+### Tom Payne: chezmoi documentation
 
-- Source: [`docs/src`](https://github.com/VorpalBlade/chezmoi_modify_manager/tree/main/docs/src) at commit
-  `62a4c18afbe478a7e6691101424ac74058593d7a` (read 2026-10-04).
-- License: GPL-3.0, per the repository's `LICENSE.md`.
-- Influence: verification only. `references/modify-manager.md` restates the tool's documented behavior, commands,
-  and directive syntax in its own words. No documentation prose or example configuration was copied; the
-  directive forms shown are the tool's input syntax.
+- Source: <https://www.chezmoi.io/>, the [command overview](https://www.chezmoi.io/user-guide/command-overview/) and
+  [reference](https://www.chezmoi.io/reference/) sections; the source is `assets/chezmoi.io/docs` in
+  <https://github.com/twpayne/chezmoi>
+- License: `MIT`
+- Version: read on or before 2026-09-25
 
-## Paul Sorensen's chezmoi skill
+The command contracts for initialization, adding, re-adding, forgetting, and application order are built on the
+documentation, and `references/official-docs.md` routes to its pages by question. The skill restates the facts in its
+own task-oriented terms.
 
-- Source: [`skills/chezmoi`](https://github.com/paulnsorensen/skillz-that-grillz/tree/main/skills/chezmoi).
-- License: MIT, copyright Paul Sorensen.
-- Influence: its bootstrap and application-order coverage prompted corresponding branches in this skill.
-  The wording, examples, and structure were written independently and checked against chezmoi's documentation.
+### VorpalBlade: chezmoi_modify_manager documentation
 
-## Terry Li's dotfiles-tools skills
+- Source: <https://github.com/VorpalBlade/chezmoi_modify_manager>, `docs/src`
+- License: `GPL-3.0-only`
+- Version: `62a4c18afbe478a7e6691101424ac74058593d7a`
 
-- Source: [`chezmoi-workflows`](https://github.com/terrylica/cc-skills/blob/main/plugins/dotfiles-tools/skills/chezmoi-workflows/SKILL.md)
-  and [`chezmoi-sync`](https://github.com/terrylica/cc-skills/blob/main/plugins/dotfiles-tools/skills/chezmoi-sync/SKILL.md).
-- License: MIT, copyright Terry Li.
-- Influence: their add, forget, diagnosis, and drift branches prompted a review of missing operations. This
-  skill keeps its own per-target checks and Git authorization boundaries. No wording or example was copied.
+`references/modify-manager.md` restates the tool's documented behavior, commands, and directive syntax in its own
+words. No documentation prose or example configuration was copied; the directive forms shown are the tool's input
+syntax.
+
+## Third-party Sources
+
+### Paul Sorensen: chezmoi skill
+
+- Source: <https://github.com/paulnsorensen/skillz-that-grillz>, `skills/chezmoi`
+- License: `MIT`
+- Version: read on or before 2026-09-25
+
+The skill's bootstrap and application-order coverage prompted corresponding branches in this skill. The wording,
+examples, and structure were written independently.
+
+### Terry Li: dotfiles-tools skills
+
+- Source: <https://github.com/terrylica/cc-skills>, `plugins/dotfiles-tools/skills/chezmoi-workflows/SKILL.md` and
+  `plugins/dotfiles-tools/skills/chezmoi-sync/SKILL.md`
+- License: `MIT`
+- Version: read on or before 2026-09-25
+
+The skills' add, forget, diagnosis, and drift branches prompted corresponding branches in this skill. No wording or
+example was copied.
