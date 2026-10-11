@@ -87,5 +87,4 @@ shells, operating systems, utilities, and failure paths tested, plus every suppo
 
 ## Attributions
 
-See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for the external skill reviewed before this independent
-replacement was written.
+See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for the sources this skill is based on.
