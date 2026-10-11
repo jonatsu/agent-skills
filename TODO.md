@@ -332,6 +332,15 @@ mostly grep and search to find things, which suggests the layouts or the guidanc
 yet steer navigation. The cause is unknown. Candidates include link wording, pointer placement, and what the
 loaded instruction files say about navigation. Raised 2026-10-11; pick it up after the attributions repair.
 
+## Documentation Flaw Patterns for the Documentation Skills
+
+Carry the patterns recorded in `docs/findings/2026-10-11-documentation-flaw-patterns.md` into the documentation
+skills (`writing-documentation`, `writing-for-humans`, `writing-for-agents`, `context-architecture`, and
+`skill-forge`'s provenance guidance), into the templates under `agents/agents-context-docs/assets/`, which
+seed new documents and so prevent the flaws at the source, and into `AGENTS.md`'s documentation guidelines. Pick it
+up after the
+attributions repair finishes, when the pattern list is complete.
+
 ## Unevaluated Candidate Sources
 
 Recorded and never fetched, read, or license-checked. The descriptions are path-based inferences, not evidence.

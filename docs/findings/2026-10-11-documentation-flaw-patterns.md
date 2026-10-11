@@ -1,0 +1,74 @@
+# Documentation Flaw Patterns
+
+Date: 2026-10-11. Status: open; patterns are added while the attributions repair (`ATTRIBUTIONS-FIX.md`) runs.
+
+These are recurring flaws in agent-written documentation. The repair of every skill's `ATTRIBUTIONS.md` surfaced
+them, and the author has seen the same patterns in agent-written documentation generally, most of all in
+technical docs. They are input for updating the documentation skills (`writing-documentation`,
+`writing-for-humans`, `writing-for-agents`, `context-architecture`, and `skill-forge`'s provenance guidance) and
+for the documentation guidelines in `AGENTS.md`. The templates under `agents/agents-context-docs/assets/` need
+the same care: they seed every new context document, so a flaw there spreads to each repository they initialize.
+
+Each pattern names what goes wrong, an observed example, and the fix.
+
+## Patterns
+
+01. **Work ledger in a durable document.** A reference document narrates the work done on its subject: repairs,
+    reviews, investigations, sessions, and the dates they happened. Example: "The 2026-09-07 repair retained useful
+    task boundaries while replacing…". The fix is to state the current state only. Git history and the
+    repository's ledgers hold the work.
+02. **Negative-result records.** The document lists what was checked and found irrelevant, or how thorough a
+    check was. Examples: a "Present but not established" section about a deck that turned out unrelated; a "Scope
+    of this investigation" section. The fix is to record only what bears on the subject.
+03. **Volatile identifiers.** The document pins material with values that change whenever it is regenerated,
+    such as the SHA-256 of a PDF rebuilt on every upstream update. The fix is a stable identifier: a release,
+    tag, or commit, the version the material embeds, or the date it carries.
+04. **References a reader cannot inspect.** Examples: the author's deleted or absorbed skills, commits in a
+    private repository, an internal port brief. The fix is to cite only what a reader of the published document
+    can reach, and to drop the rest.
+05. **Policy restated in each instance.** Every file of a kind repeats the rule that governs it, such as a "These
+    records are permanent" paragraph in each attributions file. The fix is to keep the rule once, in the
+    repository's rules, and let instances follow it silently.
+06. **Key fact buried in prose.** The fact a reader scans for sits mid-paragraph, such as a license declared in
+    the third sentence. The fix is to lead with it, or to give it a field of its own.
+07. **Grouping by history instead of by kind.** Sections sort content by when or why it was gathered, such as
+    "Third-Party Cases Used During the Repair" beside an ordinary source list. The fix is one structure grouped
+    by what the content is.
+08. **Restating what the document already says.** Prose repeats the header or a structured field: "because the
+    content license conflicts with this package's license" when the package license is at the top, or "the paper
+    is under CC-BY-4.0" right below a `License` bullet saying so. The fix is to say each fact once.
+09. **Lists of what was not done.** The document enumerates what it did not take or cover, such as "its plan
+    loop, ledger, and scripts are not retained". The fix is to state what is, and to keep an exclusion only
+    when a reader would otherwise assume the opposite.
+10. **Inventory instead of summary.** One sentence carries a dozen items when the reader needs the three main
+    ideas. The fix is to summarize to what the reader needs.
+11. **Change lists in place of a relationship.** The document itemizes each modification made to adapted
+    material instead of naming the kind of adaptation in a clause. The fix is one clause, such as "vendored and
+    adapted to call the installed CLI".
+12. **Pointers that carry the narrative.** A sentence elsewhere that points at the document repeats its
+    history: "see `ATTRIBUTIONS.md`, including a 2026-09-07 finding that…". The fix is one neutral pointer
+    sentence.
+13. **Unrequested structure.** Sections or tables nobody asked for and no reader question needs, such as
+    per-file provenance and "Composition" tables. The fix is to let each section answer a question a reader
+    has.
+14. **Defensive argumentation.** The document argues its own legitimacy, such as "No infringement finding is
+    made here or was made before". The fix is to state the facts and let them stand.
+15. **Over-broad cleanup rules.** The opposite failure, seen while fixing the above: dropping a whole
+    "verification-only" section also dropped extensive first-party source reading that deserved an entry. The
+    fix is to judge each item by its impact, not by its section label.
+16. **Dashes as default punctuation.** Em and en dashes appear throughout `SKILL.md` files where a comma, colon,
+    semicolon, or parentheses would do, and where no grammatical need exists. The writing skills allow a dash
+    only when correctness requires one. The fix is to rewrite each such dash with the punctuation the clause
+    relationship calls for, and to keep a dash only for a real range or a case grammar demands.
+
+## Instances Outside the Attribution Files
+
+The repair touched only `ATTRIBUTIONS.md` and the sentences pointing at it. These instances elsewhere wait for the
+documentation pass:
+
+- Dated measurement notes (pattern 1) in `embedded-linux/yocto-security-audit/references/`
+  (`configuration-findings.md`, `auditing-without-metadata.md`, `oeqa-security-suites.md`),
+  `embedded-linux/yocto-security-hardening/references/` (`verification-workflows.md`, `meta-security-layer-map.md`,
+  `compiler-and-binary-hardening.md`), and `embedded-linux/yocto-vulnerability-management/references/report-coverage-audit.md`.
+- A factual error: `embedded-linux/yocto-security-hardening/references/chain-of-trust-wiring.md` says meta-avb's license
+  "reports as `NOASSERTION`". Its LICENSE is the standard MIT text; only GitHub's detection reports `NOASSERTION`.
