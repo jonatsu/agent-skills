@@ -18,3 +18,12 @@ The README project-type taxonomy is adapted from the upstream skill: the four pr
 matrix in `references/readme-by-audience.md`, and the per-audience section sets behind the audience templates in
 `assets/`, which were rewritten to this skill's placeholder convention. The upstream "Reviewing" task also prompted
 a README staleness check that the skill formerly carried.
+
+### azu and contributors: Secretlint
+
+- Source: <https://github.com/secretlint/secretlint>, `README.md` and the rule package READMEs
+- License: `MIT`
+- Version: `4cf087ab0b0ba5d1f121c8a3928cfc7e426d1824`
+
+The documentation supplied the facts behind the Secretlint guidance: the rule packages and what the Docker image
+and binaries bundle, the CLI options, ignore handling, and output masking. Nothing was copied.

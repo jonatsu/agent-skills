@@ -90,6 +90,37 @@ adapt it when an established repository already carries deliberate conventions.
   not support it and panics. Omit the property so shfmt infers the dialect from the file or shebang.
   `editorconfig-checker` ignores the remaining shfmt extension keys, so the two coexist.
 
+## Secretlint Beside the Credential Scanner
+
+Secretlint is a pluggable, opt-in linter for leaked data in working-tree files. Its value next to Betterleaks is
+the rules a credential scanner lacks: `no-homedir` reports the home directory path of the user running it,
+`no-dotenv` reports `.env` files, and `pattern` reports any regular expression or file glob the repository
+declares, such as email addresses or internal host names. Enable those rules alone. The
+`preset-recommend` credential rules duplicate Betterleaks, so use them only where Secretlint is the
+repository's chosen credential scanner.
+
+- Run it as a local `language: node` hook with its rule packages in `additional_dependencies`, as the commented
+  block in the bundled `.pre-commit-config.yaml` shows. It needs no `package.json` and no Docker, but it needs
+  Node.js 22 or later. The Docker image and the release binaries bundle only `preset-recommend`, `pattern`, and
+  the SARIF formatter, so neither carries `no-homedir` or `no-dotenv`.
+- Pin every Secretlint package to the same version, since they release together. `pre-commit autoupdate`
+  updates `rev` fields only, so bump `additional_dependencies` by hand from the release page.
+- Keep `--no-glob` in the entry. pre-commit passes literal paths, and a path such as `src/(auth)/login.ts` would
+  otherwise be read as a glob.
+- `no-homedir` checks the home directory of whoever runs it. It guards a contributor's local commit, not a CI
+  run, where the runner's home path never appears in the tree.
+- Write `pattern` rules by shape rather than by literal value, because `.secretlintrc.json` is itself tracked:
+  a pattern spelling out a customer name or internal host publishes that name. A literal that must stay private
+  belongs in a configuration outside the repository, passed with `--secretlintrc`.
+- Test every `pattern` rule on a fixture before enabling it. An email pattern whose domain part accepts digits
+  matches the hook's own `"@secretlint/secretlint-rule-pattern@13.0.7"` dependency lines; requiring a
+  letters-only top-level domain, `\.[A-Za-z]{2,}`, avoids that.
+- Secretlint skips `.gitignore`d paths since v13, reads `.secretlintignore` as well, and never scans its own
+  `.secretlintrc*` files. Silence a single finding with `allowMessageIds` on the rule, or with
+  `secretlint-disable` comments where `secretlint-rule-filter-comments` is enabled.
+- Leave its output masking on. Findings print as asterisks unless `--no-maskSecrets` is passed, which keeps a
+  leaked value out of CI logs and agent transcripts.
+
 ## Bringing a Previously Excluded Document Under the Hooks
 
 Expect a large diff. mdformat unwraps manual soft wraps to the configured width, rewrites GFM tables to the

@@ -64,6 +64,9 @@ Use assets as starting points after inspecting the repository:
   Markdown, ShellCheck, and shfmt. Use the complete profile when the user requests the preferred baseline. Make
   only the requested delta when extending an established configuration. The bundled hook revisions are a
   snapshot: run `pre-commit autoupdate` before first use, unless the user or repository pins them for a reason.
+  A commented Secretlint block adds what a credential scanner does not look for: the committing user's home
+  path, `.env` files, and project-specific patterns such as email addresses. Enable it when the user wants
+  personal or project data kept out of commits, after reading its section in the adaptation notes below.
 - `.shellcheckrc`: The companion to the ShellCheck hook above, and the one place its options belong — the hook,
   an editor extension, and a direct CLI run all read it, so per-tool arguments drift apart. The bundled profile
   enables every optional check and disables two by name, with the reason attached to each. Adopting it in an
@@ -118,6 +121,9 @@ hygiene. Keep it read-only:
 
 - Committed secrets: use `betterleaks git .`, or the repository's established scanner.
 
+- Personal paths and project-specific patterns, where the repository configures Secretlint:
+  `pre-commit run secretlint --all-files`. It reads the working tree, not history.
+
 - Historical large blobs: offer this heavier scan of every object in history, and run it only when requested:
 
   ```sh
@@ -138,7 +144,9 @@ When the audit should also check whether the README or other documents are still
 - Take project names, badges, links, contacts, commands, and supported versions from the repository or the
   user; a placeholder is better than a plausible invention.
 - Describe a staged-diff secrets hook as covering new commits only, never as a history scan.
-- Run one secrets scanner: Betterleaks by default, or Gitleaks when the repository or the user selects it.
+- Run one credential scanner: Betterleaks by default, or Gitleaks or Secretlint's recommended preset when the
+  repository or the user selects it. Secretlint's home-path, dotenv, and pattern rules may run beside it, since
+  they cover what it does not.
 - Treat GitHub settings, dependency automation, CI, releases, and history rewrites as separate requests. List
   them as follow-ups rather than applying them as part of setup.
 
