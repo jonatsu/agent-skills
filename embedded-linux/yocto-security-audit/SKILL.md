@@ -188,6 +188,4 @@ Cite the release-matched manual; the codename is in the docs URL path.
 
 ## Attribution
 
-See `ATTRIBUTIONS.md`. This skill is an independent write-up derived from upstream source and from a build of
-`meta-security` performed for it; the CC BY-SA teaching materials that informed subject selection are recorded
-there and no material was adapted from them.
+See `ATTRIBUTIONS.md` for the sources this skill is based on.
