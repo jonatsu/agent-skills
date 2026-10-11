@@ -60,13 +60,14 @@ Use assets as starting points after inspecting the repository:
 - `.gitattributes`: Keep the bundled cross-platform text, script, document, serialization, image, archive, and
   patch rules unless repository evidence requires a narrower adaptation.
 - `.pre-commit-config.yaml`: The bundled asset is the full preferred profile: pre-commit-hooks, Betterleaks,
-  EditorConfig checking, YAML and Markdown formatting and linting, a local invisible-character check for
+  Secretlint, EditorConfig checking, YAML and Markdown formatting and linting, a local invisible-character check for
   Markdown, ShellCheck, and shfmt. Use the complete profile when the user requests the preferred baseline. Make
   only the requested delta when extending an established configuration. The bundled hook revisions are a
   snapshot: run `pre-commit autoupdate` before first use, unless the user or repository pins them for a reason.
-  A commented Secretlint block adds what a credential scanner does not look for: the committing user's home
-  path, `.env` files, and project-specific patterns such as email addresses. Enable it when the user wants
-  personal or project data kept out of commits, after reading its section in the adaptation notes below.
+  Secretlint, configured by `.secretlintrc.json`, catches what a credential scanner does not look for: the
+  committing user's home path and `.env` files. It needs Node.js 22 or later. When the user wants more data kept
+  out of commits, such as email addresses or internal host names, add pattern rules as the adaptation notes
+  below describe.
 - `.shellcheckrc`: The companion to the ShellCheck hook above, and the one place its options belong — the hook,
   an editor extension, and a direct CLI run all read it, so per-tool arguments drift apart. The bundled profile
   enables every optional check and disables two by name, with the reason attached to each. Adopting it in an
@@ -169,7 +170,8 @@ Report exact validation results and untested environments.
 - Community templates: `CONTRIBUTING.template.md`, `SECURITY.template.md`,
   `CODE_OF_CONDUCT.template.md`, `PULL_REQUEST_TEMPLATE.md`, and `ISSUE_TEMPLATE/*`
 - Repository configuration: `.editorconfig`, `.gitattributes`, `.pre-commit-config.yaml`,
-  `.markdownlint-cli2.jsonc`, `.mdformat.toml`, `.shellcheckrc`, `.yamlfmt.yaml`, and `.yamllint.yaml`
+  `.markdownlint-cli2.jsonc`, `.mdformat.toml`, `.secretlintrc.json`, `.shellcheckrc`, `.yamlfmt.yaml`, and
+  `.yamllint.yaml`
 - Script: `scripts/mdwrap.py`, the Markdown prose rewrapper; standard library only, tested on Python 3.12 and 3.13
 
 ## Provenance

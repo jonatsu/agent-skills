@@ -95,14 +95,17 @@ adapt it when an established repository already carries deliberate conventions.
 Secretlint is a pluggable, opt-in linter for leaked data in working-tree files. Its value next to Betterleaks is
 the rules a credential scanner lacks: `no-homedir` reports the home directory path of the user running it,
 `no-dotenv` reports `.env` files, and `pattern` reports any regular expression or file glob the repository
-declares, such as email addresses or internal host names. Enable those rules alone. The
+declares, such as email addresses or internal host names. The profile enables the first two; add `pattern` per
+repository, with `@secretlint/secretlint-rule-pattern` in the hook's `additional_dependencies`. The
 `preset-recommend` credential rules duplicate Betterleaks, so use them only where Secretlint is the
 repository's chosen credential scanner.
 
-- Run it as a local `language: node` hook with its rule packages in `additional_dependencies`, as the commented
-  block in the bundled `.pre-commit-config.yaml` shows. It needs no `package.json` and no Docker, but it needs
-  Node.js 22 or later. The Docker image and the release binaries bundle only `preset-recommend`, `pattern`, and
-  the SARIF formatter, so neither carries `no-homedir` or `no-dotenv`.
+- Run it as a local `language: node` hook with its rule packages in `additional_dependencies`, as the bundled
+  `.pre-commit-config.yaml` does. It needs no `package.json` and no Docker, but it needs Node.js 22 or later.
+  Secretlint publishes no `.pre-commit-hooks.yaml`, so there is no hook repository to pin. Its README's
+  example is a local `docker_image` hook on `secretlint/secretlint:latest`, but the Docker image and the release
+  binaries bundle only `preset-recommend`, `pattern`, and the SARIF formatter, so neither carries `no-homedir`
+  or `no-dotenv`.
 - Pin every Secretlint package to the same version, since they release together. `pre-commit autoupdate`
   updates `rev` fields only, so bump `additional_dependencies` by hand from the release page.
 - Keep `--no-glob` in the entry. pre-commit passes literal paths, and a path such as `src/(auth)/login.ts` would

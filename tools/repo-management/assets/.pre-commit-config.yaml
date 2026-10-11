@@ -82,25 +82,24 @@ repos:
   #   hooks:
   #     - id: gitleaks
 
-  # OPTIONAL complement: Secretlint, for leaks a credential scanner does not
-  # look for: the committing user's home directory path, `.env` files, and
-  # project-specific patterns. Enable it beside Betterleaks, with only those
-  # rules; its recommended credential preset would scan the same diff twice.
+  # Secretlint, beside Betterleaks, for leaks a credential scanner does not look
+  # for: the committing user's home directory path and `.env` files. Its
+  # recommended credential preset stays off, because it would scan the same diff
+  # as Betterleaks. Rules live in .secretlintrc.json; add the pattern rule there
+  # for project-specific data, as references/config-adaptation-notes.md shows.
   # Needs Node.js 22+. Keep every package on one version: `pre-commit
-  # autoupdate` does not bump `additional_dependencies`. Rules live in
-  # .secretlintrc.json; see references/config-adaptation-notes.md.
+  # autoupdate` does not bump `additional_dependencies`.
   # https://github.com/secretlint/secretlint
-  # - repo: local
-  #   hooks:
-  #     - id: secretlint
-  #       name: secretlint
-  #       language: node
-  #       entry: secretlint --no-glob
-  #       additional_dependencies:
-  #         - secretlint@13.0.7
-  #         - "@secretlint/secretlint-rule-no-homedir@13.0.7"
-  #         - "@secretlint/secretlint-rule-no-dotenv@13.0.7"
-  #         - "@secretlint/secretlint-rule-pattern@13.0.7"
+  - repo: local
+    hooks:
+      - id: secretlint
+        name: secretlint
+        language: node
+        entry: secretlint --no-glob
+        additional_dependencies:
+          - secretlint@13.0.7
+          - "@secretlint/secretlint-rule-no-homedir@13.0.7"
+          - "@secretlint/secretlint-rule-no-dotenv@13.0.7"
 
   # Check files for EditorConfig compliance:
   # https://github.com/editorconfig-checker/editorconfig-checker.python
