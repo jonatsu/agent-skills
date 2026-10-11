@@ -29,7 +29,9 @@ first fails.
 ## This Repository Is Public
 
 - Never commit a secret, a customer or client name or detail, a personal path, an email address, or an internal
-  host, in a file or a commit message. Only secrets are scanned automatically; the rest is your responsibility.
+  host, in a file or a commit message. Hooks catch secrets, your home directory path, and email addresses
+  outside the noreply and reserved example domains; names, client details, and hosts are your responsibility,
+  as are commit messages.
   Use reserved example values (`example.com`, `/home/user`) in a skill's examples.
 - Commit as the GitHub noreply address in `checks/skill_checks/identity.py`; the `commit-identity` hook fails
   any other. Pushing publishes, so push only when the user asks.

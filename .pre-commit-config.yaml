@@ -26,6 +26,21 @@ repos:
     rev: 81aff7a638638aae3a659845d089043e1d8fe9ac # frozen: v1.9.0
     hooks:
       - id: betterleaks
+  # Secretlint catches what Betterleaks does not look for: the committer's home directory path, `.env` files,
+  # and email addresses outside the noreply and reserved example domains. Rules live in .secretlintrc.json.
+  # Secretlint publishes no hook repository, and `pre-commit autoupdate` does not bump
+  # `additional_dependencies`, so keep every package on one version and bump them together by hand.
+  - repo: local
+    hooks:
+      - id: secretlint
+        name: secretlint
+        language: node
+        entry: secretlint --no-glob
+        additional_dependencies:
+          - secretlint@13.0.7
+          - "@secretlint/secretlint-rule-no-homedir@13.0.7"
+          - "@secretlint/secretlint-rule-no-dotenv@13.0.7"
+          - "@secretlint/secretlint-rule-pattern@13.0.7"
   # mdformat normalizes Markdown structure while preserving deliberate prose line breaks. Archived skills and
   # verbatim upstream files are excluded because hygiene hooks must not rewrite them.
   - repo: https://github.com/hukkin/mdformat
