@@ -135,7 +135,7 @@ Two rules that make the difference between this and the upstream case:
   statement about the image.
 
 **The key names above are measured, not assumed.** Run against `checksec` 2.6.0 as `meta-security` packages it
-at `scarthgap` on 2026-09-08, `--format=json --file=` emits exactly:
+at `scarthgap` commit `b13f170`, `--format=json --file=` emits exactly:
 
 ```json
 { "/bin/bash": { "relro":"full","canary":"yes","nx":"yes","pie":"yes","rpath":"no","runpath":"no",

@@ -105,7 +105,7 @@ quoting a gap.
 Upstream packages the tool. `meta-security` ships `checksec` 2.6.0 from `slimm609/checksec.sh` at a pinned
 `SRCREV`, with `BBCLASSEXTEND = "native"` — so a host-side scan is *meant* to need no target.
 
-⛔ **`checksec-native` does not build at `scarthgap`.** Measured 2026-09-08 by building the layer with its own
+⛔ **`checksec-native` does not build at `scarthgap`.** Measured at commit `b13f170` by building the layer with its own
 `kas/qemux86-64.yml`: the recipe sets `BBCLASSEXTEND = "native"` but leaves `RDEPENDS:${PN}` carrying `procps`,
 which has no native variant in OE-Core, so BitBake refuses the target:
 

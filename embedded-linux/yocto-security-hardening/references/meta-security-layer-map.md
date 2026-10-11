@@ -50,8 +50,8 @@ the host-side lane in `verification-workflows.md` possible without a board.
 - **The oeqa security cases are smoke tests**, and at least one is a genuine defect. See
   `verification-workflows.md`.
 
-- **Scanner health, measured 2026-09-08.** Secondary sources report `buck-security`, `checksec` and `nikto` as
-  broken in the layer. **Built at `scarthgap` with the layer's own `kas/qemux86-64.yml`: all three build and
+- **Scanner health, measured at `scarthgap` commit `b13f170`.** Secondary sources report `buck-security`,
+  `checksec` and `nikto` as broken in the layer. **Built with the layer's own `kas/qemux86-64.yml`: all three build and
   package cleanly**, exit 0, no errors — `buck-security` 0.7, `checksec` 2.6.0, `nikto` 2.1.6. The blanket
   "broken" claim does not hold, and must not be repeated.
 
