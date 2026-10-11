@@ -5,7 +5,7 @@
 
 ## First-party Sources
 
-### The Buildroot developers — Buildroot
+### The Buildroot developers: Buildroot
 
 - Source: <https://github.com/buildroot/buildroot>
 - License: `GPL-2.0-or-later`
@@ -15,7 +15,7 @@ The guidance on commands, configuration paths, rebuild semantics, source overrid
 metadata, and image generation follows the release's `Makefile`, `Config.in`, `package/pkg-*.mk`,
 `support/download/dl-wrapper`, and `support/scripts/genimage.sh`. No code is copied.
 
-### The Buildroot developers — The Buildroot user manual
+### The Buildroot developers: The Buildroot user manual
 
 - Source: <https://buildroot.org/downloads/manual/manual.pdf>
 - License: `GPL-2.0-only`
@@ -26,7 +26,7 @@ built on the manual. No prose is copied.
 
 ## Third-party Sources
 
-### Bootlin — Buildroot system development training
+### Bootlin: Buildroot system development training
 
 - Source: <https://bootlin.com/training/buildroot/>
 - License: `CC-BY-SA-3.0`
@@ -36,7 +36,7 @@ The slides' framing of reproducibility as experimental and their SDK shell mater
 reproducibility claims and isolated cross-build environments. The labs' step of recording source identity in the
 root filesystem shaped the board-provenance example. No slide prose or lab exercise is copied.
 
-### The genimage contributors — genimage
+### The genimage contributors: genimage
 
 - Source: <https://github.com/pengutronix/genimage>
 - License: `GPL-2.0-only`
@@ -45,7 +45,7 @@ root filesystem shaped the board-provenance example. No slide prose or lab exerc
 Its README and image implementation informed the distinction between filesystem construction and partition
 assembly. The illustrative layout uses its configuration interface; no implementation is vendored.
 
-### Ciro Santilli — Linux Kernel Module Cheat
+### Ciro Santilli: Linux Kernel Module Cheat
 
 - Source: <https://github.com/cirosantilli/linux-kernel-module-cheat>, `buildroot_override` and the README's
   Buildroot and package sections
@@ -55,7 +55,7 @@ assembly. The illustrative layout uses its configuration interface; no implement
 Supplied the local-iteration, image-capacity, and overlay and module-metadata cases. No wrapper or Buildroot
 change was adopted.
 
-### Wu Zhangjin and the TinyLab community — Linux Lab
+### Wu Zhangjin and the TinyLab community: Linux Lab
 
 - Source: <https://github.com/tinyclub/linux-lab>, `Makefile`
 - License: `LicenseRef-Linux-Lab`
@@ -65,7 +65,7 @@ The license is GPL version 2 for non-commercial users, and commercial users need
 author. Its rootfs selection illustrated why a successful build does not identify the image a runner consumes.
 Nothing was adapted.
 
-### Packt — Mastering Embedded Linux Programming, Second Edition, example code
+### Packt: Mastering Embedded Linux Programming, Second Edition, example code
 
 - Source: <https://github.com/PacktPublishing/Mastering-Embedded-Linux-Programming-Second-Edition>, Chapter 6
 - License: `MIT`

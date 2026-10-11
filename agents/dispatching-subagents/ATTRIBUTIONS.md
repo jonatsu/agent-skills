@@ -5,7 +5,7 @@
 
 ## Third-party Sources
 
-### Jesse Vincent — superpowers `dispatching-parallel-agents` skill
+### Jesse Vincent: superpowers `dispatching-parallel-agents` skill
 
 - Source: <https://github.com/obra/superpowers>, `skills/dispatching-parallel-agents/SKILL.md`
 - License: `MIT`
@@ -16,7 +16,7 @@ out parallel agents, and exploratory debugging comes before splitting. It also i
 together, and checking combined results for conflicting edits, running the full suite, and spot-checking because
 agents make systematic errors. Nothing was copied.
 
-### Jesse Vincent — superpowers `subagent-driven-development` skill
+### Jesse Vincent: superpowers `subagent-driven-development` skill
 
 - Source: <https://github.com/obra/superpowers>, `skills/subagent-driven-development/` (`SKILL.md`,
   `implementer-prompt.md`, `task-reviewer-prompt.md`, `re-review-prompt.md`)
@@ -29,7 +29,7 @@ small same-shape edits into one dispatch; resuming the original implementer with
 to a fresh one on a stronger model; the scoped re-review of a fix; and keeping "do not flag" instructions out of a
 reviewer's prompt. Nothing was copied.
 
-### Matt Pocock — `writing-for-agents` skill
+### Matt Pocock: `writing-for-agents` skill
 
 - Source: <https://github.com/mattpocock/skills>, `skills/productivity/writing-for-agents/`
 - License: `MIT`

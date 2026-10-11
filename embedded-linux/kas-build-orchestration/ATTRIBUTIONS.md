@@ -8,7 +8,7 @@ notice appears below, and `LICENSE.upstream` stays with the skill.
 
 ## First-party Sources
 
-### Siemens AG and kas contributors — kas
+### Siemens AG and kas contributors: kas
 
 - Source: <https://github.com/siemens/kas>, documentation at <https://kas.readthedocs.io/en/5.3/>
 - License: `MIT`

@@ -5,7 +5,7 @@
 
 ## First-party Sources
 
-### The Yocto Project — Yocto Project documentation
+### The Yocto Project: Yocto Project documentation
 
 - Source: <https://docs.yoctoproject.org/>, the Reference, BitBake, BSP, Kernel, Security, and Development Tasks
   manuals, the migration guides, and "What I wish I'd known about Yocto Project"
@@ -16,7 +16,7 @@ The BitBake syntax, task lifecycle, recipe anatomy, and compliance guidance is b
 `references/official-doc-map.md` routes to them by problem type. Facts are restated in original words; no prose
 is copied.
 
-### The Yocto Project — Poky, with OpenEmbedded-Core and BitBake
+### The Yocto Project: Poky, with OpenEmbedded-Core and BitBake
 
 - Source: <https://git.yoctoproject.org/poky>, chiefly `meta/conf/bitbake.conf`, `meta/lib/oe/package.py`,
   `meta/classes-global/`, `meta-poky/conf/distro/`, and `bitbake/lib/bb/`
@@ -28,7 +28,7 @@ derived from the release's own classes, configuration, and BitBake code. No code
 
 ## Third-party Sources
 
-### Alexandre Belloni, Bootlin — "OpenEmbedded and Yocto Project best practices"
+### Alexandre Belloni, Bootlin: "OpenEmbedded and Yocto Project best practices"
 
 - Source: <https://bootlin.com/pub/conferences/2020/elce/belloni-yocto-best-practices/>
 - License: `CC-BY-SA-3.0`
@@ -38,7 +38,7 @@ Formerly adapted: earlier revisions of `references/yocto-best-practices.md` foll
 order of topics, covering configuration scopes, distro policy, sstate sharing, release capture, and license
 manifests. The current skill carries none of that structure.
 
-### Prashant Divate — awesome-yocto-ai-agent-skills
+### Prashant Divate: awesome-yocto-ai-agent-skills
 
 - Source: <https://github.com/prashantdivate/awesome-yocto-ai-agent-skills>
 - License: `MIT`

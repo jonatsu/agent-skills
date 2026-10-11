@@ -8,7 +8,7 @@ material; keep `LICENSE.upstream` with the skill.
 
 ## First-party Sources
 
-### J Liew (kenryu42) — `cc-safety-net` skill
+### J Liew (kenryu42): `cc-safety-net` skill
 
 - Source: <https://github.com/kenryu42/cc-safety-net>, `skills/cc-safety-net/SKILL.md`
 - License: `MIT`
@@ -17,7 +17,7 @@ material; keep `LICENSE.upstream` with the skill.
 The skill text is the upstream skill, vendored and adapted to call the installed CLI and to this repository's skill
 policy.
 
-### J Liew (kenryu42) — `cc-safety-net` CLI source code
+### J Liew (kenryu42): `cc-safety-net` CLI source code
 
 - Source: <https://github.com/kenryu42/cc-safety-net>, `src/`
 - License: `MIT`

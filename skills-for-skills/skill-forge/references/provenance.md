@@ -61,7 +61,7 @@ Start from `assets/ATTRIBUTIONS.template.md`, and keep its shape:
   section that has no entries. Group sources by kind only, never by when or why they were read.
 - `## Upstream License Notice`, only when a license requires its notice text to travel with the material.
 
-Each entry has a heading naming the author or publisher and the work, three bullets, and one to three sentences:
+Each entry has a heading in the form `### <Author or publisher>: <work>`, three bullets, and one to three sentences:
 
 - `Source`: the URL, plus the path within the project when the source is part of one.
 - `License`: the SPDX identifier or expression in backticks, such as `` `GPL-2.0-or-later` `` or

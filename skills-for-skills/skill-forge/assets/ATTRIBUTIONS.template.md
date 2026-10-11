@@ -7,7 +7,7 @@
 
 ## First-party Sources
 
-### `<Publisher — work>`
+### `<Publisher>: <work>`
 
 - Source: `<URL>, <path within the project when useful>`
 - License: `<SPDX identifier>`
@@ -17,7 +17,7 @@
 
 ## Third-party Sources
 
-### `<Author — work>`
+### `<Author>: <work>`
 
 - Source: `<URL>, <path within the project when useful>`
 - License: `<SPDX identifier, or a LicenseRef- name explained in the sentences below>`

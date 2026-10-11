@@ -8,7 +8,7 @@ material; keep `LICENSE.upstream` with the skill.
 
 ## First-party Sources
 
-### The Linux kernel developers — i.MX thermal binding
+### The Linux kernel developers: i.MX thermal binding
 
 - Source: <https://github.com/torvalds/linux>, `Documentation/devicetree/bindings/thermal/imx-thermal.yaml`
 - License: `GPL-2.0-only OR BSD-2-Clause`
@@ -20,7 +20,7 @@ links to the binding and carries no code from it.
 
 ## Third-party Sources
 
-### heyu-233 — linux-embedded-dev
+### heyu-233: linux-embedded-dev
 
 - Source: <https://github.com/heyu-233/linux-embedded-dev>, `references/camera-v4l2-workflow.md` and
   `references/full-link-debug-pipeline.md`
@@ -33,7 +33,7 @@ subnet with a successful ping and a stalled SSH session, kept as a hypothesis to
 revisions also followed the perf tuning checklist and the profiling playbook; that material now lives in the
 `embedded-linux-debugging` skill.
 
-### Bootlin — Embedded Linux system development training
+### Bootlin: Embedded Linux system development training
 
 - Source: <https://bootlin.com/doc/training/embedded-linux/embedded-linux-slides.pdf>
 - License: `CC-BY-SA-3.0`
@@ -43,7 +43,7 @@ Shaped the selection of cross-compilation topics: C library and static-linking c
 cross-host selection, and prefix and staging. The skill expresses them through target ABI and build-interface diagnosis
 and copies no slide prose, sequence, lab, or code.
 
-### Bootlin — Linux debugging, profiling and tracing training
+### Bootlin: Linux debugging, profiling and tracing training
 
 - Source: <https://bootlin.com/doc/training/debugging/debugging-slides.pdf>
 - License: `CC-BY-SA-3.0`

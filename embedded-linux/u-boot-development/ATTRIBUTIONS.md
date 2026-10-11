@@ -5,7 +5,7 @@
 
 ## First-party Sources
 
-### The U-Boot developers — U-Boot
+### The U-Boot developers: U-Boot
 
 - Source: <https://github.com/u-boot/u-boot>, chiefly `cmd/nvedit.c`, `tools/env/fw_env.c`, `env/`,
   `boot/image-fit-sig.c`, `tools/image-host.c`, `common/main.c`, `common/autoboot.c`, `drivers/bootcount/`,
@@ -19,7 +19,7 @@ upstream implementation is vendored, and no board skeleton is copied.
 
 ## Third-party Sources
 
-### Michael Opdenacker, Bootlin — Implementing A/B System Updates with U-Boot
+### Michael Opdenacker, Bootlin: Implementing A/B System Updates with U-Boot
 
 - Source: <https://bootlin.com/pub/conferences/2022/elce/opdenacker-implementing-A-B-system-updates-with-u-boot/>
 - License: `CC-BY-SA-3.0`

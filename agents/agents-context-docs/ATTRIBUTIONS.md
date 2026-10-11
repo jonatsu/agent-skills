@@ -8,7 +8,7 @@ the skill when redistributing it.
 
 ## Third-party Sources
 
-### Anthropic — `claude-md-improver` skill
+### Anthropic: `claude-md-improver` skill
 
 - Source: <https://github.com/anthropics/claude-plugins-official>, `plugins/claude-md-management/skills/claude-md-improver/`
 - License: `Apache-2.0`
@@ -17,7 +17,7 @@ the skill when redistributing it.
 Adapted: the evidence discipline, audit workflow, content-quality guidance, and template ideas derive from the
 upstream skill, modified into a framework-neutral, unscored workflow.
 
-### Matt Pocock — `writing-for-agents` skill
+### Matt Pocock: `writing-for-agents` skill
 
 - Source: <https://github.com/mattpocock/skills>, `skills/productivity/writing-for-agents/`
 - License: `MIT`
@@ -25,7 +25,7 @@ upstream skill, modified into a framework-neutral, unscored workflow.
 
 The cache and behavior tests adopt ideas from this source and express them independently. No prose was copied.
 
-### Netresearch DTT GmbH — `agent-rules-skill`
+### Netresearch DTT GmbH: `agent-rules-skill`
 
 - Source: <https://github.com/netresearch/agent-rules-skill>
 - License: `MIT AND CC-BY-SA-4.0`
@@ -34,7 +34,7 @@ The cache and behavior tests adopt ideas from this source and express them indep
 No prose was copied due to the content license. Independently expressed ideas cover per-directory adapters,
 imperative pointers, generated-content boundaries, and removed-line preservation.
 
-### Denis Shiryaev — `agents-best-practices`
+### Denis Shiryaev: `agents-best-practices`
 
 - Source: <https://github.com/DenisSergeevitch/agents-best-practices>, `references/system-prompts-instructions.md` and
   `references/architecture.md`
@@ -44,7 +44,7 @@ imperative pointers, generated-content boundaries, and removed-line preservation
 No prose was copied. Independently expressed ideas distinguish prompt guidance from code enforcement and identify
 prompt patterns that claim authority they do not hold.
 
-### agentydragon — `ducktape` skills `knowledge_hygiene` and `verify_docs`
+### agentydragon: `ducktape` skills `knowledge_hygiene` and `verify_docs`
 
 - Source: <https://github.com/agentydragon/ducktape>, `skills/knowledge_hygiene/` and `skills/verify_docs/`
 - License: `AGPL-3.0-only`
