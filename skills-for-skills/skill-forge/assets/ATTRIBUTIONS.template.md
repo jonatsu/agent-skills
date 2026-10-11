@@ -1,38 +1,30 @@
 # Attributions
 
-## Current skill
+- Author: `<current-author>`
+- License: `<SPDX identifier>`
 
-- Skill: `<skill-name>`
-- Current author: `<current-author>`
-- Current license: `<current-license>`
-- Status: `<original with external idea influences | adapted from upstream | vendored from upstream>`
+`<Derived packages only: what the upstream license requires, in one or two sentences.>`
 
-## Sources and Influence
+## First-party Sources
 
-- Original author: `<original-author>`
-- Upstream project: `<upstream-project-or-url>`
-- Source path: `<path-within-upstream-repo-if-useful>`
-- Source commit: `<commit-or-tag>`
-- Relationship: `<ideas expressed independently | material adapted | material vendored>`
+### `<Publisher — work>`
 
-Describe the exact ideas or material retained. State whether any prose, code, examples, identifiers, data, or
-assets were copied, adapted, translated, or vendored. Add one entry for every source that changed the skill.
+- Source: `<URL>, <path within the project when useful>`
+- License: `<SPDX identifier>`
+- Version: `<release, tag, or commit; else the documented software version, edition, or date>`
 
-## Adaptation Note
+`<One to three sentences: what the guidance is built on from this source; whether anything was copied.>`
 
-This version is derived from the upstream `<upstream-skill-name>` skill and has been modified for this
-repository.
+## Third-party Sources
 
-Material changes include:
+### `<Author — work>`
 
-- `<change-1>`
-- `<change-2>`
-- `<change-3>`
+- Source: `<URL>, <path within the project when useful>`
+- License: `<SPDX identifier, or a LicenseRef- name explained in the sentences below>`
+- Version: `<release, tag, or commit; else the edition and publication date, or the date read>`
 
-Remove this section when the source influenced only independently expressed ideas.
+`<One to three sentences: what this source supplied; whether anything was copied, adapted, or vendored.>`
 
-## Upstream License
+## Upstream License Notice
 
-The upstream source is used under `<upstream-license>`.
-
-Add any required license notice text below if the upstream license requires it.
+`<Only when a license requires its notice text to travel with the material; otherwise delete this section.>`

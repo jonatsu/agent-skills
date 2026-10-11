@@ -59,9 +59,12 @@ first fails.
   Markdown link or a script path that does, but it matches patterns line by line; check any other reference
   yourself. A script in one skill may be run by this repository's checks, never by another skill.
 - Keep a skill's `description` one inline YAML scalar. Kasetto records a folded one as its marker character.
-- Keep an `ATTRIBUTIONS.md` source entry permanently, restated in the past tense once the material is
-  replaced. The revisions that carried the material stay in history, so deleting the entry hides a
-  relationship a later reader still needs.
+- Write `ATTRIBUTIONS.md` to the scheme in `skill-forge`'s `references/provenance.md`: what the skill is based
+  on, under which license, and what each source gave it, in first-party and third-party sections. It is never a
+  work ledger; repairs, reviews, and investigations belong in Git history.
+- Keep a third-party source entry permanently, restated in the past tense once the material is replaced. The
+  revisions that carried the material stay in history, so deleting the entry hides a relationship a later
+  reader still needs. The author's own absorbed or deleted skills get no entry; no reader can inspect them.
 - Ask what a user would have to say for a proposed skill to load, before writing it. Guidance for a moment
   nobody verbalizes, such as whenever someone writes code, belongs in an agent's rules instead; a skill for
   such a moment does not activate, and no wording repairs it.

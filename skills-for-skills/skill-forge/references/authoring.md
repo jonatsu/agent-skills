@@ -110,11 +110,12 @@ An external source is attribution-bearing when reading it changes what the skill
 mechanisms, structure, examples, terminology, or failure modes, even when no wording or code is copied. Record
 each such source in `ATTRIBUTIONS.md`, naming the exact influence and separating independently expressed ideas
 from copied or adapted material. Copied, adapted, translated, or vendored material also ships its upstream
-license text. A source used only to verify public facts or runtime behavior needs no package attribution; cite
-it near the affected claim when useful. Preserve every existing provenance file during updates.
+license text. Subject documentation the skill is extensively built on gets a first-party entry; a single fact
+checked against `--help` or a manual page needs none, so cite it near the affected claim when useful. Preserve
+every existing provenance file during updates.
 
 Read [provenance.md](provenance.md) whenever an external source influenced the skill or supplied adapted or
-vendored material.
+vendored material, and before writing or changing `ATTRIBUTIONS.md`.
 
 The step is done when `metadata.author` and `license` are set from authoritative sources and every
 influencing source has its `ATTRIBUTIONS.md` entry.
