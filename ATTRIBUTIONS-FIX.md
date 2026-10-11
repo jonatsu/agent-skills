@@ -11,7 +11,7 @@ Steps:
    done.
 3. The remaining files, by Sonnet subagents at most two at a time, each reviewed before commit.
    Status: done.
-4. A structural check under `checks/` that enforces the scheme, enabled once every row is done.
+4. A structural check under `checks/` that enforces the scheme, enabled once every row is done. Status: done.
 5. The documentation flaw patterns found here, written as general documentation guidelines in `AGENTS.md` or a
    shared rules file, proposed to the user before placing. The repair of other documentation follows later.
 
