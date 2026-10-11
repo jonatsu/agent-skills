@@ -1,62 +1,37 @@
 # Attributions
 
-## Current Skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `session-handoff`, named `handoff` until 2026-09-28
-- Current author: Joonas Onatsu
-- Current license: MIT, unchanged from upstream
-- Status: adapted from upstream and substantially rewritten
+The package adapts upstream material, whose MIT license requires its notice to travel with the material; keep
+`LICENSE.upstream` with the skill.
 
-## Original Author and Source
+## Third-party Sources
 
-- Original author: Matt Pocock ([@mattpocock](https://github.com/mattpocock))
-- Copyright holder: `Copyright (c) 2026 Matt Pocock`, as stated in the upstream `LICENSE`
-- Upstream project: [mattpocock/skills](https://github.com/mattpocock/skills)
-- Source path: `skills/productivity/handoff/SKILL.md`
-- Source commit: `d28dfdc39beadc3142a33359b5cfa4765dcbd0bc` (2026-08-15)
-- Upstream license: MIT
+### Matt Pocock: `handoff` skill
 
-## Adaptation
+- Source: <https://github.com/mattpocock/skills>, `skills/productivity/handoff/SKILL.md`
+- License: `MIT`
+- Version: `d28dfdc39beadc3142a33359b5cfa4765dcbd0bc`
 
-Upstream supplied the core no-duplication discipline, redaction rule, and temporary save-location guidance.
+The skill supplied the no-duplication discipline, the redaction rule, and the temporary save-location guidance. This
+package adapts it and extends it substantially.
 
-The current skill adds:
+### Alireza Rezvani: `handoff-engineering` skill
 
-- pointer and stateful handoff branches so routine transfers remain short;
-- a mandatory scan for undocumented preferences, agreements, nuances, rejected approaches, scope, and
-  unfinished reasoning;
-- paste-ready `PRIME` and saved `DOCUMENT` delivery modes;
-- verification requirements for factual state included in a handoff;
-- conditional sections for complex work without imposing a fixed template;
-- an ephemerality guardrail requiring durable knowledge to reach a version-controlled artifact before the
-  handoff, rather than surviving only in a gitignored note or prompt;
-- a default refusal to emit oversized `PRIME` prompts that a terminal can silently corrupt on paste; and
-- explicit carry-forward of standing session-start operating instructions.
+- Source: <https://github.com/alirezarezvani/claude-skills>
+- License: `MIT`
+- Version: read on or before 2026-09-02
 
-The repository owner's session-priming workflow informed these additions. A successful multi-item priming
-brief supplied the initial stateful shape, and later routine skill-review handoffs exposed the need for a
-separate pointer form.
+The skill is an intermediate derivative of Matt Pocock's skill. It supplied the idea of scaling a handoff's length to
+the work. Nothing was copied.
 
-## Related Work Not Used as the Base
+### Sam McDavid: context-checkpoint rule
 
-The `handoff-engineering` skill in `alirezarezvani/claude-skills` is an intermediate MIT-licensed derivative
-of Matt Pocock's skill. It was evaluated but was not used as the base because its recommender hardcodes skills
-from its own publisher's repository. Two ideas were evaluated. Scaling length to the work was adopted
-independently and remains credited here. Avoiding handoffs that merely summarize an earlier handoff was not
-carried into this skill.
+- Source: <https://github.com/samcdavid/dotfiles>, `claude/rules/context-checkpoint.md`
+- License: `LicenseRef-No-License`
+- Version: `d43480376d0361998a4f3f565944882cd52906bb`
 
-The context-checkpoint rule in `samcdavid/dotfiles`, at `claude/rules/context-checkpoint.md` in commit
-`d43480376d0361998a4f3f565944882cd52906bb` (2026-09-03), was also evaluated. That repository declares no
-license, so no text was copied. Three of its ideas were adopted and expressed independently: naming the commit
-a stateful brief was verified against, limiting `NEXT` to exactly one task, and reducing raw logs, diffs, and
-subagent reports to their conclusions. Its fixed context-token budget was rejected because it depends on one
-harness and one model's context size.
-
-## Upstream License
-
-The upstream source is used under the MIT License. The verbatim license text ships as `LICENSE.upstream`;
-preserve it and this attribution file when redistributing the skill.
-
-The license and copyright holder were verified against the pinned source on 2026-09-02 with
-`gh api repos/mattpocock/skills/contents/LICENSE?ref=d28dfdc39beadc3142a33359b5cfa4765dcbd0bc`. The upstream
-repository root at that revision contains no `NOTICE` file.
+The repository declares no license, so all rights remain with its author. The rule supplied three ideas: naming the
+commit a stateful brief was verified against, limiting `NEXT` to exactly one task, and reducing raw logs, diffs, and
+subagent reports to their conclusions. Nothing was copied.
