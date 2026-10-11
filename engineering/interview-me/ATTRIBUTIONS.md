@@ -1,52 +1,27 @@
 # Attributions
 
-## Current skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `interview-me`, named `grilling` until 2026-09-28
-- Current author: Joonas Onatsu
-- Current license: MIT
-- Status: adapted from upstream and materially modified
+The package adapts upstream material, whose MIT license requires its notice to travel with the material; keep
+`LICENSE.upstream` with the skill.
 
-## Original authors and source
+## Third-party Sources
 
-- Original author: Matt Pocock
-- Upstream project: <https://github.com/mattpocock/skills>
-- Source path: `skills/productivity/grilling/SKILL.md`
-- Source commit: `391a2701dd948f94f56a39f7533f8eea9a859c87`
+### Matt Pocock: `grilling` skill
 
-## Adaptation note
+- Source: <https://github.com/mattpocock/skills>, `skills/productivity/grilling/SKILL.md`
+- License: `MIT`
+- Version: `391a2701dd948f94f56a39f7533f8eea9a859c87`
 
-This version is derived from the upstream `grilling` skill and has been modified for this repository.
+The skill supplied the interview method: walking each branch of the decision tree one question at a time, with a
+recommended answer to each. This package adapts its opening text and adds the surrounding sections.
 
-Material changes include:
+### Douglas Urrea Ocampo: `grill-me-qa` skill
 
-- Description rewritten from "Grill the user relentlessly about a plan or design. Use when the user wants to
-  stress-test a plan before building, or uses any 'grill' trigger phrases." to a one-question-at-a-time
-  framing scoped to proposed designs and explicit user requests.
-- Upstream body preserved verbatim as the opening four paragraphs until 2026-09-28, when the skill was renamed
-  `interview-me` and widened from plans and designs to any subject that needs a shared understanding. Those
-  paragraphs now say "the subject" and "decision tree" where upstream says "this plan" and "design tree", and
-  the closing prohibition is stated positively. On 2026-09-28 the one-question-at-a-time paragraph was
-  rewritten to allow batching simple, independent, non-load-bearing questions, after documentation work in
-  another repository showed batching saved the user's time on simple decisions.
-- Sections added below it, all original to this repository: vague-answer handling, a session question budget,
-  stopping criteria, a closing decision record, and an anti-patterns list. The anti-patterns list was folded
-  into the sections it repeated on 2026-09-28.
-- Frontmatter metadata block added (author, license) and upstream provenance moved to this `ATTRIBUTIONS.md`
-  per repo skill-forge policy.
+- Source: <https://github.com/fugazi/test-automation-skills-agents>, `skills/grill-me-qa/SKILL.md`
+- License: `MIT`
+- Version: read 2026-08-25
 
-## Idea sources
-
-Beyond the upstream body above, which is a licence obligation, this is a courtesy ledger.
-
-- [fugazi/test-automation-skills-agents](https://github.com/fugazi/test-automation-skills-agents) (MIT),
-  `skills/grill-me-qa/SKILL.md`, read 2026-08-25 at `HEAD`. Reading it prompted four additions, each written
-  from scratch: the vague-answer rule, the session question budget, the stopping criteria, and the closing
-  decision record. Its own five-dimension QA question bank, TSDR templates, per-dimension budget arithmetic
-  and Spanish trigger list were evaluated and not adopted — that skill is domain-locked to web and API test
-  automation, where this one is domain-general. No text, tables, or examples were carried over.
-
-## Upstream license
-
-The upstream source is MIT-licensed. See `LICENSE.upstream` in this directory for the full notice, reproduced
-verbatim from the upstream repository's own `LICENSE` at the source commit above.
+The skill prompted four additions: handling vague answers, a session question budget, stopping criteria, and a closing
+decision record. Each was written independently, and nothing was copied.
