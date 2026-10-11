@@ -9,6 +9,7 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
+from skill_checks.attributions import check_attributions, format_attribution_report
 from skill_checks.catalog import (
     InvalidSkillDirectories,
     SkillCatalogError,
@@ -44,6 +45,7 @@ def build_parser() -> argparse.ArgumentParser:
     validate = commands.add_parser("validate", help="run specification then policy validation")
     validate.add_argument("skill_directory", type=Path)
     commands.add_parser("descriptions", help="check description form and length")
+    commands.add_parser("attributions", help="check ATTRIBUTIONS.md against the provenance scheme")
     commands.add_parser("names", help="fail when two deployable skills share a name")
     commands.add_parser("references", help="fail on a reference out of a skill package")
     commands.add_parser("identity", help="fail unless Git would commit as the noreply address")
@@ -99,6 +101,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0 if statuses == [0, 0] else 1
     if arguments.command == "descriptions":
         return _run_descriptions(root)
+    if arguments.command == "attributions":
+        return _run_attributions(root)
     if arguments.command == "names":
         return _run_names(root)
     if arguments.command == "references":
@@ -140,6 +144,17 @@ def _run_descriptions(root: Path) -> int:
     report = check_descriptions(sources)
     sys.stdout.write(format_description_report(report, root))
     return 1 if report.failures else 0
+
+
+def _run_attributions(root: Path) -> int:
+    try:
+        sources = discover_skill_sources(root)
+    except SkillCatalogError as error:
+        print(f"skill-checks: {error}", file=sys.stderr)
+        return 2
+    report = check_attributions(sources)
+    sys.stdout.write(format_attribution_report(report, root))
+    return 1 if report.findings else 0
 
 
 def _run_names(root: Path) -> int:
