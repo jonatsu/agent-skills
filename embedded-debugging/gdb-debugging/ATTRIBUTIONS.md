@@ -1,30 +1,41 @@
 # Attributions
 
-## Current skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `gdb-debugging`
-- Current author: Joonas Onatsu
-- Current license: MIT
-- Status: original text; two components adapted from upstream
+The package adapts material from low-level-dev-skills, whose MIT license requires its notice to travel with the
+material; keep `LICENSE.upstream` with the skill.
 
-## Adapted components
+## First-party Sources
 
-- Upstream: [mohitmishra786/low-level-dev-skills](https://github.com/mohitmishra786/low-level-dev-skills), skills
-  `skills/debuggers/gdb/` and `skills/debuggers/lldb/`, revision `bdc58472fa9f309ed1b3f7d985a0d8e9bd8f4608`, read
-  2026-09-30.
-- Upstream license: MIT, Copyright (c) 2026 chessMan; the full text is in [LICENSE.upstream](LICENSE.upstream).
-- From the `gdb` skill: the batch-mode invocation, the `gdbserver` and `--attach` pattern, and the breakpoint
-  `commands ... silent ... continue` logging pattern, all reworked for remote embedded targets.
-- From the `lldb` skill: the idea of a GDB-to-LLDB command table. Its rows were not carried over, because several
-  were wrong (`bt full`, `fr v -a`, `set scheduler-locking`); every row here comes from LLDB's official map or its
-  source at LLVM 23.1.2.
+### The GDB developers: GDB
 
-## Sources whose reading shaped the skill
+- Source: <https://sourceware.org/git/binutils-gdb.git>, `gdb/doc/gdb.texinfo` and the `gdb/` sources
+- License: `GPL-3.0-or-later AND GFDL-1.3-or-later`
+- Version: `gdb-18.1-release`
 
-No text was copied from these; facts are restated with their source named in the references.
+The guidance in `SKILL.md` is built on the manual and the source: connecting and loading, hardware breakpoint and
+watchpoint limits and their error messages, reading optimized code, batch runs, and core dumps. Facts are restated in
+original words; nothing was copied.
 
-- The GDB manual and source at `gdb-18.1-release`, LLDB's documentation and source at `llvmorg-23.1.2`, Debian's
-  `gdb-multiarch` build rules, Rust's `src/etc/rust-gdb` at 1.98.1, and the Arm Cortex-M0, M0+, M3, M4, M7, and M33
-  Technical Reference Manuals for the breakpoint and watchpoint counts.
+### The LLVM Project: LLDB
 
-The research notes, with URLs and commits, are in agent-setup's `docs/research/embedded-debugging/`.
+- Source: <https://github.com/llvm/llvm-project>, `lldb/docs/` and `lldb/source/`
+- License: `Apache-2.0 WITH LLVM-exception`
+- Version: `llvmorg-23.1.2`
+
+`references/lldb.md` takes every row of its GDB-to-LLDB command table from LLDB's official command map or its source.
+Nothing was copied.
+
+## Third-party Sources
+
+### mohitmishra786: low-level-dev-skills
+
+- Source: <https://github.com/mohitmishra786/low-level-dev-skills>, `skills/debuggers/gdb/` and
+  `skills/debuggers/lldb/`
+- License: `MIT`
+- Version: `bdc58472fa9f309ed1b3f7d985a0d8e9bd8f4608`
+
+Adapted for remote embedded targets: the `gdb` skill's batch-mode invocation, its `gdbserver` and `--attach` pattern,
+and its breakpoint `commands ... silent ... continue` logging pattern. The `lldb` skill supplied the idea of a
+GDB-to-LLDB command table.
