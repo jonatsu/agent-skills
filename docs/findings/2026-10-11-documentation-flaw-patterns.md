@@ -92,3 +92,6 @@ documentation pass:
   `compiler-and-binary-hardening.md`), and `embedded-linux/yocto-vulnerability-management/references/report-coverage-audit.md`.
 - A factual error: `embedded-linux/yocto-security-hardening/references/chain-of-trust-wiring.md` says meta-avb's license
   "reports as `NOASSERTION`". Its LICENSE is the standard MIT text; only GitHub's detection reports `NOASSERTION`.
+- A work narrative (pattern 1) in a license file's own header: `tools/git-commits-and-recovery/LICENSE.upstream`
+  narrates when the worktree material moved. The license text itself must stay verbatim; only the added header is in
+  question.
