@@ -62,7 +62,7 @@ shipped binaries. Even repaired, the case could not answer whether the image was
 
 ## The measured result, and why it is the point
 
-`security-test-image` at `scarthgap`, `qemux86-64`, 2026-09-08. **58 results: 33 passed, 16 failed, 9 skipped.**
+`security-test-image` at `scarthgap` commit `b13f170`, `qemux86-64`. **58 results: 33 passed, 16 failed, 9 skipped.**
 
 | Result  | Cases                                                                                                                            |
 | ------- | -------------------------------------------------------------------------------------------------------------------------------- |

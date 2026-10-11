@@ -36,7 +36,7 @@ Dropbear has entirely different defaults and flags.
 
 ## Worked example, on upstream's own security image
 
-`meta-security`'s `security-test-image` at `scarthgap`, measured 2026-09-08:
+`meta-security`'s `security-test-image`, built at `scarthgap` commit `b13f170`:
 
 ```text
 root::15069:0:99999:7:::

@@ -103,7 +103,7 @@ Say these plainly rather than inferring them:
 
 ## Worked example — auditing upstream's own security image
 
-Run against `meta-security`'s `security-test-image` at `scarthgap`, 2026-09-08. Configuration first:
+Run against `meta-security`'s `security-test-image`, built at `scarthgap` commit `b13f170`. Configuration first:
 
 ```bash
 jq -r '.IMAGE_FEATURES, .ROOTFS_POSTPROCESS_COMMAND' <image>.testdata.json
