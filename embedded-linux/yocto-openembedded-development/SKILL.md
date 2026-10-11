@@ -289,7 +289,4 @@ Cite the release-matched version of every manual (the codename is in the docs UR
 
 ## Attribution
 
-See `ATTRIBUTIONS.md` for the sources behind this skill, including a 2026-09-07 finding that
-`references/yocto-best-practices.md` was a structural adaptation of a CC BY-SA 3.0 Bootlin source, and the 2026-09-08
-independent re-derivation that resolved it in favour of the MIT declaration above. That record is permanent: the
-adapted revisions remain in this repository's history even though the current text no longer carries them.
+See `ATTRIBUTIONS.md` for the sources this skill is based on.
