@@ -1,13 +1,12 @@
 # Documentation Flaw Patterns
 
-Date: 2026-10-11. Status: open until the documentation skills and templates carry these patterns.
+Date: 2026-10-11. Status: the rules are in place; the dash sweep (pattern 16) remains in `TODO.md`.
 
 These are recurring flaws in agent-written documentation. The repair of every skill's `ATTRIBUTIONS.md` surfaced
 them, and the author has seen the same patterns in agent-written documentation generally, most of all in
-technical docs. They are input for updating the documentation skills (`writing-documentation`,
-`writing-for-humans`, `writing-for-agents`, `context-architecture`, and `skill-forge`'s provenance guidance) and
-for the documentation guidelines in `AGENTS.md`. The templates under `agents/agents-context-docs/assets/` need
-the same care: they seed every new context document, so a flaw there spreads to each repository they initialize.
+technical docs. The rules that prevent them live in `writing-documentation`, `context-architecture`'s writing
+rules, `skill-forge`'s provenance guidance, the `agents-context-docs` instruction-file template, and this
+repository's `AGENTS.md`. `writing-for-humans` already covered the sentence-level patterns (8, 14, and 16).
 
 Each pattern names what goes wrong, an observed example, and the fix.
 

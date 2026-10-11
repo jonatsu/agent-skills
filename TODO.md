@@ -349,14 +349,12 @@ mostly grep and search to find things, which suggests the layouts or the guidanc
 yet steer navigation. The cause is unknown. Candidates include link wording, pointer placement, and what the
 loaded instruction files say about navigation. Raised 2026-10-11; pick it up after the attributions repair.
 
-## Documentation Flaw Patterns for the Documentation Skills
+## Dash Overuse in Skill Packages
 
-Carry the patterns recorded in `docs/findings/2026-10-11-documentation-flaw-patterns.md` into the documentation
-skills (`writing-documentation`, `writing-for-humans`, `writing-for-agents`, `context-architecture`, and
-`skill-forge`'s provenance guidance), into the templates under `agents/agents-context-docs/assets/`, which
-seed new documents and so prevent the flaws at the source. `AGENTS.md` already carries the general rules under
-"Writing Documentation"; the skills and templates remain, as do the instances the findings record lists outside the
-attribution files.
+Rewrite the em and en dashes in non-archived `SKILL.md` files and their references that no grammatical need
+justifies, with the punctuation the clause relationship calls for. Pattern 16 in
+`docs/findings/2026-10-11-documentation-flaw-patterns.md` describes the flaw; `rg -n '—|–'` lists the
+candidates. Each skill is one commit, and a real range keeps its dash.
 
 ## Unevaluated Candidate Sources
 
