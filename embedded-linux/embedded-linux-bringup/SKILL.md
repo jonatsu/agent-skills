@@ -94,5 +94,5 @@ Use a documented recovery procedure instead of promising to restore hardware by 
 ## Sources
 
 Prefer the target kernel's `Documentation/`, DT bindings, device manuals, and the tool's own release documentation.
-Source baselines and retained influences are recorded in [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
+See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for the sources this skill is based on.
 Client deployment is not evidence of automatic activation or correct task execution.
