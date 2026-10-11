@@ -23,12 +23,12 @@ Status is `pending`, `done`, or `blocked`. A blocked row names what it waits on.
 | `agents/context-architecture`                   | 53           | done    |                |
 | `agents/context-compression`                    | 52           | done    |                |
 | `agents/dispatching-subagents`                  | 50           | done    |                |
-| `agents/document-conversion`                    | 107          | pending |                |
-| `agents/note-for-later`                         | 25           | pending |                |
-| `agents/prompt-debugging`                       | 57           | pending |                |
-| `agents/session-handoff`                        | 62           | pending |                |
-| `agents/writing-prompts`                        | 49           | pending |                |
-| `claude/session-reflect`                        | 49           | pending |                |
+| `agents/document-conversion`                    | 107          | done    |                |
+| `agents/note-for-later`                         | 25           | done    |                |
+| `agents/prompt-debugging`                       | 57           | done    |                |
+| `agents/session-handoff`                        | 62           | done    |                |
+| `agents/writing-prompts`                        | 49           | done    |                |
+| `claude/session-reflect`                        | 49           | done    |                |
 | `code-health/brooks-audit`                      | 42           | pending |                |
 | `code-health/brooks-debt`                       | 42           | pending |                |
 | `code-health/brooks-health`                     | 42           | pending |                |
@@ -58,9 +58,9 @@ Status is `pending`, `done`, or `blocked`. A blocked row names what it waits on.
 | `embedded-linux/kas-build-orchestration`        | 111          | done    |                |
 | `embedded-linux/u-boot-development`             | 82           | done    |                |
 | `embedded-linux/yocto-openembedded-development` | 155          | done    | Worked example |
-| `embedded-linux/yocto-security-audit`           | 97           | pending |                |
-| `embedded-linux/yocto-security-hardening`       | 163          | pending |                |
-| `embedded-linux/yocto-vulnerability-management` | 126          | pending |                |
+| `embedded-linux/yocto-security-audit`           | 97           | done    |                |
+| `embedded-linux/yocto-security-hardening`       | 163          | done    |                |
+| `embedded-linux/yocto-vulnerability-management` | 126          | done    |                |
 | `engineering/define-goal`                       | 40           | pending |                |
 | `engineering/domain-modeling`                   | 48           | pending |                |
 | `engineering/idea-brainstorming`                | 93           | pending |                |
