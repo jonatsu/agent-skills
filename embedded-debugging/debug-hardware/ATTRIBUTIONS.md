@@ -1,24 +1,25 @@
 # Attributions
 
-## Current skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `debug-hardware`
-- Current author: Joonas Onatsu
-- Current license: MIT
-- Status: original text
+## First-party Sources
 
-## Sources whose reading shaped the skill
+### SEGGER: J-Link / J-Trace User Guide
 
-No text was copied from any of these; facts are restated with their source named where the skill uses them.
+- Source: <https://kb.segger.com/UM08001_J-Link_/_J-Trace_User_Guide> and its linked knowledge-base pages
+- License: `LicenseRef-Proprietary`
+- Version: J-Link software 9.80
 
-- **SEGGER knowledge base** (<https://kb.segger.com/UM08001_J-Link_/_J-Trace_User_Guide> and linked pages, read
-  2026-09-30): the J-Link Base facts, and the order of the "J-Link cannot connect" checks, which section 5 of
-  `SKILL.md` and `references/jlink-base.md` adapt into a probe-neutral first-contact order.
-- **raspberrypi/debugprobe** (MIT, tag `debugprobe-v2.3.1`) and Raspberry Pi's Debug Probe documentation: the
-  firmware variants, pin assignments, and connector specification in `references/pico-debugprobe.md`.
-- **Vendor documentation** for `references/target-connections.md`: the RP2040 and RP2350 datasheets, an ST
-  Community article on STM32 readout protection, the nRF Connect SDK's AP-Protect documentation, ESP-IDF's JTAG
-  debugging guide, Raspberry Pi's `config.txt` documentation, and probe.rs's Raspberry Pi page.
+The knowledge base states no open license, so all rights remain with SEGGER. It supplied the J-Link Base capabilities
+and limits, and the order of the "J-Link cannot connect" checks, which `SKILL.md` and `references/jlink-base.md`
+restate as a probe-neutral first-contact order. Nothing was copied.
 
-The research notes behind these, with URLs and commits, are in agent-setup's
-`docs/research/embedded-debugging/`.
+### Raspberry Pi: debugprobe
+
+- Source: <https://github.com/raspberrypi/debugprobe>, `include/board_*_config.h`
+- License: `MIT`
+- Version: `debugprobe-v2.3.1`
+
+The firmware supplied the three build variants, the pin assignments for the Debug Probe hardware and for a plain Pico,
+and the UART bridge behavior in `references/pico-debugprobe.md`. Nothing was copied.
