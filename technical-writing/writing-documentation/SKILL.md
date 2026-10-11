@@ -140,7 +140,11 @@ already covers. Cut:
 - an announcement of what follows; state it instead;
 - a narrated cross-reference ("as the overview describes"); the link alone does that job;
 - a restatement of another section; link to the section that owns the point;
-- text about the document itself or how it came to be written; and
+- text about the document itself, or a record of the work on it or its subject: repairs, reviews,
+  investigations, their dates, and what was checked and found irrelevant;
+- a list of what the document leaves out, unless the reader would otherwise assume it is covered;
+- a rule that governs every document of its kind; keep it once, in the repository's rules;
+- an argument for the document's own legitimacy; state the facts and let them stand; and
 - history of how a choice was reached; the document describes the current state.
 
 State the document's scope, versions, and sources once, where it opens, and never repeat them per claim. A
@@ -148,7 +152,8 @@ reference names its upstream source and version in that opening, not beside each
 
 Date a statement only where the date changes its meaning: a revision history, a measurement, an evaluation true
 as of its run, or a record's status line. Elsewhere state the status: "awaits the customer's review", not
-"proposed on 25 September".
+"proposed on 25 September". When the measured state has a commit or version, pin the measurement to that
+instead of the date.
 
 Any document that states a decision gives each rejected option directly, with the reason it lost: "Stopping the
 boot instead would leave the device unrecoverable, because…", not "two alternatives were weighed".
@@ -186,6 +191,12 @@ subject, as in `ADR-0014: Store rendered reports in object storage`.
 Link every source the document names. A reader must reach every document they need by following links; one who
 needs a text search to find it has hit a defect.
 
+Pin a source with an identifier that survives regeneration: a release, tag, or commit, or the version or date
+the material carries, never the hash of a file rebuilt on each update. Keep the precision the evidence
+supports. When no pin was recorded, give the read date, because a commit derived afterwards claims an
+observation nobody made. Cite only what the reader can open; a private repository, a deleted file, or a working
+note is no source for a published document.
+
 ## Make the Content Usable
 
 - Put prerequisites, irreversible effects, limits, and caveats before the reader meets them.
@@ -195,6 +206,11 @@ needs a text search to find it has hit a defect.
 - For a failure, state the failed condition, its known cause, and the next action. Name the invalid value,
   required form, limit, or conflicting state when known.
 - Use link text that names its target.
+- Group content by what it is, never by when or why it was gathered, and give each section a question its
+  reader has.
+- Summarize to the points the reader needs rather than listing every item, and name the kind of a change in a
+  clause rather than listing each change.
+- Put the fact a reader scans for, such as a license or version, first or in a field of its own.
 
 ## Decision Records
 
@@ -246,6 +262,7 @@ Check that:
 - every example, step, interface detail, and failure path matches the subject as it is;
 - the document reads correctly without resolving any internal identifier elsewhere;
 - every named source is linked, and every needed document is reachable by links;
+- every pin is one the evidence recorded, and every cited source is one the reader can open;
 - the procedure still works with every note deleted, and each warning or caution matches its risk; and
 - accessibility information and recovery guidance cover what the reader needs.
 
@@ -259,7 +276,8 @@ The document is complete when it is **reader-ready** and every remaining evidenc
 - **Draft:** produce the document in its selected type.
 - **Review:** report missing context, type leaks, structural problems, inaccurate examples, accessibility gaps,
   and unclear recovery before suggesting edits.
-- **Condense:** remove noise and misplaced content; keep reader-critical context, decisions,
+- **Condense:** remove noise and misplaced content, judging each passage by what it gives the reader rather
+  than by its section's label; keep reader-critical context, decisions,
   prerequisites, examples, caveats, and recovery.
 - **Expand:** add confirmed context, examples, constraints, or recovery, never invented ones.
 
