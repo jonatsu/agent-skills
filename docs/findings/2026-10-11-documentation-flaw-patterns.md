@@ -24,7 +24,9 @@ Each pattern names what goes wrong, an observed example, and the fix.
 
 03. **Volatile identifiers.** The document pins material with values that change whenever it is regenerated,
     such as the SHA-256 of a PDF rebuilt on every upstream update. The fix is a stable identifier: a release,
-    tag, or commit, the version the material embeds, or the date it carries.
+    tag, or commit, the version the material embeds, or the date it carries. A date that pins an observation of a
+    moving target, such as a measurement on a branch, is evidence rather than narration; replace it with a commit
+    pin when the record holds one, and keep it otherwise.
 
 04. **References a reader cannot inspect.** Examples: the author's deleted or absorbed skills, commits in a
     private repository, an internal port brief. The fix is to cite only what a reader of the published document
@@ -83,15 +85,15 @@ Each pattern names what goes wrong, an observed example, and the fix.
 
 ## Instances Outside the Attribution Files
 
-The repair touched only `ATTRIBUTIONS.md` and the sentences pointing at it. These instances elsewhere wait for the
-documentation pass:
+The repair touched only `ATTRIBUTIONS.md` and the sentences pointing at it. Three suspected instances elsewhere were
+resolved afterwards:
 
-- Dated measurement notes (pattern 1) in `embedded-linux/yocto-security-audit/references/`
-  (`configuration-findings.md`, `auditing-without-metadata.md`, `oeqa-security-suites.md`),
-  `embedded-linux/yocto-security-hardening/references/` (`verification-workflows.md`, `meta-security-layer-map.md`,
-  `compiler-and-binary-hardening.md`), and `embedded-linux/yocto-vulnerability-management/references/report-coverage-audit.md`.
-- A factual error: `embedded-linux/yocto-security-hardening/references/chain-of-trust-wiring.md` says meta-avb's license
-  "reports as `NOASSERTION`". Its LICENSE is the standard MIT text; only GitHub's detection reports `NOASSERTION`.
-- A work narrative (pattern 1) in a license file's own header: `tools/git-commits-and-recovery/LICENSE.upstream`
-  narrates when the worktree material moved. The license text itself must stay verbatim; only the added header is in
-  question.
+- Dated measurement notes in the Yocto security skills' references were evidence pins, not work narration (pattern
+  3, and a near miss for pattern 15). Six now name `meta-security` commit `b13f170`, the revision the build probe in
+  agent-setup's `docs/research/yocto-security/` ran against. The seventh, "NVD feed of 2026-09-05" in
+  `report-coverage-audit.md`, is sample report text and stays.
+- A factual error: `chain-of-trust-wiring.md` warned that meta-avb's license "reports as `NOASSERTION`". The layer's
+  `LICENSE` is the MIT text with a non-standard copyright line, which GitHub's detection does not match. The
+  reference now says the layer is MIT-licensed.
+- A work narrative in `tools/git-commits-and-recovery/LICENSE.upstream`'s own header, which said when the worktree
+  material moved. The header now names "earlier revisions" in the past-tense form; the license texts are unchanged.
