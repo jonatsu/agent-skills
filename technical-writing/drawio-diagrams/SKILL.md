@@ -136,4 +136,4 @@ the diagram is inside it.
 
 ## Attributions
 
-See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for the draw.io skills whose ideas informed this one.
+See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for the sources this skill is based on.
