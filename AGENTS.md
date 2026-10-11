@@ -79,6 +79,28 @@ first fails.
 - Spend time validating or repairing an archived skill marked deferred, unless its review is explicitly
   resumed.
 
+## Writing Documentation
+
+A durable document describes its subject as it stands. These rules come from
+`docs/findings/2026-10-11-documentation-flaw-patterns.md`, which holds the examples.
+
+- Record the current state only. Repairs, reviews, investigations, and the dates they happened belong in Git
+  history and the repository's ledgers, as do lists of what was checked and found irrelevant.
+- Pin material with identifiers that survive regeneration: a release, tag, or commit, the version the material
+  embeds, or the date it carries. Keep the precision the evidence supports; without a recorded pin, give the read
+  date rather than deriving one.
+- Cite only what a reader of the published document can inspect.
+- State each fact once. Keep a rule in the repository's rules rather than in every file it governs, and never
+  restate a header or a structured field in prose.
+- Lead with the fact a reader scans for, and group content by what it is, never by when or why it was gathered.
+- Say what something is or supplied. Summarize to the main points rather than inventorying every item, name the
+  kind of a change rather than listing each one, and add an exclusion only where a reader would otherwise assume
+  the opposite.
+- Give each section a reader question to answer, and state facts without arguing the document's own legitimacy.
+- Point to another document with one neutral sentence.
+- Use a dash only where grammar requires one; a comma, colon, semicolon, or parentheses carries most clause
+  relationships.
+
 ## Archive Without Losing Structure
 
 - Keep every package file byte-identical to the last deployed version: `SKILL.md`, references, scripts,
