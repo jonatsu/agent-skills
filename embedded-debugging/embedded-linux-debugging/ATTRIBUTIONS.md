@@ -1,38 +1,61 @@
 # Attributions
 
-## Current skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `embedded-linux-debugging`
-- Current author: Joonas Onatsu
-- Current license: MIT
-- Status: original text, plus material moved from `embedded-linux-bringup` on 2026-09-30
+The package adapts material from linux-embedded-dev, whose MIT license requires its notice to travel with the
+material; keep `LICENSE.upstream` with the skill.
 
-## Material moved from embedded-linux-bringup
+## First-party Sources
 
-`references/tracing-and-profiling.md` began as `embedded-linux-bringup`'s `references/debugging.md`. Its kgdb, oops,
-crash-dump, and gdbserver sections were folded into `references/kernel-debugging.md` and
-`references/userspace-and-yocto.md`. The provenance that file carried moves with it:
+### The Linux kernel developers: Linux kernel
 
-- **Bootlin debugging training slides** (CC BY-SA 3.0, updated 2026-06-09; SHA-256
-  `5caad435377baa735a9ff653e60c0c2dc793c8915e7e6541285eb92284906977` for the inspected copy), pages 198, 200–204, and
-  207–208: perf selection, probes, and flame graphs. The prose was independently replaced in `embedded-linux-bringup`'s
-  2026-09-07 repair; subject-selection influence remains acknowledged.
-- **heyu-233/linux-embedded-dev** (MIT, Copyright (c) 2026 heyu-233, revision
-  `53e7526e3ba3ffe4018845a58af328f897ffd60a`): its profiling playbook influenced the retained guidance on profile
-  interpretation. The license text is in [LICENSE.upstream](LICENSE.upstream).
+- Source: <https://github.com/torvalds/linux>, chiefly `Documentation/admin-guide/` (`kernel-parameters.txt`,
+  `bug-hunting.rst`, `reporting-issues.rst`, `sysctl/kernel.rst`), `Documentation/process/debugging/` (`kgdb.rst`,
+  `gdb-kernel-debugging.rst`), `scripts/decode_stacktrace.sh`, and `scripts/faddr2line`
+- License: `GPL-2.0-only`
+- Version: `v7.2`
 
-`embedded-linux-bringup`'s `ATTRIBUTIONS.md` holds the full history of both.
+The oops and panic decoding, early-boot output, kgdb and kdb, and sysctl guidance in `references/kernel-debugging.md`
+and `references/userspace-and-yocto.md` is built on these documents and scripts. Facts are restated in original words;
+nothing was copied.
 
-## Sources whose reading shaped the new text
+### The U-Boot developers: U-Boot
 
-No text was copied from these; facts are restated with their source named in each reference.
+- Source: <https://github.com/u-boot/u-boot>, `doc/develop/gdb.rst`, `doc/usage/cmd/bdinfo.rst`,
+  `doc/develop/crash_dumps.rst`, and `doc/develop/spl.rst`
+- License: `GPL-2.0-or-later`
+- Version: `v2026.07`
 
-- Linux v7.2: `Documentation/admin-guide/kernel-parameters.txt`, `bug-hunting.rst`, `reporting-issues.rst`,
-  `sysctl/kernel.rst`, `Documentation/process/debugging/kgdb.rst` and `gdb-kernel-debugging.rst`, and
-  `scripts/decode_stacktrace.sh` and `scripts/faddr2line`.
-- `agent-proxy` 1.94 (git.kernel.org), OpenOCD master's manual and `tcl/target/bcm2711.cfg`.
-- U-Boot v2026.07: `doc/develop/gdb.rst`, `doc/usage/cmd/bdinfo.rst`, `doc/develop/crash_dumps.rst`, `doc/develop/spl.rst`.
-- systemd v262's `systemd-coredump`, `coredump.conf`, and `coredumpctl` manuals.
-- Yocto Project 6.0 "Wrynose" manuals and OpenEmbedded-Core, and Raspberry Pi's serial and `config.txt` documentation.
+`references/u-boot-debugging.md` is built on the relocation, `bdinfo`, crash-dump, and SPL debugging documentation.
+Nothing was copied.
 
-The research notes, with URLs and commits, are in agent-setup's `docs/research/embedded-debugging/`.
+### The Yocto Project: Yocto Project documentation
+
+- Source: <https://docs.yoctoproject.org/6.0/>, the reference, SDK, and migration manuals
+- License: `CC-BY-SA-2.0-UK`
+- Version: 6.0 (Wrynose)
+
+The guidance on getting debug symbols onto the host (debug packages, SDK, `debuginfod`) and on the removal of
+`debug-tweaks` in `references/userspace-and-yocto.md` is built on the manuals. Facts are restated in original words;
+nothing was copied.
+
+## Third-party Sources
+
+### heyu-233: linux-embedded-dev
+
+- Source: <https://github.com/heyu-233/linux-embedded-dev>, profiling playbook
+- License: `MIT`
+- Version: `53e7526e3ba3ffe4018845a58af328f897ffd60a`
+
+The profiling playbook supplied the starting point for the guidance on interpreting profiles in
+`references/tracing-and-profiling.md`.
+
+### Bootlin: Linux debugging, profiling and tracing training
+
+- Source: <https://bootlin.com/doc/training/debugging/debugging-slides.pdf>
+- License: `CC-BY-SA-3.0`
+- Version: slides updated 2026-06-09
+
+The slides shaped the perf probe selection and flame graph guidance in `references/tracing-and-profiling.md`. No slide
+prose, sequence, lab, or code is copied.
