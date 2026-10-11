@@ -1,21 +1,15 @@
 # Attributions
 
-## Current skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `serial-console-debugging`
-- Current author: Joonas Onatsu
-- Current license: MIT
-- Status: original text
+## First-party Sources
 
-## Sources whose reading shaped the skill
+### jonatsu: serial-mcp-server
 
-No text was copied from these; facts are restated with their source named where the skill uses them.
+- Source: <https://github.com/jonatsu/serial-mcp-server>, a fork of <https://github.com/es617/serial-mcp-server>
+- License: `MIT`
+- Version: `bceb725e93cd84e5bfffcff6bdd0194c72f08185`
 
-- [jonatsu/serial-mcp-server](https://github.com/jonatsu/serial-mcp-server) (MIT, commit `bceb725`), a fork of
-  es617/serial-mcp-server: the tool list, defaults, pacing options, trace, mirror, and tool-name separator, read from
-  its installed source.
-- Claude Code, Codex, and GitHub Copilot CLI documentation on project-scoped MCP servers, read 2026-09-30.
-- raspberrypi/debugprobe and Raspberry Pi's serial documentation, the Linux kernel's SysRq documentation, U-Boot's
-  command documentation, and ESP-IDF's IDF Monitor guide.
-
-The research notes, with URLs and commits, are in agent-setup's `docs/research/embedded-debugging/`.
+The guidance in `references/serial-mcp-server.md` is built on the server's installed source: its tool list, defaults,
+write-pacing options, trace and mirror features, and tool-name separator. Nothing was copied.
