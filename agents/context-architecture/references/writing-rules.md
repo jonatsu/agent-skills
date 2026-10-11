@@ -84,14 +84,18 @@ Two exemptions: frozen genres (decisions, evaluations), where a line number is a
 and a living document that declares, in its head, the pinned revision (the word "pinned" plus a backticked
 commit hash) its citations are valid at — that converts line references into stamped facts with a
 re-validation trigger.
+Point only at what a cold-start reader can open: a private repository, a deleted file, or another session's
+scratch file is a dead pointer.
 State predicates, never countable inventories: "every aspect gated on the desktop capability", not "the seven
 desktop aspects" — a count is wrong at the next addition and nothing flags it.
 
-## Stamp What Facts Were Verified Against
+## Stamp What Facts Hold At
 
-A non-obvious claim carries the revision, schema version, or test run it was checked against. "Verified
-against nixpkgs `af8ad534`" ages honestly; "checked recently" does not. When re-verification happens, move the
-stamp; when it cannot happen, add a dated unverified-since caveat.
+A non-obvious claim names the revision, schema version, or test run it holds at, stated once as a pin rather
+than as a report of checking: a source line naming nixpkgs `af8ad534` ages honestly, and "checked recently"
+does not. Stamp only what was recorded at the time. A revision derived afterwards, such as the last commit
+before a read date, claims an observation nobody made, so give the read date instead. When re-verification
+happens, move the stamp; when it cannot happen, add a dated unverified-since caveat.
 
 ## Declare Authority
 
