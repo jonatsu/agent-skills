@@ -1,24 +1,49 @@
 # Attributions
 
-## Current skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `mcu-firmware-debugging`
-- Current author: Joonas Onatsu
-- Current license: MIT
-- Status: original text
+## First-party Sources
 
-## Sources whose reading shaped the skill
+### Arm: Cortex-M documentation
 
-No text was copied from these; facts are restated with their source named in each reference.
+- Source: <https://developer.arm.com/documentation/dui0646/c> (Cortex-M7 Generic User Guide),
+  <https://developer.arm.com/documentation/100235/0100> (Cortex-M33 Generic User Guide),
+  <https://developer.arm.com/documentation/ddi0439/b> (Cortex-M4 Technical Reference Manual), and
+  <https://developer.arm.com/documentation/dui0662/b> (Cortex-M0+ Generic User Guide)
+- License: `LicenseRef-Proprietary`
+- Version: Cortex-M7 Generic User Guide r1p2 (DUI 0646C), Cortex-M4 TRM r0p0 (DDI 0439B), Cortex-M0+ Generic User Guide
+  (DUI 0662B), Cortex-M33 Generic User Guide (100235 0100)
 
-- Arm: the Cortex-M7 and Cortex-M33 Generic User Guides, the Cortex-M4 Technical Reference Manual, the Cortex-M0+
-  Generic User Guide, CMSIS 6's core headers, and the Arm semihosting specification (ARM-software/abi-aa).
-- Vendor headers and SDKs: STMicroelectronics' `cmsis_device_f4` and `cmsis_device_h7`, Nordic's nrfx 4.6.0,
-  Raspberry Pi's pico-sdk 2.3.1 and RP2350 datasheet, and ESP-IDF 6.1's fatal-errors, IDF Monitor, and core-dump
-  guides.
-- SEGGER RTT 8.58, OpenOCD master's `src/rtos/` and manual, FreeRTOS-Kernel 11.3.1, Zephyr 4.4.2, defmt 1.1.1,
-  probe-rs 0.32.0, and the RISC-V privileged specification.
-- [royforlinux/openocd-mcu-mcp](https://github.com/royforlinux/openocd-mcu-mcp): its diagnosis playbooks were read
-  as an idea source for organising fault triage by symptom; no text or code was used.
+The Arm documents are proprietary, so all rights remain with Arm. They supplied the fault register addresses and bit
+layouts, the stacked frame and `EXC_RETURN` values, and the Armv8-M and Armv6-M differences in
+`references/cortex-m-faults.md`. Nothing was copied.
 
-The research notes, with URLs and commits, are in agent-setup's `docs/research/embedded-debugging/`.
+### Espressif: ESP-IDF
+
+- Source: <https://github.com/espressif/esp-idf>, `docs/en/api-guides/fatal-errors.rst`,
+  `docs/en/api-guides/tools/idf-monitor.rst`, and `docs/en/api-guides/core_dump.rst`
+- License: `Apache-2.0`
+- Version: `v6.1`
+
+The ESP32 panic output, IDF Monitor, and core-dump guidance in `references/esp32-and-riscv.md` is built on these guides.
+Facts are restated in original words; nothing was copied.
+
+### SEGGER: Real Time Transfer
+
+- Source: <https://github.com/SEGGERMicro/RTT>, `RTT/SEGGER_RTT.h` and `RTT/SEGGER_RTT.c`
+- License: `BSD-1-Clause`
+- Version: `V8.58`
+
+The RTT section of `references/logging-channels.md` is built on the control block layout and buffer behavior in the
+source. Nothing was copied.
+
+## Third-party Sources
+
+### royforlinux: openocd-mcu-mcp
+
+- Source: <https://github.com/royforlinux/openocd-mcu-mcp>
+- License: `MIT`
+- Version: `a930c2a17eff1a8875496f2d876b70bc17cddfb6`
+
+The repository's diagnosis playbooks supplied the idea of organizing fault triage by symptom. Nothing was copied.
