@@ -1,56 +1,60 @@
 # Attributions
 
-## Current Skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `test-engineer`
-- Current author: Joonas Onatsu
-- Current license: MIT
-- Status: original expression informed by external idea sources
+## Third-party Sources
 
-## Idea Sources
+### Douglas Urrea Ocampo: test-automation-skills-agents
 
-### fugazi/test-automation-skills-agents
+- Source: <https://github.com/fugazi/test-automation-skills-agents>, `references/testing-anti-patterns.md` and
+  `skills/qa-manual-istqb/`
+- License: `MIT`
+- Version: `db514b5536e1621cded9dee3e430c9ddd72d5913`
 
-- Source: <https://github.com/fugazi/test-automation-skills-agents>
-- Revision: `db514b5536e1621cded9dee3e430c9ddd72d5913`
-- Paths: `references/testing-anti-patterns.md`, `skills/qa-manual-istqb/`
-- License: MIT
+The anti-patterns reference supplied rules on testing owned behavior, meaningful response assertions,
+condition-based synchronization, contract-focused tests, and running where the suite is judged. The ISTQB skill
+supplied the chartered exploratory-testing format. Nothing was copied.
 
-The first path informed rules about testing owned behavior, meaningful response assertions, condition-based
-synchronization, contract-focused tests, and running where the suite is judged. The second informed the
-chartered exploratory-testing format. All expression is original; no upstream code, prose, examples, or assets
-were carried over.
+### Sarath Somana: tech-skills `test-engineer` skill
 
-### sarathsomana/tech-skills
+- Source: <https://github.com/sarathsomana/tech-skills>, `skills/test-engineer/`
+- License: `MIT`
+- Version: `3595ee021eafceaff0a0e8678306721a073a1c2c`
 
-- Source: <https://github.com/sarathsomana/tech-skills>
-- Revision: `3595ee021eafceaff0a0e8678306721a073a1c2c`
-- Path: `skills/test-engineer/`
-- License: MIT
+The skill supplied the exit-status rule and bounded rerun escalation. Nothing was copied.
 
-This source informed the exit-status rule and bounded rerun escalation. All expression is original.
+### 0King0P: Claude-Skills `test-engineer` skill
 
-### 0King0P/Claude-Skills and grasberg/sofia-workspace
+- Source: <https://github.com/0King0P/Claude-Skills>, `test-engineer/SKILL.md`
+- License: `LicenseRef-No-License`
+- Version: `9e83f7e3b3586557e44f90bde7d54c6537448cb8`
 
-- Sources: <https://github.com/0King0P/Claude-Skills>, <https://github.com/grasberg/sofia-workspace>
-- Revisions: `9e83f7e3b3586557e44f90bde7d54c6537448cb8`, `d5f9553305d1397cdec69d1e098edd43dd88fe2b`
-- Paths: `test-engineer/SKILL.md`, `skills/test-engineer/SKILL.md`
-- License: neither repository declared one at the recorded revisions
+The repository declares no license, so all rights remain with its author. The skill supplied the
+tautological-assertion anti-pattern. Nothing was copied.
 
-These sources informed the tautological-assertion anti-pattern. No expression was copied.
+### grasberg: sofia-workspace `test-engineer` skill
 
-### kui04/nix-config
+- Source: <https://github.com/grasberg/sofia-workspace>, `skills/test-engineer/SKILL.md`
+- License: `LicenseRef-No-License`
+- Version: `d5f9553305d1397cdec69d1e098edd43dd88fe2b`
 
-- Source: <https://github.com/kui04/nix-config>
-- Revision: `e8e5396334d5c559fc82aa684d366df927224b14`
-- Path: `users/.config/pi/skills/test-engineer/`
-- License: no declared repository license at the recorded revision
+The repository declares no license, so all rights remain with its author. The skill supplied the
+tautological-assertion anti-pattern. Nothing was copied.
 
-This source informed stale-expectation triage and the framework-identification gate. No expression was copied.
+### kui04: nix-config `test-engineer` skill
 
-### Software Engineering at Google
+- Source: <https://github.com/kui04/nix-config>, `users/.config/pi/skills/test-engineer/`
+- License: `LicenseRef-No-License`
+- Version: `e8e5396334d5c559fc82aa684d366df927224b14`
 
-- Source: Titus Winters, Tom Manshreck, and Hyrum Wright, *Software Engineering at Google* (O'Reilly, 2020),
-  chapter 11, "Testing Overview".
+The repository declares no license, so all rights remain with its author. The skill supplied stale-expectation
+triage and the framework-identification gate. Nothing was copied.
 
-This book informed the test-size axis in `references/test-strategy.md`.
+### Titus Winters, Tom Manshreck, and Hyrum Wright: Software Engineering at Google
+
+- Source: <https://abseil.io/resources/swe-book>, chapter 11, "Testing Overview"
+- License: `CC-BY-NC-ND-4.0`
+- Version: first edition, O'Reilly, 2020
+
+The chapter supplied the test-size axis used in `references/test-strategy.md`. Nothing was copied.
