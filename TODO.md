@@ -354,9 +354,9 @@ loaded instruction files say about navigation. Raised 2026-10-11; pick it up aft
 Carry the patterns recorded in `docs/findings/2026-10-11-documentation-flaw-patterns.md` into the documentation
 skills (`writing-documentation`, `writing-for-humans`, `writing-for-agents`, `context-architecture`, and
 `skill-forge`'s provenance guidance), into the templates under `agents/agents-context-docs/assets/`, which
-seed new documents and so prevent the flaws at the source, and into `AGENTS.md`'s documentation guidelines. Pick it
-up after the
-attributions repair finishes, when the pattern list is complete.
+seed new documents and so prevent the flaws at the source. `AGENTS.md` already carries the general rules under
+"Writing Documentation"; the skills and templates remain, as do the instances the findings record lists outside the
+attribution files.
 
 ## Unevaluated Candidate Sources
 

@@ -1,6 +1,6 @@
 # Documentation Flaw Patterns
 
-Date: 2026-10-11. Status: open; patterns are added while the attributions repair (`ATTRIBUTIONS-FIX.md`) runs.
+Date: 2026-10-11. Status: open until the documentation skills and templates carry these patterns.
 
 These are recurring flaws in agent-written documentation. The repair of every skill's `ATTRIBUTIONS.md` surfaced
 them, and the author has seen the same patterns in agent-written documentation generally, most of all in
