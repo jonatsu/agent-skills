@@ -29,8 +29,9 @@ context across tasks, and the placement of timeouts. Nothing was copied.
 
 - Source: <https://kitchingroup.cheme.cmu.edu/pycse/book/25-async-programming.html>,
   in the repository <https://github.com/jkitchin/pycse>
-- License: `GPL-2.0-only`
+- License: `GPL-2.0-or-later`
 - Version: read 2026-09-15
 
 The chapter prompted two additions: `asyncio.as_completed` for handling results in completion order, and the
-already-running-loop case that notebook users hit. Nothing was copied.
+already-running-loop case that notebook users hit. Nothing was copied. The repository's `LICENSE` is the GPL-2.0
+text with no version notice; its `pyproject.toml` declares `GPL-3.0-or-later` for the Python package.
