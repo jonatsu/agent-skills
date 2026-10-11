@@ -1,50 +1,20 @@
 # Attributions
 
-## Current Skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `using-git-worktrees`
-- Current author: Joonas Onatsu
-- Current license: MIT
-- Status: adapted from an upstream skill of the same name
+The package adapts upstream material, whose MIT license requires its notice to travel with the material; keep
+`LICENSE.upstream` with the skill.
 
-## Original Author and Source
+## Third-party Sources
 
-- Original author: Jesse Vincent
-- Upstream project: [obra/superpowers](https://github.com/obra/superpowers)
-- Upstream skill: `using-git-worktrees`
-- Source path: `skills/using-git-worktrees/SKILL.md`
-- Source commit: `bc868020bbcec32bbaf9d6b51fa0538dba0b487f`
-- Source file:
-  <https://github.com/obra/superpowers/blob/bc868020bbcec32bbaf9d6b51fa0538dba0b487f/skills/using-git-worktrees/SKILL.md>
+### Jesse Vincent: using-git-worktrees skill
 
-## Adaptation Note
+- Source: <https://github.com/obra/superpowers>, `skills/using-git-worktrees/SKILL.md`
+- License: `MIT`
+- Version: `bc868020bbcec32bbaf9d6b51fa0538dba0b487f`
 
-This package reached its current form in two stages. The upstream skill was first adapted into the `git-ops`
-skill as its worktree reference, rewritten around the official Git worktree model. On 2026-09-27 that material
-moved here as a standalone skill, and the upstream's name and detect-then-prefer-the-harness flow were
-restored around it.
-
-Retained from the upstream: detecting an existing linked worktree before creating one, preferring the
-harness's own worktree mechanism over `git worktree add`, asking before isolating unless a preference is
-declared, the location priority of declared preference over an existing project-local directory, verifying that
-a project-local directory is ignored, recording a baseline, and the ready report.
-
-Material changes include:
-
-- folding the upstream's rationalization table into the steps it guarded, so each reason sits at its point
-  of use rather than in a second copy;
-- removing product-specific tool names so the skill stays portable across agent harnesses;
-- replacing automatic dependency installation with the repository's documented setup, because the upstream
-  mapped every `pyproject.toml` to Poetry and every `requirements.txt` to an unscoped `pip install`;
-- replacing the upstream's edit-and-commit of `.gitignore` with a sibling directory outside the repository;
-- replacing the silent fall back to working in place after a sandbox denial with a report and a question;
-- correcting the upstream claim that a submodule makes `--git-dir` and `--git-common-dir` differ, which does
-  not hold on Git 2.43.0, and stopping on submodules because Git documents their multiple checkouts as
-  incomplete;
-- adding start-state recording, explicit start points, collision checks, post-creation verification, shared
-  state across worktrees, and the finishing, maintenance, and problem guidance in
-  `references/finish-and-maintain.md`.
-
-## Upstream License
-
-The upstream source is used under the MIT License. See `LICENSE.upstream`.
+The skill is adapted from the upstream skill of the same name, rewritten around the official Git worktree model. It
+keeps the upstream flow: detect an existing linked worktree, prefer the harness's own worktree mechanism, ask before
+isolating, choose a location by declared preference, verify that a project-local directory is ignored, record a
+baseline, and report readiness.
