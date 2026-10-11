@@ -131,9 +131,8 @@ Two ways out, both build-shaped:
 1. **Read the hash at boot from a footer attached after signing** — the approach `meta-avb` takes, stamping
    the hash tree, root hash and signature into an AVB footer so initramfs and rootfs build independently. Its
    tooling (`avb_sign.py` on the host, `avb_verify` on the target) also supports a PKCS#7 root-hash signature
-   for `CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG`, and its signing algorithms include ML-DSA alongside RSA. Layer
-   licence reports as `NOASSERTION`; **resolve that before adopting it**, and treat it as an alternative to
-   the upstream path, not a replacement for it.
+   for `CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG`, and its signing algorithms include ML-DSA alongside RSA. The
+   layer is MIT-licensed. Treat it as an alternative to the upstream path, not a replacement for it.
 2. **Bundle the initramfs into the signed kernel** — `INITRAMFS_IMAGE_BUNDLE = "1"`, so kernel verification
    implicitly covers the initramfs, or ship the initramfs inside the signed FIT. This is what closes the gap
    named at the top of this file.
