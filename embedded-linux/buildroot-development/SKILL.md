@@ -116,4 +116,4 @@ result, and what remains unverified; identify a proven cause only when the evide
 
 Use the [Buildroot manual](https://buildroot.org/downloads/manual/manual.html) for orientation and the manual bundled
 with the selected release for version-specific details. Genimage's [upstream documentation](https://github.com/pengutronix/genimage)
-owns image-layout syntax. [Attributions](ATTRIBUTIONS.md) records source influence and the repair's provenance.
+owns image-layout syntax. [Attributions](ATTRIBUTIONS.md) lists the sources this skill is based on.
