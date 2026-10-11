@@ -11,16 +11,18 @@ Steps:
    done.
 3. The remaining files, by Sonnet subagents at most two at a time, each reviewed before commit.
 4. A structural check under `checks/` that enforces the scheme, enabled once every row is done.
+5. The documentation flaw patterns found here, written as general documentation guidelines in `AGENTS.md` or a
+   shared rules file, proposed to the user before placing. The repair of other documentation follows later.
 
 Status is `pending`, `done`, or `blocked`. A blocked row names what it waits on.
 
 | Skill                                           | Lines before | Status  | Notes          |
 | ----------------------------------------------- | ------------ | ------- | -------------- |
-| `agents/agents-context-docs`                    | 97           | pending |                |
-| `agents/cc-safety-net`                          | 57           | pending |                |
-| `agents/context-architecture`                   | 53           | pending |                |
-| `agents/context-compression`                    | 52           | pending |                |
-| `agents/dispatching-subagents`                  | 50           | pending |                |
+| `agents/agents-context-docs`                    | 97           | done    |                |
+| `agents/cc-safety-net`                          | 57           | done    |                |
+| `agents/context-architecture`                   | 53           | done    |                |
+| `agents/context-compression`                    | 52           | done    |                |
+| `agents/dispatching-subagents`                  | 50           | done    |                |
 | `agents/document-conversion`                    | 107          | pending |                |
 | `agents/note-for-later`                         | 25           | pending |                |
 | `agents/prompt-debugging`                       | 57           | pending |                |
@@ -52,9 +54,9 @@ Status is `pending`, `done`, or `blocked`. A blocked row names what it waits on.
 | `embedded-debugging/mcu-firmware-debugging`     | 24           | pending |                |
 | `embedded-debugging/serial-console-debugging`   | 21           | pending |                |
 | `embedded-linux/buildroot-development`          | 69           | done    | Worked example |
-| `embedded-linux/embedded-linux-bringup`         | 112          | pending |                |
-| `embedded-linux/kas-build-orchestration`        | 111          | pending |                |
-| `embedded-linux/u-boot-development`             | 82           | pending |                |
+| `embedded-linux/embedded-linux-bringup`         | 112          | done    |                |
+| `embedded-linux/kas-build-orchestration`        | 111          | done    |                |
+| `embedded-linux/u-boot-development`             | 82           | done    |                |
 | `embedded-linux/yocto-openembedded-development` | 155          | done    | Worked example |
 | `embedded-linux/yocto-security-audit`           | 97           | pending |                |
 | `embedded-linux/yocto-security-hardening`       | 163          | pending |                |
