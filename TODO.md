@@ -109,6 +109,7 @@ as `writing-specs` and `technical-design` do.
 | `nix-flakes`                 | 2026-10-06, `6e19432d`           | 2026-10-06, `6e19432d`                            |
 | `home-manager`               | 2026-10-06, `cc25507a`           | 2026-10-06, `cc25507a`                            |
 | `nixos-config`               | 2026-10-06, `1ff8e87d`           | 2026-10-06, `1ff8e87d`                            |
+| `apt-fetch-emulation`        | 2026-10-11, `2b958871`, imported | 2026-10-11, `2b958871`, imported                  |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
