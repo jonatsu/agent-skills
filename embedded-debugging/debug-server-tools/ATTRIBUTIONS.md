@@ -1,31 +1,65 @@
 # Attributions
 
-## Current skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `debug-server-tools`
-- Current author: Joonas Onatsu
-- Current license: MIT
-- Status: original text; one component adapted from upstream
+The package adapts material from low-level-dev-skills, whose MIT license requires its notice to travel with the
+material; keep `LICENSE.upstream` with the skill.
 
-## Adapted component
+## First-party Sources
 
-- Upstream: [mohitmishra786/low-level-dev-skills](https://github.com/mohitmishra786/low-level-dev-skills), skill
-  `skills/embedded/openocd-jtag/`, revision `bdc58472fa9f309ed1b3f7d985a0d8e9bd8f4608`, read 2026-09-30.
-- Upstream license: MIT, Copyright (c) 2026 chessMan; the full text is in [LICENSE.upstream](LICENSE.upstream).
-- Adapted into `references/openocd.md`: the script-mode `program ... verify reset exit` pattern with an address for
-  raw binaries, the distinction between `reset run`, `reset halt`, and `reset init`, and the shape of an
-  error-message section. The upstream's error table was not carried over, because several of its messages are not
-  ones OpenOCD prints; the messages here come from OpenOCD's sources and documentation.
+### The OpenOCD developers: OpenOCD
 
-## Sources whose reading shaped the skill
+- Source: <https://github.com/openocd-org/openocd>, `doc/openocd.texi` and `tcl/`
+- License: `GPL-2.0-or-later AND GFDL-1.2-or-later`
+- Version: master at `21f88d7815edfb7632548090934c51017604f450`, cross-checked against `v0.12.0`
 
-No text was copied from these; facts are restated with their source named in each reference.
+The OpenOCD guidance in `references/openocd.md` is built on the manual and the shipped configuration scripts: ports and
+binding, adapter and transport selection, multi-core targets, flashing, connect-under-reset, RTT, and error messages.
+Facts are restated in original words; no text or script is copied.
 
-- OpenOCD's `doc/openocd.texi` and `tcl/` (master `21f88d78` and release 0.12.0), pyOCD 0.45.1's subcommands and
-  `docs/`, probe-rs 0.32.0's `probe-rs-tools` and <https://probe.rs/docs/>, Espressif's ESP-IDF JTAG guide and
-  `openocd-esp32`, and SEGGER's J-Link GDB Server knowledge-base page.
-- [a5c-ai/babysitter](https://github.com/a5c-ai/babysitter), skill `jtag-swd-debug` (MIT, revision
-  `feb68abe397acc14f32b34984975c48fedba2b33`): read as a reference; it lists capabilities without procedures, and
-  nothing from it was used.
+### The pyOCD developers: pyOCD
 
-The research notes, with URLs and commits, are in agent-setup's `docs/research/embedded-debugging/`.
+- Source: <https://github.com/pyocd/pyOCD>, `pyocd/subcommands/` and `docs/`
+- License: `Apache-2.0`
+- Version: `v0.45.1`
+
+The pyOCD guidance in `references/pyocd.md` is built on the subcommand implementations and documentation. Nothing was
+copied.
+
+### The probe-rs developers: probe-rs
+
+- Source: <https://github.com/probe-rs/probe-rs>, `probe-rs-tools/`
+- License: `MIT OR Apache-2.0`
+- Version: `v0.32.0`
+
+The probe-rs guidance in `references/probe-rs.md` is built on the command-line tools' source: Linux setup, subcommands,
+and target coverage. Nothing was copied.
+
+### Espressif: openocd-esp32
+
+- Source: <https://github.com/espressif/openocd-esp32>, including `contrib/60-openocd.rules`
+- License: `GPL-2.0-or-later`
+- Version: `v0.12.0-esp32-20260831`
+
+The fork's board configs and udev rules supplied the Espressif section of `references/openocd.md`. Nothing was copied.
+
+### SEGGER: J-Link GDB Server
+
+- Source: <https://kb.segger.com/J-Link_GDB_Server>
+- License: `LicenseRef-Proprietary`
+- Version: J-Link software 9.80
+
+The knowledge-base page states no open license, so all rights remain with SEGGER. It supplied the startup options,
+monitor commands, and RTT and SWO behavior that `references/jlink-gdb-server.md` restates. Nothing was copied.
+
+## Third-party Sources
+
+### mohitmishra786: low-level-dev-skills
+
+- Source: <https://github.com/mohitmishra786/low-level-dev-skills>, `skills/embedded/openocd-jtag/`
+- License: `MIT`
+- Version: `bdc58472fa9f309ed1b3f7d985a0d8e9bd8f4608`
+
+Adapted into `references/openocd.md`: the script-mode `program ... verify reset exit` pattern, the distinction between
+`reset run`, `reset halt`, and `reset init`, and the shape of an error-message section.
