@@ -63,7 +63,8 @@ just check
 
 `just check` scans the whole history for secrets, then runs every pre-commit hook over the tree and both test
 suites. The hooks include the two skill validators, and checks that no skill description is a folded YAML
-scalar, that no two skills share a name, and that no skill links outside its own folder. `pre-commit install`
+scalar, that every `ATTRIBUTIONS.md` follows the provenance scheme, that no two skills share a name, and that no
+skill links outside its own folder. `pre-commit install`
 also adds two identity checks, at commit and at push, that fail on any address other than the author's GitHub
 noreply address. [AGENTS.md](AGENTS.md) holds the authoring rules: where a new skill goes, how it is reviewed, and how
 it is licensed.

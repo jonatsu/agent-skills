@@ -112,6 +112,12 @@ repos:
         language: system
         files: (^|/)SKILL\.md$
         pass_filenames: false
+      - id: skill-attributions
+        name: skill attributions follow the provenance scheme
+        entry: uv run --frozen skill-checks attributions
+        language: system
+        files: (^|/)ATTRIBUTIONS\.md$|^checks/skill_checks/attributions\.py$
+        pass_filenames: false
       - id: skill-names
         name: skill names are unique
         entry: uv run --frozen skill-checks names
