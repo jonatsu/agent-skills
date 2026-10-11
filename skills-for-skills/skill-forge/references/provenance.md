@@ -21,8 +21,9 @@ Classify each source read during authoring by what changed after reading it:
 
 A **first-party** source is published by the project the skill is about: its manuals, documentation, code, and
 material built from them. Every other source is **third-party**: training material, books, other projects, and
-other people's skills. Decide by impact whether first-party material earns an entry. Documentation the skill's
-guidance is extensively built on does; a single fact checked against `--help` or a manual page does not.
+other people's skills. Decide by impact whether first-party material earns an entry. Documentation or source code
+the skill's guidance is extensively built on does, even when it was read to verify behavior; a single fact checked
+against `--help` or a manual page does not.
 
 Reading a third-party source creates an obligation when it changes the skill's guidance, workflow, structure,
 examples, terminology, or failure modes, even when every sentence and example is written from scratch. Record
@@ -72,8 +73,10 @@ Each entry has a heading naming the author or publisher and the work, three bull
   date. When nothing pins the source, give the date it was read.
 
 The sentences say what the source supplied, such as ideas, structure, examples, or failure cases, and whether
-any prose, code, or assets were copied or adapted. A source whose material the skill no longer carries keeps its
-entry, restated in the past tense: "Formerly adapted …; the current skill carries none of it." The revisions
+any prose, code, or assets were copied or adapted. Adapted material names the kind of adaptation in a clause at
+most, never a list of the individual changes. A source whose material the skill no longer carries keeps its
+entry, restated in the past tense: "Formerly adapted …; the current skill carries none of it." When a license
+kept prose from being copied, say so briefly: "No prose was copied due to the content license." The revisions
 that carried the material remain in history, and the entry keeps that relationship visible.
 
 The file never contains:
@@ -82,7 +85,10 @@ The file never contains:
 - correspondence tables, change lists, or per-file provenance tables;
 - hashes of files that are regenerated, such as PDF checksums;
 - sources a reader cannot inspect, such as the author's own deleted or absorbed skills;
-- sources that were checked and found unrelated, or claims about how thorough a check was; and
+- sources that were checked and found unrelated, or claims about how thorough a check was;
+- restatements of the header or of an entry's `License` bullet, such as explaining a source license against the
+  package's own license;
+- lists of what was not taken from a source; and
 - policy text, such as why entries are kept, which belongs in the repository's rules.
 
 Preserve existing provenance artifacts and license files during updates.
