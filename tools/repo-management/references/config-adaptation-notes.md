@@ -101,7 +101,9 @@ repository, with `@secretlint/secretlint-rule-pattern` in the hook's `additional
 repository's chosen credential scanner.
 
 - Run it as a local `language: node` hook with its rule packages in `additional_dependencies`, as the bundled
-  `.pre-commit-config.yaml` does. It needs no `package.json` and no Docker, but it needs Node.js 22 or later.
+  `.pre-commit-config.yaml` does. It needs no `package.json` and no Docker. pre-commit uses the host's Node.js
+  when `node` and `npm` are on `PATH`, and Secretlint then needs version 22 or later; without them, pre-commit
+  downloads Node.js through nodeenv.
   Secretlint publishes no `.pre-commit-hooks.yaml`, so there is no hook repository to pin. Its README's
   example is a local `docker_image` hook on `secretlint/secretlint:latest`, but the Docker image and the release
   binaries bundle only `preset-recommend`, `pattern`, and the SARIF formatter, so neither carries `no-homedir`
