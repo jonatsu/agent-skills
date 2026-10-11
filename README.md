@@ -1,6 +1,6 @@
 # Agent Skills
 
-A collection of 82 Agent Skills, each a self-contained folder of instructions and optional scripts that Claude
+A collection of 83 Agent Skills, each a self-contained folder of instructions and optional scripts that Claude
 Code, Codex, GitHub Copilot CLI and Oh-My-Pi load on demand.
 
 The skills cover software engineering work: specs, technical design, implementation planning, code review,
