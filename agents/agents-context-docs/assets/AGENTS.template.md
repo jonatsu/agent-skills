@@ -8,6 +8,7 @@
   by hand instead. Delete this comment once the symlink is in place.
 
   Every line below should provide something the agent cannot get by reading the repo.
+  Write each line as the rule stands now; how it was learned belongs in a findings file or Git history.
   Delete any section the repository does not justify; an empty section costs the
   same as a full one.
 
