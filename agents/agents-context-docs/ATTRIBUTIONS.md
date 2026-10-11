@@ -1,79 +1,58 @@
 # Attributions
 
-## Current Skill
+- Author: Joonas Onatsu
+- License: `Apache-2.0`
 
-- Skill: `agents-context-docs`
-- Current author and adapter: Joonas Onatsu
-- Current license: Apache License 2.0, inherited from upstream
-- Status: substantially modified and merged from one upstream-derived skill and one original skill
+This package is a modified version of an Apache-2.0 work under section 4 of that license. Keep `LICENSE.upstream` with
+the skill when redistributing it.
 
-Keep this file and `LICENSE.upstream` with the skill when redistributing it. The upstream repository supplied
-no `NOTICE` file when checked on 2026-08-26.
+## Third-party Sources
 
-## Composition
+### Anthropic — `claude-md-improver` skill
 
-| Predecessor         | Origin                         | Contribution                                                                        |
-| ------------------- | ------------------------------ | ----------------------------------------------------------------------------------- |
-| `claude-md-auditor` | Anthropic upstream, Apache-2.0 | Evidence discipline, audit workflow, content-quality guidance, and templates        |
-| `agent-repo-docs`   | Joonas Onatsu, MIT             | Repository-fact verification, initialization, `llms.txt`, and the `AGENTS.md` asset |
+- Source: <https://github.com/anthropics/claude-plugins-official>, `plugins/claude-md-management/skills/claude-md-improver/`
+- License: `Apache-2.0`
+- Version: `claude-md-management` plugin 1.0.0
 
-The author of `agent-repo-docs` contributed that work to this merged Apache-2.0 package.
+Adapted: the evidence discipline, audit workflow, content-quality guidance, and template ideas derive from the
+upstream skill, modified into a framework-neutral, unscored workflow.
 
-## Upstream Source
-
-- Original author: Anthropic
-- Project: [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official)
-- Plugin and version: `claude-md-management` 1.0.0
-- Source path: `plugins/claude-md-management/skills/claude-md-improver/`
-- Upstream skill name: `claude-md-improver`
-
-This package is a modified version under section 4 of Apache-2.0. The current package replaces the upstream
-Claude-specific score-and-edit workflow with framework-neutral initialization, maintenance, migration, and
-qualitative audit branches. It adds capability discovery and known-client loading adapters, removes aggregate
-scoring, verifies repository claims before using them, preserves divergent real files for user reconciliation,
-and separates guidance from deterministic enforcement.
-
-## File Provenance
-
-| File                                                    | Relationship to upstream                                                          |
-| ------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| `SKILL.md`                                              | Rewritten as the shared scope, router, invariants, and completion contract        |
-| `references/initialize.md`                              | Original initialization workflow                                                  |
-| `references/maintain.md`                                | Rewritten from the earlier update workflow and original preservation guidance     |
-| `references/audit.md`                                   | Rebuilt from upstream quality criteria as evidence-based judgments without scores |
-| `references/loading-model.md`                           | Original capability model and client adapters                                     |
-| `references/templates.md`                               | Substantially reduced and reshaped from upstream section ideas                    |
-| `assets/AGENTS.template.md`, `assets/llms.template.txt` | Original `agent-repo-docs` assets                                                 |
-
-## Other Sources
-
-### mattpocock/skills: `writing-for-agents`
+### Matt Pocock — `writing-for-agents` skill
 
 - Source: <https://github.com/mattpocock/skills>, `skills/productivity/writing-for-agents/`
-- License: MIT, Copyright (c) 2026 Matt Pocock
-- Read 2026-08-26
+- License: `MIT`
+- Version: read 2026-08-26
 
 The cache and behavior tests adopt ideas from this source and express them independently. No prose was copied.
 
-### netresearch/agent-rules-skill
+### Netresearch DTT GmbH — `agent-rules-skill`
 
 - Source: <https://github.com/netresearch/agent-rules-skill>
-- License: MIT for code and CC-BY-SA-4.0 for content, Copyright Netresearch DTT GmbH, 2025-2026
-- Read 2026-08-26
+- License: `MIT AND CC-BY-SA-4.0`
+- Version: read 2026-08-26
 
-No prose was copied because the content license conflicts with this package's license obligations.
-Independently expressed ideas cover per-directory adapters, imperative pointers, generated-content boundaries,
-and removed-line preservation.
+No prose was copied due to the content license. Independently expressed ideas cover per-directory adapters,
+imperative pointers, generated-content boundaries, and removed-line preservation.
 
-### DenisSergeevitch/agents-best-practices
+### Denis Shiryaev — `agents-best-practices`
 
-- Source: <https://github.com/DenisSergeevitch/agents-best-practices>
-- Files: `references/system-prompts-instructions.md` and `references/architecture.md`
-- License: MIT, Copyright (c) 2026 Denis Shiryaev
-- Read 2026-08-27
+- Source: <https://github.com/DenisSergeevitch/agents-best-practices>, `references/system-prompts-instructions.md` and
+  `references/architecture.md`
+- License: `MIT`
+- Version: read 2026-08-27
 
-No prose was copied. Independently expressed ideas distinguish prompt guidance from code enforcement and
-identify prompt patterns that claim authority they do not hold.
+No prose was copied. Independently expressed ideas distinguish prompt guidance from code enforcement and identify
+prompt patterns that claim authority they do not hold.
+
+### agentydragon — `ducktape` skills `knowledge_hygiene` and `verify_docs`
+
+- Source: <https://github.com/agentydragon/ducktape>, `skills/knowledge_hygiene/` and `skills/verify_docs/`
+- License: `AGPL-3.0-only`
+- Version: `4ad338af25ea537dc7f817390b2e25c2a7a903f0`
+
+No prose was copied or adapted due to the license. Independently expressed ideas: cost as size times load
+frequency, the "true in any repository using the tool" test, self-duplication through file inclusion, tool and field
+descriptions as always-loaded text, and a rule repeated for emphasis counting as one rule.
 
 ## Upstream License Notice
 
@@ -83,15 +62,3 @@ Licensed under the Apache License, Version 2.0. You may obtain a copy at
 <http://www.apache.org/licenses/LICENSE-2.0>. Unless required by applicable law or agreed to in writing,
 software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 ANY KIND, either express or implied. See `LICENSE.upstream` for the complete terms.
-
-### agentydragon/ducktape: `knowledge_hygiene` and `verify_docs`
-
-- Source: <https://github.com/agentydragon/ducktape>, `skills/knowledge_hygiene/` and `skills/verify_docs/`
-- Revision: `4ad338af25ea537dc7f817390b2e25c2a7a903f0`
-- License: AGPL-3.0, as stated in the repository's README
-- Read 2026-09-30
-
-No prose was copied or adapted, because the AGPL-3.0 does not fit this package's license. Independently
-expressed ideas: cost as size times load frequency, the "true in any repository using the tool" test,
-self-duplication through file inclusion, tool and field descriptions as always-loaded text, and a rule
-repeated for emphasis counting as one rule.
