@@ -194,6 +194,23 @@ manual setup exposed failures that should become deterministic preflight checks:
 - Distinguish command-line validation, permission failures, missing dependencies, and malformed fixtures from
   candidate behavior; never count a harness failure as a model repetition or skill failure.
 
+## Compare `skill-forge` With Anthropic's `skill-creator` Plugin
+
+Check `skill-forge` against Anthropic's official `skill-creator` plugin, including the assets that ship beside the
+skill: its agents and its evaluation pipeline, which could improve this repository's authoring and evaluation setup.
+Source: <https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator/skills/skill-creator>.
+`skill-forge`'s `ATTRIBUTIONS.md` already credits the plugin's skill at `fa59bc9037741ecfa131aa27938272605710d7b2`
+for ideas only; the agents and the pipeline have not been evaluated. Weigh the pipeline against the "Portable
+Skill-Fixture Harness" entry above. The plugin is `Apache-2.0`, so adapting material brings that license's
+obligations. Raised 2026-10-11.
+
+## Compare the Custom Agents With Anthropic's `pr-review-toolkit` Plugin
+
+Check the custom agent definitions in agent-setup against Anthropic's `pr-review-toolkit` plugin:
+<https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pr-review-toolkit>. The work belongs to
+agent-setup, which owns those definitions; it is recorded here so it is not lost, and moves there when picked up.
+Raised 2026-10-11.
+
 ## Prompt Debugging Behavioral Evaluation
 
 `prompt-debugging` (renamed from `prompt-optimizer` on 2026-09-28) is statically `ready with risks`; its workflow
