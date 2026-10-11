@@ -1,28 +1,28 @@
 # Attributions
 
-## Current Skill
+- Author: Joonas Onatsu
+- License: `MIT`
 
-- Skill: `mise-tools`
-- Current author: Joonas Onatsu
-- Current license: MIT
-- Status: original skill with cold-install guidance informed by an external bootstrap example
+## First-party Sources
 
-The skill remains independently authored. The source below prompted coverage of a missing operational branch;
-the final semantics, bounds, and cautions were derived from Mise's documentation and runtime interface.
+### Jeff Dickey: mise documentation
 
-## Reference Source: Slow-Network Bootstrap
+- Source: <https://mise.en.dev/>, the `docs/` and `schema/` directories of <https://github.com/jdx/mise>
+- License: `MIT`
+- Version: read on or before 2026-09-27
 
-Applies to `references/install-and-activation.md`, "Bound a large or slow cold install."
+The configuration scopes, environment layers, tool and task options, Tera templating, and installation guidance are
+built on the documentation and its published JSON schemas, together with the installed `mise` runtime interface. The
+facts are restated in the skill's own terms; no prose was copied.
 
-- Upstream author: KevinNitroG
-- Upstream project: [KevinNitroG/dotfiles](https://github.com/KevinNitroG/dotfiles)
-- Source path: `README.md`
-- Source commit: `6bee1ca798e07ef160f48690e15c0d75568d8910`
-- Source file:
-  <https://github.com/KevinNitroG/dotfiles/blob/6bee1ca798e07ef160f48690e15c0d75568d8910/README.md#4-slow-network>
+## Third-party Sources
 
-## Influence Note
+### KevinNitroG: dotfiles
 
-The upstream bootstrap example prompted explicit guidance for limiting Mise concurrency and extending network
-timeouts during a large cold install. No wording or code was copied. This skill uses shorter timeout defaults,
-distinguishes stalled reads from complete downloads, preserves caller overrides, and keeps install-specific
+- Source: <https://github.com/KevinNitroG/dotfiles>, `README.md`, section "4. Slow network"
+- License: `LicenseRef-No-License`
+- Version: `6bee1ca798e07ef160f48690e15c0d75568d8910`
+
+The repository states no license, so all rights remain with its author. The bootstrap example prompted the guidance in
+`references/install-and-activation.md` on limiting mise concurrency and extending network timeouts during a large cold
+install. No wording or code was copied.
