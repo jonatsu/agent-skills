@@ -76,5 +76,4 @@ Report the commands run, their results, and any supported environment or failure
 
 ## Attributions
 
-See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for upstream idea sources reviewed while designing this
-original skill.
+See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for the sources this skill is based on.

@@ -1,22 +1,18 @@
 # Attributions
 
-This skill is original MIT-licensed work. No upstream prose, code, identifiers, or examples were copied.
+- Author: Joonas Onatsu
+- License: `MIT`
 
-The design was informed by review of Yudhi Armyndharis'
-[`antigravity-skills`](https://github.com/rmyndharis/antigravity-skills), commit
-`3eff4af253b3a15e2ba6edf2c2b743b53fd81211`, especially:
+## Third-party Sources
 
-- `skills/bash-pro/SKILL.md`
-- `skills/bash-defensive-patterns/SKILL.md`
-- `skills/bash-defensive-patterns/resources/implementation-playbook.md`
+### Yudhi Armyndharis: antigravity-skills
 
-Useful ideas considered from those references included the Bash-versus-POSIX boundary, input and failure-mode
-discovery, arrays, NUL-safe traversal, temporary-resource cleanup, idempotency, dependency checks, signal
-handling, replacement writes, and ShellCheck/shfmt/test validation.
+- Source: <https://github.com/rmyndharis/antigravity-skills>, `skills/bash-pro/`, `skills/bash-defensive-patterns/`,
+  and its `resources/implementation-playbook.md`
+- License: `MIT`
+- Version: `3eff4af253b3a15e2ba6edf2c2b743b53fd81211`
 
-The implementation here was written independently after rejecting the reviewed skills' blanket strict-mode
-rules, unsafe deletion guidance, broken version predicates, hidden producer failures, incomplete cleanup
-examples, portability claims, and scope-expanding output catalogues.
-
-The immediate reference repository states that its collection was ported from
-[`wshobson/agents`](https://github.com/wshobson/agents), also MIT-licensed.
+The skills supplied the subjects the guidance covers: the boundary between Bash and POSIX shell, arrays, NUL-safe
+traversal, temporary-resource cleanup, signal handling, replacement writes, and ShellCheck, shfmt, and test
+validation. Nothing was copied. The repository states that its collection was ported from
+<https://github.com/wshobson/agents>, which is also MIT-licensed.
