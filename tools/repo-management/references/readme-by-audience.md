@@ -44,4 +44,5 @@ ordering, what evidence earns a place above the fold, and when a section should 
 ## Provenance
 
 The project-type taxonomy, section matrix, and audience templates are adapted (MIT) from
-`crafting-effective-readmes` in softaworks/agent-toolkit. See `ATTRIBUTIONS.md` for the full note.
+`crafting-effective-readmes` in softaworks/agent-toolkit. See `ATTRIBUTIONS.md` for the sources this skill is based
+on.
