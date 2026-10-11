@@ -323,6 +323,15 @@ Add the existence check to `outside_references.py`'s `_target_problem`, which al
 so fenced examples stay exempt through its `FENCE` handling. The estimate is about 40 lines plus tests. Count
 the links that fail today before turning it on, and fix them in the same change so `just check` stays green.
 
+## Agents Search Instead of Following Context Links
+
+Check whether `context-architecture` actually makes agents navigate by links. Its `ATTRIBUTIONS.md` credits
+IWE's "Inclusion Links" (<https://iwe.md/docs/concepts/inclusion-links/>), whose intent is that an agent reading a
+context document follows the links in it to the specific information. In practice, the user has seen agents still
+mostly grep and search to find things, which suggests the layouts or the guidance this skill produces do not
+yet steer navigation. The cause is unknown. Candidates include link wording, pointer placement, and what the
+loaded instruction files say about navigation. Raised 2026-10-11; pick it up after the attributions repair.
+
 ## Unevaluated Candidate Sources
 
 Recorded and never fetched, read, or license-checked. The descriptions are path-based inferences, not evidence.
