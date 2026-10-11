@@ -70,7 +70,8 @@ Each entry has a heading in the form `### <Author or publisher>: <work>`, three 
 - `Version`: the release, tag, or commit for a Git repository, a release archive, or any source where one of
   those is meaningful. That includes a PDF that embeds the tag or revision it was generated from. Otherwise use
   the documented software version, the date the material carries, or for a book its edition and publication
-  date. When nothing pins the source, give the date it was read.
+  date. When nothing pins the source, give the date it was read, never a commit or version derived from that
+  date.
 
 The sentences say what the source supplied, such as ideas, structure, examples, or failure cases, and whether
 any prose, code, or assets were copied or adapted. Adapted material names the kind of adaptation in a clause at
