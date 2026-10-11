@@ -110,4 +110,4 @@ and relevant dependency pins. The helper hashes it, the effective `.config`, and
 explicit source checkout's current revision/status, and refuses to replace any existing output. It cannot reconstruct
 historical inputs or prove that supplied artifacts came from that source. See the reference for its full contract.
 
-Source influence and historical uncertainty are recorded in [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
+See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for the sources this skill is based on.
