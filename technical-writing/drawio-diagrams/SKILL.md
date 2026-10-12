@@ -35,9 +35,12 @@ is the fallback. It accepts paths relative to the current directory; convert an 
 The CLI is an Electron app, and two things decide whether a call finishes:
 
 - **Give it a display.** On a headless Linux machine, run it as `xvfb-run -a drawio ...`. WSLg already provides one.
-- **Pass `--disable-gpu` and wrap the call in `timeout 120`.** Under WSLg and in virtual machines the GPU process
-  crashes, and an image export then hangs forever instead of failing. Stderr fills with GPU, Vulkan, and driver-path
-  lines; they are noise. Success is the `input -> output` line and the output file.
+- **Pass `--disable-gpu` and wrap the call in `timeout --kill-after=10 120`.** Under WSLg and in virtual machines
+  the graphics driver can deadlock Electron's GPU process; Chromium kills and relaunches it, and an image export
+  then waits forever instead of failing. A hung export can ignore the `SIGTERM` that plain `timeout` sends, so keep
+  `--kill-after`, and run the first image export of a session in the background where the client allows it.
+  Stderr fills with GPU, Vulkan, and driver-path lines; they are noise. Success is the `input -> output` line and
+  the output file.
 
 The CLI silently ignores an unknown flag, so a misspelled option does nothing rather than failing. Check the flag
 against `drawio --help` when an option seems to have no effect.
@@ -57,7 +60,7 @@ entity-relationship): write the Mermaid to `name.mmd`, then convert it. The conv
 more reliable than placing cells by hand.
 
 ```bash
-timeout 120 drawio --disable-gpu -x -f xml -o name.drawio name.mmd
+timeout --kill-after=10 120 drawio --disable-gpu -x -f xml -o name.drawio name.mmd
 ```
 
 The `.drawio` is the artifact; delete the `.mmd` once the conversion succeeds. Restyle the result by editing its XML.
@@ -67,7 +70,7 @@ Read [references/xml-format.md](references/xml-format.md) before writing the fir
 cells rough positions and let a layout place them, repairing common structural faults on the way:
 
 ```bash
-timeout 120 drawio --disable-gpu -x -f xml --normalize --layout verticalFlow -o name.drawio name.drawio
+timeout --kill-after=10 120 drawio --disable-gpu -x -f xml --normalize --layout verticalFlow -o name.drawio name.drawio
 ```
 
 The presets are `verticalFlow`, `horizontalFlow`, `verticalTree`, `horizontalTree`, `radialTree`, and `organic`. By
@@ -110,7 +113,7 @@ The checker proves structure, not appearance. With the CLI, export a PNG and loo
 overlapping shapes, clipped labels, and edges crossing through shapes show only in the picture.
 
 ```bash
-timeout 120 drawio --disable-gpu -x -f png -b 10 -o /tmp/preview.png name.drawio
+timeout --kill-after=10 120 drawio --disable-gpu -x -f png -b 10 -o /tmp/preview.png name.drawio
 ```
 
 The step is done when the checker exits 0 and, where the CLI exists, the preview shows every label whole and no
@@ -125,8 +128,8 @@ options rearrange only the browser copy and never change the file.
 Pass `-e` so the image carries the diagram and stays editable:
 
 ```bash
-timeout 120 drawio --disable-gpu -x -f svg -e -o name.drawio.svg name.drawio
-timeout 120 drawio --disable-gpu -x -f png -e -b 10 -o name.drawio.png name.drawio
+timeout --kill-after=10 120 drawio --disable-gpu -x -f svg -e -o name.drawio.svg name.drawio
+timeout --kill-after=10 120 drawio --disable-gpu -x -f png -e -b 10 -o name.drawio.png name.drawio
 ```
 
 `-p` picks a page, counting from 1; without it an image export takes the first page. Keep the `.drawio` source
