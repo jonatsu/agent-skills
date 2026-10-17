@@ -17,7 +17,13 @@ someone who already chose the project.
   records.
 - `repo-management` owns repository scaffolding and the README templates and audience matrix.
 - `context-architecture` owns the truth audit that checks a README's claims against the tree.
-- `writing-for-humans` owns the sentence and the paragraph, and its reader-ready check closes every draft here.
+- `writing-for-humans` carries sentence-level editing in more depth; this skill's own prose rules and Before
+  Delivery checks close every draft here.
+
+Plain language, as ISO 24495-1:2023 defines it, is wording, structure, and design so clear that the intended
+readers can easily find what they need, understand what they find, and use that information. The five questions
+below apply the standard's relevant and findable principles to a stranger who has not yet chosen the project,
+and "Write for a Stranger" applies its understandable principle.
 
 A review request splits by what is being judged: **does it read well** is this skill, **is it still true** is
 `context-architecture`'s truth audit. A thorough review wants both.
@@ -91,8 +97,20 @@ it to:
 Test it by deleting everything after the first five lines and asking whether a stranger could say what the
 project is and whether it is for them. If not, the opening is not carrying its weight, no matter what follows.
 
-The reader does not share your knowledge anywhere else on the page either. Explain each project-specific term
-once, at first use, and link an unfamiliar tool to its own documentation rather than describing it.
+## Write for a Stranger
+
+The reader does not share your knowledge anywhere on the page. Explain each term they may not know, whether
+project-specific or a standard, format, or technique, once at first use. Link an unfamiliar tool or standard to
+its own documentation rather than describing it.
+
+Give each sentence one idea. Keep an instruction to one action in the imperative, within 20 words, with any
+condition before its command. Keep any other sentence within 25 words. These limits are this skill's proxies,
+adapted from ASD-STE100; ISO 24495-1 judges a text by how well its readers use it. Prefer the familiar word and
+the verb that carries the meaning, and give each concept one term.
+
+Lead each section and paragraph with its point. Bold only the one-line label above a code block or a hazard the
+reader must not miss, never the opening words of every list item. Keep every fact, number, and condition the
+project's own sources give, and state nothing they do not.
 
 ## Show It Working Before Asking for Anything
 
@@ -176,7 +194,7 @@ When the project already has documentation, infer its conventions before draftin
 example density, decoration. Two documents make a convention; one is a coincidence. An evidenced house
 convention outranks this skill's defaults for anything it covers, because consistency across a project serves
 a reader more than one improved page. `writing-documentation` carries the fuller method for building a style
-profile. With no documentation set to match, this skill's defaults and `writing-for-humans` govern.
+profile. With no documentation set to match, this skill's defaults govern.
 
 ## Before Delivery
 
@@ -189,8 +207,10 @@ profile. With no documentation set to match, this skill's defaults and `writing-
 - Is every example real, with real values and verified output?
 - Is every device present either requested, or already conventional in the surrounding set?
 - Were the devices you did not add named as recommendations, with the trigger that justifies each?
-- Did the text pass `writing-for-humans`' reader-ready check, with every project-specific term explained or
-  linked at first use?
+- Does every sentence carry one idea within its limit, with each condition before its command?
+- Is every term a stranger may not know explained or linked at first use?
+- Does each section lead with its point, with bold limited to code-block labels and hazards?
+- Did every fact, number, and condition from the project's sources survive, with nothing added they do not state?
 
 Read [references/exemplars.md](references/exemplars.md) for the evidence behind these rules and the finer
 moves: table-of-contents forms, categorized badge rows, opening shapes, and named moves with their conditions.
