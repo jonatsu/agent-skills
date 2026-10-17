@@ -1,6 +1,6 @@
 ---
 name: writing-for-humans
-description: "Write, edit, shorten, or review technical prose at the sentence and paragraph level in any language, defaulting to English, preserving every claim and the author's voice and removing AI-writing artifacts. Use for documentation, specs, PRDs, and design documents, reports, issues, commit messages, user-facing errors, and readability or de-bloat passes. Not for document structure or type (writing-documentation), agent instruction files (writing-for-agents), or fiction, poetry, marketing, or chat."
+description: "Write, edit, shorten, or review technical prose at the sentence and paragraph level in any language, defaulting to English, preserving every claim and the author's voice and removing AI-writing artifacts. Use for documentation, specs, PRDs, and design documents, reports, issues, commit messages, user-facing errors, and plain-language (ISO 24495-1), readability, or de-bloat passes. Not for document structure or type (writing-documentation), agent instruction files (writing-for-agents), or fiction, poetry, marketing, or chat."
 license: MIT AND CC-BY-4.0
 metadata:
   author: Joonas Onatsu
@@ -13,6 +13,13 @@ whether the reader can take it in on the first pass. `writing-documentation` own
 type, what belongs in it, and where each concept is explained. A spec, PRD, or design document needs both
 skills, and the skill that owns its content as well.
 
+Plain language, as ISO 24495-1:2023 defines it, is wording, structure, and design so clear that the intended
+readers can easily find what they need, understand what they find, and use that information. The standard
+groups its guidelines under four principles: relevant, findable, understandable, and usable. This skill applies
+the understandable principle to each sentence and paragraph, and the other three at the scale of a passage: the
+deletion test keeps it relevant, leading with the point keeps it findable, and the **reader-ready** pass is the
+first step of usable.
+
 Write in the language the request, the surrounding text, or the audience establishes, and default to English.
 The rules are language-general unless marked as an English convention. In another language, that language's
 own conventions govern typography, punctuation, capitalization, heading style, and register.
@@ -21,11 +28,11 @@ own conventions govern typography, punctuation, capitalization, heading style, a
 
 These bind every draft, edit, and review, and every other rule yields to them.
 
-**Preserve every claim.** When editing supplied prose, keep every supported claim, distinction, condition,
-exception, qualification, and normative requirement. Invent no fact, actor, date, number, cause, citation,
-opinion, or personality. Flag an unsupported assertion or an ambiguity rather than resolving it silently. A gap
-stays a gap: "the sources do not say" is a complete sentence, and a plausible guess written after it is a
-fabrication.
+**Preserve every claim.** When editing supplied prose, keep every supported claim, distinction, number,
+condition, exception, qualification, scope limit, and normative requirement. Invent no fact, actor, date,
+number, cause, citation, opinion, or personality. Flag an unsupported assertion or an ambiguity rather than
+resolving it silently. A gap stays a gap: "the sources do not say" is a complete sentence, and a plausible guess
+written after it is a fabrication.
 
 **Do the requested task only.** A review reports; it does not rewrite. Shortening removes text that carries
 nothing; it does not drop a condition or a citation. Polishing does not restructure. When the requested depth is
@@ -52,7 +59,9 @@ The default style is this skill plus the repository's own conventions. It applie
 established, which is most of the time.
 
 When you edit someone else's prose, keep their register and terminology and add no personality the source lacks.
-That limits your edits; it does not protect a defect.
+That limits your edits; it does not protect a defect. A plain-language request asks for a new register: replace
+formal or bureaucratic wording with the words the intended reader uses, address that reader as "you" where the
+text tells them what happens to them or what to do, and keep only the terms whose defined meaning matters.
 
 Voice matching overrides the default only with an explicit request and at least one sample. If the sample is
 missing, ask for one. Match the sample's formality, person, terminology, and degree of personality. AI-writing
@@ -72,7 +81,8 @@ of you, not the document: a how-to guide contains explanation, and a commit mess
 
 The limits are ceilings, and they bind commit bodies and error messages too. Split a sentence over its limit
 unless splitting makes it less clear. A tighter external limit, such as a 72-character commit subject, governs
-where one exists. Never edit verbatim text to fit.
+where one exists. Never edit verbatim text to fit. The limits are this skill's proxies, adapted from ASD-STE100.
+ISO 24495-1 judges a text by how well its readers use it, not by readability formulas.
 
 Count a code span, identifier, quotation, heading, or title as one word. In a vertical list, the lead-in and each
 item carry their own limit, because the colon closes the lead-in as a period would. Keep procedural and
@@ -146,7 +156,9 @@ supports. Omit a key the reader does not need.
 
 **State claims directly.** Write the affirmative claim rather than "not X but Y" against a claim nobody made.
 
-**Choose the plain word.** Cut hedges, clichés, empty promotion, and prefabricated phrases. In formal English
+**Choose the familiar word.** Prefer the word the intended reader already knows: "after", not "subsequent
+to". Keep a technical term the reader's field uses, and explain it on first use. Cut hedges, clichés, empty
+promotion, and prefabricated phrases. In formal English
 documents, write full forms such as "it is" and "does not". Terse commits and error messages may contract.
 
 **Replace the em dash.** Write the version without it first: a comma, colon, semicolon, parentheses,
@@ -175,6 +187,9 @@ or four.
 carrying a decision, and prefer restructuring to a longer bold run. Never use bold as a lead-in or decoration,
 and never give every list item a bold label. In someone else's prose, dense emphasis prompts inspection, not
 stripping.
+
+**Write a heading that predicts its section.** Where the section's message fits, state it: "Refunds take five
+working days", not "Refund information".
 
 **Open a section with new information.** A "Performance" heading followed by "Speed matters." spends a line on
 the heading.
@@ -242,13 +257,17 @@ target.
 
 A result is **reader-ready** when one complete reading pass, as its intended reader, confirms that:
 
+- the intended reader can say, after one reading, what the text wants them to know or do;
 - each section and paragraph leads with the point the reader needs;
 - explanations precede the terms, conclusions, and instructions that depend on them;
 - relationships between claims are stated rather than left for the reader to rebuild;
 - every sentence is within its limit, and none fails the deletion test;
 - every unfamiliar term or identifier has its meaning at first use;
 - every confirmed AI-writing artifact is gone; and
-- every supported claim, condition, qualification, and normative requirement survived.
+- every supported claim, number, condition, qualification, scope limit, and normative requirement survived.
+
+The pass shows that the text should work, not that its readers can use it. Only testing with readers shows
+that, so never present a reader-ready result as reader-tested.
 
 When a condition fails, revise the passage and run the complete pass again, because a revision can introduce a
 defect. **Check each replacement, not only the defect it removed:** a rewrite of a key-first opener can arrive

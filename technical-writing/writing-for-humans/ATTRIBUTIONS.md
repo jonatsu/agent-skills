@@ -78,6 +78,35 @@ command it governs, the ceiling on noun clusters, the preference for simple tens
 with its six-sentence ceiling. The skill does not implement the standard, and no rule text or dictionary entry was
 copied.
 
+### ISO: ISO 24495-1:2023, Plain language, Part 1: Governing principles and guidelines
+
+- Source: <https://www.iso.org/standard/78907.html>, preview of clauses 1 to 5.2.3 at
+  <https://cdn.standards.iteh.ai/samples/78907/d194fac21d6a45f38bfcfec9657f7498/ISO-24495-1-2023.pdf>
+- License: `LicenseRef-Proprietary`
+- Version: first edition, 2023-06
+
+ISO holds the copyright, and the standard is not free to redistribute. The skill restates its definition of
+plain language, which the International Plain Language Federation also publishes, and maps its rules to the four
+principles. Its guideline names shaped the familiar-word and predictive-heading rules. No other text was copied.
+
+### Thomas M. Schindler: "The Making of the International Standard for Writing in Plain Language ISO 24495-1"
+
+- Source: <https://amwajournal.org/index.php/amwa/article/view/333>
+- License: `LicenseRef-Proprietary`
+- Version: AMWA Journal 39(1), 2024
+
+The American Medical Writers Association holds the copyright. The article supplied the complete list of the
+standard's guideline names, including headings that help readers predict what comes next. Nothing was copied.
+
+### Dustin Yuchen Teng: `iso-24495-skill`
+
+- Source: <https://github.com/danyuchn/iso-24495-skill>
+- License: `MIT`
+- Version: `113656b0a6a6cbeb3b3c2bb7cf3bc29349cb05cf`
+
+The skill supplied the protection of numbers and scope limits, the one-reading check in the reader-ready pass,
+and the example of a heading that states its message. Nothing was copied.
+
 ### softaworks: agent-toolkit `writing-clearly-and-concisely` skill
 
 - Source: <https://github.com/softaworks/agent-toolkit>, `skills/writing-clearly-and-concisely/`
