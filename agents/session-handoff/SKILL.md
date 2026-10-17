@@ -113,6 +113,11 @@ material content:
 Merge or omit sections when that makes the brief clearer. A human or agent consumes the output, so stable
 headings are not a formal interface.
 
+Write the brief in plain language, as ISO 24495-1:2023 defines it: the recipient, possibly another agent or
+model, can easily find, understand, and use what it needs. Use complete sentences and familiar words, and define
+every project term, because the recipient shares none of the session. Give each instruction its own sentence
+within 20 words, and keep other sentences within 25 words.
+
 Point to plans, specifications, issues, ADRs, commits, and code instead of reproducing them. Record a file
 inspected and left unchanged only when the conclusion prevents a likely or expensive repeated investigation.
 Reduce a log, diff, or subagent report to the conclusion the recipient needs, and point to the full output
