@@ -40,6 +40,10 @@ Both branches build on the same core.
 ## Write It So It Lands
 
 - **Direct and specific.** Imperative sentences. Number the steps only when order or completeness matters.
+- **Plain language.** Write so the receiver can easily find, understand, and use what it needs, as ISO
+  24495-1:2023 defines plain language. Use familiar words and one term per concept, and define a project term
+  on first use. Give each instruction a complete sentence within 20 words, with any condition first, and keep
+  other sentences within 25 words. A receiver on another model shares none of your shorthand.
 - **Separate the kinds of content.** When a prompt mixes instructions, context, examples, and input, give each its
   own tagged or headed block. Put long material first and the ask last.
 - **Say what to do.** State the target behavior; a prohibition names the thing and makes it more likely. Keep a
