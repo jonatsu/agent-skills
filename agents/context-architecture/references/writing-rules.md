@@ -12,9 +12,22 @@ leaked session state and fails the test.
 
 ## Plain Language, and Detail Sized to Consequence
 
-Use ordinary words and precise terms, and prefer the specific noun to the general one. Cut filler, repetition,
-hedging, and praise for the project or its tools: a document that admires its subject spends the reader's
-attention proving nothing. Every sentence carries a fact, a constraint, a consequence, or an action.
+Write in plain language as ISO 24495-1:2023 defines it: wording, structure, and design so clear that the
+intended readers can easily find what they need, understand what they find, and use that information. An agent
+reads like a person in this respect, and the document must work for whichever agent or model loads it next, not
+only for the one that wrote it.
+
+Use ordinary words and precise terms, and prefer the specific noun to the general one. Give each concept one
+term, and define a project term or abbreviation where it first appears, because the next agent does not share
+the writer's vocabulary. Write complete sentences that keep their articles, subjects, and verbs: shorthand saves
+tokens and costs the next reader the meaning. Give each instruction its own imperative sentence within 20 words,
+with any condition before its command, and keep other sentences within 25 words. These limits are proxies,
+adapted from ASD-STE100; the test is whether a cold-started agent acts correctly. State how sentences relate,
+such as cause, condition, or exception, in words.
+
+Cut filler, repetition, hedging, and praise for the project or its tools: a document that admires its subject
+spends the reader's attention proving nothing. Every sentence carries a fact, a constraint, a consequence, or an
+action.
 
 Length is not the target — the cost of being wrong is. These documents are read deliberately, by someone who
 followed a route to get here, so they owe more detail than the floor does: the reader came for exactly what the

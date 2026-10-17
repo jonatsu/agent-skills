@@ -104,3 +104,24 @@ adapted due to the license.
 The truth audit carries over this skill's list of README claims to check (commands, paths, capabilities and
 versions, links) and its rule to decide whether the document or the implementation is right before correcting
 either.
+
+### ISO: ISO 24495-1:2023, Plain language, Part 1: Governing principles and guidelines
+
+- Source: <https://www.iso.org/standard/78907.html>, preview of clauses 1 to 5.2.3 at
+  <https://cdn.standards.iteh.ai/samples/78907/d194fac21d6a45f38bfcfec9657f7498/ISO-24495-1-2023.pdf>
+- License: `LicenseRef-Proprietary`
+- Version: first edition, 2023-06
+
+ISO holds the copyright, and the standard is not free to redistribute.
+The agent-facing writing rules' plain-language section restates its definition of plain
+language, which the International Plain Language Federation also publishes. No other text was copied.
+
+### ASD: ASD-STE100 Simplified Technical English
+
+- Source: <https://www.asd-ste100.org/>
+- License: `LicenseRef-Proprietary`
+- Version: Issue 9, 2025-01-15
+
+ASD holds the copyright, and the standard is free to obtain but not free to redistribute. It informed the
+sentence limits and the condition before its command. The skill does not implement the standard, and no rule
+text was copied.
