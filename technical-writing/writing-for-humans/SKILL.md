@@ -1,6 +1,6 @@
 ---
 name: writing-for-humans
-description: "Write, edit, shorten, or review technical prose at the sentence and paragraph level in any language, defaulting to English, preserving every claim and the author's voice and removing AI-writing artifacts. Use for documentation, specs, PRDs, and design documents, reports, issues, commit messages, user-facing errors, and plain-language (ISO 24495-1), readability, or de-bloat passes. Not for document structure or type (writing-documentation), agent instruction files (writing-for-agents), or fiction, poetry, marketing, or chat."
+description: "Write, edit, shorten, or review technical prose at the sentence and paragraph level in any language, preserving every claim and the author's voice and removing AI-writing artifacts. Use for documentation, specs, PRDs, and design documents, reports, issues, commit messages, user-facing errors, and plain-language (ISO 24495-1), readability, or de-bloat passes. Not for document structure or type (writing-documentation), agent instruction files (writing-for-agents), or fiction, poetry, marketing, or chat."
 license: MIT AND CC-BY-4.0
 metadata:
   author: Joonas Onatsu
