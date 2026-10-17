@@ -58,13 +58,16 @@ precedence, includes, nesting, reload behavior, or symlink support. Load only th
   being asked for, an index only when something follows the route. So keep on the floor the symptoms an agent
   meets **while already in trouble**, and leave the ones it looks up deliberately to the index. A symptom
   owned by a subtree belongs to that subtree's instruction file and should never reach the root at all.
-- **Write in plain language, and size detail to consequence.** An instruction file is read under load by
-  something deciding what to do next, so every sentence carries a fact, a constraint, or an action, and each
-  one leads with the rule rather than its rationale — an agent that stops reading mid-passage must still have
-  the obligation. Prefer the specific term to the general one, and ordinary words to impressive ones. Omit
-  filler, repetition, hedging, and praise for the repository or its tools. Brevity never costs a constraint, a
-  risk, an ordering dependency, or a trade-off: state what the reader must not get wrong in as much detail as
-  getting it wrong would cost.
+- **Write in plain language, and size detail to consequence.** Plain language, as ISO 24495-1:2023 defines
+  it, lets the intended readers easily find what they need, understand what they find, and use that
+  information. An instruction file is read under load by something deciding what to do next, often a different
+  agent or model from the one that wrote it. So every sentence carries a fact, a constraint, or an action, and
+  each one leads with the rule rather than its rationale: an agent that stops reading mid-passage must still
+  have the obligation. Prefer the specific term to the general one, ordinary words to impressive ones, and one
+  term per concept. Write complete sentences, one instruction each within 20 words, with any condition first;
+  keep other sentences within 25 words. Omit filler, repetition, hedging, and praise for the repository or its
+  tools. Brevity never costs a constraint, a risk, an ordering dependency, or a trade-off: state what the
+  reader must not get wrong in as much detail as getting it wrong would cost.
 - Never overwrite or automatically reconcile two divergent real context files. Show their unique and
   conflicting content, explain which clients receive each file, and ask which content should survive.
 - Reuse authorization in the user's request. Ask only when an unresolved choice changes topology, public

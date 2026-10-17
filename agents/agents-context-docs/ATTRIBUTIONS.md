@@ -61,9 +61,19 @@ descriptions as always-loaded text, and a rule repeated for emphasis counting as
 - License: `LicenseRef-Proprietary`
 - Version: first edition, 2023-06
 
-ISO holds the copyright, and the standard is not free to redistribute. The instruction-file template's
-`Writing` section restates its definition of plain language, which the International Plain Language Federation
-also publishes. No other text was copied.
+ISO holds the copyright, and the standard is not free to redistribute. The plain-language rule and the
+instruction-file template's `Writing` section restate its definition of plain language, which the International
+Plain Language Federation also publishes. No other text was copied.
+
+### ASD: ASD-STE100 Simplified Technical English
+
+- Source: <https://www.asd-ste100.org/>
+- License: `LicenseRef-Proprietary`
+- Version: Issue 9, 2025-01-15
+
+ASD holds the copyright, and the standard is free to obtain but not free to redistribute. It informed the
+sentence limits and the condition before its command. The skill does not implement the standard, and no rule
+text was copied.
 
 ## Upstream License Notice
 
