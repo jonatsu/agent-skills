@@ -60,6 +60,9 @@ first fails.
 - Keep every skill self-contained: no link, path or script reference may leave its folder. `just check` fails a
   Markdown link or a script path that does, but it matches patterns line by line; check any other reference
   yourself. A script in one skill may be run by this repository's checks, never by another skill.
+- Keep every skill complete for its own job. When two skills both need a rule, each carries its own version,
+  sized to that job, because an agent often loads only one of them. Point to a sibling skill for extra depth,
+  never for correctness. When you change a shared rule, update every skill that carries it.
 - Keep a skill's `description` one inline YAML scalar. Kasetto records a folded one as its marker character.
 - Write `ATTRIBUTIONS.md` to the scheme in `skill-forge`'s `references/provenance.md`: what the skill is based
   on, under which license, and what each source gave it, in first-party and third-party sections. It is never a
