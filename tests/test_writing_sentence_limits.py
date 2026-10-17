@@ -1,7 +1,7 @@
-"""The prose skills each carry their own copy of the sentence limits; this keeps the copies in step.
+"""Several skills carry their own copy of the sentence limits; this keeps the copies in step.
 
-`writing-for-humans` holds the canonical procedural and descriptive limits. `writing-documentation` and
-`writing-readmes` restate them so neither depends on an agent also loading `writing-for-humans`.
+`writing-for-humans` holds the canonical procedural and descriptive limits. The other prose skills and the
+agent-facing writing skills restate them, so none depends on an agent also loading `writing-for-humans`.
 """
 
 from __future__ import annotations
@@ -11,34 +11,42 @@ import unittest
 
 from skill_locator import skill_directory
 
-CANONICAL_SKILL = "writing-for-humans"
-COPYING_SKILLS = ("writing-documentation", "writing-readmes")
+CANONICAL = ("writing-for-humans", "SKILL.md")
+COPIES = (
+    ("writing-documentation", "SKILL.md"),
+    ("writing-readmes", "SKILL.md"),
+    ("context-architecture", "references/writing-rules.md"),
+    ("agents-context-docs", "SKILL.md"),
+    ("writing-prompts", "SKILL.md"),
+    ("session-handoff", "SKILL.md"),
+    ("skill-forge", "references/authoring.md"),
+)
 # A word limit as the skills write it: "20 words", optionally bold.
 WORD_LIMIT = re.compile(r"\*{0,2}(\d+) words\b")
 
 
-def word_limits(skill: str) -> list[int]:
-    text = (skill_directory(skill) / "SKILL.md").read_text(encoding="utf-8")
+def word_limits(skill: str, relative_path: str) -> list[int]:
+    text = (skill_directory(skill) / relative_path).read_text(encoding="utf-8")
     return [int(match.group(1)) for match in WORD_LIMIT.finditer(text)]
 
 
 class SentenceLimitsStayInStep(unittest.TestCase):
     def test_canonical_skill_states_procedural_then_descriptive_limit(self) -> None:
-        limits = word_limits(CANONICAL_SKILL)
+        limits = word_limits(*CANONICAL)
         self.assertEqual(
-            len(limits), 2, f"{CANONICAL_SKILL} should state exactly two word limits: {limits}"
+            len(limits), 2, f"{CANONICAL[0]} should state exactly two word limits: {limits}"
         )
         procedural, descriptive = limits
-        self.assertLess(procedural, descriptive, f"{CANONICAL_SKILL} limits out of order: {limits}")
+        self.assertLess(procedural, descriptive, f"{CANONICAL[0]} limits out of order: {limits}")
 
-    def test_copying_skills_match_the_canonical_limits(self) -> None:
-        expected = word_limits(CANONICAL_SKILL)
-        for skill in COPYING_SKILLS:
-            with self.subTest(skill=skill):
+    def test_copies_match_the_canonical_limits(self) -> None:
+        expected = word_limits(*CANONICAL)
+        for skill, relative_path in COPIES:
+            with self.subTest(skill=skill, file=relative_path):
                 self.assertEqual(
-                    word_limits(skill),
+                    word_limits(skill, relative_path),
                     expected,
-                    f"{skill} sentence limits drifted from {CANONICAL_SKILL}; update every copy together",
+                    f"{skill}/{relative_path} drifted from {CANONICAL[0]}; update every copy",
                 )
 
 
