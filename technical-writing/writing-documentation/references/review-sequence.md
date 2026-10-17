@@ -14,7 +14,8 @@ documents and reliably produced documents a first-time reader could implement fr
 3. **Re-review once, focused on what changed.** Then apply the design bar that `technical-design` sets: a first-time
    reader could re-derive the implementation from the documents alone. Delete the working note once nothing in it is
    still needed.
-4. **Run a readability pass on a draft copy.** The pass applies `writing-for-humans` and writes a revised copy to
+4. **Run a readability pass on a draft copy.** The pass applies this skill's understandable prose rules and
+   **reader-ready** pass, plus `writing-for-humans` where available, and writes a revised copy to
    a separate draft file rather than the tracked document. Read the word diff against the guidelines yourself,
    correct what the pass got wrong, and commit the result as its own change.
 

@@ -1,0 +1,51 @@
+{
+  "skill_name": "writing-documentation",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "record": [
+      "client",
+      "model",
+      "date",
+      "source_revision",
+      "prompt",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "material_cost",
+      "result"
+    ],
+    "grading": "Grade outcomes from the response and trace. Do not require exact wording or headings. Supply only this skill; the case tests that the skill works without its sibling writing skills."
+  },
+  "cases": [
+    {
+      "id": "how-to-from-notes-two-audiences",
+      "prompt": "Write the operator how-to for rotating the edge gateway TLS certificate from these notes. The security team will also read it when they audit a rotation.\n\n# Notes: rotating the edge gateway TLS certificate\n\nCollected from the platform team's chat and the old wiki page. Not yet a document.\n\n- History: we used to rotate by hand with a shell script written in 2021, then moved to the `gwctl` tool in\n  2024 after the script broke on the new appliance firmware; the old wiki page still describes the script and\n  should not be used.\n- Certs are valid 90 days. Rotation must happen at least 14 days before expiry, otherwise the monitoring raises a\n  P2 alert and the on-call engineer gets paged.\n- `gwctl cert status` shows days left. `gwctl cert request --csr` makes a CSR, which has to go to the internal CA\n  through the PKI portal, and the CA usually takes one working day to sign it, sometimes up to three.\n- Signed cert goes on the gateway with `gwctl cert install <file>`. That command validates the chain and refuses an\n  incomplete one. It keeps the previous cert as a fallback for 7 days.\n- `gwctl cert activate` switches traffic to the new cert. Active TLS sessions drop when that runs, so do it in the\n  Tuesday 22:00-23:00 maintenance window unless there's an emergency.\n- If clients fail after activation, `gwctl cert rollback` restores the previous cert, but only within those 7 days.\n  After 7 days the fallback is deleted and cannot be restored.\n- OCSP stapling has to be re-enabled after activation with `gwctl ocsp enable` because activation turns it off.\n  Without it, some partner clients reject the connection.\n- The security team audits each rotation afterwards: they need the CSR fingerprint and the activation time, which\n  `gwctl cert log` prints. They do not run the procedure.\n- Operators doing this are on the infra on-call rota; they know Linux and the gateway console but not PKI.\n",
+      "behavior": "Draft a how-to for a primary reader while serving a secondary one, applying the skill's own prose rules.",
+      "outcomes": [
+        "Writes for the on-call operator first and serves the auditor's needs (CSR fingerprint, activation time from gwctl cert log) without reshaping the procedure around them.",
+        "Explains CSR, CA, and OCSP stapling at first use in plain terms.",
+        "Gives each procedural sentence one instruction within 20 words with any condition first, and keeps descriptive sentences within 25 words.",
+        "Places the signing lead time, the maintenance window, dropped sessions, and the 7-day rollback limit before the step each affects.",
+        "Uses headings that predict their content and keeps the history and the old script off the main path.",
+        "Keeps every number: 90 days, 14 days, one to three working days, 7 days, Tuesday 22:00-23:00; re-enabling OCSP is a step.",
+        "States what remains unverified and which evaluation the document received, without inventing procedure."
+      ]
+    },
+    {
+      "id": "review-page-structure-and-prose",
+      "prompt": "Review this documentation page and tell me what to fix.\n\n# Information\n\n## Overview\n\nThe backup subsystem, which was introduced as part of the storage modernization initiative and which leverages\nthe snapshot capabilities of the underlying ZFS pools in combination with the offsite replication service, is\ndesigned to provide a robust and comprehensive solution for ensuring that customer data can be recovered in a\ntimely manner in the event of a failure.\n\n## Details\n\nRestores are performed via the `restorectl` utility; it requires the RPO-tier flag; it also needs the tenant ID;\nthe output goes to a staging dataset. Run `restorectl apply --tenant <id> --tier <tier>` if the staging dataset\nhas been verified. Snapshots are retained for 35 days for gold-tier tenants and 14 days for standard-tier tenants,\nafter which they are pruned by the retention daemon, which runs nightly at 02:00 UTC and cannot be paused while a\nrestore is in progress, so a restore of a snapshot older than 13 days on a standard-tier tenant can fail midway.\n\nHistorically restores were done by the storage team via tickets, which caused delays averaging 2.5 days, which is\nwhy self-service was introduced in Q3.\n\nNote: you must stop the tenant's application pods before running `restorectl apply`, otherwise the restore will\ncorrupt the live dataset.\n\n## More\n\nThe RPO tier is determined by the tenant's SLA. ZFS send/recv is used under the hood with incremental streams\nand the replication service uses mbuffer.\n",
+      "behavior": "Review a page for structural and sentence-level defects without relying on another skill.",
+      "outcomes": [
+        "Reports that the headings Information, Details, and More predict nothing, that the history paragraph is noise, and that the note holds a required step that must precede restorectl apply as a caution.",
+        "Reports sentence-level defects itself: the long promotional overview sentence, the semicolon chain, the condition placed after its command, and unexplained terms such as RPO tier, staging dataset, ZFS, and mbuffer.",
+        "Treats the 13-day standard-tier failure risk as a caveat that must precede the step.",
+        "Invents no facts and lists the gaps for the owner.",
+        "Reports before rewriting."
+      ]
+    }
+  ]
+}

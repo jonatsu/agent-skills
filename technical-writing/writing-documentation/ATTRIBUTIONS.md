@@ -89,8 +89,9 @@ radius. Nothing was copied.
 - License: `MIT`
 - Version: `c55ee46073ed923f86ce59a5eb3b6d895095d1b7`
 
-The skill supplied the `authority map`, `locator`, and `reader-ready` leading words, checkable completion criteria,
-and the single-owner pointer from this skill to `writing-for-humans`. Nothing was copied.
+The skill supplied the `authority map`, `locator`, and `reader-ready` leading words and checkable completion
+criteria. It formerly supplied the single-owner pointer from this skill to `writing-for-humans`; the current skill
+carries its own prose rules instead. Nothing was copied.
 
 ### Eren Suner: "Agent Skill for Documentation"
 
@@ -138,8 +139,49 @@ The convention supplied the grouping vocabulary (added, changed, deprecated, rem
 
 ASD holds the copyright, and the standard is free to obtain but not free to redistribute. It informed "Write Notes
 and Safety Instructions": a note carries information only, a warning marks risk of injury and a caution risk of
-damage, and a safety instruction puts the signal word before the command. The skill does not implement the standard,
-and no rule text or dictionary entry was copied.
+damage, and a safety instruction puts the signal word before the command. It also informed the procedural and
+descriptive sentence classes with their limits, the condition before its command, and the six-sentence paragraph.
+The skill does not implement the standard, and no rule text or dictionary entry was copied.
+
+### ISO: ISO 24495-1:2023, Plain language, Part 1: Governing principles and guidelines
+
+- Source: <https://www.iso.org/standard/78907.html>, preview of clauses 1 to 5.2.3 at
+  <https://cdn.standards.iteh.ai/samples/78907/d194fac21d6a45f38bfcfec9657f7498/ISO-24495-1-2023.pdf>
+- License: `LicenseRef-Proprietary`
+- Version: first edition, 2023-06
+
+ISO holds the copyright, and the standard is not free to redistribute. The skill restates its definition of
+plain language, which the International Plain Language Federation also publishes, and builds on its four
+principles. Its guideline names shaped the rules on reading context, predictive headings, separate
+supplementary material, and evaluation with readers. No other text was copied.
+
+### Thomas M. Schindler: "The Making of the International Standard for Writing in Plain Language ISO 24495-1"
+
+- Source: <https://amwajournal.org/index.php/amwa/article/view/333>
+- License: `LicenseRef-Proprietary`
+- Version: AMWA Journal 39(1), 2024
+
+The American Medical Writers Association holds the copyright. The article supplied the complete list of the
+standard's guideline names, including headings that help readers predict what comes next. Nothing was copied.
+
+### Dustin Yuchen Teng: `iso-24495-skill`
+
+- Source: <https://github.com/danyuchn/iso-24495-skill>
+- License: `MIT`
+- Version: `113656b0a6a6cbeb3b3c2bb7cf3bc29349cb05cf`
+
+The skill supplied the one-reading check in the reader-ready pass and the example of a heading that states its
+message. Nothing was copied.
+
+### Gareth Williams: `iso-24495` skills
+
+- Source: <https://github.com/GaZmagik/iso-24495>, `skills/iso-24495-1/SKILL.md`
+- License: `MIT`
+- Version: `5951eb7d985018459c62428378926c07f4199794`
+
+The skill supplied the rule that a primary audience settles conflicts between audiences, with the runbook example,
+the requirement that a document work when read straight through, and the rule against carrying meaning by bold,
+color, or position alone. Nothing was copied.
 
 ## Upstream License Notice
 

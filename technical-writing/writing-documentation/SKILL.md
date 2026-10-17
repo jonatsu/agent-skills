@@ -9,9 +9,16 @@ metadata:
 # Writing Documentation
 
 This skill owns the document: its reader, its type, what belongs in it, where each concept is explained, which
-sources govern its claims, and how a reader reaches it. `writing-for-humans` owns its sentences and paragraphs
-and runs the final **reader-ready** pass. `writing-readmes` owns a project's front door. A document is done when
-its intended reader understands the subject or completes the task on the first pass.
+sources govern its claims, how a reader reaches it, and how its sentences read. `writing-readmes` owns a
+project's front door. A document is done when its intended reader understands the subject or completes the task
+on the first pass.
+
+Plain language, as ISO 24495-1:2023 defines it, is wording, structure, and design so clear that the intended
+readers can easily find what they need, understand what they find, and use that information. The standard
+groups its guidelines under four principles: relevant, findable, understandable, and usable. This skill applies
+all four to a document: relevant in choosing its reader and content, findable in its structure and headings,
+understandable in its prose rules, and usable in its review and reader testing. `writing-for-humans` carries the
+prose rules in more depth, with rewrites and AI-writing diagnostics, for a heavy editing pass.
 
 The guidance is general. Where it names commands or interfaces, apply the rule to whatever the document's
 subject actually is.
@@ -32,9 +39,15 @@ explanation. "Explain Concepts Where the Reader Meets Them" below says how.
 Identify:
 
 - the reader's existing knowledge;
+- the context in which they read, such as under time pressure, on a small screen, through a screen reader, or
+  in a second language;
 - the question they need answered or the task they need completed;
 - the correct outcome, visible result, or decision; and
 - the facts, interfaces, rules, and constraints that need verification.
+
+When a document has several audiences, name the primary one and let its needs settle every conflict. A runbook
+serves the engineer running it at night before the manager who audits it later; give the secondary reader what
+they need without reshaping the main path around them.
 
 Ask a focused question when a missing reader, outcome, or product fact would change the document's form or
 claims. Flag unsupported assertions, ambiguity, missing prerequisites, and factual gaps; never remove them
@@ -102,7 +115,7 @@ A requirements specification, PRD, SRS, or technical design has its own content 
 `writing-specs` for intended behavior and acceptance, `technical-design` for how a system realizes
 it. That skill decides what the document must contain. This skill still governs how it reads, and every rule
 here applies to it in full: the authority map, one term per concept, concepts explained where first relied on,
-every sentence carrying information, and the `writing-for-humans` **reader-ready** pass.
+every sentence carrying information, the understandable prose rules, and the **reader-ready** pass.
 
 `technical-design` sets the bar a design document must meet before its handoff.
 
@@ -115,8 +128,8 @@ One exemplar supports voice matching; a repeatable convention needs two or more.
 the covered types and audience, the repeated structure, register, formatting, and terminology, the exemplar
 evidence for each convention, and what the profile does not govern.
 
-**Where no set exists, or no convention has two exemplars, the default is `writing-for-humans` and the
-repository's own writing rules.** Never build a house style from a single document.
+**Where no set exists, or no convention has two exemplars, the default is this skill and the repository's own
+writing rules.** Never build a house style from a single document.
 
 For a numbered series, such as decision records, check its location, file extension, and markup, its numbering
 and filename pattern, and its heading set. Continue the sequence; surface a conflict between two schemes rather
@@ -132,10 +145,11 @@ with evidence, because consistency across a set serves the reader more than one 
 
 ## Cut Document-Level Noise
 
-`writing-for-humans` defines **noise**: a statement that gives the reader nothing new or useful where they meet
-it. A complex subject makes noise costlier, because each unneeded sentence makes the what, why, and how harder to
-follow. At the document level, noise is content that another section, another document, or the document's type
-already covers. Cut:
+**Noise** is a statement that gives the reader nothing new or useful where they meet it. Judge it in context: a
+true sentence is noise when the text before it already carries it. Apply the deletion test: remove the
+sentence, and if the reader loses nothing they need there, it was noise. A complex subject makes noise
+costlier, because each unneeded sentence makes the what, why, and how harder to follow. At the document level,
+noise is content that another section, another document, or the document's type already covers. Cut:
 
 - an announcement of what follows; state it instead;
 - a narrated cross-reference ("as the overview describes"); the link alone does that job;
@@ -178,10 +192,37 @@ text it explains: a flowchart for structure and decisions, a sequence diagram fo
 diagram for a lifecycle. In Markdown, use Mermaid unless the set follows another convention. Explain any diagram
 or screenshot the reader must act on, and never rely on color alone.
 
+## Write Understandable Prose
+
+Apply these rules to every sentence and paragraph of the document, including one that joins a house style.
+
+Choose the word the intended reader already knows. Keep a technical term the reader's field uses, explain it
+where first used as the previous section describes, and give each concept one term throughout.
+
+Lead each sentence with its claim, action, or result, and put new or important information at its end. Use the
+verb that carries the meaning: "analyze the log", not "perform an analysis of the log". Prefer active voice when
+the actor is known and relevant. Keep every article, "that", subject, and verb the grammar needs.
+
+Classify each passage as procedural, telling the reader what to do, or descriptive, explaining what something is
+or does. Give a procedural sentence one instruction in the imperative, within **20 words**, with any condition
+before its command: "If the build fails, read the log." Keep a descriptive sentence within **25 words**. Split a
+longer sentence unless splitting makes it less clear, and never merge sentences to save words. Count a code
+span, identifier, or quotation as one word. These limits are this skill's proxies, adapted from ASD-STE100.
+ISO 24495-1 judges a document by how well its readers use it, not by readability formulas.
+
+Give each paragraph one topic, opened by the sentence that states it, and at most six sentences. State how
+sentences relate, such as cause, condition, or contrast, in words the reader does not have to reconstruct. Join
+two clauses with a semicolon only where the second turns on the first, and never chain two semicolons.
+
+Use prose for connected ideas and a list for discrete items in parallel grammar. Bold only the shortest span
+that carries a decision or warning, never as a lead-in or decoration. Carry no meaning by bold, color, or
+position alone. In formal English documents, write full forms such as "it is" and "does not".
+
 ## Identifiers and Links
 
 Write the document so its meaning survives when an identifier changes or disappears. Lead with the behavior,
-decision, or consequence and append the key only for traceability, as `writing-for-humans` specifies. A table or
+decision, or consequence and append the key only for traceability: "Keep cached values for five minutes
+(decision A-003)", not "A-003 is confirmed". A table or
 status list may keep identifiers for lookup, provided every row also states its meaning in plain language.
 
 Keep identifiers the reader uses directly: API fields, configuration keys, error codes, and formal traceability
@@ -197,8 +238,14 @@ supports. When no pin was recorded, give the read date, because a commit derived
 observation nobody made. Cite only what the reader can open; a private repository, a deleted file, or a working
 note is no source for a published document.
 
-## Make the Content Usable
+## Make the Content Findable and Actionable
 
+- Write each heading so it predicts what follows. Where the section's message fits, state it: "Refunds take five
+  working days", not "Refund information".
+- Keep supplementary material, such as background, full data, and edge-case detail, apart from the main path: in
+  a later section, an appendix, or a linked document.
+- Make the document work read straight through as well as skimmed. A listener or a reader in a second language
+  cannot skim, so no passage may make sense only after jumping ahead.
 - Put prerequisites, irreversible effects, limits, and caveats before the reader meets them.
 - Use a realistic example where it settles a concept, decision, or task, and omit setup that does not affect it.
 - Validate instructions the reader will follow when the environment or access is available; otherwise name what
@@ -247,8 +294,8 @@ document into four files in one move.
 
 1. Settle the document's claims, type, examples, and organization.
 2. Check it against the list below, and report structural defects before any prose edit.
-3. Apply `writing-for-humans` to the complete draft and resolve every defect its **reader-ready** pass finds.
-4. Repeat that pass after each material revision.
+3. Run the **reader-ready** pass over the complete draft and resolve every defect it finds.
+4. Repeat that pass after each material revision, because a revision can introduce a defect.
 
 Check that:
 
@@ -265,6 +312,25 @@ Check that:
 - every pin is one the evidence recorded, and every cited source is one the reader can open;
 - the procedure still works with every note deleted, and each warning or caution matches its risk; and
 - accessibility information and recovery guidance cover what the reader needs.
+
+A document is **reader-ready** when one complete reading pass, as its intended reader, confirms that:
+
+- the intended reader can say, after one reading, what the document wants them to know or do;
+- each section and paragraph leads with the point the reader needs;
+- explanations precede the terms, conclusions, and instructions that depend on them;
+- relationships between claims are stated rather than left for the reader to rebuild;
+- every sentence is within its limit, and none fails the deletion test;
+- every unfamiliar term or identifier has its meaning at first use; and
+- every supported claim, number, condition, qualification, and normative requirement survived.
+
+Check each replacement as well as the defect it removed: a rewrite can arrive in the passive or drop a number.
+For a heavy edit, or to remove AI-writing artifacts, also apply `writing-for-humans` where it is available.
+
+The reader-ready pass shows that the document should work, not that its readers can use it. ISO 24495-1
+completes the usable principle by evaluating a document with its readers and in use. When a document guides
+consequential action, recommend that test: give a person from the intended readership, or a subagent holding
+only the document, a real task, and record where they fail. A subagent run is a proxy for reader testing, not a
+substitute. State in the delivery which evaluation the document received.
 
 When reviewing a high-stakes document, or delegating any review or readability pass to a subagent, read
 [references/review-sequence.md](references/review-sequence.md) first.
