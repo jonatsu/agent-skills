@@ -54,6 +54,17 @@ No prose was copied or adapted due to the license. Independently expressed ideas
 frequency, the "true in any repository using the tool" test, self-duplication through file inclusion, tool and field
 descriptions as always-loaded text, and a rule repeated for emphasis counting as one rule.
 
+### ISO: ISO 24495-1:2023, Plain language, Part 1: Governing principles and guidelines
+
+- Source: <https://www.iso.org/standard/78907.html>, preview of clauses 1 to 5.2.3 at
+  <https://cdn.standards.iteh.ai/samples/78907/d194fac21d6a45f38bfcfec9657f7498/ISO-24495-1-2023.pdf>
+- License: `LicenseRef-Proprietary`
+- Version: first edition, 2023-06
+
+ISO holds the copyright, and the standard is not free to redistribute. The instruction-file template's
+`Writing` section restates its definition of plain language, which the International Plain Language Federation
+also publishes. No other text was copied.
+
 ## Upstream License Notice
 
 Copyright Anthropic, PBC.

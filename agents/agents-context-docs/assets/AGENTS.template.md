@@ -41,6 +41,15 @@ that a diff shows whether it was followed.>
 
 - `<convention>`, never `<the alternative it replaces>`
 
+## Writing
+
+\<Keep this section unless the repository's own writing rules already cover it. It applies to every document,
+including this file, whichever agent or skill writes it.>
+
+- Write every document, for people or for agents, in plain language as ISO 24495-1:2023 defines it: wording,
+  structure, and design so clear that readers easily find what they need, understand what they find, and use
+  that information. Lead with the point, use familiar words and one term per concept, and keep sentences short.
+
 ## Environment
 
 - `<VAR_NAME>`: `<purpose, and when it must be set>`

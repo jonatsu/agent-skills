@@ -22,6 +22,11 @@ repository knowledge earns the recurring context cost.
 
 - `<concrete, repository-evidenced convention>`
 
+## Writing
+
+- Write every document, for people or for agents, in plain language as ISO 24495-1:2023 defines it: readers
+  easily find what they need, understand what they find, and use that information.
+
 ## Gotchas
 
 - `<what to do, or never do>`: `<failure symptom or consequence>`
@@ -61,6 +66,10 @@ existing repository convention wins over both.
 
 Delete sections that would contain a runner transcription, directory listing, generic advice, or README
 summary. The fillable version is `../assets/AGENTS.template.md`.
+
+Keep `Writing` by default. It sets the writing standard for every document the repository's agents produce, so
+documents written without a writing skill still follow it. Delete it only when the repository's own writing
+rules already cover plain language.
 
 `Gotchas` holds one imperative line per entry. Its supporting evidence, meaning dates, commit identifiers,
 tool-version measurements, and superseded arrangements, goes to a findings file instead, indexed by symptom.
