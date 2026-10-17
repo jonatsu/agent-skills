@@ -63,7 +63,7 @@ as `writing-specs` and `technical-design` do.
 | `session-reflect`            | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                             |
 | `systemd-units`              | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                             |
 | `docker-podman-containers`   | 2026-10-04, `3316fdd2`           | 2026-09-28, `f92701a`                             |
-| `writing-for-humans`         | 2026-09-28, `e999023`            | 2026-09-28, `e999023`                             |
+| `writing-for-humans`         | 2026-10-17, `68011bd3`           | 2026-09-28, `e999023`                             |
 | `writing-documentation`      | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                             |
 | `writing-specs`              | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
 | `technical-design`           | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                             |
@@ -255,8 +255,6 @@ These skills shipped with static review only, and their plans closed with the mo
 - `idea-brainstorming`, `technical-design` and `implementation-planning`. The 2026-09-04 intent refresh added
   nine cases to their `evals/behavior.json` files and passed review lite, but no case has been run against a
   model.
-- `writing-readmes` has no `evals/behavior.json` at all. Write its cases from the skill's observed runs, so a
-  later edit cannot silently undo the five-question order.
 
 ## Deferred Engineering Pipeline Designs
 
