@@ -182,6 +182,12 @@ Remove filler, repetition, obvious explanations, and generic advice. Preserve ne
 constraints, failure handling, and examples that resolve ambiguity. Prefer the shortest clear and complete
 explanation over cryptic compression.
 
+Write the skill in plain language, as ISO 24495-1:2023 defines it: an agent on any client or model can easily
+find what it needs, understand what it finds, and use that information. Use familiar words and one term per
+concept, and define a domain term on first use. Give each instruction a complete sentence within 20 words, with
+any condition first, and keep other sentences within 25 words. Keep the articles and verbs that compressed
+shorthand drops.
+
 Match specificity to risk: constrain fragile operations closely and leave room for judgment where several
 approaches are valid. Teach a reusable procedure for a class of tasks rather than the answer to one example,
 while keeping the exact commands, formats, and templates that correct execution depends on.
