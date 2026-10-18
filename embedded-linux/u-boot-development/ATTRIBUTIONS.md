@@ -9,13 +9,13 @@
 
 - Source: <https://github.com/u-boot/u-boot>, chiefly `cmd/nvedit.c`, `tools/env/fw_env.c`, `env/`,
   `boot/image-fit-sig.c`, `tools/image-host.c`, `common/main.c`, `common/autoboot.c`, `drivers/bootcount/`,
-  `common/spl/`, and the `doc/` tree
+  `common/spl/`, `cmd/bootflow.c`, and the `doc/` tree
 - License: `GPL-2.0-or-later`
 - Version: `v2025.10`
 
-The environment, FIT signature, boot flow, bootcount, control device tree, and SPL guidance is built on the release's
-source and documentation: its failure cases, persistence and verification boundaries, and board-specific limits. No
-upstream implementation is vendored, and no board skeleton is copied.
+The environment, FIT signature, boot flow and bootstd, bootcount, control device tree, and SPL guidance is built on the
+release's source and documentation: its failure cases, persistence and verification boundaries, and board-specific
+limits. No upstream implementation is vendored, and no board skeleton is copied.
 
 ## Third-party Sources
 

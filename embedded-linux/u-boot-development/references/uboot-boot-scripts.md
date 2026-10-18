@@ -1,7 +1,7 @@
 # U-Boot Boot Scripts and Images
 
-Trace the active boot framework and file selection before editing a script or image. Examples use upstream v2025.10;
-resolve board addresses, paths, formats and enabled commands before running them.
+Trace the active boot framework and file selection before editing a script or image. Resolve board addresses, paths,
+formats and enabled commands before running an example.
 
 ## Contents
 
@@ -13,15 +13,20 @@ resolve board addresses, paths, formats and enabled commands before running them
 
 ## Boot selection
 
-Inspect `bootcmd` and generated defaults. For legacy distro boot, `boot_targets` orders devices/targets such as `mmc0`
+Inspect `bootcmd` and generated defaults. For legacy distro boot, `boot_targets` orders devices or targets such as `mmc0`
 and `usb0`, not a global list of boot methods. The scan iterates prefixes, usually `/ /boot/`, trying extlinux before
 scripts **within each prefix**. Thus `/boot.scr` can run before `/boot/extlinux/extlinux.conf`, while extlinux wins when
 both candidates are under the same prefix and boot succeeds. Failed or returning candidates can continue the scan.
 See [config_distro_bootcmd.h](https://github.com/u-boot/u-boot/blob/v2025.10/include/config_distro_bootcmd.h).
 
-For bootstd, inspect enabled bootdevs/bootmeths and their actual order using the release's `bootflow`/`bootmeth` commands
-and configuration. Do not assign a framework from the release date alone; vendor defaults can retain legacy scripts.
-Reproduce the selected device, partition, prefix and method before changing a file that might never be read.
+For bootstd, list what the build can see before editing any file. `bootdev list` shows boot devices, and its `-p`
+flag probes them. `bootmeth list` shows the boot methods in their current order, which the `bootmeths` and
+`boot_targets` variables change. Check `CONFIG_CMD_BOOTFLOW_FULL` before running `bootflow scan`: without it, the
+command accepts no flags and boots the first bootflow it finds. With it, `bootflow scan -l` lists bootflows without
+booting, and `-b` boots. Scanning runs hunters that probe buses such as USB and SCSI; add `-H` to skip them. Then
+`bootflow select` and `bootflow info` show which files the chosen bootflow reads. Vendor defaults can keep legacy
+scripts, so identify the framework from the build rather than the release date. Reproduce the selected device,
+partition, prefix and method before changing a file that might never be read.
 
 An illustrative extlinux entry, for a filesystem containing these paths and a separately identified root filesystem:
 
@@ -42,7 +47,7 @@ the selected configuration; it is not inspection.
 
 U-Boot semicolons do not stop on failure. Use nested conditionals so a failed first or second load cannot execute stale
 RAM. This **Hush template** assumes authorized MMC 0:1, a raw Image, and prevalidated non-overlapping RAM capacities.
-`validate_loaded_pair` is a project-supplied validation command variable; its absent/failing status prevents boot.
+`validate_loaded_pair` is a project-supplied validation command variable; an absent or failing validator prevents boot.
 It must check recorded lengths against capacities, expected formats and artifact identities before returning success.
 A short memory dump or a DT model string cannot supply those checks.
 
@@ -94,9 +99,9 @@ Use an enforcing authenticated path where the threat model requires it.
 | Command   | Select only with these prerequisites                                                                                                          |
 | --------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `booti`   | Supported architecture's Image; configured compressed formats also need `kernel_comp_addr_r`, `kernel_comp_size` and safe decompression space |
-| `bootz`   | Supported zImage and architecture/build support                                                                                               |
+| `bootz`   | Supported zImage and architecture and build support                                                                                           |
 | `bootm`   | Supported FIT or enabled legacy uImage; named FIT configuration uses `address#configuration`                                                  |
-| `bootefi` | Supported EFI application/stub, enabled loader and compatible architecture/DT                                                                 |
+| `bootefi` | Supported EFI application or stub, enabled loader and compatible architecture and DT                                                          |
 
 Use `<ramdisk-address>:<captured-ramdisk-size>` where a raw ramdisk size is required, or `-` for none. Confirm syntax
 with release-matched command help. The [booti contract](https://docs.u-boot.org/en/v2025.10/usage/cmd/booti.html) includes
@@ -106,7 +111,7 @@ compressed formats and decompression memory requirements; it is not limited to u
 
 A FIT's hashes detect component damage. A configuration signature authenticates the selected composition only when the
 trusted verifier enforces it. The example below is a host-side schema example for arm64, with deliberately
-board-specific load/entry addresses that must be replaced from the board memory map. It includes a real signing node.
+board-specific load and entry addresses that must be replaced from the board memory map. It includes a real signing node.
 
 ```dts
 /dts-v1/;
@@ -147,7 +152,7 @@ board-specific load/entry addresses that must be replaced from the board memory 
 };
 ```
 
-In a new task-owned host directory, prepare a test RSA key/certificate as `keys/release.key` and `keys/release.crt`.
+In a new task-owned host directory, prepare a test RSA key and certificate as `keys/release.key` and `keys/release.crt`.
 Use protected production signing infrastructure for release keys. With a copy of the verifier's actual control DT:
 
 ```bash
@@ -162,22 +167,22 @@ control DT into the verifier and authenticate that verifier through the precedin
 See [FIT enforcement](uboot-security-and-provenance.md#fit-enforcement) and the
 [signing implementation](https://github.com/u-boot/u-boot/blob/v2025.10/tools/image-host.c).
 
-`mkimage -F` modifies/re-signs an existing FIT. Key rotation needs a coordinated verifier-key and signed-image rollout,
+`mkimage -F` modifies and re-signs an existing FIT. Key rotation needs a coordinated verifier-key and signed-image rollout,
 including rollback and any required-key policy; re-signing the payload alone cannot update a deployed trust anchor.
 
 `dumpimage -l image.itb` lists metadata and signature material. It does not establish cryptographic validity or required
 policy. Extraction writes a host file, for example `dumpimage -T flat_dt -p 0 -o kernel.out image.itb`; confirm the index
-from the listing and compare the extracted bytes with the intended source. Signature acceptance/rejection must be tested
+from the listing and compare the extracted bytes with the intended source. Signature acceptance and rejection must be tested
 with an enforcing verifier, including unsigned, wrong-key and tampered inputs.
 
 ## Network loading
 
 Network boot avoids repeated flash writes during authorized development, but executes code and can mount a writable NFS
 root. Decide whether that is within scope. For DHCP address acquisition only, set `autoload no` first. Set `autostart no`
-before explicit TFTP loads; confirm actual command/environment behavior on the release.
+before explicit TFTP loads; confirm actual command and environment behavior on the release.
 
 Guard DHCP, each TFTP load, validation and boot in the same nested sequence as the MMC example. Save the kernel size
 before loading the DT and save the DT size immediately afterward. A successful network configuration is not evidence
-that either payload loaded. Do not boot after any failed transfer. Define `bootargs` with the actual NFS server/export,
+that either payload loaded. Do not boot after any failed transfer. Define `bootargs` with the actual NFS server and export,
 protocol options and access mode only when that root filesystem is intended; it remains a trust input requiring the
 [final handoff checks](uboot-security-and-provenance.md#final-kernel-inputs).
