@@ -1,7 +1,7 @@
 # Configuration Findings — Credentials, Services, Filesystem
 
 The findings that need no tool: read the rootfs. These are also the ones most often reported from the build
-configuration rather than the artefact, which is what the Iron Law forbids.
+configuration rather than the artefact; confirm each one on the artefact instead.
 
 Every check below works on an unpacked rootfs with no build tree.
 
@@ -34,25 +34,8 @@ grep -iE '^\s*(PermitRootLogin|PermitEmptyPasswords|PasswordAuthentication)' roo
 Read the file, not the package list: `openssh` being installed says nothing about its configuration, and
 Dropbear has entirely different defaults and flags.
 
-## Worked example, on upstream's own security image
-
-`meta-security`'s `security-test-image`, built at `scarthgap` commit `b13f170`:
-
-```text
-root::15069:0:99999:7:::
-PermitRootLogin yes
-PermitEmptyPasswords yes
-```
-
-with `IMAGE_FEATURES = "debug-tweaks ssh-server-openssh"` and `ROOTFS_POSTPROCESS_COMMAND` containing
-`ssh_allow_empty_password` and `ssh_allow_root_login`.
-
-Three real findings in an image whose name contains "security" — **and the correct severity is nil**, because
-it is a test image that exists so a harness can ssh in. The same three findings in a shipped image are
-critical.
-
-That is the whole discipline in one example: **the artefact produces the finding, the intent produces the
-severity, and you usually have to ask for the intent.**
+The worked example in `auditing-without-metadata.md` shows these three findings on upstream's own test image,
+and why their severity there is nil.
 
 ## What starts, and what listens
 
@@ -69,7 +52,7 @@ Host-side you can see what is **configured** to start. Only on target can you se
 ss -tulpn          # or netstat -tulpn on a busybox image
 ```
 
-⛔ **A host-side service audit cannot answer "what is exposed".** A unit can be present and masked, socket
+**A host-side service audit cannot answer "what is exposed".** A unit can be present and masked, socket
 activated, or started by something else entirely. Report which lane the result came from.
 
 Upstream's own negative result is worth carrying: OE-Core's `lighttpd` runs as root. Public-facing services in
@@ -82,20 +65,24 @@ privilege.
 grep -v '^#' rootfs/etc/fstab                          # what read-only-rootfs actually wrote
 find rootfs -perm -4000 -o -perm -2000 2>/dev/null     # setuid and setgid binaries
 find rootfs -perm -0002 -type f 2>/dev/null            # world-writable files
-getcap -r rootfs 2>/dev/null                           # file capabilities
+getcap -r rootfs 2>/dev/null                           # file capabilities; empty from a tarball, see below
 ```
 
 The setuid inventory is the highest-value one: it is short, it is stable across releases, and any addition to
 it is a change worth explaining.
 
-Two traps:
+Three traps:
 
 - **`read-only-rootfs` edits `/etc/fstab` lines matching `/dev/root`.** The kernel command line still decides
   whether the root filesystem is actually mounted read-only. `/etc/fstab` is a claim; `findmnt` on target is
   the observation.
-- **Extracting a rootfs as a non-root user loses ownership and may lose capabilities.** `find -perm` still
-  works because modes survive, but `getcap` results from an unprivileged extraction are unreliable. Say so, or
-  read the image with a tool that preserves xattrs.
+- **Extract with `-p`, or read the archive listing.** An unprivileged `tar -xf` drops every setuid and setgid bit,
+  so `find -perm -4000` on that tree reports nothing. Use `tar -xpf`. Alternatively, skip extraction and read
+  the modes and owners from the listing:
+  `tar -tvf <image>.rootfs.tar.* | awk '$1 ~ /^-..[sS]|^-.....[sS]/'`.
+- **File capabilities are not in a Yocto rootfs tarball.** OE-Core's tar image type does not store xattrs, so
+  `getcap` on any extraction is empty. Read capabilities from the `.ext4` (`debugfs -R "ea_list <path>"`) or on
+  target with `getcap -r /`.
 
 ## MAC policy
 

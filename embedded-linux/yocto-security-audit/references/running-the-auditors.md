@@ -3,7 +3,7 @@
 Hardening owns **wiring** an auditor into a prod-test image. This file owns **running** one and interpreting
 its output.
 
-⛔ **Every auditor here ships with checks turned off by default.** Reporting a clean run without saying which
+**Every auditor here ships with checks turned off by default.** Reporting a clean run without saying which
 checks were disabled is the exact failure this skill exists to prevent. Read the defaults before you read the
 findings.
 
@@ -22,12 +22,14 @@ check_security () {
 
 Three things to know before treating a clean build as a clean audit:
 
-- **Six check families are disabled by default**: `checksum`, `firewall`, `packages_problematic`, `services`,
-  `sshd`, `usermask`. Between them that is most of what an auditor would say about a network-facing image.
-- **Standard output goes to `/dev/null`.** The findings exist only in `${T}/log.do_checksecurity.*`, which is
-  under `tmp/work` and is deleted by `rm_work`.
-- **The task cannot fail the build.** It is a postprocess command with no assertion; a finding is a line in a
-  log nobody reads.
+- **Six of buck-security's thirteen checks are disabled**: `checksum`, `firewall`, `packages_problematic`,
+  `services`, `sshd`, and `usermask`. The seven that run are `emptypasswd`, `sgids`, `stickytmp`, `suids`,
+  `superusers`, `worldwriteablefiles`, and `worldwriteabledirs`. None looks at SSH configuration, services, or the
+  firewall.
+- **Standard output goes to `/dev/null`.** The findings exist only in `${T}/log.do_checksecurity.*` in the image's
+  work directory. `rm_work` keeps `temp`, so the log survives it.
+- **Findings cannot fail the build.** buck-security exits 0 however many warnings it logs; only a startup error,
+  such as a missing sysroot, fails the task.
 
 ```bash
 # Where the output actually is
@@ -40,11 +42,17 @@ by design, not by breakage.
 
 ## `checksec` — and the one that does not build
 
-Covered in `binary-and-kernel-findings.md` for what its output means. One operational fact belongs here:
-**`checksec-native` does not build at `scarthgap`** without a one-line `.bbappend`, because the recipe keeps
-`procps` in `RDEPENDS` while `procps` has no native variant. Hardening's
-`compiler-and-binary-hardening.md` carries the verified fix. Without it, the host-side scanning lane is simply
-unavailable and you are pushed to the on-target lane.
+Covered in `binary-and-kernel-findings.md` for what its output means. One operational fact belongs here.
+
+`checksec-native` does not build at `scarthgap`: the recipe keeps `procps` in `RDEPENDS` while OE-Core's `procps`
+has no native variant. A one-line `.bbappend` restores it:
+
+```bitbake
+# checksec_%.bbappend
+RDEPENDS:${PN}:class-native = "bash openssl-bin binutils findutils file"
+```
+
+Without it, run `checksec` on target in the prod-test image instead.
 
 ## Lynis and OpenSCAP
 
@@ -55,21 +63,24 @@ spots.
 
 ```bash
 lynis audit system --no-colors --quiet          # on target, in the prod-test image
-oscap xccdf eval --profile <profile> /usr/share/xml/scap/ssg/content/<datastream>.xml
+oscap xccdf eval --results results.xml --report report.html \
+    --profile xccdf_org.ssgproject.content_profile_standard \
+    /usr/share/xml/scap/ssg/content/ssg-openembedded-ds.xml   # what /usr/share/openscap/run_eval.sh runs
 ```
 
-**Not run here.** Everything in this section is read from the recipes and the tools' own documentation, not
-observed. Confirm option names and output format against the packaged version — the recipes pin specific
-releases and both tools change their CLI across major versions.
+**Not run here.** The command lines are confirmed from source at the packaged versions; the output is not
+observed. Re-check both when a recipe's pinned release moves, because both tools change their CLI across major
+versions.
 
 Two cautions that apply regardless of version:
 
 - **Lynis is written for general-purpose Linux distributions.** A large fraction of its checks assume a package
   manager, a mail transfer agent, a full PAM stack or a desktop. On a minimal embedded image many findings are
   "not installed", which is the intended state, not a gap. Its hardening index is not a number to chase.
-- **OpenSCAP evaluates a profile.** The result is meaningless without naming which datastream and which
-  profile, and the shipped SSG profiles target enterprise distributions rather than embedded images. Read the
-  profile before reporting the score.
+- **OpenSCAP evaluates a profile.** The packaged `scap-security-guide` builds only the OpenEmbedded datastream,
+  and its one profile, `standard`, describes itself as a documentation sample whose rules "should pass quickly on
+  most systems". A passing `standard` run shows that sample held, not that the image meets any benchmark. Name
+  the datastream and profile in every result.
 
 ## The general rule
 
@@ -82,7 +93,7 @@ an embedded Linux image. So:
 - [ ] **Separate "not applicable to an embedded image" from "not checked" from "checked and clean".** All three
   look the same in most output formats, and only the third is evidence.
 - [ ] **Never ship the auditor.** Results come from a prod-test image built from prod's package set — see
-  hardening's `verification-workflows.md`.
+  the yocto-security-hardening skill's three-image pattern.
 
 ## Open source only
 

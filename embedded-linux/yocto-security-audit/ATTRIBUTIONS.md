@@ -15,6 +15,26 @@
 The guidance on running the layer's scanners and auditors, on its `oeqa` runtime security suites, and on what a green
 suite does and does not prove is built on the layer's classes, recipes, and test cases. No code is copied.
 
+### OpenEmbedded: openembedded-core
+
+- Source: <https://git.openembedded.org/openembedded-core>, chiefly `meta/conf/distro/include/security_flags.inc`,
+  `meta/classes-recipe/rootfs-postcommands.bbclass`, `meta/classes-recipe/image_types.bbclass`, and
+  `meta/lib/oe/package_manager/`
+- License: `MIT`
+- Version: `b4f06303e55c7270a8482a610927a1c41d5dbf9c` (`scarthgap` branch)
+
+The exemption list, the deployed `testdata.json` and manifest, the tar image type, and the removal of the package
+database are described from these files. No code is copied.
+
+### Brian Davis and contributors: checksec.sh
+
+- Source: <https://github.com/slimm609/checksec.sh>, `checksec`
+- License: `BSD-3-Clause`
+- Version: tag `2.6.0`, the release `meta-security` packages
+
+The option syntax, the JSON keys, and how the FORTIFY result is computed are described from the script. No code
+is copied.
+
 ## Third-party Sources
 
 ### Michael Opdenacker, Root Commit: "Securing Yocto Built Systems"

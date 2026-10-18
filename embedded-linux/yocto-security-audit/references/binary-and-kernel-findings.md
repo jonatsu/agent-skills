@@ -11,8 +11,8 @@ checksec --file=rootfs/usr/bin/<binary>
 checksec --format=json --file=rootfs/bin/busybox
 ```
 
-**`checksec-native` does not build at `scarthgap`** without the one-line `.bbappend` in hardening's
-`compiler-and-binary-hardening.md`. Without it, run the target package inside a prod-test image, or run the
+**`checksec-native` does not build at `scarthgap`** without the one-line `.bbappend` in
+`running-the-auditors.md`. Without it, run the target package inside a prod-test image, or run the
 `checksec` shell script directly from its source checkout — it is a shell script, not a compiled tool.
 
 ### The JSON output, measured
@@ -36,17 +36,22 @@ Two traps:
 
 Map each column back to what sets it, and compare against the exemptions before reporting:
 
-| Column       | Set by                         | Expect                                             |
-| ------------ | ------------------------------ | -------------------------------------------------- |
-| RELRO        | `SECURITY_LDFLAGS`             | Full; **Partial** on `xserver-xorg` by design      |
-| STACK CANARY | `SECURITY_STACK_PROTECTOR`     | Canary found; absent on the exempted recipes       |
-| PIE          | `GCCPIE`/`SECURITY_PIE_CFLAGS` | PIE enabled; absent on powerpc                     |
-| FORTIFY      | `lcl_maybe_fortify`            | present — **absent means `-O0`, not "no support"** |
+| Column       | Set by                         | Expect                                                                                                                      |
+| ------------ | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| RELRO        | `SECURITY_LDFLAGS`             | Full; **Partial** on `xserver-xorg` by design                                                                               |
+| STACK CANARY | `SECURITY_STACK_PROTECTOR`     | Canary found; absent on the exempted recipes                                                                                |
+| PIE          | `GCCPIE`/`SECURITY_PIE_CFLAGS` | PIE enabled; absent on powerpc                                                                                              |
+| FORTIFY      | `lcl_maybe_fortify`            | "yes" when any `*_chk` symbol is imported; "no" also covers `-O0`, exempted recipes, and binaries with no fortifiable calls |
 
-⛔ **A per-binary result that matches the exemption table is a pass, not a finding.** OE-Core's
-`security_flags.inc` carries **21 `:pn-` opt-out lines** — at `scarthgap` including `glibc`, `gcc-runtime`,
-`libgcc`, `grub`, `grub-efi`, `valgrind`, `sysklogd` and `busybox`. A `checksec` sweep over a whole rootfs will
-light up on every one of them, and none is a defect.
+The `fortified` and `fortify-able` counts compare against the host's libc, not the target's. Read them as
+approximate on a cross-built rootfs, and on a musl target treat them as meaningless.
+
+A per-binary result that matches an exemption is the intended state, not a finding. OE-Core's
+`security_flags.inc` at `scarthgap` exempts 13 recipes. Eleven show in `checksec`: `glibc`, `glibc-testsuite`,
+`gcc-runtime`, `grub`, `grub-efi`, `valgrind`, and `sysklogd` lose most flags; `libgcc` on powerpc and `mkelfimage`
+on x86 lose them on that architecture only; `ltp` loses the stack canary; `xserver-xorg` gets partial RELRO. `busybox`
+and `gcc` lose only format-string warnings, which `checksec` cannot see, so a hardening gap in `busybox` is a
+finding. Read the file at the image's release; the list changes between releases.
 
 The useful finding is **a binary that is not exempted and not hardened** — usually the product's own
 application, built by a recipe that dropped `LDFLAGS` or set its own `CFLAGS`.
@@ -63,8 +68,8 @@ The question is which hardening symbols survived into the shipped kernel, and th
 # on target, if CONFIG_IKCONFIG_PROC=y — which is itself a small disclosure
 zcat /proc/config.gz | grep -E 'FORTIFY_SOURCE|STACKPROTECTOR|RANDOMIZE_BASE|HARDENED_USERCOPY'
 
-# host-side, from a build tree
-grep -E 'CONFIG_…' <kernel build dir>/.config
+# host-side, from a deployed kernel image built with CONFIG_IKCONFIG=y (script from that kernel's source tree)
+scripts/extract-ikconfig <deployed kernel image> | grep -E 'FORTIFY_SOURCE|STACKPROTECTOR|RANDOMIZE_BASE|HARDENED_USERCOPY'
 ```
 
 `kernel-hardening-checker` (in `meta-oe`, 0.6.17.1 at `scarthgap`) compares a `.config` against a recommended
@@ -80,7 +85,7 @@ Three cautions specific to reading its output:
   is the kernel's own `Documentation/security/self-protection.rst` **for that kernel version**, not the
   checker's list.
 - **A `kernel_configcheck` pass is not this check.** Its default audit level filters to boot-affecting options
-  and its findings are warnings unless `KMETA_AUDIT_WERROR` is set — see hardening's `kernel-hardening.md`.
+  and its findings are warnings unless `KMETA_AUDIT_WERROR` is set — see the yocto-security-hardening skill.
 
 ## Reporting either of these
 

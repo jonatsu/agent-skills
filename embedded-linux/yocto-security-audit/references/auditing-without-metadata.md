@@ -3,24 +3,15 @@
 The starting state that defines this skill: an image, a rootfs tarball, maybe a `.wic`, and no build tree. Every
 first move the sibling skills teach — `bitbake-getvar`, `bitbake -e`, reading the recipe — is unavailable.
 
-The good news is that a Yocto deploy directory carries far more evidence than people expect, and most audits
-that "need the build" do not.
+A deploy directory usually carries enough evidence for an audit without the build tree.
 
 ## Establish provenance before anything else
 
-⛔ **An audit of the wrong artefact is worse than no audit**, because it produces confident reassurance about
-something that does not ship. Answer these four before running a single check:
+Answer the four provenance questions in `SKILL.md` before running a single check.
 
-| Question                    | Where the answer is                                                 |
-| --------------------------- | ------------------------------------------------------------------- |
-| Which release?              | `DISTRO_VERSION` in `testdata.json`; failing that, package versions |
-| Which recipe built it?      | **`PN` in `testdata.json` — not the filename.** See the trap below  |
-| What is actually installed? | the `.manifest` beside the image                                    |
-| Is this what ships?         | ask. Nothing in the artefact answers it                             |
-
-That last one has no technical answer and is the one that matters most. Prod, dev and prod-test images look
-alike and differ in exactly the ways an audit cares about; hardening's `verification-workflows.md` describes
-the three-image pattern. **Always report which image a result came from.**
+The last one, whether this is what ships, has no technical answer and is the one that matters most. Prod, dev
+and prod-test images look alike and differ in exactly the ways an audit cares about; the
+yocto-security-hardening skill describes the three-image pattern. **Always report which image a result came from.**
 
 ### The filename does not identify the recipe
 
@@ -35,13 +26,12 @@ jq -r '.PN, .IMAGE_BASENAME' <image>.testdata.json
 # security-build-image     <- what the files are called
 ```
 
-This is not a corner case someone contrived; it is upstream's own security layer. **Read `PN`, never the
-filename.**
+**Read `PN`, never the filename.**
 
-## `testdata.json` is the audit's best friend
+## Read testdata.json first
 
-Deployed beside every image, and it is a **complete dump of the build datastore** — 2221 variables in the image
-measured here. If it is present, "no metadata" is largely untrue:
+Deployed beside every image, and it is a dump of the build datastore's variables (functions and `BB*` variables
+excluded): 2221 variables in the image measured here. If it is present, "no metadata" is largely untrue:
 
 ```bash
 T=<image>-<machine>.rootfs.testdata.json
@@ -58,8 +48,8 @@ jq -r 'keys[] | select(startswith("SECURITY_"))' "$T"   # what hardening flags w
 filesystem tweak the image applied. Read the **absence** of `zap_empty_root_password` as a finding, not its
 presence — it runs when `empty-root-password` is *not* set.
 
-**But `testdata.json` is still configuration, not the artefact.** It tells you what the build intended. The
-Iron Law applies to it exactly as it applies to a recipe: confirm the property on the rootfs.
+**But `testdata.json` is still configuration, not the artefact.** It tells you what the build intended. Confirm
+each property on the rootfs, exactly as you would for a recipe.
 
 ### When it is absent
 
@@ -68,22 +58,23 @@ are down to the artefact itself, and the table below is what remains.
 
 ## What the artefact alone still tells you
 
-| Question                           | How, with no build tree                                                                     |
-| ---------------------------------- | ------------------------------------------------------------------------------------------- |
-| What is installed, at what version | the `.manifest`; failing that, `/var/lib/opkg/status`, `/var/lib/dpkg/status` or the rpm db |
-| Release, approximately             | `/etc/os-release`, and the versions of `bash`, `glibc`, `busybox` against release history   |
-| Root credentials                   | `/etc/shadow`, `/etc/passwd`                                                                |
-| What starts at boot                | `/etc/systemd/system/`, `/lib/systemd/system/*.wants/`, or `/etc/init.d` and `rc*.d`        |
-| Service exposure                   | unit files' `ExecStart`, `User=`, and any config the daemon reads                           |
-| Binary hardening                   | `checksec --dir=` over the unpacked tree                                                    |
-| Kernel configuration               | `/proc/config.gz` on target, or the shipped `.config`/`bzImage` if deployed                 |
-| MAC policy present                 | `/etc/apparmor.d/`, `/etc/selinux/`, `/etc/smack/`                                          |
-| SBOM, if generated                 | `.spdx.tar.zst` at 5.0, `.spdx.json` at 6.0 — route to **yocto-vulnerability-management**   |
+| Question                           | How, with no build tree                                                                                                            |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| What is installed, at what version | the `.manifest`; failing that, the opkg, dpkg or rpm database, which exists only when `package-management` was in `IMAGE_FEATURES` |
+| Layer revisions                    | `/etc/buildinfo`, when the image inherited `image-buildinfo`                                                                       |
+| Release, approximately             | `/etc/os-release`, and the versions of `bash`, `glibc`, `busybox` against release history                                          |
+| Root credentials                   | `/etc/shadow`, `/etc/passwd`                                                                                                       |
+| What starts at boot                | `/etc/systemd/system/`, `/lib/systemd/system/*.wants/`, or `/etc/init.d` and `rc*.d`                                               |
+| Service exposure                   | unit files' `ExecStart`, `User=`, and any config the daemon reads                                                                  |
+| Binary hardening                   | `checksec --dir=` over the unpacked tree                                                                                           |
+| Kernel configuration               | `/proc/config.gz` on target, or the shipped `.config`/`bzImage` if deployed                                                        |
+| MAC policy present                 | `/etc/apparmor.d/`, `/etc/selinux/`, `/etc/smack/`                                                                                 |
+| SBOM, if generated                 | `.spdx.tar.zst` at 5.0, `.spdx.json` at 6.0 — route to **yocto-vulnerability-management**                                          |
 
-Unpacking without root is the usual practical obstacle. A `.tar.bz2` rootfs needs nothing special:
+Unpacking without root is the usual practical obstacle. A `.tar.*` rootfs needs nothing special; GNU tar detects the compression:
 
 ```bash
-mkdir rootfs && tar -xjf <image>.rootfs.tar.bz2 -C rootfs ./etc/shadow ./etc/ssh/sshd_config
+mkdir rootfs && tar -xpf <image>.rootfs.tar.* -C rootfs ./etc/shadow ./etc/ssh/sshd_config
 ```
 
 An `.ext4` needs a loop mount and therefore privilege, or a userspace reader such as `debugfs -R`. A `.wic` is
@@ -94,8 +85,8 @@ read.
 
 Say these plainly rather than inferring them:
 
-- **Which layers and revisions produced it**, unless `testdata.json` or an SBOM is present. Package versions
-  narrow the release; they do not identify a layer set or local patches.
+- **Which layers and revisions produced it**, unless `/etc/buildinfo` or an SBOM is present. `testdata.json`
+  omits `BBLAYERS`. Package versions narrow the release; they do not identify a layer set or local patches.
 - **Whether a binary's hardening reflects policy or accident.** `checksec` shows the result, not the intent.
 - **Whether the configuration on disk is what runs.** Kernel command line, initramfs and runtime overlays can
   all override it — `read-only-rootfs` edits `/etc/fstab`, but the kernel command line decides.

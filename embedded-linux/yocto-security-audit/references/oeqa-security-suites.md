@@ -3,7 +3,7 @@
 Upstream ships the harness, the images and the packaging. **It does not ship assertions that check
 properties.** Running the suite is easy; knowing what a result means is the whole job.
 
-Hardening's `verification-workflows.md` owns the two-lane model, the three-image pattern and the worked
+The yocto-security-hardening skill owns the two-lane model, the three-image pattern and the worked
 property assertion. This file owns *running* the suite and *interpreting* it.
 
 ## Running it
@@ -27,11 +27,11 @@ bitbake <image> -c testimage
 
 Measured under kas-container with Docker. Three obstacles, in the order they appear:
 
-| Symptom                                             | Cause and fix                                                                                                                                   |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `TUN control device /dev/net/tun is unavailable`    | pass `--device /dev/net/tun` and `--cap-add NET_ADMIN` to the engine                                                                            |
-| `You have no read or write permission on /dev/kvm`  | the entrypoint rebuilds the build user without supplementary groups, so `--group-add` does not reach it. Set `QEMU_USE_KVM = ""` and accept TCG |
-| `Setting up tap device failed: sudo … runqemu-ifup` | `TEST_RUNQEMUPARAMS = "slirp"` — user-mode networking, no tap, no sudo                                                                          |
+| Symptom                                             | Cause and fix                                                                                                                                                                   |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TUN control device /dev/net/tun is unavailable`    | pass `--device /dev/net/tun` and `--cap-add NET_ADMIN` to the engine                                                                                                            |
+| `You have no read or write permission on /dev/kvm`  | before kas 5.5, the entrypoint rebuilds the build user without supplementary groups, so `--group-add` does not reach it. Upgrade kas, or set `QEMU_USE_KVM = ""` and accept TCG |
+| `Setting up tap device failed: sudo … runqemu-ifup` | `TEST_RUNQEMUPARAMS = "slirp"` — user-mode networking, no tap, no sudo                                                                                                          |
 
 `slirp` plus TCG works with no privilege at all and is the configuration the results below came from. It is
 slower and it is not upstream's CI environment, which matters for timing-sensitive or network-topology-sensitive
@@ -42,8 +42,8 @@ cases.
 **A pass in this suite usually means "the tool is installed and its `--help` exits 0".** That is worth
 something — it catches a broken package — and it is not a security property.
 
-Ten of the layer's test methods have a structure where the **only assertion sits inside `if not match:`**, so
-when the expected output *is* found, nothing is asserted at all:
+Ten test methods in `lib/oeqa/runtime/cases/` have a structure where the **only assertion sits inside
+`if not match:`**, so when the expected output *is* found, nothing is asserted at all:
 
 ```python
 # lib/oeqa/runtime/cases/checksec.py
@@ -54,11 +54,14 @@ if not match:
 ```
 
 The pattern appears in `aide.py` (1), `apparmor.py` (3), `checksec.py` (1), `samhain.py` (2) and
-`tripwire.py` (3). Excluding `smack.py` — the one genuine suite, 417 of the directory's 799 lines — **10 of 29
-test methods assert nothing on the success path.**
+`tripwire.py` (3). Excluding `smack.py` — the one genuine suite, 417 of the directory's 799 lines — **10 of the 29
+test methods in `lib/oeqa/runtime/cases/` assert nothing on the success path.** The `ima`, `tpm2`, `swtpm` and
+`parsec` cases that `security-test-image` also runs live in the sublayers' `meta-*/lib/oeqa/runtime/cases/`.
 
-`checksec` carries a second, independent defect: `--fortify-proc 1` and `--proc=1` inspect **PID 1**, not the
-shipped binaries. Even repaired, the case could not answer whether the image was built with fortification.
+`checksec` carries a second, independent defect. checksec 2.6.0 accepts only `--fortify-proc=<pid>`, so
+`checksec --fortify-proc 1` exits 1 with "Unknown option". The `if not match:` branch then asserts exit status 1,
+and the test passes because its command failed. Even repaired, the case would inspect PID 1, not the shipped
+binaries.
 
 ## The measured result, and why it is the point
 
@@ -74,9 +77,9 @@ shipped binaries. Even repaired, the case could not answer whether the image was
 
 Three readings that follow directly:
 
-1. **`test_checksec_fortify` PASSED on an image where no fortification claim was checked.** Do not read that
-   line as evidence about `_FORTIFY_SOURCE`. Use the property assertion in hardening's
-   `verification-workflows.md` instead.
+1. **`test_checksec_fortify` PASSED because its `checksec` command was rejected as an unknown option.** Do
+   not read that line as evidence about `_FORTIFY_SOURCE`. Use a property assertion instead; the
+   yocto-security-hardening skill carries a worked one.
 
 2. **`apparmor.test_apparmor_aa_complain` FAILED — through the wrong branch.** All three AppArmor cases grep
    for `apparmor module is loaded.`, which is what `aa-status` prints, not `aa-complain`:
@@ -117,7 +120,7 @@ changing sign.
 
 ## Writing a case that asserts
 
-Covered in hardening's `verification-workflows.md`, which carries the worked example and the two rules that
+Covered in the yocto-security-hardening skill, which carries the worked example and the two rules that
 matter: **assert in the success path**, and **name the artefact under test**. Two additions from running the
 suite here:
 

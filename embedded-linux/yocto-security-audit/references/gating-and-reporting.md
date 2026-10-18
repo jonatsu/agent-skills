@@ -5,12 +5,11 @@ that fails for the right reasons, and a report a reader can use.
 
 ## Why the obvious gate does not work
 
-The measured `security-test-image` run at `scarthgap`: **58 results — 33 passed, 16 failed, 9 skipped**, and
-`do_testimage` exits non-zero.
+On the measured `security-test-image` run in `oeqa-security-suites.md`, `do_testimage` exits non-zero.
 
 - A gate keyed on **exit status** blocks the release, for reasons almost entirely unrelated to the image's
   security posture — an LSM configuration collision, a ClamAV signature download, and a chain of skips.
-- A gate keyed on **pass count** sees 33 green and concludes the opposite.
+- A gate keyed on **pass count** sees most cases green and concludes the opposite.
 
 **Neither number is an answer.** Both are stable, both are automatable, and both are wrong. That is the case
 against gating on a suite you have not read.
@@ -48,7 +47,7 @@ mechanical answer; "did anything change" does.
 ```bash
 # commit these per release, diff them per build
 tmp/deploy/images/<machine>/<image>-<machine>.rootfs.manifest    # package set and versions
-find rootfs -perm -4000 | sort                                   # setuid inventory
+tar -tvf <image>.rootfs.tar.* | awk '$1 ~ /^-..[sS]|^-.....[sS]/ {print $1, $2, $NF}' | sort -k3   # setuid inventory
 jq -S '{DISTRO_FEATURES,IMAGE_FEATURES,ROOTFS_POSTPROCESS_COMMAND}' <image>.testdata.json
 ```
 
@@ -62,9 +61,7 @@ need one absolute audit at the start and a review whenever they are updated.
 
 A finding is a fact about an artefact. Severity is not, and this is where most audit reports go wrong.
 
-The worked example, from upstream's own image: an empty root password, `PermitRootLogin yes` and
-`PermitEmptyPasswords yes` in `security-test-image`. Three genuine findings, **severity nil** — it is a test
-image built so a harness can log in. The same three findings in a shipped image are critical.
+See the worked example in `auditing-without-metadata.md`.
 
 So the rule: **report the finding always; assign severity only against a stated purpose, and if the purpose is
 unknown, say the severity is unknown rather than guessing.** "Critical if this ships; expected if it does not"
@@ -76,13 +73,11 @@ Each has its own shape, and each is covered where the finding is produced:
 
 | Category                                | Usual cause                                                           |
 | --------------------------------------- | --------------------------------------------------------------------- |
-| `checksec` red cells                    | the 21 `:pn-` opt-outs in `security_flags.inc` — intended state       |
+| `checksec` red cells                    | the `security_flags.inc` exemptions — intended state                  |
 | kernel-hardening-checker "failed" lines | upstream recommendations that cost performance, declined deliberately |
 | Lynis warnings on a minimal image       | checks assuming a general-purpose distribution                        |
 | oeqa failures                           | configuration collisions and environment, not the image               |
 | "package X is ancient"                  | a backported fix — route to **yocto-vulnerability-management**        |
-
-A report that has not subtracted these is a tool's output, not an audit.
 
 ## The report
 
