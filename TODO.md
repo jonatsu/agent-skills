@@ -191,18 +191,6 @@ third-party skills from upstream, and a frontmatter change to one of those is ov
 
 Open sub-question: whether tightening `allowed-tools` rides along with this or stays separate.
 
-## `drawio-diagrams`: Make `--disable-gpu` a Fallback
-
-Added 2026-10-18. The skill passes `--disable-gpu` in every export command (`technical-writing/drawio-diagrams/SKILL.md`
-lines 38 to 42 and each example), because draw.io exports hung under WSLg. The cause was a deadlock in the kisak
-PPA's Mesa build, not WSLg itself. On 2026-10-12, with Ubuntu's own Mesa 25.2.8 on an NVIDIA GPU, a PNG export
-without the flag finished in 4 seconds. The evidence is in the author's dotfiles findings (chezmoi commit
-`f412f55`).
-
-Revise the skill to name the symptom, not a machine: an export that hangs with GPU-process errors on stderr. Keep
-`--disable-gpu` as the fallback for that symptom, since hosts that keep the kisak Mesa may still need it. Keep the
-`timeout --kill-after` guidance, because plain `timeout` let a hung export block a session.
-
 ## Rebaseline `kas-build-orchestration` on kas 5.5
 
 Added 2026-10-18. The skill is verified against kas 5.3, and upstream has since tagged 5.4 and 5.5 (5.5 on
