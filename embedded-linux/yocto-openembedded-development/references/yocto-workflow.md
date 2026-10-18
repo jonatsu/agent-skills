@@ -2,7 +2,7 @@
 
 Mechanics reference: the layer model, BitBake syntax and task lifecycle, recipe anatomy, `.bbappend` overrides, sstate
 internals, and the build/inspect/debug commands. For where a setting *belongs* and release-engineering discipline, see
-`yocto-best-practices.md`; for licensing and SBOM, `compliance-and-licensing.md`.
+`yocto-best-practices.md`; for licensing, `compliance-and-licensing.md`.
 
 ## Contents
 
@@ -26,7 +26,6 @@ internals, and the build/inspect/debug commands. For where a setting *belongs* a
 - [Kernel Customization](#kernel-customization)
 - [Build History](#build-history)
 - [Offline / Air-Gapped Builds](#offline--air-gapped-builds)
-- [Debugging a Task Failure](#debugging-a-task-failure)
 - [Recipe Tooling: `recipetool`, `oe-pkgdata-util`](#recipe-tooling-recipetool-oe-pkgdata-util)
 
 ## Layer Model
@@ -89,10 +88,10 @@ source <top-dir>/<setup-dir>/build/init-build-env
 `--setup-dir-name`; the tool as a whole takes `--no-network`. That combination puts it in the same problem space as
 kas, so treat the two as alternatives rather than layers, and keep kas questions with **kas-build-orchestration**.
 
-**Confirm it exists before recommending it (Iron Law).** It is absent from BitBake at the 5.0, 5.1 and 5.2 release
-tags and present at 5.3, so a Scarthgap LTS tree does not have it — checked at those tags, where `bin/bitbake` is
-present in every one and `bin/bitbake-setup` only in the last. On a release without it, `oe-init-build-env` plus a
-manually assembled layer tree, or kas, are the options.
+**Confirm it exists before recommending it (SKILL.md *Version awareness*).** It is absent from BitBake at the 5.0,
+5.1 and 5.2 release tags and present at 5.3, so a Scarthgap LTS tree does not have it — checked at those tags, where
+`bin/bitbake` is present in every one and `bin/bitbake-setup` only in the last. On a release without it,
+`oe-init-build-env` plus a manually assembled layer tree, or kas, are the options.
 
 **The output directory is not always `tmp/`.** `TMPDIR` defaults to `${TOPDIR}/tmp`, but OE-Core's
 `defaultsetup.conf` then appends `TCLIBCAPPEND`, itself defaulting to `-${TCLIBC}` — so an ordinary distro builds into
@@ -265,7 +264,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=abc123..."
 
 SRC_URI = "git://github.com/org/myapp.git;protocol=https;branch=main"
 SRCREV  = "abc123def456..."       # pin a commit; never floating HEAD in a release
-S       = "${WORKDIR}/git"        # source dir after unpack (Git fetches)
+# S: 5.0 and older need S = "${WORKDIR}/git" for a Git fetch; 5.1 and 5.2 still accept it;
+# from 5.3 omit S entirely (the default covers Git sources; setting ${WORKDIR}/git is fatal).
 
 inherit cmake                     # or autotools, meson, python3-poetry, ...
 
@@ -285,7 +285,8 @@ do_install() {
 - `LIC_FILES_CHKSUM` is mandatory unless `LICENSE = "CLOSED"`; it may reference a whole license file or a line range
   inside a source file. A mismatch fails `do_populate_lic`. (Compliance detail: `compliance-and-licensing.md`.)
 - `SRC_URI[sha256sum]` guards a fetched archive against a tampered upstream server.
-- `SRCREV` selects the commit for a Git fetch; set `S` to the unpacked directory.
+- `SRCREV` selects the commit for a Git fetch. Set `S` only as the release requires (see the recipe example and
+  SKILL.md *Version awareness*).
 - If the version cannot come from the filename, set `PV` (e.g. `PV = "3.8.0+git"`).
 
 ```bitbake
@@ -493,7 +494,7 @@ Four properties that decide whether this will do what you expect:
 - **The board keeps whatever you left on it.** Deployed output persists across your build directory being cleaned, so
   a stale deploy can mask a later change; undeploy when finishing rather than assuming a rebuild supersedes it.
 
-Runtime debugging on the board once the code is there routes to **embedded-linux-bringup**.
+Debugging the deployed code on the board routes to **embedded-linux-debugging**.
 
 ## SDK Generation
 
@@ -527,7 +528,8 @@ tools). Cross-compilation *usage* is covered in **embedded-linux-bringup**.
 ```bash
 KERNEL_DEVICETREE = "ti/k3-am62-beagleplay.dtb"   # DTBs to build (worked example)
 SRC_URI += "file://enable-cma.cfg"                 # config fragment
-bitbake linux-yocto -c menuconfig                  # interactive; save as a fragment
+bitbake linux-yocto -c menuconfig                  # interactive change
+bitbake linux-yocto -c diffconfig                  # writes the change to ${WORKDIR}/fragment.cfg
 SRC_URI += "file://fix-sensor-dma.patch"           # kernel patch
 ```
 
@@ -612,17 +614,6 @@ mirror is actually missing, so an offline build that reuses your working caches 
 Point `DL_DIR` at the extracted mirror only, use a fresh `TMPDIR`, and confirm the negative case as well: a
 deliberately removed source must make the build fail, or the test cannot distinguish a complete capture from an
 unused one.
-
-## Debugging a Task Failure
-
-```bash
-bitbake -c listtasks <recipe>                       # tasks available for a recipe
-bitbake -g <recipe> && grep <recipe> pn-buildlist   # dependency tree
-bitbake-layers show-recipes | grep <recipe>         # which layer provides it
-bitbake-layers show-appends | grep <recipe>         # which appends fire
-bitbake <recipe> -e | grep '^SRC_URI='              # variable value at build time
-bitbake-getvar -r <recipe> SRC_URI                  # value + every assignment site
-```
 
 ## Recipe Tooling: `recipetool`, `oe-pkgdata-util`
 

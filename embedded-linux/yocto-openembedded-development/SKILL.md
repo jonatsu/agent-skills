@@ -1,6 +1,6 @@
 ---
 name: yocto-openembedded-development
-description: "Yocto/OpenEmbedded build partner: BitBake recipes (.bb/.bbappend/.bbclass), meta-layers, bblayers.conf/local.conf, sstate, devtool, wic, SDKs, reproducible release prep, licence manifests and copyleft source archives. Use when a BitBake task fails (do_fetch/do_compile/do_package/do_rootfs), packaging QA fails (installed but not shipped), an override stops applying after a release upgrade (`_append` vs `:append`), a `.bbappend` has no effect, or sstate serves stale artifacts. Route kas to kas-build-orchestration, board debugging to embedded-linux-bringup, CVE/SBOM to yocto-vulnerability-management."
+description: "Build and troubleshoot Yocto and OpenEmbedded images with BitBake. Use for writing recipes, bbappends, layers, and image or distro configuration; a failed BitBake task or packaging QA error; overrides that stop applying after a release upgrade; suspected stale sstate; devtool, SDKs, and wic; and pinned, offline-capable releases with licence manifests and copyleft sources. Route kas to kas-build-orchestration, on-target debugging to embedded-linux-debugging, CVEs or SBOMs to yocto-vulnerability-management."
 license: MIT
 compatibility: Requires a BitBake/OE-Core checkout and a Linux host meeting that release's build prerequisites. Commands assume an initialised build directory (`oe-init-build-env`); `devtool deploy-target` additionally needs SSH access to a running target. Class names, variables and override syntax are release-specific.
 metadata:
@@ -9,48 +9,25 @@ metadata:
 
 # Yocto / OpenEmbedded Development
 
-**IRON LAW: Confirm the release era from the actual checkout BEFORE giving any syntax- or class-specific answer.
-Override syntax changed at Honister 3.4 (`_append` → `:append`, `_remove` → `:remove`), and the two directions fail
-differently. You MUST NOT emit `_append`/`:append`, a class name, or a variable-behavior claim until the era is known or
-explicitly assumed and LABELLED.**
+Establish the release from the checkout before giving any syntax, class, or variable answer. Override syntax, source
+directories, configuration files, and several defaults differ by release; *Version awareness* lists the changes
+that decide answers most often. When the release cannot be established, answer for each era and label the
+assumption.
 
-The two failure directions are not symmetric, and the asymmetry decides how you diagnose:
-
-- **Old syntax on a Honister-or-newer tree fails loudly.** BitBake raises a fatal error naming the variable, the file
-  and the line — `Variable %s contains an operation using the old override syntax`. It is not a silent no-op.
-- **New syntax on a pre-Honister tree is the silent one.** There `:` is not an override separator, so
-  `IMAGE_INSTALL:append` parses as an ordinary, inert variable name and quietly does nothing.
-
-So `IMAGE_INSTALL_append` is correct on Dunfell and a hard parse failure on Kirkstone, while `IMAGE_INSTALL:append` is
-correct on Kirkstone and silently dead on Dunfell. Pin the era first, then answer.
-
----
-
-## Overview
-
-Development partner for BitBake, the layer model, recipe and `.bbappend` authoring, sstate, `devtool`, SDK generation,
-`wic` images, and reproducible release preparation. Keep this file for method, routing, and the version gate; pull
-worked commands and detail from `references/` on demand — do NOT read every reference upfront.
-
-Board-specific values (a concrete `MACHINE`, a real `.wks` layout) appear ONLY in `references/` worked examples. This
-file stays board-agnostic.
-
-**kas is a separate concern.** For build orchestration with `.kas.yml`, `kas build`, `kas-container`, and lockfiles,
-route to **kas-build-orchestration**. Yocto builds run fine without kas; reach for kas-build-orchestration only when a
-`.kas.yml` is in play.
-
-### Route to a sibling skill
+## Route to a sibling skill
 
 | Task                                                                     | Skill                              |
 | ------------------------------------------------------------------------ | ---------------------------------- |
 | kas orchestration (`.kas.yml`, `kas build/checkout/dump`, kas-container) | **kas-build-orchestration**        |
 | Board bring-up, device tree, driver probe, dmesg/boot debugging          | **embedded-linux-bringup**         |
+| gdbserver, tracing, profiling, kernel oops, Yocto debug symbols          | **embedded-linux-debugging**       |
 | Buildroot: menuconfig, packages, `BR2_EXTERNAL`                          | **buildroot-development**          |
 | U-Boot: env, extlinux, FIT, boot scripts, porting                        | **u-boot-development**             |
 | CVE scanning and triage, SBOM/SPDX generation, VEX, release CVE gates    | **yocto-vulnerability-management** |
 | Configuring a security control and proving it on the artefact            | **yocto-security-hardening**       |
+| Auditing what a built image actually ships for security defects          | **yocto-security-audit**           |
 
-### Route the task to a reference
+## Route the task to a reference
 
 | Task / symptom                                                                                                                                                                                      | Reference                                |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
@@ -59,233 +36,141 @@ route to **kas-build-orchestration**. Yocto builds run fine without kas; reach f
 | `LIC_FILES_CHKSUM`, licence manifest, on-target licence texts, archiver / copyleft source release                                                                                                   | `references/compliance-and-licensing.md` |
 | "Which manual, which section?" keyed to the release                                                                                                                                                 | `references/official-doc-map.md`         |
 
----
-
 ## Workflow
 
-Two shared steps, then branch by what the task actually is. ⛔ BLOCKING MUST complete before the next; ⚠️ REQUIRED MUST
-be done but MAY interleave.
+Do the two entry steps, then follow the lane that matches the task.
 
-**Shared entry (both lanes):**
+1. **Lock the release.** Read the OE-Core checkout's tag with `git -C <oe-core-checkout> describe --tags`, whatever
+   the directory is called, or read `bitbake-getvar DISTRO_VERSION`. Treat `LAYERSERIES_COMPAT` as the releases a
+   layer claims, not as the release checked out.
+2. **Lock the build context.** Record `MACHINE`, the `DISTRO` that `bitbake-getvar DISTRO` reports, and the active
+   layers from `bitbake-layers show-layers`.
 
-- [ ] **⛔ BLOCKING — Lock the release era.** Establish the *actual* BitBake/OE-Core revision in use: the tag or branch
-  of the OE-Core checkout (`git -C <oe-core-or-poky> describe --tags`), or `DISTRO_VERSION`. Do not assume a `poky`
-  directory or `poky.conf` — plenty of builds are OE-Core plus layers, or a vendor BSP with its own distro, and there
-  may be no Poky in the tree at all; `bitbake-getvar DISTRO` says what is actually selected. `LAYERSERIES_COMPAT` is a
-  *compatibility declaration* — a layer may legitimately list several codenames — so read it as "which releases this
-  layer claims to support", never as proof of which release is checked out. This gates override syntax, class names and
-  variable behavior (Iron Law). If it cannot be established, state the assumed era and LABEL the assumption.
-- [ ] **⚠️ REQUIRED — Lock build context.** Record `MACHINE`, `DISTRO`, and the active layer set (Poky only?
-  meta-openembedded? custom BSP?).
+**Authoring lane** (a new recipe, layer, `.bbappend`, image, SDK, or compliance setting):
 
-**Authoring lane** — new recipe, new layer, `.bbappend`, image or SDK config, compliance wiring:
+3. Name the file that owns the change, using *Where Does a Setting Belong?* in `references/yocto-best-practices.md`.
+4. Write the change, then give the command that proves it, such as `bitbake-getvar`, `bitbake -c <task>`, or
+   `bitbake-layers show-appends <recipe>`. Run read-only parse and variable checks yourself, and report the results
+   together.
 
-- [ ] **⚠️ REQUIRED — State the target and its placement.** What is being added, and which file owns it per *Where Does
-  a Setting Belong?* in `references/yocto-best-practices.md`.
-- [ ] **⚠️ REQUIRED — Write it, then name its validation.** Produce the recipe, append or config, and give the command
-  that would prove it works (`bitbake-getvar`, `bitbake -c <task>`, `bitbake-layers show-appends`). A failing build is
-  not a prerequisite for authoring — do not manufacture one.
-- [ ] **⚠️ REQUIRED — Run the already-authorized local checks** rather than stopping to ask after each one. Parse and
-  variable-inspection commands are read-only; batch them and report the results together.
+**Diagnosis lane** (a failed task, a wrong variable value, or an override that does not apply):
 
-**Diagnosis lane** — a task fails, a variable holds the wrong value, or an override does not apply:
+3. Collect the artifacts in *Evidence First*. Propose a cause only after the failing task is evidenced.
+4. Rank the causes, and run the read-only check that confirms or refutes the top one. Ask the user only for a result
+   you cannot obtain yourself, such as target access or a long build.
+5. Close with the *Output contract*.
 
-- [ ] **⛔ BLOCKING — Collect evidence.** Gather the bounded artifacts in *Evidence First* below before ranking causes.
-  No fix proposal until the failing task is evidenced.
-- [ ] **⚠️ REQUIRED — Rank causes, validate the top one.** Propose the most likely cause and the command or file edit
-  that confirms or refutes it. Read-only checks you can already run, run — reserve a checkpoint for a result only you
-  cannot obtain (target access, a long build, a mutating command).
-- [ ] **⚠️ REQUIRED — Close with the Output contract.** Root cause → evidence → exact fix/command → validation command.
-
-**Both lanes:**
-
-- [ ] **⚠️ REQUIRED — Confirm before mutating.** Any `cleansstate`/`cleanall`, sstate prune, target deploy, or image
-  write to `/dev/sdX` passes the *Confirmation gates* first.
-- [ ] **⚠️ REQUIRED — Honor a stop request.** If the user asks to stop, stop. See the pseudo note under *Anti-patterns*
-  for what interrupting BitBake actually costs.
-
----
+Any mutating command in either lane passes the *Confirmation gates* first.
 
 ## Confirmation gates
 
-You MUST stop and get explicit user confirmation before any destructive or irreversible action. Default to read-only;
-pair every mutating command with its reverse or its cost.
+Prefer read-only diagnostics, such as `bitbake-getvar` and `bitbake -c listtasks`, before any change. Get the user's
+confirmation before each action below, and state its cost or how to reverse it.
 
-- **Discarding cached build work** — `bitbake -c cleansstate <recipe>` and `bitbake -c cleanall <recipe>` delete the
-  recipe's sstate (and `cleanall` its downloads too), forcing a from-scratch rebuild. Not data loss, but potentially
-  hours of rebuild. Confirm the recipe and that a rebuild is intended; prefer scoping to one recipe over a global wipe.
-- **Writing an image to a block device** — `bmaptool copy … /dev/sdX` and `dd … of=/dev/sdX` destroy whatever is on the
-  target device. You MUST confirm the exact device path first; a wrong `/dev/sdX` overwrites the host disk. Verify with
-  `lsblk` immediately before writing.
-- **Pruning sstate** — `find ${SSTATE_DIR} … -atime +N -delete` and `sstate-cache-management.sh --remove-*` permanently
-  remove cache entries. Confirm the cache directory and the age threshold; a mistyped path or `${SSTATE_DIR}` that
-  expanded empty deletes from `/`.
-- **Writing to a live target** — `devtool deploy-target` opens an SSH session to a running board and installs the
-  recipe's `do_install` output onto it. Local `devtool add`/`modify`/`build`/`finish` touch nothing outside the build
-  directory and need no gate; `deploy-target` mutates the board and does. Confirm the target identity, and reuse an
-  authorization the user already gave for that board rather than re-asking each invocation. See the devtool section of
-  `references/yocto-workflow.md` for what it does and does not deploy.
-
-### Safety
-
-- MUST NOT run `cleansstate`, `cleanall`, or any sstate prune unprompted; each throws away reusable work or cache.
-- MUST NOT issue a `dd`/`bmaptool` write to a device path the user has not confirmed this session. Re-confirm the path
-  even if it was given earlier — devices renumber across replug.
-- MUST NOT delete from `${SSTATE_DIR}` or `${DL_DIR}` without first echoing the expanded absolute path; never run a
-  `find … -delete` whose base directory could be empty or `/`.
-- Prefer reversible diagnostics first: `bitbake -e`/`bitbake-getvar` over editing config to "see what happens";
-  `bitbake -c listtasks` over a speculative `cleansstate`.
-
----
+- **Discarding cached work.** `bitbake -c cleansstate <recipe>` deletes the recipe's local sstate, and `cleanall`
+  also deletes its downloads. Either forces a rebuild that can take hours. Confirm the recipe, and scope the clean to
+  one recipe.
+- **Pruning sstate or downloads.** Expand `${SSTATE_DIR}` or `${DL_DIR}` to an absolute path and show it first. Run
+  a `find … -delete` only when its base directory cannot expand to empty or to `/`.
+- **Writing an image to a block device.** `bmaptool copy` and `dd` destroy the device's contents. Run `lsblk`
+  immediately before writing, and confirm the exact path in this session, because devices renumber across replug.
+- **Writing to a live target.** `devtool deploy-target` installs the recipe's output onto a running board over SSH.
+  Confirm the target identity, and reuse an authorization the user already gave for that board. Local `devtool add`,
+  `modify`, `build`, and `finish` stay inside the build directory and need no gate.
 
 ## Evidence First
 
 Before diagnosing, inspect (or ask for) the artifacts that pin the failing task:
 
 - The exact BitBake error and the task log at `${WORKDIR}/temp/log.do_<task>` (path printed in the failure).
-- The variable's real build-time value — `bitbake-getvar VAR` (shows every assignment and the final value) or
-  `bitbake <recipe> -e | grep '^VAR='`.
-- Which layer and which appends are in play — `bitbake-layers show-recipes | grep <recipe>` and
-  `bitbake-layers show-appends | grep <recipe>`.
-- The actual release, plus each layer's compatibility claim — the poky checkout's tag or branch for the former,
-  `LAYERSERIES_COMPAT` in each `layer.conf` for the latter. When they disagree, that mismatch is often the bug.
+- The variable's real build-time value: `bitbake-getvar -r <recipe> VAR` shows every assignment and the final value.
+- Which layer provides the recipe and which appends apply: `bitbake-layers show-recipes <recipe>` and
+  `bitbake-layers show-appends <recipe>`.
+- The release and each layer's compatibility claim: the OE-Core checkout's tag, and `LAYERSERIES_COMPAT` in each
+  active layer's `layer.conf`. A mismatch between them is often the bug.
 
-Keep every capture BOUNDED — grep the log, do not paste a full build transcript.
+Keep every capture bounded: grep the log rather than pasting a full build transcript.
 
 ```bash
-# Release / layer sanity
-git -C <oe-core-checkout> describe --tags   # what is actually checked out (may not be named "poky")
-bitbake-getvar DISTRO                    # which distro is selected; "nodistro" if none
-bitbake-getvar DISTRO_VERSION            # the distro's own release identity
+# Release and layer sanity
+git -C <oe-core-checkout> describe --tags   # the release actually checked out
+bitbake-getvar DISTRO                       # the selected distro; "nodistro" if none
+bitbake-getvar DISTRO_VERSION               # the distro's own release identity
 bitbake-layers show-layers
-grep -R LAYERSERIES_COMPAT */conf/layer.conf   # what each layer CLAIMS to support
+for l in $(bitbake-getvar --value --quiet BBLAYERS); do grep -H LAYERSERIES_COMPAT "$l/conf/layer.conf"; done
 
-# Final vs per-assignment variable value
-bitbake-getvar IMAGE_INSTALL              # all assignments + final value
-bitbake <recipe> -e | grep '^SRC_URI='    # value at build time for one recipe
+# Final value and every assignment site
+bitbake-getvar -r <recipe> SRC_URI
+bitbake -e <recipe> | grep '^SRC_URI='      # where bitbake-getvar is unavailable
 
-# What provides / appends a recipe
-bitbake-layers show-recipes | grep <recipe>
-bitbake-layers show-appends | grep <recipe>
+# Which layer provides a recipe, and which appends apply
+bitbake-layers show-recipes <recipe>
+bitbake-layers show-appends <recipe>
 
-# Task-level introspection
+# Tasks and dependencies
 bitbake -c listtasks <recipe>
-bitbake -g <recipe> && grep <recipe> pn-buildlist   # dependency tree
+bitbake -g <image> && oe-depends-dot -k <recipe> -w task-depends.dot   # why <recipe> is in the build
 
-# Package/file ownership (backfill)
-oe-pkgdata-util find-path /usr/bin/foo    # which package ships a path
-oe-pkgdata-util list-pkg-files <pkg>      # files in a built package
+# Package and file ownership
+oe-pkgdata-util find-path /usr/bin/foo      # which package ships a path
+oe-pkgdata-util list-pkg-files <pkg>        # files in a built package
 ```
-
----
 
 ## Output contract
 
-Every diagnostic answer MUST end with these four, in order:
+Every diagnostic answer ends with these four, in order:
 
-1. **Root cause** — the single proven mechanism (task, variable, override era, layer).
-2. **Supporting evidence** — the log line, `bitbake-getvar` output, or `layer.conf` value that proves it.
-3. **Exact fix** — the precise recipe edit or command, with real variable and task names and the override syntax
+1. **Root cause**: the single proven mechanism (task, variable, override era, layer).
+2. **Supporting evidence**: the log line, `bitbake-getvar` output, or `layer.conf` value that proves it.
+3. **Exact fix**: the precise recipe edit or command, with real variable and task names and the override syntax
    matching the confirmed release.
-4. **Validation** — the command that confirms the fix (`bitbake-getvar`, a rebuilt task, a manifest check).
+4. **Validation**: the command that confirms the fix (`bitbake-getvar`, a rebuilt task, a manifest check).
 
-If the root cause is not yet proven, say so and give the ONE next command that would prove it — do NOT present a guess
-as a diagnosis.
-
----
+When the root cause is not yet proven, say so and give the one next command that would prove it.
 
 ## Version awareness
 
-BitBake and OE-Core syntax drift across releases. Before giving syntax-specific guidance you MUST confirm the release,
-because:
+These release changes decide answers most often. Read the release's migration guide for anything else.
 
-- **Override separator changed at Honister (3.4), not Kirkstone.** Pre-Honister used `_` (`SRC_URI_append`,
-  `do_install_append`); Honister introduced `:` and shipped `convert-overrides.py` to migrate metadata. From Honister
-  onward BitBake *rejects* the old operation syntax: `setVar` raises `bb.fatal` naming the variable, file and line when
-  the name contains `_append`, `_prepend` or `_remove`. Match the confirmed era exactly.
+- **Override syntax, Honister (3.4).** Before 3.4 the operators are `_append`, `_prepend`, and `_remove`. From 3.4
+  they are `:append`, `:prepend`, and `:remove`. BitBake then stops with a fatal error naming any variable whose name
+  contains an old operator; ordinary names such as `SRC_URI` are unaffected. In the other direction,
+  `IMAGE_INSTALL:append` on a pre-3.4 tree parses as an unrelated variable and silently does nothing.
+- **Source directory, 5.1 and 5.3.** At 5.0 a Git recipe sets `S = "${WORKDIR}/git"`. At 5.1 and 5.2 sources unpack
+  into `UNPACKDIR`, and that assignment still works through a compatibility move. From 5.3 the default
+  `S = "${UNPACKDIR}/${BP}"` covers Git sources, and `S = "${WORKDIR}/git"` is a fatal QA error.
+- **Global configuration, 5.2 and 5.3.** Configuration fragments (`OE_FRAGMENTS`) arrive at 5.2 and `toolcfg.conf`
+  at 5.3, and both change the parse order (`references/yocto-best-practices.md`).
+- **Image features, 5.2.** `debug-tweaks` is gone; name the features it implied (`references/yocto-workflow.md`).
+- **wic, 5.3.** Source plugin names use underscores, so `bootimg-partition` becomes `bootimg_partition`.
+- **Setup, 5.3.** `bitbake-setup` exists from 5.3; older trees use `oe-init-build-env` or kas.
+- **Classes** move between `classes/`, `classes-recipe/`, and `classes-global/`, and some are renamed or removed.
+  Check the release's Classes chapter before naming an `inherit`.
 
-  Two consequences worth keeping straight. First, the check is a **substring match on the variable name**, so ordinary
-  underscores are untouched — `SRC_URI`, `IMAGE_INSTALL` and `PACKAGE_ARCH` are all fine; only a name containing one of
-  those three operation substrings trips it. Second, the error is loud in that direction and silent in the other: see
-  the Iron Law.
+When the release is unknown, give the answer for each era and label the assumption.
 
-- **Class names and infrastructure move.** Classes are renamed, split, or relocated to
-  `classes-recipe/`/`classes-global/` across releases; `create-spdx` behavior and the SBOM format changed notably
-  between Kirkstone, Nanbield, and Scarthgap. Confirm before naming a class or its inherit.
+## Defaults
 
-- **Variable semantics shift.** `WORKDIR` layout, `SRCPV`/`PV` handling, and default `INHERIT` sets differ by release.
+- Customize through a `.bbappend` or your own layer, and leave BitBake, OE-Core, and `meta-poky` unmodified, because
+  an upgrade replaces them.
+- Pin every release recipe's `SRCREV` to a commit SHA.
+- Ship a product on your own distro configuration; Poky is a reference distribution
+  (`references/yocto-best-practices.md`).
+- Explain each path a packaging QA error names before adding `INSANE_SKIP` or moving a check out of `ERROR_QA`. A
+  skip packages nothing, so the files vanish from the image.
+- Report a green build as one gate passed. Licence obligations (`references/compliance-and-licensing.md`) and CVE or
+  SBOM reporting (**yocto-vulnerability-management**) are separate gates.
+- Judge a build by BitBake's own exit status and by an artifact, such as a deployed file or `buildhistory`. A pipe
+  such as `bitbake … | tail` returns the status of `tail`.
+- Use `:append` in `local.conf` for a variable that a machine or distro configuration also assigns. Keep `+=` for
+  variables nothing later reassigns (`references/yocto-workflow.md`).
+- Stop a build with one Ctrl-C when the user asks to stop. BitBake then starts no new tasks and lets running tasks
+  finish. A second Ctrl-C interrupts running tasks and can leave pseudo's database inconsistent.
 
-When the release is unknown, give the answer per era (pre-Honister `_` vs Honister-and-newer `:`) rather than assuming
-one, and consult `references/official-doc-map.md` to read the version-matched manual.
+## Upstream documentation
 
----
-
-## Anti-patterns
-
-- MUST NOT emit `_append`/`_remove` (or `:append`/`:remove`) before the release era is known — old syntax on a modern
-  tree is a fatal parse error, new syntax on a pre-Honister tree is a silent no-op.
-- MUST NOT reach for `+=`/`.=` in `local.conf`/`site.conf` **when a later file may hard-assign the same variable**.
-  Global parse order is defined, not undefined (`bitbake.conf` requires and includes `site.conf`, `auto.conf`,
-  `local.conf`, then machine, then distro), and that order is exactly the problem: `local.conf` is read *before* the
-  machine and distro configs, so a `VAR = "…"` in either overwrites a `VAR += "…"` you wrote earlier. `:append` is
-  applied at expansion time, after all parsing, so it survives. `+=` in `local.conf` is legitimate and common for
-  variables nothing downstream reassigns — prefer `:append` for anything a machine or distro conf also touches, and do
-  not rewrite a working `+=` for its own sake.
-- MUST NOT edit a core layer (`meta`, `meta-poky`, OE-Core, BitBake) to change behavior — upgrades wipe it silently.
-  Override via a `.bbappend` in your own layer.
-- MUST NOT ship `SRCREV = "${AUTOREV}"` in a release recipe — a floating HEAD is unreproducible and breaks air-gapped
-  builds. Pin to a commit SHA.
-- MUST NOT ship a product on the Poky distro or its default `PREMIRRORS` — see the Poky note in
-  `references/yocto-best-practices.md`; create your own distro.
-- MUST NOT rebuild "to fix it" without checking whether stale sstate is the cause; conversely MUST NOT run a global
-  `cleansstate` when scoping to one recipe suffices.
-- MUST NOT author a `.bbappend` without `FILESEXTRAPATHS:prepend` when it adds files — BitBake will not find them and
-  `do_fetch` fails with a confusing "not found".
-- MUST NOT declare a recipe's `LICENSE` without a matching `LIC_FILES_CHKSUM` (unless `LICENSE = "CLOSED"`) — a checksum
-  mismatch fails `do_populate_lic`, and a wrong license silently corrupts the SBOM and CVE report.
-- MUST NOT add `INSANE_SKIP` (or move a check out of `ERROR_QA`) to clear a packaging failure before the named paths
-  are explained. Silencing `installed-vs-shipped` does not package anything — the files ship in nothing and vanish from
-  the image, so the build goes green while the defect gets worse.
-- MUST NOT treat a green build as compliant — licence obligations are a separate gate
-  (`references/compliance-and-licensing.md`), and SBOM and CVE reporting are separate again
-  (**yocto-vulnerability-management**).
-- MUST NOT judge a build by a piped command's status — `bitbake … | tail` exits with `tail`'s status, so a failed build
-  reports success. Capture `$?` before any pipe, and confirm against an artifact (deployed file, `buildhistory`) rather
-  than the log alone.
-- MUST NOT reach for a forced kill (`SIGKILL`, a second Ctrl-C) as the ordinary way to stop a build. BitBake has two
-  distinct stop levels: the first Ctrl-C requests `stateShutdown`, which starts no new tasks and lets running ones
-  finish cleanly; a second requests `stateForceShutdown`, which interrupts tasks mid-flight. Only the forced path risks
-  leaving pseudo's inode database inconsistent, and even then diagnose the actual error — a later `path mismatch` is
-  evidence for that story, not a foregone conclusion of any cancellation. **A user asking to stop is authorization to
-  stop:** issue the graceful stop and say what it costs, rather than refusing or continuing.
-
----
-
-## Reference pointers
-
-Cite the release-matched version of every manual (the codename is in the docs URL path):
-
-- **docs.yoctoproject.org** — Reference Manual (variables, tasks, classes, QA error index), BitBake User Manual (syntax,
-  operators, fetchers), BSP Developer's Guide, Kernel Development Manual, and the **Security manual** (CVE workflow).
-  Read the **Migration Guides** for any release-to-release change (this is where the `_append`→`:append` and class moves
-  are documented), and the "What I wish I'd known" material for hard-won gotchas.
-- **dt-schema / `dt-validate`** — github.com/devicetree-org/dt-schema for device-tree binding validation; device-tree
-  work itself routes to **embedded-linux-bringup**.
-
-`references/`:
-
-- `yocto-workflow.md` — layer model, BitBake assignment operators and override order, task lifecycle and dependency
-  varflags, recipe anatomy and license/fetch/version fields, packaging (`PACKAGES`/`FILES` splits,
-  installed-vs-shipped, `PACKAGECONFIG`), inline/anonymous Python, `.bbappend` + `FILESEXTRAPATHS` detail, sstate
-  mechanics,
-  devtool, SDK, kernel customization, buildhistory, offline builds, and task-failure debugging including
-  `recipetool`/`oe-pkgdata-util`.
-- `yocto-best-practices.md` — setting placement (where a variable belongs), layer hygiene, the Poky/production
-  distinction, the release checklist, sstate sharing, CI patterns, wic + flashing safety, and a common-traps table.
-- `compliance-and-licensing.md` — `LIC_FILES_CHKSUM` discipline, the licence manifest, shipping licence texts
-  on target, and the `archiver` class for copyleft source release. SBOM and CVE work route to
-  `yocto-vulnerability-management`.
-- `official-doc-map.md` — problem type → exact manual and section, keyed to the release codename.
+Cite the manual that matches the release; the codename is a path segment in each docs.yoctoproject.org URL.
+`references/official-doc-map.md` maps a problem type to the manual and section.
 
 ## Attribution
 

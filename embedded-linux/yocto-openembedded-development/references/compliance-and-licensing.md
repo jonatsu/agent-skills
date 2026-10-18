@@ -2,7 +2,7 @@
 
 License compliance and copyleft source release for a Yocto image. These are release gates separate from a green build:
 a build can succeed and still ship a license-metadata gap or an incomplete source archive. Feature names are
-release-sensitive — confirm the codename (Iron Law) and read the version-matched Reference Manual
+release-sensitive — confirm the codename (SKILL.md *Version awareness*) and read the version-matched Reference Manual
 (`official-doc-map.md`).
 
 **SBOM generation and CVE auditing are not here.** They read the same recipe metadata but answer a different question
@@ -32,7 +32,7 @@ metadata, not the report.
 
 ## `LIC_FILES_CHKSUM`: the Root of Everything
 
-Every recipe except `LICENSE = "CLOSED"` MUST declare `LIC_FILES_CHKSUM`. It pins the exact license text the recipe was
+Every recipe except `LICENSE = "CLOSED"` declares `LIC_FILES_CHKSUM`. It pins the exact license text the recipe was
 audited against; if upstream changes that text, the checksum mismatch fails `do_populate_lic` and forces a human to
 re-review. That failure is a feature — it is the tripwire that keeps a relicensing from slipping through unnoticed.
 
@@ -52,8 +52,8 @@ LIC_FILES_CHKSUM = "\
 ## License Manifest and On-Target License Text
 
 The build writes a per-image license manifest listing each package, its version, recipe, and license, under
-`${LICENSE_DIRECTORY}/${IMAGE_NAME}/license.manifest`. Review it by hand: it reflects only the declarative metadata, so
-any recipe with a weak `LICENSE` or a missing `LIC_FILES_CHKSUM` shows up as a gap.
+`${LICENSE_DIRECTORY}/${SSTATE_PKGARCH}/${IMAGE_NAME}/license.manifest`. Review it by hand: it reflects only the
+declarative metadata, so any recipe with a weak `LICENSE` or a missing `LIC_FILES_CHKSUM` shows up as a gap.
 
 To ship the license texts on the target itself there are two distinct routes, and the second has a step that is easy to
 miss.
@@ -81,10 +81,11 @@ Reference Manual rather than assuming this pair carries across every branch.
 Whichever route you take, **verify the delivered rootfs, not the configuration**:
 
 ```bash
-grep -c . tmp/deploy/images/<machine>/<image>.manifest      # is <pkg>-lic actually in the image?
-grep -- '-lic' tmp/deploy/images/<machine>/<image>.manifest
-# and look inside the built rootfs for the texts themselves:
-find tmp/work/<machine>/<image>/*/rootfs/usr/share/{licenses,common-licenses} -maxdepth 1 2>/dev/null
+dir=$(bitbake-getvar -r <image> --value --quiet DEPLOY_DIR_IMAGE)
+name=$(bitbake-getvar -r <image> --value --quiet IMAGE_LINK_NAME)
+grep -- '-lic ' "$dir/$name.manifest"        # are the <pkg>-lic packages in the image?
+rootfs=$(bitbake-getvar -r <image> --value --quiet IMAGE_ROOTFS)   # gone if rm_work removed it
+ls "$rootfs/usr/share/licenses" "$rootfs/usr/share/common-licenses" 2>/dev/null
 ```
 
 Generating an artifact and delivering it are separate claims. A green build proves neither.
@@ -95,12 +96,13 @@ To hand over the sources a copyleft license obliges you to provide:
 
 ```bitbake
 INHERIT += "archiver"
-ARCHIVER_MODE[src] = "configured"   # patched (default) | configured | original
+ARCHIVER_MODE[src] = "configured"   # patched (default) | configured | original | mirror
 ```
 
-The class produces per-recipe source tarballs under `tmp/deploy/sources/`. Pick the mode by obligation: `original` for
-pristine upstream, `patched` (default) for upstream-plus-your-patches, `configured` when the license requires the exact
-configured tree. Pair the archive with `COPYLEFT_LICENSE_INCLUDE`/`_EXCLUDE` to scope which recipes are archived.
+The class produces per-recipe source tarballs under `DEPLOY_DIR_SRC` (`${DEPLOY_DIR}/sources` by default). Pick the
+mode by obligation: `original` for pristine upstream, `patched` (default) for upstream-plus-your-patches, `configured`
+when the license requires the exact configured tree. Pair the archive with `COPYLEFT_LICENSE_INCLUDE`/`_EXCLUDE` to
+scope which recipes are archived.
 
 ## Release Compliance Checklist
 

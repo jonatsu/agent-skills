@@ -1,8 +1,8 @@
 # Yocto / OpenEmbedded Best Practices
 
 Judgment reference: where a setting belongs, how to keep layers clean, how to prepare a reproducible release, and how to
-share and prune sstate. For the raw mechanics of any command named here, see `yocto-workflow.md`; for licensing and
-SBOM, `compliance-and-licensing.md`.
+share and prune sstate. For the raw mechanics of any command named here, see `yocto-workflow.md`; for licensing,
+`compliance-and-licensing.md`.
 
 ## Contents
 
@@ -35,8 +35,8 @@ SBOM, `compliance-and-licensing.md`.
 
 ```bash
 bitbake-layers show-layers
-bitbake-layers show-recipes | grep <recipe>
-bitbake-layers show-appends | grep <recipe>
+bitbake-layers show-recipes <recipe>
+bitbake-layers show-appends <recipe>
 ```
 
 ## Where Does a Setting Belong?
@@ -65,6 +65,9 @@ include conf/local.conf                         # 3. this build directory
 require conf/multiconfig/${BB_CURRENT_MC}.conf  # 4. multiconfig
 include conf/machine/${MACHINE}.conf            # 5. board
 include conf/distro/${DISTRO}.conf              # 6. distribution policy
+# 5.3 and newer also read conf/toolcfg.conf between auto.conf and local.conf.
+# 5.2 and newer apply OE_FRAGMENTS (addfragments) after local.conf and before the machine conf,
+# so a fragment's plain = overrides local.conf.
 ```
 
 Read that list downward and it answers both questions at once: which file owns a setting, and which file can overrule
@@ -82,7 +85,7 @@ to survive belongs at or below the level that owns it — or must use `:append`,
 
 **Resolve the distro row against the build in front of you, not against Poky.** The file included is
 `conf/distro/${DISTRO}.conf` from whichever layer provides it, so on a product build it is your own distro layer, and
-the examples above are only the *kind* of setting that belongs there. Establish `DISTRO` first (SKILL.md *Lock build
+the examples above are only the *kind* of setting that belongs there. Establish `DISTRO` first (SKILL.md *Lock the build
 context*), then let BitBake name the file rather than guessing a path — `bitbake-getvar` prints every assignment site,
 which is the reliable way to find what set a value in a layer stack you did not write:
 
@@ -132,14 +135,15 @@ chosen for breadth over stability and can shift between releases. Two consequenc
 
 - **Build your own distro** (`conf/distro/<name>.conf`) so *you* own the init system, C library, ABI, and default image
   policy, instead of tracking whatever Poky's reference defaults happen to be.
-- **Watch Poky's default mirrors.** Poky ships `PREMIRRORS` that resolve fetches against a public Yocto mirror. For
-  version-control fetches that means the *names* of the components you build travel to an external host — a
-  confidentiality concern for a closed product. Set your own `PREMIRRORS`/`SOURCE_MIRROR_URL` (or
-  `INHERIT += "own-mirrors"`) pointing at an internal mirror.
+- **Watch the default mirrors.** OE-Core's `mirrors.bbclass`, inherited by every recipe whatever the distro, adds a
+  public Yocto source mirror to `MIRRORS`. When an upstream fetch fails, the archive name for that source, including
+  a closed component's name, is requested from that external host. To keep fetches internal, point
+  `SOURCE_MIRROR_URL` with `INHERIT += "own-mirrors"` at an internal mirror and set `BB_FETCH_PREMIRRORONLY = "1"`,
+  or restrict hosts with `BB_ALLOWED_NETWORKS`. Check the effective list with `bitbake-getvar -r <recipe> MIRRORS`.
 
 ## Release Preparation Checklist
 
-A reproducible, offline-capable release is three phases. Work them in order.
+A reproducible, offline-capable release has four phases. Work them in order.
 
 **1 — Pin and tag (make the inputs immutable).**
 
@@ -149,52 +153,18 @@ A reproducible, offline-capable release is three phases. Work them in order.
   itself committed and tagged.
 - [ ] `DISTRO_VERSION` set to the release identity.
 
-**2 — Capture the sources (so the build needs no upstream later).**
+**2 — Capture the sources.** Set `BB_GENERATE_MIRROR_TARBALLS = "1"`, run `bitbake --runall=fetch <image>`, and
+publish `DL_DIR`'s contents as your internal mirror. *Offline / Air-Gapped Builds* in `yocto-workflow.md` gives the
+commands and the mirror layout.
 
-Set in `local.conf`/`site.conf`, then fetch:
+**3 — Verify the capture from cold caches.** Use `BB_FETCH_PREMIRRORONLY = "1"` to prove the mirror is complete, or
+`BB_NO_NETWORK = "1"` to prove the build needs no network. Set the chosen variable in configuration, and confirm a
+removed source makes the build fail. *Offline / Air-Gapped Builds* in `yocto-workflow.md` explains why each condition matters.
 
-```bitbake
-BB_GENERATE_MIRROR_TARBALLS = "1"     # turn VCS checkouts into archives in DL_DIR
-```
-
-```bash
-bitbake --runall=fetch <image>                       # fetch everything, build nothing
-tar -czf dl-mirror.tar.gz -C "${DL_DIR}" .           # DL_DIR's CONTENTS are the mirror
-```
-
-Publish the extracted archive to your internal mirror and point BitBake at it with `SOURCE_MIRROR_URL` +
-`INHERIT += "own-mirrors"`, or an explicit `PREMIRRORS`. Extract it *as* a `DL_DIR`-shaped directory — it is a flat set
-of archives and `.done` stamps, not a tree to overlay onto a build directory.
-
-**3 — Verify air-gapped (prove the capture is complete).**
-
-These are **configuration variables, not shell prefixes**. `BB_NO_NETWORK = "1" bitbake <image>` typed at a prompt
-exits 127 running a command named `BB_NO_NETWORK`; the build never starts, and a green terminal proves nothing. Put
-them in configuration and confirm the effective values:
-
-```bitbake
-BB_NO_NETWORK = "1"                   # denies ALL network access
-# or, to prove only that the mirror is complete:
-BB_FETCH_PREMIRRORONLY = "1"          # restricts fetching to PREMIRRORS
-```
-
-```bash
-bitbake-getvar BB_NO_NETWORK          # verify BitBake actually holds it
-bitbake --runall=fetch <image>        # fails loudly on a missed source or stray AUTOREV
-```
-
-Two conditions decide whether this test means anything:
-
-- **Choose the variable that matches the claim.** A premirror may be an `http://` host, so passing with
-  `BB_FETCH_PREMIRRORONLY` shows the mirror is complete, *not* that the build runs without a network.
-  `BB_NO_NETWORK` is the air-gap claim.
-- **Start from cold caches.** A populated `DL_DIR` or sstate cache silently satisfies sources the mirror is missing.
-  Verify with `DL_DIR` pointing at the extracted mirror alone and a fresh `TMPDIR`, and confirm the negative case: with
-  one source removed from the mirror, the build must fail.
-
-**4 — Attach compliance artifacts.** Generate the SBOM, CVE report, and license / source archives as part of the release
-— see `compliance-and-licensing.md`. Enable `buildhistory` (committed) and diff it against the previous release to catch
-unintended package-size, dependency, or version changes.
+**4 — Attach compliance artifacts.** Generate the licence manifest and copyleft source archives
+(`compliance-and-licensing.md`). The SBOM and CVE report belong to **yocto-vulnerability-management**. Enable
+`buildhistory` (committed) and diff it against the previous release to catch unintended package-size, dependency, or
+version changes.
 
 ## Sharing sstate Across Machines
 
@@ -282,9 +252,7 @@ reality and delete entries still in daily use. Check the mount options before tr
   bitbake-layers show-appends
   ```
 
-- **Release builds run offline** with `BB_FETCH_PREMIRRORONLY = "1"` to prove the mirror is complete, or
-  `BB_NO_NETWORK = "1"` to prove the build needs no network at all. Set them in configuration, not as shell prefixes,
-  and run the job from cold caches — a warm `DL_DIR` makes either check pass vacuously.
+- **Release builds run offline**, verified as in phase 3 of the Release Preparation Checklist.
 
 ## wic Images and Flashing
 
@@ -296,15 +264,14 @@ IMAGE_FSTYPES = "wic wic.bmap"
 ```
 
 ```
-# my-board.wks.in (worked example)
+# my-board.wks.in (worked example; 5.3 and newer spell the plugin bootimg_partition)
 part u-boot --source rawcopy --sourceparams="file=u-boot.imx" --no-table --align 2
 part /boot  --source bootimg-partition --use-uuid --fstype=vfat --label boot \
             --active --align 8192 --size 64
 part /      --source rootfs --use-uuid --fstype=ext4 --label root --align 8192
 ```
 
-Writing the image destroys the target device — this passes SKILL.md *Confirmation gates*, and you MUST confirm the
-`/dev/sdX` path with `lsblk` immediately before:
+Writing the image destroys the target device, so it passes SKILL.md *Confirmation gates* first:
 
 ```bash
 bmaptool copy my-image.wic /dev/sdX     # faster: skips unwritten blocks (needs the .bmap)
@@ -313,31 +280,13 @@ dd if=my-image.wic of=/dev/sdX bs=4M conv=fsync status=progress   # fallback
 
 ## Common Traps
 
-| Trap                                                                   | Fix                                                                                                                                                                                                  |
-| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `_append` on Honister+ aborts the parse with a fatal error             | use `:append` (confirm the release first); the reverse — `:append` on a pre-Honister tree — is the silent one                                                                                        |
-| `+=` in `local.conf` clobbered by a machine/distro conf                | `local.conf` parses first, so a later hard `=` wins; use `:append` for variables those files also assign                                                                                             |
-| `SRCREV = "${AUTOREV}"` in a release                                   | pin to a commit SHA                                                                                                                                                                                  |
-| Poky distro / default PREMIRRORS in production                         | own distro + own mirror                                                                                                                                                                              |
-| `IMAGE_INSTALL +=` growing in `local.conf`                             | write a custom image recipe                                                                                                                                                                          |
-| `.bbappend` version glob mismatch                                      | use the `%` wildcard                                                                                                                                                                                 |
-| `FILESEXTRAPATHS:prepend` missing in a `.bbappend`                     | add `:prepend := "${THISDIR}/files:"`                                                                                                                                                                |
-| suspected stale sstate after a `MACHINE`/patch/layer change            | those are hashed inputs and normally invalidate correctly — run `bitbake -S printdiff` / `bitbake-diffsigs` and fix the real input before cleaning                                                   |
-| `DEPENDS` used for a runtime dep                                       | use `RDEPENDS:${PN}` — but a linked shared library needs neither, it is detected from ELF `NEEDED`                                                                                                   |
-| build fails with `installed but not shipped`                           | `installed-vs-shipped` is in `ERROR_QA`, not `WARN_QA`: extend `FILES:<pkg>` or stop installing the paths it names; `INSANE_SKIP` hides the report and still ships the files nowhere                 |
-| a linked library is "missing" on target                                | usually the package split, not a dependency — `PACKAGES` is matched in order with `${PN}` last, so `.so` goes to `-dev` and only `.so.*` to `${PN}`                                                  |
-| `PACKAGECONFIG = "x"` in a `.bbappend`                                 | that declares the whole enabled set, silently disabling every other default feature; use `PACKAGECONFIG:append = " x"` with the leading space — and note a typo'd feature is only a `WARN_QA`        |
-| "nothing provides" your image recipe after adding an image feature     | an unrecognised `IMAGE_FEATURES` entry raises `SkipRecipe`, so the recipe is skipped rather than failing loudly — read the skip reason, which lists every valid feature                              |
-| `debug-tweaks` rejected                                                | valid at 5.0/5.1 only, removed at 5.2; name the four it implied — `empty-root-password allow-empty-password allow-root-login post-install-logging` — and ship none of them in production             |
-| `bitbake-setup` not found                                              | it is new — absent at the 5.0, 5.1 and 5.2 release tags, present at 5.3; on older trees use `oe-init-build-env` with a layer tree you assembled, or kas                                              |
-| reading `poky.conf` to answer "what does this build set?"              | only valid if Poky is the selected distro; resolve `bitbake-getvar DISTRO` first — it may be a vendor or custom distro, or `nodistro`, for which OE-Core ships no conf file at all                   |
-| `LAYERDEPENDS` naming a layer directory                                | it resolves against `BBFILE_COLLECTIONS`; use the collection name, or the layer reports as "not enabled" while sitting in `bblayers.conf`                                                            |
-| artifacts "missing" because nothing is under `tmp/deploy`              | `TMPDIR` gains `-${TCLIBC}` outside Poky (`tmp-glibc/`) and `DEPLOY_DIR` is often moved out of it — resolve `bitbake-getvar TMPDIR` and `DEPLOY_DIR_IMAGE` before reporting an absence               |
-| missing `LIC_FILES_CHKSUM`                                             | add it (or `LICENSE = "CLOSED"`) — see compliance ref                                                                                                                                                |
-| `def` block in a `.conf` fails to parse                                | move it to a `.inc`; only BBHandler (`.bb`/`.bbclass`/`.inc`) accepts `def`, ConfHandler owns `.conf`                                                                                                |
-| `#CONFIG_X is not set` in a kernel `.cfg` is ignored                   | needs the space — `# CONFIG_X is not set`; without it Kconfig reads a comment and the option keeps its defconfig value                                                                               |
-| distro identity set before `require conf/distro/poky.conf` is lost     | poky assigns `DISTRO`/`DISTRO_NAME`/`DISTRO_VERSION` with hard `=`; set yours after the require                                                                                                      |
-| `kernel-module-*` in `IMAGE_INSTALL` breaks when the symbol turns `=y` | built-in emits no module, so the package stops existing; drop it in the same change                                                                                                                  |
-| dlopen'd plugin absent at runtime though its provider is installed     | plugins create no shared-library dependency, so nothing pulls them in; name the package explicitly                                                                                                   |
-| `buildhistory` gives stale or mismatched answers                       | it keys on `MACHINE_ARCH` while deploy uses `MACHINE` (differ on hyphens) and keeps dirs for every image ever built — resolve `BUILDHISTORY_DIR_IMAGE` and check `build-id.txt`; never pick by mtime |
-| `UNPACKDIR` undefined on Scarthgap and older                           | use `${WORKDIR}` for `file://` sources                                                                                                                                                               |
+| Trap                                                                   | Fix                                                                                                                    |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `DEPENDS` used for a runtime dep                                       | use `RDEPENDS:${PN}` — but a linked shared library needs neither, it is detected from ELF `NEEDED`                     |
+| missing `LIC_FILES_CHKSUM`                                             | add it (or `LICENSE = "CLOSED"`) — see compliance ref                                                                  |
+| `def` block in a `.conf` fails to parse                                | move it to a `.inc`; only BBHandler (`.bb`/`.bbclass`/`.inc`) accepts `def`, ConfHandler owns `.conf`                  |
+| `#CONFIG_X is not set` in a kernel `.cfg` is ignored                   | needs the space — `# CONFIG_X is not set`; without it Kconfig reads a comment and the option keeps its defconfig value |
+| distro identity set before `require conf/distro/poky.conf` is lost     | poky assigns `DISTRO`/`DISTRO_NAME`/`DISTRO_VERSION` with hard `=`; set yours after the require                        |
+| `kernel-module-*` in `IMAGE_INSTALL` breaks when the symbol turns `=y` | built-in emits no module, so the package stops existing; drop it in the same change                                    |
+| dlopen'd plugin absent at runtime though its provider is installed     | plugins create no shared-library dependency, so nothing pulls them in; name the package explicitly                     |
+| `UNPACKDIR` undefined on Scarthgap and older                           | use `${WORKDIR}` for `file://` sources                                                                                 |

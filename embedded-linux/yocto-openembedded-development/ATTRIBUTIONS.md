@@ -7,8 +7,8 @@
 
 ### The Yocto Project: Yocto Project documentation
 
-- Source: <https://docs.yoctoproject.org/>, the Reference, BitBake, BSP, Kernel, Security, and Development Tasks
-  manuals, the migration guides, and "What I wish I'd known about Yocto Project"
+- Source: <https://docs.yoctoproject.org/>, the Reference, BitBake, BSP, Kernel, and Development Tasks manuals, the
+  migration guides, and "What I wish I'd known about Yocto Project"
 - License: `CC-BY-SA-2.0-UK`
 - Version: 5.0 (Scarthgap)
 
@@ -25,6 +25,17 @@ is copied.
 
 The configuration-file precedence, distro selection, sstate, packaging, and `installed-vs-shipped` guidance is
 derived from the release's own classes, configuration, and BitBake code. No code is copied.
+
+### OpenEmbedded: OpenEmbedded-Core and BitBake
+
+- Source: <https://git.openembedded.org/openembedded-core> and <https://git.openembedded.org/bitbake>, chiefly
+  `meta/conf/bitbake.conf`, `meta/classes-global/insane.bbclass`, `meta/classes-global/base.bbclass`, and
+  `scripts/lib/wic/plugins/source/`
+- License: `MIT AND GPL-2.0-only`
+- Version: `yocto-6.0.3`, with the `yocto-5.1`, `yocto-5.2`, and `yocto-5.3` tags for when each change arrived
+
+The release changes in *Version awareness* come from these trees: the source-directory rule, configuration
+fragments and `toolcfg.conf` in the parse order, the wic plugin rename, and `bitbake-setup`. No code is copied.
 
 ## Third-party Sources
 
