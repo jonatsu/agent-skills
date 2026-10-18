@@ -38,84 +38,92 @@ through `writing-documentation` and the `writing-for-humans` reader-ready pass. 
 sources or status "throughout" turns into per-sentence noise; carry status in the document's structure instead,
 as `writing-specs` and `technical-design` do.
 
-| Skill                        | Description pass                 | `writing-for-agents` pass                         |
-| ---------------------------- | -------------------------------- | ------------------------------------------------- |
-| `git-commits-and-recovery`   | 2026-09-27, `05ecb1e`            | 2026-09-28, `bf0a58d`                             |
-| `git-history-investigation`  | 2026-09-27, `8242032`            | 2026-09-27, `8242032`                             |
-| `using-git-worktrees`        | 2026-09-27, `b10689e`            | 2026-09-27, `36bb1b4`                             |
-| `session-handoff`            | 2026-09-28, `f25ae32`            | 2026-09-28, `bd1ba4e`                             |
-| `writing-skill-descriptions` | 2026-09-28, `37f34c8`            | 2026-09-28, `2c0a4ee`                             |
-| `session-skill-audit`        | 2026-09-28, `da8a0cb`            | 2026-09-28, `da8a0cb`                             |
-| `skill-forge`                | 2026-09-28, `9fe08b0`            | 2026-09-28, `9fe08b0`, merged with `skill-review` |
-| `context-compression`        | 2026-09-28, `2997308`            | 2026-09-25, `f0f5559f`                            |
-| `context-architecture`       | 2026-09-30, `d586c9d`            | 2026-09-30, `28da2bd`                             |
-| `agents-context-docs`        | 2026-09-30, `f8435a5`            | 2026-09-30, `f8435a5`                             |
-| `python-architecture`        | 2026-09-28, `2997308`            | 2026-09-24, `4e374bf`                             |
-| `python-async-patterns`      | 2026-09-28, `2997308`, no change | 2026-09-24, `c85d2cf`                             |
-| `python-error-handling`      | 2026-09-28, `2997308`, no change | 2026-09-24, `819aa34`                             |
-| `python-parallelism`         | 2026-09-28, `2997308`, no change | 2026-09-24, `c1d8db7`                             |
-| `python-project-management`  | 2026-09-28, `2997308`            | 2026-09-24, `bf1081b`                             |
-| `python-style`               | 2026-09-28, `2997308`            | 2026-09-24, `e47e62d`                             |
-| `python-testing`             | 2026-09-28, `2997308`            | 2026-09-24, `d908951`                             |
-| `python-typing`              | 2026-09-28, `2997308`, no change | 2026-09-24, `272c8d2`                             |
-| `interview-me`               | 2026-09-28, `cb64a9b`            | 2026-09-28, `cb64a9b`                             |
-| `idea-brainstorming`         | 2026-09-28, `7fd41bd`, no change | 2026-09-28, `7fd41bd`                             |
-| `session-reflect`            | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                             |
-| `systemd-units`              | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                             |
-| `docker-podman-containers`   | 2026-10-04, `3316fdd2`           | 2026-09-28, `f92701a`                             |
-| `writing-for-humans`         | 2026-10-17, `68011bd3`           | 2026-09-28, `e999023`                             |
-| `writing-documentation`      | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                             |
-| `writing-specs`              | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
-| `technical-design`           | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                             |
-| `implementation-planning`    | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                             |
-| `test-engineer`              | 2026-09-28, `7702d54`, unnamed   | 2026-09-28, `7702d54` and `add69c3`, unnamed      |
-| `coding-standards`           | 2026-09-28, `73a6774`, unnamed   | 2026-09-28, `73a6774`, unnamed                    |
-| `writing-readmes`            | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
-| `to-questionnaire`           | 2026-09-28, `e1f25db`            | 2026-09-28, `e1f25db`                             |
-| `domain-modeling`            | 2026-09-28, `f5cf1f9`            | 2026-09-28, `f5cf1f9`                             |
-| `conformance-review`         | 2026-09-28, `d0bc8da`, no change | 2026-09-28, `d0bc8da`                             |
-| `security-review`            | 2026-09-28, `7f3d35f`            | 2026-09-28, `7f3d35f`                             |
-| `writing-prompts`            | 2026-09-28, `d55d5dd`, new skill | 2026-09-28, `d55d5dd`, new skill                  |
-| `prompt-debugging`           | 2026-09-28, `d55d5dd`            | 2026-10-06, `7fe44be0`                            |
-| `document-conversion`        | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
-| `github-ops`                 | 2026-09-28, `7c7a61f`, no change | 2026-09-28, `7c7a61f`                             |
-| `repo-management`            | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
-| `bash-shell`                 | 2026-09-28, `ef71b3f`, no change | 2026-09-28, `ef71b3f`                             |
-| `posix-shell`                | 2026-09-28, `ef71b3f`            | 2026-09-28, `ef71b3f`                             |
-| `cc-safety-net`              | 2026-09-28, no change            | 2026-09-28, no change, vendored upstream          |
-| `ast-grep`                   | 2026-09-28, `3392f10`, no change | 2026-09-28, `3392f10`                             |
-| `just-task-runner`           | 2026-09-28, `8976754`, no change | 2026-09-28, `8976754`                             |
-| `kasetto-skill-tool`         | 2026-09-28, `f4bcb13`            | 2026-09-28, `f4bcb13`                             |
-| `chezmoi-dotfiles`           | 2026-10-04, `46487dd3`           | 2026-09-28, no change                             |
-| `mise-tools`                 | 2026-09-28, `9ae6e8a`            | 2026-09-28, `9ae6e8a`                             |
-| `drawio-diagrams`            | 2026-09-29, `1fe21f2`            | 2026-09-29, `1fe21f2`                             |
-| `lint-config-audit`          | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |
-| `note-for-later`             | 2026-09-30, `b691642`, new skill | 2026-09-30, `b691642`, new skill                  |
-| `debug-hardware`             | 2026-09-30, `606289f`, new skill | 2026-09-30, `7ba3a4a`, probe guard hook added     |
-| `debug-server-tools`         | 2026-09-30, `606289f`, new skill | 2026-09-30, `606289f`, new skill                  |
-| `gdb-debugging`              | 2026-09-30, `0de84b5`, new skill | 2026-09-30, `0de84b5`, new skill                  |
-| `mcu-firmware-debugging`     | 2026-09-30, `b2bcd2f`, new skill | 2026-09-30, `b2bcd2f`, new skill                  |
-| `embedded-linux-debugging`   | 2026-09-30, `8450467`, new skill | 2026-09-30, `8450467`, new skill                  |
-| `serial-console-debugging`   | 2026-09-30, `911b361`, new skill | 2026-09-30, `911b361`, new skill                  |
-| `define-goal`                | 2026-10-04, `2e67ef7e`           | 2026-10-04, `66bec2da`, new                       |
-| `dispatching-subagents`      | 2026-10-06, `53799042`           | 2026-10-06, `53799042`                            |
-| `incremental-implementation` | 2026-10-06, `6b63f8c6`           | 2026-10-06, `6b63f8c6`                            |
-| `systematic-debugging`       | 2026-10-06, `4df4e36f`           | 2026-10-06, `4df4e36f`                            |
-| `test-driven-development`    | 2026-10-06, `650df591`           | 2026-10-06, `650df591`                            |
-| `systemd-networking`         | 2026-10-06, `5ed8ca1a`           | 2026-10-06, `5ed8ca1a`                            |
-| `nix-secrets`                | 2026-10-06, `87752c31`           | 2026-10-06, `87752c31`                            |
-| `direnv-nix-direnv`          | 2026-10-06, `2ef12257`           | 2026-10-06, `2ef12257`                            |
-| `nix-packaging`              | 2026-10-06, `6d6273aa`           | 2026-10-06, `6d6273aa`                            |
-| `nix-flakes`                 | 2026-10-06, `6e19432d`           | 2026-10-06, `6e19432d`                            |
-| `home-manager`               | 2026-10-06, `cc25507a`           | 2026-10-06, `cc25507a`                            |
-| `nixos-config`               | 2026-10-06, `1ff8e87d`           | 2026-10-06, `1ff8e87d`                            |
-| `apt-fetch-emulation`        | 2026-10-11, `2b958871`, imported | 2026-10-11, `2b958871`, imported                  |
-| `brooks-audit`               | 2026-10-18, no change            | 2026-10-18, `f925aa52`, vendored upstream         |
-| `brooks-debt`                | 2026-10-18, no change            | 2026-10-18, `e3c48194`, vendored upstream         |
-| `brooks-health`              | 2026-10-18, no change            | 2026-10-18, `042f69b7`, vendored upstream         |
-| `brooks-review`              | 2026-10-18, no change            | 2026-10-18, `b465472d`, vendored upstream         |
-| `brooks-sweep`               | 2026-10-18, no change            | 2026-10-18, `81f027d9`, vendored upstream         |
-| `brooks-test`                | 2026-10-18, no change            | 2026-10-18, `f23636e6`, vendored upstream         |
+| Skill                            | Description pass                 | `writing-for-agents` pass                         |
+| -------------------------------- | -------------------------------- | ------------------------------------------------- |
+| `git-commits-and-recovery`       | 2026-09-27, `05ecb1e`            | 2026-09-28, `bf0a58d`                             |
+| `git-history-investigation`      | 2026-09-27, `8242032`            | 2026-09-27, `8242032`                             |
+| `using-git-worktrees`            | 2026-09-27, `b10689e`            | 2026-09-27, `36bb1b4`                             |
+| `session-handoff`                | 2026-09-28, `f25ae32`            | 2026-09-28, `bd1ba4e`                             |
+| `writing-skill-descriptions`     | 2026-09-28, `37f34c8`            | 2026-09-28, `2c0a4ee`                             |
+| `session-skill-audit`            | 2026-09-28, `da8a0cb`            | 2026-09-28, `da8a0cb`                             |
+| `skill-forge`                    | 2026-09-28, `9fe08b0`            | 2026-09-28, `9fe08b0`, merged with `skill-review` |
+| `context-compression`            | 2026-09-28, `2997308`            | 2026-09-25, `f0f5559f`                            |
+| `context-architecture`           | 2026-09-30, `d586c9d`            | 2026-09-30, `28da2bd`                             |
+| `agents-context-docs`            | 2026-09-30, `f8435a5`            | 2026-09-30, `f8435a5`                             |
+| `python-architecture`            | 2026-09-28, `2997308`            | 2026-09-24, `4e374bf`                             |
+| `python-async-patterns`          | 2026-09-28, `2997308`, no change | 2026-09-24, `c85d2cf`                             |
+| `python-error-handling`          | 2026-09-28, `2997308`, no change | 2026-09-24, `819aa34`                             |
+| `python-parallelism`             | 2026-09-28, `2997308`, no change | 2026-09-24, `c1d8db7`                             |
+| `python-project-management`      | 2026-09-28, `2997308`            | 2026-09-24, `bf1081b`                             |
+| `python-style`                   | 2026-09-28, `2997308`            | 2026-09-24, `e47e62d`                             |
+| `python-testing`                 | 2026-09-28, `2997308`            | 2026-09-24, `d908951`                             |
+| `python-typing`                  | 2026-09-28, `2997308`, no change | 2026-09-24, `272c8d2`                             |
+| `interview-me`                   | 2026-09-28, `cb64a9b`            | 2026-09-28, `cb64a9b`                             |
+| `idea-brainstorming`             | 2026-09-28, `7fd41bd`, no change | 2026-09-28, `7fd41bd`                             |
+| `session-reflect`                | 2026-09-28, `8f249b6`            | 2026-09-28, `8f249b6`                             |
+| `systemd-units`                  | 2026-09-28, `a0b9f38`            | 2026-09-28, `a0b9f38`                             |
+| `docker-podman-containers`       | 2026-10-04, `3316fdd2`           | 2026-09-28, `f92701a`                             |
+| `writing-for-humans`             | 2026-10-17, `68011bd3`           | 2026-09-28, `e999023`                             |
+| `writing-documentation`          | 2026-09-28, `1742834`            | 2026-09-28, `1742834`                             |
+| `writing-specs`                  | 2026-09-28, `1d620a6`, no change | 2026-09-28, `1d620a6`                             |
+| `technical-design`               | 2026-09-28, `a842df8`            | 2026-09-28, `a842df8`                             |
+| `implementation-planning`        | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                             |
+| `test-engineer`                  | 2026-09-28, `7702d54`, unnamed   | 2026-09-28, `7702d54` and `add69c3`, unnamed      |
+| `coding-standards`               | 2026-09-28, `73a6774`, unnamed   | 2026-09-28, `73a6774`, unnamed                    |
+| `writing-readmes`                | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
+| `to-questionnaire`               | 2026-09-28, `e1f25db`            | 2026-09-28, `e1f25db`                             |
+| `domain-modeling`                | 2026-09-28, `f5cf1f9`            | 2026-09-28, `f5cf1f9`                             |
+| `conformance-review`             | 2026-09-28, `d0bc8da`, no change | 2026-09-28, `d0bc8da`                             |
+| `security-review`                | 2026-09-28, `7f3d35f`            | 2026-09-28, `7f3d35f`                             |
+| `writing-prompts`                | 2026-09-28, `d55d5dd`, new skill | 2026-09-28, `d55d5dd`, new skill                  |
+| `prompt-debugging`               | 2026-09-28, `d55d5dd`            | 2026-10-06, `7fe44be0`                            |
+| `document-conversion`            | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
+| `github-ops`                     | 2026-09-28, `7c7a61f`, no change | 2026-09-28, `7c7a61f`                             |
+| `repo-management`                | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
+| `bash-shell`                     | 2026-09-28, `ef71b3f`, no change | 2026-09-28, `ef71b3f`                             |
+| `posix-shell`                    | 2026-09-28, `ef71b3f`            | 2026-09-28, `ef71b3f`                             |
+| `cc-safety-net`                  | 2026-09-28, no change            | 2026-09-28, no change, vendored upstream          |
+| `ast-grep`                       | 2026-09-28, `3392f10`, no change | 2026-09-28, `3392f10`                             |
+| `just-task-runner`               | 2026-09-28, `8976754`, no change | 2026-09-28, `8976754`                             |
+| `kasetto-skill-tool`             | 2026-09-28, `f4bcb13`            | 2026-09-28, `f4bcb13`                             |
+| `chezmoi-dotfiles`               | 2026-10-04, `46487dd3`           | 2026-09-28, no change                             |
+| `mise-tools`                     | 2026-09-28, `9ae6e8a`            | 2026-09-28, `9ae6e8a`                             |
+| `drawio-diagrams`                | 2026-09-29, `1fe21f2`            | 2026-09-29, `1fe21f2`                             |
+| `lint-config-audit`              | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |
+| `note-for-later`                 | 2026-09-30, `b691642`, new skill | 2026-09-30, `b691642`, new skill                  |
+| `debug-hardware`                 | 2026-09-30, `606289f`, new skill | 2026-09-30, `7ba3a4a`, probe guard hook added     |
+| `debug-server-tools`             | 2026-09-30, `606289f`, new skill | 2026-09-30, `606289f`, new skill                  |
+| `gdb-debugging`                  | 2026-09-30, `0de84b5`, new skill | 2026-09-30, `0de84b5`, new skill                  |
+| `mcu-firmware-debugging`         | 2026-09-30, `b2bcd2f`, new skill | 2026-09-30, `b2bcd2f`, new skill                  |
+| `embedded-linux-debugging`       | 2026-09-30, `8450467`, new skill | 2026-09-30, `8450467`, new skill                  |
+| `serial-console-debugging`       | 2026-09-30, `911b361`, new skill | 2026-09-30, `911b361`, new skill                  |
+| `define-goal`                    | 2026-10-04, `2e67ef7e`           | 2026-10-04, `66bec2da`, new                       |
+| `dispatching-subagents`          | 2026-10-06, `53799042`           | 2026-10-06, `53799042`                            |
+| `incremental-implementation`     | 2026-10-06, `6b63f8c6`           | 2026-10-06, `6b63f8c6`                            |
+| `systematic-debugging`           | 2026-10-06, `4df4e36f`           | 2026-10-06, `4df4e36f`                            |
+| `test-driven-development`        | 2026-10-06, `650df591`           | 2026-10-06, `650df591`                            |
+| `systemd-networking`             | 2026-10-06, `5ed8ca1a`           | 2026-10-06, `5ed8ca1a`                            |
+| `nix-secrets`                    | 2026-10-06, `87752c31`           | 2026-10-06, `87752c31`                            |
+| `direnv-nix-direnv`              | 2026-10-06, `2ef12257`           | 2026-10-06, `2ef12257`                            |
+| `nix-packaging`                  | 2026-10-06, `6d6273aa`           | 2026-10-06, `6d6273aa`                            |
+| `nix-flakes`                     | 2026-10-06, `6e19432d`           | 2026-10-06, `6e19432d`                            |
+| `home-manager`                   | 2026-10-06, `cc25507a`           | 2026-10-06, `cc25507a`                            |
+| `nixos-config`                   | 2026-10-06, `1ff8e87d`           | 2026-10-06, `1ff8e87d`                            |
+| `apt-fetch-emulation`            | 2026-10-11, `2b958871`, imported | 2026-10-11, `2b958871`, imported                  |
+| `brooks-audit`                   | 2026-10-18, no change            | 2026-10-18, `f925aa52`, vendored upstream         |
+| `brooks-debt`                    | 2026-10-18, no change            | 2026-10-18, `e3c48194`, vendored upstream         |
+| `brooks-health`                  | 2026-10-18, no change            | 2026-10-18, `042f69b7`, vendored upstream         |
+| `brooks-review`                  | 2026-10-18, no change            | 2026-10-18, `b465472d`, vendored upstream         |
+| `brooks-sweep`                   | 2026-10-18, no change            | 2026-10-18, `81f027d9`, vendored upstream         |
+| `brooks-test`                    | 2026-10-18, no change            | 2026-10-18, `f23636e6`, vendored upstream         |
+| `buildroot-development`          | 2026-10-18, `92a2dda6`           | 2026-10-18, `92a2dda6`                            |
+| `embedded-linux-bringup`         | 2026-10-18, `3a577ab4`           | 2026-10-18, `3a577ab4`                            |
+| `kas-build-orchestration`        | 2026-10-18, `53031e6a`           | 2026-10-18, `53031e6a`                            |
+| `u-boot-development`             | 2026-10-18, `363f8dd8`           | 2026-10-18, `363f8dd8`                            |
+| `yocto-openembedded-development` | 2026-10-18, `db055117`           | 2026-10-18, `db055117`                            |
+| `yocto-security-audit`           | 2026-10-18, `4548d5d8`           | 2026-10-18, `4548d5d8`                            |
+| `yocto-security-hardening`       | 2026-10-18, `50b2a490`           | 2026-10-18, `50b2a490`                            |
+| `yocto-vulnerability-management` | 2026-10-18, `6b1e4d9a`           | 2026-10-18, `6b1e4d9a`                            |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
@@ -304,30 +312,6 @@ The planning and design skills refactor deferred two companions until the pipeli
 - **A visual-plan companion** that renders a canonical Markdown plan for human review, portable across agents.
 - **Document governance**: a lifecycle and maintenance workflow for design records, with the useful parts of the
   archived `design-forge` corpus contract. Start it only with evidence that the job is needed.
-
-## Re-Review the Other Four Embedded Skills — Non-Urgent
-
-The 2026-09-08 work on `yocto-openembedded-development` found defects its completed 2026-09-07 review had not,
-so the same classes are worth a bounded second pass over the four skills reviewed in the same batch
-(`buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`). Not
-urgent, and not evidence those four are wrong. The four each carried native checks, which lower the exposure to
-classes 1 and 4 but not 2 or 3.
-
-Check for these four classes, each of which occurred in the Yocto package:
-
-1. **A command that no longer exists at the pinned baseline** (e.g. `sstate-cache-management.sh` → `.py` after
-   Kirkstone; `bitbake -c fetchall` removed). Extract every command and verify it against the pinned upstream.
-   A provenance note about a command is also a staleness signal about it.
-2. **A default environment presented as universal** (`poky.conf`, `/opt/poky/`, `tmp/` depend on the distro).
-   Ask of each concrete path: what sets this, and what happens when it is set differently?
-3. **An area the description advertises but no reference covers.** Grep each description's claimed triggers
-   against the reference bodies.
-4. **A tool interface asserted from memory.** Check flags and arity against the pinned `--help` or source.
-
-Scope: a bounded recheck against pinned upstreams and each package's description, not new behavioral
-evaluation (that and hardware qualification stay deferred per the review-ledger record, agent-setup's
-`docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md`). Record findings in a dated file under
-agent-setup's `docs/evaluations/skills/`.
 
 ## Crypto and FIPS Depth for the Yocto Security Set
 
