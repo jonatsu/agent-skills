@@ -1,26 +1,25 @@
 ---
 name: yocto-security-hardening
-description: "Yocto/OpenEmbedded security hardening: configure a control, then prove it on the built artefact. Use for IMAGE_FEATURES and distro hardening, root credentials, read-only rootfs, security_flags.inc and checksec, kernel fragments, signed-FIT and dm-verity, LUKS/fscrypt and TPM2 key sealing, firewalls and listening services, AppArmor/SELinux wiring, sstate trust, meta-security. Route CVE/SBOM to yocto-vulnerability-management, image auditing to yocto-security-audit, U-Boot verification to u-boot-development."
+description: "Harden a Yocto/OpenEmbedded image you build and prove each control on the built artefact. Use for root login and IMAGE_FEATURES, read-only rootfs, compiler and kernel hardening, signed FIT and dm-verity, LUKS, fscrypt or TPM2-sealed keys, firewalls, AppArmor or SELinux wiring, sstate trust, security layers, or a security setting that has no effect. Route audits of an existing image to yocto-security-audit, CVEs and SBOMs to yocto-vulnerability-management, U-Boot verification to u-boot-development."
 license: MIT
-compatibility: Requires a BitBake/OE-Core checkout and an initialised build directory. Class names, variables and valid IMAGE_FEATURES items are release-specific; guidance is written for 5.0 Scarthgap with 6.0 deltas named inline. On-target verification needs QEMU or a reachable board plus testimage. checksec, kernel-hardening-checker and Lynis come from meta-security or meta-openembedded, which must be added to bblayers.
+compatibility: Requires a BitBake/OE-Core checkout and an initialised build directory. Class names, variables and valid IMAGE_FEATURES items are release-specific; guidance is written for 5.0 Scarthgap with 5.1 to 6.0 Wrynose deltas named inline. On-target verification needs QEMU or a reachable board plus testimage. checksec, kernel-hardening-checker and Lynis come from meta-security or meta-openembedded, which must be added to bblayers.
 metadata:
   author: Joonas Onatsu
 ---
 
 # Yocto / OpenEmbedded Security Hardening
 
-**IRON LAW: A security setting is a claim, not a control. You MUST verify the property on the built artefact
-and MUST NOT report a setting, a variable value, or a feature in `IMAGE_FEATURES` as evidence that the
-property holds. A passing security *test* is also a claim — read what it asserts before treating a green suite
-as evidence.**
+## Evidence rule
 
-The second half is not rhetorical. Upstream `meta-security`'s own `checksec` oeqa case asserts nothing when
-its regex matches, and inspects PID 1 rather than the shipped binaries; it has been that way since 2019. The
-first half has an equally concrete basis: `security_flags.inc` carries **21 `:pn-` opt-out lines**, so
-"hardening is on" is false for `busybox`, `grub` and a dozen other named recipes on a stock build.
+A security setting is a claim, and the built artefact is the evidence. Report a property as holding only after
+you observe it on the artefact: the manifest, the rootfs, the ELF headers, the kernel `.config`, or the running
+system. Treat a passing security test the same way, and read what it asserts before you cite it.
 
-Every answer this skill gives pairs a control with the observation that settles it. A configuration snippet
-alone is an incomplete answer.
+Two upstream examples show why. `security_flags.inc` carries 18 per-recipe opt-outs, so `busybox`, `grub` and
+others build without parts of the hardening set. `meta-security`'s oeqa `checksec` fortify case passes because
+`checksec` rejects the test's own command line.
+
+Pair every control you configure with the observation that settles it.
 
 ## Scope
 
@@ -29,9 +28,8 @@ image and distro composition, credentials, root filesystem state, compiler and k
 side of the boot chain, data-at-rest encryption, network exposure, MAC framework wiring, build and
 supply-chain trust, and both verification lanes.
 
-**Out:** auditing an artefact you did not build (that starts from an image, not from metadata); CVE and SBOM
-work; U-Boot's own verification mechanics; runtime board debugging; and **MAC policy authoring**, which needs
-a real daemon's behaviour rather than a model's expectations — see *Stated gaps*.
+**Out:** auditing an image you did not build, CVE and SBOM work, U-Boot's own verification, and runtime board
+debugging; the table below names the owner of each. MAC policy authoring is a stated gap.
 
 ### Route to a sibling skill
 
@@ -82,22 +80,23 @@ Know these exist before reading any configuration. Full mechanism and verificati
 **Establish the actual OE-Core revision before naming a class, a variable or an `IMAGE_FEATURES` item** —
 `git -C <oe-core-checkout> describe --tags`, or `bitbake-getvar DISTRO_VERSION`. `LAYERSERIES_COMPAT` is a
 layer's compatibility *claim*, never proof of what is checked out. Override syntax, class locations and
-feature validity all move; that mechanism is `yocto-openembedded-development`'s Iron Law and applies here
-unchanged.
+feature validity all move.
 
 Guidance here is release-general with deltas named inline. The deltas that change a security answer:
 
-| Change                                                         | Release                                                                  |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `debug-tweaks` removed; four standalone features remain        | 5.2 Walnascar                                                            |
-| `security_flags.inc` opt-in → required by `defaultsetup.conf`  | opt-in at 5.0; on master `defaultsetup.conf` is included for every build |
-| `INIT_MANAGER` default `none` → `systemd`                      | scarthgap → master                                                       |
-| `cve-check` present → removed on master, replaced out-of-build | present on every released series including 5.0 and 5.3                   |
-| Security chapter moved to `security-manual/`                   | 6.0; the unversioned `dev-manual/vulnerabilities.html` is a 404          |
+| Change                                                                                 | Release                                                                 |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `textrel` and `buildpaths` QA checks become `ERROR_QA`                                 | 5.1 Styhead                                                             |
+| `debug-tweaks` removed; four standalone features remain                                | 5.2 Walnascar                                                           |
+| `kernel-fitimage.bbclass` removed; the `linux-yocto-fitimage` recipe builds FIT images | 5.3 Whinlatter                                                          |
+| `defaultsetup.conf` requires `security_flags.inc` for every build                      | 6.0 Wrynose; before that only `poky.conf` requires it                   |
+| `INIT_MANAGER` default `none` → `systemd`                                              | 6.0 Wrynose                                                             |
+| `cve-check` removed, replaced by out-of-build checking                                 | 6.0 Wrynose; present through 5.3                                        |
+| Security chapter moved to `security-manual/`                                           | 6.0 Wrynose; the unversioned `dev-manual/vulnerabilities.html` is a 404 |
 
 ## Knowledge-refresh gate
 
-⛔ **Where this skill relies on general knowledge rather than stating a fact itself, name the authority and
+**Where this skill relies on general knowledge rather than stating a fact itself, name the authority and
 refresh from it before answering.** Assuming the model already knows a security fact assumes its training data
 is current, which for security guidance is unsafe.
 
@@ -108,6 +107,7 @@ is current, which for security guidance is unsafe.
 | A layer's release coverage or licence    | that layer's `layer.conf` **on the branch in use**, and its own `LICENSE` file    |
 | Documentation location                   | `docs.yoctoproject.org/<codename>/…`; the chapter moved between releases          |
 | A tool's options or output format        | the version the recipe pins, not the tool's current README                        |
+| A removed feature or a moved default     | the Migration Guide for that release, under `docs.yoctoproject.org/<codename>/`   |
 
 Probe upstream at `git.openembedded.org/openembedded-core` (codename branches) and
 `git.openembedded.org/bitbake` (`yocto-5.3`-style tags). **`poky` is being wound down** — its `master` is
@@ -118,37 +118,32 @@ missing file both return 404.
 
 ## Workflow
 
-Two lanes. The release gate is shared and blocking.
+Both lanes start from the same step.
 
-**Shared entry:**
+1. Lock the release and the layer set: the OE-Core revision, `MACHINE`, `DISTRO`, and each security layer in
+   `bblayers.conf` with its branch. When you cannot establish them, state the release you assume and label it
+   as an assumption.
 
-- [ ] **⛔ BLOCKING — Lock the release and the layer set.** Revision, `MACHINE`, `DISTRO`, and which security
-  layers are in `bblayers.conf` with which branch. If it cannot be established, state the assumed release and
-  LABEL the assumption.
+**Configure lane**, for "how do I set up X":
 
-**Configure lane** — "how do I set up X":
+2. Name the mechanism and the build stage it acts at: metadata, package install, image postprocess, kernel
+   config, or deploy.
+3. Place a production control in a distro conf or an image recipe. `local.conf` is a developer file and does
+   not ship.
+4. Give the host-side check, the on-target check, or both, from `references/verification-workflows.md`.
+5. State what the control does not cover.
 
-- [ ] **⚠️ REQUIRED — Name the mechanism, not just the variable.** What the setting does, and which layer of
-  the build it acts at (metadata, package install, image postprocess, kernel config, deploy).
-- [ ] **⚠️ REQUIRED — Place it where it can ship.** A production control belongs in a distro conf or an image
-  recipe; `local.conf` is a developer's file and is not part of the release artefact.
-- [ ] **⚠️ REQUIRED — Give the verification in the same answer.** The host-side check, the on-target check, or
-  both, from `references/verification-workflows.md`. An answer without one is incomplete.
-- [ ] **⚠️ REQUIRED — Name what it does not cover.** Every control in this skill has a stated limit; say it.
+**Verify lane**, for "is X actually in effect on the image I built":
 
-**Verify lane** — "is X actually in effect":
+2. Pick the lane (host-side or on-target) and the image (`prod`, `dev` or `prod-test`). A result from the wrong
+   image says nothing about what ships.
+3. Observe the artefact itself: the manifest, the rootfs, the ELF headers, the `.config`, or the running system.
+4. Prove the negative case where one exists: an unsigned FIT is refused, a corrupted verity block fails the
+   read, a bad-key sstate archive is not installed.
+5. Report the lane, the image, the observation, and what the check cannot see, in that order.
 
-- [ ] **⛔ BLOCKING — Pick the lane and the image.** Host-side or on-target, and against `prod`, `dev` or
-  `prod-test`. A result from the wrong image is not evidence about what ships.
-- [ ] **⚠️ REQUIRED — Observe the artefact.** Read the manifest, the rootfs, the ELF headers, the `.config` or
-  the running system — never the variable that was meant to produce them.
-- [ ] **⚠️ REQUIRED — Prove the negative case where one exists.** An unsigned FIT must be refused, a corrupted
-  verity block must fail the read, a bad-key sstate archive must be rejected. A control never observed failing
-  has not been shown to work.
-- [ ] **⚠️ REQUIRED — Report lane, image, observation, and blind spot.** In that order.
-
-Read-only checks that are already authorized — `bitbake-getvar`, `bitbake -e`, manifest and rootfs
-inspection, `checksec` — run in a batch; do not stop to ask after each.
+Run already-authorized read-only checks (`bitbake-getvar`, `bitbake -e`, manifest and rootfs inspection,
+`checksec`) as one batch.
 
 ## Evidence first
 
@@ -173,58 +168,29 @@ checksec --file=<rootfs>/bin/busybox
 
 Keep every capture bounded — grep the artefact, do not paste a build log.
 
-## Anti-patterns
+## Guardrails
 
-- MUST NOT report a variable value, an `IMAGE_FEATURES` entry, or "the setting is in the distro conf" as
-  evidence that a security property holds.
-- MUST NOT read `bitbake-getvar -r <image> IMAGE_INSTALL` as the shipped package set — it returns
-  packagegroups. The manifest is the only authority.
-- MUST NOT treat a green oeqa security suite as a property check; upstream's cases are smoke tests and at
-  least one asserts nothing at all.
-- MUST NOT say "hardening is enabled" after requiring `security_flags.inc`. Name the exempted recipes, or
-  check the specific binaries in question.
-- MUST NOT read a missing `FORTIFY_SOURCE` as "unsupported" — at `-O0` the flag is dropped silently by design.
-- MUST NOT treat a `kernel_configcheck` pass as proof a hardening symbol survived: the default audit level
-  filters to boot-affecting options and its findings are warnings.
-- MUST NOT ship scanners, auditors or `kernel-hardening-checker` in production; they belong in the prod-test
-  image.
-- MUST NOT probe `poky` for a current fact, and MUST NOT judge a layer's release coverage from one branch.
-- MUST NOT recommend a commercial tool without first establishing that no open-source or free option covers
-  the need, and saying so.
-- MUST NOT invent a MAC policy, disk-encryption or network-hardening recommendation and present it as this
-  skill's guidance — see *Stated gaps*.
-- MUST NOT write a private signing key into the build tree, `DL_DIR` or sstate, or leave a key's provenance
-  implied.
+- Keep private signing keys outside the build tree, `DL_DIR` and sstate, and state where each key lives.
+- Put scanners, auditors and `kernel-hardening-checker` in the prod-test image only.
+- Recommend an open-source or free tool first. Name a commercial tool only after showing that no open option
+  covers the need, and say so.
+- Read the shipped package set from the image manifest; `bitbake-getvar -r <image> IMAGE_INSTALL` returns
+  packagegroups.
 
 ## Stated gaps
 
-Naming these is part of the skill's contract; filling them from general knowledge is not.
+When a request reaches one of these, say so and give the routing or the trade-off rather than filling the gap
+from general knowledge.
 
-- **MAC policy authoring.** Choosing a framework, wiring it in and confirming it enforces are covered;
-  writing an AppArmor profile or an SELinux module is not. The honest workflow is complain/permissive mode,
-  collect denials, turn them into rules — say that rather than generating a profile.
-- **TPM sealing policy.** Which PCR set to bind a key to depends on the boot chain and the update strategy,
-  and getting it wrong bricks devices in the field. The trade-off is stated; a PCR list is not.
-- **Network depth beyond exposure and a default-drop baseline.** VPN and overlay design, IDS tuning, and
-  per-protocol server hardening are named and routed, not taught.
-- **Crypto and FIPS depth.** Pointer only. `meta-wolfssl` is the FIPS-capable route and carries a
-  GPL-2.0/commercial split; certificate scope and module boundaries are unverified here.
-- **`meta-security` scanner health.** Reports that `buck-security`, `checksec` and `nikto` are broken in the
-  layer are **unverified** and must not be repeated as fact.
-- **Auditing an image you did not build** — a different starting state, and a different task.
-
-## Reference pointers
-
-Cite the release-matched manual; the codename is in the docs URL path.
-
-- **docs.yoctoproject.org** — Reference Manual (variables, classes, QA checks), Development Tasks Manual
-  (*Making Images More Secure*, judged thin by the community that maintains it), the **Security manual**, and
-  the Migration Guides, which are where a removed feature or a moved default is actually recorded.
-- **`git.openembedded.org/openembedded-core`** and **`/bitbake`** — the authoritative source for any class or
-  variable claim, at the reader's ref.
-- **`git.yoctoproject.org/meta-security`** — the layer itself; check `layer.conf` on the branch in use.
-- **Kernel Self Protection Project** and the kernel's own `Documentation/security/self-protection.rst` — for
-  which symbols to set on the reader's kernel version.
+- **MAC policy authoring.** The skill covers choosing a framework, wiring it in and confirming it enforces. For a
+  profile or a policy module, describe the workflow: run in complain or permissive mode, collect denials, and
+  turn them into rules.
+- **TPM sealing policy.** The right PCR set depends on the boot chain and the update strategy. State the
+  trade-off, not a PCR list.
+- **Network depth.** The skill covers the exposure inventory and a default-drop baseline. VPN and overlay design,
+  IDS tuning and per-protocol server hardening are named, not taught.
+- **Crypto and FIPS depth.** `meta-wolfssl` is the FIPS-capable route and carries a GPL-2.0/commercial split.
+  Certificate scope and module boundaries are not covered.
 
 ## Attribution
 

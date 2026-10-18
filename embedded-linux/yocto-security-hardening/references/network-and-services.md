@@ -44,13 +44,13 @@ each, and disable at the kernel-config or device-tree level rather than at runti
 
 ## What Yocto gives you, and the trap in the defaults
 
-| Tool                                                             | Where                                              | Note                                                 |
-| ---------------------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------------- |
-| `nftables` 1.0.9                                                 | `meta-openembedded/meta-networking/recipes-filter` | The modern default; needs `meta-networking`          |
-| `iptables` 1.8.10                                                | OE-Core, `meta/recipes-extended`                   | **Legacy backend by default** — see below            |
-| `ebtables`, `ipset`, `conntrack-tools`, `arno-iptables-firewall` | `meta-networking/recipes-filter`                   | Available if a design needs them                     |
-| `sshguard`                                                       | `meta-security/recipes-security`                   | Brute-force response, if ssh is exposed at all       |
-| `firewalld`                                                      | **not packaged** in `meta-networking` at scarthgap | Do not design around it without checking your layers |
+| Tool                                                             | Where                                                           | Note                                                                         |
+| ---------------------------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `nftables` 1.0.9                                                 | `meta-openembedded/meta-networking/recipes-filter`              | The modern default; needs `meta-networking`                                  |
+| `iptables` 1.8.10                                                | OE-Core, `meta/recipes-extended`                                | **Legacy backend by default** — see below                                    |
+| `ebtables`, `ipset`, `conntrack-tools`, `arno-iptables-firewall` | `meta-networking/recipes-filter`                                | Available if a design needs them                                             |
+| `sshguard`                                                       | `meta-security/recipes-security`                                | Brute-force response, if ssh is exposed at all                               |
+| `firewalld`                                                      | `meta-networking`, dynamic layer active only with `meta-python` | Present (1.3.4 at scarthgap); check that `meta-python` is in `bblayers.conf` |
 
 **The trap:** OE-Core's `iptables` recipe has `PACKAGECONFIG ?= "${@bb.utils.filter('DISTRO_FEATURES', 'ipv6', d)}"`,
 so `libnftnl` is **off by default**. Only with that option does the recipe repoint `iptables`,

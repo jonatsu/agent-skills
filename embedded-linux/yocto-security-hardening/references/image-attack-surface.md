@@ -78,13 +78,14 @@ oe-pkgdata-util find-path /usr/bin/foo                          # which package 
   credentials at provisioning time or at first boot.
 - **`extrausers.bbclass` accepts seven commands** — `useradd`, `groupadd`, `userdel`, `groupdel`, `usermod`,
   `groupmod`, and **`passwd-expire`**; anything else is `bbfatal "Invalid command in EXTRA_USERS_PARAMS"`.
-  `passwd-expire` is present on the scarthgap branch, so a first-login password change does not need a
-  hand-rolled `passwd -e` and a first-boot unit. Secondary sources describing it as 6.0-only are describing an
-  earlier 5.0 point release; check the branch you have.
+  `passwd-expire` is present on the `scarthgap` branch, so a first-login password change needs no hand-rolled
+  `passwd -e` unit. Check your branch, because early 5.0 point releases lack it.
 - **A password expiry needs somewhere to write.** On a read-only rootfs, `/etc/shadow` must be writable
   (`overlayfs-etc`, or a bind-mounted `/etc`) or the first-login change fails.
 - The class hooks `PACKAGE_INSTALL:append` to add `base-passwd shadow` only when `EXTRA_USERS_PARAMS` is
   non-empty, so an image with no users configured does not carry the tools.
+- From 6.0, the `root-login-with-empty-password` fragment turns on all three loosening features; check
+  `OE_FRAGMENTS` as well as the distro and image configuration.
 
 **Verify on the rootfs:**
 

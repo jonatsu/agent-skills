@@ -16,15 +16,15 @@ summaries describe:
 | Images              | `security-build-image`, `security-client-image`, `security-server-image`, `security-test-image`                  |
 | Packagegroups       | `packagegroup-core-security` and the `-utils`/`-scanners`/`-audit`/`-ids`/`-mac` groups it aggregates            |
 | Compliance auditing | **`lynis` 3.1.6**, `openscap` 1.3.9, `scap-security-guide` 0.1.71                                                |
-| Scanners            | **`checksec` 2.6.0** (with `BBCLASSEXTEND = "native"`), `buck-security`, `arpwatch`, `clamav`, `chkrootkit`      |
+| Scanners            | **`checksec` 2.6.0** (`-native` needs a `.bbappend`), `buck-security`, `arpwatch`, `clamav`, `chkrootkit`        |
 | Intrusion detection | `aide`, `crowdsec`, `ossec`, `samhain`, `suricata`, `tripwire`                                                   |
 | MAC                 | AppArmor, SMACK, `ccs-tools`                                                                                     |
 | Kernel              | `lkrg`                                                                                                           |
 | Runtime tests       | `lib/oeqa/runtime/cases/` — aide, apparmor, checksec, clamav, firejail, samhain, smack, sssd, suricata, tripwire |
 
 Two consequences worth acting on. **Lynis is packaged upstream**, so a third-party layer's Lynis recipe is a
-re-implementation rather than the reference. And **`checksec` has a `-native` variant**, which is what makes
-the host-side lane in `verification-workflows.md` possible without a board.
+re-implementation rather than the reference. And **`checksec` declares a `-native` variant that does not build
+without a one-line `.bbappend`** (below), which the host-side lane in `verification-workflows.md` depends on.
 
 ## Caveats to state whenever the layer is recommended
 
@@ -50,10 +50,8 @@ the host-side lane in `verification-workflows.md` possible without a board.
 - **The oeqa security cases are smoke tests**, and at least one is a genuine defect. See
   `verification-workflows.md`.
 
-- **Scanner health, measured at `scarthgap` commit `b13f170`.** Secondary sources report `buck-security`,
-  `checksec` and `nikto` as broken in the layer. **Built with the layer's own `kas/qemux86-64.yml`: all three build and
-  package cleanly**, exit 0, no errors — `buck-security` 0.7, `checksec` 2.6.0, `nikto` 2.1.6. The blanket
-  "broken" claim does not hold, and must not be repeated.
+- **Scanner health, measured at `scarthgap` commit `b13f170`.** `buck-security` 0.7, `checksec` 2.6.0 and
+  `nikto` 2.1.6 all build and package with the layer's own `kas/qemux86-64.yml`.
 
   **One real defect sits underneath it, and it is narrower and worse-placed than the rumour.**
   `checksec-native` is **unbuildable**: the recipe sets `BBCLASSEXTEND = "native"` while `RDEPENDS:${PN}` keeps

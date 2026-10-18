@@ -8,13 +8,21 @@
 ### The Yocto Project: OpenEmbedded-Core
 
 - Source: <https://git.openembedded.org/openembedded-core>, chiefly `meta/classes-recipe/` (`rootfs-postcommands`,
-  `image`, `kernel-yocto`, `kernel-fitimage`, `testimage`), `meta/classes-global/`, `meta/conf/distro/include/`, and
-  `meta/lib/oe/`
+  `image`, `kernel-yocto`, `kernel-fitimage`, `kernel-fit-image`, `uboot-sign`, `testimage`), `meta/classes-global/`,
+  `meta/conf/distro/`, and `meta/lib/oe/`
 - License: `MIT AND GPL-2.0-only`
-- Version: 5.0 (Scarthgap) release series, with the 6.0 development branch (`master`) for forward-looking differences
+- Version: 5.0 (Scarthgap) release series, with the 5.1 to 6.0 (Wrynose) release branches for later differences
 
 The guidance on image features, root credentials, read-only rootfs, compiler and linker flags, kernel fragments, signed
 FIT images, and sstate trust is built on the release's own classes and configuration. No code is copied.
+
+### The Yocto Project: poky distribution configuration
+
+- Source: <https://git.yoctoproject.org/poky>, `meta-poky/conf/distro/poky.conf`
+- License: `MIT`
+- Version: 5.0 (Scarthgap) branch, `scarthgap`
+
+Supplied the fact that the `poky` distribution requires `security_flags.inc` at 5.0. No code is copied.
 
 ### The Yocto Project: meta-security
 
@@ -27,6 +35,15 @@ The layer map, the kernel hardening fragments, dm-verity wiring, and the MAC and
 layer's own metadata. No code is copied.
 
 ## Third-party Sources
+
+### Brian Davis and contributors: checksec.sh
+
+- Source: <https://github.com/slimm609/checksec.sh>, the `checksec` script
+- License: `BSD-3-Clause`
+- Version: tag `2.6.0`, the revision `meta-security` pins
+
+Its option parser and FORTIFY logic supplied the accepted `--fortify-proc=<pid>` form and what a missing FORTIFY
+result means. No code was copied.
 
 ### Michael Opdenacker, Root Commit: "Securing Yocto Built Systems"
 

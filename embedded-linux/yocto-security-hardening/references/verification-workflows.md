@@ -101,10 +101,11 @@ if not match:
     self.assertEqual(status, 1, msg = msg)
 ```
 
-**If the regex matches, nothing is asserted.** The test passes whether or not `FORTIFY_SOURCE` is present, and
-it has been unchanged since it was introduced in 2019. A second, independent defect: `--fortify-proc 1` and
-`--proc=1` inspect **PID 1**, not the shipped binaries — so even repaired, the case could not answer whether
-the image was built with fortification.
+**The test passes because the command fails.** `checksec` 2.6.0 accepts only `--fortify-proc=<pid>`, so
+`--fortify-proc 1` exits 1 as an unknown option. The regex never matches, and the test then asserts
+`status == 1`, which the error exit satisfies. The case has been unchanged since 2019. Even with the option
+fixed, it would inspect a running process rather than the shipped binaries, so it could not show whether the
+image was built with fortification.
 
 Hence the Iron Law's second half. When you meet a green security suite, read what it asserts before believing
 it.
@@ -151,7 +152,4 @@ Getting `checksec-native` to build at all needs a one-line bbappend — see `com
 
 ## Reporting a result
 
-Say four things, in this order: **which lane** the check ran in, **which image** it ran against, **what was
-observed** on the artefact, and **what the check cannot see**. That last clause is what stops a host-side
-`checksec` pass being read as "the running system is hardened", and an on-target `findmnt` pass being read as
-"every image we ship is read-only".
+Report results in the order `SKILL.md` gives: lane, image, observation, and blind spot.

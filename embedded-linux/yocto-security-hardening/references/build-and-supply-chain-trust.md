@@ -22,14 +22,15 @@ an sstate hit substitutes a prebuilt artefact for a task you believe you compile
 To sign and verify:
 
 ```bitbake
-SSTATE_SIG_KEY = "<gpg key id>"      # on the machine that produces artefacts
-SSTATE_VERIFY_SIG = "1"              # on every machine that consumes them
-SSTATE_VALID_SIGS = "<key fingerprints or a signature-validation list>"
+SSTATE_SIG_KEY = "<gpg key id>"      # producer: signs only when SSTATE_VERIFY_SIG is also "1"
+SSTATE_VERIFY_SIG = "1"              # producer and every consumer
+SSTATE_VALID_SIGS = "<key fingerprints>"
 ```
 
-**Prove the negative case.** Verification that has never rejected anything is not evidence: build an archive
-signed with a key outside `SSTATE_VALID_SIGS`, put it in the mirror, and confirm the consuming build refuses
-it rather than silently falling through to a rebuild.
+**Prove the negative case.** Put an archive signed with a key outside `SSTATE_VALID_SIGS` in the mirror. Expect
+the warning `Cannot verify signature on sstate package …, skipping acceleration`, and expect the task to run from
+source. The property is that the foreign archive's content was never installed. A task restored from that
+archive, with no warning, means verification is off.
 
 **Related trap:** `BB_SIGNATURE_HANDLER` is not the setting that does any of this — it selects a task-hash
 generator and falls back to `noop` on an unrecognised name. See `misleading-controls.md` §7.

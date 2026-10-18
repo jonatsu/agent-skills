@@ -17,7 +17,13 @@ verity image with no secure boot beneath it is an integrity check the attacker c
 
 ## Signed FIT images
 
-`kernel-fitimage.bbclass` builds the FIT and, when `UBOOT_SIGN_ENABLE = "1"`, signs it:
+**The FIT machinery moved at 5.3 Whinlatter.** Through 5.2, `kernel-fitimage.bbclass` builds the FIT when
+`KERNEL_IMAGETYPE` includes `fitImage`. From 5.3, the `linux-yocto-fitimage` recipe builds it through
+`kernel-fit-image.bbclass`, and `fitImage` in `KERNEL_IMAGETYPE` is a build error. Signing there is gated by
+`FIT_KERNEL_SIGN_ENABLE`, which defaults to `UBOOT_SIGN_ENABLE`; the key variables default the same way.
+Both still pass `mkimage -r`.
+
+At 5.0, `kernel-fitimage.bbclass` builds the FIT and, when `UBOOT_SIGN_ENABLE = "1"`, signs it:
 
 ```bash
 ${UBOOT_MKIMAGE_SIGN} -F -k "${UBOOT_SIGN_KEYDIR}" -r ${KERNEL_OUTPUT_DIR}/$2 ${UBOOT_MKIMAGE_SIGN_ARGS}
@@ -25,9 +31,10 @@ ${UBOOT_MKIMAGE_SIGN} -F -k "${UBOOT_SIGN_KEYDIR}" -r ${KERNEL_OUTPUT_DIR}/$2 ${
 
 Three facts to carry:
 
-- **`-r` is passed**, so OE writes the `required` property into the U-Boot control dtb it patches. That closes
-  the "`CONFIG_FIT_SIGNATURE` does not require anything" trap on the build side — *provided* the dtb carrying
-  that key is the one the deployed U-Boot boots.
+- **`-r` marks the key required, but this call writes no dtb.** The public key and its `required` property reach
+  U-Boot's control dtb through `uboot-sign.bbclass`. It signs dummy images with `mkimage -K` (pointing at
+  `UBOOT_DTB_BINARY`) and `-r`, from the same `UBOOT_SIGN_KEYDIR` and key names. Verification is required only
+  if that dtb is the one the deployed U-Boot boots.
 - **All of it is inside the `UBOOT_SIGN_ENABLE` test.** With it at `0`, the FIT is assembled unsigned, and
   `FIT_GENERATE_KEYS = "1"` only warns that the keys will not be used. A build with keys configured and
   signing disabled looks configured and ships nothing signed.
@@ -35,21 +42,22 @@ Three facts to carry:
   it differs by release — 5.0 documents a use case for verification somewhere other than U-Boot, 6.0 calls it
   a complexity increase for little benefit. Name the release when advising.
 
-**How the public key reaches U-Boot is the step people skip.** Signing produces a FIT; refusing an unsigned
-one needs the verifying key inside U-Boot's own control device tree, together with the `required` property.
-U-Boot ships `tools/key2dtsi.py` to turn a key into a `.dtsi`, and `CONFIG_DEVICE_TREE_INCLUDES` names extra
-`.dtsi` files folded into the control DTB at build time. In a Yocto build that means the key must be an input
-to the **U-Boot** recipe, not only to the kernel FIT recipe — two recipes, one key, and a mismatch between
-them is a board that happily boots anything. The mechanics belong to `u-boot-development`; the build-side
-obligation is making sure the same key material feeds both.
+**How the public key reaches U-Boot is the step people skip.** Refusing an unsigned FIT needs the verifying key
+and its `required` property inside U-Boot's control device tree. In a Yocto build, `uboot-sign.bbclass` does this
+for the U-Boot recipe when `UBOOT_SIGN_ENABLE = "1"`, reading the same key directory and names as the FIT
+signing. Confirm that U-Boot and the kernel FIT read one key set; a mismatch is a board that boots anything.
+Outside that class, U-Boot's `tools/key2dtsi.py` and `CONFIG_DEVICE_TREE_INCLUDES` do the same job by hand. The
+mechanics belong to `u-boot-development`.
 
 Set the image type so the signed FIT is what boots:
 
 ```bitbake
+# 5.0 to 5.2
 KERNEL_IMAGETYPE = "fitImage"
 UBOOT_SIGN_ENABLE = "1"
 UBOOT_SIGN_KEYDIR = "<a path outside the build tree>"
 UBOOT_SIGN_KEYNAME = "<key basename>"
+# 5.3 and later: drop KERNEL_IMAGETYPE = "fitImage" and build the linux-yocto-fitimage recipe
 ```
 
 **Key handling is the part to get right and the part this file will not automate.** `FIT_GENERATE_KEYS = "1"`
@@ -70,7 +78,7 @@ neither, the key is a file, and the design should say so.
 
 ```bash
 mkimage -l tmp/deploy/images/<machine>/fitImage     # signature nodes and the algorithms actually used
-fdtget -l tmp/deploy/images/<machine>/fitImage /configurations/conf-1
+fdtget -l tmp/deploy/images/<machine>/fitImage /configurations   # list the configuration nodes first
 # and in the U-Boot control dtb: the key node, and whether it carries required = "conf" / "image"
 ```
 
@@ -157,7 +165,7 @@ rejecting anything has not been shown to work.
 ## IMA/EVM and measured boot
 
 `meta-integrity` packages IMA/EVM; the mechanisms and their runtime behaviour are build-system-agnostic and
-belong to `embedded-linux-bringup`'s `rootfs-integrity.md`. The Yocto-owned half is signing file hashes at
+belong to `embedded-linux-bringup`. The Yocto-owned half is signing file hashes at
 image-creation time and getting the keys into the image — which has the same key-handling problem as FIT
 signing above, and the same answer.
 
@@ -165,7 +173,7 @@ signing above, and the same answer.
 
 RAUC, SWUpdate and Mender are packaged as ordinary recipes; the security question they raise — that an update
 mechanism able to write a new rootfs is an execution primitive, so its signature verification and its
-key store are part of the trust chain — is covered by `embedded-linux-bringup`'s `ota-updates.md`. Route
+key store are part of the trust chain — is covered by `embedded-linux-bringup`. Route
 there rather than duplicating it.
 
 **Three parts of it are build-side and therefore ours**, because they are decided in metadata rather than on

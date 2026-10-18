@@ -83,9 +83,8 @@ deliberate choice for a production image.
 Packaged in `meta-openembedded`, at `meta-oe/recipes-security/kernel-hardening-checker`. It reports which
 config symbols and command-line settings could be tightened, against curated recommendation sets.
 
-**Check the branch, not the release number.** At the time of writing, `scarthgap` carries **0.6.17.1** and
-`walnascar` carries **0.6.10** — the LTS branch is ahead of a later release branch, because the newer version
-was backported there. Secondary sources describing it as "Walnascar and later" understate what the LTS has.
+**Check the branch, not the release number.** `scarthgap` and `wrynose` carry 0.6.17.1, while `walnascar`
+carries 0.6.10, because the newer version was backported to the LTS branch.
 
 Install it into a **prod-test image, not production** — it is an analysis tool, and shipping it hands an
 attacker your own gap list:
@@ -123,6 +122,4 @@ The dm-verity kernel fragment is enabled by `IMAGE_CLASSES` containing `dm-verit
 AppArmor and SMACK come from `meta-security` (`recipes-mac`), SELinux from `meta-selinux`, and all three need
 `xattr` in `DISTRO_FEATURES` plus matching kernel symbols and a policy that fits the product.
 
-**This skill does not yet cover MAC policy authoring**: the material to do it properly is not in hand, and a
-half-sourced policy recommendation is worse than a routing note. State the packaging, name the gap, and do not
-generate a policy from general knowledge without saying that is what you are doing.
+Wiring and enforcement checks are in `mac-frameworks.md`; policy authoring is a stated gap.

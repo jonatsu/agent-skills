@@ -106,7 +106,7 @@ require ${@bb.utils.contains('DISTRO_FEATURES', 'security', '${BPN}_security.inc
 and `linux-yocto_security.inc` is four lines, each conditional on a *further* feature — `apparmor`, `smack`,
 `lkrg` in `DISTRO_FEATURES`, and `dm-verity-img` in `IMAGE_CLASSES`. **`security` on its own adds no kernel
 configuration at all.** Note that the verity fragment keys on `IMAGE_CLASSES`, a different mechanism from the
-other three, and that eCryptfs is not in this file at scarthgap despite appearing in secondary summaries.
+other three.
 
 The layer warns at parse time when it is included without the feature, and that warning is silenceable with
 `SKIP_META_SECURITY_SANITY_CHECK = 1` — which is how the misreading survives.
@@ -176,7 +176,8 @@ ${UBOOT_MKIMAGE_SIGN} -F -k "${UBOOT_SIGN_KEYDIR}" -r ${KERNEL_OUTPUT_DIR}/$2 ${
 
 — `-r` is there, so OE marks the key required, but the whole block is inside
 `if [ "x${UBOOT_SIGN_ENABLE}" = "x1" ]`. With `UBOOT_SIGN_ENABLE = "0"` the FIT is assembled and never signed,
-and `FIT_GENERATE_KEYS = "1"` in that state only produces a warning that the keys will not be used.
+and `FIT_GENERATE_KEYS = "1"` in that state only produces a warning that the keys will not be used. From 5.3 the
+same gate is `FIT_KERNEL_SIGN_ENABLE` in `kernel-fit-image.bbclass`, which defaults to `UBOOT_SIGN_ENABLE`.
 
 Which dtb the board actually boots is U-Boot's question — route the verification mechanics to
 **u-boot-development**, and see `chain-of-trust-wiring.md` for what the build owns.

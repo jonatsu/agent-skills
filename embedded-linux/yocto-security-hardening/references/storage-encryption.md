@@ -8,13 +8,9 @@ system's measured state.
 A passphrase-less key file sitting in a read-only rootfs defeats the first threat and none of the second. Say
 which threat a design covers; most embedded designs quietly cover only the first.
 
-**The common failure is worse than that, and it is published advice.** A 2025 professional handbook on
-embedded Linux security walks through automating LUKS unlock by writing a key file to the root filesystem,
-restricting its permissions, and referencing it from `crypttab` — on a machine whose own `lsblk` output shows
-that root filesystem is **not encrypted** — and presents it as an unambiguous improvement in security posture,
-with no threat model stated. A key stored in cleartext next to the thing it unlocks defeats neither threat:
-whoever steals the device gets both halves. Recognise this pattern when reviewing an existing design, and when
-reading guidance about one.
+**A common published pattern defeats both threats:** a LUKS key file stored on an unencrypted root filesystem
+and referenced from `crypttab`. Whoever holds the device holds both halves. Recognise it when you review a design
+or read guidance about one.
 
 ## What the platform decides
 

@@ -6,7 +6,7 @@ Iron Law.
 
 ## What `security_flags.inc` sets
 
-`meta/conf/distro/include/security_flags.inc`, read at scarthgap — 71 lines, of which **21 are `:pn-`
+`meta/conf/distro/include/security_flags.inc`, read at scarthgap: 71 lines, of which **18 are per-recipe
 opt-outs**.
 
 | Variable                   | Value                                                  |
@@ -38,15 +38,15 @@ other or both … The idea would be over time to reduce this list to nothing."* 
 | **`busybox`**, `gcc`                             | `SECURITY_STRINGFORMAT`                             |
 | `glibc`, `glibc-testsuite`, `gcc-runtime`, `ltp` | `SECURITY_STACK_PROTECTOR`                          |
 | `xserver-xorg`                                   | full RELRO → **partial**                            |
-| everything on powerpc                            | PIE                                                 |
+| everything on powerpc (through 5.3)              | PIE                                                 |
 
 So on a typical embedded image, **the primary userspace (`busybox`) builds without
 `-Werror=format-security`, and the bootloader (`grub`) builds with no security CFLAGS at all.** "I enabled
 `security_flags.inc`, hardening is on" is wrong about specific, nameable, security-relevant binaries.
 
-**`_FORTIFY_SOURCE` vanishes silently at `-O0`.** `OPTLEVEL` is filtered out of `SELECTED_OPTIMIZATION`, and
-`lcl_maybe_fortify` is `oe.utils.conditional('OPTLEVEL','-O0','', …)` — a debug-optimised build loses
-fortification with no diagnostic, because the flag would otherwise emit a compiler warning.
+**`_FORTIFY_SOURCE` vanishes silently at `-O0`.** `lcl_maybe_fortify` is
+`oe.utils.conditional('OPTLEVEL','-O0','', …)`, so a recipe or configuration that forces `-O0` loses fortification
+with no diagnostic. `DEBUG_BUILD` uses `-Og` and keeps it.
 
 ## `rust_security_flags.inc` is an exemption file, not a second hardening set
 
@@ -56,7 +56,7 @@ Read it before repeating the common instruction to `require` both files "to enab
 SECURITY_CFLAGS:pn-rust-native   = "${SECURITY_NO_PIE_CFLAGS}"
 SECURITY_CFLAGS:pn-rust-cross-${TARGET_ARCH} = "${SECURITY_NO_PIE_CFLAGS}"
 SECURITY_CFLAGS:pn-rust          = "${SECURITY_NO_PIE_CFLAGS}"
-SECURITY_CFLAGS:pn-rust-llvm     = "${SECURITY_NO_PIE_CFLAGS}"
+SECURITY_CFLAGS:pn-rust-llvm     = "${SECURITY_NO_PIE_CFLAGS}"   # scarthgap
 SECURITY_LDFLAGS:pn-rust-cross-arm = " -lssp_nonshared -lssp"
 ```
 
@@ -67,16 +67,17 @@ defaults.
 
 ## Release delta: 5.0 opt-in, 6.0 on by default
 
-- **Scarthgap.** `meta/conf/distro/defaultsetup.conf` does **not** require `security_flags.inc`. Hardening is
-  opt-in: `require conf/distro/include/security_flags.inc` in your distro conf.
-- **master (→6.0).** `defaultsetup.conf` requires `security_flags.inc` (and `no-static-libs.inc`), and
+- **Scarthgap.** `defaultsetup.conf` does **not** require `security_flags.inc`. `poky.conf` does, so a `poky`
+  build is hardened. A custom distro or `nodistro` needs `require conf/distro/include/security_flags.inc` in its
+  distro conf.
+- **6.0 Wrynose.** `defaultsetup.conf` requires `security_flags.inc` (and `no-static-libs.inc`), and
   `bitbake.conf` includes `conf/distro/defaultsetup.conf` for **every** build after the distro conf — so the
   flags apply whatever `DISTRO` is set to, unless a distro conf hard-assigns the `SECURITY_*` variables
-  itself. Descriptions of this as a `nodistro`-only default do not match the include chain; read
-  `defaultsetup.conf` and `bitbake.conf` at your ref rather than trusting either claim.
+  itself.
 
-The exemption count is 21 on both refs, so the upgrade changes *whether* you get the flags, not *which*
-recipes are excluded.
+At 6.0 the powerpc PIE exemption and the `libgcc` powerpc opt-out are gone, and `gn` gains a
+`SECURITY_STRINGFORMAT` opt-out, so the upgrade changes both whether you get the flags and which recipes are
+excluded.
 
 ## The baseline is behind a mainstream distro
 
@@ -105,7 +106,7 @@ quoting a gap.
 Upstream packages the tool. `meta-security` ships `checksec` 2.6.0 from `slimm609/checksec.sh` at a pinned
 `SRCREV`, with `BBCLASSEXTEND = "native"` — so a host-side scan is *meant* to need no target.
 
-⛔ **`checksec-native` does not build at `scarthgap`.** Measured at commit `b13f170` by building the layer with its own
+**`checksec-native` does not build at `scarthgap`.** Measured at commit `b13f170` by building the layer with its own
 `kas/qemux86-64.yml`: the recipe sets `BBCLASSEXTEND = "native"` but leaves `RDEPENDS:${PN}` carrying `procps`,
 which has no native variant in OE-Core, so BitBake refuses the target:
 
@@ -133,12 +134,12 @@ recipe's source checkout, or install the target package into a prod-test image a
 
 What to read in the output, mapped back to the flags above:
 
-| Column       | Set by                         | Expect                                             |
-| ------------ | ------------------------------ | -------------------------------------------------- |
-| RELRO        | `SECURITY_LDFLAGS`             | Full; **Partial** on `xserver-xorg` by design      |
-| STACK CANARY | `SECURITY_STACK_PROTECTOR`     | Canary found; absent on the exempted recipes       |
-| PIE          | `GCCPIE`/`SECURITY_PIE_CFLAGS` | PIE enabled; absent on powerpc                     |
-| FORTIFY      | `lcl_maybe_fortify`            | present — **absent means `-O0`, not "no support"** |
+| Column       | Set by                         | Expect                                                                                                                         |
+| ------------ | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| RELRO        | `SECURITY_LDFLAGS`             | Full; **Partial** on `xserver-xorg` by design                                                                                  |
+| STACK CANARY | `SECURITY_STACK_PROTECTOR`     | Canary found; absent on the exempted recipes                                                                                   |
+| PIE          | `GCCPIE`/`SECURITY_PIE_CFLAGS` | PIE enabled; absent on powerpc through 5.3                                                                                     |
+| FORTIFY      | `lcl_maybe_fortify`            | present when the binary calls a fortifiable function; **absent can mean no such call, an exempt recipe, or an explicit `-O0`** |
 
 **A per-binary result that matches the exemption table is a pass, not a finding.** Compare against the list
 above before reporting; the useful finding is a binary that is *not* exempted and *not* hardened.
@@ -148,16 +149,16 @@ above before reporting; the useful finding is a binary that is *not* exempted an
 `insane.bbclass` runs these at `do_package_qa`. Their severity matters, because a warning does not stop a
 release:
 
-| Check                      | Default class  | What it catches                                                     |
-| -------------------------- | -------------- | ------------------------------------------------------------------- |
-| `ldflags`                  | **`ERROR_QA`** | the recipe dropped `LDFLAGS`, so RELRO/BIND_NOW never applied       |
-| `already-stripped`         | **`ERROR_QA`** | the recipe stripped its own binaries, defeating debug packaging     |
-| `rpaths`, `useless-rpaths` | **`ERROR_QA`** | build-host paths or redundant search paths burned into ELF headers  |
-| `installed-vs-shipped`     | **`ERROR_QA`** | files built and packaged nowhere — they vanish from the image       |
-| `textrel`                  | `WARN_QA`      | text relocations — a warning only; promote it if you care           |
-| `buildpaths`               | `WARN_QA`      | host paths leaking into the artefact; also a reproducibility signal |
+| Check                      | Default class                         | What it catches                                                     |
+| -------------------------- | ------------------------------------- | ------------------------------------------------------------------- |
+| `ldflags`                  | **`ERROR_QA`**                        | the recipe dropped `LDFLAGS`, so RELRO/BIND_NOW never applied       |
+| `already-stripped`         | **`ERROR_QA`**                        | the recipe stripped its own binaries, defeating debug packaging     |
+| `rpaths`, `useless-rpaths` | **`ERROR_QA`**                        | build-host paths or redundant search paths burned into ELF headers  |
+| `installed-vs-shipped`     | **`ERROR_QA`**                        | files built and packaged nowhere — they vanish from the image       |
+| `textrel`                  | `WARN_QA` at 5.0; `ERROR_QA` from 5.1 | text relocations                                                    |
+| `buildpaths`               | `WARN_QA` at 5.0; `ERROR_QA` from 5.1 | host paths leaking into the artefact; also a reproducibility signal |
 
-Promote a check by moving it: `ERROR_QA:append = " textrel buildpaths"` in the distro conf. **Never clear a
+On 5.0, promote them in the distro conf: `ERROR_QA:append = " textrel buildpaths"`. **Never clear a
 failure with `INSANE_SKIP` before the named paths are explained** — silencing `installed-vs-shipped` does not
 package anything.
 
