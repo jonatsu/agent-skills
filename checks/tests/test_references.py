@@ -58,3 +58,11 @@ def test_a_reference_inside_the_package_or_plain_prose_passes(
     make_package(tmp_path, "skill", {relative: text})
 
     assert check_packages((tmp_path,)) == ()
+
+
+def test_a_working_copy_under_scratch_is_not_checked(tmp_path: Path) -> None:
+    scratch = tmp_path / ".scratch" / "research"
+    scratch.mkdir(parents=True)
+    make_package(scratch, "upstream", {"references/a.md": "See [other](../../other/SKILL.md).\n"})
+
+    assert check_packages((tmp_path,)) == ()

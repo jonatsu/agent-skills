@@ -7,9 +7,12 @@ from pathlib import Path
 import attrs
 
 SKILL_FILE_NAME = "SKILL.md"
-# Top-level directories that hold no deployable skill: archived packages, the script tests, this tooling, and
-# version-control or environment state.
-EXCLUDED_TOP_LEVEL = frozenset({"archived", "tests", "checks", ".git", ".venv", ".github"})
+# Top-level directories that hold no deployable skill: archived packages, the script tests, this tooling,
+# version-control or environment state, and `.scratch`, where sessions keep untracked working copies such as
+# third-party skills under evaluation.
+EXCLUDED_TOP_LEVEL = frozenset(
+    {"archived", "tests", "checks", ".git", ".venv", ".github", ".scratch"}
+)
 
 
 class SkillCatalogError(Exception):

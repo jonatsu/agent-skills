@@ -10,8 +10,9 @@ SKILL_FILE_NAME = "SKILL.md"
 IGNORED_DIRECTORY_NAMES = frozenset(
     {".git", "__pycache__", ".venv", "node_modules", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
 )
-# Top-level directories that hold this tooling and its tests rather than skill packages.
-NON_SKILL_TOP_LEVEL = frozenset({"checks", "tests", ".github"})
+# Top-level directories that hold this tooling and its tests rather than skill packages, and `.scratch`, where
+# sessions keep untracked working copies such as third-party skills under evaluation.
+NON_SKILL_TOP_LEVEL = frozenset({"checks", "tests", ".github", ".scratch"})
 
 
 def skill_packages(roots: Sequence[Path]) -> tuple[Path, ...]:

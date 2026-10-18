@@ -34,6 +34,7 @@ def test_discovery_covers_every_deployable_group(
         "tests/fixture",
         "checks/tests/fixture",
         "review/example/evals/fixtures/x",
+        ".scratch/research/upstream/skills/x",
     ],
 )
 def test_discovery_skips_non_deployable_trees(
