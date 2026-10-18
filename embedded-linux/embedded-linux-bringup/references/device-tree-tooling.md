@@ -14,7 +14,7 @@ dtc -I dtb -O dts -o inspected.dts board.dtb
 
 Kernel DTS files commonly use C includes and macros. Build them through the matching kernel make target with the
 correct `ARCH`, toolchain, configuration, and output directory; passing such a source directly to dtc is insufficient.
-Do not overwrite an existing configured build with an unrelated defconfig.
+Keep an existing configured build's configuration; an unrelated defconfig replaces it.
 
 ```bash
 # In the configured kernel build context; select ARCH/CROSS_COMPILE/O= as needed.
@@ -30,7 +30,7 @@ dt-validate -s /path/to/processed-schema.json board.dtb
 ```
 
 Check actual errors and unmatched bindings; command completion alone does not mean every node was constrained.
-Follow the kernel's [schema guide](https://docs.kernel.org/devicetree/bindings/writing-schema.html).
+Follow the kernel's [schema guide](https://www.kernel.org/doc/html/v6.12/devicetree/bindings/writing-schema.html).
 
 ## Inspect and Patch
 
@@ -50,7 +50,8 @@ cp board.dtb candidate.dtb
 fdtput -t s candidate.dtb /soc/i2c@21a0000 status okay
 ```
 
-dtc v1.7.2's `fdtput` expands its buffer when required. Do not impose a universal `dtc -p` prerequisite.
+dtc v1.7.2's `fdtput` expands its buffer when required.
+Add `dtc -p` padding only for a consumer that edits the blob in place without growing it.
 In-memory bootloader edits can have different allocation constraints.
 See [fdtput's implementation](https://github.com/dgibson/dtc/blob/v1.7.2/fdtput.c).
 
@@ -68,8 +69,9 @@ fdtoverlay -i base.dtb -o merged.dtb sensor.dtbo
 Check referenced labels/paths and required driver support, then validate the merged tree.
 A missing label can be a wrong base or misspelled symbol, not merely an omitted `-@`.
 Bootloader application produces a merged tree before Linux boots; it does not require Linux runtime overlay support.
-Runtime application needs the target kernel's supported API and policy. Do not assume that a vendor configfs interface
-exists in upstream Linux. The [kernel overlay notes](https://docs.kernel.org/devicetree/overlay-notes.html)
+Runtime application needs the target kernel's supported API and policy.
+Upstream Linux has no configfs overlay interface; confirm that a vendor one exists in the running kernel.
+The [kernel overlay notes](https://www.kernel.org/doc/html/v6.12/devicetree/overlay-notes.html)
 describe its in-kernel API, target resolution, and removal constraints.
 
 ## Compare Blobs Without Hiding Conversion Failures

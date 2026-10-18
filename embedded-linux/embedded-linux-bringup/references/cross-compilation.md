@@ -10,16 +10,15 @@ Record architecture, CPU/ISA tuning, ABI, libc, dynamic loader, and library vers
 A tuple is a useful hint, not proof of all these properties: `arm-none-eabi` commonly targets bare metal,
 `arm-linux-gnueabi` and `arm-linux-gnueabihf` select different ARM calling conventions, and
 `aarch64-linux-gnu` identifies a different architecture/ABI.
-Do not infer the complete supported CPU feature set from the tuple alone.
 
 For an SDK, use its supplied setup script in a dedicated shell and inspect its compiler command, flags, and sysroot.
-Do not install or source an untrusted SDK merely to inspect its documentation.
-Yocto 4.3's environment exports `SDKTARGETSYSROOT` and `OECORE_TARGET_SYSROOT`; `$SYSROOT` is not its generic contract.
+Inspect an untrusted SDK's files in place, and install or source it only once you trust it.
+The Yocto SDK environment exports `SDKTARGETSYSROOT` and `OECORE_TARGET_SYSROOT`; `$SYSROOT` is not its generic contract.
 Compiler variables may contain multiple flags, so quoting the entire `CC` string as one executable is also wrong.
 Use the SDK's build integration and preserve its intentional argument expansion.
 
 An SDK generated for another image, tune, libc, or set of libraries is not an ABI guarantee.
-See [Yocto's SDK workflow](https://docs.yoctoproject.org/4.3/sdk-manual/working-projects.html) and inspect the actual
+See [Yocto's SDK workflow](https://docs.yoctoproject.org/5.0/sdk-manual/working-projects.html) and inspect the actual
 setup script rather than copying a dated `/opt/poky/VERSION` path.
 
 ## Autotools: Select the Execution Platform Explicitly
@@ -53,8 +52,7 @@ Inspect the specific `config.sub`/`config.guess` failure and the project's suppo
 
 ## CMake, Meson, and pkg-config
 
-Prefer the SDK's supplied CMake toolchain integration when present. Find it through the SDK environment/documentation;
-do not reconstruct the SDK from an assumed installation path and a bare compiler name.
+Prefer the SDK's supplied CMake toolchain integration when present. Find it through the SDK environment/documentation.
 For a standalone compiler, a minimal toolchain file can establish target lookup rules:
 
 ```cmake

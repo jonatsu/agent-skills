@@ -17,7 +17,7 @@ Unread corrupt data may not prevent boot. Without recovery by configured error c
 
 I/O errors and integrity mismatches have distinct policy controls. Check the installed kernel's options and defaults.
 `ignore_zero_blocks` returns zeroes for blocks expected to be zero rather than accepting arbitrary on-media contents.
-See the [kernel verity documentation](https://docs.kernel.org/admin-guide/device-mapper/verity.html).
+See the [kernel verity documentation](https://www.kernel.org/doc/html/v6.12/admin-guide/device-mapper/verity.html).
 Do not switch to `ignore_corruption` to hide a failing production verification step.
 
 ## Verify the Build Artifacts First
@@ -53,7 +53,7 @@ that stage. Check each failure's command, status, and kernel diagnostic before c
 
 Without an initramfs, the kernel's `dm-mod.create=` interface needs built-in DM initialization, verity, required crypto,
 storage, and filesystem support. A module on the inaccessible final root cannot provide those prerequisites.
-Use the [DM early-init table grammar](https://docs.kernel.org/admin-guide/device-mapper/dm-init.html).
+Use the [DM early-init table grammar](https://www.kernel.org/doc/html/v6.12/admin-guide/device-mapper/dm-init.html).
 
 Derive the table from the actual formatted layout: the mapping length is in sectors, block counts use their specified
 block sizes, and the hash-tree start must account for any header/superblock and offset.
@@ -71,19 +71,18 @@ Distinguish these failures:
 Identify who supplies the root hash and all paths that can replace it or bypass the mapping.
 A signed FIT is not by itself a guarantee that Linux receives authenticated bootargs.
 U-Boot can modify the working FDT after image verification, including taking `bootargs` from the environment;
-see [v2025.10 fdt_chosen](https://github.com/u-boot/u-boot/blob/v2025.10/boot/fdt_support.c#L301).
+see [v2025.10 fdt_chosen](https://github.com/u-boot/u-boot/blob/v2025.10/boot/fdt_support.c#L325-L333).
 
 Possible designs include parameters in an authenticated DT or initramfs with later overrides constrained, or a
 kernel-verified root-hash signature with enforced trusted-key policy.
 For any design, verify the actual final kernel inputs, key trust, signature enforcement, and alternate boot paths.
 An optional signature feature is not enforcement if an unsigned alternative can still be selected.
 Route FIT authoring, environment restrictions, required signatures, and the earlier secure-boot chain to
-**u-boot-development**. Do not prescribe a generic `.its` bootargs property as a complete trust solution.
+**u-boot-development**.
 
 Within an approved test environment, alter the root hash and unauthenticated bootargs independently.
 Those changes must be rejected or unable to change the authenticated root path.
 Also test attempted bypass through another `root=` or boot path; a valid verity mapping is ineffective if unused.
-Do not claim this trust chain verified from a successful `veritysetup verify` alone.
 
 ## Writable State and A/B Updates
 

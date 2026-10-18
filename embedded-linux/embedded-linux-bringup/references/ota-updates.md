@@ -17,11 +17,12 @@ new image. Reproduce only the necessary stage within the approved scope.
 
 In A/B systems, preserve the currently working slot while writing the selected inactive slot.
 In a rescue-based system, prove the independent rescue path remains available before rewriting the production image.
-Do not overwrite the running production root, sole recovery image, or shared boot state as a diagnostic experiment.
 
 ## RAUC: Installation and Boot Confirmation
 
-Inspect `/etc/rauc/system.conf`, slot relationships, bootnames, backend configuration, and current status:
+Find the active `system.conf`: RAUC v1.14 reads the first of `/etc/rauc/`, `/run/rauc/`, and `/usr/lib/rauc/`,
+unless `--conf` selects another. Inspect it with the slot relationships, bootnames, backend configuration, and
+current status:
 
 ```bash
 rauc status --detailed

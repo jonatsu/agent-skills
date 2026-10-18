@@ -52,8 +52,8 @@ Check provider configuration, enumeration, driver binding, firmware, and probe e
 
 ## Clocks and Reset
 
-Use the source release's [clock framework](https://docs.kernel.org/driver-api/clk.html) and
-[reset API](https://docs.kernel.org/driver-api/reset.html).
+Use the source release's [clock framework](https://www.kernel.org/doc/html/v6.12/driver-api/clk.html) and
+[reset API](https://www.kernel.org/doc/html/v6.12/driver-api/reset.html).
 `devm_clk_get()` acquires a handle; it does not enable the clock.
 Pair successful `clk_prepare_enable()` with `clk_disable_unprepare()` on removal and subsequent error paths.
 Check the return from rate changes and respect the driver's runtime power-management lifecycle.
@@ -79,10 +79,10 @@ subsystem interface after the required resources and hardware initialization suc
 
 Inventory adapters with `i2cdetect -l` and inspect bound devices before sending transactions.
 Use the datasheet and driver to determine valid addressing, register width, transfer protocol, and read side effects.
-Do not apply blanket `-y -r` scans. The
+Choose the probe mode and address range per device rather than a blanket `-y -r` scan. The
 [i2c-tools manual](https://git.kernel.org/pub/scm/utils/i2c-tools/i2c-tools.git/tree/tools/i2cdetect.8?h=v4.4)
 documents potentially destructive probes and receive-byte lockups on some devices.
-Do not force access around a bound driver's ownership.
+Leave an address bound to a driver to that driver; forced access bypasses its ownership.
 
 Check supplies, reset, pinmux, bus speed, and pull-ups against the schematic and each device's I/O ratings.
 VDD and VIO naming is device-specific. Mixed voltage domains may need level translation; see
@@ -95,7 +95,7 @@ Start with `gpioinfo` and pinctrl ownership. libgpiod v2 uses chip selection suc
 v1 positional chip syntax differs. A normal gpioget request selects input direction.
 The v2 `--as-is` option preserves direction but still requests the line; it is not a bypass for driver ownership.
 Check the installed tool's help before use. See
-[libgpiod's tools](https://libgpiod.readthedocs.io/en/master/gpio_tools.html).
+[libgpiod's tools](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/tree/tools?h=v2.2.2).
 
 For SPI, establish bus instance, chip select, mode, maximum frequency, and the attached device's command protocol.
 A generic `spidev_test` payload can be a hardware command. Use it only with a suitable unowned/test device and a
@@ -119,9 +119,8 @@ fault. Keep measurements, uncertainty, source, and applied corrections observabl
 
 - Describe board-wide hardware parameters through properties supported by the binding.
 - Read per-unit factory values through the device's supported NVMEM/eFuse or storage mechanism.
-  Do not encode one unit's trim in a shared board DT.
+  Keep each unit's trim in per-unit storage, outside the shared board DT.
 - For IIO devices, inspect the attributes actually exposed and apply the driver's documented offset/scale convention.
-  Do not assume every channel provides calibration controls.
 - Distinguish RTC oscillator trim from Linux system-clock discipline. Use the applicable driver interface or time
   synchronization mechanism rather than an unexplained application correction.
 - Keep actuator limits in the configuration that owns the hardware/application contract and validate their units.

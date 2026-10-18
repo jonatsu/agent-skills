@@ -2,7 +2,7 @@
 
 ## Contents
 
-- [Minimum Context to Collect Before Debugging](#minimum-context-to-collect-before-debugging)
+- [Camera Context](#camera-context)
 - [Investigation Order](#investigation-order)
 - [Essential Diagnostic Commands](#essential-diagnostic-commands)
 - [media-ctl — Inspect and Wire the Media Graph](#media-ctl--inspect-and-wire-the-media-graph)
@@ -12,15 +12,14 @@
 - [yavta — Low-Level Capture and Control](#yavta--low-level-capture-and-control)
 - [V4L2 Buffer Lifecycle](#v4l2-buffer-lifecycle)
 - [Capture Performance Triage](#capture-performance-triage)
-- [What to Record When a Camera Issue is Solved](#what-to-record-when-a-camera-issue-is-solved)
+- [Camera Closing Evidence](#camera-closing-evidence)
 
-## Minimum Context to Collect Before Debugging
+## Camera Context
 
-- Board / SoC / kernel tree
-- Sensor model and bus (I2C, SPI, CSI, parallel)
-- Host-side block (CSI receiver, ISP, bridge, codec)
-- DTS snippets for sensor, endpoint, clocks, reset, and `<rail>-supply` regulators
-- Symptom: probe fail, no `/dev/video*`, no frames, bad colours, timeout, low FPS
+Beyond the target facts that `SKILL.md` asks for, record the sensor model and bus (I2C, SPI, CSI, or parallel), the
+host block (CSI receiver, ISP, bridge, or codec), and the DTS for the sensor, endpoint, clocks, reset, and
+`<rail>-supply` regulators. Name the symptom: probe failure, no `/dev/video*`, no frames, bad colours, timeout, or
+low frame rate.
 
 ## Investigation Order
 
@@ -35,8 +34,9 @@ Resolve video/media node identity, namespace visibility, and capabilities before
 2. **Confirm probe path**
    - Driver is built in or its module loads within the authorized diagnostic scope
    - The enumerated bus device has the intended driver; use only device-supported I2C transactions when needed
-   - Probe logs show resource acquisition and chip-ID steps (`dmesg | grep <sensor>`; enable `dynamic_debug` on the
-     module for detail; `embedded-linux-debugging` covers it)
+   - Probe logs show resource acquisition and chip-ID steps. Read the bounded log around probe before filtering by
+     the sensor name, because a supplier's error may not mention it. `embedded-linux-debugging` covers
+     `dynamic_debug` for more detail.
 3. **Confirm video registration**
    - `/dev/video*` exists
    - `v4l2-ctl --all -d /dev/video0` returns sane information
@@ -55,6 +55,7 @@ Resolve video/media node identity, namespace visibility, and capabilities before
 ## Essential Diagnostic Commands
 
 ```bash
+# Substitute the video and media nodes found with v4l2-ctl --list-devices.
 uname -a                                  # kernel and build info
 dmesg | tail -n 200                       # recent messages — probe success/failure
 v4l2-ctl --list-devices                   # registered video devices
@@ -97,7 +98,6 @@ v4l2-compliance -d /dev/video0
 
 # Include streaming tests (actually queues/dequeues buffers)
 v4l2-compliance -d /dev/video0 -s
-
 ```
 
 Use the installed tool's media-device and sub-device options when those interfaces are relevant.
@@ -144,14 +144,13 @@ yavta --list-controls /dev/video0
 yavta -f UYVY -s 640x480 -c10 -n4 -F/tmp/frame-#.bin /dev/video0
 #   -f format  -s size  -c frame count  -n buffer count  -F filename pattern
 
-# Set a specific control by id while capturing (e.g. test pattern, exposure)
-yavta --set-control '0x009e0901 1' /dev/video0
-
+# Select test pattern menu entry 1 (V4L2_CID_TEST_PATTERN); entry meanings are driver-specific
+yavta --set-control '0x009f0903 1' /dev/video0
 ```
 
 Use yavta against a capture-capable video node. Configure sensor pads through the sub-device interface or media-ctl;
 `/dev/v4l-subdev*` provides controls, events, formats, and routing, not the video buffer capture API.
-See the [kernel sub-device documentation](https://docs.kernel.org/userspace-api/media/v4l/dev-subdev.html).
+See the [kernel sub-device documentation](https://www.kernel.org/doc/html/v6.12/userspace-api/media/v4l/dev-subdev.html).
 Match requested formats to the capabilities reported by the actual device.
 
 ## V4L2 Buffer Lifecycle
@@ -168,7 +167,7 @@ The canonical mmap streaming sequence:
 8. Loop: `VIDIOC_DQBUF` → process frame → `VIDIOC_QBUF` (return the buffer)
 9. Stop with `VIDIOC_STREAMOFF`
 
-**Buffer ownership rule:** do not access a buffer while it is queued to the driver.
+Leave a buffer alone while it is queued to the driver.
 During continued streaming, requeue completed buffers after processing so the queue does not starve.
 Shutdown and error handling may instead stop streaming and release buffers; a final dequeue need not be requeued
 when capture ends. Handle nonblocking readiness, `EAGAIN`, interrupted calls, and failed queues explicitly.
@@ -216,7 +215,7 @@ Then tune in this order, one change at a time, keeping a before/after metric tab
 6. **DMA, cache and allocator** — cache-maintenance cost, and contiguous-memory constraints on vendor stacks.
 7. **Scheduler and system effects** — CPU affinity, competing threads, tracing or debug logging left on.
 
-**Edge-triggered `epoll` is rarely the win it looks like.** It removes redundant wakeups only where the loop drains
+Edge-triggered `epoll` is rarely the win it looks like. It removes redundant wakeups only where the loop drains
 readiness correctly, and it buys missed-event and state bugs in exchange. An insufficient buffer count, slow processing
 before `QBUF`, a needless `memcpy`, a long lock hold, and a queue that never recovers from a transient error all cost
 more in practice. Prove in `perf` or `ftrace` that the wakeup path is the bottleneck before restructuring it.
@@ -233,10 +232,7 @@ Record per profiling run, or the comparison is not reproducible: kernel or BSP r
 count, frame rate and drop count, the top two CPU hotspots, whether the queue starved, and what changed since the
 previous run.
 
-## What to Record When a Camera Issue is Solved
+## Camera Closing Evidence
 
-- The DTS node used (sensor + endpoint + host port)
-- The owning driver files (`drivers/media/i2c/<sensor>.c`)
-- The exact working capture command
-- The kernel log before and after the fix
-- The root cause and the minimal validation step
+Add to the closing report the DTS nodes used (sensor, endpoint, and host port), the owning driver file, the exact
+working capture command, and the kernel log before and after the fix.

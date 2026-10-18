@@ -38,8 +38,8 @@ Use [device-tree-tooling.md](device-tree-tooling.md) to distinguish a missing ch
 For bootargs, compare each required property with `/proc/cmdline`; do not turn the presence of `rootwait` into a
 universal success condition. A system using an initramfs or another root path may not need it.
 
-Report each applicable check as matched, different, failed, or unverified. Do not print an overall build match from
-a partial compatibility check or from a skipped comparison.
+Report each applicable check as matched, different, failed, or unverified.
+Claim an overall match only when every applicable check matched.
 
 ## Decide Whether QEMU Can Exercise the Change
 
@@ -54,7 +54,7 @@ A custom DTB describes existing modeled hardware; it does not create a controlle
 - Verify pinmux, power sequencing, electrical behavior, DMA coherency, timing, and silicon errata on suitable hardware.
 
 Start with the machine-generated DTB. If a custom tree is needed, derive it for the same machine configuration and
-verify its addresses, interrupts, memory, and attached devices. Do not substitute a physical board's DTB into `virt`.
+verify its addresses, interrupts, memory, and attached devices.
 
 ```bash
 # Host: inspect this exact machine configuration's generated tree.

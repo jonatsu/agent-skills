@@ -14,14 +14,15 @@ Route U-Boot commands, image formats, environment edits, and flashing to **u-boo
 If output ends at `Starting kernel`, investigate both sides of the handoff: loaded image/address, CPU entry state,
 DTB, firmware requirements, and early console. That message does not prove the kernel received a valid handoff.
 Kernel output can also be absent while the system runs successfully on a different console.
+When the kernel stays silent after the handoff, `embedded-linux-debugging` covers early console and initcall tracing.
 
 ## Kernel and Root Mount
 
 Inspect the actual command line and the selected kernel's configuration.
 `console=` needs the correct device and console driver. `earlycon` needs a supported UART description, such as the
-appropriate DT stdout path or a verified explicit parameter. Never copy an MMIO UART address from another board.
+appropriate DT stdout path or a verified explicit parameter. Take any MMIO UART address from this board's DT or SoC manual.
 `loglevel=8` permits all ordinary kernel message levels; `ignore_loglevel` is another diagnostic choice with output cost.
-See the matching [kernel parameter reference](https://docs.kernel.org/admin-guide/kernel-parameters.html).
+See the matching [kernel parameter reference](https://www.kernel.org/doc/html/v6.12/admin-guide/kernel-parameters.html).
 
 For `VFS: Unable to mount root fs`, determine whether the root device was found before guessing the filesystem fault:
 
@@ -58,8 +59,8 @@ Not every peripheral exposes a `/dev` node. For cameras, locate devices with `v4
 graph rather than assuming the intended camera is `/dev/video0` or `/dev/video1`.
 
 For udev systems, inspect applicable rules and bounded events using `udevadm info` and `udevadm monitor`.
-Reloading rules and triggering events changes system behavior; scope those operations to the intended device.
-Do not issue a global trigger or change every video device's permissions to test a single missing node.
+Reloading rules and triggering events changes system behavior.
+Scope each trigger and permission change to the one device under test.
 
 ## Service and Application Boundary
 
@@ -85,8 +86,8 @@ not a default for an entire site subnet. Keep the export separate from valuable 
 The target needs early network/NFS support and a reachable server before mounting root.
 An example boot argument fragment is `root=/dev/nfs nfsroot=192.0.2.1:/srv/board-root,v3,tcp ip=dhcp`;
 replace it with the actual server, export, protocol, and network setup.
-Follow the [kernel NFS-root documentation](https://docs.kernel.org/admin-guide/nfs/nfsroot.html).
-Do not edit host exports, restart services, or populate a shared directory without the established scope.
+Follow the [kernel NFS-root documentation](https://www.kernel.org/doc/html/v6.12/admin-guide/nfs/nfsroot.html).
+Edit host exports, restart services, or populate a shared directory only within the established scope.
 
 ## Bring-up Completion
 

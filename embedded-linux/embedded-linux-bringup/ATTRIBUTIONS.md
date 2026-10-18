@@ -22,16 +22,19 @@ links to the binding and carries no code from it.
 
 ### heyu-233: linux-embedded-dev
 
-- Source: <https://github.com/heyu-233/linux-embedded-dev>, `references/camera-v4l2-workflow.md` and
-  `references/full-link-debug-pipeline.md`
+- Source: <https://github.com/heyu-233/linux-embedded-dev>, `references/camera-v4l2-workflow.md`,
+  `references/v4l2-buffer-lifecycle.md`, `references/perf-tuning-checklist.md`,
+  `references/profiling-playbook.md`, and `references/full-link-debug-pipeline.md`
 - License: `MIT`
 - Version: `53e7526e3ba3ffe4018845a58af328f897ffd60a`
 
-The camera workflow was the starting base for `references/camera-v4l2.md`, which reorganizes it and adds media graph,
-capture, and diagnostic detail. The full-link pipeline supplied the case of two host network interfaces on the board's
-subnet with a successful ping and a stalled SSH session, kept as a hypothesis to verify. Formerly adapted: earlier
-revisions also followed the perf tuning checklist and the profiling playbook; that material now lives in the
-`embedded-linux-debugging` skill.
+The camera workflow was the starting base for `references/camera-v4l2.md`, which reorganizes it and adds media
+graph, capture, and diagnostic detail. The buffer lifecycle file supplied that reference's mmap streaming sequence
+and its choice between blocking and poll-based capture. The perf tuning checklist and the profiling playbook
+supplied its capture performance triage: the minimal-capture bisection, the tuning order, the case against
+edge-triggered `epoll`, the profile interpretations, and the per-run record. The full-link pipeline supplied the
+case of two host network interfaces on the board's subnet with a successful ping and a stalled SSH session, kept as
+a hypothesis to verify.
 
 ### Bootlin: Embedded Linux system development training
 
