@@ -40,6 +40,11 @@ as the runtime authorities.
   a new wildcard member, name an already locked sibling or use bare `--update`. To prune a removed member,
   name it while it remains locked, name a sibling, or use bare `--update`. Bare update also advances every
   moving remote source.
+- Bumping a `ref:` pin does not relock a skill whose content is unchanged: its lock entry keeps the old
+  `source_revision`, so a `kst sync --update <name>` or a bare sync can leave sibling skills on the previous
+  ref. Reconcile with `kst lock --project` for the whole project, or `kst lock -P <name>...` to re-resolve only
+  the source holding the lagging skills. `--project` is required, because `kst lock` writes the global lock by
+  default.
 - `kst lock --check` fully checks skill lock drift and checks revision drift for tracked non-skill assets. It
   does not write the lock or destinations, but it may fetch, re-resolve, and populate the source cache.
   `kst sync --locked` never fetches; every destination must match the lock, or one verified installed copy must
