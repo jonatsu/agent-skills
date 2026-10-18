@@ -72,14 +72,13 @@ it is licensed.
 
 ## Layout
 
-| Path                        | Holds                                                                                      |
-| --------------------------- | ------------------------------------------------------------------------------------------ |
-| `<domain>/<skill>/`         | Skills grouped by subject: `agents`, `engineering`, `tools`, `embedded-linux` and others   |
-| `<domain>/<group>/<skill>/` | A closely related set within a domain, such as `development/python`                        |
-| `claude/<skill>/`           | Skills that only work in Claude Code                                                       |
-| `archived/`                 | Retired skills kept for reference and deployed nowhere; `archived/README.md` explains each |
-| `checks/`                   | The checks behind `just check` and their tests                                             |
-| `tests/`                    | Tests for scripts bundled inside skills                                                    |
+| Path                        | Holds                                                                                    |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| `<domain>/<skill>/`         | Skills grouped by subject: `agents`, `engineering`, `tools`, `embedded-linux` and others |
+| `<domain>/<group>/<skill>/` | A closely related set within a domain, such as `development/python`                      |
+| `claude/<skill>/`           | Skills that only work in Claude Code                                                     |
+| `checks/`                   | The checks behind `just check` and their tests                                           |
+| `tests/`                    | Tests for scripts bundled inside skills                                                  |
 
 The layout says what a skill is about, not how an agent loads it. Which skills an agent lists in every session
 and which it loads on demand is the installer's choice.
@@ -113,4 +112,4 @@ These sources were consulted about how the skills should be written and structur
 - [ENGINEERING-PIPELINE.md](engineering/README.md): core engineering skills structure, intended fit together and workflow,
   from an idea to verified work
 - [TODO.md](TODO.md): the skill backlog, review ledgers and unevaluated candidate sources
-- [archived/README.md](archived/README.md): why each retired skill was archived, and how to revive one
+- The `archived` branch: retired skills kept for reference, with why each was archived

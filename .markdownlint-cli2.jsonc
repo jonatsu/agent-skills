@@ -86,9 +86,6 @@
   },
   "globs": ["**/*.md", "**/*.markdown", "**/*.mdown", "**/*.mkdn", "**/*.mdx"],
   "ignores": [
-    // Archived skills are pending review and are deployed nowhere.
-    "archived/**",
-
     // Verbatim or vendored third-party material.
     "**/skill-forge/scripts/skills-ref/**",
     // brooks-lint skills vendored from github.com/hyhmrright/brooks-lint. Their

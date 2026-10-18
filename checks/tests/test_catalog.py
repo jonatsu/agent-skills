@@ -30,7 +30,6 @@ def test_discovery_covers_every_deployable_group(
 @pytest.mark.parametrize(
     "excluded",
     [
-        "archived/retired",
         "tests/fixture",
         "checks/tests/fixture",
         "review/example/evals/fixtures/x",
@@ -49,13 +48,11 @@ def test_discovery_skips_non_deployable_trees(
 def test_explicit_names_bypass_the_exclusions(
     tmp_path: Path, write_skill: Callable[[str], Path]
 ) -> None:
-    archived = write_skill("archived/retired")
+    fixture = write_skill("tests/fixture")
 
-    sources = discover_skill_sources(
-        tmp_path, (Path("archived/retired"),), working_directory=tmp_path
-    )
+    sources = discover_skill_sources(tmp_path, (Path("tests/fixture"),), working_directory=tmp_path)
 
-    assert [source.directory for source in sources] == [archived]
+    assert [source.directory for source in sources] == [fixture]
 
 
 def test_explicit_names_report_every_invalid_entry(tmp_path: Path) -> None:

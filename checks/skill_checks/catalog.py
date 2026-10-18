@@ -9,12 +9,10 @@ import attrs
 from skill_checks.git_index import candidate_files
 
 SKILL_FILE_NAME = "SKILL.md"
-# Top-level directories that hold no deployable skill: archived packages, the script tests, this tooling,
+# Top-level directories that hold no deployable skill: the script tests, this tooling,
 # version-control or environment state, and `.scratch`, where sessions keep untracked working copies such as
 # third-party skills under evaluation.
-EXCLUDED_TOP_LEVEL = frozenset(
-    {"archived", "tests", "checks", ".git", ".venv", ".github", ".scratch"}
-)
+EXCLUDED_TOP_LEVEL = frozenset({"tests", "checks", ".git", ".venv", ".github", ".scratch"})
 
 
 class SkillCatalogError(Exception):

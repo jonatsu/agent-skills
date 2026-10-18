@@ -7,7 +7,7 @@ Reviews are recorded in the author's private configuration repository, which als
 completed 2026-09 review in its `docs/evaluations/skills/2026-09-shared-skill-review.md`, and the restored
 embedded skills' campaign in `docs/evaluations/skills/2026-09-16-embedded-skill-review-ledger.md`. References
 below to "agent-setup" name that repository. Archived reviews still deferred are the rows marked "Review is
-deferred" in [archived/README.md](archived/README.md).
+deferred" in `archived/README.md` on the `archived` branch.
 
 ## Engineering Pipeline Follow-Ups
 

@@ -9,8 +9,8 @@ Read the focused source before acting:
 - `README.md` describes the layout and how the skills are used.
 - `engineering/README.md` states the intended flow of the core engineering skills, from idea to verified work.
   Read it before changing a pipeline skill's handoff or scope.
-- `archived/README.md` defines the archive procedure, and its "Review is deferred" rows record which reviews are
-  still outstanding.
+- `archived/README.md` on the `archived` branch defines the archive procedure, and its "Review is deferred" rows
+  record which reviews are still outstanding.
 - `TODO.md` holds the skill backlog and unevaluated candidate sources.
 
 ## Commands
@@ -110,9 +110,10 @@ A durable document describes its subject as it stands. These rules come from
 
 - Keep every package file byte-identical to the last deployed version: `SKILL.md`, references, scripts,
   attribution and upstream licence files.
-- Move an individual package to `archived/<skill>/`. When archiving an entire domain, keep it as
-  `archived/<domain>/<skill>/` rather than flattening its packages.
-- Add `ARCHIVED.md` inside each moved package and update `archived/README.md`.
+- Archived skills live on the `archived` branch, never on `main`. Copy the package there as `archived/<skill>/`,
+  then remove it from `main`. When archiving an entire domain, keep it as `archived/<domain>/<skill>/` rather
+  than flattening its packages.
+- Add `ARCHIVED.md` inside each moved package and update `archived/README.md` on that branch.
 
 ## Git Safety in `git-commits-and-recovery`
 

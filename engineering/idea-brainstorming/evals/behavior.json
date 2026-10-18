@@ -11,7 +11,9 @@
       },
       {
         "id": "archived-idea-forge",
-        "skill_path": "../../../../archived/idea-forge"
+        "source": "https://github.com/jonatsu/agent-skills",
+        "revision": "5c1be2630498ba101332173beb0477d90edeaccc",
+        "skill_path": "archived/idea-forge"
       },
       {
         "id": "superpowers-b36e0829",
