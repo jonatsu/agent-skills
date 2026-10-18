@@ -110,6 +110,12 @@ as `writing-specs` and `technical-design` do.
 | `home-manager`               | 2026-10-06, `cc25507a`           | 2026-10-06, `cc25507a`                            |
 | `nixos-config`               | 2026-10-06, `1ff8e87d`           | 2026-10-06, `1ff8e87d`                            |
 | `apt-fetch-emulation`        | 2026-10-11, `2b958871`, imported | 2026-10-11, `2b958871`, imported                  |
+| `brooks-audit`               | 2026-10-18, no change            | 2026-10-18, `f925aa52`, vendored upstream         |
+| `brooks-debt`                | 2026-10-18, no change            | 2026-10-18, `e3c48194`, vendored upstream         |
+| `brooks-health`              | 2026-10-18, no change            | 2026-10-18, `042f69b7`, vendored upstream         |
+| `brooks-review`              | 2026-10-18, no change            | 2026-10-18, `b465472d`, vendored upstream         |
+| `brooks-sweep`               | 2026-10-18, no change            | 2026-10-18, `81f027d9`, vendored upstream         |
+| `brooks-test`                | 2026-10-18, no change            | 2026-10-18, `f23636e6`, vendored upstream         |
 
 ## Skills With No Usage — Recheck After 2026-10-08
 
