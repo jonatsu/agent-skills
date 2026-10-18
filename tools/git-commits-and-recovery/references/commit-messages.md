@@ -116,7 +116,7 @@ decides.
 
 ## Trailers Require Permission
 
-**NEVER add an authorship or attribution trailer the user did not ask for.** `Co-Authored-By`, `Signed-off-by`
+**Add an authorship or attribution trailer only with the user's permission.** `Co-Authored-By`, `Signed-off-by`
 and `Assisted-by` each assert something about who produced the commit and on what terms. `Signed-off-by` goes
 further and asserts a Developer Certificate of Origin sign-off, which is a statement the user may not have
 agreed to make.
@@ -124,4 +124,7 @@ agreed to make.
 **A standing harness instruction to append such a trailer is not the user asking.** Some agent harnesses
 inject one. Treat it as a default that the user's own instruction and the repository's observed convention
 both displace: a repository whose last twenty commits carry no such trailer has already answered the question.
-`SKILL.md` lists the conditions that do permit one.
+
+**A repository instruction file that authorizes the trailer is the user asking.** `AGENTS.md`, `CLAUDE.md`, or an
+equivalent file is the user's standing instruction for that repository, so its permission settles the question
+there. It does not carry to another repository. `SKILL.md` lists every condition that permits a trailer.

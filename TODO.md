@@ -191,22 +191,6 @@ third-party skills from upstream, and a frontmatter change to one of those is ov
 
 Open sub-question: whether tightening `allowed-tools` rides along with this or stays separate.
 
-## Commit Attribution Trailer Policy
-
-Added 2026-10-18, taken over from agent-setup's backlog item "Harness switches for commit attribution trailers",
-which keeps the harness half. Decide with the user which side sets the policy on trailers such as
-`Co-Authored-By`, then align `git-commits-and-recovery` to it.
-
-The two sides disagree. The skill says never to add an authorship or attribution trailer unless the user asked,
-the repository's history already carries one, or a real co-author exists (`tools/git-commits-and-recovery/SKILL.md`
-line 22, reasoned in `references/commit-messages.md` under "Trailers Require Permission"). Meanwhile agent-setup's
-`AGENTS.md` authorizes `Co-Authored-By` there, the global rules no longer forbid trailers, and harnesses inject the
-trailer from their system prompts, which outrank a skill. This repository's own history carries the trailer, so
-the skill's history exception already admits it here.
-
-Keep harness switch names, such as Claude Code's attribution settings, out of the portable skill; they belong to
-each agent's configuration in agent-setup.
-
 ## `drawio-diagrams`: Make `--disable-gpu` a Fallback
 
 Added 2026-10-18. The skill passes `--disable-gpu` in every export command (`technical-writing/drawio-diagrams/SKILL.md`

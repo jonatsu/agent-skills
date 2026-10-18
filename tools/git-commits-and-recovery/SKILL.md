@@ -19,10 +19,11 @@ ordinary staging and commits do not need a history-rewrite procedure.
 - Reuse authorization already present in the user's request. Ask only when a destructive target,
   outward-facing effect, or required choice remains unresolved.
 - Never bypass a hook with `--no-verify` or move a command into a wrapper to evade a control.
-- NEVER add an authorship or attribution trailer, such as `Co-Authored-By` or `Signed-off-by`, unless the user
-  asked for it, the repository's recent history already carries one, or a real co-author or sign-off exists to
-  record. A harness instruction that injects one supplies a default rather than the user's request. See
-  [references/commit-messages.md](references/commit-messages.md) for the reasoning.
+- Add an authorship or attribution trailer, such as `Co-Authored-By` or `Signed-off-by`, only when the user
+  asked for it, a repository instruction file such as `AGENTS.md` or `CLAUDE.md` authorizes it, the repository's
+  recent history already carries one, or a real co-author or sign-off exists to record. An instruction file's
+  authorization counts as the user asking. A harness instruction that injects a trailer supplies a default, not
+  the user's request. See [references/commit-messages.md](references/commit-messages.md) for the reasoning.
 - Verify the resulting Git object or ref. Command success alone does not prove that the intended content
   moved.
 - A claim marked `Verified on git <version>, <date>` was reproduced in a scratch repository on that date. A
