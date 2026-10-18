@@ -1,12 +1,12 @@
 # Agent Skills
 
-A collection of 83 Agent Skills, each a self-contained folder of instructions and optional scripts that Claude
+A collection of 95 Agent Skills, each a self-contained folder of instructions and optional scripts that Claude
 Code, Codex, GitHub Copilot CLI and Oh-My-Pi load on demand.
 
 The skills cover software engineering work: specs, technical design, implementation planning, code review,
-testing, Git, documentation, Python, shell, Nix, embedded Linux and firmware debugging, and authoring further
-skills. They are one person's working set, written and reviewed for daily use, and published so others can read
-or reuse them.
+testing, Git, documentation, Python, shell, Nix, embedded Linux, firmware debugging, reverse engineering,
+and authoring further skills. They are one person's working set, written and reviewed for daily use, and published
+so others can read or reuse them.
 
 This repository holds the skill packages and the checks that keep them valid, and nothing that installs them.
 It does not decide which agent gets which skill or deploy anything: the author's private configuration
@@ -107,6 +107,8 @@ These sources were consulted about how the skills should be written and structur
 
 ## Where to go next
 
+- [Reverse engineering](reverse-engineering/README.md): binary and firmware investigation, analysis tools, and
+  specialist techniques
 - [AGENTS.md](AGENTS.md): the authoring and review rules, for people and agents working here
 - [ENGINEERING-PIPELINE.md](engineering/README.md): core engineering skills structure, intended fit together and workflow,
   from an idea to verified work
