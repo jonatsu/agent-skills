@@ -13,10 +13,9 @@ secrets:
 hooks:
     pre-commit run --all-files
 
-# The checks' own tests and the bundled-script tests.
+# The checks' own tests.
 test:
     {{ uv }} pytest -q
-    {{ uv }} python -m unittest discover -s tests -t tests
 
 # Both validators over one skill: the Agent Skills specification, then skill-forge's policy.
 skill-check skill:

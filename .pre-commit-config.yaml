@@ -106,39 +106,7 @@ repos:
         files: ^checks/
         types: [python]
         pass_filenames: false
-      # The skill checks read the whole tree, so each runs once whenever a file it reads changes.
-      - id: skill-spec
-        name: Agent Skills specification (skills-ref)
-        entry: uv run --frozen skill-checks spec
-        language: system
-        files: (^|/)SKILL\.md$
-        pass_filenames: false
-      # Always runs: the policy also checks that each referenced file exists and that a LICENSE.upstream has
-      # its ATTRIBUTIONS.md, so deleting or renaming one of those breaks it without any SKILL.md changing.
-      - id: skill-policy
-        name: skill-forge local policy
-        entry: uv run --frozen skill-checks policy
-        language: system
-        always_run: true
-        pass_filenames: false
-      - id: skill-descriptions
-        name: skill descriptions are inline and within budget
-        entry: uv run --frozen skill-checks descriptions
-        language: system
-        files: (^|/)SKILL\.md$
-        pass_filenames: false
-      - id: skill-attributions
-        name: skill attributions follow the provenance scheme
-        entry: uv run --frozen skill-checks attributions
-        language: system
-        files: (^|/)ATTRIBUTIONS\.md$|^checks/skill_checks/attributions\.py$
-        pass_filenames: false
-      - id: skill-names
-        name: skill names are unique
-        entry: uv run --frozen skill-checks names
-        language: system
-        files: (^|/)SKILL\.md$
-        pass_filenames: false
+      # Archived packages stay as they were last deployed, so the skill validators do not run on this branch.
       - id: skill-references
         name: no reference leaves its skill package
         entry: uv run --frozen skill-checks references

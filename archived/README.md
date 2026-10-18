@@ -1,18 +1,10 @@
 # Archived skills
 
-Skills kept for reference that no longer deploy anywhere. **Nothing in this
-directory reaches any agent.**
-
-The configuration that installs these skills names each skill group it deploys
-as a Kasetto `sub-dir`, and none names `archived`. A directory here is therefore
-invisible to deployment, with no exclusion list to maintain.
+Skills kept for reference that no longer deploy anywhere. They live on the `archived` branch, which carries
+these packages and the repository's check tooling but no live skill. **Nothing on this branch reaches any
+agent**: the installing configuration pins a commit of `main`, which does not hold these packages.
 
 ## What lives here
-
-The embedded domain was restored on 2026-09-07 and now lives in `../embedded-linux/`. Its five skills use the
-names `buildroot-development`, `embedded-linux-bringup`, `kas-build-orchestration`, `u-boot-development`, and
-`yocto-openembedded-development`. Their review progress is tracked in
-[../TODO.md](../TODO.md#re-review-the-other-four-embedded-skills--non-urgent).
 
 A row saying "Review is deferred" is the authoritative record that the package's review is still outstanding.
 The 2026-09 review campaign's own ledger is retired; its verdicts and evidence are in
@@ -33,16 +25,17 @@ agent-setup's `docs/evaluations/skills/2026-09-shared-skill-review.md`, which re
 
 ## Archiving a skill
 
-1. `git mv <group>/<name> archived/<name>`, using `git mv` so history and rename
-   detection survive. When archiving a complete domain, preserve it as
-   `archived/<domain>/<name>` instead of flattening its skills.
+1. On the `archived` branch, copy the package from `main` and move it into place:
+   `git checkout main -- <group>/<name>`, then `git mv <group>/<name> archived/<name>`.
+   When archiving a complete domain, preserve it as `archived/<domain>/<name>` instead
+   of flattening its skills. Name the `main` commit it came from in the commit body.
 2. Write `ARCHIVED.md` inside the moved skill package: the date, why it was archived,
    what it was deployed to last, and where any successor lives. **Leave
    `SKILL.md` byte-identical to what was last deployed**: the reference copy is
    only worth keeping if it is exactly what ran.
-3. Add a row to the table above.
-4. Update whatever named the skill or domain as live: `README.md`, and any open item in
-   `TODO.md` that planned future work on it.
+3. Add a row to the table above, and commit on `archived`.
+4. On `main`, `git rm -r <group>/<name>`, and update whatever named the skill or domain
+   as live: `README.md`, and any open item in `TODO.md` that planned future work on it.
 5. The skill leaves the agents when the installing configuration next bumps its pin
    to this repository. If the archival empties a group, that bump must also drop the
    group's `sub-dir`, so say so in the commit body. Confirm the removal there, against
