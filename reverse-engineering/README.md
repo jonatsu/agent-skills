@@ -1,6 +1,6 @@
 # Reverse Engineering
 
-Twelve self-contained skills support evidence-driven investigation of binaries, firmware, protocols, and memory\
+Thirteen self-contained skills support evidence-driven investigation of binaries, firmware, protocols, and memory\
 captures. Choose a skill by the question to answer. Tool requirements apply to the selected route, rather than the\
 whole group.
 
@@ -9,6 +9,7 @@ whole group.
 | Question                                                                                    | Skill                                                                       |
 | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | Where should the investigation start, and what experiment comes next?                       | [reverse-engineering-methodology](reverse-engineering-methodology/SKILL.md) |
+| What format or container is an unknown file or blob, judged from its signatures?            | [binary-file-identification](binary-file-identification/SKILL.md)           |
 | What do native instructions, control flow, and data accesses mean?                          | [binary-analysis-patterns](binary-analysis-patterns/SKILL.md)               |
 | How can Ghidra analysis, types, signatures, and names become more accurate?                 | [ghidra-firmware-analysis](ghidra-firmware-analysis/SKILL.md)               |
 | How can radare2 query, corroborate, match, and preserve analysis?                           | [radare2-firmware-analysis](radare2-firmware-analysis/SKILL.md)             |
@@ -21,7 +22,8 @@ whole group.
 | What message structure and state does an undocumented protocol implement?                   | [protocol-reverse-engineering](protocol-reverse-engineering/SKILL.md)       |
 | What do RAM images and process dumps establish about runtime behavior?                      | [memory-forensics](memory-forensics/SKILL.md)                               |
 
-Methodology owns investigation planning and evidence tracking. Binary analysis owns native-code interpretation. Tool\
+Methodology owns investigation planning and evidence tracking. File identification owns naming a format from its\
+signatures, the step before binary analysis, which owns native-code interpretation. Tool\
 skills own execution and tool-specific analytical judgment. Each package carries the essentials for its own job.
 
 ## Use and install
