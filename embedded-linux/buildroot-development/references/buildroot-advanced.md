@@ -1,9 +1,5 @@
 # Buildroot — Advanced Topics
 
-`BR2_EXTERNAL` trees, external toolchains and the wrapper, out-of-tree CMake and Meson against the staging sysroot,
-`pkg-config` sysroot, SDK generation and `environment-setup`, `make legal-info`, reproducible builds, dependency graphs,
-out-of-tree `O=` builds, and ccache.
-
 For package `.mk`/`Config.in` authoring, see `buildroot-packages.md`. For board files, overlays, and `genimage`, see
 `buildroot-board-support.md`.
 
@@ -81,7 +77,7 @@ make BR2_EXTERNAL="/path/to/bsp-tree /path/to/app-tree" menuconfig
 ```
 
 Buildroot records `BR2_EXTERNAL` in `output/.br2-external.mk`, so later `make` calls in the same output directory do not
-need to repeat it. That file is generated — you MUST NOT hand-edit it.
+need to repeat it. That file is generated; change `BR2_EXTERNAL` on the command line instead.
 
 ### `provides/` (optional)
 
@@ -94,24 +90,31 @@ Lets the external tree add selectable providers for `toolchain`, `jpeg`, `openss
 - Skips rebuilding the toolchain on every `make distclean`.
 - Lets you use a pre-validated toolchain from Bootlin, Linaro, or your own crosstool-NG build.
 
+Bootlin and Arm toolchains are also available as downloadable profiles under Toolchain → Toolchain, which declare
+their features for you.
+
 Check the candidate against the release's external-toolchain requirements before configuring it. A general application
 SDK or the host distribution's toolchain is not interchangeable with the external toolchain Buildroot expects.
 Use a supported profile or a suitable purpose-built toolchain. The
 [first-party toolchain documentation](https://github.com/buildroot/buildroot/blob/2026.08/docs/manual/configure.adoc)
 explains the supported inputs, including the OE/Yocto SDK exclusion; verify a real candidate's libc and features.
 
-### Configuring in menuconfig
+### Configuring a custom external toolchain
+
+Set these symbols, or their menuconfig prompts under "Toolchain":
 
 ```
-Toolchain → Toolchain type → External toolchain
-Toolchain → Toolchain → Custom toolchain
-Toolchain → Toolchain path → /path/to/toolchain
-Toolchain → External toolchain prefix → arm-linux-gnueabihf
-Toolchain → External toolchain C library → glibc
+BR2_TOOLCHAIN_EXTERNAL=y
+BR2_TOOLCHAIN_EXTERNAL_CUSTOM=y
+BR2_TOOLCHAIN_EXTERNAL_PREINSTALLED=y
+BR2_TOOLCHAIN_EXTERNAL_PATH="/path/to/toolchain"
+BR2_TOOLCHAIN_EXTERNAL_CUSTOM_PREFIX="arm-linux-gnueabihf"
 ```
+
+Then declare the toolchain's gcc version, kernel-headers series, C library, and features to match the binary.
 
 Buildroot checks the features you declare (threads, C++, RPC, wide-char, and so on) against what the toolchain binary
-actually provides, and errors at configure time on a mismatch. In particular the declared libc MUST match the
+actually provides, and errors at configure time on a mismatch. The declared C library has to match the
 toolchain's: a glibc external toolchain cannot back a musl or uClibc target.
 
 ### Toolchain wrapper debugging
@@ -125,18 +128,10 @@ export BR2_DEBUG_WRAPPER=2
 make <pkg>-rebuild
 ```
 
-### Pre-built toolchain sources
-
-| Source             | URL                                   |
-| ------------------ | ------------------------------------- |
-| Bootlin toolchains | <https://toolchains.bootlin.com/>     |
-| Arm GNU toolchains | <https://developer.arm.com/downloads> |
-| crosstool-NG       | <https://crosstool-ng.github.io/>     |
-
 ## CMake and Meson Against the Staging Sysroot
 
-Build an out-of-tree project against Buildroot's staging sysroot using the toolchain files Buildroot generates. Those
-files are generated — do NOT edit them; your changes are overwritten on the next build.
+Build an out-of-tree project against Buildroot's staging sysroot using the toolchain files Buildroot generates. Treat
+those files as generated output: Buildroot overwrites them on the next build.
 
 ### CMake (toolchain file)
 
@@ -261,8 +256,8 @@ make <pkg>-graph-depends
 # Output format (default: pdf)
 BR2_GRAPH_OUT=svg make graph-depends
 
-# Trim depth and drop transitive edges for a readable graph
-BR2_GRAPH_DEPS_OPTS='-d 3 --no-transitive' make graph-depends
+# Limit depth for a readable graph; add --transitive to draw transitive edges
+BR2_GRAPH_DEPS_OPTS='-d 3' make graph-depends
 ```
 
 Graphs land in `output/graphs/graph-depends.<format>`.

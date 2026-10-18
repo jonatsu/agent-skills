@@ -1,8 +1,5 @@
 # Buildroot Package Infrastructure
 
-Package macros, `Config.in` wiring, the `.mk` variables that matter, fetch methods, staging vs target install, rebuild
-commands, and package-failure triage.
-
 For `BR2_EXTERNAL` layout and where custom packages live, see `buildroot-advanced.md`. For a symbol that will not appear
 or a `select` that warns, see `kconfig-troubleshooting.md`.
 
@@ -11,17 +8,18 @@ or a `select` that warns, see `kconfig-troubleshooting.md`.
 - [Package Infrastructure Types](#package-infrastructure-types)
 - [`Config.in` Structure](#configin-structure)
 - [Key Package Variables](#key-package-variables)
+- [Hashes and Package Checks](#hashes-and-package-checks)
 - [Fetch Methods](#fetch-methods)
 - [Package Rebuild Commands](#package-rebuild-commands)
 - [Local Source Iteration](#local-source-iteration)
 - [Host Package Dependencies](#host-package-dependencies)
-- [Build Order vs Runtime Presence (there is no RDEPENDS)](#build-order-vs-runtime-presence-there-is-no-rdepends)
+- [Build Order and Runtime Presence](#build-order-and-runtime-presence)
 - [Debugging Package Failures](#debugging-package-failures)
 
 ## Package Infrastructure Types
 
-Each package picks one macro. The macro decides how the configure, build, and install steps run; you MUST match it to
-the upstream build system.
+Each package picks one macro. The macro decides how the configure, build, and install steps run, so match it to the
+upstream build system.
 
 ### `generic-package` / `host-generic-package`
 
@@ -48,8 +46,8 @@ endef
 $(eval $(generic-package))
 ```
 
-Do NOT set `MYPKG_SITE_METHOD` here: an `https://` site auto-selects the `wget` backend. Set the method explicitly only
-to override that inference (see *Fetch Methods*).
+Leave `MYPKG_SITE_METHOD` unset here: an `https://` site selects the `wget` backend. Set it only to override that
+inference (see *Fetch Methods*).
 
 ### `autotools-package`
 
@@ -86,7 +84,7 @@ MYPKG_CONF_OPTS = -DENABLE_TESTS=OFF -DBUILD_SHARED_LIBS=ON
 $(eval $(cmake-package))
 ```
 
-Buildroot injects `-DCMAKE_TOOLCHAIN_FILE=...` itself. You MUST NOT set it by hand.
+Buildroot passes `-DCMAKE_TOOLCHAIN_FILE` itself; leave it out of `MYPKG_CONF_OPTS`.
 
 ### `meson-package`
 
@@ -113,7 +111,7 @@ For Python packages. Declare the build backend with `SETUP_TYPE`.
 ```makefile
 MYPKG_VERSION = 1.0.0
 MYPKG_SOURCE = mypkg-$(MYPKG_VERSION).tar.gz
-MYPKG_SITE = https://pypi.org/packages/source/m/mypkg
+MYPKG_SITE = https://files.pythonhosted.org/packages/<hash-path>
 MYPKG_LICENSE = MIT
 MYPKG_LICENSE_FILES = LICENSE
 MYPKG_SETUP_TYPE = setuptools
@@ -170,7 +168,7 @@ config BR2_PACKAGE_MYPKG
 ```
 
 - `depends on` — hides the option until the dependency is enabled.
-- `select` — force-enables the named symbol, but does NOT check that symbol's own `depends on`. An unguarded `select` is
+- `select` — force-enables the named symbol, without checking that symbol's own `depends on`. An unguarded `select` is
   the usual source of "unmet direct dependencies" warnings; see `kconfig-troubleshooting.md`.
 - `BR2_TOOLCHAIN_HAS_THREADS` — the standard guard for anything needing POSIX threads.
 
@@ -195,15 +193,22 @@ Or source it from your `BR2_EXTERNAL` tree's `Config.in` (see `buildroot-advance
 | `<PKG>_GIT_SUBMODULES`      | `YES` to init submodules after clone                                         |
 | `<PKG>_LICENSE`             | SPDX identifier(s)                                                           |
 | `<PKG>_LICENSE_FILES`       | Path(s) to license text within the source                                    |
-| `<PKG>_DEPENDENCIES`        | Packages that MUST build first (build order)                                 |
+| `<PKG>_DEPENDENCIES`        | Packages that build first (build order only)                                 |
 | `<PKG>_CONF_OPTS`           | Extra options for configure/cmake/meson                                      |
 | `<PKG>_MAKE_OPTS`           | Extra options passed to `make` at build                                      |
 | `<PKG>_INSTALL_TARGET`      | `YES` (default) — install into `$(TARGET_DIR)`                               |
 | `<PKG>_INSTALL_STAGING`     | `YES` — install headers + `.so` into `$(STAGING_DIR)`                        |
 | `<PKG>_INSTALL_TARGET_CMDS` | Target install commands; infrastructure may provide a default                |
 
-A library that other packages link against MUST set `<PKG>_INSTALL_STAGING = YES`, or its headers and shared objects
-never reach `$(STAGING_DIR)` and downstream links fail.
+Set `<PKG>_INSTALL_STAGING = YES` for a library that other packages link against; otherwise its headers and shared
+objects never reach `$(STAGING_DIR)` and downstream links fail.
+
+## Hashes and Package Checks
+
+Give every downloaded source a `package/<pkg>/<pkg>.hash` file with its SHA-256 and each license file's hash.
+Buildroot only warns when the file is missing, unless `BR2_DOWNLOAD_FORCE_CHECK_HASHES` is set. Lint new or changed
+files with `./utils/check-package package/<pkg>/*`. Build the package across toolchains with `utils/test-pkg` and a
+config snippet. For a PyPI package, generate the first draft with `utils/scanpypi`.
 
 ## Fetch Methods
 
@@ -234,7 +239,7 @@ MYPKG_SITE_METHOD = local
 ## Package Rebuild Commands
 
 Buildroot stamps each build step, so a bare `make` skips a package that already built even after you edit its source or
-`.mk`. You MUST force the step you changed.
+`.mk`. Force the step you changed with the matching target below.
 
 | Change                                                                                        | Appropriate operation                                               |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -275,44 +280,26 @@ When a target package needs a host tool at build time, depend on its `host-` pac
 MYPKG_DEPENDENCIES = host-mypkg-tool
 ```
 
-Host packages install into `$(HOST_DIR)/bin/`, which is already on `PATH` during the build.
+Host packages install into `$(HOST_DIR)/bin/`. The package infrastructures put it on `PATH`; in custom commands, pass
+`$(TARGET_MAKE_ENV)` or `$(TARGET_CONFIGURE_OPTS)` so the host tool is found.
 
-## Build Order vs Runtime Presence (there is no RDEPENDS)
+## Build Order and Runtime Presence
 
-Buildroot has NO runtime-dependency declaration. Unlike Yocto/OE (`RDEPENDS`) or Debian (`Depends`), there is no
-variable that says "this package needs that one present at run time." Do NOT go looking for one.
+Buildroot has no runtime-dependency variable comparable to Yocto's `RDEPENDS`. `<PKG>_DEPENDENCIES` only orders the
+build: the listed packages finish before this one configures. Express what must be present on the target in
+`Config.in`:
 
-`<PKG>_DEPENDENCIES` is a build-ORDER list and nothing more: it guarantees the listed packages finish building before
-this package configures. It has no separate runtime meaning.
-
-Target-package install steps normally populate `TARGET_DIR`; invoking a package as a Make dependency can run those
-steps even without selecting its Kconfig symbol. This side effect is not a sound runtime dependency contract.
-Keep configuration dependencies and build-order dependencies consistent:
-
-- Select required libraries in `Config.in`, propagating their toolchain and other non-selectable constraints.
-  `depends on` restricts availability; it does not enable the dependency.
-- Add build dependencies to `<PKG>_DEPENDENCIES` as well. Their targets can run even without a matching selected Kconfig
-  symbol, so this is not a substitute for correct configuration dependencies. Host tools and packages that disable target
-  installation do not imply runtime presence.
-
-The reliable lever is always the configuration (`Config.in` `select`/`depends on`), never a runtime-deps variable.
+- `select` each library the package needs at run time, and propagate that library's toolchain constraints with
+  `depends on`. A bare `depends on` restricts availability; it enables nothing.
+- Add the same build-time libraries to `<PKG>_DEPENDENCIES`. A Make dependency can install a package whose symbol is
+  unselected, so keep the two lists consistent rather than relying on that side effect.
 
 ## Debugging Package Failures
 
+`SKILL.md` covers log capture, `printvars`, and `show-info`. To read a configure log, resolve the package's build
+directory first, because source overrides and `O=` builds move it:
+
 ```bash
-# Resolve the actual build directory, including source-override and O= cases
 make -s printvars VARS=MYPKG_DIR
-# Substitute the returned path; config.log is an autotools example.
-tail -n 60 -- /absolute/path/to/package-build/config.log
-
-# Inspect the release's supported targets and actual build invocation
-make help
-make V=1 mypkg
-
-# Package metadata (deps, version, license) as JSON
-make mypkg-show-info
-
-# Resolve a variable's effective value (wildcards allowed)
-make -s printvars VARS=MYPKG_SITE
-make -s printvars VARS='MYPKG_%'
+tail -n 60 -- /absolute/path/to/package-build/config.log   # autotools example
 ```

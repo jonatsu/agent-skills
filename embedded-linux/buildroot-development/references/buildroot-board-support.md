@@ -145,7 +145,7 @@ image boot.vfat {
 
 image myboard-sdcard.img {
     hdimage {
-        partition-table-type = "dos"
+        partition-table-type = "mbr"
     }
     partition boot {
         partition-type = 0xC
@@ -189,8 +189,8 @@ the target's account configuration.
 ## Init System Selection
 
 Choose the init system in the board's system configuration and satisfy its release-specific toolchain constraints.
-`BR2_INIT_BUSYBOX`, `BR2_INIT_SYSTEMD`, `BR2_INIT_OPENRC`, `BR2_INIT_SYSV`, and `BR2_INIT_NONE` are alternatives, not
-simultaneous settings. Inspect `system/Config.in`; avoid copying a stale matrix of supported libc combinations.
+Init choices such as `BR2_INIT_BUSYBOX`, `BR2_INIT_SYSTEMD`, and `BR2_INIT_NONE` form one Kconfig choice;
+`system/Config.in` lists the release's full set and its toolchain constraints.
 A custom init and a custom filesystem skeleton are independent choices.
 
 ## Kernel Config Persistence
@@ -203,8 +203,9 @@ Inspect `BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG`, `BR2_LINUX_KERNEL_CUSTOM_CONFIG_FI
 - With a named kernel defconfig, use `linux-savedefconfig` where supported to produce the minimal config in the kernel
   build tree, then copy it to a project-owned file and select that custom config, or maintain intentional overrides as
   fragments. Do not assume `linux-update-config`/`linux-update-defconfig` exist in this mode.
-- With fragments, preserve their intended separation. Inspect the release's Kconfig-package update behavior and review
-  the resulting base/fragment diffs rather than flattening them into an upstream base file accidentally.
+- With fragments set, `linux-update-config` and `linux-update-defconfig` refuse to run. Run `linux-diff-config` to
+  print the difference between the base plus fragments and the current configuration. Copy the intended lines into
+  the project-owned fragment, never into the base file.
 
 Reconfigure from the persisted inputs and verify the effective settings before cleanup or handoff. Edits remaining only
 in the kernel build tree disappear when that tree is removed. Apply the same persistence principle to BusyBox and U-Boot

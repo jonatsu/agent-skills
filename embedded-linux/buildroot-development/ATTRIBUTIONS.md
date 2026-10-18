@@ -13,7 +13,9 @@
 
 The guidance on commands, configuration paths, rebuild semantics, source overrides, hook environments, package
 metadata, and image generation follows the release's `Makefile`, `Config.in`, `package/pkg-*.mk`,
-`support/download/dl-wrapper`, and `support/scripts/genimage.sh`. No code is copied.
+`support/download/dl-wrapper`, and `support/scripts/genimage.sh`. The Kconfig warning formats follow
+`support/kconfig/symbol.c`, the external-toolchain symbols follow `toolchain/toolchain-external/`, and the package
+checks follow `support/download/check-hash` and `utils/`. No code is copied.
 
 ### The Buildroot developers: The Buildroot user manual
 

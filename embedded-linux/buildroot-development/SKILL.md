@@ -1,6 +1,6 @@
 ---
 name: buildroot-development
-description: "Develop and troubleshoot embedded Linux systems with Buildroot. Use for defconfigs, BR2_EXTERNAL trees, package .mk/Config.in authoring, toolchains, rootfs overlays, genimage layouts, SDKs, legal-info, reproducible builds, and package or configuration failures. Covers Buildroot integration; use embedded-linux-bringup for runtime kernel/device debugging and u-boot-development for bootloader internals."
+description: "Build and troubleshoot embedded Linux images with Buildroot. Use to write or fix a Buildroot package, board defconfig, or BR2_EXTERNAL tree; set up an external toolchain, rootfs overlay, post-build hook, or genimage layout; save kernel or BusyBox config changes; produce an SDK, legal-info, or reproducible release; or diagnose a failed build or a hidden Kconfig option. Route board runtime faults to embedded-linux-bringup and bootloader internals to u-boot-development."
 license: MIT
 compatibility: "Execution requires a Linux host with the selected Buildroot release's build prerequisites. Hook examples use Bash and GNU utilities. Image assembly, SDK, and graph workflows require their corresponding host tools; check availability before use."
 metadata:
@@ -16,8 +16,8 @@ fresh/full build, because Buildroot does not provide per-package uninstall.
 ## Establish the Build Context
 
 Identify the Buildroot source, release, output directory, configuration, external trees, and intended result before
-editing. Record the architecture and toolchain when they affect the task. Do not infer Buildroot's release from
-`make --version`: that reports GNU Make. Inspect the release's `Makefile` or query the configured build:
+editing. Record the architecture and toolchain when they affect the task. Read Buildroot's release from `BR2_VERSION`,
+because `make --version` reports GNU Make. Inspect the release's `Makefile` or query the configured build:
 
 ```bash
 make -s printvars VARS='BR2_VERSION BR2_CONFIG CONFIG_DIR BASE_DIR BR2_DEFCONFIG'
@@ -27,8 +27,7 @@ Run examples below in the selected build context: use the generated output-direc
 build, or retain `-C <source> O=<output>` consistently. `BR2_CONFIG` names the active configuration; it is not always
 `output/.config`. `CONFIG_DIR` also owns the default `local.mk` override file. Resolve paths before using examples.
 
-Use the target release's manual, configuration symbols, package infrastructure, and `make help` as the primary
-references. Third-party recipes can suggest cases, but verify their commands and distinguish wrapper behavior from
+Third-party recipes can suggest cases, but verify their commands and distinguish wrapper behavior from
 native Buildroot. When documentation and code disagree, report the documented contract and verify actual behavior
 against that release; do not convert an untested assumption into a requirement.
 
@@ -55,9 +54,9 @@ files do not need a second approval because they live outside the output directo
 | External trees, external toolchains, out-of-tree application builds, SDKs, legal-info, reproducibility | [Advanced topics](references/buildroot-advanced.md)              |
 | Hidden symbols, unmet dependencies, conditional selection, configuration cycles                        | [Kconfig troubleshooting](references/kconfig-troubleshooting.md) |
 
-Keep Buildroot's integration of the kernel and bootloader here. Route runtime driver/DTS work to
-`embedded-linux-bringup`, bootloader implementation and console behavior to `u-boot-development`, Yocto/BitBake to
-`yocto-openembedded-development`, and kas orchestration to `kas-build-orchestration`.
+Keep Buildroot's integration of the kernel and bootloader here: version selection, configuration, and deployment.
+Route runtime driver and device-tree work to `embedded-linux-bringup`, and bootloader implementation and console
+behavior to `u-boot-development`.
 
 ## Diagnose Without Hiding Failures
 
@@ -85,8 +84,8 @@ make busybox-show-info
 ```
 
 For a failing configure/build command, inspect the package log and generated build files. Use `make V=1` to see the
-actual invocation and reproduce it only with its environment and working directory understood. Do not invent
-`<pkg>-shell` or `<pkg>-list-targets`; use the release's documented targets.
+actual invocation and reproduce it only with its environment and working directory understood. Use only the package
+targets that `make help` and the release's manual list.
 
 ## Preserve Inputs and Verify Completion
 
@@ -114,6 +113,7 @@ result, and what remains unverified; identify a proven cause only when the evide
 
 ## Sources
 
-Use the [Buildroot manual](https://buildroot.org/downloads/manual/manual.html) for orientation and the manual bundled
-with the selected release for version-specific details. Genimage's [upstream documentation](https://github.com/pengutronix/genimage)
-owns image-layout syntax. [Attributions](ATTRIBUTIONS.md) lists the sources this skill is based on.
+Treat the manual bundled with the selected release, its `Config.in` symbols, `package/pkg-*.mk`, and `make help` as
+primary; use the [online manual](https://buildroot.org/downloads/manual/manual.html) for orientation.
+Genimage's [upstream documentation](https://github.com/pengutronix/genimage) owns image-layout syntax.
+[Attributions](ATTRIBUTIONS.md) lists the sources this skill is based on.

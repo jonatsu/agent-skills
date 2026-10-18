@@ -1,11 +1,6 @@
 # Kconfig / menuconfig Troubleshooting
 
-Why a `BR2_*` symbol will not appear, what "unmet direct dependencies" means and how to clear it, the difference between
-`depends on`, `select`, and `imply`, and how to break a recursive-dependency error. Buildroot's configuration is
-Kconfig, the same engine the kernel uses, so these rules are general.
-
-For package `Config.in` authoring, see `buildroot-packages.md`. For the release drift that renames or removes symbols,
-see the SKILL's *Version awareness*.
+For package `Config.in` authoring, see `buildroot-packages.md`.
 
 ## Contents
 
@@ -20,11 +15,13 @@ see the SKILL's *Version awareness*.
 
 ## How Visibility Works
 
+Buildroot's configuration uses Kconfig, the kernel's engine, so these rules also apply there.
+
 A false `depends on` expression can hide a prompt. Also inspect enclosing menus, prompt conditions, and whether the
 symbol exists in this release before concluding why it is absent. Symbols without a prompt are not user-selectable.
 
 A hidden symbol also cannot be set from a defconfig: writing `BR2_PACKAGE_FOO=y` into a defconfig whose dependencies are
-unmet is silently dropped when the config is loaded. You MUST satisfy the dependency first.
+unmet is silently dropped when the config is loaded. Satisfy the dependency first.
 
 ## Finding a Symbol and Why It Is Hidden
 
@@ -32,20 +29,15 @@ Search inside `make menuconfig`: press `/`, type the symbol or a fragment, and r
 symbol's prompt, its `Depends on` expression, its `Location` (the menu path), and what selects it. Any `Depends on` term
 currently evaluating false is the reason the prompt is hidden.
 
-When menuconfig itself is not handy, grep the release's Config.in files — the symbol's definition shows its dependencies
-directly:
-
-```bash
-grep -rn "BR2_PACKAGE_FOO\b" package/ */Config.in
-```
+When menuconfig is not available, search the release's `Config.in` files with the command under *Evidence Commands*.
 
 ## `depends on` vs `select` vs `imply`
 
-These three read similarly and behave very differently. Confusing them is the root of most Kconfig grief.
+These three read similarly and behave very differently.
 
 - **`depends on X`** — a visibility and value gate. The option is available only when `X` is true. Non-forcing, and it
   never turns `X` on for you.
-- **`select X`** — force-enables `X` and holds it on. Its trap: `select` does NOT evaluate `X`'s own `depends on`. It
+- **`select X`** — force-enables `X` and holds it on. Its trap: `select` skips `X`'s own `depends on`. It
   can therefore switch `X` on even when `X`'s dependencies are unmet, which is exactly what produces an "unmet direct
   dependencies" warning. Reserve `select` for leaf symbols with few or no dependencies.
 - **`imply X`** — a weak reverse dependency that respects direct dependencies and permits the user to disable a
@@ -56,13 +48,16 @@ dependencies are already guaranteed.
 
 ## "Unmet Direct Dependencies"
 
-The classic warning looks like this:
+The warning looks like this:
 
 ```
-warning: (BR2_PACKAGE_A) selects BR2_PACKAGE_B which has unmet direct dependencies (BR2_PACKAGE_C)
+WARNING: unmet direct dependencies detected for BR2_PACKAGE_B
+  Depends on [n]: BR2_PACKAGE_C [=n]
+  Selected by [y]:
+  - BR2_PACKAGE_A [=y]
 ```
 
-Mechanism: `A` does `select B`, but `B` has `depends on C`, and `C` is not enabled. Because `select` skips the
+Mechanism: `A` selects `B`, but `B` depends on `C`, and `C` is off. Because `select` skips the
 dependency check, Kconfig turns `B` on anyway and warns that `B` is now enabled with a dependency unsatisfied. The build
 often fails later in `B` with a missing header or library.
 
@@ -73,29 +68,28 @@ For a library chain, add the corresponding build dependencies to the package `.m
 `select BR2_PACKAGE_B if BR2_PACKAGE_C` is suitable only when A can operate without B and its optional feature is
 disabled accordingly. Otherwise it hides the warning while leaving A without a required dependency.
 
-Do NOT "fix" it by just enabling `C` blindly in the config — that hides the authoring bug and leaves the next user to
-hit it.
+Fix the selecting symbol's `Config.in`, so every configuration that enables `A` also satisfies `B`.
 
 ## Recursive-Dependency Errors
 
 A cycle of `select`/`depends on` produces a recursive-dependency error at configure time:
 
 ```
-error: recursive dependency detected!
-symbol BR2_PACKAGE_A depends on BR2_PACKAGE_B
-symbol BR2_PACKAGE_B is selected by BR2_PACKAGE_A
+Config.in:12:error: recursive dependency detected!
+Config.in:12:	symbol BR2_PACKAGE_A depends on BR2_PACKAGE_B
+Config.in:20:	symbol BR2_PACKAGE_B is selected by BR2_PACKAGE_A
 ```
 
 Kconfig prints the exact chain — read it as a loop and cut one edge. The usual culprit is a `select` that closes the
-ring; replacing that `select` with a `depends on`, or dropping the redundant back-reference, breaks it. You MUST resolve
-the cycle in the `Config.in` graph; there is no config-file workaround.
+ring; replacing that `select` with a `depends on`, or dropping the redundant back-reference, breaks it. Resolve the
+cycle in the `Config.in` graph; a `.config` edit cannot break it.
 
 ## Symbol Renamed or Removed Across Releases
 
 A `BR2_*` symbol that existed in an older Buildroot may have been renamed or dropped. Buildroot tracks retired symbols
 in `Config.in.legacy`; a legacy option you still have set surfaces under a "Legacy config options" menu and points at
 its replacement. Before recommending any symbol, confirm it exists in the target release (menuconfig `/` search, or grep
-the tree). See the SKILL's *Version awareness* step.
+the tree). Confirm the release first, as `SKILL.md` describes under "Establish the Build Context".
 
 ## Evidence Commands
 
@@ -131,8 +125,9 @@ config BR2_PACKAGE_MYAPP
   is false. Enable a thread-capable toolchain (a `BR2_TOOLCHAIN_*` with thread support) and the option appears. It is a
   toolchain-feature gate, not a missing package.
 - The `select BR2_PACKAGE_MYLIB` is unguarded. If `MYLIB` itself has `depends on BR2_PACKAGE_OPENSSL`, enabling `myapp`
-  forces `MYLIB` on even without OpenSSL, yielding
-  `... selects BR2_PACKAGE_MYLIB which has unmet direct dependencies (BR2_PACKAGE_OPENSSL)`. Fix in the `Config.in`:
+  forces `MYLIB` on even without OpenSSL, and Kconfig reports
+  `unmet direct dependencies detected for BR2_PACKAGE_MYLIB` with `Depends on [n]: BR2_PACKAGE_OPENSSL [=n]`.
+  Fix in the `Config.in`:
   Keep `select BR2_PACKAGE_MYLIB` and also select the required OpenSSL package from `MYAPP`; propagate applicable
   toolchain constraints to the selecting symbols. Correct `MYLIB`'s own library dependency declaration as needed.
   Confirm both libraries remain enabled whenever `MYAPP` is enabled, then verify the `.mk` build-order dependencies.
