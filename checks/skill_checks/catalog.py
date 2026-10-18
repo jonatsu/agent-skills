@@ -6,6 +6,8 @@ from pathlib import Path
 
 import attrs
 
+from skill_checks.git_index import candidate_files
+
 SKILL_FILE_NAME = "SKILL.md"
 # Top-level directories that hold no deployable skill: archived packages, the script tests, this tooling,
 # version-control or environment state, and `.scratch`, where sessions keep untracked working copies such as
@@ -68,7 +70,7 @@ def discover_skill_sources(
 
     discovered = tuple(
         SkillSource(skill_md.parent.resolve(), skill_md.resolve())
-        for skill_md in sorted(root.rglob(SKILL_FILE_NAME), key=str)
+        for skill_md in sorted(candidate_files(root, SKILL_FILE_NAME), key=str)
         if _is_default_skill(skill_md, root)
     )
     if not discovered:

@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Iterator, Sequence
 from pathlib import Path
 
+from skill_checks.git_index import candidate_files
+
 SKILL_FILE_NAME = "SKILL.md"
 # Directories never holding packages to check: version control and tool caches.
 IGNORED_DIRECTORY_NAMES = frozenset(
@@ -22,7 +24,7 @@ def skill_packages(roots: Sequence[Path]) -> tuple[Path, ...]:
     """
     found: list[Path] = []
     for root in roots:
-        for skill_file in sorted(root.rglob(SKILL_FILE_NAME)):
+        for skill_file in candidate_files(root, SKILL_FILE_NAME):
             package = skill_file.parent
             relative = package.relative_to(root).parts
             if _is_ignored(package, root) or relative[:1] and relative[0] in NON_SKILL_TOP_LEVEL:
@@ -34,8 +36,8 @@ def skill_packages(roots: Sequence[Path]) -> tuple[Path, ...]:
 
 
 def package_files(package: Path) -> Iterator[Path]:
-    """Yield every regular file inside one package, in a stable order."""
-    for path in sorted(package.rglob("*")):
+    """Yield every regular file inside one package that Git tracks or has staged, in a stable order."""
+    for path in candidate_files(package, "*"):
         if path.is_file() and not path.is_symlink() and not _is_ignored(path, package):
             yield path
 
