@@ -17,7 +17,8 @@ notice appears below, and `LICENSE.upstream` stays with the skill.
 `references/kas-tool.md` was seeded from the kas command, configuration schema, lockfile, and `kas-container`
 documentation, then reorganized and rewritten. The guidance in `SKILL.md` and that reference on composition, include
 paths, locking, cleanup, credentials, and container behavior is built on the 5.3 sources, chiefly
-`kas/includehandler.py`, `kas/config.py`, `kas/repos.py`, `kas/plugins/`, and `kas-container`. The skill adapts
+`kas/includehandler.py`, `kas/config.py`, `kas/repos.py`, `kas/plugins/`, and `kas-container`. The security guidance
+also draws on the kas GitHub security advisories GHSA-mv8m-v9v6-5f94 and GHSA-6p9r-86f2-f954. The skill adapts
 documentation and bundles no upstream executable.
 
 ## Upstream License Notice
