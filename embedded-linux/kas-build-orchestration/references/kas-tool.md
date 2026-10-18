@@ -1,6 +1,6 @@
 # kas: Command and Configuration Reference
 
-Checked against kas 5.3 documentation and implementation. Native kas, `kas-container`, and a project's own wrapper
+Checked against kas 5.5 documentation and implementation. Native kas, `kas-container`, and a project's own wrapper
 can own different commands and flags, so check the help of the one that runs.
 
 ## Contents
@@ -20,12 +20,12 @@ can own different commands and flags, so check the help of the one that runs.
 ## Installation and Commands
 
 Use the project's supported kas version and existing installation method. An isolated native install can use
-`pipx install 'kas==5.3'`; distro packages may provide another release. Native builds still need the dependencies of
+`pipx install 'kas==5.5'`; distro packages may provide another release. Native builds still need the dependencies of
 the selected Yocto/OE release. Menu requires both kconfiglib (supplied by `kas[tui]`) and newt's Python bindings
 for its terminal UI. Consult the
-[installation guide](https://kas.readthedocs.io/en/5.3/userguide/getting-started.html) for the host environment.
+[installation guide](https://kas.readthedocs.io/en/5.5/userguide/getting-started.html) for the host environment.
 
-| Operation                              | kas 5.3 command                                               | Relevant effect                                                                    |
+| Operation                              | kas 5.5 command                                               | Relevant effect                                                                    |
 | -------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | Set up and build                       | `kas build kas-project.yml`                                   | Fetch/checkout, patches, generated config, BitBake build                           |
 | Set up without building                | `kas checkout kas-project.yml`                                | Fetch/checkout, patches and generated config                                       |
@@ -42,14 +42,14 @@ settings; commands with an omitted config can use that file in `KAS_WORK_DIR`. C
 before running menu in a shared work directory. `kas diff` accepts `--content-only` to omit repository log details;
 this does not make repository resolution read-only.
 
-[Plugin documentation and help](https://kas.readthedocs.io/en/5.3/userguide/plugins.html) owns the full option inventory.
+[Plugin documentation and help](https://kas.readthedocs.io/en/5.5/userguide/plugins.html) owns the full option inventory.
 `--force-checkout` can discard local work; never add it merely to make a setup warning disappear. Without it, kas skips
-repositories it detects as dirty, so verify actual HEAD/status even after success. For Git, kas 5.3's dirty test uses
+repositories it detects as dirty, so verify actual HEAD/status even after success. For Git, kas 5.5's dirty test uses
 `git diff --stat`, which does not cover every staged or untracked change. Inspect full status and relevant branch refs.
 
 ## Dump and Observed Build State
 
-Dump can fetch/clone/check out repositories, including repositories supplying includes. In 5.3 it skips patch application,
+Dump can fetch/clone/check out repositories, including repositories supplying includes. In 5.5 it skips patch application,
 build-environment setup, and generated BitBake configuration. Therefore it is useful for input resolution, but cannot
 prove that existing files under the build directory correspond to that input. When the live checkout must stay
 untouched, inspect files first or resolve in an authorized disposable workspace.
@@ -70,13 +70,13 @@ CLI/environment selection separately, then inspect actual `local.conf`, `bblayer
 assignment in a `local_conf_header` can outrank kas's generated `MACHINE ??=`; use the Yocto/OE skill for final BitBake
 variable evaluation. Avoid logging environment variables or configuration values containing credentials.
 
-`kas dump --lock` emits locking-shaped output. The old write combination `--lock --inplace` is deprecated in 5.3 and
+`kas dump --lock` emits locking-shaped output. The old write combination `--lock --inplace` is deprecated in 5.5 and
 routes to the lock plugin; use the lock commands below for writes.
 
 ## Configuration and Composition
 
 A header with a supported `version` is sufficient for schema validity; a useful build also needs suitable repositories,
-layers, and target selections. In 5.3, omitted machine/distro/target select `qemux86-64`, `nodistro`, and
+layers, and target selections. In 5.5, omitted machine/distro/target select `qemux86-64`, `nodistro`, and
 `core-image-minimal`. Specify them when a silent default would select the wrong product.
 
 The following illustrates the configuration shape using historical documentation pins, not a qualified release matrix.
@@ -122,7 +122,7 @@ header:
 
 For files under Git, these string paths are relative to the repository root, not the including file's directory.
 Outside version control, the root is the first configuration's directory. A deprecated file-relative fallback exists
-in 5.3; write new configurations with repository-relative paths. Cross-repository includes use `repo` and `file`,
+in 5.5; write new configurations with repository-relative paths. Cross-repository includes use `repo` and `file`,
 with `file` relative to that repository's root. Includes must stay inside the referenced repository.
 
 ```yaml
@@ -159,7 +159,7 @@ BitBake statement inside it.
 Merge order and emission order differ, and emission order decides which assignment wins. Merging preserves
 insertion order, as above. But kas writes the header entries sorted by key: `_get_conf_header` iterates
 `sorted(...)` over the mapping, so `local.conf` receives them alphabetically regardless of which fragment supplied
-them ([config.py](https://github.com/siemens/kas/blob/5.3/kas/config.py)). `bblayers_conf_header` is emitted the same
+them ([config.py](https://github.com/siemens/kas/blob/5.5/kas/config.py)). `bblayers_conf_header` is emitted the same
 way.
 
 That is the supported lever for overriding a vendored fragment's setting without editing it: add a named entry whose
@@ -195,16 +195,17 @@ All colon-composed files must belong to the same repository or all be outside ve
 include for files from different repositories. Configs on the command line and included fragments can each have
 adjacent lockfiles. A new containing file can add its own lock, so include/composition equivalence assumes the same
 relevant inputs and locks. See the
-[configuration guide](https://kas.readthedocs.io/en/5.3/userguide/project-configuration.html) and
-[include implementation](https://github.com/siemens/kas/blob/5.3/kas/includehandler.py).
+[configuration guide](https://kas.readthedocs.io/en/5.5/userguide/project-configuration.html) and
+[include implementation](https://github.com/siemens/kas/blob/5.5/kas/includehandler.py).
 
 ### Format Version Versus Tool Version
 
-Use the [format changelog](https://kas.readthedocs.io/en/5.3/format-changelog.html) to select an appropriate declaration:
+Use the [format changelog](https://kas.readthedocs.io/en/5.5/format-changelog.html) to select an appropriate declaration:
 `commit`/`branch` and repository overrides arrived with format 14, `tag` with 15, and signing configuration with 19.
-This history is not a complete runtime gate on each key: 5.3 validates with its installed schema and separately checks
-the declared version range. A successful parse on 5.3 does not prove the file works with an older kas executable.
-Keep version declarations honest and test every release for which compatibility is claimed.
+Format 23 (kas 5.4) adds `url` overrides, null `commit` overrides, and the `isar-privileged` and `isar-rootless`
+build systems. This history is not a complete runtime gate on each key: 5.5 validates with its installed schema and
+separately checks the declared version range. A successful parse on 5.5 does not prove the file works with an older
+kas executable. Keep version declarations honest and test every release for which compatibility is claimed.
 
 ## Lockfiles
 
@@ -221,7 +222,7 @@ overrides:
       commit: 89e6c98d92887913cadf06b2adb97f26cde4849b
 ```
 
-For kas 5.3:
+For kas 5.5:
 
 - `kas lock kas-project.yml` resolves repositories with existing locks in effect. It creates missing pins for floating
   managed repositories; it is not the operation for deliberately advancing an existing locked branch.
@@ -237,11 +238,11 @@ For kas 5.3:
 
 A lock refresh is a deliberate input change. Reuse authorization for that change, preserve prior lock edits, and review
 the complete pin diff. Restoring a file from HEAD is safe only if HEAD is the intended previous state. See
-[Lock implementation](https://github.com/siemens/kas/blob/5.3/kas/plugins/lock.py).
+[Lock implementation](https://github.com/siemens/kas/blob/5.5/kas/plugins/lock.py).
 
 ## Selection and Path Variables
 
-| Variable                    | Native kas 5.3 meaning                                                      |
+| Variable                    | Native kas 5.5 meaning                                                      |
 | --------------------------- | --------------------------------------------------------------------------- |
 | `KAS_WORK_DIR`              | Existing workspace directory; default current directory                     |
 | `KAS_BUILD_DIR`             | Build directory; default `KAS_WORK_DIR/build`; configured parent must exist |
@@ -254,26 +255,27 @@ the complete pin diff. Restoring a file from HEAD is safe only if HEAD is the in
 For target/task, a supplied build CLI option wins over environment, then configuration, then the default. Read all three
 sources before naming the selection. Paths must be accessible and must not overlap, except that the data directories
 may be inside `KAS_WORK_DIR`. See the release's
-[environment reference](https://kas.readthedocs.io/en/5.3/command-line.html#environment-variables).
+[environment reference](https://kas.readthedocs.io/en/5.5/userguide/env-vars.html).
 
 ## Containers
 
 The wrapper sets up mounts and runs kas in an OCI image; direct image and CI invocations can bypass parts of that setup.
-Record the actual entry point before diagnosing. Prefer a wrapper from the same release as the image; kas 5.3 emits a
+Record the actual entry point before diagnosing. Prefer a wrapper from the same release as the image; kas 5.5 emits a
 warning on a mismatch. Matching versions is a useful compatibility default, not a diagnosis by itself.
 
 ```bash
 # Inspect a project-vendored wrapper's version before use
 ./kas-container --version
-KAS_IMAGE_VERSION=5.3 ./kas-container build kas-project.yml
+KAS_IMAGE_VERSION=5.5 ./kas-container build kas-project.yml
 KAS_CONTAINER_ENGINE=podman ./kas-container build kas-project.yml
 ```
 
-The default image is `ghcr.io/siemens/kas/kas:<script-version>`. `KAS_CONTAINER_IMAGE` supplies a custom full image
+The default image is `ghcr.io/siemens/kas/kas:<script-version>`, or `kas-isar` in place of `kas` for ISAR builds.
+`KAS_CONTAINER_IMAGE` supplies a custom full image
 reference, including a digest when exact content identity matters. Since 5.0, `KAS_CONTAINER_IMAGE_DISTRO` can select
 an available base such as `debian-bookworm`, yielding a `<version>-<distro>` tag. Check the release's actual image set.
-Docker is preferred during engine auto-detection; `KAS_CONTAINER_ENGINE` selects Docker or Podman explicitly.
-The 5.3 wrapper adds `--userns=keep-id` for Podman.
+Engine auto-detection prefers Docker, except that an `isar-rootless` build prefers Podman (kas 5.4 and later).
+`KAS_CONTAINER_ENGINE` selects Docker or Podman explicitly. The 5.5 wrapper adds `--userns=keep-id` for Podman.
 
 ### Mounts and Ownership
 
@@ -291,12 +293,13 @@ Paths inside `KAS_WORK_DIR` are rewritten under `/work` instead of mounted again
 variables can leave data at kas's in-container defaults; inspect actual arguments before inferring a host path from this
 table.
 
-A mounted cache can still be bypassed by the configuration. kas passes `SSTATE_DIR`, `SSTATE_MIRRORS`, `DL_DIR` and
-`TMPDIR` into BitBake through `BB_ENV_PASSTHROUGH_ADDITIONS` ([libkas.py](https://github.com/siemens/kas/blob/5.3/kas/libkas.py)),
-so they arrive as environment. A hard `=` assignment in a `local_conf_header` outranks that. A configuration carrying
-someone else's absolute paths, commonly a vendored fragment with CI paths, silently redirects both caches to
-directories that are not mounted. Nothing errors; the build simply re-downloads and rebuilds every run and the
-mounted directories stay empty.
+A mounted cache can still be bypassed by the configuration. kas passes `SSTATE_DIR`, `SSTATE_MIRRORS`, `DL_DIR`,
+`TMPDIR`, and, from kas 5.5, the hash equivalence variables `BB_HASHSERVE`, `BB_HASHSERVE_UPSTREAM`, and
+`BB_HASHSERVE_DB_DIR` into BitBake through `BB_ENV_PASSTHROUGH_ADDITIONS`
+([libkas.py](https://github.com/siemens/kas/blob/5.5/kas/libkas.py)), so they arrive as environment. A hard `=`
+assignment in a `local_conf_header` outranks that. A configuration carrying someone else's absolute paths, commonly a
+vendored fragment with CI paths, silently redirects both caches to directories that are not mounted. Nothing errors;
+the build simply re-downloads and rebuilds every run and the mounted directories stay empty.
 
 ```bash
 # The only reliable check: read the generated file, not the wrapper's arguments.
@@ -343,7 +346,7 @@ exclude the escaping entry and name the repository root:
 repos:
   meta-example:
     layers:
-      ../meta-example: disabled    # 5.3 also accepts the deprecated spelling "excluded"
+      ../meta-example: disabled    # 5.5 also accepts the deprecated spelling "excluded"
       .:
 ```
 
@@ -357,20 +360,21 @@ ownership of top-level managed directories, not a blanket recursive restoration 
 wrapper defaults the source mount to read-only even for shell/lock and rejects an explicit writable source request.
 Lock writes under `/repo` therefore need a different supported execution arrangement, such as an authorized native
 refresh. See
-[container guidance](https://kas.readthedocs.io/en/5.3/userguide/kas-container.html) and the
-[entrypoint](https://github.com/siemens/kas/blob/5.3/container-entrypoint).
+[container guidance](https://kas.readthedocs.io/en/5.5/userguide/kas-container.html) and the
+[entrypoint](https://github.com/siemens/kas/blob/5.5/container-entrypoint).
 
 Extra runtime options can be passed with `--runtime-args "--memory=8g --cpus=4"`. Inspect existing options and resource
 limits; fix a permission error at its cause rather than with extra privilege or host mounts.
 
 ## Credentials
 
-These are kas-container 5.3 wrapper options, placed before its subcommand:
+These are kas-container 5.5 wrapper options, placed before its subcommand:
 
 ```bash
 ./kas-container --ssh-agent build kas-project.yml
 ./kas-container --ssh-dir ~/.ssh/kas-only build kas-project.yml
 ./kas-container --git-credential-store /path/to/scoped-credentials build kas-project.yml
+./kas-container --git-credential-socket /path/to/credential-cache/socket build kas-project.yml
 ./kas-container --aws-dir /path/to/scoped-aws build kas-project.yml
 ./kas-container --no-proxy-from-env build kas-project.yml
 ```
@@ -380,16 +384,18 @@ which files a supplied directory exposes: the whole SSO cache can be copied, inc
 For isolation, use a dedicated directory or separate account; logging out unrelated sessions helps only if no other
 sensitive material remains accessible. Do not copy actual secrets into logs or saved diagnostic output.
 
-For native kas 5.3, when the directory beside `AWS_CONFIG_FILE` lacks `sso/cache`, credential setup can fall back to
+For native kas 5.5, when the directory beside `AWS_CONFIG_FILE` lacks `sso/cache`, credential setup can fall back to
 the invoking user's `~/.aws/sso/cache`. A dedicated config file alone is therefore insufficient. Supply a dedicated
 cache directory (empty if SSO is not used) or use an account without unrelated cached sessions. Verify which cache path
 is selected; do not inspect or copy real credential contents merely to diagnose it.
 
 SSH-agent forwarding exposes agent operations, even without exposing the private key files. Use it only for the intended
-build's trust boundary. A credential-store file also grants its contents to the build. The 5.3 wrapper has no
-`--git-credential-socket` option; kas-container added it in 5.4, so check the wrapper's `--help` before prescribing it.
+build's trust boundary. A credential-store file also grants its contents to the build. A credential-cache socket
+grants every credential its daemon holds; run a separate daemon with its own `--socket` path to isolate one project.
+`KAS_GIT_CREDENTIAL_STORE` and `KAS_GIT_CREDENTIAL_SOCKET` are the environment forms of the two Git options. The socket
+option arrived in kas 5.4, so check the wrapper's `--help` before prescribing it to an older wrapper.
 
-[Credential handling](https://kas.readthedocs.io/en/5.3/userguide/credentials.html) describes the release's supported
+[Credential handling](https://kas.readthedocs.io/en/5.5/userguide/credentials.html) describes the release's supported
 file/environment mechanisms. Forwarding and limiting credential authority are separate decisions.
 
 ## Cleanup and Purge
@@ -397,9 +403,9 @@ file/environment mechanisms. Forwarding and limiting credential authority are se
 Inspect the actual resolved paths and preserve local work before authorizing deletion. kas workspace cleanup commands
 are different from `bitbake -c clean/cleansstate/cleanall <recipe>`; kas's operations can affect whole caches.
 
-| kas 5.3 operation | Removal scope                                                                                                                                          |
+| kas 5.5 operation | Removal scope                                                                                                                                          |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `clean`           | Build `tmp*` directories; ISAR layout may require privileged removal                                                                                   |
+| `clean`           | Build `tmp*` directories; ISAR removal uses `sudo` when privileged and a user namespace when rootless                                                  |
 | `cleansstate`     | Clean artifacts plus contents of the environment-selected or default sstate cache                                                                      |
 | `cleanall`        | Above plus contents of the environment-selected or default download cache                                                                              |
 | `purge`           | Above plus build-directory contents, managed repositories and other managed paths; matching reference repos unless preserved; explicit buildtools path |
@@ -425,7 +431,7 @@ approved deletion scope. Keep the same other flags and environment.
 
 For rootless Docker, use the supported wrapper purge path for ownership cleanup rather than ad hoc recursive chown/rm.
 If preview fails, report the unresolved targets; do not treat partial output as a complete deletion inventory.
-[Cleanup implementation](https://github.com/siemens/kas/blob/5.3/kas/plugins/clean.py) owns version-specific details.
+[Cleanup implementation](https://github.com/siemens/kas/blob/5.5/kas/plugins/clean.py) owns version-specific details.
 
 ## CI and ISAR
 
@@ -438,16 +444,22 @@ Use the GitHub operations guidance for runner/workflow behavior and the shell gu
 credentials scoped, use explicit minimal permissions, disable checkout credential persistence unless needed, and pin
 remote actions to verified commits. Record image digests when reproducibility requires immutable image content.
 
-For ISAR, `./kas-container --isar build kas-isar-project.yml` selects the `kas-isar` image. ISAR requires privileged,
-rootful container execution; the wrapper can invoke a privileged executor. Confirm that this authority and the target
-environment are already within the task before running it.
+For ISAR, set `build_system` to `isar-privileged` or `isar-rootless` in the top-level configuration. Since kas 5.4 an
+omitted `build_system` means `openembedded`, so an ISAR configuration without it fails to find `isar-init-build-env`;
+kas 5.3 and earlier searched for both init scripts. The deprecated value `isar` and wrapper option `--isar` still mean
+`isar-privileged`.
+
+Both modes select the `kas-isar` image. `./kas-container --isar-privileged build kas-isar-project.yml` runs a
+privileged, rootful container, and the wrapper can invoke a privileged executor such as `sudo`. Confirm that this
+authority and the target environment are already within the task before running it. `--isar-rootless` runs without
+root, prefers Podman, and needs host kernel 6.7 or later and layers that support rootless ISAR.
 
 ## Security
 
-Repository pins select content; they do not authenticate its publisher. kas 5.3 supports explicit Git signature
+Repository pins select content; they do not authenticate its publisher. kas 5.5 supports explicit Git signature
 verification: define trusted keys using `signers`, enable `signed` on the repository, and set nonempty `allowed_signers`.
 These keys were introduced with format 19. Depending on the scheme, dependencies include GPG/python-gnupg or Git's SSH
-signature tools. Check the release's [schema and signing fields](https://kas.readthedocs.io/en/5.3/userguide/project-configuration.html).
+signature tools. Check the release's [schema and signing fields](https://kas.readthedocs.io/en/5.5/userguide/project-configuration.html).
 
 Trust roots must come from an already trusted source, not solely from the repository being authenticated. kas checks
 configured signatures before checkout, including repositories supplying includes; verification is not enabled for all
@@ -455,13 +467,16 @@ repositories by default. Wrong-signer and unsigned cases must reject under the i
 appropriate commit constraints as well as authentication. A valid signature identifies an authorized signer; it does
 not make build recipes safe to execute with unrelated credentials or privileges.
 
-Two published advisories affect kas 5.3. When `SSH_PRIVATE_KEY` or `SSH_PRIVATE_KEY_FILE` starts kas's own SSH agent
-and the user has no `~/.ssh/config`, native kas creates one containing `Host *` with `StrictHostKeyChecking no`, which
-outlives the run ([GHSA-mv8m-v9v6-5f94](https://github.com/siemens/kas/security/advisories/GHSA-mv8m-v9v6-5f94),
-fixed in 5.4). On a persistent host, create the user's SSH configuration before using those variables, and inspect it
-after any earlier run. kas 5.3 also accepts abbreviated commit IDs, which ease collision and look-alike branch or tag
-attacks ([GHSA-6p9r-86f2-f954](https://github.com/siemens/kas/security/advisories/GHSA-6p9r-86f2-f954), fixed in
-5.5). Pin every `commit` with its full hash.
+Two published advisories affect releases before 5.5. `SSH_PRIVATE_KEY` or `SSH_PRIVATE_KEY_FILE` makes kas start its
+own SSH agent. Up to kas 5.3, when the user then has no `~/.ssh/config`, kas creates one containing `Host *` with
+`StrictHostKeyChecking no`, which outlives the run
+([GHSA-mv8m-v9v6-5f94](https://github.com/siemens/kas/security/advisories/GHSA-mv8m-v9v6-5f94)). kas 5.4 and later
+write that file only under GitHub Actions, GitLab CI, or a VS Code remote container. On an older release, create the
+user's SSH configuration before using those variables, and inspect it after any earlier run. Up to kas 5.4,
+abbreviated commit IDs pass with little or no warning, which eases collision and look-alike branch or tag attacks
+([GHSA-6p9r-86f2-f954](https://github.com/siemens/kas/security/advisories/GHSA-6p9r-86f2-f954)). kas 5.5 warns on
+every abbreviated ID and fails when the resolved commit does not start with the specified one. Pin every `commit` with
+its full hash.
 
 ## Reproduction Evidence
 

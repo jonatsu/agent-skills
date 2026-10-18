@@ -2,7 +2,7 @@
 name: kas-build-orchestration
 description: "Configure and debug kas, the YAML tool that fetches layer repositories and generates Yocto/OpenEmbedded or ISAR build configuration. Use for writing or composing kas configs and includes, a wrong checked-out commit or ignored override, a wrong generated local.conf or bblayers.conf, creating or refreshing kas lockfiles, kas-container ownership, mount, or credential failures, kas in CI, or cleaning a kas workspace. Recipe, layer, and BitBake task failures belong to yocto-openembedded-development."
 license: MIT
-compatibility: Requires kas and Git; native builds need the target project's host dependencies, container builds need Docker or Podman. Menu needs kas UI dependencies. Guidance verified against kas 5.3; check release-matched help on other versions.
+compatibility: Requires kas and Git; native builds need the target project's host dependencies, container builds need Docker or Podman. Menu needs kas UI dependencies. Guidance verified against kas 5.5; check release-matched help on other versions.
 metadata:
   author: Joonas Onatsu
 ---
@@ -95,7 +95,7 @@ Make lasting changes in the configuration sources, because kas rewrites `local.c
 
 Check `kas --version`, the actual subcommand's `--help`, and matching upstream documentation before prescribing
 version-dependent flags. Check wrapper help separately from native kas help. Prefer matching wrapper/image releases;
-5.3 warns on a mismatch, which is a compatibility concern, not proof of a particular failure.
+5.5 warns on a mismatch, which is a compatibility concern, not proof of a particular failure.
 
 `header.version` declares configuration-format expectations. Raise it only to the lowest format that provides a key
 the configuration uses, per the format changelog. The installed kas validates against its schema and a supported
@@ -103,9 +103,9 @@ version range, not a comprehensive per-key gate keyed to that declaration. Parsi
 an older release.
 
 Pins constrain repository selection; they do not establish publisher identity. Pin every `commit` with its full hash.
-kas 5.3 can enforce configured Git commit/tag signature verification with `signers`, `signed`, and `allowed_signers`
+kas 5.5 can enforce configured Git commit/tag signature verification with `signers`, `signed`, and `allowed_signers`
 (format 19). Read the version-matched [security guidance](references/kas-tool.md#security) before configuring signing
-or using `SSH_PRIVATE_KEY` with native kas.
+or using `SSH_PRIVATE_KEY` with kas older than 5.4.
 
 A lockfile does not capture unmanaged root-repository changes, arbitrary local edits, every recipe source, or the host
 kernel. Record those inputs and image identity when release reproduction matters. Containers reduce host dependency
@@ -119,6 +119,6 @@ verified configuration shape, real repository behavior, a build artifact, or onl
 
 ## Sources
 
-- [kas 5.3 manual](https://kas.readthedocs.io/en/5.3/)
-- [kas 5.3 implementation](https://github.com/siemens/kas/tree/5.3)
+- [kas 5.5 manual](https://kas.readthedocs.io/en/5.5/)
+- [kas 5.5 implementation](https://github.com/siemens/kas/tree/5.5)
 - [Attributions and source influence](ATTRIBUTIONS.md), with the MIT notice and [upstream license](LICENSE.upstream)

@@ -191,13 +191,6 @@ third-party skills from upstream, and a frontmatter change to one of those is ov
 
 Open sub-question: whether tightening `allowed-tools` rides along with this or stays separate.
 
-## Rebaseline `kas-build-orchestration` on kas 5.5
-
-Added 2026-10-18. The skill is verified against kas 5.3, and upstream has since tagged 5.4 and 5.5 (5.5 on
-2026-08-21). The 2026-10-18 review fixed what 5.3 gets wrong and added the two advisories that affect it, but it did
-not move the baseline. Its reviewer inferred, without checking each change, that nine core files differ between 5.3
-and 5.5. Diff `siemens/kas` from tag `5.3` to `5.5`, update the claims the changes affect, and move the stated pin.
-
 ## Portable Skill-Fixture Harness
 
 Evaluate and design a portable runner for package-local skill fixtures before the next multi-client suite. The

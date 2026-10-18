@@ -10,13 +10,13 @@ notice appears below, and `LICENSE.upstream` stays with the skill.
 
 ### Siemens AG and kas contributors: kas
 
-- Source: <https://github.com/siemens/kas>, documentation at <https://kas.readthedocs.io/en/5.3/>
+- Source: <https://github.com/siemens/kas>, documentation at <https://kas.readthedocs.io/en/5.5/>
 - License: `MIT`
-- Version: `5.3`
+- Version: `5.5`
 
 `references/kas-tool.md` was seeded from the kas command, configuration schema, lockfile, and `kas-container`
 documentation, then reorganized and rewritten. The guidance in `SKILL.md` and that reference on composition, include
-paths, locking, cleanup, credentials, and container behavior is built on the 5.3 sources, chiefly
+paths, locking, cleanup, credentials, and container behavior is built on the 5.5 sources, chiefly
 `kas/includehandler.py`, `kas/config.py`, `kas/repos.py`, `kas/plugins/`, and `kas-container`. The security guidance
 also draws on the kas GitHub security advisories GHSA-mv8m-v9v6-5f94 and GHSA-6p9r-86f2-f954. The skill adapts
 documentation and bundles no upstream executable.
