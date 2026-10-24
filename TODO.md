@@ -364,6 +364,15 @@ sources, record provenance, and decide whether the source overlaps an existing s
   such as `lib_requires_skill_area`, `graph-quality.mjs` scores the result, and the target ids live under
   `packages/atlas/graph/`. Whether anything reads the generated graph at run time is unverified; that, and
   whether such edges could drive on-demand skill discovery in the installing setup, are the open questions.
+- [mohitmishra786/low-level-dev-skills](https://github.com/mohitmishra786/low-level-dev-skills): mine for
+  inspiration on further low-level and embedded skills, noted on 2026-10-24. It is MIT-licensed and already a
+  source for `gdb-debugging`, `debug-server-tools`, `arm-assembly`, `qemu-emulation`, and
+  `reverse-engineering-methodology`, each pinned at commit `bdc58472fa9f309ed1b3f7d985a0d8e9bd8f4608`, which
+  was also upstream `HEAD` on 2026-10-24. Only the paths those packages name were read
+  (`skills/debuggers/`, `skills/embedded/openocd-jtag/`, `skills/low-level-programming/assembly-arm/`,
+  `skills/qemu/`, `skills/security/reverse-engineering`). The rest of the repository is unread: list its
+  skill directories, check each against our skills for coverage gaps, and write any adopted material
+  independently or carry the MIT notice per `skill-forge`'s `references/provenance.md`.
 
 ## Session Backtrace Skill
 
