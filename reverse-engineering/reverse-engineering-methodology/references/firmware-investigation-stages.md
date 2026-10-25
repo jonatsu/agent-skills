@@ -3,7 +3,9 @@
 The [OWASP Firmware Security Testing Methodology][fstm] provides a nine-stage assessment map: reconnaissance,\
 acquisition, image analysis, filesystem extraction, content analysis, emulation, dynamic analysis, runtime analysis,\
 and binary exploitation. Use its stages to locate missing evidence, not as a requirement to perform every operation. An\
-explanation-only reverse-engineering request may end before execution or exploitation.
+explanation-only reverse-engineering request may end before execution or exploitation. The firmware-security-testing\
+skill carries these stages at command level, with each stage's tools, commands, and heuristics, when an assessment\
+needs to work the methodology stage by stage.
 
 ## Context and acquisition
 
