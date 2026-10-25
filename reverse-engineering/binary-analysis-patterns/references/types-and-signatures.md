@@ -15,6 +15,10 @@ Separate three claims: function identity, declaration, and data layout. A recogn
 match does not prove its prototype. A header from another ABI does not prove the target layout. Track provenance and\
 confidence independently for each claim.
 
+Trace every assignment to a return-value variable before naming it. Kernel and POSIX code return negated `errno`\
+values, but one variable can also carry a module's own status codes, so name the variable for what it holds, such as\
+`rc`, and name each value from the code that produces it.
+
 ## Build Types from Accesses
 
 For each pointer candidate, collect offset, access width, read/write role, and every function using that offset.\
@@ -32,6 +36,12 @@ For an indirect call, trace the object pointer and table index. Confirm whether 
 switch table, or import structure. Multiple inheritance or interface adjustment may shift the apparent object base.\
 Record verified slot behavior before assigning a class hierarchy.
 
+Recognise a library structure from how code initialises it: a list head set to point at itself, a well-known callback\
+stored in a function-pointer field, a clear of exactly the structure's size, and the library calls that receive the\
+object. Confirm the candidate in the header for the target's library or kernel version, then type the whole object.\
+Adjacent globals reached through one base pointer form a structure only when the symbols agree; a binary that names\
+each member as its own global had separate globals.
+
 ## Refine Decompilation Without Concealing Evidence
 
 1. Save the original inferred declaration and the evidence for the proposed change.
@@ -45,8 +55,9 @@ Record verified slot behavior before assigning a class hierarchy.
 
 A newly elegant decompilation is a diagnostic signal, not proof. Forced casts, extensive invented padding, or\
 unexplained argument disappearance suggest a wrong type, boundary, or ABI. A local array smaller than a write into it\
-usually marks one aggregate split into several variables; type the full span and re-decompile. Split an incorrect\
-merged variable where supported, and preserve the raw instruction evidence for tool limitations.
+usually marks one aggregate split into several variables, and the variables around it are often misread as well.\
+Confirm the frame in the listing before ruling out an overflow, then type the full span and re-decompile. Split an\
+incorrect merged variable where supported, and preserve the raw instruction evidence for tool limitations.
 
 Use known headers, symbols, type archives, donor libraries, or debug information only after matching architecture, ABI,\
 version, and relevant build options. Review similarity candidates manually using unique constants, call shape, and\
