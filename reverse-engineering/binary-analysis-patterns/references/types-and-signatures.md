@@ -35,14 +35,18 @@ Record verified slot behavior before assigning a class hierarchy.
 ## Refine Decompilation Without Concealing Evidence
 
 1. Save the original inferred declaration and the evidence for the proposed change.
-2. Change the narrowest justified component, such as one parameter type or one field offset.
-3. Redecompile the function and inspect all affected callers and writes.
-4. Check pointer scaling, casts, stack balance, hidden arguments, and return-value uses.
-5. Preserve the change only if it explains the observations without introducing contradictions.
+2. Establish where the variable's value comes from. A parameter takes its type from the function's declaration, and a\
+   call result takes it from the callee's return type. Change the type at that source; most decompilers re-derive a\
+   type changed elsewhere.
+3. Change the narrowest justified component, such as one parameter type or one field offset.
+4. Redecompile the function and inspect all affected callers and writes.
+5. Check pointer scaling, casts, stack balance, hidden arguments, and return-value uses.
+6. Preserve the change only if it explains the observations without introducing contradictions.
 
 A newly elegant decompilation is a diagnostic signal, not proof. Forced casts, extensive invented padding, or\
-unexplained argument disappearance suggest a wrong type, boundary, or ABI. Split an incorrect merged variable where\
-supported, and preserve the raw instruction evidence for tool limitations.
+unexplained argument disappearance suggest a wrong type, boundary, or ABI. A local array smaller than a write into it\
+usually marks one aggregate split into several variables; type the full span and re-decompile. Split an incorrect\
+merged variable where supported, and preserve the raw instruction evidence for tool limitations.
 
 Use known headers, symbols, type archives, donor libraries, or debug information only after matching architecture, ABI,\
 version, and relevant build options. Review similarity candidates manually using unique constants, call shape, and\
