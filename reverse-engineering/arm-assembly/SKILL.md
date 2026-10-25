@@ -47,7 +47,9 @@ Alignment, multiword values, aggregates, and hidden result pointers change the a
 source arguments. An argument may be unused, saved before a call, spilled, or passed on the stack. Inspect callers and\
 incoming stack slots before deciding arity. A composite larger than four bytes generally uses caller-provided result\
 storage under base PCS. VFP parameter passing and platform-specific conventions need separate confirmation from\
-attributes and call sites.
+attributes and call sites. A function built with `-pg` calls `__gnu_mcount_nc` before its own code. The hook preserves\
+`r0`–`r3`, so registers the body reads after that call still hold the function's arguments, even when a decompiler\
+shows them as the hook's result.
 
 Preserve `r4`–`r8`, `r10`, `r11`, and `sp` across conforming calls; `r9` has a platform-defined role. Treat `r12` and\
 condition flags as volatile, including across linker veneers. Register `r13` is `sp`, `r14` is `lr`, and `r15` is `pc`.\
