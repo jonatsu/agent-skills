@@ -27,6 +27,11 @@ Choose one route that answers the question rather than requiring every optional 
 supplied, mount inputs read-only, separate writable projects/results, bound resources, and map ownership. Discover its\
 actual launchers; neither Docker nor a particular host OS is assumed.
 
+Before writing or changing a Ghidra script, look up each class, method, overload, and enum constant you use in the\
+installed release's API documentation, which a Ghidra distribution ships as `docs/GhidraAPI_javadoc.zip`. A guessed\
+name fails only after a full headless start, so each guess costs a run. Read\
+[headless execution](references/headless-execution.md) for the lookup and overload details.
+
 Inventory existing programs, names, comments, types, archives, and exports before rebuilding analysis. Record input\
 hashes and architecture evidence. Close project sessions before taking a consistent project backup or lossless program\
 archive, then verify that the preservation copy opens. A fresh import or exported C file cannot recover unrecorded\
@@ -58,7 +63,8 @@ Read [FunctionID and type metadata](references/functionid-and-typeinfo.md) befor
 function signatures, header-derived archives, or recovered structures. Function identity, prototype, calling\
 convention, and layout are separate claims. Validate architecture/ABI, argument and return storage, widths, alignment,\
 and field offsets before propagation. Inventory existing user annotations and the pre-application names/types/failures\
-so effects and rollback are visible.
+so effects and rollback are visible. A program finds each type archive by its file name, so keep archive names stable\
+and in a directory the GUI searches; the metadata reference explains how.
 
 Work from known callee boundaries into callers. Correct one supported type or signature, redecompile, then inspect both\
 the intended improvement and unrelated branches for propagation errors. Rename from context as understanding grows, and\
@@ -78,14 +84,14 @@ partial; preserve it as incomplete evidence and retry to a fresh destination.
 
 Distinguish auto-analysis limits from per-function decompiler limits. Resolve failures through function boundaries,\
 unsupported operations, diagnostics, and instruction evidence before raising budgets. Report failed functions\
-explicitly; an emitted file alone does not establish successful decompilation. Before editing scripts, consult\
-release-matched stubs/API documentation and check the available Python or Java tooling. Trial write-capable scripts\
-against disposable projects before retained analysis.
+explicitly; an emitted file alone does not establish successful decompilation. Trial write-capable scripts against\
+disposable projects before retained analysis.
 
 ## Completion
 
 Deliver the requested behavior explanation with addresses, supporting instructions/references, accepted metadata,\
 uncertain interpretations, and failed functions. Preserve input/tool/metadata identities, mappings, commands,\
 diagnostics, annotations, and next questions using the consuming workspace's conventions. Save deliberate edits, reopen\
-the program, and verify representative names, signatures, types, and comments. Keep firmware-byte modifications or\
-live-device work within their separately authorized scope.
+the program, and verify representative names, signatures, types, and comments. Treat a script's applied count as\
+attempted until a fresh decompile of the saved program shows each change; report the measured count, and list the edits\
+that did not hold. Keep firmware-byte modifications or live-device work within their separately authorized scope.

@@ -66,6 +66,25 @@ annotations but does not prove that every database detail survived. For a versio
 into a separate project before promoting it. Avoid editing an active script during execution; preserve the exact script\
 bytes for each run.
 
+The Ghidra front end, not CodeBrowser, holds the project lock, so closing CodeBrowser leaves headless writes blocked.\
+Collect headless writes into one window and ask the user to close the whole GUI once for it. Edits to a tool's saved\
+configuration files also need the GUI closed. While the GUI stays open, make small edits through MCP instead.
+
+## Write scripts against the documented API
+
+Read a class page from the release's `docs/GhidraAPI_javadoc.zip` with `unzip -p`; the archive holds\
+`api/allclasses-index.html` and one page per class under its package path, such as\
+`api/ghidra/program/model/data/DataTypeManager.html`. When the documentation leaves a question open, inspect the live\
+class once from a PyGhidra session, with `dir()` or Java reflection, instead of rerunning a guessed call.
+
+A PyGhidra overload error, `TypeError: No matching overloads found`, prints the accepted signatures. Match them\
+exactly: `None` can match several overloads and become ambiguous, Python `str` and `int` arguments may need the Java\
+types the signature names, and a task monitor must be the declared `TaskMonitor` type.
+
+Write bulk-edit scripts to handle the common case and to list every site they skip, with its address and reason, in the\
+same format on every run. Fix the listed sites by hand. Extending a script to cover each rare shape costs more than the\
+manual fixes.
+
 ## Scripting limits in headless mode
 
 A script that reaches a Ghidra service through the tool (`getState().getTool().getService(...)`) fails headless:\

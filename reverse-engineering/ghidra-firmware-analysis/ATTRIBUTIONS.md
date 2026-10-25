@@ -20,12 +20,15 @@ Guidance is independently expressed; no implementation or documentation prose is
 
 ### LaurieWired: GhidraMCP
 
-- Source: <https://github.com/LaurieWired/GhidraMCP>, README and `src/ghidra_mcp`
+- Source: <https://github.com/LaurieWired/GhidraMCP>, README, `src/ghidra_mcp`, and the extension's\
+  `GhidraAnalysisService.java` and `BackendHttpServer.java`
 - License: `Apache-2.0`
-- Version: `1e980252087b2479a21b9ca6d82d5829538651a7`
+- Version: GhidraMCP 2.0, `1e980252087b2479a21b9ca6d82d5829538651a7`
 
 The integration documentation and source informed GUI/MCP capability discovery, optional Python execution, mutation\
-verification, and persistence checks. No code or prose is copied.
+verification, and persistence checks. They also supplied the `ghidra-mcp` GUI and headless modes, the `/health` probe,\
+and the limits of the edit tools: type names resolve only in the program's own data type manager, and the\
+local-variable tool reaches only decompiler locals. No code or prose is copied.
 
 ### mitsuhiko: agent-stuff Ghidra skill
 

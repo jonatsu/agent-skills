@@ -19,8 +19,11 @@ A boundary typed by guesswork (`undefined4 *param_2`) misrenders every access in
 Correct the boundary at one site and let Ghidra propagate:
 
 1. Take a call to a known function whose decompiled argument reads `puVar3`.
-2. Retype the variable from the known signature — `FILE *stream`, `const char *path`, `size_t count` — or edit the\
-   callee signature where several callers share the wrong type.
+2. Find where the variable's value comes from, then apply the known type (`FILE *stream`, `const char *path`,\
+   `size_t count`) at that source. When it is the function's own parameter, change the function signature. When it is\
+   the value a previous call returned, change that callee's return type. Retype the variable itself only when it is a\
+   true local, such as a stack slot or a callee-saved register. A retype at the wrong level is re-derived on the next\
+   decompile and does not hold.
 3. The decompiler re-runs and propagates the change to every reference of that value, so the other call sites clean up\
    in the same edit.
 4. Rename the variable from the site's context; a contextual name is cheap and expected to change, and a later caller\
@@ -48,6 +51,48 @@ into a stack array can collapse to its first few entries, and a by-value aggrega
 were passed. When the C looks truncated, contradicts a caller, or omits work the function obviously does, read the\
 instruction listing for that range and recover the folded operations from it. Rebuild a table the C under-reports by\
 reading the store immediates in order, not the C.
+
+A stack array smaller than a write into it is usually one aggregate the decompiler split into pieces. For example,\
+`undefined1 auStack_54[4]` cleared by `memset(auStack_54, 0, 0x14)` covers 20 bytes, and the variables that follow it\
+in the frame are parts of the same object. Find the type that matches the full span, such as a library structure the\
+surrounding calls take. Retype the first slot with it, then re-decompile; the merged variable replaces the fragments,\
+and nearby expressions often clear up as well.
+
+Record decompiler rendering artifacts, such as an unrecovered jump table that renders as a call through the stack,\
+separately from type errors. They need flow repair, such as a jump-table override, rather than a retype.
+
+## Profiling calls hide arguments
+
+Code built with `-pg` calls a profiling hook at every function entry, such as `__gnu_mcount_nc` on ARM. The hook\
+preserves the argument registers, but Ghidra treats the call as overwriting them. The first argument then renders as\
+the hook's return value (`p = __gnu_mcount_nc();`), later ones appear as `extraout_` variables, and every function\
+looks like it takes no parameters. Retyping each function by hand leaves the body bound to the hook's result.
+
+Fix it once per program with a call fixup: a specification extension that tells the decompiler what a call to the hook\
+does. ARM's `__gnu_mcount_nc` pops the `lr` its caller pushed and returns with `r0`–`r3` intact, which this fixup\
+states:
+
+```xml
+<callfixup name="gnu_mcount_nc_preserve">
+  <target name="__gnu_mcount_nc"/>
+  <pcode>
+    <body><![CDATA[
+      lr = *:4 sp;
+      sp = sp + 4;
+    ]]></body>
+  </pcode>
+</callfixup>
+```
+
+In the GUI, import the XML file under Edit > Options for the program > Specification Extensions, and apply. Then open\
+Edit Function on `__gnu_mcount_nc` and select the fixup as its Call Fixup; set it on both the thunk and the external\
+function of that name. A script does the same inside a transaction with\
+`SpecExtension(program).addReplaceCompilerSpecExtension(xml, monitor)` and `Function.setCallFixup(name)`. The fixup is\
+stored with the program.
+
+Re-decompile to confirm: the hook call disappears, the parameters appear in each signature and body, and a warning\
+comment names the injection. A different hook, such as an older `mcount`, has its own stack and register effects; read\
+its code and write a fixup body that matches before reusing this one.
 
 ## Cut obfuscation before reading
 
@@ -85,6 +130,13 @@ follow its XREFs to the code that fills and reads it; the access width gives the
   walk to JSON so later passes read it without re-querying.
 - A graph result is a hypothesis as well: an empty result can mean incomplete analysis or an unresolved indirect call,\
   so inspect the underlying instructions before concluding absence.
+
+## Type static data in every section
+
+Type static data across every initialised non-executable block, not only sections named `.data` or `.bss`. Read-only\
+data, module metadata, parameter tables, and literal pools carry strings and structures as well. When a sweep excludes\
+a block, report which one and why. Some families type mechanically, such as parameter-name strings sized by their\
+terminating NUL; apply those in bulk and keep per-site judgment for the rest.
 
 ## Record what you learn
 
