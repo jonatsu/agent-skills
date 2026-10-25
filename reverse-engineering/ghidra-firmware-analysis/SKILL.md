@@ -30,12 +30,15 @@ actual launchers; neither Docker nor a particular host OS is assumed.
 Before writing or changing a Ghidra script, look up each class, method, overload, and enum constant you use in the\
 installed release's API documentation, which a Ghidra distribution ships as `docs/GhidraAPI_javadoc.zip`. A guessed\
 name fails only after a full headless start, so each guess costs a run. Read\
-[headless execution](references/headless-execution.md) for the lookup and overload details.
+[headless execution](references/headless-execution.md) for the lookup and overload details. Look first for a script in\
+the project that already does the job. Start a new one from [scripting recipes](references/scripting-recipes.md), and\
+once it proves useful, save it beside the project's other scripts with a usage note.
 
 Inventory existing programs, names, comments, types, archives, and exports before rebuilding analysis. Record input\
 hashes and architecture evidence. Close project sessions before taking a consistent project backup or lossless program\
 archive, then verify that the preservation copy opens. A fresh import or exported C file cannot recover unrecorded\
-annotations. Use separate project copies for uncertain mappings or metadata trials.
+annotations. Use separate project copies for uncertain mappings or metadata trials. Before deleting a project copy,\
+compare it with the retained project as [headless execution](references/headless-execution.md) describes.
 
 ## Establish the loading model
 

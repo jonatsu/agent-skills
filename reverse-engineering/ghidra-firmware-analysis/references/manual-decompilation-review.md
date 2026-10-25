@@ -1,5 +1,18 @@
 # Manual decompilation review
 
+## Contents
+
+- Start from the known calls
+- The type and rename loop
+- When the rendering looks wrong, read the listing
+- Read a constant by where it comes from
+- Profiling calls hide arguments
+- Cut obfuscation before reading
+- Confirm at runtime what static reading cannot settle
+- Navigate by graph and reference
+- Type static data in every section
+- Record what you learn
+
 Automated metadata gets a program named and typed; this loop finishes what it cannot, working call site by call site.\
 Start from the enriched program — FunctionID names, archive signatures, and the renames replay\
 ([FunctionID and type metadata][metadata]) — and tighten what remains. This is the core hand-RE workflow; the metadata\
@@ -18,16 +31,19 @@ imported name as a complete declaration. Resolve an unknown callee's identity be
 A boundary typed by guesswork (`undefined4 *param_2`) misrenders every access inside the function and every caller.\
 Correct the boundary at one site and let Ghidra propagate:
 
-1. Take a call to a known function whose decompiled argument reads `puVar3`.
+1. Take a call to a known function. For example, `fgets(auStack_108, uVar2, piVar1)` calls\
+   `char *fgets(char *str, int count, FILE *stream)`, so the first argument is a `char` buffer, `uVar2` an `int`\
+   count, and `piVar1` a `FILE *`.
 2. Find where the variable's value comes from, then apply the known type (`FILE *stream`, `const char *path`,\
    `size_t count`) at that source. When it is the function's own parameter, change the function signature. When it is\
    the value a previous call returned, change that callee's return type. Retype the variable itself only when it is a\
    true local, such as a stack slot or a callee-saved register. A retype at the wrong level is re-derived on the next\
-   decompile and does not hold.
+   decompile and does not hold. For example, an `undefined4` parameter that the function passes straight to a library\
+   call's `int` argument is an `int`; change it in the function's signature.
 3. The decompiler re-runs and propagates the change to every reference of that value, so the other call sites clean up\
    in the same edit.
-4. Rename the variable from the site's context; a contextual name is cheap and expected to change, and a later caller\
-   with clearer meaning renames it again.
+4. Rename each variable from the site's context, such as `line`, `line_size`, and `stream` for the `fgets` call; a\
+   contextual name is cheap and expected to change, and a later caller with clearer meaning renames it again.
 5. Re-read the function: the cleaner rendering exposes the next wrong type (offset arithmetic that was a field access,\
    a callback whose parameters now line up), and the loop repeats.
 
@@ -52,14 +68,32 @@ were passed. When the C looks truncated, contradicts a caller, or omits work the
 instruction listing for that range and recover the folded operations from it. Rebuild a table the C under-reports by\
 reading the store immediates in order, not the C.
 
-A stack array smaller than a write into it is usually one aggregate the decompiler split into pieces. For example,\
-`undefined1 auStack_54[4]` cleared by `memset(auStack_54, 0, 0x14)` covers 20 bytes, and the variables that follow it\
-in the frame are parts of the same object. Find the type that matches the full span, such as a library structure the\
-surrounding calls take. Retype the first slot with it, then re-decompile; the merged variable replaces the fragments,\
-and nearby expressions often clear up as well.
+A stack array smaller than a write into it usually means the decompiler split one object. For example,\
+`undefined1 auStack_54[4]` cleared by `memset(auStack_54, 0, 0x14)` covers 20 bytes, so the variables that follow it\
+in the frame are likely parts of the same object, and the stack variables around it are usually misread as well. Check\
+the frame layout in the listing before you treat the write as an overflow. When the frame confirms one object, type the\
+full span and re-decompile, which repairs the neighbouring variables together.
+
+Identify the object from how the code fills it. Suppose the code clears those 20 bytes, stores a task pointer at offset\
+4, `&autoremove_wake_function` at offset 8, and the object's own address plus 0xc at offsets 0xc and 0x10, then passes\
+the object to `prepare_to_wait`. A list head pointing at itself, a well-known callback in a function-pointer field, a\
+clear of the exact size, and the calls that receive the object together identify the Linux kernel's `wait_queue_t`:\
+`flags`, `private`, `func`, and a `list_head`, 20 bytes on a 32-bit target. Confirm the layout in the header for the\
+target's kernel version, apply the type to the whole span, and re-decompile; the fields then render by name.
 
 Record decompiler rendering artifacts, such as an unrecovered jump table that renders as a call through the stack,\
 separately from type errors. They need flow repair, such as a jump-table override, rather than a retype.
+
+## Read a constant by where it comes from
+
+A literal's meaning comes from the code that produces it and the code that tests it. In Linux kernel code, a small\
+negative return value is usually a negated `errno` value: `-5` is `-EIO`, `-4` is `-EINTR`, and `-12` is `-ENOMEM`.\
+Check each value before naming the variable that holds it, by tracing every assignment to the call or literal that\
+produced it. For example, a driver function's result variable can hold `-5` and `-4` from failed kernel calls and also\
+`0x40` and `0x60` that the driver's own polling functions return as hardware status, which its log strings print as a\
+status word. Name a variable that mixes the two families as a return code, such as `rc`. Record a confirmed meaning\
+as an equate, with Set Equate on the operand, so the listing shows the name instead of the number; a script uses\
+`SetEquateCmd`, as the [scripting recipes][recipes] show.
 
 ## Profiling calls hide arguments
 
@@ -138,6 +172,10 @@ data, module metadata, parameter tables, and literal pools carry strings and str
 a block, report which one and why. Some families type mechanically, such as parameter-name strings sized by their\
 terminating NUL; apply those in bulk and keep per-site judgment for the rest.
 
+Neighbouring statics that code reaches through one base pointer may be one structure or separate globals that the\
+linker placed together. Read the symbol table first: when the binary names each member as its own global, keep the\
+separate symbols and type the shared access pointer, rather than inventing a structure the source never had.
+
 ## Record what you learn
 
 Save accepted types, labels, and names to the program in a transaction, export deliberate renames for replay with the\
@@ -150,4 +188,5 @@ in the function comment so a later pass can review or overturn it.
 ## References
 
 [metadata]: functionid-and-typeinfo.md
+[recipes]: scripting-recipes.md
 [recovery]: symbol-and-struct-recovery.md

@@ -13,11 +13,13 @@ For the GUI route, open the intended program in CodeBrowser and enable the compa
 runs as the `ghidra-mcp` command. In GUI mode it connects to the plugin's HTTP server, set with `--ghidra-server`; in\
 headless mode it imports and analyses one binary itself through PyGhidra. Probe a plugin with `GET /health`, which\
 reports the GhidraMCP and Ghidra versions, the mode, and the open program, and check the program identity before\
-querying sample data. The plugin has no authentication, so keep it on loopback unless remote access is explicitly\
-required and configured with appropriate protection. Headless mode keeps edits only when started with `--project DIR`.\
-For a stdio server, keep protocol stdout separate from logs. The server needs its declared Python dependencies;\
-PyGhidra is required only by routes that embed Ghidra through Python. Use installation guidance from the selected\
-release rather than blindly installing an unpinned default branch.
+querying sample data. When the server cannot reach the plugin at all, the GUI, its program, or the plugin is not\
+running; ask the user to start it, or use the headless route, instead of repeating the call. The plugin has no\
+authentication, so keep it on loopback unless remote access is explicitly required and configured with appropriate\
+protection. Headless mode keeps edits only when started with `--project DIR`. For a stdio server, keep protocol stdout\
+separate from logs. The server needs its declared Python dependencies; PyGhidra is required only by routes that embed\
+Ghidra through Python. Use installation guidance from the selected release rather than blindly installing an unpinned\
+default branch.
 
 ## Query narrowly
 

@@ -9,11 +9,14 @@ Keep `LICENSE.symbol-recovery` with the adapted symbol and structure recovery ma
 
 ### National Security Agency: Ghidra documentation
 
-- Source: <https://github.com/NationalSecurityAgency/ghidra>, headless analysis, scripting, FunctionID, and data types
+- Source: <https://github.com/NationalSecurityAgency/ghidra>, headless analysis, scripting, FunctionID, data types, the\
+  API Javadoc, and the PyGhidra package source
 - License: `Apache-2.0`
-- Version: Ghidra 12.0 PyGhidra guide and 12.1.4 headless/PyGhidra guides
+- Version: Ghidra 12.0 PyGhidra guide, 12.1.4 headless/PyGhidra guides and API Javadoc, and PyGhidra 3.1.0
 
 The documentation grounds installation discovery, script providers, saved-program processing, and metadata operations.\
+The API Javadoc and the framework classes ground the scripting recipes' signatures and the project path and owner\
+checks. The PyGhidra source grounds the `pyghidra` command's exit status, project layout, and save behaviour.\
 Guidance is independently expressed; no implementation or documentation prose is copied.
 
 ## Third-party Sources
