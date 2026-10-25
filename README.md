@@ -109,7 +109,7 @@ These sources were consulted about how the skills should be written and structur
 - [Reverse engineering](reverse-engineering/README.md): binary and firmware investigation, analysis tools, and
   specialist techniques
 - [AGENTS.md](AGENTS.md): the authoring and review rules, for people and agents working here
-- [ENGINEERING-PIPELINE.md](engineering/README.md): core engineering skills structure, intended fit together and workflow,
+- [Engineering pipeline](engineering/README.md): core engineering skills structure, intended fit together and workflow,
   from an idea to verified work
 - [TODO.md](TODO.md): the skill backlog, review ledgers and unevaluated candidate sources
 - The `archived` branch: retired skills kept for reference, with why each was archived

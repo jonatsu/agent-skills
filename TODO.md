@@ -12,7 +12,7 @@ deferred" in `archived/README.md` on the `archived` branch.
 ## Engineering Pipeline Follow-Ups
 
 Added 2026-10-04, left open by the pipeline rewiring that made the skills match
-[ENGINEERING-PIPELINE.md](ENGINEERING-PIPELINE.md) (commits `11925447`, `a0e2d2e2`, `f7e89b7f`; the reasoning is in
+[the engineering pipeline](engineering/README.md) (commits `11925447`, `a0e2d2e2`, `f7e89b7f`; the reasoning is in
 the routing check (agent-setup's `docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md`)).
 
 - **Evals for the two new behaviors.** Neither has a case in its package's `evals/behavior.json`, so a later edit
