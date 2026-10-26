@@ -46,10 +46,19 @@ Under base AAPCS32, `r0`–`r3` carry initial argument words and scratch values;
 Alignment, multiword values, aggregates, and hidden result pointers change the allocation. Do not count registers as\
 source arguments. An argument may be unused, saved before a call, spilled, or passed on the stack. Inspect callers and\
 incoming stack slots before deciding arity. A composite larger than four bytes generally uses caller-provided result\
-storage under base PCS. VFP parameter passing and platform-specific conventions need separate confirmation from\
-attributes and call sites. A function built with `-pg` calls `__gnu_mcount_nc` before its own code. The hook preserves\
-`r0`–`r3`, so registers the body reads after that call still hold the function's arguments, even when a decompiler\
-shows them as the hook's result.
+storage under base PCS. Determine the floating-point variant before recovering a float argument: the base, soft-float\
+variant passes every argument, floats included, in `r0`–`r3` and the stack, while the VFP, hard-float variant passes\
+floating-point values and short homogeneous float aggregates in `s0`–`s15`/`d0`–`d7` and leaves only integer arguments\
+in `r0`–`r3`. VFP load or move instructions marshalling a call's arguments, or a `Tag_ABI_VFP_args` attribute, indicate\
+the VFP variant; confirm from a call boundary rather than assuming soft-float.
+
+Calls to `__aeabi_*` compiler-runtime helpers, and GCC equivalents such as `__gnu_mcount_nc`, are compiler-inserted,\
+not application logic; name the operation and do not trace into them. A function built with `-pg` calls\
+`__gnu_mcount_nc` before its own code, and that hook preserves `r0`–`r3`, so registers the body reads after the call\
+still hold the function's arguments even when a decompiler shows them as the hook's result. Several helpers return\
+multiple registers, such as `__aeabi_idivmod` in `r0` and `r1`, which a decompiler can mis-render as a scalar or as\
+separate calls. The [runtime-helper and ABI-variant reference](references/runtime-helpers-and-abi-variants.md) catalogs\
+the helpers and the two floating-point variants.
 
 Preserve `r4`–`r8`, `r10`, `r11`, and `sp` across conforming calls; `r9` has a platform-defined role. Treat `r12` and\
 condition flags as volatile, including across linker veneers. Register `r13` is `sp`, `r14` is `lr`, and `r15` is `pc`.\

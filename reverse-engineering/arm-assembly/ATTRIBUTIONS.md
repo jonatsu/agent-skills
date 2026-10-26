@@ -11,9 +11,18 @@
 - License: `CC-BY-SA-4.0 AND LicenseRef-Arm-Patent-License`
 - Version: embedded release `2025Q4`, issued 23 January 2026
 
-Informed independently expressed ABI interpretation guidance, including argument allocation and platform-dependent\
-register roles. The source adds a patent grant with defensive termination. No prose, tables, or artwork were copied or\
-adapted.
+Informed independently expressed ABI interpretation guidance, including argument allocation, the soft-float and VFP\
+calling variants, and platform-dependent register roles. The source adds a patent grant with defensive termination. No\
+prose, tables, or artwork were copied or adapted.
+
+### Arm: Run-time ABI for the Arm Architecture
+
+- Source: <https://github.com/ARM-software/abi-aa/blob/main/rtabi32/rtabi32.rst>
+- License: `CC-BY-SA-4.0 AND LicenseRef-Arm-Patent-License`
+- Version: embedded release `2025Q4`, issued 23 January 2026
+
+Informed the independently expressed catalog of `__aeabi_*` compiler-runtime helpers and their register conventions.\
+The source adds a patent grant with defensive termination. No prose, tables, or artwork were copied or adapted.
 
 ### Arm: Cortex-A Series Programmer's Guide
 
