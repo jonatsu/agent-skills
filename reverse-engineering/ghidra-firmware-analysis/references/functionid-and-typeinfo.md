@@ -1,5 +1,13 @@
 # FunctionID, type archives, and symbol metadata
 
+## Contents
+
+- Symbol sources
+- FunctionID
+- Type archives, built from headers or from compiler debug information
+- Keep archive references resolvable
+- Locking and validation
+
 Names, function matches, and C types solve different gaps in a stripped program. Determine what already survives in the\
 input before building or applying external metadata.
 
@@ -32,6 +40,25 @@ position-independent code can change matching effectiveness. A hash hit alone do
 role of a common wrapper or tiny helper. Corroborate matches using callers, constants, argument effects, and\
 instructions before accepting disputed names.
 
+Prepare donors so that ingest records them. FunctionID names an entry from the function's primary symbol, so it skips\
+functions that still carry default `FUN_` names. Analyse donors with the Function ID and Library Identification\
+analyzers disabled, so earlier matches do not contaminate the database. Disable the Demangler too when the database\
+must match raw mangled names. The bundled `FunctionIDHeadlessPrescript` shows these settings for a headless import.
+
+Most false positives come from tiny functions and from recurring idioms, such as destructors that compile identically\
+under different names. Raising the instruction-count threshold in the analysis options suppresses the tiny matches,\
+at the cost of some true ones. Per-entry flags tune one database more precisely:
+
+- Force Specific accepts the entry only on an exact full-hash match, which suits idioms that embed known constants.
+- Force Relation requires a matching parent or child, which separates large idioms.
+- Auto Fail never matches the entry.
+- Auto Pass lets a short function with a distinctive instruction sequence pass the threshold.
+
+Set them in the FunctionID debug windows, or in a script on a modifiable `FidDB` with `setForceSpecificByFullHash` and\
+its `ForceRelation`, `AutoFail`, and `AutoPass` siblings. Then save the database. `FIDHashCurrentFunction` prints a\
+function's hashes. `RemoveFunctions` prunes a finished database and `RepackFid` compacts it; the FunctionID feature's\
+`data/building_fid.txt` records how Ghidra tuned its shipped databases.
+
 Version Tracking can correlate programs and propagate accepted annotations. BSim searches decompiler-derived similarity\
 signatures and can identify near matches beyond byte-identical code. Both require their own supported setup and match\
 review; availability does not establish that a database has already been built.
@@ -50,7 +77,10 @@ settings, pointer widths, scalar widths, alignment, and calling convention.
 Type archives are not governed by the same universal exact-LanguageID rule as FunctionID. Verify the stored data\
 organisation and destination ABI rather than rejecting or accepting solely from the archive filename. Inspect installed\
 C-parser and Data Type Manager documentation for the actual archive constraints and application options. Ghidra's\
-bundled generic archives are the default for common library imports. When an archive built from the target's exact\
+bundled generic archives are the default for common library imports. Measure what they already supply before building\
+a libc archive. Analysis applies `generic_clib` automatically, and in 12.1.4 it already gives complete 32-bit layouts\
+for `FILE`, `struct stat`, `struct tm`, and `pthread_mutex_t`. A target-specific libc archive then adds mainly the\
+functions `generic_clib` lacks and exact-version provenance. When an archive built from the target's exact\
 library version is available, compare the two on the types the program uses, and prefer the target-specific archive\
 where it is more accurate. Measure the remaining gaps before constructing another archive. Library headers do not\
 recover proprietary application structures that were never published.
@@ -76,6 +106,30 @@ If direct parsing fails, inspect `<output>_CParser.out` for the failing declarat
 compiler preprocess the real headers with their include paths and feature defines. Remove unsupported inline bodies or\
 attributes only after checking whether they affect layout or signatures; preserve required packing and calling\
 conventions. Record the source, any adapter, ABI, and parser diagnostics with the archive.
+
+### Build an archive from compiler debug information
+
+The C-parser rejects glibc's internal headers, such as `libio.h` and `bits/*`, whichever sysroot supplies them; a\
+fuller sysroot reproduces the failure. Let the target compiler compute the layouts instead, and import them as DWARF:
+
+1. Write a probe source that references every type you need.
+2. Compile it with the target's own cross-compiler at `-g -O0 -fno-eliminate-unused-debug-types`.
+3. Import the object into Ghidra with the target language forced.
+4. Export its DWARF types into a file archive created for the same language and compiler spec.
+5. Compare a few known sizes, such as `struct stat` and `FILE`, against the target ABI.
+
+Take function signatures separately. `gcc -aux-info` over the public headers emits normalised prototypes that the\
+C-parser accepts; parse them into a copy of the DWARF archive. Parsing a prototype that names `struct X *` can create a\
+new, empty `struct X` that shadows the complete DWARF one, so the parameters bind to the empty type. After the parse,\
+replace each empty composite with its complete namesake through `DataTypeManager.replaceDataType`. Then confirm that the\
+parameters point at the complete type.
+
+A kernel or kernel-module archive also depends on the kernel configuration, because options change struct layouts.\
+Compile the probe with the kernel's own build system, against a tree configured like the target. When the target's\
+configuration is unknown, infer each layout-affecting option from the symbols it adds. A symbol's presence in\
+`kallsyms` or the kernel image settles the option. For example, `spin_bug` shows spinlock debugging is enabled, which\
+enlarges every structure that holds a lock. Check the finished archive against a structure the firmware initialises\
+statically, such as a `file_operations` table whose relocated members land at known offsets.
 
 Apply signatures only after verifying both the function identity and its argument/return storage. A C wrapper's calling\
 convention can differ from a raw syscall or firmware service ABI. Record uncertain pointer meanings instead of\

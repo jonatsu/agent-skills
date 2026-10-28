@@ -82,7 +82,8 @@ clear of the exact size, and the calls that receive the object together identify
 target's kernel version, apply the type to the whole span, and re-decompile; the fields then render by name.
 
 Record decompiler rendering artifacts, such as an unrecovered jump table that renders as a call through the stack,\
-separately from type errors. They need flow repair, such as a jump-table override, rather than a retype.
+separately from type errors. They need flow repair, such as a jump-table override, rather than a retype;\
+[decompiler repairs][repairs] maps each symptom to its repair.
 
 ## Read a constant by where it comes from
 
@@ -190,3 +191,4 @@ in the function comment so a later pass can review or overturn it.
 [metadata]: functionid-and-typeinfo.md
 [recipes]: scripting-recipes.md
 [recovery]: symbol-and-struct-recovery.md
+[repairs]: decompiler-repairs.md

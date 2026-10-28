@@ -1,6 +1,6 @@
 ---
 name: ghidra-firmware-analysis
-description: Reverse-engineer firmware and native binaries with Ghidra. Use to import images, investigate functions and references, iteratively improve decompilation through names and types, generate or apply function signatures and type metadata, or preserve and resume analysis through GUI/MCP or headless scripting.
+description: Reverse-engineer firmware and native binaries with Ghidra. Use to import images, investigate functions and references, iteratively improve decompilation through names, types, and signature or control-flow repairs, generate or apply function signatures and type metadata, or preserve and resume analysis through GUI/MCP or headless scripting.
 license: MIT
 compatibility: Requires Ghidra and its supported Java runtime. GUI automation needs a compatible MCP extension and bridge; Python scripting needs compatible PyGhidra and CPython. Java scripts are an alternative. Containers are optional.
 metadata:
@@ -45,8 +45,10 @@ compare it with the retained project as [headless execution](references/headless
 For recognized executables, inspect detected language/compiler IDs, mappings, symbols, and relocations. For raw images,\
 justify architecture, bitness, byte order, instruction mode, load address, and mapped ranges. Check instruction\
 decoding and branch targets before accepting a mapping; retain competing hypotheses separately. Relocatable module\
-offsets and runtime module addresses are different coordinates. Read the loader's actual diagnostics; a saved program\
-does not imply clean relocation or completed analysis.
+offsets and runtime module addresses are different coordinates. A relocatable object, such as a kernel module, has no\
+single runtime base. Its relocation-resolved references and its struct field offsets are correct at any image base, so\
+rebase it only to correlate with runtime addresses from a symbol table or crash dump. Read the loader's actual\
+diagnostics; a saved program does not imply clean relocation or completed analysis.
 
 ## Navigate evidence before naming
 
@@ -73,9 +75,11 @@ Work from known callee boundaries into callers. Correct one supported type or si
 the intended improvement and unrelated branches for propagation errors. Rename from context as understanding grows, and\
 revise names when stronger evidence arrives. Read the\
 [manual refinement loop](references/manual-decompilation-review.md) for merged variables, missing operations,\
-obfuscation, and runtime corroboration. Reject a pleasing rendering that contradicts instruction effects or a caller's\
-argument preparation. Export accepted annotations with their source and target identity; test reopening before treating\
-them as durable.
+obfuscation, and runtime corroboration. When the C is structurally wrong, with `in_`, `unaff_`, or `extraout_`\
+variables, phantom indirect calls, junk after calls, or opaque system calls, read\
+[decompiler repairs](references/decompiler-repairs.md) to find the trusted fact to correct. Reject a pleasing\
+rendering that contradicts instruction effects or a caller's argument preparation. Export accepted annotations with\
+their source and target identity; test reopening before treating them as durable.
 
 ## Export and recover
 
