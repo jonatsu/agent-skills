@@ -134,5 +134,5 @@ differ between architectures and later kernels append calls.
 As of Ghidra 12.2, the ARM and Thumb language definitions lower `svc` to a `software_interrupt` operation that takes\
 only the immediate, so every EABI site decompiles as `software_interrupt(0)` with no visible argument or result.\
 Ghidra's documented repair gives each syscall a body-less function in an overlay block of the `OTHER` space, and adds a\
-`CALLOTHER_CALL_OVERRIDE` reference from the `svc` to it. The bundled `ResolveX86orX64LinuxSyscallsScript` automates\
+`CALLOTHER_OVERRIDE_CALL` reference from the `svc` to it. The bundled `ResolveX86orX64LinuxSyscallsScript` automates\
 that repair for x86 and x64 only; ARM needs an adapted script and a supplied number-to-name table.
