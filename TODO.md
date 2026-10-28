@@ -293,6 +293,15 @@ material than to hardening's configure-and-verify lane. Decide placement as part
 Related and unfinished: post-quantum crypto has no upstream answer either; the two Yocto-native candidates
 (`meta-oqs`, `meta-quantum-safe`) are both self-described as experimental and never compared.
 
+## Bare-Metal Conventions for `arm-assembly`
+
+`arm-assembly` covers base AAPCS32 and its variants, Linux userspace system calls, and ARMv7-A privileged code, and
+its `SKILL.md` states that bare-metal and RTOS conventions are outside that scope. Add a reference for reading
+bare-metal AArch32 code. Cover the ARMv7-M exception model (hardware-stacked frame, `EXC_RETURN` values, vector
+table layout), semihosting calls, startup code that copies `.data` and zeroes `.bss`, and the service-call conventions
+of common RTOSes. Ground it in the ARMv7-M Architecture Reference Manual, Arm's semihosting specification, and each
+RTOS's own port sources, then remove the exclusion from the skill's scope statement.
+
 ## Risk Scan for Third-Party Skills
 
 Vet an upstream skill for risky code before adopting, adapting or re-pinning it. Raised 2026-10-10 by a
