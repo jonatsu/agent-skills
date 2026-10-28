@@ -163,8 +163,23 @@ follow its XREFs to the code that fills and reads it; the access width gives the
   GML, GraphML, and others — so the walk becomes a file an agent reads directly.
 - Headless, query the call graph and references with the script API from the skill's navigation section, and write the\
   walk to JSON so later passes read it without re-querying.
+- Over GhidraMCP, `get_function_calls` returns a function's callers, callees, or both, chosen by its `direction`\
+  argument. `get_function_xrefs` and `get_xrefs_to` confirm callers reference by reference; `get_xrefs_from` lists the\
+  outward references of one instruction or data address.
 - A graph result is a hypothesis as well: an empty result can mean incomplete analysis or an unresolved indirect call,\
   so inspect the underlying instructions before concluding absence.
+
+Answer an ordering question by membership in the callee graph. To decide whether B runs on A's path, collect A's\
+callees transitively, down to the depth the question needs. Suppose A's first callees only read a device, poll status,\
+and delay, and B never appears among them. Then B does not run inline on that path, and the callee list is the\
+evidence. A caller that may run B before calling A is a separate question; walk A's callers to answer it.
+
+Indirect dispatch ends a static walk. When code calls through a function-pointer table, dispatch table, or vtable, the\
+call-graph and reference tools resolve the edge only to the table slot or a thunk, often an undefined stub. A function\
+reached only that way shows one caller, the slot's address, and no direct reference ties it to its real caller. Treat\
+that edge as undecided by the static graph. Resolve it by reading the code that fills the table, or by observing the\
+call at runtime as described above. Until then, report the edge as statically undecidable rather than concluding either\
+way.
 
 ## Type static data in every section
 

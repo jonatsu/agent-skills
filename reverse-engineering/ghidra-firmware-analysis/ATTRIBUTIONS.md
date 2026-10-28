@@ -34,6 +34,7 @@ expressed; no implementation or documentation prose is copied.
 
 The integration documentation and source informed GUI/MCP capability discovery, optional Python execution, mutation\
 verification, and persistence checks. They also supplied the `ghidra-mcp` GUI and headless modes, the `/health` probe,\
+the call-graph and reference tools,\
 and the limits of the edit tools: type names resolve only in the program's own data type manager, and the\
 local-variable tool reaches only decompiler locals. No code or prose is copied.
 

@@ -57,6 +57,12 @@ callers, callees, incoming/outgoing references, initialized data, and pointer-ta
 through exported C misses indirect calls and data relationships. An empty reference result may mean incomplete\
 analysis, so inspect instructions and analysis coverage first.
 
+Build the local call graph before claiming any flow across functions: that A runs before B, that X is reached only\
+from Y, or that a read requires a check. One decompiled body shows neither its callers nor what its callees do. Walk\
+callers up toward entry points and callees down toward dependencies. A static graph stops at indirect dispatch, so an\
+edge through a pointer table can stay undecided; [graph navigation](references/manual-decompilation-review.md) covers\
+both.
+
 Read [symbol and structure recovery](references/symbol-and-struct-recovery.md) for missing names or layouts. Infer\
 roles from argument effects, constants, strings, ownership, and caller/callee relationships. Separate file symbols,\
 automated matches, and analyst hypotheses; record address, evidence, confidence, and alternatives. Intuition chooses\
