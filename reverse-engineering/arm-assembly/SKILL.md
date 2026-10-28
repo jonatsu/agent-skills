@@ -28,6 +28,12 @@ branch targets, bit zero encodes Thumb state; the actual instruction address exc
 in a listing does not establish ARM state. Inspect mapping symbols, branch type, and surrounding code. On a bad decode,\
 test a separate mode or mapping hypothesis and compare valid branch destinations and literal references.
 
+State carries along fall-through and changes only at an interworking transfer. Its target can be a value with bit zero\
+set that is built, stored, reloaded, and then passed to `bx`, so trace such a value through memory before assigning a\
+mode. A wrong-mode decode does not resynchronise the way x86 does, because both instruction sets use fixed lengths. A\
+long run of plausible instructions is therefore no evidence of the right mode; judge the mode by whether branch\
+targets, literal references, and calls stay consistent.
+
 ## Trace one question through a function
 
 1. Identify entry, exits, callers, and the concrete question that the function must answer.

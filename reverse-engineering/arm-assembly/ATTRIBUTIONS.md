@@ -86,6 +86,17 @@ Supplied the original workflow structure linking disassembly, register interpret
 recovery. Its concrete examples concern AArch64; this package's AArch32 guidance is independently written. The upstream\
 notice accompanies the package in `LICENSE.upstream`.
 
+### Ye, Zhang, Shi, Aafer, and Zhang: D-ARM
+
+- Source: "D-ARM: Disassembling ARM Binaries by Lightweight Superset Instruction Interpretation and Graph Modeling",\
+  IEEE Symposium on Security and Privacy 2023, <https://doi.org/10.1109/SP46215.2023.10179307>
+- License: `LicenseRef-No-License-Declared`
+- Version: author-hosted PDF, <https://qingkaishi.github.io/public_pdfs/SP23DARM.pdf>, read 2026-10-28
+
+Informed the independently expressed guidance that ARM and Thumb state carries along fall-through, that an interworking\
+target can pass through memory, and that a wrong-mode decode does not resynchronise. No prose, figures, or tables are\
+copied.
+
 ### University of Washington CSE469 materials: ARMv7 Quick Reference
 
 - Source: <https://courses.cs.washington.edu/courses/cse469/20wi/armv7.pdf>
