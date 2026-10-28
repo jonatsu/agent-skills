@@ -40,6 +40,9 @@ afij @ 0x8000          function entry, size, and analysis details
 pdfj @ 0x8000          bytes and disassembly
 agfj @ 0x8000          basic blocks and graph edges
 axtj @ 0x8000          known incoming references
+axfj @ 0x8000          references from this address
+agcj @ 0x8000          call graph rooted at this function
+agCj                   global call graph
 pdc @ 0x8000           native pseudo-disassembly
 LDj                    installed decompiler command names
 La                     installed architecture plugins
@@ -50,6 +53,12 @@ Replace `0x8000` with a verified function entry in the current mapping. Prefer l
 resolving symbols so command construction cannot execute symbol-supplied syntax. Use `?v $$` after seeking and compare\
 the result with `afij` and the requested entry. Follow references and pointer-table registrations before searching\
 exported C text. Expand analysis when callers are missing, then distinguish absent evidence from proven absence.
+
+Build the call graph before claiming a flow across functions, such as one call running before another. Use `agcj` to\
+walk one function's callees and `axtj` to walk its callers. Export `agCj` when you need the shape of a large subsystem\
+at once; a graph format such as `d` (Graphviz DOT) renders it for a person. A static graph stops at indirect dispatch:\
+an edge through a function-pointer or dispatch table resolves only to the table slot. Report such an edge as\
+undecided until the code that fills the table, or a runtime observation, settles it.
 
 ## Retain evidence
 
