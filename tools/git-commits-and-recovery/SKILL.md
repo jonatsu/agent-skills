@@ -50,6 +50,15 @@ Assume unrecognized changes belong to another contributor. Commit only changes y
 When independent lanes need different branches or checkouts, isolate them in linked worktrees with the
 `using-git-worktrees` skill. Do not use the shared stash as automatic concurrency isolation.
 
+## Branches
+
+Keep a branch short-lived and merge it within days, so it stays close to its base and merges cleanly. Name it
+for its work as `<type>/<short-description>`, such as `fix/login-redirect`, unless the repository has its own
+convention. Rebase a private branch onto its base to keep history linear. Keep a shared branch's history
+stable: a force-push to it needs explicit authorization and the protected push in
+[references/history-changing-operations.md](references/history-changing-operations.md#pushing). Delete a
+branch once it has merged; deleting one with unmerged work is a destructive operation.
+
 ## Route by Operation
 
 - For an ordinary stage and commit, use [Routine Staging and Commits](#routine-staging-and-commits).
