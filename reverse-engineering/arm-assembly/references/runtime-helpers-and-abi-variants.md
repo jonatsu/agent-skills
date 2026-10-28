@@ -1,9 +1,10 @@
 # ARMv7 runtime helpers and calling-convention variants
 
-Two AArch32 conventions routinely distort a decompiler's output: the floating-point calling variant, which decides\
-where float arguments live, and the `__aeabi_*` compiler-runtime helpers, which a decompiler shows as ordinary calls.\
-This reference catalogs both so recovered arguments and reconstructed logic match the binary. The register roles and\
-helper semantics follow the Arm AAPCS32 and Run-time ABI.
+Three AArch32 conventions routinely distort a decompiler's output: the floating-point calling variant, which decides\
+where float arguments live; the `__aeabi_*` compiler-runtime helpers, which a decompiler shows as ordinary calls; and\
+the Linux system-call convention, which a decompiler shows as one opaque trap. This reference catalogs all three so\
+recovered arguments and reconstructed logic match the binary. The register roles and helper semantics follow the Arm\
+AAPCS32 and Run-time ABI, and the system-call convention follows the Linux kernel's ARM entry code.
 
 ## Contents
 
@@ -13,6 +14,7 @@ helper semantics follow the Arm AAPCS32 and Run-time ABI.
 - Soft-float arithmetic, comparison, and conversion
 - Memory helpers
 - What the helpers mean for reconstruction
+- Linux system calls
 
 ## Soft-float and VFP calling variants
 
@@ -98,3 +100,39 @@ Do not trace into a helper as if it were application logic; name the operation i
 multi-register return (`idivmod`, `ldivmod`, `lmul`) as one value, not several. Treat a helper call as evidence of the\
 source-level operation: a division, a 64-bit arithmetic step, a float cast, or a block copy the C source expressed\
 directly.
+
+## Linux system calls
+
+Three facts decide how a system-call site reads: the binary's ABI, the kernel's architecture, and the kernel version.\
+Every EABI case shares one register convention. The code executes `svc #0`, in ARM or Thumb state, with the syscall\
+number in `r7`. Arguments occupy `r0`–`r5`, six words with none on the stack, and a 64-bit argument starts at an even\
+register pair, so `r1` or `r3` can be padding. The kernel returns the result in `r0`, or a value from -4095 to -1 that\
+is a negated errno; a libc wrapper converts that value to a -1 return and sets `errno`.
+
+| Environment                       | Number encoding                               | ARM-private calls                      |
+| --------------------------------- | --------------------------------------------- | -------------------------------------- |
+| 32-bit ARM kernel, EABI binary    | `r7`; the `svc` immediate is 0                | base `0xf0000`; set depends on version |
+| 32-bit ARM kernel, OABI binary    | `swi 0x900000+N`, ARM state only; `r7` unused | same set, base `0x9f0000`              |
+| arm64 kernel, AArch32 EABI binary | `r7`; OABI binaries do not run                | `cacheflush` and `set_tls` only        |
+
+On a 32-bit ARM kernel, the ARM-private calls sit at the base plus n. Kernels v3.0 through v4.14 provide `breakpoint`,\
+`cacheflush`, `usr26`, `usr32`, and `set_tls` (n = 1 to 5), and v4.15 adds `get_tls` (n = 6). Kernels up to v4.3 also\
+define `cmpxchg` at n = `0xfff0`, private to the kernel's own pre-ARMv6 helper; user code should not contain it. A\
+vendor kernel can add calls, so check the target kernel's `asm/unistd.h` when one is available. A 32-bit kernel runs\
+OABI binaries only when built without EABI or with `CONFIG_OABI_COMPAT`. Native AArch64 code uses `svc #0` with the\
+number in `x8` and arguments in `x0`–`x5`; its other conventions are outside this skill.
+
+Tell the ABI apart before reading sites. The top byte of the ELF header's `e_flags` holds the Arm EABI version, 5 for\
+current toolchains, which `readelf -h` decodes. A version of 0 means unknown conformance rather than OABI, so confirm\
+from a site: a non-zero `svc` immediate in ARM code marks an OABI call.
+
+Recover the number by propagating the constant from the nearest preceding write to `r7` (`mov r7, #N`, `movw`, or a\
+literal load) on every path into the `svc`. When `r7` comes from a register or memory, the call is chosen at run time;\
+leave it unresolved rather than guess. Map the number through the target kernel's own syscall table, because numbers\
+differ between architectures and later kernels append calls.
+
+As of Ghidra 12.2, the ARM and Thumb language definitions lower `svc` to a `software_interrupt` operation that takes\
+only the immediate, so every EABI site decompiles as `software_interrupt(0)` with no visible argument or result.\
+Ghidra's documented repair gives each syscall a body-less function in an overlay block of the `OTHER` space, and adds a\
+`CALLOTHER_CALL_OVERRIDE` reference from the `svc` to it. The bundled `ResolveX86orX64LinuxSyscallsScript` automates\
+that repair for x86 and x64 only; ARM needs an adapted script and a supplied number-to-name table.

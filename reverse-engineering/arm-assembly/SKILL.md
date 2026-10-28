@@ -1,6 +1,6 @@
 ---
 name: arm-assembly
-description: Interpret 32-bit ARMv7 ARM and Thumb disassembly. Use to reconstruct arguments and stack frames, resolve instruction-mode or signedness errors, recover structures and control flow, or trace privileged ARMv7-A firmware code.
+description: Interpret 32-bit ARMv7 ARM and Thumb disassembly. Use to reconstruct arguments, stack frames, and Linux system calls, resolve instruction-mode or signedness errors, recover structures and control flow, or trace privileged ARMv7-A firmware code.
 license: MIT
 compatibility: Requires supplied AArch32 disassembly or an ARM-capable disassembler. Runtime tracing additionally requires a compatible debugger and execution environment.
 metadata:
@@ -10,7 +10,9 @@ metadata:
 # Reading ARMv7 assembly
 
 Recover behavior from AArch32 instructions and evidence, then improve names, types, and reconstructed logic. This skill\
-covers ARMv7 ARM/Thumb, including ARMv7-A system code. AArch64 conventions require different guidance.
+covers ARMv7 ARM/Thumb, including ARMv7-A system code. Its calling conventions are base AAPCS32 and its variants, and\
+its operating-system interface is Linux userspace. Bare-metal and RTOS conventions, such as the ARMv7-M exception\
+model, semihosting, and RTOS service calls, need their own documentation, as do AArch64 conventions.
 
 ## Establish the interpretation
 
@@ -66,6 +68,13 @@ Frame-pointer choice is compiler-dependent; `r7` or `r11` may appear, or no fram
 stack alignment and eight-byte alignment at a public interface; verify actual call-boundary alignment. Track saved\
 `lr`, local allocation, and outgoing argument space before assigning stack-variable offsets. A push of `lr` is evidence\
 about preservation, not a proof that the body contains a normal call.
+
+Linux userspace enters the kernel through its own convention, not AAPCS32. An EABI binary executes `svc #0` with the\
+syscall number in `r7`, up to six argument words in `r0`–`r5`, and the result or a negated errno in `r0`, under both\
+32-bit ARM and arm64 kernels. Legacy OABI binaries encode the number in the instruction instead. A decompiler that\
+models the trap by its immediate alone renders every EABI site as the same opaque call, so recover each site from its\
+registers. The [runtime-helper and ABI-variant reference](references/runtime-helpers-and-abi-variants.md) separates\
+the cases by ABI, kernel architecture, and kernel version.
 
 ## Corroborate reconstructed behavior
 
