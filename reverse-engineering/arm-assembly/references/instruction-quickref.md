@@ -79,6 +79,15 @@ stack. Writeback and loaded base-register interactions require checking the enco
 an interworking target, commonly `lr` for return. A plain `b` can be a tail call. Loading `pc` can return or dispatch\
 indirectly; derive its destination from the actual source memory.
 
+Whether a write to `pc` can switch instruction set depends on the instruction, the current state, and the\
+architecture version. `bx`, `blx` (register), and `bxj` always treat the value as an interworking address: bit zero\
+set selects Thumb, and bits one and zero both clear select ARM. From ARMv5T, `ldr` into `pc`, and `pop` or `ldm` with\
+`pc` in the list, interwork the same way in either state. From ARMv7, in ARM state only, a data-processing instruction\
+that writes `pc` without setting flags also interworks, such as `mov pc, r0` or `add pc, pc, r1`. The same instruction\
+in Thumb state, or before ARMv7, branches within the current state. `b`, `bl`, `cbz`, `cbnz`, `tbb`, and `tbh` never\
+change state, and `blx` (immediate) always does. Exception-return forms, such as `ldm` with `^` or a flag-setting\
+`movs pc, lr`, restore the state from the saved program status register instead.
+
 For `tbb` and `tbh`, decode the table base and unsigned entry width, then form the PC-relative destination with the\
 required scaling. Check every recovered destination against an instruction boundary and executable mapping. A jump\
 table is data even if linear disassembly produces plausible instructions there.

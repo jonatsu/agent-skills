@@ -34,6 +34,16 @@ Formerly supplied a distilled programmer-model reference; the current package re
 independently written analysis procedures. Its Linux SVC example corroborates the system-call number register. The\
 guide requires prior written permission for reproduction; no guide prose or tables are carried.
 
+### Arm: ARM Architecture Reference Manual, ARMv7-A and ARMv7-R edition
+
+- Source: <https://developer.arm.com/documentation/ddi0406/latest>
+- License: `LicenseRef-Proprietary`
+- Version: DDI 0406C.c (ID051414)
+
+Its writes-to-PC rules and pseudocode in section A2.3 grounded the independently expressed guidance on which\
+instructions interwork, in which state, and from which architecture version. The manual requires prior written\
+permission for reproduction; no prose, tables, or pseudocode are carried.
+
 ### Arm: ELF for the Arm Architecture
 
 - Source: <https://github.com/ARM-software/abi-aa/blob/main/aaelf32/aaelf32.rst>
