@@ -45,8 +45,10 @@ Use read-only calls to establish state. Creating, editing, merging, closing, dis
 an API changes GitHub for other people. Perform such an operation only when the user's request authorizes the
 exact repository, resource, and change. Otherwise, report the proposed action or ask for approval.
 
-When writing a pull-request description, issue body, or review reply, state what changed and why, link the
-context, and apply `writing-for-humans`.
+Keep a pull request small enough to review in one sitting, and split a large change into reviewable slices.
+Match its title to the repository's commit convention. When writing a pull-request description, issue body, or
+review reply, state what changed and why, link the issue or context that motivates it, and apply
+`writing-for-humans`.
 
 ## Recognize Fail-Open Results
 
