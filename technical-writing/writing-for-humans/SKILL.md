@@ -130,7 +130,9 @@ condition. A reader who meets the condition after the instruction has already ac
 or when the second is the immediate result of the first.
 
 **Give each concept one term.** Define a term or abbreviation on first use, never rotate synonyms, and never
-redefine an abbreviation. Prefer the precise technical term over shorthand, metaphor, or jargon.
+redefine an abbreviation. Prefer the precise technical term over shorthand, metaphor, or jargon. When a word has
+several meanings in the reader's domain, such as slot, key, image, or partition, name the meaning on first use: "the
+SoC's one-time-programmable key slot", not "the slot", which a reader may take for a card slot.
 
 **Link clauses by their real relation.** Put a cause, condition, or qualification in a subordinate clause. Give
 equal ideas parallel clauses. Join two clauses with a colon or a semicolon only where the second explains or
