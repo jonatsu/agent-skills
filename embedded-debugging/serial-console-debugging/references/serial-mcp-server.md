@@ -57,11 +57,16 @@ Names are shown with the default dot; with the separator set, they use `_`.
   `baudrate`, `bytesize`, `parity`, `stopbits`, `encoding`, `newline`, and `exclusive` override them. Opening can assert
   DTR and RTS and reset the target.
 - `serial.read`, `serial.readline`, `serial.read_until` (with a `delimiter` and `timeout_ms`): read from the
-  connection's buffer. Reading consumes the buffer, so the server marks these destructive.
+  connection's buffer. Reading consumes the buffer, so the server marks these destructive. Keep `max_bytes` near
+  its default of 4096: a large read across a full boot overflows the tool result.
 - `serial.write`: sends `data`, with `append_newline` and per-call pacing.
 - `serial.flush`, `serial.set_dtr`, `serial.set_rts`, `serial.pulse_dtr`, `serial.pulse_rts`: buffer and control
   lines; the pulse tools reset many boards.
 - `serial.close`: releases the port for other tools.
+- `serial.log.start`, `serial.log.stop`, `serial.log.status`, `serial.log.mark` (release `v0.2.4`, checked
+  2026-10-29): record the connection's traffic to files under `SERIAL_MCP_LOG_DIR`, by default `.serial_mcp/logs/`;
+  `log: true` on `serial.open` starts one at open. The start call returns the file paths, so search those files for a
+  long capture. The server never deletes log files.
 - `serial.trace.status`, `serial.trace.tail`: the call trace, on by default (`SERIAL_MCP_TRACE=0` disables it;
   `SERIAL_MCP_TRACE_PAYLOADS=1` records data too).
 - `serial.spec.*` and `serial.plugin.*`: protocol descriptions and device plugins, for structured protocols.

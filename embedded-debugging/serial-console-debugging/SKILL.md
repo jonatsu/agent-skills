@@ -27,7 +27,8 @@ A port has one reader at a time; a second one steals bytes from the first.
 
 - **The serial MCP server** for a session the agent drives: open, read until a prompt, write, with pacing for slow
   targets. It is not configured globally. When a project needs it, add it to that project's own configuration, as
-  [references/serial-mcp-server.md](references/serial-mcp-server.md) describes, and start a new session.
+  [references/serial-mcp-server.md](references/serial-mcp-server.md) describes, and start a new session. Close the
+  connection when the work is done, because an open one keeps the user's own terminal off the port.
 - **`tio` or `picocom`** for the user to watch or type.
 - **Both at once:** the MCP server's PTY mirror lets the user watch (`ro`) or type (`rw`) through a linked device while
   the agent drives.
@@ -52,7 +53,9 @@ symptom:
   resets on open before treating a capture's first line as the start of the boot.
 - Keep the whole log with timestamps. Quote the lines around a failure, and keep the original for anything the quote
   omits.
-- The MCP server's trace records each call; `tio --log` or `picocom --logfile` records a human session.
+- Capture a full boot to a file and search the file. A single MCP read across a whole boot overflows the tool result,
+  so start the server's port log and read only bounded chunks live. `tio --log` or `picocom --logfile` records a human
+  session.
 
 ## 5. Drive the Console
 
