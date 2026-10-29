@@ -97,6 +97,13 @@ The v2 `--as-is` option preserves direction but still requests the line; it is n
 Check the installed tool's help before use. See
 [libgpiod's tools](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/tree/tools?h=v2.2.2).
 
+v2 `gpioset` holds its lines until killed, and a line another process or a kernel driver holds fails with `EBUSY`.
+`-t` toggles every line in the request after each period; a list ending in `0` exits after the last toggle, and
+`-t 0` sets the values and exits. A bare period is milliseconds; the suffixes are `us`, `ms`, `s`, and `m` for
+minutes. To blink one line while another stays steady, run one `gpioset` per line. A blink at frequency f toggles
+every 1/(2f), so `gpioset -t 500ms` blinks at 1 Hz. Current known: libgpiod v2.3.1, checked 2026-10-29 against
+`tools/gpioset.c` and `tools/tools-common.c`.
+
 For SPI, establish bus instance, chip select, mode, maximum frequency, and the attached device's command protocol.
 A generic `spidev_test` payload can be a hardware command. Use it only with a suitable unowned/test device and a
 known-safe transaction. Missing `/dev/spidev*` may be correct when a dedicated kernel driver owns the device.
