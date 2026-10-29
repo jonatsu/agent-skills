@@ -302,6 +302,14 @@ table layout), semihosting calls, startup code that copies `.data` and zeroes `.
 of common RTOSes. Ground it in the ARMv7-M Architecture Reference Manual, Arm's semihosting specification, and each
 RTOS's own port sources, then remove the exclusion from the skill's scope statement.
 
+## Refresh the Serial MCP Server Reference
+
+`serial-console-debugging`'s `references/serial-mcp-server.md` is pinned to fork commit `bceb725` (`0.1.4.dev3`),
+while the server's latest release is `v0.2.4`. Only the port-log tools were checked against `v0.2.4`. The release
+also adds `serial.configure`, `serial.send_file`, and the `serial.script.*` tools, which the reference omits. Reread
+the server's `docs/tools.md` and `docs/configuration.md` at the latest release, update the tool list and the
+"Current known" line, and decide whether scripts belong in the skill.
+
 ## Risk Scan for Third-Party Skills
 
 Vet an upstream skill for risky code before adopting, adapting or re-pinning it. Raised 2026-10-10 by a
