@@ -52,6 +52,19 @@ another attempt. Exhausting counters requires the actual boot/reboot path to exe
 effective watchdog or other recovery mechanism. A mark-good service must depend on demonstrated application health,
 not merely on reaching an early startup target.
 
+These install behaviours hold for RAUC v1.15.2, checked 2026-10-29 against `src/install.c`, `src/service.c`, and the
+[reference](https://rauc.readthedocs.io/en/v1.15.2/reference.html):
+
+- The default handler marks the target slot bad before it writes the first byte, and activates it only after every
+  slot is written. Any interrupted or failed install therefore leaves that slot bad. A full custom `handler=` in the
+  manifest skips this marking.
+- Built with its service, the default, `rauc install` is a D-Bus client. A second install during the first fails with
+  `Already processing a different method`; wait for the first to finish.
+- `rauc info` and the D-Bus `InspectBundle` method verify the signature by default. For a `crypt` bundle they first
+  decrypt the envelope with the device key, so the unauthenticated envelope reaches that key before any signature
+  check. Treat inspecting a bundle from untrusted media as handing attacker input to the decryption.
+- `events=` in a `[log.<name>]` section is a semicolon-separated list of `install`, `boot`, and `mark`, or `all`.
+
 ## SWUpdate: Manifest, Selection, and Handler Failures
 
 Inspect the installed framework configuration and the selected `sw-description` branch, hardware revision, target
@@ -73,7 +86,12 @@ Keep environment writes and boot script repairs with **u-boot-development**, inf
 RAUC `plain`, `verity`, and `crypt` are bundle formats with different verification, streaming, and encryption behavior.
 Select and diagnose them using the release's supported format and kernel requirements.
 The `verity` bundle format checks the bundle payload during installation; it does not automatically configure
-dm-verity for the installed root filesystem. See [rootfs-integrity.md](rootfs-integrity.md) for that separate boot path.
+dm-verity for the installed root filesystem. See [rootfs-integrity.md](rootfs-integrity.md) for that separate boot
+path.
+
+The `verity` signature covers the manifest and the verity root hash, not the payload bytes, so a damaged payload
+passes the signature check. dm-verity then fails the copy with an I/O error, and the kernel log names the corrupted
+block. `perform-pre-check=true` reads the whole payload before installing.
 
 ## Qualify Recovery Without Promising It from the Layout
 
@@ -86,6 +104,35 @@ On a suitable approved bench target, distinguish failures during payload writing
 startup, service startup, and post-boot health checks. Record which image boots and how confirmation/fallback occurs.
 Forced power loss, deliberate image corruption, and fleet updates require authorization for those effects.
 Do not weaken signature checks or remove rollback to make an installation appear successful.
+
+### Fault-injection recipes for RAUC
+
+A RAUC bundle ends with its CMS signature, followed by the signature's size as an 8-byte big-endian integer. Damage a
+copy of the bundle, never the original, by flipping one bit:
+
+```bash
+size=$(stat -c %s update.raucb)
+sigsize=$(tail -c 8 update.raucb | od -An -tu8 --endian=big | tr -d ' ')
+sigstart=$((size - 8 - sigsize))
+flip() { b=$(od -An -tu1 -j "$2" -N1 "$1" | tr -d ' '); printf "$(printf '\\%03o' $((b ^ 1)))" |
+  dd of="$1" bs=1 seek="$2" conv=notrunc status=none; }
+cp update.raucb bad-sig.raucb && flip bad-sig.raucb $((sigstart + sigsize / 2))   # refusal path
+cp update.raucb bad-data.raucb && flip bad-data.raucb $((sigstart / 2))            # verity path
+```
+
+The damaged signature must make RAUC refuse the bundle when it opens it, before any slot is written. The damaged
+payload passes the signature check of a `verity` bundle and must fail during the copy; with 4096-byte verity data
+blocks, the kernel names block offset / 4096. That failure must leave the target slot bad and the booted slot
+primary.
+
+- **Reset during an install:** `systemctl reboot --force --force` reboots at once without stopping processes or
+  unmounting file systems. It is the nearest shell equivalent of a power cut, but the storage device keeps its power,
+  so a real power cut remains the stronger test. Magic SysRq `b` is an alternative where `/proc/sysrq-trigger` exists;
+  hardened kernels often omit it.
+- **Boot-counter fallback:** in the inactive slot's root filesystem, mask its mark-good unit by linking it to
+  `/dev/null` under `/etc/systemd/system/`. RAUC does not ship that unit; the integration does, such as meta-rauc's
+  `rauc-mark-good.service`. Activate the slot and reboot repeatedly. Each boot must spend one attempt, the bootloader
+  must then fall back, and `rauc status` must then report the slot bad.
 
 Report installer success, selected boot image, health confirmation, and tested recovery separately.
 If no hardware recovery test ran, leave recovery qualification unverified.
