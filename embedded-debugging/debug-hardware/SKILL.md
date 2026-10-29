@@ -93,6 +93,10 @@ Give the user a pin-to-pin list: probe pin, signal, target pin. Then:
   are not interchangeable.
 - **Order.** Connect the probe to the host, then to the target, then power the target.
 - **Length.** Keep SWD and JTAG wires short. Long flying leads are the usual reason a link works only at low speed.
+- **Bench switches in a fast signal path.** An SD-card MUX, or any switch or extension cable between a board and its
+  storage, can corrupt a link the host drives at full speed, such as SD at UHS-I SDR104. Kernel lines such as
+  `mmc0: running CQE recovery` or a write `I/O error` are the signal. Before blaming the card, a hub, or software,
+  repeat the failing workload with the card in the board's own slot.
 
 ## 5. Make First Contact
 
