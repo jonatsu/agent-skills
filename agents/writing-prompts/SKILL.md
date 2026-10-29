@@ -74,7 +74,10 @@ Done when every core item is present in the rewrite or listed as an assumption o
 
 The receiver starts cold. It has not seen the conversation, and it may not load your instruction files or skills.
 
-- **Outcome, reason, and done.** One or two sentences each.
+- **Outcome, reason, and done.** One or two sentences each. When the work answers a user's question, quote it or
+  restate it without narrowing it, so the receiver answers that question rather than an easier neighbour. "How does
+  this SD-card MUX work?" asks for the device class, protocol, and whether we could drive it ourselves, from source
+  and datasheets; "the vendor CLI has no command for that" answers a different question.
 - **What you established.** Paths with line numbers, decisions taken, hypotheses ruled out, so it does not redo them.
 - **Rules it must follow.** The instructions that apply to this task and that it may not inherit, such as staging
   rules, writing style, or a required tool. Restate them; a reference to a file it will not read carries nothing.
