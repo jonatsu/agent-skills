@@ -102,6 +102,7 @@ Open the matching file yourself before working in its area. Treat this list as t
 description of automatic loading.
 
 - Read before touching `<path or glob>`: [`<instruction file>`](path/to/AGENTS.md) covers `<scope>`.
+- Before `<task>`: load the `<skill-name>` skill.
 
 ## Update triggers
 

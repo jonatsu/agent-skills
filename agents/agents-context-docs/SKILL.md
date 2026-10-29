@@ -74,6 +74,10 @@ precedence, includes, nesting, reload behavior, or symlink support. Load only th
   behavior, compatibility, data preservation, cost, or scope.
 - Create a vendor-specific file only for a target client or a verified repository need; recognizing its name
   is not a reason.
+- Route to a repository skill by its name and the task that calls for it: "Before adding a service, load the
+  `deploy-service` skill." Each client then loads it through its own skill mechanism. A `SKILL.md` path leads
+  the agent to read the file outside that mechanism, and a client that ranks skills by use never counts it.
+  Give the path only where a maintainer edits the skill.
 - Keep `llms.txt` conditional. It indexes documentation for language models; it is not an instruction file.
 - Report unknown loading behavior and unavailable evidence without blocking useful work for recognized
   capabilities.

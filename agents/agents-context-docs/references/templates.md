@@ -49,6 +49,7 @@ Open the matching file when the symptom appears.
 Open the matching file before working in its area.
 
 - Read before touching `<path or glob>`: [`<instruction file>`](path/to/AGENTS.md) covers `<scope>`.
+- Before `<task>`: load the `<skill-name>` skill.
 
 ## Update triggers
 
