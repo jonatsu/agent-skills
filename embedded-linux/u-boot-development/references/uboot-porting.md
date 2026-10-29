@@ -32,6 +32,21 @@ For integration into Buildroot or Yocto, use the sibling build-system skill inst
 The [devicetree guide](https://github.com/u-boot/u-boot/blob/v2025.10/doc/develop/devicetree/control.rst) explains the
 providers; editing another kernel checkout does not automatically update U-Boot's build inputs.
 
+## Trimming a defconfig
+
+A meta-option `select`s other options, sometimes through a chain, and `savedefconfig` omits every option a select or
+an `imply` sets. Unsetting a meta-option therefore drops options that no defconfig diff shows. In v2026.10,
+`BOOTSTD_DEFAULTS` selects `BOOTMETH_DISTRO`, which selects `BOOTMETH_SCRIPT`, which selects `HUSH_PARSER`; see
+[boot Kconfig](https://github.com/u-boot/u-boot/blob/v2026.10/boot/Kconfig). Without hush, a boot script's `while`
+or `if` fails with `Unknown command 'while'`, and the simple parser rejects a command longer than
+`CONFIG_SYS_CBSIZE` with `## Command too long!`.
+
+1. Run `olddefconfig` before and after the change, and diff the two resolved `.config` files.
+2. Set every option the boot script and boot flow need explicitly in the defconfig, at least `CONFIG_HUSH_PARSER=y`
+   for a script that uses hush syntax.
+3. Add a build step that fails when a required option is missing from the resolved `.config`, such as a Yocto
+   `do_configure` append that checks `${B}/.config`.
+
 ## Driver model
 
 A `udevice` is a bound device instance and may still be unprobed. A `uclass` groups a device class; a driver implements
