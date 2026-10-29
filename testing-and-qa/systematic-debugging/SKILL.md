@@ -36,6 +36,9 @@ test a focused explanation, and fix the cause rather than suppressing the sympto
 - Test one explanation at a time; a fix or refactor rests on a supported cause.
 - A green command, a silenced error, or a workaround proves only that the symptom moved; the reproduction
   passing proves the cause is fixed.
+- A check that reads through a cache verifies the cache, not the store behind it. On Linux, a hash of data just
+  copied to a doubtful device reads the page cache. Run `sync` and then, as root,
+  `echo 3 > /proc/sys/vm/drop_caches` before hashing.
 - A mitigation, destructive experiment, or risky architectural change needs authority of its own.
 - Use independent test review when the task, risk, or user requests it. `test-engineer` owns test work and does
   not own production changes.
