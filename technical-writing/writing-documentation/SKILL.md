@@ -185,7 +185,9 @@ In a reference, say what a setting or feature is for before how it works, and gi
 name its own heading.
 
 When one word carries two concepts, give each its own durable name and glossary entry. A word such as
-"manifest" that means three different files in one project misleads every reader who meets it.
+"manifest" that means three different files in one project misleads every reader who meets it. When the domain
+itself overloads a word, such as slot, key, image, or partition, name the meaning on first use: "the SoC's
+one-time-programmable key slot", not "the slot".
 
 When a design or plan covers more than two components, or a flow whose order matters, add a diagram beside the
 text it explains: a flowchart for structure and decisions, a sequence diagram for ordered interactions, a state
