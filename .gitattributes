@@ -1,1 +1,3 @@
 * text=auto
+# Evaluation fixtures are byte-exact test data; keep their line endings fixed whatever a user's global attributes say.
+*.csv text eol=lf
