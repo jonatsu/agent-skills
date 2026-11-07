@@ -26,9 +26,10 @@ The step is done when every command has a group and you know which ones are safe
 ## Probe the Tool
 
 Run `scripts/probe_cli.py` from the skill's directory with the tool's working directory as `--workdir`. Add
-`--help-for` for each subcommand, `--probe` for each read-only command worth observing, and `--skip-bare` when
-the bare command acts. Use `--modes pipe,tty,tty-no-color,tty-dumb` to cover colour handling, and
-`--isolate-network` when the tool might reach the network and the system supports it.
+`--help-for` for each subcommand, `--probe` for each read-only command worth observing, `--skip-bare` when
+the bare command acts, and `--home-from` when the tool loads libraries or config from HOME. Use
+`--modes pipe,tty,tty-no-color,tty-dumb` to cover colour handling, and `--isolate-network` when the tool might
+reach the network and the system supports it.
 
 Run commands from the "changes data" and "destroys data" groups only through `--probe`, so that each one acts on
 its own sandbox copy. Never run commands that reach beyond the machine unless the user named and authorized a

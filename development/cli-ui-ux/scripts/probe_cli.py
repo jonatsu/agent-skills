@@ -6,9 +6,11 @@ Usage:
 
 COMMAND and ARGS form the invocation prefix, such as `./bin/mytool` or `python3 tool.py`. Each probe appends
 its own arguments to that prefix and runs in a fresh sandbox: a copy of `--workdir` (or an empty directory) as
-the working directory, a temporary HOME, XDG directories and TMPDIR, an environment built from scratch (only
-PATH, LANG, TERM, and what `--env` or `--keep-env` add, so credential variables are never inherited), a
-timeout, and its own process group, which is killed when the probe ends.
+the working directory, a temporary HOME (seeded from `--home-from` when given), XDG directories including an
+empty XDG_RUNTIME_DIR, TMPDIR, an environment built from scratch (only PATH, LANG, TERM, and what `--env` or
+`--keep-env` add, so credential variables are never inherited), a timeout, and its own process group, which is
+killed when the probe ends. The empty runtime directory keeps a tool from finding a real per-user socket, such
+as a systemd user service's, under /run/user.
 
 Each probe runs in each requested mode:
     pipe          stdin from /dev/null, stdout and stderr captured separately
@@ -19,7 +21,7 @@ Each probe runs in each requested mode:
 A tty probe that times out was most likely waiting for input: that is the hang an agent harness with a
 pseudo-terminal would see.
 
-The sandbox confines relative paths, HOME and XDG locations only. A tool that writes to an absolute path, a
+The sandbox confines relative paths, HOME, XDG locations, and the runtime directory only. A tool that writes to an absolute path, a
 system file, a service, a device, or the network is not contained; classify the tool's commands before
 probing it. `--isolate-network` runs every probe under `unshare --user --net` when that is available.
 
@@ -160,7 +162,7 @@ class Sandbox:
     home: Path
 
     @classmethod
-    def create(cls, source: Path | None) -> Sandbox:
+    def create(cls, source: Path | None, home_source: Path | None = None) -> Sandbox:
         root = Path(tempfile.mkdtemp(prefix="probe-cli-"))
         workdir = root / "work"
         if source is None:
@@ -168,9 +170,12 @@ class Sandbox:
         else:
             shutil.copytree(source, workdir, symlinks=True)
         home = root / "home"
+        if home_source is not None:
+            shutil.copytree(home_source, home, symlinks=True)
         for sub in ("config", "data", "cache", "state"):
-            (home / sub).mkdir(parents=True)
+            (home / sub).mkdir(parents=True, exist_ok=True)
         (root / "tmp").mkdir()
+        (root / "run").mkdir(mode=0o700)
         return cls(root=root, workdir=workdir, home=home)
 
     def environment(self, extra: dict[str, str]) -> dict[str, str]:
@@ -182,6 +187,7 @@ class Sandbox:
             "XDG_DATA_HOME": str(self.home / "data"),
             "XDG_CACHE_HOME": str(self.home / "cache"),
             "XDG_STATE_HOME": str(self.home / "state"),
+            "XDG_RUNTIME_DIR": str(self.root / "run"),
             "TMPDIR": str(self.root / "tmp"),
         }
         env.update(extra)
@@ -286,7 +292,7 @@ def run_probe(
     source: Path | None,
     options: argparse.Namespace,
 ) -> ProbeResult:
-    sandbox = Sandbox.create(source)
+    sandbox = Sandbox.create(source, options.home_from)
     try:
         extra = dict(options.env)
         for name in options.keep_env:
@@ -427,14 +433,37 @@ def build_parser() -> argparse.ArgumentParser:
         default=200.0,
         help="refuse to copy a larger working directory (default: %(default)s)",
     )
+    parser.add_argument(
+        "--home-from",
+        type=Path,
+        help="directory copied into each sandbox as the temporary HOME, for tools that load files from HOME",
+    )
     parser.add_argument("--output", type=Path, help="write the JSON report here instead of stdout")
     parser.add_argument("command", nargs=argparse.REMAINDER, help="-- COMMAND [ARGS...]")
     return parser
 
 
+def join_dash_probes(argv: list[str]) -> list[str]:
+    """Rewrite `--probe -h` as `--probe=-h`, which argparse would otherwise read as a missing value."""
+    joined: list[str] = []
+    index = 0
+    while index < len(argv):
+        token = argv[index]
+        if token == "--":
+            joined.extend(argv[index:])
+            break
+        if token == "--probe" and index + 1 < len(argv) and argv[index + 1].startswith("-"):
+            joined.append(f"--probe={argv[index + 1]}")
+            index += 2
+            continue
+        joined.append(token)
+        index += 1
+    return joined
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
-    options = parser.parse_args(argv)
+    options = parser.parse_args(join_dash_probes(sys.argv[1:] if argv is None else argv))
     command = options.command[1:] if options.command[:1] == ["--"] else options.command
     if not command:
         parser.error("give the command to probe after --")
@@ -472,6 +501,10 @@ def main(argv: list[str] | None = None) -> int:
                     f"--workdir holds {size_mb:.0f} MB, over --max-workdir-mb {options.max_workdir_mb:.0f}"
                 )
             source = resolved
+        if options.home_from is not None:
+            options.home_from = options.home_from.resolve()
+            if not options.home_from.is_dir():
+                raise ProbeEnvironmentError(f"--home-from is not a directory: {options.home_from}")
         prefix = resolve_prefix(command, source)
         options.wrapper = network_wrapper(options.isolate_network)
     except ProbeEnvironmentError as error:
@@ -489,7 +522,8 @@ def main(argv: list[str] | None = None) -> int:
         "modes": modes,
         "timeout_s": options.timeout,
         "network_isolated": bool(options.wrapper),
-        "containment": "relative paths, HOME, XDG and TMPDIR only; absolute paths and the network are not "
+        "containment": "relative paths, HOME, XDG, the runtime directory and TMPDIR only; absolute paths "
+        "and the network are not "
         "contained" + ("" if options.wrapper else "; network access was available"),
         "probes": results,
     }

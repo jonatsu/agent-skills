@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -186,6 +187,62 @@ class ProbeCliTest(unittest.TestCase):
     def test_missing_command_argument_is_a_usage_error(self) -> None:
         result = self.probe("--modes", "pipe")
         self.assertEqual(result.returncode, EXIT_USAGE)
+
+    def test_probe_values_may_start_with_a_dash(self) -> None:
+        report = self.report(
+            "--no-default-probes",
+            "--probe",
+            "-h",
+            "--probe",
+            "--version",
+            "--modes",
+            "pipe",
+            "--",
+            sys.executable,
+            str(self.root / "good.py"),
+        )
+        self.assertEqual([p["args"] for p in report["probes"]], [["-h"], ["--version"]])
+        self.assertEqual([p["exit_code"] for p in report["probes"]], [0, 0])
+
+    def test_home_from_seeds_each_temporary_home(self) -> None:
+        seed = self.root / "seed"
+        (seed / ".local" / "lib").mkdir(parents=True)
+        (seed / ".local" / "lib" / "plugin.txt").write_text("loaded", encoding="utf-8")
+        script = "import os; print(open(os.path.expanduser('~/.local/lib/plugin.txt')).read())"
+        report = self.report(
+            "--home-from",
+            str(seed),
+            "--no-default-probes",
+            "--probe",
+            f"-c {shlex.quote(script)}",
+            "--modes",
+            "pipe",
+            "--",
+            sys.executable,
+        )
+        self.assertEqual(report["probes"][0]["stdout"]["text"].strip(), "loaded")
+        self.assertTrue((seed / ".local" / "lib" / "plugin.txt").exists())
+
+    def test_runtime_directory_is_sandboxed(self) -> None:
+        report = self.report(
+            "--no-default-probes",
+            "--probe",
+            "XDG_RUNTIME_DIR",
+            "--modes",
+            "pipe",
+            "--",
+            "printenv",
+            env={"XDG_RUNTIME_DIR": "/run/user/0"},
+        )
+        runtime = report["probes"][0]["stdout"]["text"].strip()
+        self.assertTrue(runtime.endswith("/run"), runtime)
+        self.assertNotEqual(runtime, "/run/user/0")
+
+    def test_home_from_must_be_a_directory(self) -> None:
+        result = self.probe(
+            "--home-from", str(self.root / "missing"), "--", sys.executable, "-c", "pass"
+        )
+        self.assertEqual(result.returncode, EXIT_ENVIRONMENT)
 
 
 if __name__ == "__main__":

@@ -134,7 +134,11 @@ Before running a tool you are testing or reviewing, sort its commands into four 
 destroys data, and reaches beyond the machine. Use its help text and code to sort them. Then:
 
 - Run probes through `scripts/probe_cli.py`, which gives every run a sandbox copy of the working directory, a
-  temporary HOME, an environment without inherited credentials, a timeout, and a killed process group.
+  temporary HOME, an empty runtime directory, an environment without inherited credentials, a timeout, and a
+  killed process group. The empty `XDG_RUNTIME_DIR` keeps the tool away from real per-user sockets, such as
+  those of systemd user services or Podman.
+- When the tool loads libraries, plugins, or config from HOME, seed the temporary HOME with `--home-from DIR`
+  rather than pointing the tool at the real one.
 - Run data-changing and destroying commands only against a disposable copy, inside the agreed workspace or a
   temporary directory. Leave the user's real data untouched, because restoring it after the fact is not safe.
 - Judge commands that reach beyond the machine from code, unless the user names and authorizes a test target.

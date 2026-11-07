@@ -76,6 +76,11 @@ or harm, never the difference alone.
 - **Rule:** prompt only when stdin and stderr are both terminals. Otherwise fail at once with an error that
   names the flag that supplies the missing value.
 - **Rule:** never prompt when the non-interactive flag or variable is set, or when `CI` is set.
+- **Default:** a tool may read a secret or a confirmation from `/dev/tty` instead of stdin, as `ssh`, `sudo`,
+  and `gpg` do, so that stdin keeps carrying data in a pipeline. This is correct, and a review does not report
+  it. For such a tool, the interactivity check is whether `/dev/tty` can be opened, not whether stdin is a
+  terminal. Non-interactive mode, `CI`, and `--yes` still stop the prompt, and when `/dev/tty` cannot be opened
+  the tool fails at once, naming the flag or variable that supplies the value.
 - **Default:** do not try to detect agents from environment variables; such detection is fragile.
 - **Default:** when agents, scripts, or CI will call the tool, strongly recommend a non-interactive mode, and
   leave the decision to the user. Name it `--no-input` (short, and clig.dev's name) or `--non-interactive`
