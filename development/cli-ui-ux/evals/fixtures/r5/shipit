@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""shipit: deploy the current build to an environment."""
+
+import argparse
+import datetime
+import os
+import sys
+
+ENVIRONMENTS = ("staging", "prod")
+
+
+def deploy(env):
+    # The real rollout is stubbed in this repository: record what would ship.
+    stamp = datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds")
+    with open(os.path.join("deploys", f"{env}.log"), "a") as log:
+        log.write(f"{stamp} deployed build to {env}\n")
+    print(f"deployed to {env}")
+
+
+def cmd_deploy(args):
+    answer = input(f"Deploy to {args.env}? [y/N] ")
+    if answer.strip().lower() not in ("y", "yes"):
+        print("aborted")
+        sys.exit(1)
+    deploy(args.env)
+
+
+def cmd_status(args):
+    for env in ENVIRONMENTS:
+        path = os.path.join("deploys", f"{env}.log")
+        last = "never"
+        if os.path.exists(path):
+            with open(path) as f:
+                lines = f.read().splitlines()
+            if lines:
+                last = lines[-1].split(" ")[0]
+        print(f"{env}\t{last}")
+
+
+def main():
+    p = argparse.ArgumentParser(prog="shipit", description="Deploy the current build.")
+    sub = p.add_subparsers(dest="cmd", required=True)
+    s = sub.add_parser("deploy", help="Deploy to an environment")
+    s.add_argument("--env", choices=ENVIRONMENTS, required=True, help="target environment")
+    s.set_defaults(func=cmd_deploy)
+    s = sub.add_parser("status", help="Show the last deploy per environment")
+    s.set_defaults(func=cmd_status)
+    args = p.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+"""bm: a small bookmark manager. Bookmarks live in bookmarks.json."""
+
+import argparse
+import json
+import os
+import sys
+
+STORE = os.environ.get("BM_STORE", "bookmarks.json")
+
+
+def load():
+    if not os.path.exists(STORE):
+        return []
+    with open(STORE) as f:
+        return json.load(f)
+
+
+def save(items):
+    with open(STORE, "w") as f:
+        json.dump(items, f, indent=2)
+
+
+def cmd_list(args):
+    items = load()
+    if args.json:
+        print(json.dumps([{"name": b["name"], "url": b["url"]} for b in items], indent=2))
+        return
+    width = max([len("NAME")] + [len(b["name"]) for b in items])
+    print(f"{'NAME'.ljust(width)}  URL")
+    for b in items:
+        print(f"{b['name'].ljust(width)}  {b['url']}")
+
+
+def cmd_add(args):
+    items = load()
+    if any(b["name"] == args.name for b in items):
+        print(f"bm: error: a bookmark named '{args.name}' already exists", file=sys.stderr)
+        sys.exit(1)
+    items.append({"name": args.name, "url": args.url})
+    save(items)
+    print(f"added '{args.name}'", file=sys.stderr)
+
+
+def main():
+    p = argparse.ArgumentParser(prog="bm", description="Keep a list of bookmarks.")
+    sub = p.add_subparsers(dest="cmd", required=True)
+    s = sub.add_parser("list", help="List bookmarks")
+    s.add_argument("--json", action="store_true", help="print JSON")
+    s.set_defaults(func=cmd_list)
+    s = sub.add_parser("add", help="Add a bookmark")
+    s.add_argument("name")
+    s.add_argument("url")
+    s.set_defaults(func=cmd_add)
+    args = p.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()

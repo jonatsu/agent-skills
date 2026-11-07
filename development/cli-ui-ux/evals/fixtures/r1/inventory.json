@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "USB-C cable",
+    "quantity": 4,
+    "tags": ["cables"],
+    "created_at": "2026-10-01T09:00:00+00:00",
+    "updated_at": "2026-10-01T09:00:00+00:00"
+  },
+  {
+    "id": 2,
+    "name": "Serial adapter, 3.3 V",
+    "quantity": 2,
+    "tags": ["debug", "cables"],
+    "created_at": "2026-10-02T10:30:00+00:00",
+    "updated_at": "2026-10-05T12:00:00+00:00"
+  },
+  {
+    "id": 3,
+    "name": "microSD card 32 GB",
+    "quantity": 6,
+    "tags": [],
+    "created_at": "2026-10-03T08:15:00+00:00",
+    "updated_at": "2026-10-03T08:15:00+00:00"
+  }
+]

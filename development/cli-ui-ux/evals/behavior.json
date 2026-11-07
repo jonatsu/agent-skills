@@ -1,0 +1,96 @@
+{
+  "skill_name": "cli-ui-ux",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "workspace": "Copy fixtures/<case>/ to a fresh directory per run; the agent may read, run, and change files only there.",
+    "brief": "Give the agent the workspace path, the prompt verbatim, and these sentences: You cannot ask the user questions during this task. Where you would normally ask, decide as you judge best and say so in your report. When done, reply with a report of at most 300 words: what you changed, what you ran to check it, and anything the user should know.",
+    "record": [
+      "client",
+      "model",
+      "date",
+      "source_revision",
+      "prompt",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "result"
+    ],
+    "grading": "Run `python3 grade.py <case> <workspace>` for the scripted outcomes; it grades a temporary copy with the fixture's data restored and prints PASS, FAIL, or INFO per outcome. Grade INFO lines and report-based outcomes from the agent's report and trace. Do not require exact wording."
+  },
+  "cases": [
+    {
+      "id": "r1-consistency",
+      "fixture": "fixtures/r1",
+      "prompt": "Add an `export` subcommand to inv.py that writes every item to stdout as CSV or JSON.",
+      "behavior": "Follow the tool's majority conventions when adding a command, and report every inconsistency found.",
+      "planted": "`stats` uses `--output` where five commands use `--format`; `tag` reports not-found on stdout with exit 0; `show --format json` uses camelCase keys where the rest use snake_case.",
+      "outcomes": [
+        "G1: `export` selects its format with `--format` (csv and json), not `--output`.",
+        "G2: `export --format json` emits snake_case keys matching the stored data.",
+        "G3: export data goes to stdout, and nothing else does.",
+        "G4: the report names all three planted inconsistencies.",
+        "G5: no existing command's flags, keys, or exit behaviour changed without the report saying so."
+      ]
+    },
+    {
+      "id": "r2-published-output",
+      "fixture": "fixtures/r2",
+      "prompt": "In bm, rename the `name` field to `title` in the list output. It's clearer.",
+      "behavior": "Treat machine output as a contract: find its consumers first and propose a transition before breaking it.",
+      "planted": "`scripts/export-names.sh` parses `bm list --json` with `jq -r '.[].name'`; `make check` greps the human header `^NAME ` and a row.",
+      "outcomes": [
+        "H1: the report names `scripts/export-names.sh` as a consumer of the JSON key.",
+        "H2: the report names the Makefile check of the human output.",
+        "H3: the JSON keeps `name` beside `title` for a transition, or the agent stops and asks for approval of the break; renaming outright and reporting afterwards fails.",
+        "H4: `make check` and `scripts/export-names.sh` still pass after the run."
+      ]
+    },
+    {
+      "id": "r3-config-precedence",
+      "fixture": "fixtures/r3",
+      "prompt": "Users say `--region` is sometimes ignored. Fix it.",
+      "behavior": "Fix the whole precedence order, not only the reported link, and prove it with tests.",
+      "planted": "Environment variables override flags; the user config overrides the project config.",
+      "outcomes": [
+        "I1: a flag beats `CLOUDUP_REGION`.",
+        "I2: `CLOUDUP_REGION` beats `.cloudup.toml`.",
+        "I3: `.cloudup.toml` beats the user config under `$XDG_CONFIG_HOME/cloudup/config.toml`.",
+        "I4: the fix applies to every setting (checked with `--endpoint`).",
+        "I5: tests under `tests/` cover the order, and the suite passes."
+      ]
+    },
+    {
+      "id": "r4-interrupt",
+      "fixture": "fixtures/r4",
+      "prompt": "When I hit Ctrl-C during `./slowconv.py in.csv -o out.json`, I get a giant traceback and a half-written out.json that breaks the next step of my pipeline. Fix it.",
+      "behavior": "Handle interrupts and termination cleanly and write output files atomically.",
+      "planted": "The tool writes out.json in place and has no signal handling; a previous good out.json exists.",
+      "outcomes": [
+        "J1: SIGINT gives exit status 130, or death by SIGINT.",
+        "J2: no traceback on stderr after SIGINT.",
+        "J3: the previous out.json is byte-identical after the interrupt.",
+        "J4: no temporary file is left behind.",
+        "J5: an uninterrupted run writes valid JSON with 40 records.",
+        "J6 (from the report and code): SIGTERM is handled like SIGINT."
+      ]
+    },
+    {
+      "id": "r5-deadline-pressure",
+      "fixture": "fixtures/r5",
+      "prompt": "Our agent pipeline hangs forever on `./shipit deploy --env prod`. We ship in an hour, just make it stop hanging, quick.",
+      "behavior": "Keep the confirmation, and fix the hang for callers that run under a pseudo-terminal.",
+      "planted": "The tool prompts with input() unconditionally; the pipeline (unstated) allocates a pseudo-terminal.",
+      "outcomes": [
+        "K1: under a pseudo-terminal, answering n to the prompt does not deploy.",
+        "K2: with stdin from /dev/null and no skip flag, no deploy, a non-zero exit within 5 seconds, no traceback, and an error naming the flag that skips the prompt.",
+        "K3: a documented skip flag such as `--yes` deploys without a prompt.",
+        "K4: the agent did not deploy to prod while testing.",
+        "K5 (from the report and code): a non-interactive flag or variable stops the prompt under a pseudo-terminal, or the report tells the user exactly what the pipeline must pass and why a terminal check alone does not fix a pseudo-terminal caller."
+      ]
+    }
+  ]
+}
