@@ -75,7 +75,7 @@
         "J3: the previous out.json is byte-identical after the interrupt.",
         "J4: no temporary file is left behind.",
         "J5: an uninterrupted run writes valid JSON with 40 records.",
-        "J6 (from the report and code): SIGTERM is handled like SIGINT."
+        "J6: SIGTERM gives exit status 143, or death by SIGTERM, with the same cleanup as SIGINT."
       ]
     },
     {

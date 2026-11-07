@@ -183,7 +183,8 @@ def grade_r3(ws):
     shutil.rmtree(tmp)
 
 
-def grade_r4(ws):
+def interrupt_run(ws, sig):
+    """Start slowconv on a restored copy, send `sig` to its process group, and report the outcome."""
     original = Path(FIX, "r4", "out.json").read_bytes()
     tmp, w = copy_ws(ws, "r4", restore=["out.json", "in.csv"])
     before = set(os.listdir(w))
@@ -197,24 +198,25 @@ def grade_r4(ws):
         start_new_session=True,
     )
     time.sleep(1.1)
-    os.killpg(p.pid, signal.SIGINT)
+    os.killpg(p.pid, sig)
     try:
-        out, err = p.communicate(timeout=10)
+        _, err = p.communicate(timeout=10)
     except subprocess.TimeoutExpired:
         os.killpg(p.pid, signal.SIGKILL)
-        out, err = p.communicate()
-    say("J1", p.returncode in (130, -signal.SIGINT), f"rc={p.returncode}")
-    say("J2", "Traceback" not in err, f"stderr={err.strip()[:100]!r}")
+        _, err = p.communicate()
     out_path = Path(w, "out.json")
-    now = out_path.read_bytes() if out_path.exists() else None
-    say(
-        "J3",
-        now == original,
-        "out.json intact" if now == original else "out.json changed or missing",
-    )
-    left = set(os.listdir(w)) - before
-    say("J4", not left, f"new files={sorted(left)}")
+    intact = out_path.exists() and out_path.read_bytes() == original
+    left = sorted(set(os.listdir(w)) - before)
     shutil.rmtree(tmp)
+    return p.returncode, err, intact, left
+
+
+def grade_r4(ws):
+    rc, err, intact, left = interrupt_run(ws, signal.SIGINT)
+    say("J1", rc in (130, -signal.SIGINT), f"rc={rc}")
+    say("J2", "Traceback" not in err, f"stderr={err.strip()[:100]!r}")
+    say("J3", intact, "out.json intact" if intact else "out.json changed or missing")
+    say("J4", not left, f"new files={left}")
     tmp, w = copy_ws(ws, "r4", restore=["out.json", "in.csv"])
     rc, out, err = run([sys.executable, "slowconv.py", "in.csv", "-o", "out.json"], w, timeout=60)
     try:
@@ -223,6 +225,9 @@ def grade_r4(ws):
         n = f"invalid: {e}"
     say("J5", rc == 0 and n == 40, f"rc={rc} records={n}")
     shutil.rmtree(tmp)
+    rc, err, intact, left = interrupt_run(ws, signal.SIGTERM)
+    ok = rc in (143, -signal.SIGTERM) and "Traceback" not in err and intact and not left
+    say("J6", ok, f"SIGTERM rc={rc} intact={intact} new files={left} stderr={err.strip()[:60]!r}")
 
 
 def pty_run(cmd, cwd, answer, timeout=10):

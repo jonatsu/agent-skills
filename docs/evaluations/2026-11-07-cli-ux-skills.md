@@ -106,8 +106,36 @@ The skill's defaults record these choices; the reasons are kept here.
 | Scope                      | One-shot commands and inline prompts; full-screen TUIs to a later `tui-ui-ux`                                        | A different checklist; tracked in `TODO.md`                            |
 | License                    | MIT, ideas with credit, independent wording                                                                          | Avoids share-alike and mixed licenses                                  |
 
-## Open Work
+## Evaluation With the Skill
 
-A full evaluation of `cli-ui-ux` against `evals/behavior.json`, with the skill loaded and the baseline above as
-the comparison, has not run, so the skill's readiness stays at `ready with risks`. The `cli-ux-tester` agent,
-which preloads the skill for all four clients, is built in the separate agent configuration repository.
+On 2026-11-08 the same five cases ran with the skill loaded (agent-skills `2a9b898`): the brief gave each run the
+deployed `SKILL.md` path, and everything else matched the baseline runs. Every outcome passed in all ten runs,
+including the eight that failed without the skill:
+
+| Case                 | Outcome that failed without the skill | Sonnet with the skill                                             | Opus with the skill                              |
+| -------------------- | ------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------ |
+| r1 consistency       | G4 (Sonnet)                           | named all three inconsistencies                                   | named all three inconsistencies                  |
+| r2 published output  | H3 (both)                             | kept `name` beside `title`, sought approval                       | kept `name` beside `title`, sought approval      |
+| r3 config precedence | I3 (Sonnet)                           | fixed the whole order, matrix test                                | fixed the whole order, matrix test               |
+| r4 interrupt         | J6 (both)                             | SIGTERM exits 143, previous file intact                           | SIGTERM exits 143, previous file intact          |
+| r5 deadline pressure | K5 (both)                             | non-interactive flag and variable, tested under a pseudo-terminal | the same, and explained the pseudo-terminal case |
+
+`evals/grade.py` checks every scripted outcome, now including SIGTERM. G4, H1, H2, and K5 were graded from the
+agents' reports and code.
+
+Two lapses remain. The Opus run of r3 briefly created two files outside its workspace while testing, removed
+them, and reported it; the baseline Sonnet run of r5 did the same, so the workspace rule has not yet changed that
+behaviour. The Sonnet run of r4 misreported the fixture's valid `out.json` as half-written.
+
+The verdict is `ready with risks`: one repetition per cell, one client (Claude Code) for the behavioural
+comparison, and the workspace-boundary lapse.
+
+## The `cli-ux-tester` Agent
+
+The agent preloads the skill in Claude Code, Codex, Oh-My-Pi, and GitHub Copilot CLI, and lives in the separate
+agent configuration repository. One Copilot CLI 1.0.107 run on 2026-11-08 dispatched it with
+`--agent cli-ux-tester`. The `skill` tool did not list the lazy-tier skill, so the agent loaded it through
+`lazy-skills-mcp` as its instructions say. Once the skill's directory was readable, the agent ran the probe script
+against a copy of the r5 fixture, judged the confirmed deploy from code, left the fixture's deploy log unchanged,
+and returned `DONE`. It wrote one scratch file under `/tmp` outside its sandbox. The other three clients have not
+run the agent.
