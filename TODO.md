@@ -420,6 +420,15 @@ What the assessment established:
   secrets; the output stays local.
 - **Keep it separate from `session-handoff`,** which briefs a different recipient; this answers the user now.
 
+## `tui-ui-ux` Sibling Skill
+
+Build `tui-ui-ux` beside `development/cli-ui-ux` for full-screen terminal interfaces: layout, keybindings,
+focus, resizing, redraw, screen-reader behaviour, and a TUI review order. `cli-ui-ux` covers one-shot commands
+and inline prompts and states full-screen interfaces as out of scope, because they need a different checklist.
+Decided by the user on 2026-11-07 while designing `cli-ui-ux`. Candidate sources from that session's survey,
+unread in full: `hyperb1iss/hyperskills` `tui-design` (MIT) and `wimpysworld/nix-config` `tui-design`
+(BlueOak-1.0.0). Check each license at a pinned commit before adapting anything.
+
 ## Dedicated GitHub Actions Skill
 
 Create a separate GitHub Actions skill if recurring work exceeds the short orientation in
