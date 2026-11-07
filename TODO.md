@@ -194,12 +194,9 @@ Open sub-question: whether tightening `allowed-tools` rides along with this or s
 ## Evaluation Harness Lives in agent-setup
 
 The runner for package-local eval fixtures is being built in agent-setup, under its skill-evaluation redesign
-record (`docs/plans/evaluation/skill-evaluation-redesign.md`, from commit `0f95961c`). The record carries this
-entry's former requirements as principles. It does not carry three of them, which still apply: initialize only
-the repository state a case declares; check a fixture's prerequisites and the commands it advertises before
-starting a model; and grant each case the narrowest read and write permissions, which a resumed session must keep
-without a full sandbox bypass. Once the harness works, run this repository's evaluations through it instead of by
-hand.
+record (`docs/plans/evaluation/skill-evaluation-redesign.md`, as of commit `103b8edc`), whose principles carry
+every requirement this entry used to list. Once the harness works, run this repository's evaluations through it
+instead of by hand.
 
 ## Eval Case Schema
 
