@@ -7,6 +7,9 @@ shfmt = "3.14.1"
 "pipx:pre-commit" = "4.6.2"
 # The history scan behind `just secrets`; the pre-commit hook builds its own copy for staged changes.
 "aqua:betterleaks/betterleaks" = "1.9.0"
+# Compiles and lints the Rust skills' code examples. Pinned because clippy's lints and their levels change
+# between releases.
+rust = { version = "1.99.1", components = "clippy,rustfmt" }
 
 [settings]
 # The uv-managed .venv (uv.lock is committed) holds the checks and their test tools.
