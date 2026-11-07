@@ -269,6 +269,9 @@ These skills shipped with static review only, and their plans closed with the mo
 - `idea-brainstorming`, `technical-design` and `implementation-planning`. The 2026-09-04 intent refresh added
   nine cases to their `evals/behavior.json` files and passed review lite, but no case has been run against a
   model.
+- `cli-ui-ux`. Its five cases in `evals/behavior.json` have a no-skill baseline from Sonnet and Opus in
+  `docs/evaluations/2026-11-07-cli-ux-skills.md`; run the same cases with the skill loaded, grade with
+  `evals/grade.py`, and compare.
 
 ## Deferred Engineering Pipeline Designs
 
