@@ -47,8 +47,10 @@ Check every area below. For each one, name the command or code line that shows t
   `--version` works.
 - **Safety:** the bare command does nothing destructive; destructive commands confirm, offer `--yes` and
   `--dry-run`, and name their target.
-- **Streams:** results on stdout; errors, progress, and prompts on stderr.
-- **Exit codes:** failures exit non-zero; usage errors are distinguishable; signals give 128 plus the number.
+- **Streams:** results on stdout; errors, progress, and prompts on stderr. A wrapper writes nothing of its own
+  to stdout.
+- **Exit codes:** failures exit non-zero; usage errors are distinguishable; signals give 128 plus the number. A
+  wrapper passes its child's status through and keeps only 125, 126, and 127; it forwards signals to the child.
 - **Errors:** what failed, the cause naming the input, and a next step that follows from the cause.
 - **Output:** machine formats exist where scripts need them; piped output carries no terminal codes.
 - **Colour:** off when piped, under `NO_COLOR`, and under `TERM=dumb`; meaning never depends on colour alone.

@@ -21,6 +21,7 @@ or harm, never the difference alone.
 - Configuration and environment
 - Secrets
 - Signals and output files
+- Commands that run another command
 - Progress
 - Compatibility and deprecation
 - Paging and telemetry
@@ -36,6 +37,7 @@ or harm, never the difference alone.
 - **Default:** `--quiet` (`-q`) silences the stderr confirmation only. It never silences the stdout result,
   because a script that passes `--quiet` still needs the ID.
 - **Default:** a read command prints its data and nothing else.
+- **Rule:** a command that runs another program owns no stdout; see Commands That Run Another Command.
 - **Default:** next-step hints ("Next, run `tool login`") appear only after onboarding steps such as `init` or
   first login, and only when stderr is a terminal.
 
@@ -142,6 +144,8 @@ or harm, never the difference alone.
   "give up". Document them; they become part of the contract.
 - **Default:** use `sysexits.h` codes (64 to 78) only where the project already does.
 - **Default:** a yes-or-no predicate command may follow `grep`: 0 for yes, 1 for no, 2 or more for an error.
+- **Rule:** a command that runs another program passes its child's status through and keeps only 125, 126, and
+  127 for itself; see Commands That Run Another Command.
 
 ## Command Grammar and Names
 
@@ -153,6 +157,10 @@ or harm, never the difference alone.
 - **Rule:** the same flag means the same thing in every command, and the same action has the same verb.
 - **Default:** command names are lowercase words, with hyphens where needed. Avoid abbreviations except
   established ones (`ls`, `rm`), and avoid two commands whose names differ only subtly.
+- **Default:** keep positional arguments off the root when the tool has subcommands. `tool <agent>` beside
+  `tool init` competes with command names and turns a mistyped command into an argument; use `tool run <agent>`.
+  When a root positional must stay, reject values that match a command name, and suggest the nearest command for
+  an unknown one.
 
 ## Arguments and Flags
 
@@ -209,6 +217,26 @@ or harm, never the difference alone.
   reads half a file.
 - **Default:** a second Ctrl-C during cleanup exits at once.
 - **Default:** on interrupt, print one line on stderr saying what was and was not written.
+
+## Commands That Run Another Command
+
+A wrapper starts another program and must behave like it: `tool run <agent> -- ARGS`, `tool exec <id> -- CMD`,
+`env`, `timeout`, `podman run`. Callers, including harnesses that treat the wrapper as the program itself, cannot
+tell the two apart, so these rules override the general ones above.
+
+- **Rule:** everything after `--` belongs to the child, passed through untouched. The wrapper parses only its own
+  options before `--`.
+- **Rule:** the child's exit status passes through unchanged. The wrapper keeps three codes for itself: 125 when
+  the wrapper fails (its own usage errors included, so 2 stays the child's), 126 when the command is found but
+  cannot be started, and 127 when the command does not exist. `podman run`, `docker run`, GNU `env`, `chroot`,
+  `nohup`, and `timeout` use the same codes. Document them in the help text.
+- **Rule:** a child killed by a signal makes the wrapper report that signal, by re-raising it or exiting 128 plus
+  the signal number.
+- **Rule:** the child owns stdout and stdin. Every wrapper message goes to stderr, start-up notices included, and
+  `--quiet` silences them. One stray stdout line breaks a caller that parses the child's output.
+- **Rule:** when the child runs on the caller's terminal, Ctrl-C already reaches it through the foreground
+  process group; do not send it a second time, and wait for the child. Without a terminal, forward SIGINT and
+  SIGTERM to the child and wait for it. Then clean up and exit with the child's status.
 
 ## Progress
 

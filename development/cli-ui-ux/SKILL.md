@@ -59,6 +59,8 @@ the reason for each, area by area. Read it when designing, converting, or review
   Use one form throughout a tool.
 - **Arguments:** at most one kind of positional argument: the object acted on, or a list of like items such as
   `FILE...`. Everything else is a flag, including required values.
+- **Wrappers:** a command that runs another program (`run <agent> -- ARGS`) passes the child's exit status
+  through, keeps only 125, 126, and 127 for itself, writes every own message to stderr, and forwards signals.
 - **Configuration:** precedence runs flags, then environment, then project config, then user config (XDG), then
   system config, then built-in defaults.
 - **Signals:** SIGINT and SIGTERM both clean up. Write output files to a temporary file and rename it on
