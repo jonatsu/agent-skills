@@ -191,22 +191,31 @@ third-party skills from upstream, and a frontmatter change to one of those is ov
 
 Open sub-question: whether tightening `allowed-tools` rides along with this or stays separate.
 
-## Portable Skill-Fixture Harness
+## Evaluation Harness Lives in agent-setup
 
-Evaluate and design a portable runner for package-local skill fixtures before the next multi-client suite. The
-manual setup exposed failures that should become deterministic preflight checks:
+The runner for package-local eval fixtures is being built in agent-setup, under its skill-evaluation redesign
+record (`docs/plans/evaluation/skill-evaluation-redesign.md`, from commit `0f95961c`). The record carries this
+entry's former requirements as principles. It does not carry three of them, which still apply: initialize only
+the repository state a case declares; check a fixture's prerequisites and the commands it advertises before
+starting a model; and grant each case the narrowest read and write permissions, which a resumed session must keep
+without a full sandbox bypass. Once the harness works, run this repository's evaluations through it instead of by
+hand.
 
-- Resolve candidate and fixture paths from package identity, not author-machine absolute paths.
-- Copy each fixture into a fresh workspace and initialize only the repository state the case declares; keep
-  future conversation turns outside the active workspace until sent.
-- Validate fixture prerequisites and advertised commands before starting a model, and prove the fixture and
-  trace destinations are ready without invoking one (a preflight mode).
-- Apply the narrowest read/write permissions the case needs, and verify resumed sessions keep them without a
-  full sandbox bypass.
-- Persist prompts, outputs, full traces, durations, token use, client and model identity, source revision, and
-  result — avoid ephemeral sessions when the trace is evidence.
-- Distinguish command-line validation, permission failures, missing dependencies, and malformed fixtures from
-  candidate behavior; never count a harness failure as a model repetition or skill failure.
+## Eval Case Schema
+
+This repository owns the schema for `evals/*.json`, and the agent-setup harness validates case files against it
+at a pinned commit. The state at `2a9b898`:
+
+- All 14 files share the top-level fields `skill_name`, `mode`, `run_contract` and `cases`.
+- The `run_contract` keys drift: the skill-forge files `activation.json` and `review-quality.json` use
+  `supply_skill_path`, and the other twelve use `supply_candidate_skill_path`.
+- The `record` lists differ from file to file, and outcomes are free-text sentences.
+- No check validates the files, not even as JSON.
+
+Write a JSON Schema and a check in `just check` that validates every `**/evals/*.json` outside `evals/fixtures/`,
+which can hold its own `evals/`. Settle the drifting keys, and decide whether outcomes gain an optional
+machine-checkable form beside their sentence. Decide both together with the redesign's open question "What the
+schema pins". Writing the schema before the harness exists is fine.
 
 ## Compare `skill-forge` With Anthropic's `skill-creator` Plugin
 
