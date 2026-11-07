@@ -264,6 +264,114 @@ class CheckContextArchitectureTests(unittest.TestCase):
         )
         self.assertIn("docs/child.md: unreachable", result.stdout)
 
+    def test_reference_links_route_in_tables_lists_and_standalone_inclusions(self) -> None:
+        routes = (
+            "| Read when | Read |\n| --- | --- |\n| Updating child | [Child][route] |",
+            "- Read when updating child: [Child][route]",
+            "[route][]",
+            "[route]",
+        )
+        for route in routes:
+            with self.subTest(route=route):
+                _write(
+                    self.root, "docs/index.md", f"# Index\n\n{route}\n\n[route]: child.md#details\n"
+                )
+                _write(self.root, "docs/child.md", "# Child\n")
+                result = _run(self.root)
+                self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+
+    def test_reference_labels_ignore_case_and_normalize_whitespace(self) -> None:
+        _write(
+            self.root,
+            "docs/index.md",
+            "# Index\n\n- Read when updating child: [Child][ROUTE   name]\n\n[route name]: child.md\n",
+        )
+        _write(self.root, "docs/child.md", "# Child\n")
+        result = _run(self.root)
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+
+    def test_unused_or_undefined_reference_does_not_route(self) -> None:
+        for content in (
+            "[route]: child.md",
+            "[missing]\n\n[route]: child.md",
+            "[route][missing]\n\n[route]: child.md",
+        ):
+            with self.subTest(content=content):
+                _write(self.root, "docs/index.md", f"# Index\n\n{content}\n")
+                _write(self.root, "docs/child.md", "# Child\n")
+                result = _run(self.root)
+                self.assertIn("docs/child.md: unreachable", result.stdout)
+
+    def test_incidental_reference_link_does_not_route(self) -> None:
+        _write(
+            self.root,
+            "docs/index.md",
+            "# Index\n\nSee [Child][route] for background.\n\n[route]: child.md\n",
+        )
+        _write(self.root, "docs/child.md", "# Child\n")
+        self.assertIn("docs/child.md: unreachable", _run(self.root).stdout)
+
+    def test_code_examples_cannot_define_or_follow_reference_routes(self) -> None:
+        examples = (
+            "```md\n[route]\n[route]: child.md\n```",
+            "[route]\n\n~~~md\n[route]: child.md\n~~~",
+            "- Read when updating child: `[Child][route]`\n\n[route]: child.md",
+        )
+        for example in examples:
+            with self.subTest(example=example):
+                _write(self.root, "docs/index.md", f"# Index\n\n{example}\n")
+                _write(self.root, "docs/child.md", "# Child\n")
+                self.assertIn("docs/child.md: unreachable", _run(self.root).stdout)
+
+    def test_reference_links_still_require_table_trigger_headers(self) -> None:
+        _write(
+            self.root,
+            "docs/index.md",
+            "# Index\n\n| File | Description |\n| --- | --- |\n| [One][one] | First |\n| [Two][two] | Second |\n\n[one]: one.md\n[two]: two.md\n",
+        )
+        _write(self.root, "docs/one.md", "# One\n")
+        _write(self.root, "docs/two.md", "# Two\n")
+        self.assertIn("no recognized trigger column", _run(self.root).stdout)
+
+    def test_nested_git_boundaries_exclude_candidates_and_routing_roots(self) -> None:
+        for marker_kind in ("file", "directory"):
+            with self.subTest(marker_kind=marker_kind):
+                foreign = self.root / "docs" / marker_kind
+                foreign.mkdir(parents=True)
+                marker = foreign / ".git"
+                if marker_kind == "file":
+                    marker.write_text("gitdir: somewhere\n", encoding="utf-8")
+                else:
+                    marker.mkdir()
+                _write(self.root, f"docs/{marker_kind}/AGENTS.md", "[Escape](../child.md)\n")
+                _write(self.root, f"docs/{marker_kind}/foreign.md", "# Foreign\n")
+        _write(self.root, "docs/index.md", "# Index\n")
+        _write(self.root, "docs/child.md", "# Child\n")
+        result = _run(self.root)
+        self.assertIn("docs/child.md: unreachable", result.stdout)
+        self.assertNotIn("foreign.md", result.stdout)
+
+    def test_structural_route_cannot_enter_a_nested_worktree(self) -> None:
+        _write(self.root, "docs/foreign/.git", "gitdir: somewhere\n")
+        _write(self.root, "docs/foreign/index.md", "[Child](../child.md)\n")
+        _write(self.root, "docs/index.md", "[Foreign](foreign/index.md)\n")
+        _write(self.root, "docs/child.md", "# Child\n")
+        self.assertIn("docs/child.md: unreachable", _run(self.root).stdout)
+
+    def test_selected_root_may_itself_be_a_git_worktree(self) -> None:
+        _write(self.root, ".git", "gitdir: somewhere\n")
+        _write(self.root, "docs/index.md", "# Index\n")
+        self.assertEqual(_run(self.root).returncode, EXIT_OK)
+
+    def test_unreadable_unrelated_directory_does_not_crash_the_scan(self) -> None:
+        _write(self.root, "docs/index.md", "# Index\n")
+        blocked = self.root / "unreadable"
+        blocked.mkdir()
+        self.addCleanup(blocked.chmod, 0o700)
+        blocked.chmod(0)
+        result = _run(self.root)
+        self.assertEqual(result.returncode, EXIT_OK, result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

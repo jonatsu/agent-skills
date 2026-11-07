@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import json
+import os
 import re
 import sys
 from collections.abc import Iterator, Sequence
@@ -90,6 +91,96 @@ class Finding(NamedTuple):
     detail: str
 
 
+REFERENCE_DEFINITION = re.compile(r"^ {0,3}\[([^\]\n]+)\]:\s*(?:<([^>\n]+)>|(\S+))")
+REFERENCE_LINK = re.compile(r"(?<!!)\[([^\[\]\n]+)\](?:[ \t]*\[([^\[\]\n]*)\])?")
+CODE_SPAN = re.compile(r"(`+)(.*?)\1(?!`)")
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+
+
+def _reference_label(label: str) -> str:
+    """Apply Markdown's case-insensitive, whitespace-normalized label matching."""
+    return " ".join(label.split()).casefold()
+
+
+def _routing_text(text: str) -> str:
+    """Expand used reference links while keeping code and definitions out of routes."""
+    lines: list[str] = []
+    fence = ""
+    for line in text.splitlines():
+        marker = FENCE.match(line)
+        if fence:
+            if marker and marker[1][0] == fence[0] and len(marker[1]) >= len(fence):
+                fence = ""
+            lines.append("")
+        elif marker:
+            fence = marker[1]
+            lines.append("")
+        else:
+            lines.append(line)
+    definitions: dict[str, str] = {}
+    for line in lines:
+        if match := REFERENCE_DEFINITION.match(line):
+            definitions.setdefault(_reference_label(match[1]), match[2] or match[3])
+
+    def expand(match: re.Match[str]) -> str:
+        if match.string[match.end() :].startswith("("):
+            return match[0]
+        label = match[1] if match[2] in (None, "") else match[2]
+        destination = definitions.get(_reference_label(label))
+        return f"[{match[1]}]({destination})" if destination else match[0]
+
+    prepared: list[str] = []
+    for line in lines:
+        if REFERENCE_DEFINITION.match(line):
+            prepared.append("")
+            continue
+        pieces: list[str] = []
+        start = 0
+        for code in CODE_SPAN.finditer(line):
+            pieces.append(REFERENCE_LINK.sub(expand, line[start : code.start()]))
+            # Routing tables also deliberately accept a lone backticked document path.
+            literal = code[0] if re.fullmatch(r"`[^`\s]+\.md`", code[0]) else " " * len(code[0])
+            pieces.append(literal)
+            start = code.end()
+        pieces.append(REFERENCE_LINK.sub(expand, line[start:]))
+        prepared.append("".join(pieces))
+    return "\n".join(prepared)
+
+
+def _inside_nested_repository(path: Path, root: Path) -> bool:
+    """Keep a chosen repository separate from nested checkouts and linked worktrees."""
+    current = path.resolve()
+    root = root.resolve()
+    if not current.is_relative_to(root):
+        return False
+    while current != root:
+        if os.path.lexists(current / ".git"):
+            return True
+        current = current.parent
+    return False
+
+
+def _repository_files(root: Path, excludes: tuple[str, ...]) -> Iterator[Path]:
+    """Walk owned files without entering excluded directories or nested repositories."""
+    for directory, names, filenames in os.walk(root):
+        base = Path(directory)
+        names[:] = [
+            name
+            for name in names
+            if name != ".git"
+            and not os.path.lexists(base / name / ".git")
+            and not any(
+                fnmatch.fnmatch(f"/{(base / name).relative_to(root).as_posix()}/", pattern)
+                for pattern in excludes
+            )
+        ]
+        for name in filenames:
+            path = base / name
+            relative = path.relative_to(root).as_posix()
+            if not any(fnmatch.fnmatch(f"/{relative}", pattern) for pattern in excludes):
+                yield path
+
+
 def iter_context_files(config: Config) -> Iterator[tuple[str, Path]]:
     """Yield (root-relative path, path) for each instruction file to measure.
 
@@ -97,7 +188,7 @@ def iter_context_files(config: Config) -> Iterator[tuple[str, Path]]:
     is covered the day it appears. Symlinks are skipped: the CLAUDE.md beside an
     AGENTS.md is usually a link to it, and counting both would double its cost.
     """
-    for path in sorted(config.root.rglob("*")):
+    for path in sorted(_repository_files(config.root, config.excludes)):
         if path.name not in config.names:
             continue
         if path.is_symlink() or not path.is_file():
@@ -117,7 +208,7 @@ def evidence_links(text: str, evidence_dir: str) -> list[str]:
     """
     pattern = re.compile(rf"((?:\.\./)*{re.escape(evidence_dir)}/[\w.\-]+\.md)")
     seen: dict[str, None] = {}
-    for match in pattern.findall(text):
+    for match in pattern.findall(_routing_text(text)):
         seen.setdefault(match, None)
     return list(seen)
 
@@ -133,6 +224,8 @@ def check_links(
             resolved = target.relative_to(config.root.resolve()).as_posix()
         except ValueError:
             findings.append(Finding("escapes", relative, f"{reference} resolves outside the root"))
+            continue
+        if _inside_nested_repository(target, config.root):
             continue
         referenced.add(resolved)
         if not target.is_file():
@@ -175,9 +268,9 @@ def index_links(text: str) -> list[str]:
     file must use. Markdown links and backticked paths are collected alike,
     because an index table commonly uses either; the caller resolves them.
     """
-    pattern = re.compile(r"\[[^\]]*\]\(([^)\s]+\.md)\)|`([^`\s]+\.md)`")
+    pattern = re.compile(r"\[[^\]]*\]\(([^)#\s]+\.md)(?:#[^)]*)?\)|`([^`\s]+\.md)`")
     seen: dict[str, None] = {}
-    for link, literal in pattern.findall(text):
+    for link, literal in pattern.findall(_routing_text(text)):
         seen.setdefault(link or literal, None)
     return list(seen)
 
@@ -209,6 +302,8 @@ def check_index(
     evidence_root = (config.root / config.evidence_dir).resolve()
     for reference in index_links(text):
         target = resolve_index_reference(reference, path, config)
+        if _inside_nested_repository(target, config.root):
+            continue
         if evidence_root not in target.parents:
             continue
         resolved = target.relative_to(config.root.resolve()).as_posix()
@@ -221,6 +316,8 @@ def check_index(
 def iter_index_files(config: Config) -> Iterator[tuple[str, Path]]:
     """Yield (root-relative path, path) for the evidence directory's own index."""
     evidence_root = config.root / config.evidence_dir
+    if _inside_nested_repository(evidence_root, config.root):
+        return
     for name in INDEX_NAMES:
         path = evidence_root / name
         if path.is_file():
@@ -267,7 +364,7 @@ def check_orphans(config: Config, referenced: set[str]) -> list[Finding]:
     regardless of how good its contents are.
     """
     evidence_root = config.root / config.evidence_dir
-    if not evidence_root.is_dir():
+    if not evidence_root.is_dir() or _inside_nested_repository(evidence_root, config.root):
         return []
     findings: list[Finding] = []
     for path in sorted(evidence_root.glob("*.md")):

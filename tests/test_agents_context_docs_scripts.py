@@ -253,6 +253,82 @@ class CheckAgentContextTests(unittest.TestCase):
         self.assertEqual(result.returncode, EXIT_USAGE)
         self.assertIn("must be an integer", result.stderr)
 
+    def test_reference_links_route_through_an_evidence_index(self) -> None:
+        for reference in ("[Thing][route]", "[route][]", "[route]", "[Thing][ROUTE   name]"):
+            with self.subTest(reference=reference):
+                _write(
+                    self.root,
+                    "AGENTS.md",
+                    "[Evidence][index]\n\n[index]: docs/findings/README.md\n",
+                )
+                _write(
+                    self.root,
+                    "docs/findings/README.md",
+                    f"# Evidence\n\n{reference}\n\n[route]: thing.md\n[route name]: thing.md\n",
+                )
+                _write(self.root, "docs/findings/thing.md", "# Thing\n")
+                result = _run(str(self.root))
+                self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+
+    def test_unused_reference_definition_does_not_grant_an_index_hop(self) -> None:
+        _write(self.root, "AGENTS.md", "# Root\n\n[index]: docs/findings/README.md\n")
+        _write(self.root, "docs/findings/README.md", "[Thing](thing.md)\n")
+        _write(self.root, "docs/findings/thing.md", "# Thing\n")
+        self.assertIn("orphaned", _run(str(self.root)).stdout)
+
+    def test_index_reference_code_examples_do_not_reach_evidence(self) -> None:
+        for content in (
+            "```md\n[route]\n[route]: thing.md\n```",
+            "`[route]`\n\n[route]: thing.md",
+            "[missing]\n\n[route]: thing.md",
+        ):
+            with self.subTest(content=content):
+                _write(self.root, "AGENTS.md", "See `docs/findings/README.md`.\n")
+                _write(self.root, "docs/findings/README.md", content)
+                _write(self.root, "docs/findings/thing.md", "# Thing\n")
+                self.assertIn("orphaned", _run(str(self.root)).stdout)
+
+    def test_nested_git_boundaries_exclude_instruction_files(self) -> None:
+        _write(self.root, "AGENTS.md", "# Root\n")
+        _write(self.root, "other/linked/.git", "gitdir: somewhere\n")
+        _write(self.root, "other/linked/AGENTS.md", "See `docs/findings/missing.md`.\n")
+        (self.root / "other" / "checkout" / ".git").mkdir(parents=True)
+        _write(self.root, "other/checkout/AGENTS.md", "See `docs/findings/missing.md`.\n")
+        result = _run(str(self.root), "--json")
+        payload = json.loads(result.stdout)
+        self.assertEqual(payload["checked"], 1)
+        self.assertEqual(payload["findings"], [])
+
+    def test_evidence_directory_inside_nested_worktree_is_excluded(self) -> None:
+        _write(self.root, "AGENTS.md", "# Root\n")
+        _write(self.root, "docs/foreign/.git", "gitdir: somewhere\n")
+        _write(self.root, "docs/foreign/findings/thing.md", "# Thing\n")
+        result = _run(str(self.root), "--evidence-dir", "docs/foreign/findings")
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+
+    def test_selected_root_may_itself_be_a_git_worktree(self) -> None:
+        _write(self.root, ".git", "gitdir: somewhere\n")
+        self._clean_tree()
+        self.assertEqual(_run(str(self.root)).returncode, EXIT_OK)
+
+    def test_unreadable_unrelated_directory_does_not_crash_the_scan(self) -> None:
+        self._clean_tree()
+        blocked = self.root / "unreadable"
+        blocked.mkdir()
+        self.addCleanup(blocked.chmod, 0o700)
+        blocked.chmod(0)
+        result = _run(str(self.root))
+        self.assertEqual(result.returncode, EXIT_OK, result.stderr)
+
+    def test_index_links_with_fragments_reach_evidence(self) -> None:
+        for link in ("[Thing](thing.md#details)", "[Thing][route]\n\n[route]: thing.md#details"):
+            with self.subTest(link=link):
+                _write(self.root, "AGENTS.md", "See `docs/findings/README.md`.\n")
+                _write(self.root, "docs/findings/README.md", f"# Evidence\n\n{link}\n")
+                _write(self.root, "docs/findings/thing.md", "# Thing\n\n## Details\n")
+                result = _run(str(self.root))
+                self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

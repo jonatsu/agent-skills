@@ -21,8 +21,10 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import os
 import re
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 from typing import NamedTuple
 
@@ -122,6 +124,96 @@ class RoutingEntry(NamedTuple):
     form: str
 
 
+REFERENCE_DEFINITION = re.compile(r"^ {0,3}\[([^\]\n]+)\]:\s*(?:<([^>\n]+)>|(\S+))")
+REFERENCE_LINK = re.compile(r"(?<!!)\[([^\[\]\n]+)\](?:[ \t]*\[([^\[\]\n]*)\])?")
+CODE_SPAN = re.compile(r"(`+)(.*?)\1(?!`)")
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+
+
+def _reference_label(label: str) -> str:
+    """Apply Markdown's case-insensitive, whitespace-normalized label matching."""
+    return " ".join(label.split()).casefold()
+
+
+def _routing_text(text: str) -> str:
+    """Expand used reference links while keeping code and definitions out of routes."""
+    lines: list[str] = []
+    fence = ""
+    for line in text.splitlines():
+        marker = FENCE.match(line)
+        if fence:
+            if marker and marker[1][0] == fence[0] and len(marker[1]) >= len(fence):
+                fence = ""
+            lines.append("")
+        elif marker:
+            fence = marker[1]
+            lines.append("")
+        else:
+            lines.append(line)
+    definitions: dict[str, str] = {}
+    for line in lines:
+        if match := REFERENCE_DEFINITION.match(line):
+            definitions.setdefault(_reference_label(match[1]), match[2] or match[3])
+
+    def expand(match: re.Match[str]) -> str:
+        if match.string[match.end() :].startswith("("):
+            return match[0]
+        label = match[1] if match[2] in (None, "") else match[2]
+        destination = definitions.get(_reference_label(label))
+        return f"[{match[1]}]({destination})" if destination else match[0]
+
+    prepared: list[str] = []
+    for line in lines:
+        if REFERENCE_DEFINITION.match(line):
+            prepared.append("")
+            continue
+        pieces: list[str] = []
+        start = 0
+        for code in CODE_SPAN.finditer(line):
+            pieces.append(REFERENCE_LINK.sub(expand, line[start : code.start()]))
+            # Routing tables also deliberately accept a lone backticked document path.
+            literal = code[0] if re.fullmatch(r"`[^`\s]+\.md`", code[0]) else " " * len(code[0])
+            pieces.append(literal)
+            start = code.end()
+        pieces.append(REFERENCE_LINK.sub(expand, line[start:]))
+        prepared.append("".join(pieces))
+    return "\n".join(prepared)
+
+
+def _inside_nested_repository(path: Path, root: Path) -> bool:
+    """Keep a chosen repository separate from nested checkouts and linked worktrees."""
+    current = path.resolve()
+    root = root.resolve()
+    if not current.is_relative_to(root):
+        return False
+    while current != root:
+        if os.path.lexists(current / ".git"):
+            return True
+        current = current.parent
+    return False
+
+
+def _repository_files(root: Path, excludes: tuple[str, ...]) -> Iterator[Path]:
+    """Walk owned files without entering excluded directories or nested repositories."""
+    for directory, names, filenames in os.walk(root):
+        base = Path(directory)
+        names[:] = [
+            name
+            for name in names
+            if name != ".git"
+            and not os.path.lexists(base / name / ".git")
+            and not any(
+                fnmatch.fnmatch(f"/{(base / name).relative_to(root).as_posix()}/", pattern)
+                for pattern in excludes
+            )
+        ]
+        for name in filenames:
+            path = base / name
+            relative = path.relative_to(root).as_posix()
+            if not any(fnmatch.fnmatch(f"/{relative}", pattern) for pattern in excludes):
+                yield path
+
+
 def _excluded(rel_posix: str, excludes: tuple[str, ...]) -> bool:
     """Report whether a root-relative path matches any exclusion glob.
 
@@ -143,6 +235,7 @@ def _find_floor(root: Path) -> Path | None:
 
 def _structural_paths(text: str, base: Path, root: Path) -> set[Path]:
     """Resolve deliberate parent-child routes rather than incidental references."""
+    text = _routing_text(text)
     found: set[Path] = set()
     raw_paths = [
         match.group(1)
@@ -158,7 +251,7 @@ def _structural_paths(text: str, base: Path, root: Path) -> set[Path]:
     for raw in raw_paths:
         for origin in (base, root):
             candidate = (origin / raw).resolve()
-            if candidate.is_file():
+            if candidate.is_file() and not _inside_nested_repository(candidate, root):
                 found.add(candidate)
                 break
     return found
@@ -166,13 +259,7 @@ def _structural_paths(text: str, base: Path, root: Path) -> set[Path]:
 
 def _routing_roots(root: Path, excludes: tuple[str, ...]) -> list[Path]:
     """The root floor plus every scoped instruction file — clients load these by location."""
-    roots: list[Path] = []
-    for name in FLOOR_NAMES:
-        for candidate in root.rglob(name):
-            rel = candidate.relative_to(root).as_posix()
-            if candidate.is_file() and not _excluded(rel, excludes):
-                roots.append(candidate)
-    return roots
+    return sorted(path for path in _repository_files(root, excludes) if path.name in FLOOR_NAMES)
 
 
 def _reachable(seeds: list[Path], root: Path) -> tuple[set[Path], list[Finding]]:
@@ -276,6 +363,7 @@ def _routing_list_entries(document_text: str) -> list[RoutingEntry]:
 
 def _routing_entries(document_text: str) -> list[RoutingEntry]:
     """Return every recognized trigger-keyed table row and list item."""
+    document_text = _routing_text(document_text)
     return _routing_table_entries(document_text) + _routing_list_entries(document_text)
 
 
@@ -303,7 +391,7 @@ def check_routing_table_headers(document_text: str, relative: str) -> list[Findi
     reported only when the target cells actually carry document links, which is
     what makes a reader treat the table as a route.
     """
-    lines = document_text.splitlines()
+    lines = _routing_text(document_text).splitlines()
     findings: list[Finding] = []
     for index, line in enumerate(lines[:-1]):
         stripped = line.strip()
@@ -354,21 +442,21 @@ def _candidates(
     Every Markdown file under the docs directories, plus root-level Markdown
     that is neither the floor nor self-justifying by name.
     """
-    found: list[Path] = []
-    for docs_dir in docs_dirs:
-        base = root / docs_dir
-        if base.is_dir():
-            found.extend(sorted(base.rglob("*.md")))
-    for child in sorted(root.glob("*.md")):
-        if child.name not in FLOOR_NAMES and child.name not in DEFAULT_ROOT_EXEMPT:
-            found.append(child)
-
-    selected: list[tuple[str, Path]] = []
-    for path in found:
-        relative = path.relative_to(root).as_posix()
-        if not _excluded(relative, excludes):
-            selected.append((relative, path))
-    return selected
+    bases = [root / docs_dir for docs_dir in docs_dirs]
+    found = [
+        path
+        for path in _repository_files(root, excludes)
+        if path.suffix == ".md"
+        and (
+            any(base in path.parents for base in bases)
+            or (
+                path.parent == root
+                and path.name not in FLOOR_NAMES
+                and path.name not in DEFAULT_ROOT_EXEMPT
+            )
+        )
+    ]
+    return [(path.relative_to(root).as_posix(), path) for path in sorted(found)]
 
 
 def check_reachability(candidates: list[tuple[str, Path]], reachable: set[Path]) -> list[Finding]:
