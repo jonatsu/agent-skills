@@ -72,6 +72,9 @@ RECORD_DIR_GLOBS = (
 PIN_HEAD_LINES = 15
 PIN_WORD = re.compile(r"\bpinned\b", re.IGNORECASE)
 PIN_REV = re.compile(r"`[0-9a-f]{7,40}`")
+PIN_SHA256 = re.compile(r"\bsha-?256\s*[:=]?\s*`[0-9a-f]{64}`", re.IGNORECASE)
+PIN_LITERAL = re.compile(r"`(?:[0-9a-f]{7,40}|[0-9a-f]{64})`", re.IGNORECASE)
+PIN_CODE_SPAN = re.compile(r"(`+)(.*?)\1(?!`)", re.DOTALL)
 
 # A Markdown link target, and a backticked path accepted only in a routing-table file cell.
 MD_LINK = re.compile(r"\]\(([^)#\s]+\.md)(?:#[^)]*)?\)")
@@ -81,6 +84,10 @@ STANDALONE_MD_LINK = re.compile(r"^\s*\[[^]\n]+\]\(([^)#\s]+\.md)(?:#[^)]*)?\)\s
 ROUTE_LIST_PREFIX = re.compile(
     r"^\s*-\s+(?:read when|read before|if you|symptom)\b(?P<rest>.*)$",
     re.IGNORECASE,
+)
+LIST_MARKER = re.compile(r"^[ \t]*-[ \t]+")
+CONTINUATION_BLOCK = re.compile(
+    r"^(?:[-+*](?:\s|$)|\d+[.)](?:\s|$)|#{1,6}(?:\s|$)|[|>]|`{3,}|~{3,})"
 )
 ROUTE_TARGET_HEADERS = {"file", "read"}
 # Linked rows before a trigger-less table is read as an index rather than content.
@@ -135,8 +142,8 @@ def _reference_label(label: str) -> str:
     return " ".join(label.split()).casefold()
 
 
-def _routing_text(text: str) -> str:
-    """Expand used reference links while keeping code and definitions out of routes."""
+def _without_fenced_code(text: str) -> str:
+    """Mask fenced examples while preserving source line numbers."""
     lines: list[str] = []
     fence = ""
     for line in text.splitlines():
@@ -150,6 +157,12 @@ def _routing_text(text: str) -> str:
             lines.append("")
         else:
             lines.append(line)
+    return "\n".join(lines)
+
+
+def _routing_text(text: str) -> str:
+    """Expand used reference links while keeping code and definitions out of routes."""
+    lines = _without_fenced_code(text).splitlines()
     definitions: dict[str, str] = {}
     for line in lines:
         if match := REFERENCE_DEFINITION.match(line):
@@ -336,13 +349,37 @@ def _routing_table_entries(document_text: str) -> list[RoutingEntry]:
     return entries
 
 
+def _logical_list_item(lines: list[str], start: int) -> str:
+    """Join indented paragraph continuations without consuming another Markdown block."""
+    first = lines[start].expandtabs(4)
+    marker = LIST_MARKER.match(first)
+    assert marker is not None  # the caller already matched a trigger-keyed list item
+    content_column = marker.end()
+    parts = [first.rstrip().removesuffix("\\")]
+    for line in lines[start + 1 :]:
+        expanded = line.expandtabs(4)
+        stripped = expanded.lstrip()
+        indent = len(expanded) - len(stripped)
+        if (
+            not stripped
+            or indent < content_column
+            or indent >= content_column + 4
+            or CONTINUATION_BLOCK.match(stripped)
+        ):
+            break
+        parts.append(stripped.rstrip().removesuffix("\\"))
+    return " ".join(parts)
+
+
 def _routing_list_entries(document_text: str) -> list[RoutingEntry]:
-    """Return trigger-keyed list items that contain a Markdown document link."""
+    """Return trigger-keyed logical list items that contain a Markdown document link."""
     entries: list[RoutingEntry] = []
-    for lineno, line in enumerate(document_text.splitlines(), start=1):
-        match = ROUTE_LIST_PREFIX.fullmatch(line)
-        if match is None:
+    lines = document_text.splitlines()
+    for index, line in enumerate(lines):
+        if ROUTE_LIST_PREFIX.fullmatch(line) is None:
             continue
+        match = ROUTE_LIST_PREFIX.fullmatch(_logical_list_item(lines, index))
+        assert match is not None
         rest = match.group("rest")
         target_link = MD_DOCUMENT_LINK.search(rest)
         if target_link is None:
@@ -352,7 +389,7 @@ def _routing_list_entries(document_text: str) -> list[RoutingEntry]:
             continue
         entries.append(
             RoutingEntry(
-                lineno,
+                index + 1,
                 rest[separator + 1 :].strip(),
                 rest[:separator].strip(),
                 "list",
@@ -475,12 +512,26 @@ def check_reachability(candidates: list[tuple[str, Path]], reachable: set[Path])
     ]
 
 
+def _has_source_pin(text: str) -> bool:
+    """Recognize explicit revision or SHA-256 pins in prose at the document head."""
+    prose = _without_fenced_code("\n".join(text.splitlines()[:PIN_HEAD_LINES]))
+    head = "\n".join(
+        "" if line.startswith(("    ", "\t")) else line.rstrip().removesuffix("\\")
+        for line in prose.splitlines()
+    )
+    head = PIN_CODE_SPAN.sub(
+        lambda match: match[0] if PIN_LITERAL.fullmatch(match[0]) else " ",
+        head,
+    )
+    return bool(PIN_WORD.search(head) and (PIN_REV.search(head) or PIN_SHA256.search(head)))
+
+
 def check_line_references(candidates: list[tuple[str, Path]]) -> list[Finding]:
     """Report line-number references in living documents that do not pin a revision.
 
     Frozen genres are skipped entirely: there a line number is a dated snapshot
     coordinate rather than rot. A living document may opt out the same way by
-    declaring its pinned revision in its head.
+    declaring its pinned revision or immutable artifact's SHA-256 in its head.
     """
     findings: list[Finding] = []
     for relative, path in candidates:
@@ -491,8 +542,7 @@ def check_line_references(candidates: list[tuple[str, Path]]) -> list[Finding]:
         except (OSError, UnicodeDecodeError) as error:
             findings.append(Finding(relative, f"unreadable: {error}"))
             continue
-        head = "\n".join(text.splitlines()[:PIN_HEAD_LINES])
-        if PIN_WORD.search(head) and PIN_REV.search(head):
+        if _has_source_pin(text):
             continue
         findings.extend(
             Finding(

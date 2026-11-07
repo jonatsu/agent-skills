@@ -217,7 +217,7 @@ class CheckContextArchitectureTests(unittest.TestCase):
         self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
         self.assertIn("docs/child.md: unreachable", result.stdout)
 
-    def test_trigger_and_link_must_share_the_first_physical_line(self) -> None:
+    def test_trigger_and_link_may_wrap_within_the_same_list_item(self) -> None:
         _write(
             self.root,
             "docs/index.md",
@@ -227,8 +227,138 @@ class CheckContextArchitectureTests(unittest.TestCase):
 
         result = _run(self.root)
 
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+        self.assertEqual(result.stdout.strip(), "clean")
+
+    def test_wrapped_routes_accept_conditions_hard_breaks_and_reference_links(self) -> None:
+        routes = (
+            "- Read when changing the\n  child: [Child](child.md).",
+            "- Read before changing the child:\\\n  [Child](child.md).",
+            "- If you change the child:\n    [Child][route].\n\n[route]: child.md",
+            "  - Symptom the child fails:\\\n    [Child][route].\n\n[route]: child.md",
+        )
+        _write(self.root, "docs/child.md", "# Child\n")
+        for route in routes:
+            with self.subTest(route=route):
+                _write(self.root, "docs/index.md", f"# Index\n\n{route}\n")
+                result = _run(self.root)
+                self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+
+    def test_wrapped_route_stops_at_markdown_block_boundaries(self) -> None:
+        boundaries = (
+            "- See [Child](child.md).",
+            "  - See [Child](child.md).",
+            "  1. See [Child](child.md).",
+            "  # See [Child](child.md)",
+            "  | See [Child](child.md) |",
+            "  ```md\n  [Child](child.md)\n  ```",
+            "  ~~~md\n  [Child](child.md)\n  ~~~",
+            "See [Child](child.md).",
+            "\n  See [Child](child.md).",
+        )
+        _write(self.root, "docs/child.md", "# Child\n")
+        for boundary in boundaries:
+            with self.subTest(boundary=boundary):
+                _write(
+                    self.root,
+                    "docs/index.md",
+                    f"# Index\n\n- Read when changing the child:\n{boundary}\n",
+                )
+                result = _run(self.root)
+                self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
+                self.assertIn("docs/child.md: unreachable", result.stdout)
+
+    def test_wrapped_route_keeps_its_first_line_for_trigger_diagnostics(self) -> None:
+        _write(
+            self.root,
+            "docs/index.md",
+            "# Index\n\n- Read before:\\\n  [Child](child.md).\n",
+        )
+        _write(self.root, "docs/child.md", "# Child\n")
+
+        result = _run(self.root)
+
+        self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
+        self.assertIn(
+            "docs/index.md: line 3: routing list item has an empty trigger", result.stdout
+        )
+        self.assertIn("docs/child.md: unreachable", result.stdout)
+
+    def test_wrapping_does_not_promote_an_incidental_list_link(self) -> None:
+        _write(
+            self.root,
+            "docs/index.md",
+            "# Index\n\n- Read when changing the child, see\n  [Child](child.md) for background.\n",
+        )
+        _write(self.root, "docs/child.md", "# Child\n")
+
+        result = _run(self.root)
+
         self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
         self.assertIn("docs/child.md: unreachable", result.stdout)
+
+    def test_explicit_sha256_pin_preserves_immutable_source_line_coordinates(self) -> None:
+        digest = "ab" * 32
+        for label in ("SHA-256", "sha256"):
+            with self.subTest(label=label):
+                _write(
+                    self.root,
+                    "docs/index.md",
+                    f"# Index\n\nSources are pinned to {label} `{digest}`.\n\nSee `driver.c:42`.\n",
+                )
+                result = _run(self.root)
+                self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+
+    def test_source_pin_can_wrap_but_must_be_in_the_document_head(self) -> None:
+        digest = "cd" * 32
+        _write(
+            self.root,
+            "docs/index.md",
+            f"# Index\n\nSources are pinned to SHA-256:\\\n`{digest}`.\n\nSee `driver.c:42`.\n",
+        )
+        result = _run(self.root)
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
+
+        _write(
+            self.root,
+            "docs/index.md",
+            "# Index\n"
+            + "\n" * 14
+            + f"Sources are pinned to SHA-256 `{digest}`.\nSee `driver.c:42`.\n",
+        )
+        result = _run(self.root)
+        self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
+        self.assertIn("line-number reference", result.stdout)
+
+    def test_invalid_or_example_digests_do_not_exempt_line_references(self) -> None:
+        digest = "ef" * 32
+        declarations = (
+            f"    Sources are pinned to SHA-256 `{digest}`.",
+            f"SHA-256 `{digest}`.",
+            f"Sources are pinned to `{digest}`.",
+            f"Sources are pinned to SHA-256 `{digest[:-1]}`.",
+            f"Sources are pinned to SHA-256 `{digest}0`.",
+            f"Sources are pinned to SHA-256 `{'z' * 64}`.",
+            f"```md\nSources are pinned to SHA-256 `{digest}`.\n```",
+            f"``Sources are pinned to SHA-256 `{digest}`.``",
+        )
+        for declaration in declarations:
+            with self.subTest(declaration=declaration):
+                _write(
+                    self.root, "docs/index.md", f"# Index\n\n{declaration}\n\nSee `driver.c:42`.\n"
+                )
+                result = _run(self.root)
+                self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
+                self.assertIn("line-number reference", result.stdout)
+
+    def test_existing_commit_pin_still_exempts_source_line_coordinates(self) -> None:
+        _write(
+            self.root,
+            "docs/index.md",
+            "# Index\n\nSources are pinned to commit `abcdef1234`.\n\nSee `driver.c:42`.\n",
+        )
+        result = _run(self.root)
+        self.assertEqual(result.returncode, EXIT_OK, result.stdout)
 
     def test_root_ledgers_are_exempt_without_exempting_other_root_files(self) -> None:
         _write(self.root, "BACKLOG.md", "# Backlog\n")

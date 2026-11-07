@@ -47,9 +47,12 @@ it from the other.
 
 ## Separate Structural Routes From References
 
-A trigger-keyed list item is the default structural route. Keep the trigger and Markdown document link on its
-first physical line, and put the link immediately after the separating colon. Wrap only the purpose text that
-follows. Use one of these exhaustive leading phrases:
+A trigger-keyed list item is the default structural route. Start its first line with one of the phrases
+below, and put the Markdown link immediately after the colon separating the condition from the destination.
+The condition, link, and purpose may wrap onto indented continuation lines within the same list paragraph.
+Indent continuations to the list item's content column; Markdown hard-break backslashes are accepted.
+A blank line, a new Markdown block, or an unindented line ends the route.
+Use one of these exhaustive leading phrases:
 
 ```markdown
 - Read when <condition>: [<document>](<path>.md) <purpose>.
@@ -94,9 +97,12 @@ symptom route that paraphrases its symptoms is invisible to the agent grepping t
 Mechanism > stable identity > file path > never a line number. Point at the option, command, or anchor that
 survives refactors; use a file path when nothing stabler exists; a line number is stale before it is read.
 Two exemptions: frozen genres (decisions, evaluations), where a line number is a dated snapshot coordinate;
-and a living document that declares, in its head, the pinned revision (the word "pinned" plus a backticked
-commit hash) its citations are valid at — that converts line references into stamped facts with a
-re-validation trigger.
+and a living document that explicitly pins its source within its first 15 lines.
+A source pin uses the word "pinned" with a backticked commit hash, or with `SHA-256` and a backticked full 64-digit
+hexadecimal digest of an immutable artifact. The spelling `sha256` is also accepted.
+The algorithm and digest may span a normal wrap or Markdown hard break.
+Place the declaration in prose, outside code examples, and identify the artifact and its retained source.
+The pin makes the coordinates reproducible; revalidate them when the identified source changes.
 Point only at what a cold-start reader can open: a private repository, a deleted file, or another session's
 scratch file is a dead pointer.
 State predicates, never countable inventories: "every aspect gated on the desktop capability", not "the seven

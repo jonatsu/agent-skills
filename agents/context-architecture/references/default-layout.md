@@ -157,8 +157,9 @@ table (when X changes, touch Y — freshness is part of done-ness). Use one list
 - Read when <condition>: [<document>](<path>.md) <purpose>.
 ```
 
-The leading phrase, condition, and Markdown link must remain on the first physical line. Use `Read when`,
-`Symptom`, `Read before`, or `If you`; the checker treats another phrase as ordinary prose. Routing tables
+Start the first line with `Read when`, `Symptom`, `Read before`, or `If you`; the checker treats another
+phrase as ordinary prose. The condition and Markdown link may wrap onto indented continuation lines in the
+same list paragraph. Routing tables
 remain supported when a compact matrix earns coupled formatting, but their exact headers are a compatibility
 contract rather than the default. [Writing rules](writing-rules.md) defines both forms.
 
