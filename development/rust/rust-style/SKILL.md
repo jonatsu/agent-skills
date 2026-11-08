@@ -2,7 +2,7 @@
 name: rust-style
 description: Write and review idiomatic Rust that fits the crate's edition and minimum Rust version. Use for new Rust code, style or idiom reviews, function signatures and ownership, newtypes and enums, panics and expect, module layout, doc comments, and clippy, rustfmt, or Cargo [lints] setup. Error types, async and tokio, Unix processes and signals, and tests have their own rust-* skills.
 license: MIT
-compatibility: Rust 1.85 or later (edition 2024); claims checked against Rust 1.99.1.
+compatibility: Rust 1.85 or later (edition 2024).
 metadata:
   author: Joonas Onatsu
 ---
