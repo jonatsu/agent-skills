@@ -140,3 +140,57 @@ examples mechanically before it lands:
 - Claims that can change between versions cite official documentation and the Rust version they were checked
   on, and each skill gets an independent review before it lands. Compiling proves an example is valid Rust, not
   that its advice is sound; the review covers that.
+
+## Behaviour Evaluation
+
+The set does not change whether Sonnet or Opus solve the evaluation's four tasks: both models solve them
+without it. It does change how they solve them, in the direction the skills teach. The evaluation compared each
+model with and without the skills on four small standalone crates, each carrying one defect of the kind the
+target project will meet:
+
+| Case    | Defect                                                      | Graded outcomes                                                   |
+| ------- | ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| `svc`   | A tokio job runner with no SIGTERM handling                 | Exits 0 within 5 s with stdin held open, every started job ends   |
+| `wrap`  | A command wrapper that panics on spawn failure              | 127 and 126 on start failure, 143 on SIGTERM, background job ends |
+| `relay` | A TCP relay that runs both copy directions in one `select!` | The full reply arrives after the client half-closes               |
+| `sbx`   | A clap and serde TOML tool that accepts misspelled keys     | Exit 3 naming the key, the field or the path, plain `error:` line |
+
+Each of the 16 runs was a Claude Code subagent given one workspace, the defect as a user would report it, and
+no way to ask questions. The control arm was told not to read any `rust-*` skill. The skill arm was told to
+read the relevant `SKILL.md` files first. A script then built each workspace and probed the binary from
+outside. The fixtures and the grading script were kept out of the repository.
+
+| Case    | Sonnet, control | Sonnet, skills | Opus, control | Opus, skills |
+| ------- | --------------- | -------------- | ------------- | ------------ |
+| `svc`   | 5/5             | 5/5            | 5/5           | 5/5          |
+| `wrap`  | 8/8             | 8/8            | 6/8           | 6/8          |
+| `relay` | 2/2             | 2/2            | 2/2           | 2/2          |
+| `sbx`   | 11/11           | 11/11          | 10/11         | 11/11        |
+
+Every failure is a narrowly written check rather than a defect. Both Opus `wrap` runs re-raise the child's
+signal instead of exiting 143; a shell reports 143 either way, and `rust-unix-processes` presents re-raising
+as the alternative that costs one `unsafe` call. The Opus `sbx` control prefixed its one-line error with
+`sbx:` rather than `error:`.
+
+Reading the code shows what the scores cannot:
+
+- **Shutdown:** both `svc` controls waited for jobs without a deadline and escaped the blocked tokio stdin read
+  with `process::exit` or `shutdown_background`. Both skill runs read stdin on a dedicated thread and bounded
+  the drain with a timeout.
+- **Process supervision:** both skill-arm `wrap` runs added 125 for wrapper failures, classified a missing
+  interpreter as 126, and escalated to SIGKILL after a grace period. The Sonnet skill run also kept the
+  command in the foreground when stdin is a terminal, and the Opus skill run became a subreaper that stops
+  `setsid` daemons. The Sonnet control did none of these.
+- **Validation:** both skill-arm `sbx` runs validated `memory_mb` with a `try_from` type during
+  deserialization, so the error carries its line and column, and tested the binary with a cleared environment
+  and a temporary directory.
+- **Tests:** every skill run added tests, and the `relay`, `sbx` and `wrap`
+  runs moved their logic into `src/lib.rs`. The signal tests waited on a readiness line and polled with a
+  deadline, as `rust-testing` teaches. The controls' testing ranged from none to thorough.
+- **Overreach:** both skill-arm `wrap` runs also stop background processes after a normal exit, which running
+  the command directly would not do.
+
+`relay` showed no difference: all four runs replaced the `select!` with `copy_bidirectional`. Each cell is one
+run, so the scores cannot separate the arms; the code differences are consistent across both models. A harder
+evaluation would grade the gaps the controls left open: a job that outlives the drain, a child that calls
+`setsid`, and a command that ignores SIGTERM.
