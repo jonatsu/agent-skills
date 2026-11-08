@@ -146,8 +146,10 @@ failure path uses the same table, and use the tool's documented status as the fa
 Find what failed without losing it on the way:
 
 - `error.downcast_ref::<YourError>()` finds your error through any number of anyhow `.context()` layers.
-- It does not find a cause stored as another error's `#[source]` field. Search the whole chain instead, with
-  `error.chain().find_map(|cause| cause.downcast_ref::<io::Error>())`.
+- It does not find a cause stored as another error's `#[source]` field. Reach that cause through the outer
+  variant, as the example does, or search the whole chain with
+  `error.chain().find_map(|cause| cause.downcast_ref::<io::Error>())`. A chain search matches any `io::Error`,
+  such as a missing configuration file, so classify a spawn failure by its own variant.
 - `#[error(transparent)]` hides the inner type from both, so match the outer enum.
 - Attach a cause with `.context()` or a `#[source]` field. Formatting it into `anyhow!("...: {cause}")` turns
   it into text, and no downcast finds it again.
@@ -181,16 +183,17 @@ fn launch(name: &str, program: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// The documented exit status of each failure.
+/// The documented exit status of each failure; a spawn failure is classified by its own cause only.
 fn exit_code(error: &anyhow::Error) -> ExitCode {
-    if let Some(LaunchError::UnknownSandbox(_)) = error.downcast_ref::<LaunchError>() {
-        return ExitCode::from(2);
-    }
-    let cause = error.chain().find_map(|cause| cause.downcast_ref::<io::Error>());
-    match cause.map(io::Error::kind) {
-        Some(io::ErrorKind::NotFound) => ExitCode::from(127),
-        Some(io::ErrorKind::PermissionDenied) => ExitCode::from(126),
-        _ => ExitCode::from(125),
+    match error.downcast_ref::<LaunchError>() {
+        Some(LaunchError::UnknownSandbox(_)) => ExitCode::from(2),
+        Some(LaunchError::Spawn { source, .. }) => match source.kind() {
+            io::ErrorKind::NotFound => ExitCode::from(127),
+            io::ErrorKind::PermissionDenied => ExitCode::from(126),
+            _ if source.raw_os_error() == Some(nix::libc::ENOEXEC) => ExitCode::from(126),
+            _ => ExitCode::from(125),
+        },
+        None => ExitCode::from(125),
     }
 }
 
@@ -216,7 +219,8 @@ A real `main` prints the message with `eprintln!` and returns the code.
 
 With clap, a parse error is not always a usage error: `--help` and `--version` also arrive as `Err` from
 `try_parse`. Call `error.exit()` on a clap error, which prints it and exits 0 for help and version and 2 for
-misuse, or read `error.exit_code()` rather than mapping every clap error to 2.
+misuse, before any guard that must run on exit exists, because it calls `process::exit`. Otherwise call
+`error.print()` and return `error.exit_code()`, rather than mapping every clap error to 2.
 
 Keep secrets out of error values. An error variant that carries a token, a password, or a whole configuration
 value prints it through `Display` or `Debug` into logs and terminals.
