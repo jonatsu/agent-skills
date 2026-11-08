@@ -101,7 +101,8 @@ def test_plain_toml_counts_only_in_a_package_with_rust_examples(
         ("toml,manifest", None),
         ("toml,clippy-config", None),
         ("rust,ignore", "unknown label ignore"),
-        ("rust,compile_fail", "needs exactly one error code"),
+        ("rust,compile_fail", "needs an error code"),
+        ("rust,compile_fail,E0277,E0308", "at most one error code"),
         ("rust,compile_fail,E0277,run", "exclude each other"),
         ("rust,E0277", "needs compile_fail"),
         ("toml,cargo", "exactly one of"),
@@ -154,6 +155,13 @@ def _message(report: ExampleReport) -> str:
             "    #[test]\n    fn doubles() {\n        assert_eq!(super::double(2), 4);\n    }\n}\n",
         ),
         ("rust,compile_fail,E0308", 'fn main() {\n    let _count: u32 = "one";\n}\n'),
+        (
+            "rust,compile_fail",
+            "// error: future cannot be sent between threads safely\n"
+            "fn require_send<T: Send>(_: T) {}\n\nfn main() {\n"
+            "    require_send(async {\n        let rc = std::rc::Rc::new(1);\n"
+            "        std::future::ready(()).await;\n        drop(rc);\n    });\n}\n",
+        ),
         ("toml,manifest", '[lints.clippy]\npedantic = { level = "warn", priority = -1 }\n'),
         ("toml,clippy-config", 'msrv = "1.85"\n'),
     ],
@@ -201,6 +209,16 @@ def test_a_correct_example_passes(workspace: Workspace, info: str, code: str) ->
             "expected only E0308, found E0308, E0425",
         ),
         ("rust", "fn unused_helper() {}\n\npub fn api() {}\n", "clippy failed"),
+        (
+            "rust,compile_fail",
+            "// error: future cannot be sent between threads safely\nfn main() {\n    undefined_name();\n}\n",
+            "found E0425",
+        ),
+        (
+            "rust,compile_fail",
+            "// error: future cannot be sent between threads safely\nfn main() {}\n",
+            "but it builds",
+        ),
     ],
 )
 def test_a_planted_failure_is_caught(

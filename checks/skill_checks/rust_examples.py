@@ -5,6 +5,8 @@ A fenced block whose info string starts with `rust` is a Rust example, and its l
 - `rust`: it builds, and clippy passes with warnings denied, with and without `cfg(test)`.
 - `rust,run`: it also passes its own tests, and its `main`, when it has one, exits 0.
 - `rust,compile_fail,E0277`: it fails to build with that error code and no other error.
+- `rust,compile_fail` whose first line is `// error: <message>`: it fails with that message and no other error,
+  for the compiler errors that have no code, such as a spawned future that is not `Send`.
 
 A `toml,manifest` block is a `Cargo.toml` fragment that cargo and clippy must accept, and a `toml,clippy-config`
 block is a `clippy.toml` that clippy must accept. Any other label in either family is a finding, and so are a
@@ -44,8 +46,8 @@ FENCE_RE = re.compile(
 QUOTE_MARKER_RE = re.compile(r"^[ \t]*> ?")
 MAIN_RE = re.compile(r"^\s*(?:pub\s+)?(?:async\s+)?fn\s+main\s*\(", re.MULTILINE)
 COMPILER_ERROR_CODE_RE = re.compile(r"error\[(E\d{4})\]")
-# An error line without a code, except the summary cargo prints after any failed build.
-UNCODED_ERROR_RE = re.compile(r"^error(?!\[)(?!: could not compile )", re.MULTILINE)
+EXPECTED_MESSAGE_RE = re.compile(r"^//\s*error:\s*(?P<message>\S.*?)\s*$")
+UNCODED_ERROR_LINE_RE = re.compile(r"^error: (?!could not compile )(?P<message>.*)$", re.MULTILINE)
 # Variables that change what cargo or clippy does without changing the example; the check sets its own.
 SCRUBBED_VARIABLES = (
     "RUSTFLAGS",
@@ -83,6 +85,12 @@ class Example:
     def expected_error(self) -> str | None:
         codes = [label for label in self.labels if ERROR_CODE_RE.match(label)]
         return codes[0] if codes else None
+
+    @property
+    def expected_message(self) -> str | None:
+        first_line = self.code.split("\n", 1)[0]
+        match = EXPECTED_MESSAGE_RE.match(first_line)
+        return match["message"] if match else None
 
     @property
     def is_binary(self) -> bool:
@@ -207,8 +215,13 @@ def label_problem(example: Example) -> str | None:
     if "compile_fail" in example.labels:
         if "run" in example.labels:
             return "compile_fail and run exclude each other"
-        if len(codes) != 1:
-            return "compile_fail needs exactly one error code, such as compile_fail,E0277"
+        if len(codes) > 1:
+            return "compile_fail takes at most one error code"
+        if not codes and example.expected_message is None:
+            return (
+                "compile_fail needs an error code, such as compile_fail,E0277, or a first line "
+                "`// error: <message>` for an error without a code"
+            )
     elif codes:
         return "an error code needs compile_fail"
     return None
@@ -372,12 +385,20 @@ def _prove_compile_fail(
     result = _run(
         ["cargo", "build", "--locked", "--quiet", *selector], workspace.host, _target(workspace)
     )
-    expected = example.expected_error
+    code = example.expected_error
+    expected = code or f"`error: {example.expected_message}`"
     if result.status == 0:
         return ExampleFinding(example, f"expected error {expected}, but it builds")
     codes = set(COMPILER_ERROR_CODE_RE.findall(result.output))
-    if codes != {expected} or UNCODED_ERROR_RE.search(result.output):
-        found = ", ".join(sorted(codes)) or "errors without a code"
+    messages = {match["message"] for match in UNCODED_ERROR_LINE_RE.finditer(result.output)}
+    if code is not None:
+        matches = codes == {code} and not messages
+    else:
+        matches = not codes and messages == {example.expected_message}
+    if not matches:
+        found = ", ".join(
+            [*sorted(codes), *(f"`error: {message}`" for message in sorted(messages))]
+        )
         return ExampleFinding(example, f"expected only {expected}, found {found}", result.output)
     return None
 

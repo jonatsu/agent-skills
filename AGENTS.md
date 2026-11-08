@@ -65,7 +65,8 @@ first fails.
   sized to that job, because an agent often loads only one of them. Point to a sibling skill for extra depth,
   never for correctness. When you change a shared rule, update every skill that carries it.
 - Label every Rust code block in a skill with what it must prove: `rust` builds and passes clippy, `rust,run`
-  also runs, and `rust,compile_fail,E0277` fails with that error. Label a `Cargo.toml` fragment
+  also runs, and `rust,compile_fail,E0277` fails with that error. For an error without a code, write
+  `rust,compile_fail` and make the block's first line `// error: <the compiler's message>`. Label a `Cargo.toml` fragment
   `toml,manifest` and a `clippy.toml` one `toml,clippy-config`. Write a snippet that should not be checked as
   `text`; an unlabelled `toml` block in a skill with Rust examples fails the check. Examples may use only the
   dependencies in `checks/rust_examples/Cargo.toml`.
