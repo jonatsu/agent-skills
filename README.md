@@ -112,4 +112,5 @@ These sources were consulted about how the skills should be written and structur
 - [Engineering pipeline](engineering/README.md): core engineering skills structure, intended fit together and workflow,
   from an idea to verified work
 - [TODO.md](TODO.md): the skill backlog, review ledgers and unevaluated candidate sources
+- [Evaluations](docs/evaluations/README.md): dated evaluation records, and how to run a behaviour evaluation
 - The `archived` branch: retired skills kept for reference, with why each was archived
