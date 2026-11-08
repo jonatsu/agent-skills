@@ -48,6 +48,11 @@ child's:
 Check that the program exists before spawning when the status must tell these apart, and report the missing
 interpreter or directory as 126 or 125.
 
+A child started through `pre_exec`, as pty-process does, never fails with `ENOEXEC`: the C library then retries
+the file with `/bin/sh`, so a file without a shebang runs as a shell script, and a corrupt binary exits 127
+through the shell. pty-process also wraps the error as `pty_process::Error::Io`, so read the `io::Error` from
+that variant before classifying it.
+
 ## Waiting and Output
 
 Every child must be waited for. An exited child that nobody waits for stays a zombie and holds a process slot.
@@ -141,21 +146,26 @@ action and kills the wrapper, leaving the child running and the terminal raw.
 
 Choose where the child runs by how it uses the terminal:
 
-- **The child uses no terminal** (its stdin is null or piped): start it in its own process group with
+- **The child never opens a terminal** (its stdin is null or piped, and it does not open `/dev/tty` itself,
+  as ssh, sudo, and password prompts do): start it in its own process group with
   `Command::process_group(0)` and forward SIGINT, SIGTERM, SIGHUP, and SIGQUIT to that group.
 - **The child gets its own pseudo-terminal**, as in the next section: it leads a new session and process
   group, so forward the same four signals to its group.
 - **The child shares the caller's terminal**: keep it in the wrapper's process group. A process in another
   group on that terminal is a background job, and the kernel stops it as soon as it reads the terminal or
   changes its settings, so the wrapper would wait forever. The terminal already sends SIGINT and SIGQUIT for
-  `Ctrl-C` and `Ctrl-\` to the whole foreground group, so forwarding them would deliver them twice. Forward
-  only SIGTERM and SIGHUP, to the child's process ID with `nix::sys::signal::kill`.
+  `Ctrl-C` and `Ctrl-\` to the whole foreground group, so forwarding them would deliver them twice. Still
+  register SIGINT and SIGQUIT and discard them, or the first `Ctrl-C` kills the wrapper while the child keeps
+  the terminal. Forward only SIGTERM and SIGHUP, to the child's process ID with `nix::sys::signal::kill`.
 
 Send a signal to a group with `nix::sys::signal::killpg` or `rustix::process::kill_process_group`, so the
 child's own children receive it too. The child's children can outlive it, and the group lives as long as any
 member does, so after the child exits, stop what is left of its group: SIGTERM, a bounded wait, then SIGKILL.
 `ESRCH` means the group is empty. For full containment of everything the child starts, also make the wrapper a
-subreaper with `rustix::process::set_child_subreaper`, or run the child in a PID namespace.
+subreaper with `rustix::process::set_child_subreaper`, or run the child in a PID namespace. A subreaper inherits
+the orphaned grandchildren, and tokio reaps only the children it spawned, so the wrapper must reap the group's
+zombies itself: a group of zombies still exists, and `killpg` never reports `ESRCH` for it. The example's
+`reap_group` does that.
 
 ```rust
 use std::process::ExitStatus;
@@ -163,6 +173,7 @@ use std::time::Duration;
 
 use nix::errno::Errno;
 use nix::sys::signal::{Signal, killpg};
+use nix::sys::wait::{WaitPidFlag, WaitStatus, waitpid};
 use nix::unistd::Pid;
 use tokio::signal::unix::{self as unix_signal, SignalKind};
 
@@ -221,12 +232,23 @@ async fn stop_group(group: Pid) {
     }
     for _ in 0..50 {
         tokio::time::sleep(Duration::from_millis(100)).await;
+        reap_group(group);
         if killpg(group, None) == Err(Errno::ESRCH) {
             return;
         }
     }
     if let Err(error) = killpg(group, Signal::SIGKILL) {
         eprintln!("could not stop process group {group}: {error}");
+    }
+}
+
+/// Reaps exited members of the group that the wrapper inherited as a subreaper; tokio reaps only its own.
+fn reap_group(group: Pid) {
+    let members = Pid::from_raw(-group.as_raw());
+    while let Ok(status) = waitpid(members, Some(WaitPidFlag::WNOHANG)) {
+        if status == WaitStatus::StillAlive {
+            break;
+        }
     }
 }
 ```
@@ -276,7 +298,8 @@ Passing a terminal through also needs these, each with its own failure when left
 - **End of output.** Reading the primary side returns `EIO` on Linux after the child exits, as in the example.
   Treat it as the end of the stream. That happens only once every copy of the secondary side is closed:
   `spawn` consumes the `Pts`, but with `spawn_borrowed`, drop the `Pts` after spawning, or the read never
-  ends.
+  ends. A grandchild that inherited the terminal also keeps it open after the child exits, so race the read
+  loop against `child.wait()` rather than waiting for `EIO` alone.
 - **Raw mode.** Put the caller's terminal in raw mode, so keystrokes such as `Ctrl-C` reach the child as
   bytes. Do it only when standard input is a terminal and the wrapper is its foreground process group, because
   changing the settings of a terminal from a background job, as in `launcher &`, stops the wrapper. Restore the
@@ -294,6 +317,7 @@ Passing a terminal through also needs these, each with its own failure when left
 use std::io::{self, IsTerminal};
 use std::os::fd::AsFd;
 
+use nix::errno::Errno;
 use nix::sys::termios::{self, SetArg, Termios};
 use nix::unistd;
 
@@ -310,8 +334,14 @@ impl RawMode {
     /// Returns an error when the terminal settings cannot be read or changed.
     pub fn enter() -> nix::Result<Option<Self>> {
         let stdin = io::stdin();
-        if !stdin.is_terminal() || unistd::tcgetpgrp(stdin.as_fd())? != unistd::getpgrp() {
+        if !stdin.is_terminal() {
             return Ok(None);
+        }
+        // ENOTTY: a terminal, but not this process's controlling terminal.
+        match unistd::tcgetpgrp(stdin.as_fd()) {
+            Ok(foreground) if foreground == unistd::getpgrp() => {}
+            Ok(_) | Err(Errno::ENOTTY) => return Ok(None),
+            Err(error) => return Err(error),
         }
         let saved = termios::tcgetattr(stdin.as_fd())?;
         let mut raw = saved.clone();
