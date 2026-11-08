@@ -145,6 +145,16 @@ repos:
         language: system
         types_or: [markdown, python, shell]
         pass_filenames: false
+      # Builds, lints, and runs every Rust skill example. A commit runs it only when a Rust skill, the host
+      # package, the check, or the toolchain pin changes, and it rebuilds only the examples that changed since
+      # they passed. A Rust block in any other skill is still checked by `just check` and CI, whose all-files run
+      # always matches the host package.
+      - id: rust-examples
+        name: Rust skill examples build, lint, and run
+        entry: uv run --frozen skill-checks rust-examples
+        language: system
+        files: ^development/rust/.*\.md$|^checks/rust_examples/|^checks/skill_checks/rust_examples\.py$|^mise\.(toml|lock)$
+        pass_filenames: false
       # The repository is public and its history carries only the noreply address.
       - id: commit-identity
         name: commit identity is the noreply address

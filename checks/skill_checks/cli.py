@@ -20,6 +20,13 @@ from skill_checks.descriptions import check_descriptions, format_description_rep
 from skill_checks.identity import IdentityError, wrong_identities, wrong_pushed_identities
 from skill_checks.names import duplicate_names
 from skill_checks.outside_references import check_packages
+from skill_checks.rust_examples import (
+    RustToolchainMissing,
+    Workspace,
+    check_examples,
+    collect_package_examples,
+    format_report,
+)
 from skill_checks.validators import (
     ValidationReport,
     ValidatorKind,
@@ -48,6 +55,14 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("attributions", help="check ATTRIBUTIONS.md against the provenance scheme")
     commands.add_parser("names", help="fail when two deployable skills share a name")
     commands.add_parser("references", help="fail on a reference out of a skill package")
+    examples = commands.add_parser(
+        "rust-examples", help="build, lint, and run the Rust code examples in skill packages"
+    )
+    examples.add_argument(
+        "--rebuild-all",
+        action="store_true",
+        help="prove every example again, ignoring the record of those that passed",
+    )
     commands.add_parser("identity", help="fail unless Git would commit as the noreply address")
     pushed = commands.add_parser(
         "pushed-identity",
@@ -107,6 +122,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _run_names(root)
     if arguments.command == "references":
         return _run_references(root)
+    if arguments.command == "rust-examples":
+        return _run_rust_examples(root, rebuild_all=arguments.rebuild_all)
     if arguments.command == "locate":
         return _run_locate(root, arguments.name)
     raise AssertionError(f"unhandled command: {arguments.command}")
@@ -178,6 +195,28 @@ def _run_references(root: Path) -> int:
         print(f"FAIL  {location}: {violation.reason}: {violation.reference}")
     print(f"references: {len(violations)} reference(s) out of their package")
     return 1 if violations else 0
+
+
+# The host package template, and the ignored directory the check builds in.
+RUST_EXAMPLES_TEMPLATE = Path("checks") / "rust_examples"
+RUST_EXAMPLES_WORK = Path(".cache") / "rust-examples"
+
+
+def _run_rust_examples(root: Path, *, rebuild_all: bool) -> int:
+    try:
+        sources = discover_skill_sources(root)
+    except SkillCatalogError as error:
+        print(f"skill-checks: {error}", file=sys.stderr)
+        return 2
+    examples = collect_package_examples(source.directory for source in sources)
+    workspace = Workspace(root / RUST_EXAMPLES_TEMPLATE, root / RUST_EXAMPLES_WORK)
+    try:
+        report = check_examples(examples, workspace, use_record=not rebuild_all)
+    except RustToolchainMissing as error:
+        print(f"skill-checks: {error}", file=sys.stderr)
+        return 2
+    sys.stdout.write(format_report(report, root))
+    return 1 if report.findings else 0
 
 
 def _run_identity() -> int:

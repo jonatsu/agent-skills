@@ -1,0 +1,32 @@
+# The host package that skill-checks rust-examples copies each Rust skill example into, as one binary target per
+# example. One package keeps Cargo.lock independent of the examples, so the check can build with --locked.
+# Every dependency is a normal one, so an example can use any of them, including inside its tests.
+[package]
+name = "rust-examples"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# A workspace of its own, so cargo never looks for one in a parent directory.
+[workspace]
+
+[dependencies]
+anyhow = "1"
+assert_cmd = "2"
+clap = { version = "4", features = ["derive", "env"] }
+futures = "0.3"
+insta = { version = "1", features = ["json", "yaml"] }
+nix = { version = "0.31", features = ["fs", "process", "signal", "term", "ioctl", "poll"] }
+predicates = "3"
+proptest = "1"
+rstest = "0.28"
+rustix = { version = "1", features = ["process", "termios", "pty", "fs", "stdio"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tempfile = "3"
+thiserror = "2"
+tokio = { version = "1", features = ["full", "test-util"] }
+tokio-util = { version = "0.7", features = ["rt"] }
+toml = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

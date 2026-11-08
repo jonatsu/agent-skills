@@ -30,6 +30,16 @@ jobs:
         run: just secrets
       - name: Install the checks
         run: uv sync --frozen
+      # The Rust example check records the examples that passed and keeps its build here, so a run proves only
+      # the examples that changed. Each run saves a new entry; a run restores the newest one for its lockfiles.
+      - name: Restore the Rust example build
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .cache/rust-examples
+            ~/.cargo/registry
+          key: rust-examples-${{ hashFiles('checks/rust_examples/Cargo.lock', 'mise.lock') }}-${{ github.sha }}
+          restore-keys: rust-examples-${{ hashFiles('checks/rust_examples/Cargo.lock', 'mise.lock') }}-
       - name: Run every hook and test
         env:
           SKIP: commit-identity

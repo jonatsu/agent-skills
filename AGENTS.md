@@ -19,6 +19,7 @@ Read the focused source before acting:
 just check                     # history secrets scan, every hook, both test suites; run before calling work done
 just skill-check <skill-dir>   # both validators over one skill
 uv run --frozen skill-checks spec | policy | descriptions | names | references   # one check, whole tree
+uv run --frozen skill-checks rust-examples   # build, lint, and run every Rust skill example
 ```
 
 **Running only one validator is the mistake the pair exists to prevent.** The specification validator passes a
@@ -63,6 +64,11 @@ first fails.
 - Keep every skill complete for its own job. When two skills both need a rule, each carries its own version,
   sized to that job, because an agent often loads only one of them. Point to a sibling skill for extra depth,
   never for correctness. When you change a shared rule, update every skill that carries it.
+- Label every Rust code block in a skill with what it must prove: `rust` builds and passes clippy, `rust,run`
+  also runs, and `rust,compile_fail,E0277` fails with that error. Label a `Cargo.toml` fragment
+  `toml,manifest` and a `clippy.toml` one `toml,clippy-config`. Write a snippet that should not be checked as
+  `text`; an unlabelled `toml` block in a skill with Rust examples fails the check. Examples may use only the
+  dependencies in `checks/rust_examples/Cargo.toml`.
 - Keep a skill's `description` one inline YAML scalar. Kasetto records a folded one as its marker character.
 - Write `ATTRIBUTIONS.md` to the scheme in `skill-forge`'s `references/provenance.md`: what the skill is based
   on, under which license, and what each source gave it, in first-party and third-party sections. It is never a

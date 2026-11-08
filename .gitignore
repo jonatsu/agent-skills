@@ -4,3 +4,7 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# Where skill-checks rust-examples builds the Rust skills examples, and Cargo output.
+.cache/
+target/
