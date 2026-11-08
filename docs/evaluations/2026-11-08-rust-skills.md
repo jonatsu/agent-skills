@@ -130,8 +130,13 @@ examples mechanically before it lands:
   denied. A block's label can also require that it runs and exits 0, that it fails with a named compiler
   error, or that a `Cargo.toml` fragment is accepted by cargo and clippy. Running matters because several
   defects above compile cleanly and behave wrongly.
-- The check stays permanent, because edits are where an unnoticed broken example lands. It skips blocks whose
-  content has not changed, and CI runs it only when a Rust skill changes.
+- The check stays permanent, because edits are where an unnoticed broken example lands. It records each
+  example that passed by a hash of the example, the toolchain, the host package, and the check itself, and
+  builds only the examples whose hash changed. A commit runs it only when a Rust skill or its check changes,
+  and CI restores the record and build from its cache, so an unchanged tree builds nothing.
+- The test crates the set relies on (proptest, insta, rstest, mockall, assert_cmd) are among the most
+  downloaded in crates.io's testing category, read on 2026-11-08; `rust-testing` also names wiremock,
+  serial_test, and pretty_assertions from the same list.
 - Claims that can change between versions cite official documentation and the Rust version they were checked
   on, and each skill gets an independent review before it lands. Compiling proves an example is valid Rust, not
   that its advice is sound; the review covers that.
