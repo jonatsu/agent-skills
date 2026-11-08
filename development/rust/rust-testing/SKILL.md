@@ -99,8 +99,9 @@ Test signal handling with a real process:
 2. Wait until the binary reports that it is ready, by reading a readiness line from its stdout. A `sleep`
    instead races with the binary's startup and fails on a slow machine.
 3. Send SIGTERM with `nix::sys::signal::kill`.
-4. Wait for the exit with a timeout, kill the child if the timeout expires, and assert the exit status, such as
-   143, and the cleanup.
+4. Wait for the exit with a deadline by polling `try_wait`, since std has no timed wait, and kill the child if
+   the deadline passes. Assert how it ended: a wrapper that exits 143 has `code() == Some(143)`, and a process
+   that dies from the signal has `signal() == Some(15)` instead. Then assert the cleanup.
 
 The `rust-unix-processes` skill covers the statuses a wrapper must return.
 
@@ -255,7 +256,7 @@ Run the slow tests in a CI job on a machine that has those systems, so they stil
 `cargo nextest run` runs each test in its own process and in parallel, which isolates crashes and global state
 and reports slow tests. It does not run doctests, so a project that uses nextest also runs `cargo test --doc`.
 Configure timeouts, retries, and test groups in `.config/nextest.toml`. `cargo test` hides a passing test's
-output; pass `-- --nocapture` to see it.
+output; pass `-- --no-capture` to see it.
 
 Measure line coverage with `cargo llvm-cov`, and fail CI under a floor with `--fail-under-lines`. Coverage
 shows which lines no test runs, not whether the tests check the right results.
