@@ -1,6 +1,6 @@
 ---
 name: systemd-units
-description: Write, review, harden, and debug Linux systemd units. Use for .service, .timer, and .socket files, drop-ins, dependencies, failed system or user services, journal diagnosis, and resource controls. Use systemd-networking for networkd link configuration and resolved DNS routing. Route Podman or Docker Quadlet-generated units to docker-podman-containers.
+description: Write, review, harden, and debug Linux systemd units. Use for .service, .timer, and .socket files, drop-ins, dependencies, failed system or user services, journal diagnosis, and resource controls. Use systemd-networking for networkd link configuration and resolved DNS routing. For a Podman Quadlet unit, use docker-podman-containers as well for its container keys.
 license: MIT
 compatibility: Requires Linux with systemd and its command-line tools; available directives vary by systemd version.
 metadata:
