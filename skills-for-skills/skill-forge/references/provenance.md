@@ -25,9 +25,9 @@ other people's skills. Decide by impact whether first-party material earns an en
 the skill's guidance is extensively built on does, even when it was read to verify behavior; a single fact checked
 against `--help` or a manual page does not.
 
-Apply the third-party entry to every source that meets the influence test in the authoring guide's provenance
-step, including a source whose license is restrictive or proprietary and that served only as inspiration, so its
-entry can state that nothing was copied. This is a conservative traceability policy, not a universal legal rule.
+Give a third-party entry to every attribution-bearing source, as the authoring guide's Preserve Provenance step
+defines it, including a source whose license is restrictive or proprietary and that served only as inspiration,
+so its entry can state that nothing was copied. This is a conservative traceability policy, not a universal legal rule.
 
 For copied, adapted, translated, or vendored material, determine the source license's actual obligations. This
 workflow also requires the package to ship:
