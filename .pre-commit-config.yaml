@@ -23,7 +23,7 @@ repos:
   # whole history. The hook is a golang-language hook, so pre-commit builds it once from source. Revisions
   # are frozen to commits; Dependabot proposes updates.
   - repo: https://github.com/betterleaks/betterleaks
-    rev: 81aff7a638638aae3a659845d089043e1d8fe9ac # frozen: v1.9.0
+    rev: 8d77e1712fb06fd14444cc648686f1d5655e28a8 # frozen: v1.10.0
     hooks:
       - id: betterleaks
   # Secretlint catches what Betterleaks does not look for: the committer's home directory path, `.env` files,
