@@ -60,7 +60,7 @@ indent_style = tab
 end_of_line = unset
 indent_size = unset
 indent_style = unset
-insert_final_newline = false
+insert_final_newline = unset
 trim_trailing_whitespace = false
 
 [LICENSE]
@@ -68,7 +68,7 @@ trim_trailing_whitespace = false
 end_of_line = unset
 indent_size = unset
 indent_style = unset
-insert_final_newline = false
+insert_final_newline = unset
 trim_trailing_whitespace = false
 
 # Non-standard EditorConfig properties supported by shfmt for scripts with a
