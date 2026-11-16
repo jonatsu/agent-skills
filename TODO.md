@@ -457,7 +457,12 @@ rather than third-party skill write-ups. A research subagent started it on 2026-
 `.scratch/2026-11-16-usability-skill/research/usability-frameworks.md`; move what is worth keeping into a
 tracked evaluation record before relying on it. The `lev-os/agents` `nielsen-heuristics` skill that prompted the
 idea states no license and invents an outcome statistic, so take nothing from it. `mastepanoski/claude-skills`
-`nielsen-heuristics-audit` (MIT) is a GUI-focused reference for the audit procedure and severity scale.
+`nielsen-heuristics-audit` (MIT) is a GUI-focused reference for the audit procedure and severity scale. Its
+sibling `don-norman-principles-audit` (MIT, read at `ac30238`) applies Norman's seven principles from *The
+Design of Everyday Things* (revised edition, 2013) with the same template: per-principle questions and a
+"Norman door" lens worth keeping, but it treats an affordance as a perceived property, which the revised
+edition reassigns to signifiers, and its percent-of-principles score has no source. Cite the book, not the
+skill.
 
 ## `tui-ui-ux` Sibling Skill
 
