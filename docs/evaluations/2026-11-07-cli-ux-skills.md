@@ -130,6 +130,29 @@ behaviour. The Sonnet run of r4 misreported the fixture's valid `out.json` as ha
 The verdict is `ready with risks`: one repetition per cell, one client (Claude Code) for the behavioural
 comparison, and the workspace-boundary lapse.
 
+## Fitting the Surface to the Job
+
+On 2026-11-16 a user report showed the skill over-building: asked to make a repository's justfile targets
+user-friendly, an agent designed a separate command-line tool. The skill had no step asking whether a dedicated
+tool was needed, and its design mode started from a command tree. Case r6 reproduces it with a small OpenWrt
+image repository whose builder downloads packages before it checks the device name.
+
+With the previous skill neither model wrote a separate program, but both built a command-line tool into the
+recipes: Sonnet wrote 151 lines and Opus 132, each with a hand-written confirmation prompt, `--dry-run` and
+`--no-input` flags, and an invented `ROUTER_NO_INPUT` variable where just's `[confirm]` and `just --yes`
+already serve. Both passed L1 to L5 and failed L7, which the grader gained after these runs showed the gap.
+
+The revised skill adds "Fit the Surface to the Job": the lightest interface that serves the callers, the
+conditions that justify a dedicated tool, the surface's own mechanism for each default, and usability questions
+adapted from Nielsen's heuristics. `references/conventions.md` maps the defaults onto task-runner recipes. With
+it, Sonnet wrote a 59-line justfile and Opus a 96-line one, both using `[confirm]`, and both passed every outcome;
+Opus stated why recipes were enough. The ten r1 to r5 runs with the revised skill (agent-skills `9a99d3d`)
+passed every outcome, matching the 2026-11-08 runs. In r5 both models still added a non-interactive
+flag and variable to the standalone tool, so the new rule did not suppress that default where it belongs.
+
+The workspace lapse persists: r3 on Opus and r5 on Sonnet each wrote briefly outside the workspace and reported
+it, and the r6 Sonnet run on the previous skill deleted the fixture's previous image while testing `clean --yes`.
+
 ## The `cli-ux-tester` Agent
 
 The agent preloads the skill in Claude Code, Codex, Oh-My-Pi, and GitHub Copilot CLI, and lives in the separate
