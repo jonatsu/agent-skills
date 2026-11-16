@@ -456,7 +456,9 @@ this one fills the gaps. Agreed with the user on 2026-11-16:
 - **Value beyond what an agent already knows:** translate each principle into the medium at hand, rate by
   consequence, stay proportionate to the job (the lesson of `cli-ui-ux` case r6), and say when a heuristic
   review is not enough and real users must test it.
-- **Out of scope:** medium-specific rules, visual design, and accessibility compliance, each a later skill.
+- **Out of scope:** medium-specific rules and visual design, each a later skill. Accessibility was proposed as
+  out of scope by the agent, not decided by the user; the user then asked for a one-line pointer that a
+  usability review does not cover accessibility, and for an accessibility skill soon (see below).
 - **`cli-ui-ux` keeps its own six usability questions,** sized to the CLI case, under the rule that every skill
   carries its own version of a shared rule.
 
@@ -494,6 +496,15 @@ Two more siblings from the same repository, read 2026-11-16:
 - `cognitive-walkthrough` states the method's four questions per action and a rule worth keeping: an
   inspection method predicts, so never invent success percentages. Cite the practitioner's guide by Wharton,
   Rieman, Lewis, and Polson (1994), and check Spencer's streamlined two-question variant (2000).
+
+## Accessibility Skill (Next After `usability`)
+
+Requested by the user on 2026-11-16, to follow `usability` soon. Build an accessibility skill in
+`ui-ux-skills/` for designing, evaluating, and reviewing interfaces against accessibility requirements, starting
+from WCAG 2.2's four principles and its testable success criteria, which
+`docs/evaluations/2026-11-16-usability-sources.md` records. `usability` points to it and stays out of
+compliance checking. Settle its scope with the user first: web content only, or also native apps, command-line
+tools, and physical devices, and whether it checks conformance levels.
 
 ## `tui-ui-ux` Sibling Skill
 
