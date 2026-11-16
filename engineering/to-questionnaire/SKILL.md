@@ -14,7 +14,7 @@ questionnaire pulls it out of them.
 
 **Grill the send, not the subject.** Interview the user only about the *send*, which they can always answer: who
 it goes to, and what they need back. The questions in the document then target the **gap** between what the
-recipient knows and what the user needs — not the subject the user cannot speak to.
+recipient knows and what the user needs, not the subject the user cannot speak to.
 
 This is the inverse of `interview-me`. That skill interviews the user about their own plan or design; reach for
 this instead when the user genuinely cannot answer, because the knowledge lives with someone else. It is not a requirements
@@ -39,7 +39,7 @@ behavior.
 ## Document structure
 
 Frame it as a **discovery questionnaire**: the user lacks context, the recipient holds it. Order questions
-most-important-first — async means you may get only one pass — and group them under `##` headings by theme once
+most-important-first (async means you may get only one pass) and group them under `##` headings by theme once
 there are more than a handful. Use this template:
 
 ```markdown
@@ -55,7 +55,7 @@ One paragraph orienting a recipient who was not in the user's head. Enough to an
 
 ## How to answer
 
-Deadline and rough effort. Partial answers and "I don't know" are useful — flag anything you are unsure of
+Deadline and rough effort. Partial answers and "I don't know" are useful; flag anything you are unsure of
 rather than skipping it.
 
 ## <Theme heading>
