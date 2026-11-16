@@ -12,20 +12,20 @@ Let nix-direnv's own `use_flake` and `use_nix` run, and pass options as argument
 either function replaces nix-direnv's version with one that neither caches nor protects the shell's dependencies
 from garbage collection, and the arguments on the `use flake` line are lost.
 
-nix-direnv is a drop-in replacement for direnv's built-in `use_nix`/`use_flake`. Its two jobs — and the only reasons to
-use it over plain direnv — are:
+nix-direnv is a drop-in replacement for direnv's built-in `use_nix`/`use_flake`. Its two jobs (and the only reasons to
+use it over plain direnv) are:
 
 1. **Cache** the `nix print-dev-env` output under `.direnv/`, so re-entering a directory is near-instant instead of
    re-evaluating the flake/shell.
 2. **Pin** the resulting devShell derivation _and every flake input_ as GC roots, so `nix-collect-garbage` cannot delete
    a project's build dependencies.
 
-If `.direnv/` is missing or the shell re-evaluates on every `cd`, one of those two is broken — start at the Diagnosing
+If `.direnv/` is missing or the shell re-evaluates on every `cd`, one of those two is broken; start at the Diagnosing
 section.
 
 ## Canonical `.envrc`
 
-**Flake project** (nix-direnv installed via home-manager/NixOS — see `references/install-and-integration.md`):
+**Flake project** (nix-direnv installed via home-manager/NixOS; see `references/install-and-integration.md`):
 
 ```bash
 use flake
@@ -44,7 +44,7 @@ Each tag has its own sha256; take the hash for the exact tag you pin, or the fet
 
 **Non-flake** (`shell.nix`/`default.nix`): `use nix`.
 
-Then run `direnv allow`. `flake.nix`, `flake.lock`, `.envrc`, and the direnvrc files are auto-watched — no manual
+Then run `direnv allow`. `flake.nix`, `flake.lock`, `.envrc`, and the direnvrc files are auto-watched; no manual
 `watch_file` needed for those.
 
 ## Adding options as arguments to `use flake`
@@ -59,7 +59,7 @@ Extra arguments after the flake expression forward to `nix print-dev-env`:
 | Impure eval (flake reads ambient env/paths)      | `use flake . --impure`              |
 | Watch an extra input (call _before_ `use flake`) | `watch_file ./nix/foo.nix`          |
 
-`--impure` is a reproducibility smell — add it only if the flake genuinely needs it. The first argument must be the
+`--impure` is a reproducibility smell; add it only if the flake genuinely needs it. The first argument must be the
 flake expression; a leading flag is an error.
 
 Full stdlib (watch_file, nix_direnv_manual_reload, nix_direnv_disallow_fallback, nix-direnv-reload, auto-watched files,
@@ -67,8 +67,8 @@ use nix arg parsing): `references/envrc-stdlib.md`.
 
 ## Global config and trust
 
-`direnv.toml` `[global]` options worth knowing — `warn_timeout` (set `0` to silence the slow-eval warning on cold Nix
-builds), `hide_env_diff = true` (recommended for Nix, which emits a huge env diff), `load_dotenv`, `strict_env` — plus
+`direnv.toml` `[global]` options worth knowing: `warn_timeout` (set `0` to silence the slow-eval warning on cold Nix
+builds), `hide_env_diff = true` (recommended for Nix, which emits a huge env diff), `load_dotenv`, `strict_env`, plus
 the `allow`/`deny` content-hash trust model and the `[whitelist]` footguns: `references/direnv-toml-and-trust.md`.
 
 Read the `.envrc` diff before each `direnv allow`: trust is granted per content version, so the review is the
@@ -85,16 +85,16 @@ or option is actually active.
 
 Work top-down; each step isolates a layer:
 
-1. `ls .direnv/` — no `flake-profile-*` symlink + `.rc` file ⇒ nix-direnv isn't caching. Prime suspect: an `.envrc`
+1. `ls .direnv/`: no `flake-profile-*` symlink + `.rc` file ⇒ nix-direnv isn't caching. Prime suspect: an `.envrc`
    that defines its own `use_flake`/`use_nix`, or a hand-rolled `eval "$(nix print-dev-env)"`.
 2. Run `direnv reload` and read its output. nix-direnv logs `nix-direnv: Using cached dev shell` or
    `nix-direnv: Renewed cache`. When no `nix-direnv:` line appears at all, nix-direnv did not run, so the install
    or `source_url` is not taking effect. Diagnose from this log: `.envrc` runs in a subshell, so its functions, such
    as `use_flake` and `nix_direnv_version`, never exist in your interactive shell.
-3. `command -v direnv` + `direnv status` — confirm _which_ direnv is on PATH and that its
+3. `command -v direnv` + `direnv status`: confirm _which_ direnv is on PATH and that its
    `Loaded RC path`/`warn_timeout` match the config you expect. A mismatch means a different direnv (or config) governs
    the shell than you think you configured.
-4. Stale env after editing `flake.nix` under `nix_direnv_manual_reload` — that's by design; run the `nix-direnv-reload`
+4. Stale env after editing `flake.nix` under `nix_direnv_manual_reload`; that's by design; run the `nix-direnv-reload`
    shell command.
 
 ## Done
