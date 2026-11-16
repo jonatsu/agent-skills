@@ -456,14 +456,24 @@ design mode, review mode, the holistic review, or a voice interface, and ran onc
 a case for each, built on fixtures unlike the existing five, and rerun with at least two repetitions. While
 there, make `evals/grade.py` ignore a report that says it gives no score.
 
-## Accessibility Skill (Next After `usability`)
+## Accessibility Skill (In Progress)
 
-Requested by the user on 2026-11-16, to follow `usability` soon. Build an accessibility skill in
-`ui-ux-skills/` for designing, evaluating, and reviewing interfaces against accessibility requirements, starting
-from WCAG 2.2's four principles and its testable success criteria, which
-`docs/evaluations/2026-11-16-usability-sources.md` records. `usability` points to it and stays out of
-compliance checking. Settle its scope with the user first: web content only, or also native apps, command-line
-tools, and physical devices, and whether it checks conformance levels.
+Requested by the user on 2026-11-16. Build an accessibility skill in `ui-ux-skills/` for designing, evaluating,
+and reviewing interfaces against accessibility requirements. `usability` stays out of conformance checking, and
+its one-line pointer names the new skill once it lands. Agreed with the user on 2026-11-16:
+
+- **Scope:** web content and native apps on WCAG 2.2, plus a short section for non-web software, documents, and
+  hardware based on EN 301 549.
+- **Default target:** WCAG 2.2 Level AA; AAA only when the user names it.
+- **Reuse from `usability`:** the design, evaluate, and review modes; the quick check versus full evaluation;
+  the report shape with a required closing slot, here naming the assistive-technology and user tests;
+  severity by consequence, with each finding also citing its success criterion and level; the interaction
+  dimensions; and the eval harness, including a case that defers to `cli-ui-ux` and the u1 sign-up fixture.
+- **New:** WCAG's principles and success criteria in place of the usability principles; a conformance
+  discipline (no conformance claim from reading code, automated scans catch only part, native elements before
+  ARIA); and a source survey of WCAG 2.2, WCAG-EM, the ARIA Authoring Practices, and EN 301 549.
+
+Next: the source survey (running on Sonnet), then the eval cases and control runs.
 
 ## `tui-ui-ux` Sibling Skill
 
