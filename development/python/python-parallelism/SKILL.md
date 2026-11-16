@@ -32,7 +32,7 @@ quadratic beats four cores, and none of them add a failure mode. Parallelism is 
 work is already efficient and genuinely independent.
 
 Then check that the work is big enough to be worth moving. Measured on CPython 3.12.14, 10 cores: **2000
-trivial tasks through a `ProcessPoolExecutor` ran 1348x slower than the same work in a list comprehension** —
+trivial tasks through a `ProcessPoolExecutor` ran 1348x slower than the same work in a list comprehension**:
 0.122s against effectively 0s. Every argument and result was pickled and shipped between processes to save
 arithmetic that cost nothing.
 
@@ -51,18 +51,18 @@ pure-Python arithmetic ran 1.01x faster on threads and 3.70x on processes, while
 | ------------------------------------------------------- | -------------------------------------------- |
 | CPU-bound Python: loops, parsing, `scipy` solves        | `ProcessPoolExecutor`                        |
 | Blocking I/O with a synchronous library                 | `ThreadPoolExecutor`                         |
-| Blocking I/O, many concurrent operations, async library | asyncio — `python-async-patterns`            |
+| Blocking I/O, many concurrent operations, async library | asyncio: `python-async-patterns`             |
 | CPU-bound inside native code that releases the GIL      | `ThreadPoolExecutor`; measure, do not assume |
 | Too big for one machine, or a real task graph           | Dask or Ray                                  |
 
 That fourth row is the one people get wrong in both directions. NumPy, SciPy and pandas release the GIL around
-large native operations, so threads can parallelize them — but only for the part that is actually inside the C
+large native operations, so threads can parallelize them, but only for the part that is actually inside the C
 code. Time it both ways; the answer depends on the array sizes, not on the library's reputation.
 
 **Free-threaded builds change this rule, and they are a different interpreter.** From 3.13 CPython ships an
 optional build with no GIL, where threads do parallelize CPU-bound Python. It is not what `python3` gives you
-unless you installed it deliberately — verified on the 3.12.14 and 3.13.15 builds here, both report
-`sysconfig.get_config_var("Py_GIL_DISABLED")` as false. That variable says only that the build supports free
+unless you installed it deliberately (verified on the 3.12.14 and 3.13.15 builds here, both report
+`sysconfig.get_config_var("Py_GIL_DISABLED")` as false). That variable says only that the build supports free
 threading: a free-threaded interpreter re-enables the GIL at runtime when it imports an extension module not
 marked as supporting free threading, or when `PYTHON_GIL` or `-X gil` asks for it. Check
 `sys._is_gil_enabled()` (3.13+) in the running process before claiming either behavior, and keep writing code
@@ -142,7 +142,7 @@ Before relying on any of that, read joblib's own documentation, which splits by 
 ## Failure Modes
 
 Arguments, return values and the function itself cross a process boundary by pickle, and workers do not share
-memory. That breaks things that work fine in one process — unpicklable arguments, lost global state, correlated
+memory. That breaks things that work fine in one process: unpicklable arguments, lost global state, correlated
 random streams, and deadlocks inherited across `fork`. **Read
 [crossing-the-process-boundary.md](references/crossing-the-process-boundary.md) before writing a process
 pool**, or when one fails in a way the table below does not explain. The first three fail at the moment of

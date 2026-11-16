@@ -29,7 +29,7 @@ example works through the cases where even that is not enough.
 ## Workers Do Not Share Memory
 
 A global mutated in a worker changes that worker's copy and nothing else. The parent sees no change, and
-neither does any sibling. Return the result instead — that is what the return value is for.
+neither does any sibling. Return the result instead: that is what the return value is for.
 
 Where genuinely shared state is unavoidable, `multiprocessing.Manager` provides proxied objects and
 `multiprocessing.shared_memory` provides a raw shared buffer, both at a synchronization cost that frequently
@@ -37,14 +37,14 @@ erases the speedup. Prefer a design where workers are independent and the parent
 
 Large read-only inputs are the common case that looks like it needs sharing. A big NumPy array passed as an
 argument is copied into every worker. Write it to disk and let workers memory-map it, or use joblib, which
-memory-maps large arrays for you — its
+memory-maps large arrays for you; its
 [NumPy memmap in joblib.Parallel](https://joblib.readthedocs.io/en/stable/auto_examples/parallel_memmap.html)
 example shows the mechanism and its limits.
 
 ## Random Streams Must Be Split Deliberately
 
 Workers that inherit one seed produce identical "random" results, which silently biases everything downstream.
-The fix that looks obvious — adding the worker ID to a root seed — is documented by NumPy as unsafe: repeat
+The fix that looks obvious (adding the worker ID to a root seed) is documented by NumPy as unsafe: repeat
 runs whose root seeds differ by a small increment produce overlapping worker streams, so subsets of workers
 return identical results across runs.
 
@@ -73,7 +73,7 @@ Measured on CPython 3.12.14 on Linux, the default start method is `fork`: the ch
 memory, made without running its imports again.
 
 That is fast, and it is also why a forked child can inherit a lock held by a thread that does not exist in the
-child — which deadlocks, intermittently, usually under load and rarely in testing. Any program that combines
+child, which deadlocks, intermittently, usually under load and rarely in testing. Any program that combines
 threads with `fork` has this exposure; from 3.12, `os.fork()` emits a `DeprecationWarning` when it detects
 other threads. `spawn` starts a fresh interpreter and has no such inheritance; it is
 the default on macOS and Windows, which is one reason a pool that works on Linux can behave differently there.
@@ -82,8 +82,8 @@ the default on macOS and Windows, which is one reason a pool that works on Linux
 mp.set_start_method("spawn")        # once, at start-up, before creating any pool
 ```
 
-Choose `spawn` or `forkserver` for any program that also uses threads. CPython is moving the same way — 3.14
-changes the Linux default to `forkserver` — so code that only works under `fork` is on borrowed time. Confirm
+Choose `spawn` or `forkserver` for any program that also uses threads. CPython is moving the same way (3.14
+changes the Linux default to `forkserver`), so code that only works under `fork` is on borrowed time. Confirm
 the default for the versions you target with `mp.get_start_method()` rather than assuming either.
 
 Under `spawn` or `forkserver`, the child re-imports the main module. **Module-level code that creates a pool
