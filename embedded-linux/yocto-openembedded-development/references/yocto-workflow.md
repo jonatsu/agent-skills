@@ -70,11 +70,11 @@ source oe-init-build-env build
 ```
 
 This creates `build/conf/{local.conf,bblayers.conf}` and puts `bitbake` on the path. For a one-command "fetch layers,
-configure, and build" wrapper driven by a single YAML config, use kas — that workflow lives in the
+configure, and build" wrapper driven by a single YAML config, use kas: that workflow lives in the
 **kas-build-orchestration** skill. Plain `bitbake` after `oe-init-build-env` is fully sufficient; kas is optional.
 
-**Newer releases add `bitbake-setup`, and it is not a rename of `oe-init-build-env`.** It bootstraps a whole setup —
-selecting a configuration, fetching the layer repositories, and *then* preparing a build directory — where
+**Newer releases add `bitbake-setup`, and it is not a rename of `oe-init-build-env`.** It bootstraps a whole setup:
+selecting a configuration, fetching the layer repositories, and *then* preparing a build directory, where
 `oe-init-build-env` only initialises a build directory in a tree you already assembled yourself.
 
 ```bash
@@ -89,12 +89,12 @@ source <top-dir>/<setup-dir>/build/init-build-env
 kas, so treat the two as alternatives rather than layers, and keep kas questions with **kas-build-orchestration**.
 
 **Confirm it exists before recommending it (SKILL.md *Version awareness*).** It is absent from BitBake at the 5.0,
-5.1 and 5.2 release tags and present at 5.3, so a Scarthgap LTS tree does not have it — checked at those tags, where
+5.1 and 5.2 release tags and present at 5.3, so a Scarthgap LTS tree does not have it: checked at those tags, where
 `bin/bitbake` is present in every one and `bin/bitbake-setup` only in the last. On a release without it,
 `oe-init-build-env` plus a manually assembled layer tree, or kas, are the options.
 
 **The output directory is not always `tmp/`.** `TMPDIR` defaults to `${TOPDIR}/tmp`, but OE-Core's
-`defaultsetup.conf` then appends `TCLIBCAPPEND`, itself defaulting to `-${TCLIBC}` — so an ordinary distro builds into
+`defaultsetup.conf` then appends `TCLIBCAPPEND`, itself defaulting to `-${TCLIBC}`, so an ordinary distro builds into
 `tmp-glibc/`. Poky sets `TCLIBCAPPEND = ""`, which is the only reason Poky builds show a plain `tmp/`. Deployed
 artifacts land in `DEPLOY_DIR_IMAGE` (`${DEPLOY_DIR}/images/${MACHINE}` by default), and `DEPLOY_DIR` is commonly moved
 outside `TMPDIR` altogether. Resolve both instead of assuming them, especially before reporting an artifact missing:
@@ -118,9 +118,9 @@ EXTRA_IMAGE_FEATURES += "tools-debug"                 # plus dev logins — see 
 ```
 
 A change to `local.conf` reparses every recipe, so keep it to genuinely local, development-only settings. Everything
-durable belongs in a distro, machine, or image recipe — see `yocto-best-practices.md`.
+durable belongs in a distro, machine, or image recipe; see `yocto-best-practices.md`.
 
-### `debug-tweaks` was removed after 5.1 — confirm the release before using it
+### `debug-tweaks` was removed after 5.1: confirm the release before using it
 
 `debug-tweaks` was the umbrella image feature that opened up a development image. It is in
 `IMAGE_FEATURES[validitems]` at **5.0 Scarthgap and 5.1 Styhead**, and **absent from 5.2 Walnascar onward**. On
@@ -140,7 +140,7 @@ Those four are exactly what `debug-tweaks` expanded to: it gated `zap_empty_root
 logging without also shipping a passwordless root login.
 
 **The failure mode is not a clean error.** An unrecognised image feature raises `bb.parse.SkipRecipe`, so the *image
-recipe is skipped* rather than failing loudly — the visible symptom is BitBake reporting nothing provides your image.
+recipe is skipped* rather than failing loudly: the visible symptom is BitBake reporting nothing provides your image.
 The real reason is in the skip message, which names every valid feature and has a distinct wording when the feature
 arrived via `EXTRA_IMAGE_FEATURES`. Read the skip reason before believing the image recipe is missing.
 
@@ -172,28 +172,28 @@ IMAGE_INSTALL = "busybox mtd-utils"
 
 ## BitBake Assignment Operators and Overrides
 
-| Operator    | Meaning                                                                      |
-| ----------- | ---------------------------------------------------------------------------- |
-| `=`         | lazy assignment (RHS expanded when used)                                     |
-| `:=`        | immediate assignment (RHS expanded at parse time)                            |
-| `?=`        | weak default — sets only if undefined; among several, the **first** wins     |
-| `??=`       | weakest default — lower priority than `?=`; among several, the **last** wins |
-| `+=` / `=+` | append / prepend with a space                                                |
-| `.=` / `=.` | append / prepend without a space                                             |
+| Operator    | Meaning                                                                     |
+| ----------- | --------------------------------------------------------------------------- |
+| `=`         | lazy assignment (RHS expanded when used)                                    |
+| `:=`        | immediate assignment (RHS expanded at parse time)                           |
+| `?=`        | weak default: sets only if undefined; among several, the **first** wins     |
+| `??=`       | weakest default: lower priority than `?=`; among several, the **last** wins |
+| `+=` / `=+` | append / prepend with a space                                               |
+| `.=` / `=.` | append / prepend without a space                                            |
 
 `:append`, `:prepend`, and `:remove` (the `_append`/`_prepend`/`_remove` forms before Honister) are applied at
 variable-expansion time, after parsing. You control all spacing yourself. Application order is `:append`, then
 `:prepend`, then `:remove`.
 
 **What "order-independent" does and does not mean.** Because they are deferred to expansion, an `:append` cannot be
-wiped by a plain `=` parsed later in another file — that is the property worth having. It does **not** mean the appends
+wiped by a plain `=` parsed later in another file: that is the property worth having. It does **not** mean the appends
 are unordered among themselves: two `:append` operations on the same variable concatenate in the order BitBake parsed
 them, so a conditional override and an unconditional one still compose in a definite sequence. Inspect the result with
 `bitbake-getvar -r <recipe> VAR`, which prints every assignment site alongside the final value, rather than reasoning
 it out.
 
 **Global config files.** Parse order there is defined, not arbitrary: `bitbake.conf` includes `site.conf`, `auto.conf`
-and `local.conf`, and only then the multiconfig, machine and distro configs. That ordering is the real hazard — a
+and `local.conf`, and only then the multiconfig, machine and distro configs. That ordering is the real hazard: a
 `VAR = "…"` in a machine or distro conf silently overwrites a `VAR += "…"` written earlier in `local.conf`, while an
 `:append` survives it. Prefer the override forms for any variable a machine or distro conf also assigns. `+=` remains
 correct and idiomatic for variables nothing downstream reassigns (`BBLAYERS`, `EXTRA_IMAGE_FEATURES`, `INHERIT`), and
@@ -227,10 +227,10 @@ do_package_qa[rdeptask]  = "do_packagedata"
 do_rootfs[recrdeptask]  += "do_packagedata"
 ```
 
-- `[depends]` — inter-task dependency on a specific target's task.
-- `[deptask]` — task each `DEPENDS` item must finish first (`DEPENDS` = build-time).
-- `[rdeptask]` — task each `RDEPENDS` item must finish first (`RDEPENDS` = runtime).
-- `[recrdeptask]` — recursive form.
+- `[depends]`: inter-task dependency on a specific target's task.
+- `[deptask]`: task each `DEPENDS` item must finish first (`DEPENDS` = build-time).
+- `[rdeptask]`: task each `RDEPENDS` item must finish first (`RDEPENDS` = runtime).
+- `[recrdeptask]`: recursive form.
 
 **Forgetting `RDEPENDS` is usually *not* how you get a missing library at runtime.** `do_package` scans the built ELF
 objects, reads their `NEEDED` entries, and `read_shlibdeps` merges the resolved providers into each package's
@@ -240,11 +240,11 @@ rather than deferring it to the board.
 
 Three different mechanisms, worth separating before editing a recipe:
 
-| Need                                      | Mechanism                   | Declared by                                            |
-| ----------------------------------------- | --------------------------- | ------------------------------------------------------ |
-| A library/header to *build* against       | `DEPENDS`                   | you, explicitly                                        |
-| A shared library the binary links against | generated from ELF `NEEDED` | the build, automatically — usually needs no `RDEPENDS` |
-| Anything with no link-time trace          | `RDEPENDS:${PN}`            | you, explicitly — nothing can infer it                 |
+| Need                                      | Mechanism                   | Declared by                                           |
+| ----------------------------------------- | --------------------------- | ----------------------------------------------------- |
+| A library/header to *build* against       | `DEPENDS`                   | you, explicitly                                       |
+| A shared library the binary links against | generated from ELF `NEEDED` | the build, automatically; usually needs no `RDEPENDS` |
+| Anything with no link-time trace          | `RDEPENDS:${PN}`            | you, explicitly; nothing can infer it                 |
 
 The third row is where an explicit `RDEPENDS` genuinely earns its place: an interpreter for a shipped script
 (`#!/usr/bin/env python3`), a `dlopen`'d plugin, a command the program shells out to, or a data/config package. None of
@@ -299,7 +299,7 @@ SRC_URI[sha256sum] = "f2c1c76592a82ffff8413ba3c4a1299b6c7ab06c734dee03fd88630485
 ## Packaging: `PACKAGES` and `FILES`
 
 `do_install` fills `${D}`; `do_package` then splits that tree into binary packages. Each path is matched against
-`FILES:<pkg>` for every package in `PACKAGES` **in order, and the first match claims it** — a file already taken is
+`FILES:<pkg>` for every package in `PACKAGES` **in order, and the first match claims it**: a file already taken is
 skipped for every later package. The default list puts `${PN}` last:
 
 ```bitbake
@@ -309,7 +309,7 @@ PACKAGES = "${PN}-src ${PN}-dbg ${PN}-staticdev ${PN}-dev ${PN}-doc ${PN}-locale
 So the main package receives only what the `-src`/`-dbg`/`-staticdev`/`-dev`/`-doc`/`-locale` globs left behind. That is
 why a shared library splits without anyone asking for it: `FILES:${PN}` claims `${libdir}/lib*${SOLIBS}` (`.so.*`, the
 versioned runtime object) while `FILES:${PN}-dev` claims `${FILES_SOLIBSDEV}` (`.so`, the development symlink). A
-library that looks "missing" on target is usually this split rather than a missing dependency — check with
+library that looks "missing" on target is usually this split rather than a missing dependency; check with
 `oe-pkgdata-util list-pkg-files`.
 
 To add a package that must claim files **before** `${PN}` takes them, put it in `PACKAGE_BEFORE_PN`; appending to
@@ -319,7 +319,7 @@ no files at all (the default for `-dev` and `-dbg`).
 ### `installed but not shipped`
 
 Whatever is left in `${D}` that no package's `FILES` claimed is reported by path, and this is an **error, not a
-warning** — `installed-vs-shipped` is in the default `ERROR_QA`. Read the listed paths: each one says either "extend
+warning**: `installed-vs-shipped` is in the default `ERROR_QA`. Read the listed paths: each one says either "extend
 `FILES`" or "`do_install` should not have installed this".
 
 ```bitbake
@@ -328,7 +328,7 @@ INSANE_SKIP:${PN} += "installed-vs-shipped"  # silence the check — read the ca
 ```
 
 `INSANE_SKIP` silences the report; it packages nothing. Those files then belong to no package and are absent from the
-image, so the skip is only right when they genuinely should not ship — and deleting them at the end of `do_install` is
+image, so the skip is only right when they genuinely should not ship, and deleting them at the end of `do_install` is
 usually the clearer way to say that. Note the key: this check reads `INSANE_SKIP:<recipe>` (`PN`), whereas most other
 QA checks are keyed by *package* name, so the two forms coincide only for the main package.
 
@@ -391,14 +391,14 @@ SRC_URI += "file://my-board-fix.patch \
 Two rules that cause silent failures when missed:
 
 - **`FILESEXTRAPATHS:prepend` is required** to make BitBake search this layer's `files/` directory. Omit it and the
-  added `file://` entries are not found — `do_fetch` fails with a "cannot find file" that points nowhere obvious.
+  added `file://` entries are not found: `do_fetch` fails with a "cannot find file" that points nowhere obvious.
 - **The version glob must match.** `linux-yocto_6.6.bbappend` does not apply to `linux-yocto_6.10`. Use
   `linux-yocto_%.bbappend` to track any version.
 
 ## sstate-cache Mechanics
 
-sstate (shared state) caches the output of the tasks a class opted in via `SSTATETASKS` — `do_populate_sysroot`,
-`do_package_write_*` and friends, not literally every task — as a tarball keyed by a hash of that task's inputs. On
+sstate (shared state) caches the output of the tasks a class opted in via `SSTATETASKS` (`do_populate_sysroot`,
+`do_package_write_*` and friends, not literally every task) as a tarball keyed by a hash of that task's inputs. On
 rebuild BitBake reuses the cached result when the input hash is unchanged. That is the core of Yocto's incremental
 speed. (Sharing sstate across machines and pruning it: `yocto-best-practices.md`.)
 
@@ -423,7 +423,7 @@ archive is actually rejected.
 
 ### Diagnose before you delete
 
-Ordinary `MACHINE` switches, recipe patches and layer bumps **are** hashed inputs — they normally invalidate the
+Ordinary `MACHINE` switches, recipe patches and layer bumps **are** hashed inputs; they normally invalidate the
 affected tasks correctly. So "stale sstate" is a conclusion to reach *after* evidence, not the first guess; reaching
 for `cleansstate` on suspicion throws away hours of reusable work and usually leaves the real cause in place.
 
@@ -452,12 +452,12 @@ Three limits to state before running any of them:
 - **`cleansstate` only clears the local `${SSTATE_DIR}`.** It cannot remove objects from a remote `SSTATE_MIRRORS`, so
   the next build may fetch the very artifact you thought you deleted. Rebuild against the mirror disabled if you need
   to prove a local rebuild.
-- **`cleanall` is discouraged as routine practice** — it forces a refetch from upstream and defeats the source capture
+- **`cleanall` is discouraged as routine practice**: it forces a refetch from upstream and defeats the source capture
   an offline or release build depends on.
 - **On a shared cache, cleanup affects other people's builds**, and concurrent downloads into a shared `DL_DIR` are a
   known hazard. Never prune a shared directory as a personal debugging step.
 
-All of these are gated — see SKILL.md *Confirmation gates* — and scoping to one recipe beats a global wipe.
+All of these are gated (see SKILL.md *Confirmation gates*), and scoping to one recipe beats a global wipe.
 
 ## devtool Workflow
 
@@ -488,7 +488,7 @@ Four properties that decide whether this will do what you expect:
   installed. A binary that deploys "successfully" and then fails to start for a missing library is the normal
   presentation of this, not a build defect.
 - **Existing files are preserved by default** and restored by `undeploy-target`; `--no-preserve` discards that safety
-  net. Undeploy recovers files this tool replaced — it is not a general rollback of the board.
+  net. Undeploy recovers files this tool replaced; it is not a general rollback of the board.
 - **Resolve the target identity before connecting**, and reuse an authorization the user already gave for that board
   rather than asking again per invocation. `-n/--dry-run` answers "what would change?" without touching it.
 - **The board keeps whatever you left on it.** Deployed output persists across your build directory being cleaned, so
@@ -506,7 +506,7 @@ source /opt/poky/<ver>/environment-setup-aarch64-poky-linux
 ```
 
 **Those last two paths are Poky's, not universal.** The installer filename comes from `SDK_NAME` and the default
-install prefix from `SDKPATHINSTALL`, both set by the distro conf, so a custom distro produces different strings —
+install prefix from `SDKPATHINSTALL`, both set by the distro conf, so a custom distro produces different strings,
 and the deploy directory follows `TMPDIR`, which is `tmp-glibc/` outside Poky. Resolve them rather than pattern-match:
 
 ```bash
@@ -564,7 +564,7 @@ where a machine name contains a hyphen, so do not derive one from the other by h
 
 ## Offline / Air-Gapped Builds
 
-Mechanics only — the *release discipline* around these (pinning, tagging, verifying) is the checklist in
+Mechanics only: the *release discipline* around these (pinning, tagging, verifying) is the checklist in
 `yocto-best-practices.md`.
 
 **These are BitBake configuration variables, not shell prefixes.** Set them in `local.conf` or `site.conf`:
@@ -578,7 +578,7 @@ BB_FETCH_PREMIRRORONLY = "1"         # restrict fetching to PREMIRRORS entries
 Writing `BB_NO_NETWORK = "1" bitbake <image>` on a shell command line does not do what it looks like: with spaces
 around the `=` the shell reads `BB_NO_NETWORK` as the *command name* and exits **127** before BitBake ever starts. The
 spaceless form `BB_NO_NETWORK=1 bitbake <image>` is at least valid shell, but BitBake filters its environment into the
-datastore — only variables passed through `BB_ENV_PASSTHROUGH_ADDITIONS` arrive — so an exported variable is not
+datastore: only variables passed through `BB_ENV_PASSTHROUGH_ADDITIONS` arrive, so an exported variable is not
 reliably in effect either. Put the policy in configuration and **verify the value BitBake actually holds**:
 
 ```bash
@@ -589,7 +589,7 @@ bitbake-getvar BB_FETCH_PREMIRRORONLY
 **The two settings prove different things.** `BB_FETCH_PREMIRRORONLY` restricts *where* fetches may come from; a
 premirror can itself be an `http://` host, so a build that passes with it is not thereby proved offline.
 `BB_NO_NETWORK` is the one that denies network access outright. Use premirror-only to prove "every source is in our
-mirror", and no-network to prove "this builds with the cable pulled" — do not report one as evidence for the other.
+mirror", and no-network to prove "this builds with the cable pulled"; do not report one as evidence for the other.
 
 Capture the sources, then verify:
 
@@ -599,7 +599,7 @@ bitbake --runall=fetch <image>     # fetch everything without building
 tar -czf dl-mirror.tar.gz -C "${DL_DIR}" .
 ```
 
-The archive is a flat directory of source archives and mirror tarballs plus `.done` stamps — extract it *as*
+The archive is a flat directory of source archives and mirror tarballs plus `.done` stamps: extract it *as*
 `DL_DIR`, or publish the extracted directory and point at it with a `file://` premirror. It is not a nested tree to
 copy on top of a build directory:
 
@@ -617,13 +617,13 @@ unused one.
 
 ## Recipe Tooling: `recipetool`, `oe-pkgdata-util`
 
-- `recipetool create <url>` — scaffold a recipe from a source URL or tarball, guessing `LICENSE`, `SRC_URI`, and
+- `recipetool create <url>`: scaffold a recipe from a source URL or tarball, guessing `LICENSE`, `SRC_URI`, and
   checksums (verify the guess).
-- `recipetool appendfile <layer> <target-path> <local-file>` — generate a `.bbappend` that installs or replaces a file,
+- `recipetool appendfile <layer> <target-path> <local-file>`: generate a `.bbappend` that installs or replaces a file,
   wiring `FILESEXTRAPATHS` for you.
-- `recipetool setvar <recipe> VAR value` — edit a recipe variable programmatically.
-- `oe-pkgdata-util find-path <path>` — which package ships a given file path.
-- `oe-pkgdata-util list-pkg-files <pkg>` — the files a built package contains.
-- `oe-pkgdata-util lookup-recipe <pkg>` — the recipe behind a runtime package name.
-- `oe-pkgdata-util read-value RDEPENDS <pkg>` — a package's *generated* metadata, including the shared-library
+- `recipetool setvar <recipe> VAR value`: edit a recipe variable programmatically.
+- `oe-pkgdata-util find-path <path>`: which package ships a given file path.
+- `oe-pkgdata-util list-pkg-files <pkg>`: the files a built package contains.
+- `oe-pkgdata-util lookup-recipe <pkg>`: the recipe behind a runtime package name.
+- `oe-pkgdata-util read-value RDEPENDS <pkg>`: a package's *generated* metadata, including the shared-library
   dependencies the build detected automatically. Read this before adding an `RDEPENDS` by hand.

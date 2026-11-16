@@ -34,27 +34,27 @@ Guides** are the authoritative answer, not the current Reference Manual.
 
 CVE and SBOM questions route to **yocto-vulnerability-management**.
 
-Device-tree binding validation (`dt-validate`, dt-schema) is not a Yocto manual topic — see **embedded-linux-bringup**
+Device-tree binding validation (`dt-validate`, dt-schema) is not a Yocto manual topic; see **embedded-linux-bringup**
 and github.com/devicetree-org/dt-schema.
 
 ## Manual Quick Description
 
-- **Reference Manual** — the encyclopedia: variables, tasks, classes, image features, QA messages. First stop for "what
+- **Reference Manual**: the encyclopedia of variables, tasks, classes, image features, QA messages. First stop for "what
   is `X`".
-- **BitBake User Manual** — the language and the tool: metadata syntax, assignment and override operators, fetchers, and
-  `bitbake` CLI. Note it versions with BitBake, not the Yocto codename, though the docs site cross-links the matching
-  pair.
-- **Development Tasks Manual** — how-to for real workflows: recipes, `devtool`, layers, images, SDK, licensing.
-- **BSP Developer's Guide** — board/machine support layout and `MACHINE` mechanics.
-- **Kernel Development Manual** — `linux-yocto`, config fragments, kernel patches.
-- **Migration Guides** — the definitive per-release change list; the *only* correct source for "when did this change".
+- **BitBake User Manual**: the language and the tool, covering metadata syntax, assignment and override operators,
+  fetchers, and `bitbake` CLI. Note it versions with BitBake, not the Yocto codename, though the docs site
+  cross-links the matching pair.
+- **Development Tasks Manual**: how-to for real workflows, such as recipes, `devtool`, layers, images, SDK, licensing.
+- **BSP Developer's Guide**: board/machine support layout and `MACHINE` mechanics.
+- **Kernel Development Manual**: `linux-yocto`, config fragments, kernel patches.
+- **Migration Guides**: the definitive per-release change list; the *only* correct source for "when did this change".
 
 ## Release-Sensitive Topics
 
 Confirm the codename before answering any of these; the answer is era-specific:
 
-- **Override separator** — `_append`/`_remove` before Honister; `:append`/`:remove` from **Honister 3.4** onward, where
+- **Override separator**: `_append`/`_remove` before Honister; `:append`/`:remove` from **Honister 3.4** onward, where
   BitBake raises a fatal error on the old operation syntax rather than ignoring it. → Migration Guides (the Honister
   3.4 page, "Override syntax changes").
-- **Class location and names** — the split into `classes-recipe/` and `classes-global/`, and renamed/removed classes. →
+- **Class location and names**: the split into `classes-recipe/` and `classes-global/`, and renamed/removed classes. →
   Migration Guides + Reference Manual (Classes) for the target release.

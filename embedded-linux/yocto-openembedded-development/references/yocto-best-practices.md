@@ -20,15 +20,15 @@ share and prune sstate. For the raw mechanics of any command named here, see `yo
 
 - **Keep core layers pristine.** BitBake, OE-Core (`meta`), and `meta-poky` stay untouched; an upgrade overwrites local
   edits and the conflict is silent. Every customization goes in your own layer through a `.bbappend`.
-- **One concern per layer** — BSP (machine/kernel/bootloader), distro (init, libc, ABI, global policy), middleware
+- **One concern per layer**: BSP (machine/kernel/bootloader), distro (init, libc, ABI, global policy), middleware
   (third-party libraries), and application (product code) each get their own layer. Do not fold product code into a fork
   of OE-Core.
 - **Start small.** Add a layer only when it earns its keep; layer count is compounding complexity.
-- **Reuse before authoring.** Check the Yocto Compatible Layer Index — a `meta-<vendor>` layer for your SoC usually
+- **Reuse before authoring.** Check the Yocto Compatible Layer Index: a `meta-<vendor>` layer for your SoC usually
   already exists.
 - **Declare compatibility.** Every `layer.conf` sets `LAYERSERIES_COMPAT` (which releases the layer targets) and
   `LAYERDEPENDS` (which layers it needs). These are also your first evidence when debugging a release mismatch.
-  `LAYERDEPENDS` names **collections, not directories** — BitBake resolves each entry against `BBFILE_COLLECTIONS`, so
+  `LAYERDEPENDS` names **collections, not directories**: BitBake resolves each entry against `BBFILE_COLLECTIONS`, so
   a layer living in `meta-foo/` but declaring the collection `foo` must be depended on as `foo`. Name the directory
   instead and the parse fails with `depends on layer 'y', but this layer is not enabled`, which reads like a missing
   layer even though it is sitting right there in `bblayers.conf`.
@@ -47,7 +47,7 @@ the build is not reproducible. Hand-maintained `local.conf` is for genuinely loc
 ship; `site.conf` carries host-wide settings (proxy, mirrors, shared-cache paths) with the same limitation.
 
 **The defect is "unversioned and hand-edited", not the file itself.** A `local.conf` that is *generated* from a
-committed source — a kas config's `local_conf_header`, a CI template, a checked-in fragment — travels, reproduces, and
+committed source (a kas config's `local_conf_header`, a CI template, a checked-in fragment) travels, reproduces, and
 reviews perfectly well, and that is a legitimate and common design. When you find one, read the generator as the source
 of truth and edit *it*; do not "fix" a generated `local.conf` by hand (the next `kas build` overwrites it) and do not
 recommend migrating settings out of a versioned generator that already solves the reproducibility problem. kas
@@ -72,7 +72,7 @@ include conf/distro/${DISTRO}.conf              # 6. distribution policy
 
 Read that list downward and it answers both questions at once: which file owns a setting, and which file can overrule
 which. Anything a machine or distro conf assigns is beyond `local.conf`'s reach with `=` or `+=`, so a setting you want
-to survive belongs at or below the level that owns it — or must use `:append`, applied after every file is parsed.
+to survive belongs at or below the level that owns it, or must use `:append`, applied after every file is parsed.
 
 | Level in the parse order     | Owns                             | Observable examples                                                                                     |
 | ---------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -86,7 +86,7 @@ to survive belongs at or below the level that owns it — or must use `:append`,
 **Resolve the distro row against the build in front of you, not against Poky.** The file included is
 `conf/distro/${DISTRO}.conf` from whichever layer provides it, so on a product build it is your own distro layer, and
 the examples above are only the *kind* of setting that belongs there. Establish `DISTRO` first (SKILL.md *Lock the build
-context*), then let BitBake name the file rather than guessing a path — `bitbake-getvar` prints every assignment site,
+context*), then let BitBake name the file rather than guessing a path: `bitbake-getvar` prints every assignment site,
 which is the reliable way to find what set a value in a layer stack you did not write:
 
 ```bash
@@ -114,7 +114,7 @@ this section is telling you to write: it sets identity (`DISTRO`, `DISTRO_VERSIO
 Two rules of thumb fall out of the table:
 
 - **Do not grow `IMAGE_INSTALL:append` in `local.conf`.** The moment the `core-image-*` recipes stop being enough, write
-  your own image recipe — it is versioned, shareable, and parse-order-safe.
+  your own image recipe: it is versioned, shareable, and parse-order-safe.
 
   ```bitbake
   # my-app-image.bb
@@ -125,7 +125,7 @@ Two rules of thumb fall out of the table:
 
 - **Promote anything durable out of a hand-edited `local.conf`/`site.conf`** into the distro, machine, or image layer as
   soon as more than one person or machine depends on it. Reusable policy belongs in a layer even when a generator is
-  emitting the config correctly — a generated `local.conf` solves reproducibility, not reuse across products.
+  emitting the config correctly: a generated `local.conf` solves reproducibility, not reuse across products.
 
 ## Poky Is a Reference, Not a Product Base
 
@@ -145,30 +145,30 @@ chosen for breadth over stability and can shift between releases. Two consequenc
 
 A reproducible, offline-capable release has four phases. Work them in order.
 
-**1 — Pin and tag (make the inputs immutable).**
+**1. Pin and tag (make the inputs immutable).**
 
-- [ ] No `SRCREV = "${AUTOREV}"` anywhere — every Git fetch pinned to a commit SHA. A floating branch is unreproducible
+- [ ] No `SRCREV = "${AUTOREV}"` anywhere: every Git fetch pinned to a commit SHA. A floating branch is unreproducible
   and breaks air-gapped rebuilds.
 - [ ] Every layer pinned to a tag or SHA (via a kas lockfile, a `repo` manifest, or submodule commits) and that manifest
   itself committed and tagged.
 - [ ] `DISTRO_VERSION` set to the release identity.
 
-**2 — Capture the sources.** Set `BB_GENERATE_MIRROR_TARBALLS = "1"`, run `bitbake --runall=fetch <image>`, and
+**2. Capture the sources.** Set `BB_GENERATE_MIRROR_TARBALLS = "1"`, run `bitbake --runall=fetch <image>`, and
 publish `DL_DIR`'s contents as your internal mirror. *Offline / Air-Gapped Builds* in `yocto-workflow.md` gives the
 commands and the mirror layout.
 
-**3 — Verify the capture from cold caches.** Use `BB_FETCH_PREMIRRORONLY = "1"` to prove the mirror is complete, or
+**3. Verify the capture from cold caches.** Use `BB_FETCH_PREMIRRORONLY = "1"` to prove the mirror is complete, or
 `BB_NO_NETWORK = "1"` to prove the build needs no network. Set the chosen variable in configuration, and confirm a
 removed source makes the build fail. *Offline / Air-Gapped Builds* in `yocto-workflow.md` explains why each condition matters.
 
-**4 — Attach compliance artifacts.** Generate the licence manifest and copyleft source archives
+**4. Attach compliance artifacts.** Generate the licence manifest and copyleft source archives
 (`compliance-and-licensing.md`). The SBOM and CVE report belong to **yocto-vulnerability-management**. Enable
 `buildhistory` (committed) and diff it against the previous release to catch unintended package-size, dependency, or
 version changes.
 
 ## Sharing sstate Across Machines
 
-sstate reuse is keyed on a hash of each task's *inputs*. A mismatch is a cache **miss**, never a wrong result — the
+sstate reuse is keyed on a hash of each task's *inputs*. A mismatch is a cache **miss**, never a wrong result: the
 build falls back to compiling, which is slow but correct.
 
 How much the host matters depends on what is being built. Target recipes are cross-compiled and largely insulated from
@@ -203,12 +203,12 @@ DL_DIR         = "/mnt/shared/downloads"                       # shared source c
 - **Warm the cache from CI.** A nightly full build populates sstate before developers pull from it, so their first build
   of the day is fast.
 - **Pin the host environment.** A build container (for example `kas-container`, via **kas-build-orchestration**) keeps
-  native and SDK signatures matching across machines. Keep `INHERIT += "uninative"` in play too — it is what makes
+  native and SDK signatures matching across machines. Keep `INHERIT += "uninative"` in play too: it is what makes
   native artifacts portable between distributions in the first place.
 
 ## Pruning sstate
 
-The cache grows without bound. Prune it deliberately — this is destructive, so gate it (SKILL.md *Confirmation gates*)
+The cache grows without bound. Prune it deliberately: this is destructive, so gate it (SKILL.md *Confirmation gates*)
 and expand `${SSTATE_DIR}` and read it back first.
 
 ```bash
@@ -224,7 +224,7 @@ where the shell version no longer exists. The `-d`/`--remove-duplicated` and `--
 rewrite, so only the filename changes. The Python version also takes `--stamps-dir` to keep exactly what the named
 build directories still use, and prompts before deleting unless you pass `-y`/`--yes`.
 
-Printing the path catches the catastrophic case — an empty expansion turning the `find` into a walk of `/` — but a
+Printing the path catches the catastrophic case (an empty expansion turning the `find` into a walk of `/`) but a
 plausible-looking path is not a safe one. Two further checks before deleting:
 
 - **Whose cache is it?** A path under `/mnt/shared` or an NFS mount is very likely someone else's working set and CI's
@@ -246,7 +246,7 @@ reality and delete entries still in daily use. Check the mount options before tr
 - **Commit `buildhistory`** and diff each branch against main to surface regressions in package size, dependencies, or
   versions.
 
-- **Lint appends after every layer bump** — a stale version glob or `LAYERSERIES_COMPAT` is a silent breakage:
+- **Lint appends after every layer bump**: a stale version glob or `LAYERSERIES_COMPAT` is a silent breakage:
 
   ```bash
   bitbake-layers show-appends
@@ -280,13 +280,13 @@ dd if=my-image.wic of=/dev/sdX bs=4M conv=fsync status=progress   # fallback
 
 ## Common Traps
 
-| Trap                                                                   | Fix                                                                                                                    |
-| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `DEPENDS` used for a runtime dep                                       | use `RDEPENDS:${PN}` — but a linked shared library needs neither, it is detected from ELF `NEEDED`                     |
-| missing `LIC_FILES_CHKSUM`                                             | add it (or `LICENSE = "CLOSED"`) — see compliance ref                                                                  |
-| `def` block in a `.conf` fails to parse                                | move it to a `.inc`; only BBHandler (`.bb`/`.bbclass`/`.inc`) accepts `def`, ConfHandler owns `.conf`                  |
-| `#CONFIG_X is not set` in a kernel `.cfg` is ignored                   | needs the space — `# CONFIG_X is not set`; without it Kconfig reads a comment and the option keeps its defconfig value |
-| distro identity set before `require conf/distro/poky.conf` is lost     | poky assigns `DISTRO`/`DISTRO_NAME`/`DISTRO_VERSION` with hard `=`; set yours after the require                        |
-| `kernel-module-*` in `IMAGE_INSTALL` breaks when the symbol turns `=y` | built-in emits no module, so the package stops existing; drop it in the same change                                    |
-| dlopen'd plugin absent at runtime though its provider is installed     | plugins create no shared-library dependency, so nothing pulls them in; name the package explicitly                     |
-| `UNPACKDIR` undefined on Scarthgap and older                           | use `${WORKDIR}` for `file://` sources                                                                                 |
+| Trap                                                                   | Fix                                                                                                                   |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `DEPENDS` used for a runtime dep                                       | use `RDEPENDS:${PN}`, but a linked shared library needs neither; it is detected from ELF `NEEDED`                     |
+| missing `LIC_FILES_CHKSUM`                                             | add it (or `LICENSE = "CLOSED"`); see compliance ref                                                                  |
+| `def` block in a `.conf` fails to parse                                | move it to a `.inc`; only BBHandler (`.bb`/`.bbclass`/`.inc`) accepts `def`, ConfHandler owns `.conf`                 |
+| `#CONFIG_X is not set` in a kernel `.cfg` is ignored                   | needs the space: `# CONFIG_X is not set`; without it Kconfig reads a comment and the option keeps its defconfig value |
+| distro identity set before `require conf/distro/poky.conf` is lost     | poky assigns `DISTRO`/`DISTRO_NAME`/`DISTRO_VERSION` with hard `=`; set yours after the require                       |
+| `kernel-module-*` in `IMAGE_INSTALL` breaks when the symbol turns `=y` | built-in emits no module, so the package stops existing; drop it in the same change                                   |
+| dlopen'd plugin absent at runtime though its provider is installed     | plugins create no shared-library dependency, so nothing pulls them in; name the package explicitly                    |
+| `UNPACKDIR` undefined on Scarthgap and older                           | use `${WORKDIR}` for `file://` sources                                                                                |
