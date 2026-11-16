@@ -25,20 +25,6 @@ the routing check (agent-setup's `docs/evaluations/skills/2026-10-04-engineering
   compared against those two, with the missing spec reported as a coverage limit, and a change governed by none of
   the three must be returned as general code review.
 
-## Skill-Authoring Rules Only in `AGENTS.md`
-
-Two generic rules for writing skills live only in this repository's `AGENTS.md`, so an agent that authors a
-skill with `skill-forge` anywhere else never sees them:
-
-- Every skill is complete for its own job. When two skills need a rule, each carries its own version sized to
-  that job, and a pointer to a sibling skill adds depth, never correctness.
-- Before writing a skill, ask what a user would have to say for it to load. Guidance for a moment nobody
-  verbalizes belongs in an agent's rules, because no description makes such a skill activate.
-
-Add both to `skills-for-skills/skill-forge/references/authoring.md`. A sweep on 2026-11-16 of `AGENTS.md` and
-this file's header found no others: the documentation rules are already in `writing-documentation`, and the
-remaining rules are specific to this repository.
-
 ## Description and Prose Pass Ledger
 
 Every skill gets two passes: `writing-skill-descriptions` on its description, and `writing-for-agents`

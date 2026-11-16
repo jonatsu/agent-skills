@@ -166,6 +166,10 @@ loaded. A client may execute a script without loading its source; verify that be
 Keep each meaning in one authoritative place, and leave facts that a reliable live source provides cheaply to
 that source. A short, self-contained skill is complete when it contains everything its task needs.
 
+That rule stops at the package boundary. When another skill also needs a rule, each skill carries its own
+version, sized to its job, because an agent often loads only one of them. A pointer to a sibling skill may add
+depth, never correctness. When a shared rule changes, update every skill that carries it.
+
 Read [workflow-patterns.md](workflow-patterns.md) when real prerequisites, branching, iteration, gates, or
 strict output contracts make control flow consequential. Read [pro-agent.md](pro-agent.md) when deciding
 whether repeated or fragile logic belongs in a script.
