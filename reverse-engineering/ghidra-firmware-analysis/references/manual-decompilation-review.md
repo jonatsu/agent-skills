@@ -14,8 +14,8 @@
 - Record what you learn
 
 Automated metadata gets a program named and typed; this loop finishes what it cannot, working call site by call site.\
-Start from the enriched program — FunctionID names, archive signatures, and the renames replay\
-([FunctionID and type metadata][metadata]) — and tighten what remains. This is the core hand-RE workflow; the metadata\
+Start from the enriched program: FunctionID names, archive signatures, and the renames replay\
+([FunctionID and type metadata][metadata]). Then tighten what remains. This is the core hand-RE workflow; the metadata\
 pipeline exists to shorten its first pass, not to replace it.
 
 ## Start from the known calls
@@ -159,8 +159,8 @@ follow its XREFs to the code that fills and reads it; the access width gives the
 ([symbol and structure recovery][recovery]).
 
 - The Function Call Graph window follows the listing's current function and shows callers and callees by level; expand\
-  a node to keep walking. The Graph Export service writes any displayed graph to a chosen format — JSON among CSV, DOT,\
-  GML, GraphML, and others — so the walk becomes a file an agent reads directly.
+  a node to keep walking. The Graph Export service writes any displayed graph to a chosen format (JSON among CSV, DOT,\
+  GML, GraphML, and others), so the walk becomes a file an agent reads directly.
 - Headless, query the call graph and references with the script API from the skill's navigation section, and write the\
   walk to JSON so later passes read it without re-querying.
 - Over GhidraMCP, `get_function_calls` returns a function's callers, callees, or both, chosen by its `direction`\
