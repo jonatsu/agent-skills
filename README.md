@@ -76,7 +76,7 @@ it is licensed.
 | --------------------------- | ---------------------------------------------------------------------------------------- |
 | `<domain>/<skill>/`         | Skills grouped by subject: `agents`, `engineering`, `tools`, `embedded-linux` and others |
 | `<domain>/<group>/<skill>/` | A closely related set within a domain, such as `development/python`                      |
-| `claude/<skill>/`           | Skills that only work in Claude Code                                                     |
+| `<agent>/<skill>/`          | Skills that work with only one agent, in a directory named for that agent                |
 | `checks/`                   | The checks behind `just check` and their tests                                           |
 | `tests/`                    | Tests for scripts bundled inside skills                                                  |
 

@@ -40,15 +40,16 @@ first fails.
 
 ## Placing a Skill
 
-- **By coupling.** Agent-agnostic skills go in a domain at the root. Claude Code-only skills, about `CLAUDE.md`,
-  `.claude/agents` or Claude subagents, go in `claude/`.
+- **By coupling.** Agent-agnostic skills go in a domain at the root. A skill that works with only one agent,
+  because it is about that agent's own files or features, goes in a directory named for that agent.
 - **Then by subject.** A skill that fits two domains goes where a reader would look first. **A skill name must
   stay unique across every group**; `just check` fails on a duplicate, because agents receive every skill flat.
 - **Never by how it is loaded.** Whether an agent lists a skill in every session or loads it on demand is the
   installing configuration's choice, made by skill name; no directory here encodes it.
 - **A new group, or emptying one, needs a matching change where the skills are installed.** The installing
-  configuration names each group as a Kasetto `sub-dir`, Kasetto finds skills exactly one level below it, and a
-  missing or new group fails the next pin bump there. Say so in the commit body.
+  configuration names each group as a Kasetto `sub-dir` and tracks `main`, and Kasetto finds skills exactly one
+  level below each one, so a skill in a group it does not name stops deploying at the next push. Say so in the
+  commit body.
 
 ## Writing and Reviewing Skills
 
