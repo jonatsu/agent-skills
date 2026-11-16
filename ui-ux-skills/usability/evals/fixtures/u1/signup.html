@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Create your account</title></head>
+<body>
+  <h1>Create your account</h1>
+  <!-- Shown after a failed submit; the form is re-rendered empty. -->
+  <p class="error" hidden>Invalid input</p>
+  <form action="/signup" method="post">
+    <input name="email" placeholder="Email">
+    <input name="password" type="password" placeholder="Password">
+    <input name="password2" type="password" placeholder="Repeat">
+    <input name="dob" placeholder="DD/MM/YYYY">
+    <label><input type="checkbox" name="terms"> I agree</label>
+    <button type="submit">Go</button>
+  </form>
+  <!-- Server rules, checked only on submit: every field is required; password needs 12+ characters, one digit
+       and one symbol; date of birth must be ISO YYYY-MM-DD despite the placeholder; terms must be ticked. -->
+</body>
+</html>

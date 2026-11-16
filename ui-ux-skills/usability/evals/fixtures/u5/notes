@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+"""notes: keep short notes in ~/.notes.json."""
+
+import json
+import os
+import sys
+
+PATH = os.path.expanduser("~/.notes.json")
+
+
+def load():
+    return json.load(open(PATH)) if os.path.exists(PATH) else []
+
+
+def main():
+    notes = load()
+    if len(sys.argv) < 2:
+        for i, n in enumerate(notes):
+            print(f"\033[1m{i}\033[0m {n}")
+        return
+    cmd = sys.argv[1]
+    if cmd == "add":
+        notes.append(" ".join(sys.argv[2:]))
+    elif cmd == "rm":
+        notes.pop(int(sys.argv[2]))
+    else:
+        print("unknown command")
+        return
+    json.dump(notes, open(PATH, "w"))  # noqa: SIM115 - planted defect fixture
+    print("OK")
+
+
+main()

@@ -457,58 +457,12 @@ What the assessment established:
   secrets; the output stays local.
 - **Keep it separate from `session-handoff`,** which briefs a different recipient; this answers the user now.
 
-## General `usability` Skill (In Progress)
+## `usability` Eval Gaps
 
-Build `ui-ux-skills/usability`, a catch-all usability skill for any interface people operate: CLIs, GUIs, web
-and mobile apps, voice, and physical HMIs. A medium-specific skill such as `cli-ui-ux` wins where it applies;
-this one fills the gaps. Agreed with the user on 2026-11-16:
-
-- **Modes:** design, evaluate, and review, as in `cli-ui-ux`.
-- **Core:** the established principles shared across Nielsen, Shneiderman, Norman, and ISO 9241, applied
-  through a short method: users, tasks, a check against the principles, and findings ranked by consequence.
-- **Value beyond what an agent already knows:** translate each principle into the medium at hand, rate by
-  consequence, stay proportionate to the job (the lesson of `cli-ui-ux` case r6), and say when a heuristic
-  review is not enough and real users must test it.
-- **Out of scope:** medium-specific rules and visual design, each a later skill. Accessibility was proposed as
-  out of scope by the agent, not decided by the user; the user then asked for a one-line pointer that a
-  usability review does not cover accessibility, and for an accessibility skill soon (see below).
-- **`cli-ui-ux` keeps its own six usability questions,** sized to the CLI case, under the rule that every skill
-  carries its own version of a shared rule.
-
-The source survey of the established principle sets, evaluation methods, and laws is
-`docs/evaluations/2026-11-16-usability-sources.md`. Next: draft the skill's structure from it for the user to
-confirm. The `lev-os/agents` `nielsen-heuristics` skill that prompted the
-idea states no license and invents an outcome statistic, so take nothing from it. `mastepanoski/claude-skills`
-`nielsen-heuristics-audit` (MIT) is a GUI-focused reference for the audit procedure and severity scale. Its
-sibling `don-norman-principles-audit` (MIT, read at `ac30238`) applies Norman's seven principles from *The
-Design of Everyday Things* (revised edition, 2013) with the same template: per-principle questions and a
-"Norman door" lens worth keeping, but it treats an affordance as a perceived property, which the revised
-edition reassigns to signifiers, and its percent-of-principles score has no source. Cite the book, not the
-skill for facts. As designs, the repository's skills are input for shaping ours: they split the work into a
-broad principle audit, a task walkthrough, and a holistic review, each with stated inputs, a stepwise
-procedure, a severity scale, a report template, and a closing limit that real users must confirm the findings.
-Credit any idea taken in `ATTRIBUTIONS.md`. The user agreed the shape on 2026-11-16:
-
-- **Take:** the three kinds of work (principle audit, task walkthrough, holistic review) as modes or as the
-  evaluate mode's methods; inputs stated first (users, tasks, context); a stepwise procedure with a severity
-  scale and a fixed report shape; and the closing limit that an expert review predicts and real users confirm,
-  with no invented success percentages.
-- **Differ:** stay independent of the medium and translate each principle into the one at hand, using the
-  interaction-design dimensions; rate findings by consequence, never by a made-up score; keep the depth
-  proportionate to the job; and build one skill with a reference per method, loaded only when needed.
-
-Two more siblings from the same repository, read 2026-11-16:
-
-- `ux-audit-rethink` combines three lenses worth considering for the skill's wider-than-usability view:
-  Morville's user experience honeycomb (useful, usable, findable, credible, desirable, accessible, valuable),
-  five usability qualities, and the interaction-design dimensions of Crampton Smith (words, visuals, physical
-  objects or space, time) with Silver's fifth, behavior. The dimensions suit translating a principle into any
-  medium. It misattributes the five qualities to ISO 9241-11, which defines effectiveness, efficiency, and
-  satisfaction; the five are Whitney Quesenbery's. Its 85-point grade and mobile pixel rules have no source and
-  are out of scope.
-- `cognitive-walkthrough` states the method's four questions per action and a rule worth keeping: an
-  inspection method predicts, so never invent success percentages. Cite the practitioner's guide by Wharton,
-  Rieman, Lewis, and Polson (1994), and check Spencer's streamlined two-question variant (2000).
+The `ui-ux-skills/usability` evaluation (`docs/evaluations/2026-11-16-usability-skill.md`) has no case for
+design mode, review mode, the holistic review, or a voice interface, and ran once per model on one client. Add
+a case for each, built on fixtures unlike the existing five, and rerun with at least two repetitions. While
+there, make `evals/grade.py` ignore a report that says it gives no score.
 
 ## Accessibility Skill (Next After `usability`)
 

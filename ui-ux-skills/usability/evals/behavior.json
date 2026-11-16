@@ -1,0 +1,76 @@
+{
+  "skill_name": "usability",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "workspace": "Copy fixtures/<case>/ to a fresh directory per run; the agent may read and run files only there, and writes its report to usability-review.md in the workspace.",
+    "brief": "Give the agent the workspace path, the prompt verbatim, and these sentences: You cannot ask the user questions during this task. Where you would normally ask, decide as you judge best and say so in your report. Write your findings to usability-review.md in the workspace and change no other file. Then reply with at most 150 words summarising them.",
+    "grading": "Run `python3 grade.py <case> <workspace>` for the scripted outcomes; it prints PASS, FAIL, or INFO per outcome. Grade the rest from usability-review.md and the trace. Do not require exact wording."
+  },
+  "cases": [
+    {
+      "id": "u1-web-form",
+      "fixture": "fixtures/u1",
+      "prompt": "Review the usability of our sign-up form in signup.html and tell me what to fix first.",
+      "behavior": "Find the planted usability problems, rank them by consequence for the stated users, and give each a concrete fix.",
+      "planted": "Placeholder-only labels; rules for the password and date shown only after a failed submit; an error that names no field; the form cleared after an error; no marked required fields; a vague 'Go' button; the date placeholder contradicting the accepted format.",
+      "outcomes": [
+        "M1: the report names at least five of the seven planted problems.",
+        "M2: each finding has a severity tied to its consequence for the user, and the most consequential (losing all input, rules revealed only after failure) rank above cosmetic ones.",
+        "M3: no overall score, grade, or percentage of principles met (scripted).",
+        "M4: the report says an expert review predicts problems and real users should confirm them."
+      ]
+    },
+    {
+      "id": "u2-device-panel",
+      "fixture": "fixtures/u2",
+      "prompt": "We're about to build the hardware for this thermostat panel (panel-spec.md). Evaluate its usability first.",
+      "behavior": "Apply the principles to a physical two-button panel rather than a screen, and propose fixes that fit the hardware.",
+      "planted": "Hidden mode with no indicator; an unlabelled display that alternates between two temperatures; hidden hold gestures the user must recall; a child lock with no feedback, which reads as a broken panel; a schedule mode with no way out but a 60-second wait.",
+      "outcomes": [
+        "N1: the report names at least four of the five planted problems.",
+        "N2: the fixes fit a physical panel (indicators, labels, legends, button behaviour), not screen widgets such as dialogs, tooltips, or menus, unless the report argues for a display change.",
+        "N3: no overall score, grade, or percentage (scripted).",
+        "N4: the report recommends testing with residents or a physical prototype before the hardware is fixed."
+      ]
+    },
+    {
+      "id": "u3-proportionate",
+      "fixture": "fixtures/u3",
+      "prompt": "Quick sanity check: is our internal cache rebuild page (rebuild.html) usable enough? Three engineers use it.",
+      "behavior": "Keep the depth proportionate to a tiny internal page: lead with the one consequential problem instead of running a full audit.",
+      "planted": "The button gives no feedback, and a second click starts a parallel rebuild that slows search for every customer.",
+      "outcomes": [
+        "P1: the report leads with the missing feedback and the double-click that starts parallel rebuilds, and names its consequence for customers.",
+        "P2: the report is short (scripted: at most 400 words) and does not walk through a full list of heuristics.",
+        "P3: no overall score, grade, or percentage (scripted)."
+      ]
+    },
+    {
+      "id": "u4-walkthrough",
+      "fixture": "fixtures/u4",
+      "prompt": "Walk through how a first-time user would share an album with her brother in this app (screens.md), and tell me where she'd get stuck.",
+      "behavior": "Run a task walkthrough action by action, asking at each step whether she will know what to do, see how, connect the control to her goal, and see progress.",
+      "planted": "Sharing hidden under '...' as 'People'; long-press offers no share; only email accepted when she knows a phone number; no confirmation after Add; the default permission lets her brother delete photos.",
+      "outcomes": [
+        "W1: the report goes through the task one action at a time and names the step where each problem stops her.",
+        "W2: it names at least four of the five planted problems.",
+        "W3: no invented success rate, completion percentage, or time estimate (scripted).",
+        "W4: it says the walkthrough predicts and recommends testing with first-time users."
+      ]
+    },
+    {
+      "id": "u5-defer-to-cli",
+      "fixture": "fixtures/u5",
+      "prompt": "Review the usability of our notes command-line tool.",
+      "skill_arm_only": true,
+      "behavior": "Defer to the medium-specific cli-ui-ux skill for a command-line tool, and use usability only for what that skill does not cover.",
+      "planted": "Bold codes in piped output; 'unknown command' on stdout with exit 0; `rm` with no confirmation and a traceback on a bad index; 'OK' on stdout; no help.",
+      "outcomes": [
+        "D1: the agent loads cli-ui-ux, or the report says it applies cli-ui-ux's command-line conventions.",
+        "D2: the report names the stream, exit-code, and confirmation problems."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Cache admin</title></head>
+<body>
+  <h1>Search cache</h1>
+  <p>Last rebuild: <span id="last">2026-11-15 22:10</span></p>
+  <button onclick="fetch('/admin/rebuild', {method: 'POST'})">Rebuild cache</button>
+  <!-- A rebuild takes about two minutes. Each click starts another rebuild in parallel; two at once slow
+       search for every customer until both finish. The page gives no response to the click. -->
+</body>
+</html>
