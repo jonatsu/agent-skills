@@ -33,6 +33,17 @@ every question carry its place, such as "Question 4 of 12", with the total taken
 answer opens or closes a branch, the total changes with the re-shown map, and the next question shows the new
 total. Keep it consistent with the skill's batching rule, numbering each question in a batch.
 
+## Core Working Rules Belong in the Skills
+
+Requested by the user on 2026-11-16. A core working rule should already live in the skill that does that work,
+not only in one repository's `AGENTS.md` or ledger header. The rule that prompted this: a ledger entry (TODO,
+backlog, roadmap) leaves the ledger once it is done, handled elsewhere, or stale, after anything a later reader
+needs has moved to its durable home. This repository states it in the `TODO.md` header and in `AGENTS.md`, but
+no skill does. A search of every `SKILL.md` for the rule found none. The skills that write ledger entries are
+`agents/note-for-later`, `engineering/implementation-planning`, `engineering/technical-design`,
+`agents/session-reflect`, and `agents/agents-context-docs`. Add the rule to each one that writes or closes an
+entry, sized to its job. Then sweep for other rules that exist only in a repository file, and list them here.
+
 ## Description and Prose Pass Ledger
 
 Every skill gets two passes: `writing-skill-descriptions` on its description, and `writing-for-agents`
