@@ -13,7 +13,7 @@ nixos-generate-config --show-hardware-config > hosts/<host>/hardware-configurati
 ```
 
 The generated file is machine-specific: filesystem UUIDs, `boot.initrd.availableKernelModules`, and swap
-devices. Keep it per-host and never share it between machines — two hosts with the same UUIDs are a boot
+devices. Keep it per-host and never share it between machines: two hosts with the same UUIDs are a boot
 failure waiting for the first disk swap. Treat it as a generated baseline: regenerate after hardware changes,
 and keep deliberate hardware policy in a separate host-specific module where possible.
 
@@ -50,7 +50,7 @@ a live system whose EFI vars are not the target's.
 }
 ```
 
-On UEFI with GRUB, set `boot.loader.grub.efiSupport = true` and `device = "nodev"` instead — passing a disk
+On UEFI with GRUB, set `boot.loader.grub.efiSupport = true` and `device = "nodev"` instead: passing a disk
 path on UEFI is a common mis-copy that installs nothing.
 
 ## Encrypted and layered disks
@@ -64,7 +64,7 @@ LUKS devices must be opened in initrd, keyed by UUID:
 }
 ```
 
-Use the UUID of the **encrypted container**, not of the filesystem inside it — `blkid` shows both, and picking
+Use the UUID of the **encrypted container**, not of the filesystem inside it: `blkid` shows both, and picking
 the inner one yields an initrd that cannot find the device. LVM on LUKS needs no extra option; the volume
 group is discovered once the container opens.
 

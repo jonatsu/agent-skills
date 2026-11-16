@@ -136,7 +136,7 @@ host.
 | `../home-manager/references/settings-trees-and-merges.md` | Writing or gating a nested `settings` tree that a generator renders to a file, in either module system   |
 
 The last row lives in the companion `home-manager` skill and resolves only when both are deployed side by
-side; if it is missing, its core is: nested attrsets in `settings`-style options shallow-merge per module —
+side; if it is missing, its core is: nested attrsets in `settings`-style options shallow-merge per module;
 they do not deep-merge, so a shared name is replaced wholesale. The same holds for `//` on any two config trees:
 combine them with `lib.recursiveUpdate`, or `mkIf` when the value is an option.
 
@@ -145,6 +145,6 @@ combine them with `lib.recursiveUpdate`, or `mkIf` when the value is an option.
 Verify option paths and package names before writing them; guessing an option path produces an
 `attribute missing` error that reads as a syntax problem.
 
-The `mcp-nixos` MCP server answers this directly (`uvx mcp-nixos`, or `nix run github:utensils/mcp-nixos`) —
+The `mcp-nixos` MCP server answers this directly (`uvx mcp-nixos`, or `nix run github:utensils/mcp-nixos`):
 search options, read option details, confirm package names, check binary cache coverage before committing to a
 long build. Without it, `nix repl` with `:lf .` and tab completion on the resolved config is the fallback.

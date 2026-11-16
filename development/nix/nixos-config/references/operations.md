@@ -54,7 +54,7 @@ nix-collect-garbage --delete-older-than 30d                        # prune
 Rollback swaps the system profile and re-activates; it does NOT revert stateful changes a service already made
 to its data directory. A database that migrated its schema on the last switch stays migrated.
 
-When the machine will not boot, pick an older generation from the boot menu — every generation kept by
+When the machine will not boot, pick an older generation from the boot menu: every generation kept by
 `configurationLimit` is bootable. That is the real recovery path; rollback requires a booted system.
 
 ## Reading build failures
@@ -75,7 +75,7 @@ not the module that set it.
 NixOS is not FHS-compliant, so a downloaded dynamically-linked binary fails with an interpreter or
 shared-library error. Cheapest first:
 
-1. **`nix-ld`** — a stub loader at the standard FHS path, so unpatched binaries find libraries. Best for dev
+1. **`nix-ld`**: a stub loader at the standard FHS path, so unpatched binaries find libraries. Best for dev
    machines where IDEs and language servers download their own tooling:
 
 ```nix
@@ -85,11 +85,11 @@ shared-library error. Cheapest first:
 }
 ```
 
-2. **`steam-run`** — a one-off FHS sandbox: `nix-shell -p steam-run --run "steam-run ./binary"`. The
+2. **`steam-run`**: a one-off FHS sandbox: `nix-shell -p steam-run --run "steam-run ./binary"`. The
    package is unfree-gated: without unfree allowed it fails with a licensing error, so use
    `NIXPKGS_ALLOW_UNFREE=1 nix-shell --impure -p steam-run …` for a one-off, or set
    `nixpkgs.config.allowUnfree = true`.
-3. **`nix-alien`** — resolves a specific binary's missing libraries automatically
+3. **`nix-alien`**: resolves a specific binary's missing libraries automatically
    (<https://github.com/thiagokokada/nix-alien>).
 
 These are runtime escape hatches. To package a binary reproducibly into the store, use the `nix-packaging`
