@@ -1,4 +1,4 @@
-# Configuration Findings — Credentials, Services, Filesystem
+# Configuration Findings: Credentials, Services, Filesystem
 
 The findings that need no tool: read the rootfs. These are also the ones most often reported from the build
 configuration rather than the artefact; confirm each one on the artefact instead.
@@ -22,7 +22,7 @@ awk -F: '$7 !~ /(nologin|false)$/ {print $1, $7}' rootfs/etc/passwd   # accounts
 | a hash present at all                 | it is offline-crackable; the question is whether it should be there        |
 
 **The fleet-wide point is the one people miss.** `extrausers` sets the same credentials on every device built
-from that image, so a recovered hash is a fleet key, not a device key. You cannot see this from one artefact —
+from that image, so a recovered hash is a fleet key, not a device key. You cannot see this from one artefact;
 it is a question to ask, not a check to run.
 
 ## SSH exposure
@@ -90,8 +90,8 @@ Three traps:
 ls rootfs/etc/apparmor.d/ rootfs/etc/selinux/ rootfs/etc/smack/ 2>/dev/null
 ```
 
-Presence of a policy directory means a framework was installed. It does **not** mean the framework is enforcing
-— that needs the kernel command line and, on target, `aa-status`, `getenforce` or the SMACK filesystem.
+Presence of a policy directory means a framework was installed. It does **not** mean the framework is enforcing;
+that needs the kernel command line and, on target, `aa-status`, `getenforce` or the SMACK filesystem.
 
 The measured collision from the oeqa run is the cautionary case: an image can enable two LSMs in
 `DISTRO_FEATURES` while the kernel command line selects one, so a policy directory exists for a framework that
@@ -105,5 +105,5 @@ reporting:
 - [ ] **Confirm on the artefact, never from `IMAGE_FEATURES`.** `debug-tweaks` predicts an empty root password;
   `grep '^root:'` establishes it.
 - [ ] **Ask what the image is for** before assigning severity.
-- [ ] **Name the lane** — an unpacked rootfs and a running device answer different questions.
+- [ ] **Name the lane**: an unpacked rootfs and a running device answer different questions.
 - [ ] **Route CVE questions elsewhere.** "This package is old" is `yocto-vulnerability-management`'s job.

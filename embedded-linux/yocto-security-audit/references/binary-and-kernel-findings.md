@@ -13,7 +13,7 @@ checksec --format=json --file=rootfs/bin/busybox
 
 **`checksec-native` does not build at `scarthgap`** without the one-line `.bbappend` in
 `running-the-auditors.md`. Without it, run the target package inside a prod-test image, or run the
-`checksec` shell script directly from its source checkout — it is a shell script, not a compiled tool.
+`checksec` shell script directly from its source checkout; it is a shell script, not a compiled tool.
 
 ### The JSON output, measured
 
@@ -29,7 +29,7 @@ Two traps:
 - **The recipe pins a `SRCREV`, and these key names have changed upstream across versions.** Re-check when the
   pin moves.
 - **`--format=json --fortify-file=` emits repeated `"function"` keys inside one object**, which is not valid
-  JSON. `jq` accepts it and silently keeps only the last occurrence — 33 entries reduce to 1. **Parse the
+  JSON. `jq` accepts it and silently keeps only the last occurrence: 33 entries reduce to 1. **Parse the
   `--file` form.**
 
 ### Reading the result
@@ -53,7 +53,7 @@ on x86 lose them on that architecture only; `ltp` loses the stack canary; `xserv
 and `gcc` lose only format-string warnings, which `checksec` cannot see, so a hardening gap in `busybox` is a
 finding. Read the file at the image's release; the list changes between releases.
 
-The useful finding is **a binary that is not exempted and not hardened** — usually the product's own
+The useful finding is **a binary that is not exempted and not hardened**, usually the product's own
 application, built by a recipe that dropped `LDFLAGS` or set its own `CFLAGS`.
 
 Also worth knowing before reporting: if `security_flags.inc` was never required at all, *nothing* is hardened
@@ -79,19 +79,19 @@ as needing confirmation at the packaged version.
 Three cautions specific to reading its output:
 
 - **It reports against upstream recommendations, not your threat model.** A "failed" line is a recommendation
-  not followed, which may be a deliberate and correct choice for an embedded target — several of its checks
+  not followed, which may be a deliberate and correct choice for an embedded target; several of its checks
   cost real performance or break legitimate workloads.
 - **Kernel version matters more than the tool version.** The authority for which symbols exist and what they do
   is the kernel's own `Documentation/security/self-protection.rst` **for that kernel version**, not the
   checker's list.
 - **A `kernel_configcheck` pass is not this check.** Its default audit level filters to boot-affecting options
-  and its findings are warnings unless `KMETA_AUDIT_WERROR` is set — see the yocto-security-hardening skill.
+  and its findings are warnings unless `KMETA_AUDIT_WERROR` is set; see the yocto-security-hardening skill.
 
 ## Reporting either of these
 
 Both produce output that looks like a report and is not one. Convert it:
 
-- [ ] **State the tool, its version, and the artefact** — which image, which lane.
+- [ ] **State the tool, its version, and the artefact**: which image, which lane.
 - [ ] **Subtract the intended state.** Exempted recipes, deliberate kernel choices, architecture limits.
 - [ ] **Report the residue, with the recipe or config that owns each item.** A finding a reader cannot act on
   is a statistic.

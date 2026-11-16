@@ -8,7 +8,7 @@ that fails for the right reasons, and a report a reader can use.
 On the measured `security-test-image` run in `oeqa-security-suites.md`, `do_testimage` exits non-zero.
 
 - A gate keyed on **exit status** blocks the release, for reasons almost entirely unrelated to the image's
-  security posture — an LSM configuration collision, a ClamAV signature download, and a chain of skips.
+  security posture: an LSM configuration collision, a ClamAV signature download, and a chain of skips.
 - A gate keyed on **pass count** sees most cases green and concludes the opposite.
 
 **Neither number is an answer.** Both are stable, both are automatable, and both are wrong. That is the case
@@ -29,7 +29,7 @@ Gate on a small number of properties you chose, each of which fails for exactly 
 Two properties make a gate durable:
 
 **It fails closed.** A missing report, an unparseable file or a tool that did not run must fail, not pass. This
-is the single highest-value line in any gate — it converts every future rename, relocation or tooling change
+is the single highest-value line in any gate; it converts every future rename, relocation or tooling change
 from a silent pass into a loud failure.
 
 ```bash
@@ -73,20 +73,20 @@ Each has its own shape, and each is covered where the finding is produced:
 
 | Category                                | Usual cause                                                           |
 | --------------------------------------- | --------------------------------------------------------------------- |
-| `checksec` red cells                    | the `security_flags.inc` exemptions — intended state                  |
+| `checksec` red cells                    | the `security_flags.inc` exemptions: intended state                   |
 | kernel-hardening-checker "failed" lines | upstream recommendations that cost performance, declined deliberately |
 | Lynis warnings on a minimal image       | checks assuming a general-purpose distribution                        |
 | oeqa failures                           | configuration collisions and environment, not the image               |
-| "package X is ancient"                  | a backported fix — route to **yocto-vulnerability-management**        |
+| "package X is ancient"                  | a backported fix; route to **yocto-vulnerability-management**         |
 
 ## The report
 
 Five things, in this order. Anything less is not actionable:
 
 1. **The artefact.** Which image, which recipe (`PN`, not the filename), which release, and whether it is what
-   ships. If you do not know, say so — it bounds everything below.
+   ships. If you do not know, say so; it bounds everything below.
 2. **The lane and the tooling.** Host-side or on-target, which tools at which versions.
-3. **Coverage.** What was checked, and — the part that gets skipped — **what was not**, including checks
+3. **Coverage.** What was checked, and **what was not** (the part that gets skipped), including checks
    disabled by default in the tools you ran.
 4. **Findings**, each with the observation that produced it and the artefact path it came from.
 5. **Severity against a stated purpose**, or an explicit "purpose unknown".

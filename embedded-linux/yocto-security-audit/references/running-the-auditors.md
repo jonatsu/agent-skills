@@ -7,7 +7,7 @@ its output.
 checks were disabled is the exact failure this skill exists to prevent. Read the defaults before you read the
 findings.
 
-## `check_security.bbclass` — the build-time gate, and it is quieter than it looks
+## `check_security.bbclass`: the build-time gate, and it is quieter than it looks
 
 `meta-security` ships a class that runs `buck-security` over the rootfs as a `ROOTFS_POSTPROCESS_COMMAND`.
 Its entire body:
@@ -37,10 +37,10 @@ bitbake-getvar -r <image> T
 cat <T>/log.do_checksecurity.*
 ```
 
-`buck-security-native` **does** build at `scarthgap` — verified — so the class works as written. Its silence is
+`buck-security-native` **does** build at `scarthgap` (verified), so the class works as written. Its silence is
 by design, not by breakage.
 
-## `checksec` — and the one that does not build
+## `checksec`, and the one that does not build
 
 Covered in `binary-and-kernel-findings.md` for what its output means. One operational fact belongs here.
 
@@ -56,7 +56,7 @@ Without it, run `checksec` on target in the prod-test image instead.
 
 ## Lynis and OpenSCAP
 
-Both are packaged upstream in `meta-security` — `lynis` 3.1.6 and `openscap` 1.3.9 with
+Both are packaged upstream in `meta-security`: `lynis` 3.1.6 and `openscap` 1.3.9 with
 `scap-security-guide` 0.1.71 at `scarthgap`. They are the answer to "what user-space auditor should I run", and
 they belong in a **prod-test image**, never in production: an auditor on a shipped device is a map of the weak
 spots.
@@ -92,7 +92,7 @@ an embedded Linux image. So:
 - [ ] **Read the disabled-by-default list first**, then the findings.
 - [ ] **Separate "not applicable to an embedded image" from "not checked" from "checked and clean".** All three
   look the same in most output formats, and only the third is evidence.
-- [ ] **Never ship the auditor.** Results come from a prod-test image built from prod's package set — see
+- [ ] **Never ship the auditor.** Results come from a prod-test image built from prod's package set; see
   the yocto-security-hardening skill's three-image pattern.
 
 ## Open source only

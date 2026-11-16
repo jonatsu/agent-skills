@@ -20,7 +20,7 @@ with six of its thirteen checks disabled and its standard output discarded. Ten 
 
 ## Scope
 
-**In:** auditing a built artefact — an image, rootfs or deploy directory, including one you did not build.
+**In:** auditing a built artefact: an image, rootfs or deploy directory, including one you did not build.
 Establishing provenance, running and interpreting auditors and oeqa suites, reading binary, kernel,
 credential, service and filesystem state, separating findings from intended state, and gating in CI.
 
@@ -66,7 +66,7 @@ The filename really does lie. `meta-security`'s `security-test-image` deploys ar
 `security-build-image-*`, because the base recipe it `require`s exports `IMAGE_BASENAME`. Two image recipes
 write the same filenames and the second overwrites the first.
 
-## `testdata.json` — read it first
+## `testdata.json`: read it first
 
 Deployed beside every image and containing a dump of the build datastore's variables (functions and `BB*`
 variables excluded); 2221 variables in the image measured here. When it is present, "I have no metadata" is
@@ -125,7 +125,7 @@ find rootfs -perm -4000 -o -perm -2000
 checksec --dir=rootfs/usr/bin
 ```
 
-Keep every capture bounded — query the artefact, do not paste a rootfs listing.
+Keep every capture bounded: query the artefact, do not paste a rootfs listing.
 
 ## Stated gaps
 
@@ -147,11 +147,11 @@ Naming these is part of the skill's contract; filling them from general knowledg
 
 Cite the release-matched manual; the codename is in the docs URL path.
 
-- **docs.yoctoproject.org/\<codename>/** — Reference Manual for variables and classes, the Development Tasks
+- **docs.yoctoproject.org/\<codename>/**: Reference Manual for variables and classes, the Development Tasks
   Manual's *Making Images More Secure*, and the **Security manual** at 6.0.
-- **`git.yoctoproject.org/meta-security`** — `classes/check_security.bbclass`, `lib/oeqa/runtime/cases/`, and
+- **`git.yoctoproject.org/meta-security`**: `classes/check_security.bbclass`, `lib/oeqa/runtime/cases/`, and
   the sublayers' `meta-*/lib/oeqa/runtime/cases/` are short and worth reading before trusting their results.
-- **`git.openembedded.org/openembedded-core`** — `conf/distro/include/security_flags.inc` for the exemption
+- **`git.openembedded.org/openembedded-core`**: `conf/distro/include/security_flags.inc` for the exemption
   list that turns a `checksec` sweep into a finding set.
 - **The kernel's `Documentation/security/self-protection.rst`**, for that kernel version, over any checker's
   recommendation list.

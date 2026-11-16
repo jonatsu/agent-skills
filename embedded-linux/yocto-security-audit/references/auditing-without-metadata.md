@@ -1,7 +1,7 @@
 # Auditing an Artefact You Did Not Build
 
 The starting state that defines this skill: an image, a rootfs tarball, maybe a `.wic`, and no build tree. Every
-first move the sibling skills teach — `bitbake-getvar`, `bitbake -e`, reading the recipe — is unavailable.
+first move the sibling skills teach (`bitbake-getvar`, `bitbake -e`, reading the recipe) is unavailable.
 
 A deploy directory usually carries enough evidence for an audit without the build tree.
 
@@ -46,7 +46,7 @@ jq -r 'keys[] | select(startswith("SECURITY_"))' "$T"   # what hardening flags w
 
 `ROOTFS_POSTPROCESS_COMMAND` is the highest-value single line: it names, in expanded form, every credential and
 filesystem tweak the image applied. Read the **absence** of `zap_empty_root_password` as a finding, not its
-presence — it runs when `empty-root-password` is *not* set.
+presence; it runs when `empty-root-password` is *not* set.
 
 **But `testdata.json` is still configuration, not the artefact.** It tells you what the build intended. Confirm
 each property on the rootfs, exactly as you would for a recipe.
@@ -69,7 +69,7 @@ are down to the artefact itself, and the table below is what remains.
 | Binary hardening                   | `checksec --dir=` over the unpacked tree                                                                                           |
 | Kernel configuration               | `/proc/config.gz` on target, or the shipped `.config`/`bzImage` if deployed                                                        |
 | MAC policy present                 | `/etc/apparmor.d/`, `/etc/selinux/`, `/etc/smack/`                                                                                 |
-| SBOM, if generated                 | `.spdx.tar.zst` at 5.0, `.spdx.json` at 6.0 — route to **yocto-vulnerability-management**                                          |
+| SBOM, if generated                 | `.spdx.tar.zst` at 5.0, `.spdx.json` at 6.0; route to **yocto-vulnerability-management**                                           |
 
 Unpacking without root is the usual practical obstacle. A `.tar.*` rootfs needs nothing special; GNU tar detects the compression:
 
@@ -89,10 +89,10 @@ Say these plainly rather than inferring them:
   omits `BBLAYERS`. Package versions narrow the release; they do not identify a layer set or local patches.
 - **Whether a binary's hardening reflects policy or accident.** `checksec` shows the result, not the intent.
 - **Whether the configuration on disk is what runs.** Kernel command line, initramfs and runtime overlays can
-  all override it — `read-only-rootfs` edits `/etc/fstab`, but the kernel command line decides.
+  all override it: `read-only-rootfs` edits `/etc/fstab`, but the kernel command line decides.
 - **Whether this is the image that ships.** Ask.
 
-## Worked example — auditing upstream's own security image
+## Worked example: auditing upstream's own security image
 
 Run against `meta-security`'s `security-test-image`, built at `scarthgap` commit `b13f170`. Configuration first:
 
@@ -120,5 +120,5 @@ And then the judgement that makes it an audit rather than a scan: **this is fine
 whole purpose is to let a harness ssh in and run cases. The finding is real, the severity is nil *for this
 artefact's purpose*, and it would be critical if the same image shipped.
 
-That is the shape of every audit finding — see `gating-and-reporting.md`. A finding is a fact about an
+That is the shape of every audit finding; see `gating-and-reporting.md`. A finding is a fact about an
 artefact; severity is a judgement about intent, and you usually have to ask for the intent.
