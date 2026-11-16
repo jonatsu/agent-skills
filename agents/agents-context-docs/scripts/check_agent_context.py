@@ -263,7 +263,7 @@ def check_dates(relative: str, text: str) -> list[Finding]:
 def index_links(text: str) -> list[str]:
     """Return each distinct Markdown reference in an index, in source order.
 
-    An index sits beside what it lists, so it names its entries relatively —
+    An index sits beside what it lists, so it names its entries relatively:
     `[thing.md](thing.md)` rather than the full root-relative path an instruction
     file must use. Markdown links and backticked paths are collected alike,
     because an index table commonly uses either; the caller resolves them.

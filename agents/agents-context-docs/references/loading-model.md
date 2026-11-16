@@ -34,8 +34,8 @@ For repositories targeting Claude Code, OpenCode, and Copilot CLI on a filesyste
 | One real and one symlink | same content          | same content                                       | same content                         |
 
 The OpenCode column describes the V1 default install. OpenCode V2 (rolling out 2026-09) discovers `AGENTS.md`
-only and drops the `CLAUDE.md` fallback, so the pair still works there — V2 reads the real `AGENTS.md` and
-ignores the symlink — but a repository that put guidance only in `CLAUDE.md` loses it under V2.
+only and drops the `CLAUDE.md` fallback, so the pair still works there (V2 reads the real `AGENTS.md` and
+ignores the symlink), but a repository that put guidance only in `CLAUDE.md` loses it under V2.
 
 When creating the pair, make `AGENTS.md` real and use `ln -s AGENTS.md CLAUDE.md`. Never use `ln -f` or
 replace an existing real file. If symlinks are unsupported, preserve one canonical source and use the least
@@ -66,7 +66,7 @@ Two current major versions differ materially; V1 is still the default install an
   `OPENCODE_DISABLE_CLAUDE_CODE`). Traverses upward from the working directory and does not discover descendant
   package files. Does not expand file references as runtime includes; a trigger-keyed route can tell the model
   to read another file.
-- **V2:** discovers `AGENTS.md` only — the `CLAUDE.md` fallback is dropped, so move any `CLAUDE.md`-only
+- **V2:** discovers `AGENTS.md` only. The `CLAUDE.md` fallback is dropped, so move any `CLAUDE.md`-only
   guidance into `AGENTS.md`. It also discovers descendant `AGENTS.md` files as the agent reads into
   subdirectories, nearest-first. Runtime `@`-reference expansion is unverified, and the config `instructions`
   array is currently unimplemented.
