@@ -73,12 +73,14 @@ repos:
         args: ["--no-globs"]
   # skill-forge's vendored skills-ref copy is pinned third-party code, outside this repository's lint policy.
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 8a948e557ca98afa9489998ad0b85515964df9c4 # frozen: v0.12.0
+    rev: ef6cf06c079dd6b299dfc720b0f14400c9d168e1 # frozen: v0.17.5
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: ["--fix", "--exit-non-zero-on-fix"]
         exclude: ^(.+/)?skill-forge/scripts/skills-ref/
+      # Python files only: skill code blocks are fragments and verbatim upstream quotes, which formatting breaks.
       - id: ruff-format
+        types_or: [python, pyi, jupyter]
         exclude: ^(.+/)?skill-forge/scripts/skills-ref/
   - repo: local
     hooks:

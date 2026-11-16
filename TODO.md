@@ -164,13 +164,6 @@ description unchanged: in headless main sessions it loads on every substantive G
 description scored no better (`docs/evaluations/2026-11-16-github-and-history-triggers.md`). Short questions such
 as "did the latest run pass?" still rarely load it.
 
-## Dependabot Ruff Bumps Fail CI
-
-Dependabot has opened the same `ruff-pre-commit` bump six times (#1, #3, #4, #7, #15, and #17, which is still
-open), and each fails CI: the newer ruff reformats 21 files and the `ruff-format` hook rejects the change. Found
-by the 2026-11-16 trigger evaluation's CI review. Apply the bump with `ruff format` in one commit, then close #17,
-or pin the version with a Dependabot ignore rule.
-
 ## Archived `find-skills` Is No Longer Byte-Identical
 
 Commit `f3020e6` (2026-09-18), a ShellCheck pass on `main` while `archived/` still lived there, edited
