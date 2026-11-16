@@ -162,7 +162,7 @@ So the original is **never lost** by omitting `from`; Python records it as `__co
 while handling it. Use it when translating an exception, which is the case in almost every boundary wrapper.
 
 `from None` hides the original from the traceback. It is right when the internal error is noise the caller
-cannot act on — a `KeyError` from your own lookup table becoming a clean `ConfigError` — and wrong whenever a
+cannot act on (a `KeyError` from your own lookup table becoming a clean `ConfigError`) and wrong whenever a
 debugger would want the detail.
 
 Every handler logs, re-raises, translates, or visibly suppresses; an `except ...: pass` leaves the program
