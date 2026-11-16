@@ -61,13 +61,13 @@ necessary for the cases it gets wrong.
 
 Distilled from OWASP FSTM / Tarlogic: [OWASP FSTM, stage 4: Extracting the filesystem][source].
 
-- [scriptingxss/owasp-fstm][owasp-fstm-repo] — the OWASP FSTM reference project this series is based on.
-- [Firmware Mod Kit (Kali tools)][fmk] — a packaged toolset for unpacking and repacking common firmware filesystem\
+- [scriptingxss/owasp-fstm][owasp-fstm-repo]: the OWASP FSTM reference project this series is based on.
+- [Firmware Mod Kit (Kali tools)][fmk]: a packaged toolset for unpacking and repacking common firmware filesystem\
   formats.
-- [OWASP/IoTGoat][iotgoat] — the deliberately vulnerable firmware image used in the worked examples.
-- [Pen Test Partners, "How to do firmware analysis: tools, tips and tricks"][pentestpartners] — a companion\
+- [OWASP/IoTGoat][iotgoat]: the deliberately vulnerable firmware image used in the worked examples.
+- [Pen Test Partners, "How to do firmware analysis: tools, tips and tricks"][pentestpartners]: a companion\
   practitioner walkthrough of the same extraction techniques.
-- [k3170makan, "Reverse Engineering Primer: Unpacking Firmware"][k3170makan] — a worked binwalk/entropy unpacking\
+- [k3170makan, "Reverse Engineering Primer: Unpacking Firmware"][k3170makan]: a worked binwalk/entropy unpacking\
   example.
 
 [fmk]: https://www.kali.org/tools/firmware-mod-kit/

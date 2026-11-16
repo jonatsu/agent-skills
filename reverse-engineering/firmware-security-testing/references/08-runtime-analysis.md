@@ -73,12 +73,12 @@ static analysis alone could not surface.
 
 Distilled from OWASP FSTM / Tarlogic: [OWASP FSTM, step 8: Runtime analysis][source].
 
-- [Frida] — the dynamic instrumentation toolkit.
-- [longld/peda][peda] — Python Exploit Development Assistance for GDB.
-- Qiling, ["Instrumenting IoT firmware"][qiling-intro] — Qiling's own introduction to using it as an instrumentation\
+- [Frida]: the dynamic instrumentation toolkit.
+- [longld/peda][peda]: Python Exploit Development Assistance for GDB.
+- Qiling, ["Instrumenting IoT firmware"][qiling-intro]: Qiling's own introduction to using it as an instrumentation\
   platform.
-- [trace-cmd] and [KernelShark] — userspace front ends for the kernel's `ftrace` facility.
-- Microsoft Learn, ["Tracing and Instrumenting Applications"][ms-tracing] — background on the\
+- [trace-cmd] and [KernelShark]: userspace front ends for the kernel's `ftrace` facility.
+- Microsoft Learn, ["Tracing and Instrumenting Applications"][ms-tracing]: background on the\
   instrumentation/tracing/logging distinction used above.
 
 [frida]: https://frida.re/

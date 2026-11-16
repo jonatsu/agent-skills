@@ -72,9 +72,9 @@ strong lead until it is checked against the physical device.
 
 Distilled from OWASP FSTM / Tarlogic: [OWASP FSTM step 6: firmware emulation][source].
 
-- [scriptingxss/owasp-fstm][owasp-fstm-repo] — the OWASP FSTM reference project this series is based on.
-- [qemu/qemu][qemu] — the QEMU machine emulator and virtualizer.
-- [renode/renode][renode] and its [documentation][renode-docs] — the Renode embedded-emulation framework, with its\
+- [scriptingxss/owasp-fstm][owasp-fstm-repo]: the OWASP FSTM reference project this series is based on.
+- [qemu/qemu][qemu]: the QEMU machine emulator and virtualizer.
+- [renode/renode][renode] and its [documentation][renode-docs]: the Renode embedded-emulation framework, with its\
   supported-device and board lists.
 
 [owasp-fstm-repo]: https://github.com/scriptingxss/owasp-fstm

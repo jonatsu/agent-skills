@@ -85,19 +85,19 @@ constraint, then repackage with the firmware's own packaging tools and upload it
 
 Distilled from OWASP FSTM / Tarlogic: [OWASP FSTM, step 7: Dynamic analysis][source].
 
-- [scriptingxss/owasp-fstm][owasp-fstm-repo] — the OWASP FSTM reference project this series is based on.
-- Securelist, ["Dynamic analysis of firmware components in IoT devices"][securelist] — a companion writeup on the same\
+- [scriptingxss/owasp-fstm][owasp-fstm-repo]: the OWASP FSTM reference project this series is based on.
+- Securelist, ["Dynamic analysis of firmware components in IoT devices"][securelist]: a companion writeup on the same\
   technique set.
-- Open Source For You, ["Dynamic Analysis of Firmware Using Firmadyne"][osfy-firmadyne] — a Firmadyne-specific\
+- Open Source For You, ["Dynamic Analysis of Firmware Using Firmadyne"][osfy-firmadyne]: a Firmadyne-specific\
   walkthrough.
-- Kaspersky ICS-CERT, ["Dynamic analysis of firmware components in IoT devices"][kaspersky-ics] — the same Securelist\
+- Kaspersky ICS-CERT, ["Dynamic analysis of firmware components in IoT devices"][kaspersky-ics]: the same Securelist\
   report, republished.
 - [U-Boot documentation: environment variables][uboot-env] and the\
-  [linux-sunxi U-Boot configuration reference][linux-sunxi-uboot] — the `bootargs`/`setenv`/`saveenv` mechanics used\
+  [linux-sunxi U-Boot configuration reference][linux-sunxi-uboot]: the `bootargs`/`setenv`/`saveenv` mechanics used\
   above.
-- eTutorials, ["Setting Up the Bootloader: U-Boot"][etutorials-uboot] — background on U-Boot's role in the embedded\
+- eTutorials, ["Setting Up the Bootloader: U-Boot"][etutorials-uboot]: background on U-Boot's role in the embedded\
   Linux boot process.
-- [HorstBaerbel/ubootwrite][ubootwrite] — loads a U-Boot image over UART instead of TFTP.
+- [HorstBaerbel/ubootwrite][ubootwrite]: loads a U-Boot image over UART instead of TFTP.
 
 [etutorials-uboot]: https://etutorials.org/Linux+systems/embedded+linux+systems/Chapter+9.+Setting+Up+the+Bootloader/9.5+U-Boot/
 [kaspersky-ics]: https://ics-cert.kaspersky.com/publications/reports/2022/07/06/dynamic-analysis-of-firmware-components-in-iot-devices/

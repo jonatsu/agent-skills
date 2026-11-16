@@ -51,7 +51,7 @@ the later stages down, so the search stays organized around what the next stages
 
 Distilled from OWASP FSTM / Tarlogic: [OWASP FSTM, stage 1: Information gathering and reconnaissance][source].
 
-- [scriptingxss/owasp-fstm][owasp-fstm-repo] — the OWASP FSTM reference project this series is based on.
+- [scriptingxss/owasp-fstm][owasp-fstm-repo]: the OWASP FSTM reference project this series is based on.
 
 [owasp-fstm-repo]: https://github.com/scriptingxss/owasp-fstm
 [source]: https://www.tarlogic.com/blog/owasp-fstm-information-gathering/

@@ -53,22 +53,22 @@ remote-access daemons (`ssh`, `telnet`, `tftp`, `dropbear`). Inside configuratio
 
 Treat every tool below as a source of leads to verify manually, not a finished report.
 
-- **[Firmwalker]** — a bash script that sweeps an extracted or mounted filesystem root for the\
+- **[Firmwalker]**: a bash script that sweeps an extracted or mounted filesystem root for the\
   password/key/config/service patterns above: `./firmwalker filesystem_root`.
-- **[FACT]** (the Firmware Analysis and Comparison Tool) — automates content identification, filesystem extraction,\
+- **[FACT]** (the Firmware Analysis and Comparison Tool): automates content identification, filesystem extraction,\
   key/certificate detection, and CWE weakness matching. Ships as a Docker image or install script; start with\
   `sudo ./start_all_installed_fact_components` and reach it on ports 5000/80.
-- **[EMBA]** — a bash framework bundling filesystem extraction, static executable analysis, and known-vulnerability\
+- **[EMBA]**: a bash framework bundling filesystem extraction, static executable analysis, and known-vulnerability\
   identification; run with `sudo ./emba.sh -l ./log_file -f /firmware_image`. `EMBArk` adds a web UI for team use.
 
 ## References
 
 Distilled from OWASP FSTM / Tarlogic: [OWASP FSTM, stage 5: Analyzing filesystem contents][source].
 
-- [scriptingxss/owasp-fstm][owasp-fstm-repo] — the OWASP FSTM reference project this series is based on.
-- [craigz28/firmwalker][firmwalker] — the Firmwalker automated filesystem sweep.
-- [fkie-cad/FACT_core][fact] — the Firmware Analysis and Comparison Tool.
-- [e-m-b-a/emba][emba] — the Embedded Analyzer framework.
+- [scriptingxss/owasp-fstm][owasp-fstm-repo]: the OWASP FSTM reference project this series is based on.
+- [craigz28/firmwalker][firmwalker]: the Firmwalker automated filesystem sweep.
+- [fkie-cad/FACT_core][fact]: the Firmware Analysis and Comparison Tool.
+- [e-m-b-a/emba][emba]: the Embedded Analyzer framework.
 
 [emba]: https://github.com/e-m-b-a/emba
 [fact]: https://github.com/fkie-cad/FACT_core

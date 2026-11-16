@@ -71,13 +71,13 @@ recognition catches the small deliberate modification to a known algorithm that 
 
 Distilled from OWASP FSTM / Tarlogic: [OWASP FSTM, stage 3: Analyzing firmware][source].
 
-- [scriptingxss/owasp-fstm][owasp-fstm-repo] — the OWASP FSTM reference project this series is based on.
+- [scriptingxss/owasp-fstm][owasp-fstm-repo]: the OWASP FSTM reference project this series is based on.
 - [Wikipedia: Intel HEX][wiki-intelhex], [SREC (file format)][wiki-srec], [Hex dump][wiki-hexdump],\
-  [Base64][wiki-base64], [Entropy (information theory)][wiki-entropy] — background on the formats and concept above.
-- [Intel_Hex2Bin][hex2bin] and [SRecord] — conversion tools for the line-oriented hex formats.
-- [Hitsxx/NandTool][nandtool] — attempts to automate out-of-band/parity stripping on a NAND chip-off dump.
-- [File Signatures Database][file-signatures] — a broader magic-number reference than the table above.
-- [OWASP/IoTGoat][iotgoat] — the deliberately vulnerable firmware image used in the worked examples.
+  [Base64][wiki-base64], [Entropy (information theory)][wiki-entropy]: background on the formats and concept above.
+- [Intel_Hex2Bin][hex2bin] and [SRecord]: conversion tools for the line-oriented hex formats.
+- [Hitsxx/NandTool][nandtool]: attempts to automate out-of-band/parity stripping on a NAND chip-off dump.
+- [File Signatures Database][file-signatures]: a broader magic-number reference than the table above.
+- [OWASP/IoTGoat][iotgoat]: the deliberately vulnerable firmware image used in the worked examples.
 
 [file-signatures]: https://www.filesignatures.net
 [hex2bin]: https://hex2bin.sourceforge.net/

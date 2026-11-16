@@ -62,8 +62,8 @@ it is not always achievable at a cost proportionate to the device.
 
 Distilled from OWASP FSTM / Tarlogic: [OWASP FSTM, stage 2: Obtaining IoT device firmware][source].
 
-- [scriptingxss/owasp-fstm][owasp-fstm-repo] — the OWASP FSTM reference project this series is based on.
-- [Microchip] — cited for EEPROM/flash part lookups when identifying a memory chip by package.
+- [scriptingxss/owasp-fstm][owasp-fstm-repo]: the OWASP FSTM reference project this series is based on.
+- [Microchip]: cited for EEPROM/flash part lookups when identifying a memory chip by package.
 
 [microchip]: https://www.microchip.com
 [owasp-fstm-repo]: https://github.com/scriptingxss/owasp-fstm
