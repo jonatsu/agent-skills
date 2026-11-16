@@ -113,21 +113,6 @@ as `writing-specs` and `technical-design` do.
 | `yocto-security-hardening`       | 2026-10-18, `50b2a490`           | 2026-10-18, `50b2a490`                            |
 | `yocto-vulnerability-management` | 2026-10-18, `6b1e4d9a`           | 2026-10-18, `6b1e4d9a`                            |
 
-## Skills With No Usage — Recheck After 2026-10-08
-
-The 2026-09-08 measurement (738 transcripts plus `skillUsage` in `.claude.json`) is not usable: the set was
-redeployed and largely renamed that week, and `skillUsage` keys on the name, so every counter had reset — a
-zero meant "deployed last week", not "unused".
-
-Recheck no earlier than **2026-10-08**, once a month of sessions has accumulated under current names. `/doctor`
-re-runs it; the trustworthy inputs are `skillUsage.lastUsedAt` (written only on real dispatch) and `Skill`
-`tool_use` entries in `~/.config/claude/projects/*/*.jsonl` (`usageCount` never windows).
-
-Read the full-description skills as the clean test cases — a non-trigger there is the real evidence the
-description-activation entries below are waiting for: `context-architecture`, `context-compression`,
-`git-commits-and-recovery`, `github-ops`, `repo-management`. The 21 skills set
-to `name-only` are reached mainly by explicit name, so a future zero on them means "never asked for by name".
-
 ## `test-engineer` Activation Datapoint
 
 On 2026-09-06 a session wrote new pytest integration tests — squarely `test-engineer`'s declared modes — and no
@@ -142,6 +127,10 @@ session that writes or fixes tests without being told to load a skill is the dat
 skills appeared and whether they loaded unprompted (a deploy-then-appear does not count). If they still do not
 fire, wording is not the lever — move the behavior into always-loaded instructions, as `searchable-code`
 already concluded.
+
+Usage from 2026-10-08 to 2026-11-16 (`docs/evaluations/2026-11-16-skill-usage.md`) points that way: no agent
+loaded `test-engineer` on its own, and its six loads were all typed by the user, while `python-testing` loaded
+21 times by agents.
 
 ## `writing-skill-descriptions` Misses Descriptions Inside a Larger Change
 
@@ -163,6 +152,17 @@ history). Whether the wording drives activation is unmeasured and nothing depend
 not activate on work they cover, move their behavior into the agents' always-loaded rules in agent-setup, per
 `AGENTS.md` ("no wording repairs" a moment nobody verbalizes), rather than editing the description again. The
 `test-engineer`/`python-testing` datapoint is tracked above.
+
+Usage from 2026-10-08 to 2026-11-16 (`docs/evaluations/2026-11-16-skill-usage.md`): agents loaded
+`systematic-debugging` three times and `repo-management` five times on their own. Five direct-tier skills
+never loaded at all: `context-compression`, `domain-modeling`, `git-history-investigation`, `github-ops`, and
+`writing-specs`.
+
+**Question for the user: what happens to those five?** A zero cannot tell an unneeded skill from a description
+that fails to trigger. Recommendation: run a trigger evaluation for `github-ops` and `git-history-investigation`,
+because their work (GitHub CLI calls, history questions) comes up often, so a zero suggests missed triggers.
+Move `context-compression`, `domain-modeling`, and `writing-specs` to the lazy tier in agent-setup's
+`base.yaml`: the first two are rarely needed, and `technical-design` names `writing-specs` where a spec is due.
 
 ## Invocation Control Audit
 
