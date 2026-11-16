@@ -58,7 +58,7 @@ Return text or a diff for an existing file unless the user asked for an in-place
 A stranger works through these in order. They abandon the page at the first one that goes unanswered.
 
 1. **What is this?** One sentence, concrete, no metaphor. They should be able to repeat it to a colleague.
-2. **Is it for me?** Who it serves, what problem it solves, and — the part most READMEs skip — what it does
+2. **Is it for me?** Who it serves, what problem it solves, and (the part most READMEs skip) what it does
    not do and who should use something else.
 3. **Does it actually work?** Evidence before claims. Output, a screenshot, a real example with a real result.
 4. **How do I start?** The shortest path from nothing to a working result.
@@ -75,7 +75,7 @@ gets cut. Three consequences are commonly got wrong:
   discovers the boundary after installing is angrier than one who was told. Naming the alternatives and who
   each suits costs nothing and buys more credibility than any claim you can make about yourself.
 - **Where the project resembles something the reader already has, say the reader's objection out loud.** State
-  it verbatim — *"But doesn't X already do this?"* — then answer it with a concrete scenario. Hoping the
+  it verbatim, *"But doesn't X already do this?"*, then answer it with a concrete scenario. Hoping the
   reader infers the difference leaves the whole document's case unmade.
 
 A released project has a sixth reader the five questions miss: the **returning user**, asking *what changed
@@ -128,7 +128,7 @@ running it now, or a bold one-line label above it. The label form lets a skimmer
 still follow the sequence.
 
 **Surface a blocking prerequisite before the reader spends effort**, not inside the setup section where they
-find it half-committed. Anything that can stop them — a platform requirement, an account, a cost — belongs
+find it half-committed. Anything that can stop them (a platform requirement, an account, a cost) belongs
 above the first instruction.
 
 Show only output you have verified. If you cannot run the command, say so and leave the example unpadded
@@ -138,13 +138,13 @@ rather than fabricating a plausible transcript.
 
 Common sections that usually answer nothing, and what to do instead:
 
-| Section                             | Verdict                                                                              |
-| ----------------------------------- | ------------------------------------------------------------------------------------ |
-| Contributing, Changelog             | One-line pointer to the file. The prose belongs in `CONTRIBUTING.md`.                |
-| License                             | One line naming the licence and linking `LICENSE`. Never the text.                   |
-| Features, as a bullet list of nouns | Fold into question 2, or show it in the example instead.                             |
-| Roadmap, Acknowledgements, Author   | Only where a reader's decision depends on it.                                        |
-| CLI options, as a Markdown table    | Use a fenced block mirroring real `--help` output — it cannot drift from the binary. |
+| Section                             | Verdict                                                                             |
+| ----------------------------------- | ----------------------------------------------------------------------------------- |
+| Contributing, Changelog             | One-line pointer to the file. The prose belongs in `CONTRIBUTING.md`.               |
+| License                             | One line naming the licence and linking `LICENSE`. Never the text.                  |
+| Features, as a bullet list of nouns | Fold into question 2, or show it in the example instead.                            |
+| Roadmap, Acknowledgements, Author   | Only where a reader's decision depends on it.                                       |
+| CLI options, as a Markdown table    | Use a fenced block mirroring real `--help` output; it cannot drift from the binary. |
 
 A front door that links out is doing its job. Every line the reader must scan past to reach question 4 is a
 cost.
@@ -157,21 +157,21 @@ only where the surrounding documentation set already uses it, because consistenc
 
 Each device solves one reader problem, and a recommendation that cannot name the problem is decoration:
 
-- **Table of contents** — from roughly six top-level sections, where a reader would otherwise scroll past
+- **Table of contents**: from roughly six top-level sections, where a reader would otherwise scroll past
   three screens to reach a section they already know they want. It goes below the opening block, never above
   it.
-- **Badges** — one per distinct trust question a skeptical adopter would otherwise check by hand: does it run
+- **Badges**: one per distinct trust question a skeptical adopter would otherwise check by hand: does it run
   on my system, is it maintained, does the suite pass, what licence, what version. Five is the observed
   ceiling. Omitting one is a decision too: a project with no build carries no build badge.
-- **Centered masthead** — only where three or more elements stack above the fold. Where prose starts a line or
+- **Centered masthead**: only where three or more elements stack above the fold. Where prose starts a line or
   two after the title, leave it left-aligned.
-- **Raw HTML** — where the layout is something Markdown cannot express: grouped badge rows, a bordered box, a
+- **Raw HTML**: where the layout is something Markdown cannot express: grouped badge rows, a bordered box, a
   forced line break inside a table cell, an image sized to signal importance. A document that is linear text
   and code gains nothing from it.
-- **Admonitions** — for a skippable aside, never a required step, so that skimming past one costs nothing.
+- **Admonitions**: for a skippable aside, never a required step, so that skimming past one costs nothing.
   Calibrate the type to the severity rather than repeating one. GitHub-only; they degrade to blockquotes
   elsewhere.
-- **Emoji** — where they do a job, such as marking each section in a long table of contents for scanning.
+- **Emoji**: where they do a job, such as marking each section in a long table of contents for scanning.
 
 Undirected length is the defect, not length: every aid and every line traces to a reader problem. A long
 document with the aids that make it navigable beats a short one that had to cut real content. The plain
@@ -180,7 +180,7 @@ reader who wanted them has to say one word.
 
 ## Humor Is Allowed, in Exactly One Place
 
-Personality is not a cost. **A joke lives in the motivating sentence before an instruction — never inside a
+Personality is not a cost. **A joke lives in the motivating sentence before an instruction, never inside a
 bullet, a step, a table cell, or any sentence the reader must act on correctly.** Keep every section a reader
 consults under pressure dry: prerequisites, install, troubleshooting. Follow each joke with the dry
 specification it introduces; that is what keeps the humor from costing credibility.
