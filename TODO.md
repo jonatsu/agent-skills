@@ -184,6 +184,14 @@ is unknown; it is installed through mise but has no version set. Candidate fixes
 
 Until then, the session memory rule is to make no commit while subagents edit the same tree.
 
+## Unpushed Restore on the `archived` Branch
+
+The local `archived` branch holds `a82c1db`, "fix(find-skills): restore the deployed verify_skill.sh". It
+restores the archived `find-skills` script to its deployed blob `c8fb8f3` and excludes `archived/` from ruff,
+shfmt, and shellcheck. A plain `git push` from `main` does not send it, so it needs `git push origin archived`.
+The user may prune the `archived` branch soon. If the branch is pruned, the commit becomes moot, so delete this
+entry; otherwise push it.
+
 ## Invocation Control Audit
 
 Checked 2026-09-11: no skill in this repository sets `disable-model-invocation` or `user-invocable`,
@@ -290,9 +298,24 @@ These skills shipped with static review only, and their plans closed with the mo
 
 - `skill-forge`, including its review mode, which absorbed `skill-review` on 2026-09-28. The 2026-09-04 refresh
   left it `ready with risks` with no baseline or candidate run.
-- `idea-brainstorming`, `technical-design` and `implementation-planning`. The 2026-09-04 intent refresh added
-  nine cases to their `evals/behavior.json` files and passed review lite, but no case has been run against a
-  model.
+
+- `idea-brainstorming`, `technical-design` and `implementation-planning`. Their `evals/behavior.json` files hold
+  53 cases, and none had run against a model before 2026-11-17. That day's first round runs the 28 cases that
+  need no supplied material, without and with the skill, once each on Sonnet and Opus in headless Claude Code.
+
+  **Next, after that round lands:** write synthetic fixtures for the 23 cases that depend on material the prompt
+  calls "supplied" or on a repository to inspect, then run them the same way. Size each fixture by what the first
+  round shows, and put it under the skill's `evals/fixtures/`. The cases are:
+
+  - `idea-brainstorming`: `handoff-fidelity`, `backward-refinement` (its `handoff-repo` fixture may serve both);
+  - `technical-design`: `02-idea-brainstorming-handoff`, `03-repository-grounded-design`,
+    `current-code-not-product-policy`, `negative-guarantee-design`, `accepted-specification-input`,
+    `missing-requirement-return`, `arc42-default`, `existing-design-format`, `unrelated-docs-not-convention`,
+    `requirements-and-adrs-in-format`;
+  - `implementation-planning`: `06-accepted-design`, `12-verification-theater`, `negative-guarantee-verification`,
+    `review-gates-and-required-practices`, `review-availability-and-cost`, `specification-design-traceability`,
+    `stale-design-after-specification-change`, `plan-default-and-shared-preflight`, `accepted-design-formats`,
+    `plan-versus-execution-record`, `implementer-comprehension`.
 
 ## Deferred Engineering Pipeline Designs
 
