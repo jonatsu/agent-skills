@@ -11,7 +11,8 @@ Read the focused source before acting:
   Read it before changing a pipeline skill's handoff or scope.
 - `archived/README.md` on the `archived` branch defines the archive procedure, and its "Review is deferred" rows
   record which reviews are still outstanding.
-- `TODO.md` holds the skill backlog and unevaluated candidate sources.
+- `TODO.md` holds the skill backlog and unevaluated candidate sources. An entry leaves it once it is done,
+  handled elsewhere, or stale, after anything a later reader needs has moved to its durable home.
 
 ## Commands
 
