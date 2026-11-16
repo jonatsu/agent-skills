@@ -30,8 +30,31 @@ a `Skill` tool call for the skill. The deployed descriptions were those of agent
 | How do I squash two unpushed commits safely? (near miss)              | `git-commits-and-recovery`  | `git-commits-and-recovery`, 3 of 3 |
 | Review a Bash loop for quoting bugs (control)                         | `bash-shell`                | 0 of 3                             |
 
+## Follow-Up: Main Sessions and a Revised `github-ops` Description
+
+A second round tested a candidate description that leads with inspecting and diagnosing and names "whether CI
+passed or why a run failed" first. A separate Sonnet subagent wrote the held-out requests from the skill's body
+alone, without seeing either description: six substantive GitHub requests, four of them phrased by outcome
+without naming `gh`, and three near misses (a local commit move, a pull-request description, a shell review of
+the workflow file). Each request ran three times as a headless Claude Code main session on Opus
+(`claude -p --no-session-persistence`, read-only tools). The candidate arm temporarily replaced the deployed
+description and restored it afterwards.
+
+| Requests                        | Current description  | Candidate description |
+| ------------------------------- | -------------------- | --------------------- |
+| Six held-out GitHub requests    | 18 of 18             | 18 of 18              |
+| Three near misses               | no `github-ops` load | no `github-ops` load  |
+| First round: latest run passed? | 0 of 3               | 1 of 3                |
+| First round: branch protection  | 3 of 3               | 2 of 3                |
+| First round: two weeks of CI    | 3 of 3               | 3 of 3                |
+
+The candidate did no better, so the description stays. The low first-round rate came mostly from the subagent
+context: the same three original requests loaded the skill on 6 of 9 runs as main sessions against 3 of 9 as
+subagents. A short status question remains the one request shape that rarely loads it, with either wording.
+
 ## Limits
 
-The runs used one client, one model, and subagents rather than main sessions, whose skill listing may differ.
+The runs used one client and one model. The first round ran as subagents and the follow-up as headless main
+sessions, so neither covers an interactive session with earlier conversation in context.
 Three runs per request measure a rate only coarsely. The usage record behind this evaluation counts Claude Code
 transcripts only, while a tier change in agent-setup also changes what Codex, Copilot, and Oh-My-Pi list.

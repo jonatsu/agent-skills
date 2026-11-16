@@ -158,15 +158,11 @@ Usage from 2026-10-08 to 2026-11-16 (`docs/evaluations/2026-11-16-skill-usage.md
 never loaded at all: `context-compression`, `domain-modeling`, `git-history-investigation`, `github-ops`, and
 `writing-specs`.
 
-The user moved `context-compression`, `domain-modeling`, and `writing-specs` to the lazy tier (agent-setup
-`aab1bb2a`). A trigger evaluation (`docs/evaluations/2026-11-16-github-and-history-triggers.md`) found that
-`github-ops` loads on 3 of 9 requests its description names and `git-history-investigation` on none of 6, while
-every answer was correct without them.
-
-**Question for the user: what happens to those two?** Recommendation: move `git-history-investigation` to the
-lazy tier, since agents answer history questions well without it and it never loads. Keep `github-ops` direct
-and revise its description, which opens with "Manage", for read-only diagnosis such as "did CI pass" and "why did
-this run fail"; measure the revision with held-out queries before deploying it.
+The user moved `context-compression`, `domain-modeling`, `writing-specs` (agent-setup `aab1bb2a`), and
+`git-history-investigation` (agent-setup `2038566c`) to the lazy tier. `github-ops` stays direct with its
+description unchanged: in headless main sessions it loads on every substantive GitHub request, and a revised
+description scored no better (`docs/evaluations/2026-11-16-github-and-history-triggers.md`). Short questions such
+as "did the latest run pass?" still rarely load it.
 
 ## Dependabot Ruff Bumps Fail CI
 
