@@ -1,4 +1,4 @@
-"""Fail on a skill package file that references something outside its own package.
+"""Fail on a skill package file that references something outside its own package, or a file missing in it.
 
 A skill is self-contained: once deployed, its directory is all an agent has. Two kinds of reference can reach
 outside it, and both are checked:
@@ -8,6 +8,10 @@ outside it, and both are checked:
 - a path a bundled `.py`, `.sh` or `.bash` script builds from its own location: a `../` run in a string,
   resolved against the script's directory, or a `Path(__file__)` chain of `.parent` or `parents[n]` that climbs
   above the package.
+
+A Markdown link that stays inside the package must also name a file or directory that exists there. Files
+under `assets/` are exempt from that one rule: they are templates whose links point into the repository the
+template is copied to.
 
 Plain prose that names a path without linking it is not a reference and passes. An absolute path, a `~` path
 or a `file:` URL in a link fails, because each points into one machine's files. The check reads lines with
@@ -20,6 +24,7 @@ from __future__ import annotations
 import re
 from collections.abc import Iterator, Sequence
 from pathlib import Path, PurePosixPath
+from urllib.parse import unquote
 
 import attrs
 
@@ -85,27 +90,33 @@ def _markdown_violations(package: Path, path: Path, text: str) -> Iterator[Viola
         if definition:
             targets.append(definition.group(1))
         for target in targets:
-            reason = _target_problem(package, path.parent, target)
+            reason = _target_problem(package, path, target)
             if reason:
                 yield Violation(path, number, target, reason)
 
 
-def _target_problem(package: Path, base: Path, target: str) -> str | None:
+def _target_problem(package: Path, path: Path, target: str) -> str | None:
     if FILE_URL.match(target):
         return "file URL"
     if target.startswith("~"):
         return "home-relative path"
     if URL_SCHEME.match(target) or target.startswith("#"):
         return None
-    file_part = target.split("#", 1)[0].split("?", 1)[0]
+    file_part = unquote(target.split("#", 1)[0].split("?", 1)[0])
     if not file_part:
         return None
     if file_part.startswith("/") or PurePosixPath(file_part).is_absolute():
         return "absolute path"
-    resolved = (base / file_part).resolve()
+    resolved = (path.parent / file_part).resolve()
     if not resolved.is_relative_to(package.resolve()):
         return "resolves outside the package"
+    if not resolved.exists() and not _is_asset(package, path):
+        return "target does not exist"
     return None
+
+
+def _is_asset(package: Path, path: Path) -> bool:
+    return path.relative_to(package).parts[0] == "assets"
 
 
 def _script_violations(package: Path, path: Path, text: str) -> Iterator[Violation]:

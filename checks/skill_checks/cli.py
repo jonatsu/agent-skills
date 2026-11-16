@@ -193,7 +193,7 @@ def _run_references(root: Path) -> int:
     for violation in violations:
         location = f"{violation.path.relative_to(root)}:{violation.line}"
         print(f"FAIL  {location}: {violation.reason}: {violation.reference}")
-    print(f"references: {len(violations)} reference(s) out of their package")
+    print(f"references: {len(violations)} reference(s) out of their package or missing")
     return 1 if violations else 0
 
 

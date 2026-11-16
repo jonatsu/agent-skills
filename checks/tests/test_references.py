@@ -33,6 +33,9 @@ def make_package(root: Path, name: str, files: dict[str, str]) -> Path:
         ("scripts/run.py", "ROOT = Path(__file__).resolve().parents[2]\n"),
         ("scripts/run.sh", 'source "$(dirname "$0")/../../other/lib.sh"\n'),
         ("scripts/run.py", 'LIB = HERE / "../../other/lib.py"\n'),
+        ("references/a.md", "See [missing](missing.md).\n"),
+        ("references/a.md", "See [missing](../scripts/gone.py#main).\n"),
+        ("SKILL.md", "---\nname: skill\n---\nRead [it](references/absent.md).\n"),
     ],
 )
 def test_a_reference_out_of_the_package_fails(tmp_path: Path, relative: str, text: str) -> None:
@@ -44,7 +47,9 @@ def test_a_reference_out_of_the_package_fails(tmp_path: Path, relative: str, tex
 @pytest.mark.parametrize(
     ("relative", "text"),
     [
-        ("references/a.md", "See [sibling](b.md) and [up](../SKILL.md#usage).\n"),
+        ("references/a.md", "See [up](../SKILL.md#usage) and [dir](../references/).\n"),
+        ("references/a.md", "See [spaced](my%20notes.md).\n"),
+        ("assets/README.template.md", "See [licence](LICENSE) and [guide](CONTRIBUTING.md).\n"),
         ("references/a.md", "See [site](https://example.com/x) and [anchor](#top).\n"),
         ("references/a.md", "```\n[not a link](../../../x.md)\n```\n"),
         ("ATTRIBUTIONS.md", "Drew on docs/research/elsewhere/notes.md in another repository.\n"),
@@ -55,7 +60,7 @@ def test_a_reference_out_of_the_package_fails(tmp_path: Path, relative: str, tex
 def test_a_reference_inside_the_package_or_plain_prose_passes(
     tmp_path: Path, relative: str, text: str
 ) -> None:
-    make_package(tmp_path, "skill", {relative: text})
+    make_package(tmp_path, "skill", {relative: text, "references/my notes.md": "Notes.\n"})
 
     assert check_packages((tmp_path,)) == ()
 
