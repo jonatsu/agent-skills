@@ -158,11 +158,30 @@ Usage from 2026-10-08 to 2026-11-16 (`docs/evaluations/2026-11-16-skill-usage.md
 never loaded at all: `context-compression`, `domain-modeling`, `git-history-investigation`, `github-ops`, and
 `writing-specs`.
 
-**Question for the user: what happens to those five?** A zero cannot tell an unneeded skill from a description
-that fails to trigger. Recommendation: run a trigger evaluation for `github-ops` and `git-history-investigation`,
-because their work (GitHub CLI calls, history questions) comes up often, so a zero suggests missed triggers.
-Move `context-compression`, `domain-modeling`, and `writing-specs` to the lazy tier in agent-setup's
-`base.yaml`: the first two are rarely needed, and `technical-design` names `writing-specs` where a spec is due.
+The user moved `context-compression`, `domain-modeling`, and `writing-specs` to the lazy tier (agent-setup
+`aab1bb2a`). A trigger evaluation (`docs/evaluations/2026-11-16-github-and-history-triggers.md`) found that
+`github-ops` loads on 3 of 9 requests its description names and `git-history-investigation` on none of 6, while
+every answer was correct without them.
+
+**Question for the user: what happens to those two?** Recommendation: move `git-history-investigation` to the
+lazy tier, since agents answer history questions well without it and it never loads. Keep `github-ops` direct
+and revise its description, which opens with "Manage", for read-only diagnosis such as "did CI pass" and "why did
+this run fail"; measure the revision with held-out queries before deploying it.
+
+## Dependabot Ruff Bumps Fail CI
+
+Dependabot has opened the same `ruff-pre-commit` bump six times (#1, #3, #4, #7, #15, and #17, which is still
+open), and each fails CI: the newer ruff reformats 21 files and the `ruff-format` hook rejects the change. Found
+by the 2026-11-16 trigger evaluation's CI review. Apply the bump with `ruff format` in one commit, then close #17,
+or pin the version with a Dependabot ignore rule.
+
+## Archived `find-skills` Is No Longer Byte-Identical
+
+Commit `f3020e6` (2026-09-18), a ShellCheck pass on `main` while `archived/` still lived there, edited
+`archived/find-skills/scripts/verify_skill.sh`, and the move to the `archived` branch carried the edit along,
+although `AGENTS.md` and that package's `ARCHIVED.md` require archived packages to stay byte-identical to the last
+deployed version. Restore the script from the deployed revision, and exclude `archived/` from the shell
+formatters so it cannot recur.
 
 ## Invocation Control Audit
 
