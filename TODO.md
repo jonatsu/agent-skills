@@ -452,10 +452,9 @@ this one fills the gaps. Agreed with the user on 2026-11-16:
 - **`cli-ui-ux` keeps its own six usability questions,** sized to the CLI case, under the rule that every skill
   carries its own version of a shared rule.
 
-Next: a source survey of the well-known principle sets, evaluation methods, and laws, from original sources
-rather than third-party skill write-ups. A research subagent started it on 2026-11-16, writing to the ephemeral
-`.scratch/2026-11-16-usability-skill/research/usability-frameworks.md`; move what is worth keeping into a
-tracked evaluation record before relying on it. The `lev-os/agents` `nielsen-heuristics` skill that prompted the
+The source survey of the established principle sets, evaluation methods, and laws is
+`docs/evaluations/2026-11-16-usability-sources.md`. Next: draft the skill's structure from it for the user to
+confirm. The `lev-os/agents` `nielsen-heuristics` skill that prompted the
 idea states no license and invents an outcome statistic, so take nothing from it. `mastepanoski/claude-skills`
 `nielsen-heuristics-audit` (MIT) is a GUI-focused reference for the audit procedure and severity scale. Its
 sibling `don-norman-principles-audit` (MIT, read at `ac30238`) applies Norman's seven principles from *The
