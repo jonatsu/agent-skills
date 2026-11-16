@@ -35,6 +35,13 @@ first fails.
   outside the noreply and reserved example domains; names, client details, and hosts are your responsibility,
   as are commit messages.
   Use reserved example values (`example.com`, `/home/user`) in a skill's examples.
+- Material drawn from the author's private or work projects can carry their vocabulary without their name:
+  project, product, host, layer, machine, or configuration names, and paths into them. Before committing work
+  that drew on such a project, ask the user which projects it touched, unless your agent memory already records
+  them. Derive each project's terms from its own repository, and keep the terms and their sources only in your
+  agent memory, never in this repository or a commit message. Scan the change, any untracked drafts, and
+  `git log --all -S` for each term, with a positive control that proves the scan can match. When a match or a
+  doubt remains, ask the user before committing.
 - Commit as the GitHub noreply address in `checks/skill_checks/identity.py`; the `commit-identity` hook fails
   any other. Pushing publishes, so push only when the user asks.
 - Commits use Conventional Commits, `type(scope): subject`, with the scope naming the skill or tool changed.
