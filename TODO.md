@@ -164,14 +164,6 @@ description unchanged: in headless main sessions it loads on every substantive G
 description scored no better (`docs/evaluations/2026-11-16-github-and-history-triggers.md`). Short questions such
 as "did the latest run pass?" still rarely load it.
 
-## Archived `find-skills` Is No Longer Byte-Identical
-
-Commit `f3020e6` (2026-09-18), a ShellCheck pass on `main` while `archived/` still lived there, edited
-`archived/find-skills/scripts/verify_skill.sh`, and the move to the `archived` branch carried the edit along,
-although `AGENTS.md` and that package's `ARCHIVED.md` require archived packages to stay byte-identical to the last
-deployed version. Restore the script from the deployed revision, and exclude `archived/` from the shell
-formatters so it cannot recur.
-
 ## Invocation Control Audit
 
 Checked 2026-09-11: no skill in this repository sets `disable-model-invocation` or `user-invocable`,
