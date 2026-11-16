@@ -175,6 +175,9 @@ justified by a request that needs it.
 
 ## 5. Write for Reliable Behavior
 
+When the `writing-for-agents` skill is available, load it for more depth on the levers that make agent-facing
+prose predictable, such as leading words, completion criteria, and pruning.
+
 **Say what needs to be said; drop everything else.**
 
 Include content that changes the agent's decisions, actions, or understanding needed for correct execution.

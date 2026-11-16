@@ -63,7 +63,7 @@ first fails.
 
 **Always:**
 
-- Use `skill-forge` when creating, editing, restructuring, or replacing a skill, and
+- Use `skill-forge` and `writing-for-agents` when creating, editing, restructuring, or replacing a skill, and
   `writing-skill-descriptions` whenever a description is written or changed.
 - Use `skill-forge`'s review mode for every skill review. It governs assessment and evidence; its authoring
   mode governs the shape of a proposed repair and any separately authorized edit.
