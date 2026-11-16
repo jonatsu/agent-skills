@@ -71,15 +71,16 @@ repos:
     hooks:
       - id: markdownlint-cli2
         args: ["--no-globs"]
-  # skill-forge's vendored skills-ref copy is pinned third-party code, outside this repository's lint policy.
+  # Archived packages stay byte-identical to their last deployed version, and skill-forge's vendored skills-ref copy
+  # is pinned third-party code, so no formatter or linter may rewrite either.
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: 8a948e557ca98afa9489998ad0b85515964df9c4 # frozen: v0.12.0
     hooks:
       - id: ruff
         args: ["--fix", "--exit-non-zero-on-fix"]
-        exclude: ^(.+/)?skill-forge/scripts/skills-ref/
+        exclude: ^(archived/|(.+/)?skill-forge/scripts/skills-ref/)
       - id: ruff-format
-        exclude: ^(.+/)?skill-forge/scripts/skills-ref/
+        exclude: ^(archived/|(.+/)?skill-forge/scripts/skills-ref/)
   - repo: local
     hooks:
       # U+00A0 in Markdown indentation breaks nested fences without any visible sign.
@@ -94,11 +95,13 @@ repos:
         args: ["-i", "2", "-ci", "-bn", "-sr", "-w"]
         language: system
         types: [shell]
+        exclude: ^archived/
       - id: shellcheck
         name: shellcheck (lint shell scripts)
         entry: shellcheck
         language: system
         types: [shell]
+        exclude: ^archived/
       - id: mypy-checks
         name: mypy (skill checks)
         entry: uv run --frozen mypy
