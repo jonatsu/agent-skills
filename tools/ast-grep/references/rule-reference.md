@@ -3,12 +3,12 @@
 Rule syntax for `ast-grep scan`. A rule is a declarative condition an AST node must satisfy. Rules come in
 three categories:
 
-- **Atomic** — match one node by an intrinsic property: `pattern`, `kind`, `regex`, `nthChild`, `range`.
-- **Relational** — match by position relative to other nodes: `inside`, `has`, `precedes`, `follows`.
-- **Composite** — combine other rules: `all`, `any`, `not`, `matches`.
+- **Atomic**: match one node by an intrinsic property: `pattern`, `kind`, `regex`, `nthChild`, `range`.
+- **Relational**: match by position relative to other nodes: `inside`, `has`, `precedes`, `follows`.
+- **Composite**: combine other rules: `all`, `any`, `not`, `matches`.
 
 Every field of a rule object is optional, but at least one positive key (such as `kind` or `pattern`) must be
-present. A node matches a rule object when it satisfies **every** field in it — an implicit AND. Where a
+present. A node matches a rule object when it satisfies **every** field in it (an implicit AND). Where a
 metavariable captured by one field is used by another, wrap the fields in an explicit `all` so the matching
 order is guaranteed.
 
@@ -50,7 +50,7 @@ pattern:
   context: class { $F }
 ```
 
-Reach for `context`/`selector` when a fragment cannot stand alone as a statement — a class field, an object
+Reach for `context`/`selector` when a fragment cannot stand alone as a statement: a class field, an object
 entry, a `case` arm.
 
 ### kind
@@ -96,9 +96,9 @@ has:
 
 Controls where the relational search stops:
 
-- `neighbor` (**default**) — stop as soon as the immediately surrounding node does not match.
-- `end` — search to the end of the direction: the root for `inside`, the leaves for `has`.
-- a rule object — stop at the first surrounding node matching that rule, inclusive.
+- `neighbor` (**default**): stop as soon as the immediately surrounding node does not match.
+- `end`: search to the end of the direction: the root for `inside`, the leaves for `has`.
+- a rule object: stop at the first surrounding node matching that rule, inclusive.
 
 The default is the single most common cause of a relational rule matching nothing. Use `stopBy: end` unless
 a shallow search is specifically what you want.
@@ -138,7 +138,7 @@ are written.
 Names must be uppercase letters, digits and underscores: `$META`, `$META_VAR` and `$_` are valid; `$invalid`,
 `$123` and `$KEBAB-CASE` are not.
 
-Reusing a name constrains equality — `$A == $A` matches `a == a` but not `a == b`. An underscore-prefixed name
+Reusing a name constrains equality: `$A == $A` matches `a == a` but not `a == b`. An underscore-prefixed name
 does not capture, so `$_FUNC($_FUNC)` matches `test(a)` as well as `testFunc(1 + 1)`.
 
 `$$$` absorbs a variable number of arguments or statements: `console.log($$$)` matches every arity, and
