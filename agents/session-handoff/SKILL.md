@@ -133,8 +133,8 @@ other machine or person. Ask only when the request sends the work outside this s
 Use `PRIME` when the same work continues in a fresh context. Return one fenced block that the user can paste
 as the first message, and keep it off disk.
 
-A pasted prompt is size-limited by the terminal, not by the model. Above roughly 4 KB — about 3,000
-characters, or 40–50 lines — many terminals silently corrupt a large paste: the start and end arrive intact
+A pasted prompt is size-limited by the terminal, not by the model. Above roughly 4 KB (about 3,000
+characters, or 40–50 lines), many terminals silently corrupt a large paste: the start and end arrive intact
 while the middle is truncated or collapsed, with no error and nothing to recover the lost lines from, and a
 client that folds a multi-line paste behind a collapsed view can hide the damage entirely. Refuse by default
 to emit a `PRIME` handoff that exceeds this threshold. Say why, then either switch to `DOCUMENT`, whose saved
