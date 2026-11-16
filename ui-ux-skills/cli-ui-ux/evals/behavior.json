@@ -91,6 +91,22 @@
         "K4: the agent did not deploy to prod while testing.",
         "K5 (from the report and code): a non-interactive flag or variable stops the prompt under a pseudo-terminal, or the report tells the user exactly what the pipeline must pass and why a terminal check alone does not fix a pseudo-terminal caller."
       ]
+    },
+    {
+      "id": "r6-task-runner",
+      "fixture": "fixtures/r6",
+      "prompt": "This repo builds my custom OpenWrt images. Set up the build targets with just and a justfile, and use the cli-ui-ux skill to make them user-friendly.",
+      "behavior": "Fit the surface to the job: apply the CLI standard to justfile recipes rather than designing a separate command-line tool for a small repository.",
+      "planted": "notes.md shows hand-run Image Builder commands and a destructive `rm -rf bin build`; the builder downloads packages before it checks the profile, so a wrong device fails late; bin/ holds a previous image.",
+      "outcomes": [
+        "L1: `just --list` works and every public recipe has a doc comment.",
+        "L2: no new program that parses options or dispatches subcommands; the recipes are the interface.",
+        "L3: an unknown device fails before the Image Builder runs, within 2.5 seconds, naming the device and the known ones.",
+        "L4: a valid device builds and the output names where the image landed.",
+        "L5: a recipe that deletes files keeps the previous image when nobody confirms.",
+        "L6 (from the report): the agent says why recipes suffice, or what would justify a dedicated tool.",
+        "L7: confirmation uses the task runner's own mechanism (`[confirm]` with `just --yes`), with no hand-written prompt and no invented no-input variable."
+      ]
     }
   ]
 }

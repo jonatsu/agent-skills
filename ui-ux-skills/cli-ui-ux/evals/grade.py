@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Grade cli-ui-ux behavioral-evaluation workspaces against the outcomes in behavior.json.
 
-Usage: grade.py CASE WORKSPACE   (CASE is r1..r5)
+Usage: grade.py CASE WORKSPACE   (CASE is r1..r6)
 
 Every check runs on a temporary copy of the workspace, restored to the fixture's data files, so the agent's
 own test leftovers cannot change the result. Prints one line per assertion: PASS, FAIL, or INFO (needs manual
@@ -304,6 +304,151 @@ def grade_r5(ws):
     )
 
 
+OPTION_PARSING = re.compile(
+    r"argparse|optparse|getopts|getopt\b|import click|import typer|clap::|--help\)|\"--help\"|'--help'"
+)
+
+
+def new_script_files(w):
+    """Files the agent added that are programs, as opposed to the justfile, data, or docs."""
+    fixture = {p.relative_to(Path(FIX, "r6")) for p in Path(FIX, "r6").rglob("*")}
+    found = []
+    for path in Path(w).rglob("*"):
+        rel = path.relative_to(w)
+        if not path.is_file() or rel in fixture or rel.parts[0] in ("bin", "build", ".git"):
+            continue
+        if rel.name.lower() in ("justfile", ".justfile") or rel.suffix in (
+            ".md",
+            ".conf",
+            ".txt",
+            ".img",
+        ):
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if (
+            os.access(path, os.X_OK)
+            or text.startswith("#!")
+            or rel.suffix in (".py", ".sh", ".bash")
+        ):
+            found.append((str(rel), text))
+    return found
+
+
+def just_recipes(w):
+    rc, out, _ = run(["just", "--dump", "--dump-format", "json"], w)
+    if rc != 0:
+        return None
+    return json.loads(out)["recipes"]
+
+
+def grade_r6(ws):
+    tmp, w = copy_ws(ws, "r6", restore=["bin", "devices", "imagebuilder/make-image"])
+    calls = os.path.join(w, "imagebuilder", "calls.log")
+    if os.path.exists(calls):
+        os.remove(calls)
+    recipes = just_recipes(w)
+    if recipes is None:
+        say("L1", False, "no justfile that just can read")
+        shutil.rmtree(tmp)
+        return
+    public = {name: r for name, r in recipes.items() if not r["private"]}
+    undocumented = sorted(name for name, r in public.items() if not r["doc"])
+    rc, listing, _ = run(["just", "--list"], w)
+    say(
+        "L1",
+        rc == 0 and public and not undocumented,
+        f"recipes={sorted(public)} undocumented={undocumented}",
+    )
+
+    scripts = new_script_files(w)
+    parsers = [rel for rel, text in scripts if OPTION_PARSING.search(text)]
+    say("L2", not parsers, f"new programs={[rel for rel, _ in scripts]} parsing options={parsers}")
+
+    def mentions_builder(name, seen=()):
+        r = recipes[name]
+        if "make-image" in json.dumps(r["body"]):
+            return True
+        return any(
+            d["recipe"] not in seen and mentions_builder(d["recipe"], (*seen, name))
+            for d in r.get("dependencies", [])
+        )
+
+    builders = [n for n, r in public.items() if r["parameters"] and mentions_builder(n)]
+    if not builders:
+        builders = [n for n, r in public.items() if r["parameters"] and "build" in n]
+    if not builders:
+        say("L3", None, "no public recipe that takes a device and runs the Image Builder")
+        say("L4", None, "no build recipe found")
+    else:
+        build = builders[0]
+        started = time.monotonic()
+        rc, out, err = run(["just", build, "nosuch"], w, timeout=30)
+        elapsed = time.monotonic() - started
+        text = out + err
+        ok = (
+            rc not in (0, "timeout")
+            and elapsed < 2.5
+            and not os.path.exists(calls)
+            and "nosuch" in text
+            and ("x86-64" in text or "rpi4" in text)
+        )
+        say(
+            "L3",
+            ok,
+            f"recipe={build} rc={rc} seconds={elapsed:.1f} builder_ran={os.path.exists(calls)} "
+            f"msg={text.strip()[-160:]!r}",
+        )
+        rc, out, err = run(["just", build, "rpi4"], w, timeout=60)
+        built = os.path.exists(os.path.join(w, "bin", "rpi4.img"))
+        say(
+            "L4",
+            rc == 0 and built and "rpi4.img" in out + err,
+            f"rc={rc} built={built} names_image={'rpi4.img' in out + err}",
+        )
+
+    removers = [n for n, r in public.items() if re.search(r"\brm\b", json.dumps(r["body"]))]
+    for name in removers:
+        run(["just", name], w, timeout=20)
+    kept = os.path.exists(os.path.join(w, "bin", "x86-64.img"))
+    if removers:
+        say(
+            "L5",
+            kept,
+            f"removing recipes={removers} previous image kept with no answer on stdin={kept}",
+        )
+    else:
+        say("L5", None, "no recipe removes files")
+    say("L6", None, "from the report: the agent judged whether the job needed more than recipes")
+    bodies = {name: json.dumps(r["body"]) for name, r in recipes.items()}
+    prompting = sorted(n for n, b in bodies.items() if re.search(r"\bread\b", b))
+    invented = sorted(
+        {
+            m
+            for b in bodies.values()
+            for m in re.findall(r"\b[A-Z][A-Z0-9_]*_(?:NO_INPUT|NON_INTERACTIVE)\b", b)
+        }
+    )
+    lines = (
+        len(Path(w, "justfile").read_text(encoding="utf-8").splitlines())
+        if Path(w, "justfile").exists()
+        else 0
+    )
+    say(
+        "L7",
+        not prompting and not invented,
+        f"recipes with their own prompt={prompting} invented no-input variables={invented} justfile_lines={lines}",
+    )
+    shutil.rmtree(tmp)
+
+
 if __name__ == "__main__":
     case, ws = sys.argv[1], os.path.abspath(sys.argv[2])
-    {"r1": grade_r1, "r2": grade_r2, "r3": grade_r3, "r4": grade_r4, "r5": grade_r5}[case](ws)
+    graders = {
+        "r1": grade_r1,
+        "r2": grade_r2,
+        "r3": grade_r3,
+        "r4": grade_r4,
+        "r5": grade_r5,
+        "r6": grade_r6,
+    }
+    graders[case](ws)

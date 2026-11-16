@@ -126,3 +126,13 @@ copied.
 
 The specification supplied the user config, data, cache, and state locations. No license is stated; nothing was
 copied.
+
+### Jakob Nielsen: 10 Usability Heuristics for User Interface Design
+
+- Source: <https://www.nngroup.com/articles/ten-usability-heuristics/>
+- License: `LicenseRef-Proprietary`
+- Version: last reviewed 2024-01-30, read 2026-11-16
+
+The heuristics supplied the usability questions in "Fit the Surface to the Job": system status, error
+prevention, recovery from errors, recognition rather than recall, consistency, and user control. They were
+restated for command-line tasks; nothing was copied.

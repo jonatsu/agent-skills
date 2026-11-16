@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Stand-in for the OpenWrt Image Builder's `make image`. Like the real one, it downloads packages before it
+# checks the profile, so a wrong PROFILE fails late.
+profile="" packages="" files=""
+for arg in "$@"; do
+  case "${arg}" in
+    PROFILE=*) profile="${arg#PROFILE=}" ;;
+    PACKAGES=*) packages="${arg#PACKAGES=}" ;;
+    FILES=*) files="${arg#FILES=}" ;;
+    *) ;;
+  esac
+done
+here="$(cd "$(dirname "$0")" && pwd)"
+echo "$(date +%s) PROFILE=${profile}" >> "${here}/calls.log"
+echo "Downloading packages: ${packages:-none}" >&2
+sleep 3
+if [[ ! -f "${here}/../devices/${profile}.conf" ]]; then
+  echo "make: *** No rule to make target 'image'. Profile '${profile}' not found." >&2
+  exit 2
+fi
+mkdir -p "${here}/../build" "${here}/../bin"
+sleep 1
+printf 'image %s files=%s packages=%s\n' "${profile}" "${files}" "${packages}" > "${here}/../bin/${profile}.img"
+echo "Image written." >&2

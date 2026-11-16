@@ -1,6 +1,6 @@
 ---
 name: cli-ui-ux
-description: Design, build, and review the user-facing interface of command-line tools, covering commands and flags, help text, output and JSON formats, errors, exit codes, colour, prompts, configuration, and signals. Use when designing a new CLI, adding or changing a command, fixing output that breaks pipes or hangs automation, or reviewing or testing a CLI's usability. Use bash-shell or posix-shell for shell scripting technique; full-screen terminal UIs are out of scope.
+description: Design, build, and review the user-facing interface of command-line tools and a project's task commands, covering commands, flags, help, output formats, errors, exit codes, colour, prompts, config, and signals. Use when designing a CLI, making build or task commands user-friendly, changing a command, fixing output that breaks pipes or hangs automation, or reviewing CLI usability. Use just-task-runner for justfile mechanics and bash-shell or posix-shell for shell technique; full-screen TUIs are out of scope.
 license: MIT
 compatibility: The probe script needs Python 3.9 or later; its terminal modes need a POSIX system.
 metadata:
@@ -9,9 +9,9 @@ metadata:
 
 # CLI UI and UX
 
-Shape the contract a command-line tool offers to the people, scripts, and agents that call it: its commands,
-arguments, help, output, errors, exit codes, configuration, prompts, and signal handling. The same standard
-serves three modes, and each mode applies it at a different moment:
+Shape the contract a command-line tool, or a project's set of commands, offers to the people, scripts, and
+agents that call it: its commands, arguments, help, output, errors, exit codes, configuration, prompts, and
+signal handling. The same standard serves three modes, and each mode applies it at a different moment:
 
 - **Design** a new interface or command before code exists.
 - **Implement** a new command, or change an existing one.
@@ -27,6 +27,31 @@ Where a convention gives poor UX, recommend the improvement and name the default
 uses the defaults below. When the user asks to convert an existing tool to these defaults, convert it, and treat
 every change to the machine contract as a breaking change (see [Change the Contract
 Deliberately](#change-the-contract-deliberately)).
+
+## Fit the Surface to the Job
+
+Every mode starts here. Choose the lightest surface that serves the callers, in this order: the commands the
+project already has, task-runner recipes (`just`, `make`, package scripts), a single script, and last a
+dedicated CLI. Build a dedicated CLI only when the job needs one:
+
+- it is distributed to people who do not have the repository;
+- other programs consume its output as a machine contract; or
+- it keeps state across runs, or has more commands and options than recipes express clearly.
+
+Otherwise apply this skill's standard to the surface you chose, and say in your report why it suffices. Meet
+each default with the surface's own mechanism, such as `[confirm]` with `just --yes` for a destructive recipe,
+rather than building prompts, flags, or environment variables into it. For recipes,
+[references/conventions.md](references/conventions.md#task-runner-recipes) maps each default onto a task runner.
+In a review, judge whether the surface fits the job before you judge its details.
+
+Then ask the usability questions, which hold for any task run from a command line:
+
+- **Status:** does a long step say what it is doing, and does the result say where it landed?
+- **Prevention:** is a bad input caught before an expensive or destructive step runs?
+- **Recovery:** can the user retry, clean up, or resume after a failure, and does the error say how?
+- **Discovery:** can the user list the commands, targets, and valid values without reading the code?
+- **Consistency:** do the same words, parameters, and outputs mean the same thing everywhere?
+- **Control:** can a destructive step be confirmed, skipped with `--yes`, or previewed?
 
 ## The Defaults
 
@@ -112,12 +137,16 @@ codes. Report every inconsistency you find, even when the change follows the maj
 Write the interface before the code, because help text is a specification a reviewer can read:
 
 1. List the users and callers: people, scripts, CI, agents. Note which ones cannot answer a prompt.
-2. Map tasks to a command tree, and choose the grammar by the rule above.
-3. Draft the help text for every command, with at least one realistic example each.
-4. Write the exit-code table, the machine output shapes, and the config and environment variables.
+2. Choose the surface by [Fit the Surface to the Job](#fit-the-surface-to-the-job). Map tasks to commands or
+   recipes, and for a dedicated CLI choose the grammar by the rule above.
+3. Draft the help text for every command, with at least one realistic example each. For a recipe, that is its
+   doc comment.
+4. Write the exit-code table, the machine output shapes, and the config and environment variables, for each
+   one the surface has. Recipes usually have none beyond their exit status.
 5. Mark each destructive operation with its confirmation, `--yes`, and `--dry-run`.
 
-The design is done when every command has help text and every failure has an exit code and an error message.
+The design is done when the surface has its reason, every command has help text, and every failure has an exit
+code and an error message.
 
 ## Implement
 

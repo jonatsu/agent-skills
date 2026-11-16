@@ -26,6 +26,7 @@ or harm, never the difference alone.
 - Compatibility and deprecation
 - Paging and telemetry
 - Accessibility
+- Task-runner recipes
 
 ## Streams and Success Output
 
@@ -273,3 +274,23 @@ tell the two apart, so these rules override the general ones above.
 
 - **Rule:** meaning never depends on colour or symbols alone.
 - **Default:** offer the plain format and the non-interactive mode as the path for assistive technology.
+
+## Task-runner Recipes
+
+A project's recipes are its command-line interface, so the same defaults apply. Current known: just 1.58.0,
+checked on 2026-11-16 by running each behaviour below; `just --help` and the Just manual confirm them.
+
+- **Discovery:** a comment on the line above a recipe becomes its description in `just --list`. Give every
+  public recipe one, and group related recipes with `[group('name')]`. A Makefile gets a `help` target that
+  lists its targets.
+- **Parameters:** a recipe parameter can have a default, such as `build device="x86-64"`. List the valid values
+  in a recipe of their own, such as `just devices`, or in the error that rejects a bad one.
+- **Prevention:** check every input at the start of the recipe, before a slow or destructive step, and fail
+  with a message that names the bad value and the valid ones.
+- **Confirmation:** mark a destructive recipe `[confirm]` or `[confirm("Delete bin/?")]`. `just --yes` skips
+  the question, and a run that gets no answer fails with exit status 1 rather than hanging.
+- **Exit codes:** a failing command fails the recipe, and `just` exits non-zero. Keep the failing command's
+  own error visible rather than discarding its stderr with `2>/dev/null`.
+- **Results:** say where the output landed, such as the path of a built image, on the last line.
+- **Helpers:** a recipe that outgrows a few lines may call a script, but the recipe stays the interface:
+  parse its arguments in the recipe, not in a second command-line parser.

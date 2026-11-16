@@ -43,6 +43,8 @@ sandbox copy and HOME.
 
 Check every area below. For each one, name the command or code line that shows the behaviour:
 
+- **Fit:** the surface suits the job, as `SKILL.md` describes under "Fit the Surface to the Job". A dedicated
+  CLI that recipes would serve is a finding, and so is a recipe set that has outgrown recipes.
 - **Discovery:** `-h`, `--help`, `help`, and per-command help work; help leads with purpose and examples;
   `--version` works.
 - **Safety:** the bare command does nothing destructive; destructive commands confirm, offer `--yes` and
