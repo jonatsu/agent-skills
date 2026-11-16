@@ -1,7 +1,9 @@
 # Skills Future Work
 
 The backlog for the skills in this repository, including candidate sources not yet evaluated. Roughly high
-priority first; settled and low-priority entries sit at the bottom.
+priority first; settled and low-priority entries sit at the bottom. An entry leaves this file once it is done,
+handled elsewhere, or stale; Git history keeps it, and anything a later reader needs moves to its durable home
+first.
 
 Reviews are recorded in the author's private configuration repository, which also deploys the skills: the
 completed 2026-09 review in its `docs/evaluations/skills/2026-09-shared-skill-review.md`, and the restored
