@@ -436,6 +436,29 @@ What the assessment established:
   secrets; the output stays local.
 - **Keep it separate from `session-handoff`,** which briefs a different recipient; this answers the user now.
 
+## General `usability` Skill (In Progress)
+
+Build `ui-ux-skills/usability`, a catch-all usability skill for any interface people operate: CLIs, GUIs, web
+and mobile apps, voice, and physical HMIs. A medium-specific skill such as `cli-ui-ux` wins where it applies;
+this one fills the gaps. Agreed with the user on 2026-11-16:
+
+- **Modes:** design, evaluate, and review, as in `cli-ui-ux`.
+- **Core:** the established principles shared across Nielsen, Shneiderman, Norman, and ISO 9241, applied
+  through a short method: users, tasks, a check against the principles, and findings ranked by consequence.
+- **Value beyond what an agent already knows:** translate each principle into the medium at hand, rate by
+  consequence, stay proportionate to the job (the lesson of `cli-ui-ux` case r6), and say when a heuristic
+  review is not enough and real users must test it.
+- **Out of scope:** medium-specific rules, visual design, and accessibility compliance, each a later skill.
+- **`cli-ui-ux` keeps its own six usability questions,** sized to the CLI case, under the rule that every skill
+  carries its own version of a shared rule.
+
+Next: a source survey of the well-known principle sets, evaluation methods, and laws, from original sources
+rather than third-party skill write-ups. A research subagent started it on 2026-11-16, writing to the ephemeral
+`.scratch/2026-11-16-usability-skill/research/usability-frameworks.md`; move what is worth keeping into a
+tracked evaluation record before relying on it. The `lev-os/agents` `nielsen-heuristics` skill that prompted the
+idea states no license and invents an outcome statistic, so take nothing from it. `mastepanoski/claude-skills`
+`nielsen-heuristics-audit` (MIT) is a GUI-focused reference for the audit procedure and severity scale.
+
 ## `tui-ui-ux` Sibling Skill
 
 Build `tui-ui-ux` beside `ui-ux-skills/cli-ui-ux` for full-screen terminal interfaces: layout, keybindings,
