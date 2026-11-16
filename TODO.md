@@ -23,6 +23,14 @@ the routing check (agent-setup's `docs/evaluations/skills/2026-10-04-engineering
   compared against those two, with the missing spec reported as a coverage limit, and a change governed by none of
   the three must be returned as general code review.
 
+## `interview-me` Shows Progress
+
+Requested by the user on 2026-11-16. `engineering/interview-me` shows the branch map with a rough question count
+per branch, but a question itself carries no position, so the user cannot tell how far the session has come. Make
+every question carry its place, such as "Question 4 of 12", with the total taken from the branch map. When an
+answer opens or closes a branch, the total changes with the re-shown map, and the next question shows the new
+total. Keep it consistent with the skill's batching rule, numbering each question in a batch.
+
 ## Description and Prose Pass Ledger
 
 Every skill gets two passes: `writing-skill-descriptions` on its description, and `writing-for-agents`
