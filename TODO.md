@@ -155,6 +155,16 @@ skills appeared and whether they loaded unprompted (a deploy-then-appear does no
 fire, wording is not the lever — move the behavior into always-loaded instructions, as `searchable-code`
 already concluded.
 
+## `writing-skill-descriptions` Misses Descriptions Inside a Larger Change
+
+The user reports that `writing-skill-descriptions` usually loads on its own, but not always. A datapoint from
+2026-11-16: while proposing a change to `cli-ui-ux` that included a broader description, the agent drafted the
+new description in its proposal without loading the skill, and loaded it only after the user asked. The miss
+happened before `skill-forge` was loaded, so `skill-forge`'s own pointer to this skill could not help. The
+description names drafting and revising a description, but not a description changed as one part of a wider
+skill edit or proposal. Tune the wording for that branch, then measure it with the skill's own trigger method:
+realistic skill-change requests that include a description, against near misses such as editing a skill body.
+
 ## Description Activation Is Unmeasured
 
 The 2026-09 audit rewrote 13 short capability-only descriptions to carry activation clauses and triggers
