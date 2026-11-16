@@ -115,7 +115,7 @@ pytest --cov --cov-fail-under=80
 
 Two cautions. `source` naming the package rather than the test directory is what makes an untested module
 count as uncovered instead of being invisible. And a coverage percentage measures which lines executed, not
-whether anything was asserted — `test-engineer` owns whether the number means anything.
+whether anything was asserted; `test-engineer` owns whether the number means anything.
 
 ## Test Layout
 
