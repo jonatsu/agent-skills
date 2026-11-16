@@ -462,7 +462,10 @@ sibling `don-norman-principles-audit` (MIT, read at `ac30238`) applies Norman's 
 Design of Everyday Things* (revised edition, 2013) with the same template: per-principle questions and a
 "Norman door" lens worth keeping, but it treats an affordance as a perceived property, which the revised
 edition reassigns to signifiers, and its percent-of-principles score has no source. Cite the book, not the
-skill. Two more siblings from the same repository, read 2026-11-16:
+skill for facts. As designs, the repository's skills are input for shaping ours: they split the work into a
+broad principle audit, a task walkthrough, and a holistic review, each with stated inputs, a stepwise
+procedure, a severity scale, a report template, and a closing limit that real users must confirm the findings.
+Credit any idea taken in `ATTRIBUTIONS.md`. Two more siblings from the same repository, read 2026-11-16:
 
 - `ux-audit-rethink` combines three lenses worth considering for the skill's wider-than-usability view:
   Morville's user experience honeycomb (useful, usable, findable, credible, desirable, accessible, valuable),
