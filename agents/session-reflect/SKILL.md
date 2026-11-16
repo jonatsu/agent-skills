@@ -136,6 +136,8 @@ its wording to the case observed.
 
 ## 5. Write the captures
 
+- **Verify a configuration claim first.** Before capturing a claim about configuration or permissions, read the
+  setting it names. An error message is evidence that a guard fired, not proof of how the guard is configured.
 - **Memory**: write through the facility the agent's reference names, in its own format. Where memory is files,
   read a neighbouring entry and match its fields rather than a remembered schema, because tooling writes some
   fields itself. Put everything recall must match in the text the facility searches. A fact true across every
