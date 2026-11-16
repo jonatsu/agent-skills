@@ -42,7 +42,7 @@ project/
 In this layout, `src/` is the import root and `mypkg/` is the package. Configure the build backend to match it.
 
 The reason is not tidiness. Under a flat layout the package directory sits in the working directory, so
-`import mypkg` resolves to the working copy rather than the installed one — and a test suite can pass against
+`import mypkg` resolves to the working copy rather than the installed one, and a test suite can pass against
 code that was never installed, hiding a missing module in the packaged artifact until someone else installs it.
 A src layout avoids that accidental root import under normal path settings. Test an installed artifact to verify
 packaging; editable-install tests alone cannot establish that the wheel contains the required files.
@@ -56,7 +56,7 @@ than letting modules accumulate at the top level.
 
 ## Name Packages for What They Own
 
-Name a package for the capability it owns — `billing`, `recognition` — not for the kind of thing inside it.
+Name a package for the capability it owns (`billing`, `recognition`), not for the kind of thing inside it.
 `helpers`, `utils`, `models`, and `common` describe a filing decision rather than a responsibility, so they
 attract anything that does not obviously belong elsewhere and stop being searchable once they do.
 
@@ -98,7 +98,7 @@ platform-specific implementation.
 Put tests in a top-level `tests/` directory that loosely mirrors the package. This keeps them out of the
 distribution and lets them run against the installed package rather than a path that happens to resolve.
 
-Mirror module names — `tests/test_recognition.py` for `mypkg/recognition.py` — so a reader finds a module's
+Mirror module names (`tests/test_recognition.py` for `mypkg/recognition.py`) so a reader finds a module's
 tests without searching.
 
 Tests inside the package, run with `pytest --pyargs mypkg`, are the alternative when the tests ship
@@ -124,7 +124,7 @@ Keep public API for real callers; whether to test an underscore-prefixed helper 
 
 For an application rather than a library, name the layers and let dependencies point inward:
 
-- **Boundary** code talks to the outside world — the CLI, HTTP handlers, database and service clients. It
+- **Boundary** code talks to the outside world: the CLI, HTTP handlers, database and service clients. It
   depends on the core.
 - **Core** code holds the domain model and the decisions. It depends on nothing outside itself and on no
   framework.
@@ -146,6 +146,6 @@ review or an import-contract tool such as `import-linter`'s `layers` contract wi
 
 ## Reference
 
-- [src layout vs flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/) —
+- [src layout vs flat layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/):
   Python Packaging User Guide
-- [Good integration practices](https://docs.pytest.org/en/stable/explanation/goodpractices.html) — pytest
+- [Good integration practices](https://docs.pytest.org/en/stable/explanation/goodpractices.html): pytest
