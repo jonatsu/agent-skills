@@ -84,5 +84,5 @@ sentence, and copying the second in place of the first is the dominant failure i
 ```
 
 The retention entry is the one to model. It names the new default, the old one, the key that restores it, and
-the fact that the change is not retroactive — everything a reader needs to decide whether the upgrade is safe,
+the fact that the change is not retroactive: everything a reader needs to decide whether the upgrade is safe,
 without opening the issue.
