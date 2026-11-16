@@ -65,6 +65,10 @@ map and the rough question count per branch; it is the shape of the session up f
 Question in that order. A decision that constrains three others is worth settling before any of them. When an
 answer reshapes the tree, opening a branch or closing one, say so and re-show the map.
 
+Number every question with its place and the current total, such as "Question 4 of 12". Take the total from the
+counts on the map, and number each question in a batch on its own. When a re-shown map changes the total, the
+next question carries the new total.
+
 ## Make Each Question Answerable on Its Own
 
 Write each question for a reader who was not following your investigation. State the choice in plain words,
