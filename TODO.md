@@ -428,7 +428,7 @@ What the assessment established:
 
 ## `tui-ui-ux` Sibling Skill
 
-Build `tui-ui-ux` beside `development/cli-ui-ux` for full-screen terminal interfaces: layout, keybindings,
+Build `tui-ui-ux` beside `ui-ux-skills/cli-ui-ux` for full-screen terminal interfaces: layout, keybindings,
 focus, resizing, redraw, screen-reader behaviour, and a TUI review order. `cli-ui-ux` covers one-shot commands
 and inline prompts and states full-screen interfaces as out of scope, because they need a different checklist.
 Decided by the user on 2026-11-07 while designing `cli-ui-ux`. Candidate sources from that session's survey,
