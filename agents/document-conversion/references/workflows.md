@@ -259,7 +259,7 @@ Do not automatically send failed local conversions to a cloud service.
 
 ## 10. Application-Controlled Remote Resource
 
-The application—not MarkItDown—should:
+The application, not MarkItDown, should:
 
 - Validate destination and every redirect
 - Enforce time and byte limits

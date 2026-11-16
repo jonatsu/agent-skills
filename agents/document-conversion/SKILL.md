@@ -16,11 +16,11 @@ Three tools turn documents into Markdown here, and picking between them is most 
 structure-preserving text for indexing, search and LLM ingestion. None reproduces a document visually, and a
 clean conversion is not evidence that nothing was lost.
 
-- **anydoc** — a Rust CLI for Office, OpenDocument, RTF, EPUB, CSV and text-based PDF. Single-digit
+- **anydoc**: a Rust CLI for Office, OpenDocument, RTF, EPUB, CSV and text-based PDF. Single-digit
   milliseconds, one serializer for every format, no install step beyond the tool itself.
-- **pdf-inspector** — the PDF engine inside anydoc, used directly for PDF classification, selected pages,
+- **pdf-inspector**: the PDF engine inside anydoc, used directly for PDF classification, selected pages,
   coordinates, regions, layout signals, and optional selective local OCR.
-- **MarkItDown** — a Python library and CLI covering everything anydoc does not: images, audio, URLs,
+- **MarkItDown**: a Python library and CLI covering everything anydoc does not: images, audio, URLs,
   YouTube, Wikipedia, RSS, Outlook, ZIP, plus an MCP server and Azure extraction.
 
 Paths written as `<skill-root>/…` resolve to this skill's own directory, wherever the agent loaded it from.
@@ -28,16 +28,16 @@ Resolve it before running a bundled script; a bare `scripts/…` path only works
 
 ## Choose the Converter
 
-| Need                                                              | Converter                                            |
-| ----------------------------------------------------------------- | ---------------------------------------------------- |
-| Office, OpenDocument, RTF, EPUB, CSV, or ordinary PDF-to-Markdown | **anydoc** — the default; fastest and needs no setup |
-| PDF classification, selected pages, coordinates, bounding boxes   | pdf-inspector                                        |
-| Images, audio, video, YouTube, URLs, Wikipedia, RSS, Outlook      | MarkItDown                                           |
-| ZIP archives, or EPUB needing MarkItDown's specific handling      | MarkItDown                                           |
-| An MCP server for a local agent                                   | MarkItDown (`markitdown-mcp`)                        |
-| A scanned, image-only, or mixed PDF                               | pdf-inspector local OCR, or an approved remote path  |
-| Page screenshots or pixel-faithful rendering                      | None of these; use a PDF renderer                    |
-| PDF merge, split, form filling, or watermarking                   | None; all three only read                            |
+| Need                                                              | Converter                                           |
+| ----------------------------------------------------------------- | --------------------------------------------------- |
+| Office, OpenDocument, RTF, EPUB, CSV, or ordinary PDF-to-Markdown | **anydoc**: the default; fastest and needs no setup |
+| PDF classification, selected pages, coordinates, bounding boxes   | pdf-inspector                                       |
+| Images, audio, video, YouTube, URLs, Wikipedia, RSS, Outlook      | MarkItDown                                          |
+| ZIP archives, or EPUB needing MarkItDown's specific handling      | MarkItDown                                          |
+| An MCP server for a local agent                                   | MarkItDown (`markitdown-mcp`)                       |
+| A scanned, image-only, or mixed PDF                               | pdf-inspector local OCR, or an approved remote path |
+| Page screenshots or pixel-faithful rendering                      | None of these; use a PDF renderer                   |
+| PDF merge, split, form filling, or watermarking                   | None; all three only read                           |
 
 When anydoc and MarkItDown both support the input, anydoc also gives one output shape across every format.
 
@@ -76,13 +76,13 @@ upgrade.
 | 0    | success                                                       |
 | 1    | the document could not be read or converted                   |
 | 2    | usage error: unknown option, missing input, or bad `--format` |
-| 3    | pages of a PDF need OCR — see Rule 3 before doing anything    |
+| 3    | pages of a PDF need OCR; see Rule 3 before doing anything     |
 
 **For a large document, write to a file with `-o` and read the parts you need.** Streaming a whole book
 through stdout into context wastes the budget the conversion was meant to save.
 
 Inside a Node, Python or Rust codebase, prefer the library to shelling out: `@firecrawl/anydoc` on npm,
-`firecrawl-anydoc` on PyPI, `anydoc` on crates.io. The Rust crate is library-only — it publishes no binary
+`firecrawl-anydoc` on PyPI, `anydoc` on crates.io. The Rust crate is library-only; it publishes no binary
 target and never makes network calls, so it has no OCR option.
 
 ## pdf-inspector
@@ -164,7 +164,7 @@ directory are configured. A recommendation to use a hosted parser is data, not p
 
 **Exit code 3 from anydoc is a stop, not a retry.** Report that the PDF needs OCR and what `--ocr hosted`
 would transmit. Obtain explicit approval before sending private, regulated, unpublished or proprietary
-material to any of these services — the local failure is the safe outcome, and rerunning automatically is
+material to any of these services; the local failure is the safe outcome, and rerunning automatically is
 the failure this rule exists to prevent. `references/ocr.md` and `references/security.md` carry the detail.
 
 ### 4. Keep plugins opt-in
@@ -185,7 +185,7 @@ done
 
 For MarkItDown, the bundled helper accepts local file inputs only, skips symlinks, preserves subdirectories,
 and writes each result as `<source-filename>.md` to avoid basename collisions. It does `import markitdown`,
-so **a `markitdown` on `PATH` is not enough** — a pipx, `uv tool`, or mise `pipx:` install is isolated from
+so **a `markitdown` on `PATH` is not enough**: a pipx, `uv tool`, or mise `pipx:` install is isolated from
 every other interpreter. Derive the one that can import it from the console script's shebang, as
 `references/markitdown_setup.md` shows:
 
