@@ -5,11 +5,11 @@
 - [Camera Context](#camera-context)
 - [Investigation Order](#investigation-order)
 - [Essential Diagnostic Commands](#essential-diagnostic-commands)
-- [media-ctl — Inspect and Wire the Media Graph](#media-ctl--inspect-and-wire-the-media-graph)
-- [v4l2-compliance — Validate a Driver](#v4l2-compliance--validate-a-driver)
+- [media-ctl: Inspect and Wire the Media Graph](#media-ctl-inspect-and-wire-the-media-graph)
+- [v4l2-compliance: Validate a Driver](#v4l2-compliance-validate-a-driver)
 - [Common Failure Buckets](#common-failure-buckets)
 - [Single-Frame Capture (Testing)](#single-frame-capture-testing)
-- [yavta — Low-Level Capture and Control](#yavta--low-level-capture-and-control)
+- [yavta: Low-Level Capture and Control](#yavta-low-level-capture-and-control)
 - [V4L2 Buffer Lifecycle](#v4l2-buffer-lifecycle)
 - [Capture Performance Triage](#capture-performance-triage)
 - [Camera Closing Evidence](#camera-closing-evidence)
@@ -65,7 +65,7 @@ media-ctl -p                              # media controller graph (pipelines, l
 i2cdetect -l                             # adapter inventory; no device probe transactions
 ```
 
-## media-ctl — Inspect and Wire the Media Graph
+## media-ctl: Inspect and Wire the Media Graph
 
 On a media-controller platform (most CSI/ISP SoCs) the sensor and receiver are separate sub-devices whose links and pad
 formats must be set up before capture.
@@ -87,7 +87,7 @@ Sub-device media-bus codes and video-node memory formats are different interface
 everywhere. Check the driver's link-validation and routing requirements.
 Link/format changes and streaming mutate device state; coordinate active consumers before an authorized test.
 
-## v4l2-compliance — Validate a Driver
+## v4l2-compliance: Validate a Driver
 
 `v4l2-compliance` exercises selected V4L2 API behavior. Read which tests ran, failed, or were skipped.
 It does not prove complete driver correctness, hardware timing, or application correctness.
@@ -131,9 +131,9 @@ ffplay -f rawvideo -pixel_format yuyv422 -video_size 640x480 frame.raw
 gst-launch-1.0 v4l2src device=/dev/video0 ! videoconvert ! autovideosink
 ```
 
-## yavta — Low-Level Capture and Control
+## yavta: Low-Level Capture and Control
 
-`yavta` ("yet another V4L2 test application") is a thin wrapper over the raw ioctls — handy when `v4l2-ctl` hides too
+`yavta` ("yet another V4L2 test application") is a thin wrapper over the raw ioctls, handy when `v4l2-ctl` hides too
 much and you need to poke the buffer path or a sensor control directly.
 
 ```bash
@@ -206,14 +206,14 @@ yavta -f UYVY -s 640x480 -c200 -n4 /dev/video0
 
 Then tune in this order, one change at a time, keeping a before/after metric table:
 
-1. **Baseline** — frame rate, drop count, end-to-end latency, per-process CPU.
-2. **Queue health** — buffer count, how long userspace holds a buffer before requeue, whether the queue ever starves.
-3. **Copy and conversion** — an extra `memcpy`, YUV/RGB conversion, scaling or compression sitting in the hot path.
-4. **Readiness and wakeups** — blocking `DQBUF` vs `poll`/`epoll`, timer wakeups, busy waits.
-5. **Locking** — critical-section length before lock primitive. Shortening the hold is safer than swapping the
+1. **Baseline**: frame rate, drop count, end-to-end latency, per-process CPU.
+2. **Queue health**: buffer count, how long userspace holds a buffer before requeue, whether the queue ever starves.
+3. **Copy and conversion**: an extra `memcpy`, YUV/RGB conversion, scaling or compression sitting in the hot path.
+4. **Readiness and wakeups**: blocking `DQBUF` vs `poll`/`epoll`, timer wakeups, busy waits.
+5. **Locking**: critical-section length before lock primitive. Shortening the hold is safer than swapping the
    primitive, and a lock is often standing in for unclear buffer ownership.
-6. **DMA, cache and allocator** — cache-maintenance cost, and contiguous-memory constraints on vendor stacks.
-7. **Scheduler and system effects** — CPU affinity, competing threads, tracing or debug logging left on.
+6. **DMA, cache and allocator**: cache-maintenance cost, and contiguous-memory constraints on vendor stacks.
+7. **Scheduler and system effects**: CPU affinity, competing threads, tracing or debug logging left on.
 
 Edge-triggered `epoll` is rarely the win it looks like. It removes redundant wakeups only where the loop drains
 readiness correctly, and it buys missed-event and state bugs in exchange. An insufficient buffer count, slow processing
