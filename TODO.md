@@ -462,7 +462,18 @@ sibling `don-norman-principles-audit` (MIT, read at `ac30238`) applies Norman's 
 Design of Everyday Things* (revised edition, 2013) with the same template: per-principle questions and a
 "Norman door" lens worth keeping, but it treats an affordance as a perceived property, which the revised
 edition reassigns to signifiers, and its percent-of-principles score has no source. Cite the book, not the
-skill.
+skill. Two more siblings from the same repository, read 2026-11-16:
+
+- `ux-audit-rethink` combines three lenses worth considering for the skill's wider-than-usability view:
+  Morville's user experience honeycomb (useful, usable, findable, credible, desirable, accessible, valuable),
+  five usability qualities, and the interaction-design dimensions of Crampton Smith (words, visuals, physical
+  objects or space, time) with Silver's fifth, behavior. The dimensions suit translating a principle into any
+  medium. It misattributes the five qualities to ISO 9241-11, which defines effectiveness, efficiency, and
+  satisfaction; the five are Whitney Quesenbery's. Its 85-point grade and mobile pixel rules have no source and
+  are out of scope.
+- `cognitive-walkthrough` states the method's four questions per action and a rule worth keeping: an
+  inspection method predicts, so never invent success percentages. Cite the practitioner's guide by Wharton,
+  Rieman, Lewis, and Polson (1994), and check Spencer's streamlined two-question variant (2000).
 
 ## `tui-ui-ux` Sibling Skill
 
