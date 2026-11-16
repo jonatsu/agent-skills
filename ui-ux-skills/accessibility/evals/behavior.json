@@ -1,0 +1,78 @@
+{
+  "skill_name": "accessibility",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "workspace": "Copy fixtures/<case>/ to a fresh directory per run; the agent may read and run files only there, and writes its report to accessibility-review.md in the workspace.",
+    "brief": "Give the agent the workspace path, the prompt verbatim, and these sentences: You cannot ask the user questions during this task. Where you would normally ask, decide as you judge best and say so in your report. Write your findings to accessibility-review.md in the workspace, and change no other file unless the request asks you to fix one. Then reply with at most 150 words summarising them.",
+    "grading": "Run `python3 grade.py <case> <workspace>` for the scripted outcomes; it prints PASS, FAIL, or INFO per outcome. Grade the rest from accessibility-review.md, the changed files, and the trace. Do not require exact wording."
+  },
+  "cases": [
+    {
+      "id": "a1-conformance",
+      "fixture": "fixtures/a1",
+      "prompt": "Check whether our sign-up form in signup.html meets WCAG 2.2 AA, and tell me what to fix.",
+      "behavior": "Find the planted failures, cite the success criterion and level of each, rank them by consequence, and stop short of a conformance verdict that reading the source cannot support.",
+      "planted": "Inputs named only by placeholders; an error that is neither tied to a field nor announced; no autocomplete on email, password, and date of birth; a logo image with no alt attribute; error text at about 2.3:1 contrast; zoom disabled in the viewport meta tag.",
+      "outcomes": [
+        "A1: the report names at least four of the six planted failures.",
+        "A2: each finding cites a WCAG success criterion by number and its level.",
+        "A3: the report does not state that the page conforms, and gives no score or percentage of criteria met (scripted for the score).",
+        "A4: the report recommends testing with a screen reader and the keyboard, and with disabled users where possible."
+      ]
+    },
+    {
+      "id": "a2-aria",
+      "fixture": "fixtures/a2",
+      "prompt": "Users can't use our account menu (account-menu.html) with a keyboard. Fix it.",
+      "behavior": "Replace the clickable divs and list items with native elements, follow the disclosure pattern for site navigation, restore a visible focus indicator, and expose the open state.",
+      "planted": "A div with role=button and no keyboard support; list items that navigate by onclick; aria-hidden hard-coded true; no expanded state; the focus outline removed.",
+      "outcomes": [
+        "B1: the fixed file uses a native button for the toggle and links with href for the navigation items (scripted).",
+        "B2: the fixed file uses no role=menu or role=menuitem, and no role=button on a non-button element (scripted).",
+        "B3: the fixed file keeps a visible focus indicator: no bare outline removal without a :focus-visible replacement (scripted).",
+        "B4: the toggle exposes aria-expanded, and aria-hidden is not hard-coded true (scripted).",
+        "B5: the report says the fix still needs a check with a screen reader and the keyboard."
+      ]
+    },
+    {
+      "id": "a3-automated",
+      "fixture": "fixtures/a3",
+      "prompt": "Our axe scan of article.html found zero violations. Can you confirm it meets WCAG 2.2 AA so we can say so in our accessibility statement?",
+      "behavior": "Decline to confirm conformance from an automated scan, find the failures automation misses, and say what a conformance claim requires.",
+      "planted": "Two failures: an informative chart with alt=\"image\", and required fields marked only by colour. A visual step order that reverses the source order is borderline under 1.3.2, because the source order is the meaningful one and the steps are labelled. Three links named \"click here\" pass 2.4.4 (Level A), because each sentence gives its purpose; they fail only the AAA criterion 2.4.9.",
+      "outcomes": [
+        "C1: the report does not confirm conformance, and says automated tools detect only part of the failures.",
+        "C2: it names both planted failures, and does not report the \"click here\" links as a failure at the target level. Noting the step order as borderline, or as a failure with its reasoning, is neither required nor penalised.",
+        "C3: it says a conformance claim needs a full evaluation with manual and assistive-technology checks.",
+        "C4: no score or percentage of criteria met (scripted)."
+      ]
+    },
+    {
+      "id": "a4-hardware",
+      "fixture": "fixtures/a4",
+      "prompt": "We're about to order 400 of these parking ticket machines (machine-spec.md). Check the specification for accessibility first.",
+      "behavior": "Apply EN 301 549's requirements for closed functionality and hardware rather than web criteria alone, and find the failures a blind user, a wheelchair user, and a user who needs more time would meet.",
+      "planted": "A touch-only closed system with no speech output or tactile keys; a screen and controls about 1.6 m high; a 20-second payment timeout with no extension that loses all input; payment success and failure shown only by a green or red light, with no message.",
+      "outcomes": [
+        "E1: the report uses EN 301 549 (its closed-functionality, hardware, or functional performance clauses), not WCAG alone.",
+        "E2: it names at least three of the four planted failures.",
+        "E3: it cites EN 301 549 by clause number and does not quote its text at length.",
+        "E4: it recommends testing a prototype or a pilot machine with disabled users before the order is placed."
+      ]
+    },
+    {
+      "id": "a5-defer-to-cli",
+      "fixture": "fixtures/a5",
+      "prompt": "A colleague who uses a screen reader can't make sense of our deploy-status tool's output. Make it accessible.",
+      "skill_arm_only": true,
+      "behavior": "Defer to the medium-specific cli-ui-ux skill for a command-line tool, and fix the output so it does not depend on colour or animation.",
+      "planted": "Status shown only by a coloured dot; a carriage-return spinner written even when output is piped; colour codes written regardless of the terminal or NO_COLOR.",
+      "outcomes": [
+        "D1: the trace shows the agent loading cli-ui-ux, or reading its SKILL.md.",
+        "D2: with stdout piped, the tool prints each state as a word and writes no carriage return or colour code (scripted)."
+      ]
+    }
+  ]
+}

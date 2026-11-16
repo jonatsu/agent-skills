@@ -456,24 +456,15 @@ design mode, review mode, the holistic review, or a voice interface, and ran onc
 a case for each, built on fixtures unlike the existing five, and rerun with at least two repetitions. While
 there, make `evals/grade.py` ignore a report that says it gives no score.
 
-## Accessibility Skill (In Progress)
+## `accessibility` Eval Gaps
 
-Requested by the user on 2026-11-16. Build an accessibility skill in `ui-ux-skills/` for designing, evaluating,
-and reviewing interfaces against accessibility requirements. `usability` stays out of conformance checking, and
-its one-line pointer names the new skill once it lands. Agreed with the user on 2026-11-16:
-
-- **Scope:** web content and native apps on WCAG 2.2, plus a short section for non-web software, documents, and
-  hardware based on EN 301 549.
-- **Default target:** WCAG 2.2 Level AA; AAA only when the user names it.
-- **Reuse from `usability`:** the design, evaluate, and review modes; the quick check versus full evaluation;
-  the report shape with a required closing slot, here naming the assistive-technology and user tests;
-  severity by consequence, with each finding also citing its success criterion and level; the interaction
-  dimensions; and the eval harness, including a case that defers to `cli-ui-ux` and the u1 sign-up fixture.
-- **New:** WCAG's principles and success criteria in place of the usability principles; a conformance
-  discipline (no conformance claim from reading code, automated scans catch only part, native elements before
-  ARIA); and a source survey of WCAG 2.2, WCAG-EM, the ARIA Authoring Practices, and EN 301 549.
-
-Next: the source survey (running on Sonnet), then the eval cases and control runs.
+The `ui-ux-skills/accessibility` evaluation (`docs/evaluations/2026-11-16-accessibility-skill.md`) has no case
+for design mode, review mode, the quick check and its 300-word cap, a target the user sets at AAA, a document or
+native app under EN 301 549 clauses 10 and 11, or a clean page where the agent finds no failure and must still
+refuse to write "conforms". It ran once per model on one client. Add a case for each, such as a review of a diff
+that adds a sticky header and a 20-pixel icon button, and rerun with at least two repetitions. The description
+has no trigger for contrast, alt text, ARIA, or a procurement conformance report (VPAT); add one only if a
+trigger evaluation shows misses.
 
 ## `tui-ui-ux` Sibling Skill
 

@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+"""deploy-status: show the state of each service's latest deploy."""
+
+import sys
+import time
+
+SERVICES = [("api", "ok"), ("web", "failed"), ("worker", "ok"), ("billing", "running")]
+COLOURS = {"ok": "\033[32m", "failed": "\033[31m", "running": "\033[33m"}
+SPINNER = "|/-\\"
+
+
+def main() -> None:
+    for i in range(12):
+        sys.stdout.write(f"\rChecking {SPINNER[i % 4]}")
+        sys.stdout.flush()
+        time.sleep(0.05)
+    sys.stdout.write("\r" + " " * 20 + "\r")
+    for name, state in SERVICES:
+        print(f"{COLOURS[state]}●\033[0m {name}")
+
+
+main()

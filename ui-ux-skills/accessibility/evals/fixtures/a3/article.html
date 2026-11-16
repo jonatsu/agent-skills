@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Energy prices this winter</title>
+  <style>
+    .steps { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 2em; }
+    .required { color: #c00000; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Energy prices this winter</h1>
+    <p>Prices rose sharply in November. The chart shows the monthly average price per kilowatt hour.</p>
+    <img src="price-chart.png" alt="image" width="600" height="300">
+    <p>Read the full methodology <a href="/methodology">click here</a>. For regional prices <a href="/regions">click
+      here</a>. To download the data <a href="/data.csv">click here</a>.</p>
+    <h2>Get price alerts</h2>
+    <div class="steps">
+      <p>Step 1: enter your postcode.</p>
+      <p>Step 2: choose how often to hear from us.</p>
+    </div>
+    <form action="/alerts" method="post">
+      <p>Fields in red are required.</p>
+      <label for="postcode" class="required">Postcode</label>
+      <input id="postcode" name="postcode" autocomplete="postal-code">
+      <label for="freq">How often</label>
+      <select id="freq" name="freq"><option>Weekly</option><option>Monthly</option></select>
+      <button type="submit">Subscribe</button>
+    </form>
+  </main>
+</body>
+</html>
