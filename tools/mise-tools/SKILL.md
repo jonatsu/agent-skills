@@ -63,7 +63,7 @@ Prefer:
 
 Scope by the consumer, not the author. A tool used only inside a repository's own commands belongs in that
 repository's `mise.toml`. But a tool invoked by a process the harness spawns from an arbitrary working
-directory — an editor hook, an MCP server launcher, a connect-time credential helper — must go in the global
+directory (an editor hook, an MCP server launcher, a connect-time credential helper) must go in the global
 config: its shim sits on `PATH` everywhere, yet resolves a version only from the config active in the caller's
 directory, so a repo-local declaration fails with `No version is set for shim: <tool>` anywhere else. "Narrowest
 scope" is bounded below by where the tool actually runs, which is not always where it is declared.

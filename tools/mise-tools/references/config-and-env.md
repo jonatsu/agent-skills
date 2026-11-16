@@ -11,7 +11,7 @@ Important files:
 Key behavior from upstream docs:
 
 - config files merge upward through parent dirs
-- `[tools]`, `[env]`, and `[settings]` are additive with overrides — with one exception for `tools = true`,
+- `[tools]`, `[env]`, and `[settings]` are additive with overrides, with one exception for `tools = true`,
   below
 - individual task definitions replace by task name
 - `MISE_ENV` activates `mise.<env>.toml`
@@ -101,11 +101,11 @@ config, a project `mise.local.toml` setting `UV_PYTHON = "3.12"` had no effect, 
 same file applied normally. Switching the project entry to `{ value = "3.12", tools = true }` made it win.
 
 Prefer a plain value in global config. Where a global entry must template on a tool, every project needing to
-override it has to repeat the `tools = true` form — say so where the entry is defined.
+override it has to repeat the `tools = true` form; say so where the entry is defined.
 
 ## `[env]` applies during installation, not just activation
 
-`[env]` is resolved before tools, so it reaches tool-installation subprocesses — upstream states this in
+`[env]` is resolved before tools, so it reaches tool-installation subprocesses; upstream states this in
 `docs/environments/index.md`, and the code path runs `dependency_env` → `full_env_without_tools` →
 `Toolset::env`, where the config `[env]` block is applied last and therefore overrides a tool's own
 `exec_env`.
@@ -113,7 +113,7 @@ override it has to repeat the `tools = true` form — say so where the entry is 
 The carve-out is mise's own self-configuration: `MISE_DATA_DIR`, `MISE_INSTALLS_DIR` and friends are read at
 process start, so set those in the shell or CI environment rather than in `[env]`.
 
-This is the supported way to control an install subprocess's environment — for example redirecting `GOPATH` so
+This is the supported way to control an install subprocess's environment, for example redirecting `GOPATH` so
 `go:` backend installs stop writing to `$HOME/go`. Load `references/go-backend.md` for that case.
 
 `install_env` on a `[tools]` entry is a different scope: it applies to **that tool's own install and

@@ -18,7 +18,7 @@ Likely causes:
 
 A tool declared only in a project `mise.toml` is on `PATH` as a shim everywhere, but the shim resolves a
 version only from the config active in the caller's directory. A process the harness launches from
-elsewhere — an editor hook, an MCP launcher, a connect-time credential helper — then fails with
+elsewhere (an editor hook, an MCP launcher, a connect-time credential helper) then fails with
 `No version is set for shim: <tool>` even though the tool is installed. Move such a tool to the global
 config; see `SKILL.md`, "Choose Scope and Execution". Observed on mise 2026.9.7.
 
@@ -79,7 +79,7 @@ recover.
 
 ### A force-reinstall breaks when the installer is itself a mise-managed tool
 
-`mise install --force` with no arguments reinstalls **every** configured tool and exempts nothing — including tools mise
+`mise install --force` with no arguments reinstalls **every** configured tool and exempts nothing, including tools mise
 uses for installation. Declare `cargo-binstall` in the config and a forced run replaces cargo-binstall while other
 `cargo:` crates are being installed through it. The first forced run fails and plain re-runs then succeed, so it reads as
 intermittent.
@@ -100,7 +100,7 @@ Two things compound it:
   installed leaves it inert, so a config can declare a fallback it never uses.
 
 Check for **every** copy before concluding it is gone. `type -a cargo-binstall` can list a stray `CARGO_HOME/bin` artifact
-from a plain `cargo install`, the mise install directory, and the shim — and `CARGO_HOME/bin` often wins on PATH, so removing
+from a plain `cargo install`, the mise install directory, and the shim. `CARGO_HOME/bin` often wins on PATH, so removing
 only the mise tool entry changes nothing.
 
 ### Go tools write to `$HOME/go`
@@ -121,7 +121,7 @@ Observed on mise 2026.9.7.
 ### `mise prune` uninstalls by the active config and skips the lockfile
 
 `mise prune` with no flags prunes only configuration links; pruning tools needs `--yes`. `mise prune --yes` then
-uninstalls every installed tool version not referenced by the config active in the **current directory** — so
+uninstalls every installed tool version not referenced by the config active in the **current directory**; so
 running it inside a project can uninstall a version only a global or sibling config still wants, including an
 orphaned older version of a tool you depend on. Inspect `mise ls` first, and run prune from a directory whose
 config resolution covers everything you mean to keep. Prune also does not edit `mise.lock`. Observed on mise
