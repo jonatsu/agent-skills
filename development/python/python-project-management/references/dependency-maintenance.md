@@ -86,7 +86,7 @@ pull request keeps the review queue small enough that the updates actually get r
 dependencies group only patches, so a minor bump to something users run arrives as its own reviewable change.
 
 **Use `package-ecosystem: uv` for a uv project, not `pip`.** Dependabot lists them as separate ecosystems, and
-the `pip` one does not update `uv.lock` — so a project configured with `pip` keeps the very lock this skill
+the `pip` one does not update `uv.lock`, so a project configured with `pip` keeps the very lock this skill
 insists on committing permanently stale. Confirmed against GitHub's Dependabot options reference on
 2026-09-04; check the current ecosystem list if the project uses a different package manager.
 

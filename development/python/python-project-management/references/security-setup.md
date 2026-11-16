@@ -101,7 +101,7 @@ detect-secrets audit --report .secrets.baseline
 ```
 
 A false positive is re-baselined with `detect-secrets scan --baseline .secrets.baseline`. A real secret is
-removed from the code **and rotated** — a committed credential is compromised even after the commit is
+removed from the code **and rotated**: a committed credential is compromised even after the commit is
 rewritten, because it existed in a working tree and possibly a push.
 
 ## Workflow Auditing
