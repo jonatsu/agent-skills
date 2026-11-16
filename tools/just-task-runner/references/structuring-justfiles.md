@@ -38,7 +38,7 @@ import? 'optional/local.just'
 **Duplicate definitions.** A duplicate is an error unless `set allow-duplicate-recipes` or
 `set allow-duplicate-variables` is in force. With them, shallower wins: a definition in the importing file
 overrides one from an import, which overrides one from a deeper import. Between two duplicates at the same
-depth, the **earlier** import wins — the opposite of the "last one wins" most configuration formats use.
+depth, the **earlier** import wins; the opposite of the "last one wins" most configuration formats use.
 Upstream considers this a bug held in place by backwards compatibility, so do not build an override scheme on
 it. Prefer arranging for the override to live at a shallower depth.
 
@@ -84,7 +84,7 @@ already has its own justfile reached by a hand-written forwarding recipe:
    already, forwarded by hand and exposing one recipe instead of all of them. Replace it with `mod sub 'sub'`
    and the whole subdirectory interface becomes `just sub::…`.
 3. **Move one cluster at a time**, and after each, check relative paths against the module's new working
-   directory, and re-add any setting the cluster depended on — settings do not cross the module boundary.
+   directory, and re-add any setting the cluster depended on; settings do not cross the module boundary.
 4. **Drop the prefix from moved recipe names.** `test-vault` inside `mod vault` becomes `vault::test`; leaving
    it produces `vault::test-vault`.
 5. **Re-check the interface** with `just --list`, `just --list <module>`, and `just --groups`. A recipe that

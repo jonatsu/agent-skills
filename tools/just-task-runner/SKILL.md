@@ -130,7 +130,7 @@ the file or module, so introduce them as a deliberate decision rather than to fi
 
 Ordinary recipe lines run in separate shell invocations. Use one shell line or a script recipe when
 working-directory changes, variables, traps, or shell state must persist across commands. State does not cross
-recipes at all, so a recipe cannot activate an environment for a later one — invoke the environment's binaries
+recipes at all, so a recipe cannot activate an environment for a later one; invoke the environment's binaries
 directly, as with a virtualenv's `./venv/bin/python`, instead of sourcing an activation script. A script
 recipe's body also does not abort on a failing line the way separate recipe lines do; give it the target
 shell's error handling.
