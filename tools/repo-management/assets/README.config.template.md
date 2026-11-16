@@ -1,4 +1,4 @@
-<!-- Config README template — XDG config dirs, dotfiles, script folders. The
+<!-- Config README template: XDG config dirs, dotfiles, script folders. The
 audience is future-you, probably confused. Replace placeholders; drop unused
 sections. -->
 

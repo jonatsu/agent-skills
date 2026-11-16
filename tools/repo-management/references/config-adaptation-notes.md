@@ -79,11 +79,11 @@ adapt it when an established repository already carries deliberate conventions.
   prose-wrap offers `preserve`, `always` and `never` where mdformat's `--wrap` takes a numeric column. No
   head-to-head trial is on record, so treat the preference itself as a stated convention rather than a
   measured result.
-- Shell repos get both `shellcheck` (lint) and `shfmt` (format) — they only touch shell files via the hooks'
+- Shell repos get both `shellcheck` (lint) and `shfmt` (format); they only touch shell files via the hooks'
   own file matching, so both stay in the baseline.
-- Keep shell formatting in `.editorconfig`, not in `shfmt` flags. shfmt reads `.editorconfig` —
+- Keep shell formatting in `.editorconfig`, not in `shfmt` flags. shfmt reads `.editorconfig`:
   `indent_style`/`indent_size` plus its extensions (`switch_case_indent`, `binary_next_line`,
-  `space_redirects`, `keep_padding`, `function_next_line`) — but ONLY when no formatting flag is passed on the
+  `space_redirects`, `keep_padding`, `function_next_line`), but ONLY when no formatting flag is passed on the
   command line; any printer flag (`-i`/`-ci`/`-sr`/…) makes shfmt ignore `.editorconfig` entirely. So give the
   shfmt hook operation flags only (e.g. `-w`) and let `.editorconfig` be the single source of truth.
   Do not set shfmt's `shell_variant` property to `auto`: shfmt 3.13.1 passes that value to a parser that does

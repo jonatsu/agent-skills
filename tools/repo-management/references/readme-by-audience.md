@@ -6,13 +6,13 @@ asset and include only the sections marked for that type.
 
 ## Project types
 
-- **OSS** — public projects for contributors and users worldwide. Reader needs install, usage, contributing,
+- **OSS**: public projects for contributors and users worldwide. Reader needs install, usage, contributing,
   license. Template: `assets/README.oss.template.md`.
-- **Personal** — side projects, portfolio pieces, experiments. Reader is future-you and portfolio viewers.
+- **Personal**: side projects, portfolio pieces, experiments. Reader is future-you and portfolio viewers.
   Template: `assets/README.personal.template.md`.
-- **Internal** — team codebases, services, internal tools. Reader is a new teammate needing setup,
+- **Internal**: team codebases, services, internal tools. Reader is a new teammate needing setup,
   architecture, and operational runbooks. Template: `assets/README.internal.template.md`.
-- **Config** — XDG config dirs, dotfiles, script folders. Reader is future-you, probably confused, asking
+- **Config**: XDG config dirs, dotfiles, script folders. Reader is future-you, probably confused, asking
   "what is this?". Template: `assets/README.config.template.md`.
 
 When the type is unclear, ask. Default to the generic `assets/README.template.md` rather than assuming OSS.
@@ -37,7 +37,7 @@ When the type is unclear, ask. Default to the generic `assets/README.template.md
 license text are maintained in `CONTRIBUTING.md` and `LICENSE`; restating them here creates two copies that
 drift.
 
-This matrix says which sections a type needs. It does not say how to make the result good — for the hook, the
+This matrix says which sections a type needs. It does not say how to make the result good: for the hook, the
 ordering, what evidence earns a place above the fold, and when a section should be cut, apply
 `writing-readmes`. For prose quality inside whichever template you pick, apply `writing-for-humans`.
 

@@ -68,7 +68,7 @@ Use assets as starting points after inspecting the repository:
   committing user's home path and `.env` files. It needs Node.js 22 or later. When the user wants more data kept
   out of commits, such as email addresses or internal host names, add pattern rules as the adaptation notes
   below describe.
-- `.shellcheckrc`: The companion to the ShellCheck hook above, and the one place its options belong — the hook,
+- `.shellcheckrc`: The companion to the ShellCheck hook above, and the one place its options belong: the hook,
   an editor extension, and a direct CLI run all read it, so per-tool arguments drift apart. The bundled profile
   enables every optional check and disables two by name, with the reason attached to each. Adopting it in an
   established repository turns the whole shell tree red at once; the file's own comments carry the sweep

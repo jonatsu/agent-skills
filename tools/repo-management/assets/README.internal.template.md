@@ -1,4 +1,4 @@
-<!-- Internal README template — team codebases, services, internal tools. Focus
+<!-- Internal README template: team codebases, services, internal tools. Focus
 on onboarding a new teammate and operational knowledge. Replace placeholders;
 drop unused sections. Do not invent contact details or URLs. -->
 

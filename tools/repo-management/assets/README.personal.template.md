@@ -1,4 +1,4 @@
-<!-- Personal README template — side projects, portfolio pieces, experiments.
+<!-- Personal README template: side projects, portfolio pieces, experiments.
 Balance documenting for future-you with showcasing. Replace placeholders; drop
 unused sections. -->
 
@@ -14,7 +14,7 @@ unused sections. -->
 
 ## Tech stack
 
-- **{{CATEGORY}}**: {{TECHNOLOGY}} — {{WHY_CHOSEN}}
+- **{{CATEGORY}}**: {{TECHNOLOGY}}, {{WHY_CHOSEN}}
 
 ## Getting started
 
