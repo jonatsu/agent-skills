@@ -217,6 +217,18 @@
         "No timing, state or interface claim contradicts another section.",
         "Explains each concept once where it is first relied on, and carries no restated context, verification narration or empty section."
       ]
+    },
+    {
+      "id": "no-spec-design-grows-large",
+      "prompt": "Design self-service account deletion for our web app. No specification exists; the request is only 'let users delete their accounts'. Cover what the design needs, including what users see during deletion, whether there is a grace period, and what happens to shared content they created.",
+      "behavior": "When the design starts deciding user-visible behavior that no spec covers, stop deciding it, propose a spec, and record the decision as open in the design basis.",
+      "outcomes": [
+        "Identifies the grace period, the deletion experience, and the fate of shared content as user-visible behavior no spec covers.",
+        "Proposes writing a spec with writing-specs, says why, and leaves the decision to the user.",
+        "Records that decision in the design basis as pending, or as a waiver with its reason.",
+        "Labels any of that behavior it states as a recommendation for the user to confirm, not a decision.",
+        "Continues the technical design that holds under any answer, and does not hand the design to implementation planning while the decision is open."
+      ]
     }
   ]
 }

@@ -11,20 +11,6 @@ embedded skills' campaign in `docs/evaluations/skills/2026-09-16-embedded-skill-
 below to "agent-setup" name that repository. Archived reviews still deferred are the rows marked "Review is
 deferred" in `archived/README.md` on the `archived` branch.
 
-## Engineering Pipeline Follow-Ups
-
-Added 2026-10-04, left open by the pipeline rewiring that made the skills match
-[the engineering pipeline](engineering/README.md) (commits `11925447`, `a0e2d2e2`, `f7e89b7f`; the reasoning is in
-the routing check (agent-setup's `docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md`)).
-
-- **Evals for the two new behaviors.** Neither has a case in its package's `evals/behavior.json`, so a later edit
-  can drop it unnoticed. Add a case to `engineering/technical-design/evals/behavior.json`: a design with no
-  spec that starts deciding user-visible behavior, journeys, or acceptance must stop, propose a spec with
-  `writing-specs`, and record the user's decision in the design basis. Add one to
-  `review/conformance-review/evals/behavior.json`: a change governed by a design and plan but no spec must be
-  compared against those two, with the missing spec reported as a coverage limit, and a change governed by none of
-  the three must be returned as general code review.
-
 ## Description and Prose Pass Ledger
 
 Every skill gets two passes: `writing-skill-descriptions` on its description, and `writing-for-agents`

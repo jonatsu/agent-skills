@@ -119,6 +119,27 @@
         "Keeps broad drift in the review summary and does not create a duplicate standalone report.",
         "Does not post to GitHub or mutate external review state."
       ]
+    },
+    {
+      "id": "design-and-plan-without-spec",
+      "prompt": "Review this change against its accepted technical design and implementation plan. The design adds a nightly job that archives projects inactive for 90 days; the plan lists the job, its migration, and its tests. No product specification exists. The implementation follows the design, but archived projects vanish from the dashboard without notifying their owners.",
+      "behavior": "Without a spec, compare against the design and plan, and report the missing spec as a coverage limit.",
+      "outcomes": [
+        "Compares the implementation with the design and the plan item by item.",
+        "Reports the missing spec as a coverage limit.",
+        "Treats the missing owner notice as user-visible behavior that stays unverified, neither a conformance pass nor a failure.",
+        "Does not state that the change fully conforms."
+      ]
+    },
+    {
+      "id": "no-basis-conformance-request",
+      "prompt": "Check whether this pull request conforms to what we agreed. It adds rate limiting to the public API. Nothing was written down: there is no spec, design, or plan.",
+      "behavior": "When no spec, design, or plan governs the work, conformance has no basis, so the request goes to general code review.",
+      "outcomes": [
+        "Says conformance has no basis without a spec, design, or plan.",
+        "Returns the request as general code review.",
+        "Does not reconstruct requirements from the code or the pull-request description and judge against them."
+      ]
     }
   ]
 }
