@@ -27,7 +27,7 @@ ordinary staging and commits do not need a history-rewrite procedure.
 - Verify the resulting Git object or ref. Command success alone does not prove that the intended content
   moved.
 - A claim marked `Verified on git <version>, <date>` was reproduced in a scratch repository on that date. A
-  claim marked *reported, not measured here* is unverified — confirm it yourself before relying on it.
+  claim marked *reported, not measured here* is unverified; confirm it yourself before relying on it.
 
 ## Concurrent Work
 
