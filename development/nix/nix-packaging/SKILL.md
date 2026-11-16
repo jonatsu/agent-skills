@@ -33,11 +33,11 @@ nix-prefetch-url --unpack https://github.com/owner/repo/archive/v1.0.0.tar.gz
 
 Common fetchers:
 
-- `fetchurl` — any URL. Requires `url` and `hash`.
-- `fetchFromGitHub` — GitHub repos. Requires `owner`, `repo`, `rev`, `hash`. Pin `rev` to a tag or commit; a
+- `fetchurl`: any URL. Requires `url` and `hash`.
+- `fetchFromGitHub`: GitHub repos. Requires `owner`, `repo`, `rev`, `hash`. Pin `rev` to a tag or commit; a
   branch name moves and breaks reproducibility.
-- `fetchzip` — zip archives. Auto-extracts.
-- `fetchgit` — raw git repos. Use sparingly; prefer `fetchFromGitHub`.
+- `fetchzip`: zip archives. Auto-extracts.
+- `fetchgit`: raw git repos. Use sparingly; prefer `fetchFromGitHub`.
 
 Use `lib.fakeHash` only while scaffolding: the first build fails and prints the real hash, which replaces it.
 
@@ -163,7 +163,7 @@ refer to it.
 
 ### AppImage Packaging
 
-Use `appimageTools` — the canonical nixpkgs route. `wrapType2` handles extraction and bundles the common
+Use `appimageTools`, the canonical nixpkgs route. `wrapType2` handles extraction and bundles the common
 runtime libraries:
 
 ```nix
@@ -200,11 +200,11 @@ runtime dependency list.
 
 ### Dependency Categories
 
-| Attribute               | When to use                                                                                                                                      |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `nativeBuildInputs`     | Tools needed at BUILD time only: compilers, code generators, `pkg-config`, `cmake`, `meson`, `makeWrapper`                                       |
-| `buildInputs`           | Libraries needed at BUILD and RUN time: `gtk3`, `glib`, `mesa`, `openssl`                                                                        |
-| `propagatedBuildInputs` | Libraries needed by consumers of this package at their build time. Use sparingly — only when headers or pkg-config files are required downstream |
+| Attribute               | When to use                                                                                                                                     |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nativeBuildInputs`     | Tools needed at BUILD time only: compilers, code generators, `pkg-config`, `cmake`, `meson`, `makeWrapper`                                      |
+| `buildInputs`           | Libraries needed at BUILD and RUN time: `gtk3`, `glib`, `mesa`, `openssl`                                                                       |
+| `propagatedBuildInputs` | Libraries needed by consumers of this package at their build time. Use sparingly; only when headers or pkg-config files are required downstream |
 
 `autoPatchelfHook` resolves only libraries listed in `buildInputs`, so put every library a prebuilt binary links
 against there. Reference store content through package interpolation (`${gtk3}/lib`), never a literal
