@@ -61,5 +61,5 @@ contexts, where each lives, and how they relate:
 - **Ordering ↔ Billing**: shared `CustomerId` and `Money` types.
 ```
 
-The filenames above are illustrative — follow the repository's own convention where it has one, as `SKILL.md`
+The filenames above are illustrative; follow the repository's own convention where it has one, as `SKILL.md`
 requires. Infer which context a topic belongs to from the map; when it is unclear, ask rather than guess.

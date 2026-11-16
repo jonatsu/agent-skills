@@ -21,13 +21,13 @@ this skill to capture them; when this skill's questioning widens into a full des
 ## During the session
 
 - **Challenge against the glossary.** When a term conflicts with the language already recorded, call it out at
-  once: "The glossary defines *cancellation* as X, but you mean Y — which is it?"
+  once: "The glossary defines *cancellation* as X, but you mean Y. Which is it?"
 - **Sharpen fuzzy language.** When a term is vague or overloaded, propose a precise canonical word and force the
-  choice: "You said *account* — the Customer or the User? Those are different things."
+  choice: "You said *account*: the Customer or the User? Those are different things."
 - **Stress-test with concrete scenarios.** When a relationship is asserted, invent a specific edge case that
   probes the boundary between concepts and forces a precise answer, rather than accepting the general statement.
 - **Cross-check against the code.** When behavior is claimed, check whether the code agrees. Surface a
-  contradiction as a question: "The code cancels whole Orders, but you said partial cancellation exists — which
+  contradiction as a question: "The code cancels whole Orders, but you said partial cancellation exists. Which
   is right?"
 - **Capture each term the moment it resolves.** A decision captured later is a decision remembered wrong.
 
@@ -37,7 +37,7 @@ listed back to the user as a question.
 ## The glossary is vocabulary only
 
 The glossary defines what a term *is*, in a sentence or two, and names the words to avoid for it. It is not a
-spec, a scratchpad, or a home for implementation decisions — those are code, a design doc, or a decision record.
+spec, a scratchpad, or a home for implementation decisions; those are code, a design doc, or a decision record.
 A term earns a place only when it is specific to this project's domain; general programming concepts do not
 belong even when the project uses them constantly. Write each definition for a newcomer to the domain. The entry
 shape and its rules are in [references/glossary-format.md](references/glossary-format.md).
@@ -46,11 +46,11 @@ shape and its rules are in [references/glossary-format.md](references/glossary-f
 
 Find the existing convention before creating anything: a glossary file already in the repository, a terms
 section in the documentation set, or a location the contributor guide names. Two or more entries establish a
-convention — continue it exactly. Where none exists, create a single glossary file where the documentation set
+convention; continue it exactly. Where none exists, create a single glossary file where the documentation set
 would look first, and create it **lazily**, only when the first term resolves.
 
-When a codebase holds more than one bounded context — distinct areas where the same word legitimately means
-different things — keep a glossary per context and one map of how they relate, rather than forcing a single
+When a codebase holds more than one bounded context (distinct areas where the same word legitimately means
+different things), keep a glossary per context and one map of how they relate, rather than forcing a single
 glossary to carry conflicting definitions. The multi-context layout is in
 [references/glossary-format.md](references/glossary-format.md).
 
