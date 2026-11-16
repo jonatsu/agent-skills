@@ -29,7 +29,7 @@ Cut filler, repetition, hedging, and praise for the project or its tools: a docu
 spends the reader's attention proving nothing. Every sentence carries a fact, a constraint, a consequence, or an
 action.
 
-Length is not the target — the cost of being wrong is. These documents are read deliberately, by someone who
+Length is not the target: the cost of being wrong is. These documents are read deliberately, by someone who
 followed a route to get here, so they owe more detail than the floor does: the reader came for exactly what the
 floor could not afford to carry, and arriving at a summary of it is a wasted trip. Write what the reader must
 not get wrong in as much detail as getting it wrong would cost, and leave out what would merely be nice to
@@ -38,8 +38,8 @@ that does.
 
 ## Read-When Lines Are Trigger Conditions
 
-Every routing entry, document header, and skill description answers "when should I load this" — not "what is
-this about". "Verification gates" fails; "which gate proves what — read before gating a change, not after a
+Every routing entry, document header, and skill description answers "when should I load this", not "what is
+this about". "Verification gates" fails; "which gate proves what: read before gating a change, not after a
 result surprises you" routes. Front-load the discriminating words. Cover each distinct trigger once; add an
 exclusion only when it prevents likely misrouting. One owner per trigger across the whole system: when two
 descriptions claim the same phrase, move the trigger to the document that carries the full treatment and cut
@@ -84,7 +84,7 @@ routes without copying their contents into the floor.
 
 Progressive disclosure applies inside documents, not only between them. A document's first paragraph answers
 "should I keep reading"; a section's first sentence answers it for the section. The reader who stops early
-should leave with a correct, if shallow, model — never a wrong one.
+should leave with a correct, if shallow, model, never a wrong one.
 
 ## Maximize the Search Surface
 
@@ -106,7 +106,7 @@ The pin makes the coordinates reproducible; revalidate them when the identified 
 Point only at what a cold-start reader can open: a private repository, a deleted file, or another session's
 scratch file is a dead pointer.
 State predicates, never countable inventories: "every aspect gated on the desktop capability", not "the seven
-desktop aspects" — a count is wrong at the next addition and nothing flags it.
+desktop aspects": a count is wrong at the next addition and nothing flags it.
 
 ## Stamp What Facts Hold At
 
@@ -120,22 +120,22 @@ happens, move the stamp; when it cannot happen, add a dated unverified-since cav
 
 A document that could be mistaken for outranking something must say it does not. Frozen records state they are
 historical; findings state they are advisory and need re-verification; plans state that built code supersedes
-them. The two global rules — the user's current instruction outranks stored guidance, and the repository
-outranks its own documentation — hold everywhere and need not be restated per file, but nothing may contradict
+them. The two global rules (the user's current instruction outranks stored guidance, and the repository
+outranks its own documentation) hold everywhere and need not be restated per file, but nothing may contradict
 them.
 
 ## Memory Is Fact Plus Rationale, Never Bare Imperative
 
 A stored note written as a command ("always delete X before Y") executes as an instruction in a later session
 with none of its original context. Write the fact, the why, and the condition: "X caches Y; deleting X before
-Y prevented Z on <date> — applies only when W." The reading agent decides; the note informs.
+Y prevented Z on <date>; applies only when W." The reading agent decides; the note informs.
 
 ## Every Claim Is Verified, Generated, or Flagged
 
 Confident prose from recall is the failure mode that fabricated configuration options and wrong defaults enter
 by. A claim about external behavior cites what verified it; a claim derivable from code should be generated or
 should point at the code; anything else is labelled unverified. When editing a document, the claims you did
-not check keep their existing status — do not silently launder them into verified.
+not check keep their existing status; do not silently launder them into verified.
 
 ## Checkable Subset
 

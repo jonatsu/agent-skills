@@ -18,7 +18,7 @@ maintenance cost of keeping that assembly correct as the repository changes.
 
 This skill owns the system level: which documents exist, the genre each belongs to, how the floor file routes
 to them, when to shard, whether they still tell the truth, and how the whole is measured. Instruction-file
-internals — writing and maintaining `AGENTS.md`/`CLAUDE.md` content, scoped instructions, `llms.txt` — belong
+internals (writing and maintaining `AGENTS.md`/`CLAUDE.md` content, scoped instructions, `llms.txt`) belong
 to `agents-context-docs`; invoke it as the executor for those files. Extracting a repeated procedure into a
 skill belongs to `skill-forge`.
 
@@ -40,8 +40,8 @@ existing repository's established conventions outrank this skill's defaults.
   (below), read [references/walk-test.md](references/walk-test.md) for the behavioral measurement, and delegate
   instruction-file internals to the `agents-context-docs` skill's audit branch. Coverage is a separate
   question from navigation, and the walk test cannot ask it: compare the decisions the repository visibly
-  made — framework and dependency choices, data models, authentication strategies, anything expensive to
-  reverse — against the records in its decisions genre, and report an unrecorded one as a gap. Deliver
+  made (framework and dependency choices, data models, authentication strategies, anything expensive to
+  reverse) against the records in its decisions genre, and report an unrecorded one as a gap. Deliver
   findings by severity with evidence; record measurements as a dated file in the repository's evaluations
   genre.
 - **Truth audit:** check whether documents still tell the truth, from one README to the whole tree: stale
@@ -57,19 +57,19 @@ document in any branch.
 Five concerns, in order of leverage. Topology is deliberately last.
 
 1. **Floor discipline.** The always-loaded file taxes every session of every agent. It carries only never-miss
-   rules and the routing index; everything else is a pointer. Grow it from observed failures — every floor
+   rules and the routing index; everything else is a pointer. Grow it from observed failures: every floor
    rule should trace to a failure it prevents. Apply the `agents-context-docs` skill's accretion test to keep
    the floor from becoming an incident log.
 
    **A floor over its budget is a routing defect until routing is proven clean.** Diagnose before trimming:
    trimming under budget pressure deletes meaning a word at a time, while moving one route block can free hundreds of
    words and make its contents more reachable. When a section does move, the never-miss obligation stays as one
-   imperative line and its trigger, exceptions and rationale go to the hub — "archive before reporting done"
+   imperative line and its trigger, exceptions and rationale go to the hub: "archive before reporting done"
    stays, while its trigger details leave.
 
    Routing is the first lever but not always an available one: a ruleset loaded at user or machine scope has
    no hub to route to, because no second file loads in every session of every harness. There the register and
-   the accretion test are the whole remedy — shorten by deleting what changes no decision, never by thinning a
+   the accretion test are the whole remedy: shorten by deleting what changes no decision, never by thinning a
    rule.
 
 2. **Read-when sharpness.** Every index entry, document header, and skill description is a load/skip
@@ -82,8 +82,8 @@ Five concerns, in order of leverage. Topology is deliberately last.
    its update semantics and its place in the override chain. Live code outranks descriptions of current behavior;
    accepted specifications govern intended observable behavior; the user's current instruction outranks stored
    guidance. The genre table and named default layout live in
-   [references/default-layout.md](references/default-layout.md). Mixing genres — a living reference inside a
-   frozen decision, state notes inside the floor — is the root failure behind most context rot.
+   [references/default-layout.md](references/default-layout.md). Mixing genres (a living reference inside a
+   frozen decision, state notes inside the floor) is the root failure behind most context rot.
 
 4. **Truth maintenance.** One owner per fact, and the owner is the file someone must touch when the fact
    changes; everywhere else carries a pointer. Generate what is derivable from code and never hand-edit the
@@ -99,8 +99,8 @@ Five concerns, in order of leverage. Topology is deliberately last.
 
 - Durable state lives in agent-neutral files in the repository. The floor is `AGENTS.md`, with `CLAUDE.md` as
   a symlink where a client requires that name.
-- Client capabilities — skill auto-discovery, subagents, lifecycle hooks, proprietary memory, auto-compaction
-  — are progressive enhancement. Every one of them gets a files-based fallback reachable from the floor. Put
+- Client capabilities (skill auto-discovery, subagents, lifecycle hooks, proprietary memory, auto-compaction)
+  are progressive enhancement. Every one of them gets a files-based fallback reachable from the floor. Put
   a skill's trigger in the floor only when it is a floor-level choice; otherwise route the floor to a focused
   skill or workflow index whose own read-when entries expose the trigger without taxing unrelated sessions.
 - Deterministic obligations belong to repository-run gates (pre-commit, CI, task runner), which fire whichever
@@ -125,7 +125,7 @@ file that index carried by the other one. The handshake is the route: the floor 
 names the evidence. Losing either end is a finding in one checker and silence in the other.
 
 One unreachable parent reports as many findings as it has children, so read a batch of unreachable files as one
-broken route rather than as many problems — and check that the parent's own entries are structural, since a
+broken route rather than as many problems, and check that the parent's own entries are structural, since a
 route landing on an index whose links are prose stops there.
 
 Scripts prove structure, not behavior. The behavioral acceptance gate is the walk test in

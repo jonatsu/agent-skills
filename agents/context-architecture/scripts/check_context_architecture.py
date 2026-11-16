@@ -271,7 +271,7 @@ def _structural_paths(text: str, base: Path, root: Path) -> set[Path]:
 
 
 def _routing_roots(root: Path, excludes: tuple[str, ...]) -> list[Path]:
-    """The root floor plus every scoped instruction file — clients load these by location."""
+    """The root floor plus every scoped instruction file; clients load these by location."""
     return sorted(path for path in _repository_files(root, excludes) if path.name in FLOOR_NAMES)
 
 
@@ -279,7 +279,7 @@ def _reachable(seeds: list[Path], root: Path) -> tuple[set[Path], list[Finding]]
     """Walk structural routes from the routing roots to everything they reach.
 
     Args:
-        seeds: Routing roots — the floor and every scoped instruction file.
+        seeds: Routing roots: the floor and every scoped instruction file.
         root: Repository root, used to resolve root-relative route targets.
 
     Returns:
@@ -423,8 +423,8 @@ def check_routing_table_headers(document_text: str, relative: str) -> list[Findi
     A table routes only when both headers are recognized, so either one alone is
     a near miss worth reporting at its own line rather than as unreachable
     children elsewhere. The two directions need different evidence. A trigger
-    header is distinctive enough to convict on its own. A target header is not —
-    `File` heads many tables that route nothing — so the missing-trigger case is
+    header is distinctive enough to convict on its own. A target header is not:
+    `File` heads many tables that route nothing, so the missing-trigger case is
     reported only when the target cells actually carry document links, which is
     what makes a reader treat the table as a route.
     """

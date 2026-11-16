@@ -71,11 +71,11 @@ Two rules keep it working, and both are cheap now and expensive later:
 Progressive disclosure works downward as well as outward. A subtree file is not decoration, and each kind
 answers a different question:
 
-| Give it     | When                                                                                                                                               |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AGENTS.md` | the subtree has a rule an agent can violate *from outside it* — a sudo boundary, a generated tree, a deploy path. Not merely because it is complex |
-| `README.md` | a reader arriving there must choose between its files and the filenames do not settle it                                                           |
-| Both        | a subsystem with its own gates and its own findings: it indexes its own evidence and stops taxing the floor                                        |
+| Give it     | When                                                                                                                                              |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AGENTS.md` | the subtree has a rule an agent can violate *from outside it*: a sudo boundary, a generated tree, a deploy path. Not merely because it is complex |
+| `README.md` | a reader arriving there must choose between its files and the filenames do not settle it                                                          |
+| Both        | a subsystem with its own gates and its own findings: it indexes its own evidence and stops taxing the floor                                       |
 
 The scoped `AGENTS.md` is the strongest instrument available, because it is a routing root, an evidence index,
 and it loads by location. A finding owned by a subtree should never reach the root floor at all.
@@ -95,7 +95,7 @@ seems to need two, split it.
 | `docs/plans/`         | Living while the work is unbuilt; diverges from reality after             | Proposal only; built code outranks it                | Work completes or is abandoned → `plans/archive/`     |
 | `docs/working-notes/` | Continuously, by the lane that owns it; states its own status up top      | Session state; advisory to other lanes               | Lane closes → archive                                 |
 | `docs/research/`      | Added to while its question is open; each dated file frozen once written  | Evidence behind a decision; never binding by itself  | Question settles → corpus stays, marked closed        |
-| `docs/evaluations/`   | Frozen at write time; a record, never a ledger — it tracks no status      | Evidence; later measurements supersede               | Never                                                 |
+| `docs/evaluations/`   | Frozen at write time; a record, never a ledger; it tracks no status       | Evidence; later measurements supersede               | Never                                                 |
 | `docs/findings/`      | Entries added on discovery, pruned when fixed upstream or disproven       | Advisory; verify against current state before acting | Per-entry, at consolidation                           |
 | Scoped `AGENTS.md`    | As the subtree's conventions change                                       | Binding within its subtree; narrower wins            | Subtree converges with root                           |
 | `docs/archive/`       | Never; a retired document keeps its text and gains a retirement banner    | None; history only                                   | Never                                                 |
@@ -151,7 +151,7 @@ to write it there; the directory's own `README.md` indexes what it holds.
 
 `AGENTS.md` carries, in order: an identity paragraph (what this repository is, three to five lines), the hard
 rules (each traceable to a failure it prevents), the routing index, the commands block, and an update-triggers
-table (when X changes, touch Y — freshness is part of done-ness). Use one list item per route:
+table (when X changes, touch Y; freshness is part of done-ness). Use one list item per route:
 
 ```markdown
 - Read when <condition>: [<document>](<path>.md) <purpose>.
@@ -176,22 +176,22 @@ session, or person, can find them.
 
 A small repository is complete with the floor alone. Add, in each case on first need:
 
-01. `docs/reference/` — when a how-it-works nuance outgrows a floor line.
-02. `docs/how-to/` — when a recurring task's commands outgrow the floor's commands block.
-03. `docs/specs/` — when accepted intended behavior needs a durable contract across design or implementation work.
-04. `docs/findings/` — on the first non-obvious gotcha worth keeping; add a symptom → file index (in the floor
+01. `docs/reference/`: when a how-it-works nuance outgrows a floor line.
+02. `docs/how-to/`: when a recurring task's commands outgrow the floor's commands block.
+03. `docs/specs/`: when accepted intended behavior needs a durable contract across design or implementation work.
+04. `docs/findings/`: on the first non-obvious gotcha worth keeping; add a symptom → file index (in the floor
     or a dedicated index file) at the same time, because an unindexed finding is unreachable at need. This is
     the specific case of the general rule: **every directory added here gets its index in the same change.**
-05. `docs/decisions/` and `docs/plans/` — on the first design question that gets settled or scoped.
-06. `docs/working-notes/` — when multi-session or multi-lane work needs durable state; add the floor rule
+05. `docs/decisions/` and `docs/plans/`: on the first design question that gets settled or scoped.
+06. `docs/working-notes/`: when multi-session or multi-lane work needs durable state; add the floor rule
     from the floor contract in the same change.
-07. `docs/research/<subject>/` — when evidence gathered toward a question is worth keeping past the session.
-08. `docs/evaluations/` — on the first recorded assessment (the first walk test creates it).
-09. An architecture map — only when "how does this fit together" questions outgrow the floor's identity
+07. `docs/research/<subject>/`: when evidence gathered toward a question is worth keeping past the session.
+08. `docs/evaluations/`: on the first recorded assessment (the first walk test creates it).
+09. An architecture map: only when "how does this fit together" questions outgrow the floor's identity
     paragraph. Give it a section index with stable anchors (`§N`, frozen forever once assigned).
-10. `docs/archive/` — on the first retirement of a document other than a plan. Archive rather than delete
+10. `docs/archive/`: on the first retirement of a document other than a plan. Archive rather than delete
     anything still revivable.
-11. Scoped `AGENTS.md` files — only on genuine divergence, never as decoration.
+11. Scoped `AGENTS.md` files: only on genuine divergence, never as decoration.
 
 Conditional additions that are never part of the default: a changelog (add when change history stops being
 recoverable from commit messages alone), repository-local skills (route through `skill-forge`; add a floor
@@ -204,9 +204,9 @@ Every durable tier needs all four stages, not just the first:
 
 - **Capture gate:** entries are verified or labelled unverified; no secrets, no speculation, no bare
   imperatives (see [writing-rules.md](writing-rules.md)).
-- **Stamp:** non-obvious facts record what they were verified against — a revision, a schema, a run — because
+- **Stamp:** non-obvious facts record what they were verified against (a revision, a schema, a run) because
   that, not the write date, decides staleness.
 - **Consolidation:** on a schedule or at natural breaks, deduplicate, resolve conflicts by recency of
   verification, and merge session-scoped notes into durable tiers or drop them.
 - **Forgetting:** prune entries that are fixed upstream, disproven, or superseded. An append-only store
-  degrades the system it serves; removal is maintenance, not loss — git history keeps the body.
+  degrades the system it serves; removal is maintenance, not loss: git history keeps the body.

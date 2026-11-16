@@ -23,14 +23,14 @@ metrics and the failure-mode mapping.
    file edited, right command proposed, right diagnosis stated) or clearly commits to a wrong path. Only
    intervene to stop, never to redirect.
 4. **Score.** Record per task, per client:
-   - **Tokens to first correct action** — the headline efficiency number when the client exposes a token
+   - **Tokens to first correct action**: the headline efficiency number when the client exposes a token
      count at that point. Otherwise record files opened and tool calls before the first correct action as the
      fallback. Fallback comparisons are ordinal, and later runs must use the same substitute to preserve the
      series.
-   - **Wrong loads** — documents opened that a correct route would not touch. Do not count a load that produced
+   - **Wrong loads**: documents opened that a correct route would not touch. Do not count a load that produced
      a verified material finding; record it separately as a productive detour and revise the answer key's
      interpretation without rewriting the pre-run key.
-   - **Missed loads** — documents the task needed that were never opened (judged against a pre-written
+   - **Missed loads**: documents the task needed that were never opened (judged against a pre-written
      answer key of which documents each task requires).
    - Verbatim notes on where the agent hesitated, grepped fruitlessly, or asked the user.
 5. **Record.** Write a dated file in the repository's evaluations genre: task set version, client and model
@@ -56,7 +56,7 @@ Each observation indicts a specific layer; fix that layer, not the symptom:
 - Compare against the previous record, not an absolute bar: the test's value is direction under change.
 - A first run taken only after a restructure establishes a baseline; it cannot show that the restructure
   improved navigation or earned its maintenance cost.
-- One client's clean run does not generalize — client discovery and loading differ; every untested client is
+- One client's clean run does not generalize: client discovery and loading differ; every untested client is
   a coverage limit, not a supported claim.
 - Search behavior can bypass the intended topology. Record whether a route navigated to the answer or merely
   confirmed one found by search, and preserve the task vocabulary that made either path successful. One
