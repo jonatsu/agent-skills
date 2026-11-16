@@ -9,12 +9,12 @@ command or default carries over.
 
 - **Daemonless, fork-exec.** There is no long-running engine daemon; each `podman` invocation runs the
   container directly. A systemd unit that orders `docker.service` (see `compose-systemd.md`) has no daemon to
-  require under Podman — order the Podman socket or the generated unit instead.
+  require under Podman; order the Podman socket or the generated unit instead.
 - **Rootless by default, via user namespaces.** Rootless Podman maps container root to the invoking user
   through `/etc/subuid` and `/etc/subgid`; missing entries make commands fail. Container UID 0 is already
   isolated from host root without `--userns` remapping.
 - **Ports below 1024** cannot be bound rootless without `net.ipv4.ip_unprivileged_port_start`, a capability
-  grant, or a proxy — an unprivileged process is denied `CAP_NET_BIND_SERVICE`.
+  grant, or a proxy; an unprivileged process is denied `CAP_NET_BIND_SERVICE`.
 - **Volume mount suffixes Docker lacks:** `:U` recursively chowns the source to the container's UID/GID (slow
   on many-inode volumes); `:z` applies a shared SELinux label, `:Z` a private one. In a pod every container
   shares the pod's SELinux label, so one container's `:Z` exposes the volume to the whole pod.
@@ -47,7 +47,7 @@ Three paths, all pointing at the Podman socket
 but recommend no single path; choose from what the target has and verify the compose features it actually
 supports. `docker-compose` behavior against the Podman socket is otherwise the `docker-compose.md` guidance.
 
-## Quadlet — Podman's systemd Integration
+## Quadlet: Podman's systemd Integration
 
 Quadlet is a systemd generator: it reads declarative unit files at boot and on `systemctl daemon-reload` and
 generates real `.service` units. It **replaces the deprecated `podman generate systemd`** (that command
@@ -75,7 +75,7 @@ target-version checks.
   identical syntax and both names are recognized (`Containerfile` is Podman's preferred name). The
   `dockerfile-patterns.md` guidance applies as-is.
 - Podman/Buildah-specific: a `LABEL io.containers.capabilities=CAP1,CAP2` in the Containerfile records the
-  capability subset the resulting container should run with — no Docker equivalent.
+  capability subset the resulting container should run with (no Docker equivalent).
 
 ## Security-Default Divergences
 
@@ -100,7 +100,7 @@ the systemd-managed wrappers around pod creation and `kube play`.
 ## CLI Parity Pitfalls
 
 - No Podman equivalent for `docker buildx`/`builder`, `config`, `context`, `node`, `plugin`, `stack`, `swarm`,
-  or `container update`/`update` (Podman does not alter a running container — recreate it). Orchestration is
+  or `container update`/`update` (Podman does not alter a running container; recreate it). Orchestration is
   delegated to Kubernetes/CRI-O.
 - `podman volume create` errors if the volume exists (Docker's is idempotent), and a bind mount of a
   nonexistent host path errors instead of creating it. Do not rely on the Docker auto-create behavior in a
