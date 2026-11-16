@@ -465,7 +465,17 @@ edition reassigns to signifiers, and its percent-of-principles score has no sour
 skill for facts. As designs, the repository's skills are input for shaping ours: they split the work into a
 broad principle audit, a task walkthrough, and a holistic review, each with stated inputs, a stepwise
 procedure, a severity scale, a report template, and a closing limit that real users must confirm the findings.
-Credit any idea taken in `ATTRIBUTIONS.md`. Two more siblings from the same repository, read 2026-11-16:
+Credit any idea taken in `ATTRIBUTIONS.md`. The user agreed the shape on 2026-11-16:
+
+- **Take:** the three kinds of work (principle audit, task walkthrough, holistic review) as modes or as the
+  evaluate mode's methods; inputs stated first (users, tasks, context); a stepwise procedure with a severity
+  scale and a fixed report shape; and the closing limit that an expert review predicts and real users confirm,
+  with no invented success percentages.
+- **Differ:** stay independent of the medium and translate each principle into the one at hand, using the
+  interaction-design dimensions; rate findings by consequence, never by a made-up score; keep the depth
+  proportionate to the job; and build one skill with a reference per method, loaded only when needed.
+
+Two more siblings from the same repository, read 2026-11-16:
 
 - `ux-audit-rethink` combines three lenses worth considering for the skill's wider-than-usability view:
   Morville's user experience honeycomb (useful, usable, findable, credible, desirable, accessible, valuable),
