@@ -1,4 +1,4 @@
-# Buildroot — Advanced Topics
+# Buildroot: Advanced Topics
 
 For package `.mk`/`Config.in` authoring, see `buildroot-packages.md`. For board files, overlays, and `genimage`, see
 `buildroot-board-support.md`.

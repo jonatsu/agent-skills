@@ -35,12 +35,12 @@ When menuconfig is not available, search the release's `Config.in` files with th
 
 These three read similarly and behave very differently.
 
-- **`depends on X`** — a visibility and value gate. The option is available only when `X` is true. Non-forcing, and it
+- **`depends on X`**: a visibility and value gate. The option is available only when `X` is true. Non-forcing, and it
   never turns `X` on for you.
-- **`select X`** — force-enables `X` and holds it on. Its trap: `select` skips `X`'s own `depends on`. It
+- **`select X`**: force-enables `X` and holds it on. Its trap: `select` skips `X`'s own `depends on`. It
   can therefore switch `X` on even when `X`'s dependencies are unmet, which is exactly what produces an "unmet direct
   dependencies" warning. Reserve `select` for leaf symbols with few or no dependencies.
-- **`imply X`** — a weak reverse dependency that respects direct dependencies and permits the user to disable a
+- **`imply X`**: a weak reverse dependency that respects direct dependencies and permits the user to disable a
   selectable symbol. It cannot guarantee a mandatory library is enabled. Verify support in the release's Kconfig.
 
 Rule of thumb: gate with `depends on`, nudge with `imply`, and use `select` only when you are certain the target's
@@ -80,7 +80,7 @@ Config.in:12:	symbol BR2_PACKAGE_A depends on BR2_PACKAGE_B
 Config.in:20:	symbol BR2_PACKAGE_B is selected by BR2_PACKAGE_A
 ```
 
-Kconfig prints the exact chain — read it as a loop and cut one edge. The usual culprit is a `select` that closes the
+Kconfig prints the exact chain: read it as a loop and cut one edge. The usual culprit is a `select` that closes the
 ring; replacing that `select` with a `depends on`, or dropping the redundant back-reference, breaks it. Resolve the
 cycle in the `Config.in` graph; a `.config` edit cannot break it.
 

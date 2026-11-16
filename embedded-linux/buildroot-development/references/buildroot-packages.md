@@ -23,7 +23,7 @@ upstream build system.
 
 ### `generic-package` / `host-generic-package`
 
-Fully manual — you write every step. Use it only when no higher-level macro fits.
+Fully manual: you write every step. Use it only when no higher-level macro fits.
 
 ```makefile
 # package/mypkg/mypkg.mk
@@ -167,10 +167,10 @@ config BR2_PACKAGE_MYPKG
       https://example.com/mypkg
 ```
 
-- `depends on` — hides the option until the dependency is enabled.
-- `select` — force-enables the named symbol, without checking that symbol's own `depends on`. An unguarded `select` is
+- `depends on`: hides the option until the dependency is enabled.
+- `select`: force-enables the named symbol, without checking that symbol's own `depends on`. An unguarded `select` is
   the usual source of "unmet direct dependencies" warnings; see `kconfig-troubleshooting.md`.
-- `BR2_TOOLCHAIN_HAS_THREADS` — the standard guard for anything needing POSIX threads.
+- `BR2_TOOLCHAIN_HAS_THREADS`: the standard guard for anything needing POSIX threads.
 
 Register the package in a parent `Config.in` (e.g. `package/Config.in`):
 
@@ -189,15 +189,15 @@ Or source it from your `BR2_EXTERNAL` tree's `Config.in` (see `buildroot-advance
 | `<PKG>_VERSION`             | Version string (feeds the source filename)                                   |
 | `<PKG>_SOURCE`              | Source archive filename; normally keep the generated default for VCS sources |
 | `<PKG>_SITE`                | Base URL or VCS URL                                                          |
-| `<PKG>_SITE_METHOD`         | Override only — auto-detected from `<PKG>_SITE` (see below)                  |
+| `<PKG>_SITE_METHOD`         | Override only: auto-detected from `<PKG>_SITE` (see below)                   |
 | `<PKG>_GIT_SUBMODULES`      | `YES` to init submodules after clone                                         |
 | `<PKG>_LICENSE`             | SPDX identifier(s)                                                           |
 | `<PKG>_LICENSE_FILES`       | Path(s) to license text within the source                                    |
 | `<PKG>_DEPENDENCIES`        | Packages that build first (build order only)                                 |
 | `<PKG>_CONF_OPTS`           | Extra options for configure/cmake/meson                                      |
 | `<PKG>_MAKE_OPTS`           | Extra options passed to `make` at build                                      |
-| `<PKG>_INSTALL_TARGET`      | `YES` (default) — install into `$(TARGET_DIR)`                               |
-| `<PKG>_INSTALL_STAGING`     | `YES` — install headers + `.so` into `$(STAGING_DIR)`                        |
+| `<PKG>_INSTALL_TARGET`      | `YES` (default): install into `$(TARGET_DIR)`                                |
+| `<PKG>_INSTALL_STAGING`     | `YES`: install headers + `.so` into `$(STAGING_DIR)`                         |
 | `<PKG>_INSTALL_TARGET_CMDS` | Target install commands; infrastructure may provide a default                |
 
 Set `<PKG>_INSTALL_STAGING = YES` for a library that other packages link against; otherwise its headers and shared
@@ -253,7 +253,7 @@ Buildroot stamps each build step, so a bare `make` skips a package that already 
 archives; it does not necessarily download again. Rebuilding a dependency does not automatically rebuild every consumer.
 Use the release's `make help` and package-target documentation for available operations.
 
-A `-rebuild`/`-reinstall` updates `$(TARGET_DIR)` but not the packed image — follow it with `make` (or append `all`) to
+A `-rebuild`/`-reinstall` updates `$(TARGET_DIR)` but not the packed image; follow it with `make` (or append `all`) to
 regenerate the filesystem image.
 
 ## Local Source Iteration
