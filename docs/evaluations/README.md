@@ -17,7 +17,9 @@ fix outside the workspace the agent sees.
 3. Dispatch one general-purpose subagent per workspace with the `model` set. The brief gives the workspace, the
    defect as a user would report it, offline build commands, a rule to keep every write and temporary file in
    the workspace, no questions, and a report of at most 250 words. The control arm is told not to read the
-   skills under evaluation; the skill arm is told which `SKILL.md` files to read first.
+   skills under evaluation; the skill arm is told which `SKILL.md` files to read first. Name any file the agent
+   writes by its subject, such as `usability-review.md`, because the harness refuses a subagent's Markdown file
+   whose name starts with `report`.
 4. Run at most three subagents at once, the harness limit, and grade each workspace as its run finishes.
 5. Keep each run's transcript with its result, then read the code as well as the grades.
 6. Delete every workspace when the record is written.
