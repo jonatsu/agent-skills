@@ -32,13 +32,13 @@ the warning `Cannot verify signature on sstate package …, skipping acceleratio
 source. The property is that the foreign archive's content was never installed. A task restored from that
 archive, with no warning, means verification is off.
 
-**Related trap:** `BB_SIGNATURE_HANDLER` is not the setting that does any of this — it selects a task-hash
+**Related trap:** `BB_SIGNATURE_HANDLER` is not the setting that does any of this; it selects a task-hash
 generator and falls back to `noop` on an unrecognised name. See `misleading-controls.md` §7.
 
 **Upstream documents no integrity or provenance model for sstate mirrors.** Two independent surveys of the 5.0
 and 6.0 reference manuals found no signature, integrity or provenance discussion in the sstate and mirror
 chapters, while 6.0 turns hash equivalence on by default and ships a fragment pointing at a public CDN mirror.
-State this as a **gap** — do not cite a manual section for a control that is not described there, and do not
+State this as a **gap**: do not cite a manual section for a control that is not described there, and do not
 present the variables above as an upstream-recommended workflow they are not.
 
 ## Mirrors disclose what you build
@@ -72,7 +72,7 @@ bitbake-getvar -r <recipe> SRCREV
 
 ## Reproducibility as a security property
 
-Reproducibility is what lets a third party — a customer, an auditor, or you after an incident — rebuild the
+Reproducibility is what lets a third party (a customer, an auditor, or you after an incident) rebuild the
 shipped artefact and get the same bits, which is the only mechanical way to check that the released binary
 corresponds to the released source. Both reference manuals frame it in exactly those terms, with the same
 non-guarantee: **adding any layer voids the upstream reproducibility claim**, because the guarantee covers
@@ -95,12 +95,12 @@ compiler that built the product is then not described by the metadata. Say so wh
 
 The controls above are the ones a release process, not a developer, has to own:
 
-| Question at release time                         | Evidence, not a setting                                                                      |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| Did every artefact come from a build we control? | sstate signing verified with a deliberate bad-key rejection                                  |
-| Can we rebuild this exact image?                 | a passing reproducibility run, plus pinned `SRCREV`s and archived `DL_DIR`                   |
-| Did we disclose the composition to anyone?       | the mirror and monitoring-service configuration, decided explicitly                          |
-| Are the sources we must offer actually captured? | `archiver` output — mechanics and licence obligations are `yocto-openembedded-development`'s |
+| Question at release time                         | Evidence, not a setting                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Did every artefact come from a build we control? | sstate signing verified with a deliberate bad-key rejection                                 |
+| Can we rebuild this exact image?                 | a passing reproducibility run, plus pinned `SRCREV`s and archived `DL_DIR`                  |
+| Did we disclose the composition to anyone?       | the mirror and monitoring-service configuration, decided explicitly                         |
+| Are the sources we must offer actually captured? | `archiver` output: mechanics and licence obligations are `yocto-openembedded-development`'s |
 
 CVE reporting, SBOM generation and the evidence package handed to a customer belong to vulnerability
 management, which is a separate skill and a separate cadence.

@@ -39,7 +39,7 @@ Three facts to carry:
   `FIT_GENERATE_KEYS = "1"` only warns that the keys will not be used. A build with keys configured and
   signing disabled looks configured and ships nothing signed.
 - **`FIT_SIGN_INDIVIDUAL` signs each sub-image as well as the configuration.** Upstream's editorial advice on
-  it differs by release — 5.0 documents a use case for verification somewhere other than U-Boot, 6.0 calls it
+  it differs by release: 5.0 documents a use case for verification somewhere other than U-Boot, 6.0 calls it
   a complexity increase for little benefit. Name the release when advising.
 
 **How the public key reaches U-Boot is the step people skip.** Refusing an unsigned FIT needs the verifying key
@@ -65,13 +65,13 @@ generating an RSA key into the build directory is a development convenience; a r
 or a signing service, is never committed, and never reaches `DL_DIR` or sstate. If a build needs a private key
 present, say so explicitly rather than leaving it implied.
 
-For *device-held* keys — a per-unit identity rather than the signing key — the portable abstraction is
+For *device-held* keys (a per-unit identity rather than the signing key), the portable abstraction is
 **PKCS#11**, which lets the same code address a TPM, a discrete HSM, or a TEE-backed token without knowing
 which it has. On ARM parts with a secure world, `meta-arm` packages OP-TEE (`optee-os`, `optee-client`, and a
 TA devkit for building trusted applications), and a PKCS#11 trusted application then acts as an on-device soft
 HSM. The property that makes it worth the complexity: **generate the key on the device rather than importing
 one**, so the private key never exists outside the secure world, and ship only a certificate request off it.
-Where a platform has no secure world, the equivalent is a TPM or an external secure element — and where it has
+Where a platform has no secure world, the equivalent is a TPM or an external secure element, and where it has
 neither, the key is a file, and the design should say so.
 
 **Verify the produced artefact, then the negative case:**
@@ -93,7 +93,7 @@ the configuration is not doing what you think.
 ## Below the FIT: the platform's own first stage
 
 Everything above starts at U-Boot. What authenticates U-Boot itself is the SoC's boot ROM, and that layer is
-**not portable** — the container format, the key hierarchy, the fuse or OTP store and the vendor tooling
+**not portable**: the container format, the key hierarchy, the fuse or OTP store and the vendor tooling
 differ per part, and this skill will not pretend otherwise. What generalises is the shape a platform must
 provide, and the questions to ask of it:
 
@@ -107,7 +107,7 @@ provide, and the questions to ask of it:
 **The third row is the trap, and it is the same shape as `CONFIG_FIT_SIGNATURE`.** On typical parts, burning
 the root-key hash changes nothing on its own: the ROM keeps booting unsigned or badly-signed images until the
 device is transitioned to a closed lifecycle state. A build pipeline that signs correctly, fuses correctly and
-never transitions is producing devices with no secure boot at all — and every functional test passes.
+never transitions is producing devices with no secure boot at all, and every functional test passes.
 
 The verification shape that survives across vendors: **read the ROM's own authentication event log, not the
 boot outcome.** A part that boots is not evidence; a log with no authentication events is. Expect a good
@@ -129,19 +129,19 @@ also ships `dm-verity-image-initramfs.bb`, an initramfs that sets up the mapping
 
 The build-shaped problem this creates, and the reason it is worth a section rather than a pointer:
 
-> **The root hash is only known once the rootfs image is final, and something has to carry it before that** —
+> **The root hash is only known once the rootfs image is final, and something has to carry it before that**:
 > the kernel command line or an initramfs. That is a circular dependency between the initramfs and rootfs
 > tasks, and the tempting fix (rebuild everything unconditionally to avoid a stale hash) discards sstate and
 > hides the problem rather than solving it.
 
 Two ways out, both build-shaped:
 
-1. **Read the hash at boot from a footer attached after signing** — the approach `meta-avb` takes, stamping
+1. **Read the hash at boot from a footer attached after signing**: the approach `meta-avb` takes, stamping
    the hash tree, root hash and signature into an AVB footer so initramfs and rootfs build independently. Its
    tooling (`avb_sign.py` on the host, `avb_verify` on the target) also supports a PKCS#7 root-hash signature
    for `CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG`, and its signing algorithms include ML-DSA alongside RSA. The
    layer is MIT-licensed. Treat it as an alternative to the upstream path, not a replacement for it.
-2. **Bundle the initramfs into the signed kernel** — `INITRAMFS_IMAGE_BUNDLE = "1"`, so kernel verification
+2. **Bundle the initramfs into the signed kernel**: `INITRAMFS_IMAGE_BUNDLE = "1"`, so kernel verification
    implicitly covers the initramfs, or ship the initramfs inside the signed FIT. This is what closes the gap
    named at the top of this file.
 
@@ -166,14 +166,14 @@ rejecting anything has not been shown to work.
 
 `meta-integrity` packages IMA/EVM; the mechanisms and their runtime behaviour are build-system-agnostic and
 belong to `embedded-linux-bringup`. The Yocto-owned half is signing file hashes at
-image-creation time and getting the keys into the image — which has the same key-handling problem as FIT
+image-creation time and getting the keys into the image, which has the same key-handling problem as FIT
 signing above, and the same answer.
 
 ## A/B, rollback and update integrity
 
-RAUC, SWUpdate and Mender are packaged as ordinary recipes; the security question they raise — that an update
+RAUC, SWUpdate and Mender are packaged as ordinary recipes; the security question they raise (that an update
 mechanism able to write a new rootfs is an execution primitive, so its signature verification and its
-key store are part of the trust chain — is covered by `embedded-linux-bringup`. Route
+key store are part of the trust chain) is covered by `embedded-linux-bringup`. Route
 there rather than duplicating it.
 
 **Three parts of it are build-side and therefore ours**, because they are decided in metadata rather than on
@@ -183,7 +183,7 @@ the device:
   certificate rotation is a field update; a CA lets you rotate signers without touching deployed devices.
   Where a fleet's clock cannot be trusted, an updater that validates against the bundle's signing time rather
   than the current time is the difference between a working update and a mass failure at certificate expiry.
-- **The A/B slot definition exists in two places that must agree** — the partition layout in the `.wks`, and
+- **The A/B slot definition exists in two places that must agree**: the partition layout in the `.wks`, and
   the updater's own configuration plus whatever `fw_env.config` tells `libubootenv` where the U-Boot
   environment lives. A mismatch is not a build failure; it is a device that installs to the wrong slot or
   cannot record which slot it booted.
@@ -196,7 +196,7 @@ is the argument for keeping the one fact that must survive a bad update somewher
 ## x86 targets: a different first stage
 
 Where the target boots UEFI rather than U-Boot, the FIT machinery above does not apply and the equivalent is
-Secure Boot's key hierarchy — the platform key, key-exchange keys, and the allow and forbid databases — with
+Secure Boot's key hierarchy (the platform key, key-exchange keys, and the allow and forbid databases) with
 firmware-owned state readable at runtime through the EFI variables that report whether Secure Boot is enabled
 and whether the platform is still in setup mode. Enrolling your own keys is the step that turns a
 vendor-trusted chain into one you control, and the tooling for it has changed hands, so check what is current

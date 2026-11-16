@@ -19,7 +19,7 @@ bitbake-getvar IMAGE_FEATURES
 bitbake-getvar MACHINE_FEATURES
 ```
 
-`DISTRO_FEATURES:remove` in the production distro conf is the blunt instrument — dropping `alsa`, `bluetooth`,
+`DISTRO_FEATURES:remove` in the production distro conf is the blunt instrument: dropping `alsa`, `bluetooth`,
 `nfs`, `wifi`, `x11` and similar removes both the daemons and, for many recipes, the code paths compiled in.
 Two cautions:
 
@@ -76,7 +76,7 @@ oe-pkgdata-util find-path /usr/bin/foo                          # which package 
 - **`EXTRA_USERS_PARAMS` sets identical credentials on every device.** One extracted image compromises the
   fleet. Treat a baked-in password as a development convenience with a removal date, and generate per-device
   credentials at provisioning time or at first boot.
-- **`extrausers.bbclass` accepts seven commands** — `useradd`, `groupadd`, `userdel`, `groupdel`, `usermod`,
+- **`extrausers.bbclass` accepts seven commands**: `useradd`, `groupadd`, `userdel`, `groupdel`, `usermod`,
   `groupmod`, and **`passwd-expire`**; anything else is `bbfatal "Invalid command in EXTRA_USERS_PARAMS"`.
   `passwd-expire` is present on the `scarthgap` branch, so a first-login password change needs no hand-rolled
   `passwd -e` unit. Check your branch, because early 5.0 point releases lack it.
@@ -102,18 +102,18 @@ only `sshd_config` does not.
 
 ## Read-only rootfs and `/etc` overlays
 
-`IMAGE_FEATURES += "read-only-rootfs"` is cheap to enable and easy to over-trust — see
+`IMAGE_FEATURES += "read-only-rootfs"` is cheap to enable and easy to over-trust; see
 `misleading-controls.md` §3 and §4 for the mechanism, the fstab pattern it matches and the delayed-postinsts
 trap.
 
 Configuration that actually holds needs three parts:
 
-1. **The image side** — the feature, plus every writable path moved to a tmpfs or a data partition. Mount
+1. **The image side**: the feature, plus every writable path moved to a tmpfs or a data partition. Mount
    points for read-write partitions must exist at rootfs-creation time; the rootfs is read-only when the
    system tries to create them.
-2. **The boot side** — the kernel command line must not carry `rw`. This is bootloader configuration; route to
+2. **The boot side**: the kernel command line must not carry `rw`. This is bootloader configuration; route to
    `u-boot-development`.
-3. **The state side** — `overlayfs-etc` (an `/etc` overlay backed by a writable device) or `stateless-rootfs`
+3. **The state side**: `overlayfs-etc` (an `/etc` overlay backed by a writable device) or `stateless-rootfs`
    (regenerate on every boot, keep nothing). They are different products, not two spellings of one: the
    overlay persists an operator's changes and therefore persists an attacker's, and the stateless image
    discards both.
@@ -144,7 +144,7 @@ The Yocto-shaped work is:
 - a systemd drop-in packaged by that append, or `SYSTEMD_AUTO_ENABLE` set so an unneeded unit does not start;
 - `PACKAGECONFIG` narrowing what the daemon can do at all.
 
-Which systemd directives to set — `ProtectSystem=`, `NoNewPrivileges=`, `PrivateTmp=`, `CapabilityBoundingSet=` —
+Which systemd directives to set (`ProtectSystem=`, `NoNewPrivileges=`, `PrivateTmp=`, `CapabilityBoundingSet=`)
 is general Linux and is not this skill's subject. State the directive, cite `systemd-analyze security <unit>`
 as the check, and do not turn this file into a systemd tutorial.
 

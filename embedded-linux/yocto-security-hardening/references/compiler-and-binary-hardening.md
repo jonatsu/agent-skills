@@ -13,15 +13,15 @@ opt-outs**.
 | -------------------------- | ------------------------------------------------------ |
 | `SECURITY_STACK_PROTECTOR` | `-fstack-protector-strong`                             |
 | `SECURITY_STRINGFORMAT`    | `-Wformat -Wformat-security -Werror=format-security`   |
-| `SECURITY_LDFLAGS`         | `-Wl,-z,relro,-z,now` — full RELRO plus BIND_NOW       |
-| `SECURITY_X_LDFLAGS`       | `-Wl,-z,relro` — **partial RELRO only**                |
+| `SECURITY_LDFLAGS`         | `-Wl,-z,relro,-z,now`: full RELRO plus BIND_NOW        |
+| `SECURITY_X_LDFLAGS`       | `-Wl,-z,relro`: **partial RELRO only**                 |
 | `GCCPIE`                   | `--enable-default-pie`                                 |
 | `SECURITY_PIE_CFLAGS`      | `-pie -fPIE`, injected **only when `GCCPIE` is empty** |
 | `SECURITY_NOPIE_CFLAGS`    | `-no-pie -fno-PIE`, used by the opt-outs               |
 | `lcl_maybe_fortify`        | `${OPTLEVEL} -D_FORTIFY_SOURCE=2`                      |
 
 Applied through `TARGET_CC_ARCH:append:class-target`, `TARGET_LDFLAGS:append:class-target` and the
-`class-cross-canadian` equivalents — so the flags land on target builds, and SDK/native builds are a separate
+`class-cross-canadian` equivalents, so the flags land on target builds, and SDK/native builds are a separate
 question.
 
 The file states its own limits: *"these don't work universally, there are recipes which can't use one, the
@@ -61,7 +61,7 @@ SECURITY_LDFLAGS:pn-rust-cross-arm = " -lssp_nonshared -lssp"
 ```
 
 Its entire content **removes** PIE from the Rust toolchain recipes because they fail to build with it. It adds
-no hardening. Requiring it is still correct — without it those recipes break — but it is not a second set of
+no hardening. Requiring it is still correct (without it those recipes break) but it is not a second set of
 protections, and it says nothing about hardening in Rust *code*, which comes from the Rust compiler's own
 defaults.
 
@@ -71,7 +71,7 @@ defaults.
   build is hardened. A custom distro or `nodistro` needs `require conf/distro/include/security_flags.inc` in its
   distro conf.
 - **6.0 Wrynose.** `defaultsetup.conf` requires `security_flags.inc` (and `no-static-libs.inc`), and
-  `bitbake.conf` includes `conf/distro/defaultsetup.conf` for **every** build after the distro conf — so the
+  `bitbake.conf` includes `conf/distro/defaultsetup.conf` for **every** build after the distro conf, so the
   flags apply whatever `DISTRO` is set to, unless a distro conf hard-assigns the `SECURITY_*` variables
   itself.
 
@@ -93,7 +93,7 @@ lcl_maybe_fortify = "${@oe.utils.conditional('OPTLEVEL','-O0','','${OPTLEVEL} -D
 ```
 
 `_FORTIFY_SOURCE=3` needs a compiler that supports it and produces build failures in code the weaker level
-tolerated, so expect to fix or exempt recipes — which is the same maintenance burden the 21 existing opt-outs
+tolerated, so expect to fix or exempt recipes, which is the same maintenance burden the 21 existing opt-outs
 represent.
 
 **Worth checking against whatever distribution you are being compared to**, and not asserted here: several
@@ -104,7 +104,7 @@ quoting a gap.
 ## Verify per binary, host-side
 
 Upstream packages the tool. `meta-security` ships `checksec` 2.6.0 from `slimm609/checksec.sh` at a pinned
-`SRCREV`, with `BBCLASSEXTEND = "native"` — so a host-side scan is *meant* to need no target.
+`SRCREV`, with `BBCLASSEXTEND = "native"`, so a host-side scan is *meant* to need no target.
 
 **`checksec-native` does not build at `scarthgap`.** Measured at commit `b13f170` by building the layer with its own
 `kas/qemux86-64.yml`: the recipe sets `BBCLASSEXTEND = "native"` but leaves `RDEPENDS:${PN}` carrying `procps`,
@@ -115,7 +115,7 @@ ERROR: Nothing RPROVIDES 'procps-native' (but …/checksec_2.6.0.bb RDEPENDS on 
 ```
 
 The target `checksec` builds and packages cleanly; only the native variant is affected. A one-line `.bbappend`
-restores the host-side lane, mirroring what the layer's own `buck-security` recipe already does — **verified by
+restores the host-side lane, mirroring what the layer's own `buck-security` recipe already does, **verified by
 building it**:
 
 ```bitbake
@@ -154,16 +154,16 @@ release:
 | `ldflags`                  | **`ERROR_QA`**                        | the recipe dropped `LDFLAGS`, so RELRO/BIND_NOW never applied       |
 | `already-stripped`         | **`ERROR_QA`**                        | the recipe stripped its own binaries, defeating debug packaging     |
 | `rpaths`, `useless-rpaths` | **`ERROR_QA`**                        | build-host paths or redundant search paths burned into ELF headers  |
-| `installed-vs-shipped`     | **`ERROR_QA`**                        | files built and packaged nowhere — they vanish from the image       |
+| `installed-vs-shipped`     | **`ERROR_QA`**                        | files built and packaged nowhere; they vanish from the image        |
 | `textrel`                  | `WARN_QA` at 5.0; `ERROR_QA` from 5.1 | text relocations                                                    |
 | `buildpaths`               | `WARN_QA` at 5.0; `ERROR_QA` from 5.1 | host paths leaking into the artefact; also a reproducibility signal |
 
 On 5.0, promote them in the distro conf: `ERROR_QA:append = " textrel buildpaths"`. **Never clear a
-failure with `INSANE_SKIP` before the named paths are explained** — silencing `installed-vs-shipped` does not
+failure with `INSANE_SKIP` before the named paths are explained**: silencing `installed-vs-shipped` does not
 package anything.
 
 ## What this file does not cover
 
 Kernel-side hardening symbols are `kernel-hardening.md`. ELF inspection as a *general* Linux practice, and
-tools that are not Yocto-integrated, are out of scope for a Yocto skill — the shape to keep here is "which
+tools that are not Yocto-integrated, are out of scope for a Yocto skill; the shape to keep here is "which
 build setting produced this property, and which recipe is exempt from it".

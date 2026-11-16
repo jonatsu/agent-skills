@@ -23,7 +23,7 @@ Pair every control you configure with the observation that settles it.
 
 ## Scope
 
-**In:** configuring a security control in a Yocto build, and proving on the artefact that it took effect —
+**In:** configuring a security control in a Yocto build, and proving on the artefact that it took effect:
 image and distro composition, credentials, root filesystem state, compiler and kernel hardening, the build
 side of the boot chain, data-at-rest encryption, network exposure, MAC framework wiring, build and
 supply-chain trust, and both verification lanes.
@@ -67,17 +67,17 @@ Know these exist before reading any configuration. Full mechanism and verificati
 | Setting                              | What it actually does                                                                   |
 | ------------------------------------ | --------------------------------------------------------------------------------------- |
 | `empty-root-password`                | **Permits**; the zap step runs when the feature is *absent*, and only rewrites `root::` |
-| `serial-autologin-root`              | Inert alone — the gate needs `empty-root-password` **as well**                          |
+| `serial-autologin-root`              | Inert alone; the gate needs `empty-root-password` **as well**                           |
 | `read-only-rootfs-delayed-postinsts` | **Disables** the check that would fail the build; defers writes to first boot           |
 | `read-only-rootfs`                   | Edits `/etc/fstab` lines matching `/dev/root`; the kernel command line still decides    |
 | the `security` `DISTRO_FEATURE`      | Adds **nothing** alone; gates four further feature conditions                           |
-| `IMAGE_INSTALL:remove`               | Metadata edit — a no-op against transitively pulled packages; use `PACKAGE_EXCLUDE`     |
+| `IMAGE_INSTALL:remove`               | Metadata edit: a no-op against transitively pulled packages; use `PACKAGE_EXCLUDE`      |
 | `BB_SIGNATURE_HANDLER`               | A task-hash handler, not a signer; falls back to `noop` on a typo                       |
 | `CONFIG_FIT_SIGNATURE`               | Enables verification; *requiring* it is `mkimage -r` plus `UBOOT_SIGN_ENABLE = "1"`     |
 
 ## Release gate
 
-**Establish the actual OE-Core revision before naming a class, a variable or an `IMAGE_FEATURES` item** —
+**Establish the actual OE-Core revision before naming a class, a variable or an `IMAGE_FEATURES` item**:
 `git -C <oe-core-checkout> describe --tags`, or `bitbake-getvar DISTRO_VERSION`. `LAYERSERIES_COMPAT` is a
 layer's compatibility *claim*, never proof of what is checked out. Override syntax, class locations and
 feature validity all move.
@@ -110,8 +110,8 @@ is current, which for security guidance is unsafe.
 | A removed feature or a moved default     | the Migration Guide for that release, under `docs.yoctoproject.org/<codename>/`   |
 
 Probe upstream at `git.openembedded.org/openembedded-core` (codename branches) and
-`git.openembedded.org/bitbake` (`yocto-5.3`-style tags). **`poky` is being wound down** — its `master` is
-retired and its tags stop before 5.3, so probing it returns confident false negatives — and the
+`git.openembedded.org/bitbake` (`yocto-5.3`-style tags). **`poky` is being wound down**: its `master` is
+retired and its tags stop before 5.3, so probing it returns confident false negatives, and the
 `yoctoproject/poky` GitHub mirror is a stub whose recursive tree returns two entries, so code search against it
 silently finds nothing. **Always fetch a known-present control file at the same ref**: a missing branch and a
 missing file both return 404.
@@ -166,7 +166,7 @@ grep '^root:' <rootfs>/etc/shadow
 checksec --file=<rootfs>/bin/busybox
 ```
 
-Keep every capture bounded — grep the artefact, do not paste a build log.
+Keep every capture bounded: grep the artefact, do not paste a build log.
 
 ## Guardrails
 

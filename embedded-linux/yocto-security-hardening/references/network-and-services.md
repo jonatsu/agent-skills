@@ -2,7 +2,7 @@
 
 Deliberately higher-level than the rest of this skill: the mechanisms are general Linux, and only the
 packaging and the defaults are Yocto's. The one rule worth stating absolutely is that **the inventory comes
-first** — a firewall in front of services nobody enumerated is a guess with a configuration file.
+first**: a firewall in front of services nobody enumerated is a guess with a configuration file.
 
 ## Enumerate before configuring
 
@@ -39,7 +39,7 @@ lsusb; ls /sys/class/udc/      # USB gadget mode — the device can present itse
 A CAN bus carries no authentication or encryption by design, so anything reachable on it is reachable by
 whatever else sits on the bus; a debug UART with a console on it is a root shell for anyone holding the board;
 and a USB gadget interface is an entry point that no `ss` output will ever show. Enumerate them, decide about
-each, and disable at the kernel-config or device-tree level rather than at runtime — which puts the fix in
+each, and disable at the kernel-config or device-tree level rather than at runtime, which puts the fix in
 `kernel-hardening.md` and in the board's device tree, not here.
 
 ## What Yocto gives you, and the trap in the defaults
@@ -47,7 +47,7 @@ each, and disable at the kernel-config or device-tree level rather than at runti
 | Tool                                                             | Where                                                           | Note                                                                         |
 | ---------------------------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `nftables` 1.0.9                                                 | `meta-openembedded/meta-networking/recipes-filter`              | The modern default; needs `meta-networking`                                  |
-| `iptables` 1.8.10                                                | OE-Core, `meta/recipes-extended`                                | **Legacy backend by default** — see below                                    |
+| `iptables` 1.8.10                                                | OE-Core, `meta/recipes-extended`                                | **Legacy backend by default**: see below                                     |
 | `ebtables`, `ipset`, `conntrack-tools`, `arno-iptables-firewall` | `meta-networking/recipes-filter`                                | Available if a design needs them                                             |
 | `sshguard`                                                       | `meta-security/recipes-security`                                | Brute-force response, if ssh is exposed at all                               |
 | `firewalld`                                                      | `meta-networking`, dynamic layer active only with `meta-python` | Present (1.3.4 at scarthgap); check that `meta-python` is in `bblayers.conf` |
@@ -55,7 +55,7 @@ each, and disable at the kernel-config or device-tree level rather than at runti
 **The trap:** OE-Core's `iptables` recipe has `PACKAGECONFIG ?= "${@bb.utils.filter('DISTRO_FEATURES', 'ipv6', d)}"`,
 so `libnftnl` is **off by default**. Only with that option does the recipe repoint `iptables`,
 `iptables-save` and `iptables-restore` at `xtables-nft-multi`. On a stock image, `iptables` therefore writes
-**legacy** tables while `nft` writes the nftables tables — two independent rule sets in one kernel, where each
+**legacy** tables while `nft` writes the nftables tables; two independent rule sets in one kernel, where each
 tool shows a complete-looking picture of only its own. A rule set that appears to be missing is usually this.
 
 Pick one. For a new product that means nftables, and it means not installing `iptables` at all.
@@ -91,13 +91,13 @@ rather than as something an operator applies.
 ## Service-level hardening
 
 - **ssh.** If it ships at all, it is the primary remote surface: keys only (`PasswordAuthentication no`), no
-  root login, and a considered decision about whether it is present in the production image at all — many
+  root login, and a considered decision about whether it is present in the production image at all; many
   products ship it in `dev` and `prod-test` only. `image-attack-surface.md` covers the `IMAGE_FEATURES` that
   silently loosen both settings, including the PAM `nullok` rewrite that an `sshd_config` audit misses.
 - **TLS-terminating services** need the same treatment as any server: current protocol versions, a real
   certificate story, and a plan for rotating it on a device that may be offline. Where certificates come from,
   and how they are renewed in the field, is a product decision this skill does not make for you.
-- **systemd unit exposure** — `systemd-analyze security <unit>` ranks what each service can reach. The
+- **systemd unit exposure**: `systemd-analyze security <unit>` ranks what each service can reach. The
   directives are general Linux; the Yocto half is which recipe packages the drop-in.
 
 ## Verification
@@ -117,6 +117,6 @@ connection is a configuration file.
 
 This file is deliberately generic. It covers enumerating exposure, choosing between the two packaged firewall
 stacks, and the default-drop shape. It does not cover VPN or overlay-network design, IDS tuning
-(`meta-security` packages `suricata`, `aide`, `samhain` and others — see `meta-security-layer-map.md`), or
+(`meta-security` packages `suricata`, `aide`, `samhain` and others; see `meta-security-layer-map.md`), or
 per-protocol server hardening beyond the above. Say so rather than generating a policy that looks
 authoritative.

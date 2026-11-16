@@ -2,7 +2,7 @@
 
 Two threats, and they need different designs. **A stolen device** is defeated by any key the running system
 cannot be asked for while powered off. **A compromised root on a running device** is defeated only if the key
-never becomes readable to userspace — which means a hardware key store and a policy that binds release to the
+never becomes readable to userspace, which means a hardware key store and a policy that binds release to the
 system's measured state.
 
 A passphrase-less key file sitting in a read-only rootfs defeats the first threat and none of the second. Say
@@ -15,16 +15,16 @@ or read guidance about one.
 ## What the platform decides
 
 **Portable rule: LUKS with a hardware-bound key needs kernel Trusted Keys backed by a real key store.** Where
-the SoC's security block exposes no Trusted Keys backend, you get "naked" cryptsetup — a key that exists in
-plaintext somewhere at unlock time — and the compromised-root threat is not addressed however the rest is
+the SoC's security block exposes no Trusted Keys backend, you get "naked" cryptsetup (a key that exists in
+plaintext somewhere at unlock time), and the compromised-root threat is not addressed however the rest is
 configured. Establish which of the following the target has before designing:
 
-| Key store                                             | Trusted Keys backend                | Consequence                                                           |
-| ----------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------- |
-| Discrete or firmware TPM 2.0                          | `trusted` (TPM 2.0)                 | Sealing to PCRs is available; the reference case                      |
-| OP-TEE / TEE-backed                                   | `trusted` (CAAM/TEE, SoC-dependent) | Check the vendor's kernel; support varies by part                     |
-| SoC security block, no NVM or no Trusted Keys support | none                                | Naked cryptsetup only — state the limit rather than working around it |
-| None                                                  | none                                | Encryption is a compliance gesture; do not present it as a control    |
+| Key store                                             | Trusted Keys backend                | Consequence                                                          |
+| ----------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------- |
+| Discrete or firmware TPM 2.0                          | `trusted` (TPM 2.0)                 | Sealing to PCRs is available; the reference case                     |
+| OP-TEE / TEE-backed                                   | `trusted` (CAAM/TEE, SoC-dependent) | Check the vendor's kernel; support varies by part                    |
+| SoC security block, no NVM or no Trusted Keys support | none                                | Naked cryptsetup only: state the limit rather than working around it |
+| None                                                  | none                                | Encryption is a compliance gesture; do not present it as a control   |
 
 Check on the target, not in the datasheet:
 
@@ -55,11 +55,11 @@ Everything below is metadata, and each piece has a way of being missing without 
   PACKAGECONFIG:append:pn-systemd = " cryptsetup tpm2"
   ```
 
-- **`systemd-cryptenroll` is packaged separately** — `FILES:${PN}-crypt` covers it and `${libdir}/cryptsetup`,
+- **`systemd-cryptenroll` is packaged separately**: `FILES:${PN}-crypt` covers it and `${libdir}/cryptsetup`,
   with only an `RRECOMMENDS` from the main package. On an image built with `NO_RECOMMENDATIONS` or a curated
   package list, it is simply absent.
 
-- **TPM tooling comes from `meta-security/meta-tpm`** — `tpm2-tools`, `tpm2-tss`, `tpm2-abrmd`,
+- **TPM tooling comes from `meta-security/meta-tpm`**: `tpm2-tools`, `tpm2-tss`, `tpm2-abrmd`,
   `tpm2-openssl`, `tpm2-pkcs11`. That layer declares `LAYERSERIES_COMPAT = "nanbield scarthgap"`, so the
   branch must match the release.
 
@@ -72,7 +72,7 @@ Everything below is metadata, and each piece has a way of being missing without 
 
 - **Filesystem-level alternatives**: `fscrypt` and `fscryptctl` (per-directory encryption, no separate block
   device) are in `meta-security/recipes-security`, and `ecryptfs-utils` and `cryptmount` are there too. Prefer
-  fscrypt when the requirement is "encrypt this data directory" rather than "encrypt this partition" — it
+  fscrypt when the requirement is "encrypt this data directory" rather than "encrypt this partition"; it
   avoids a second block device and the initramfs unlock entirely.
 
 ## Design shapes that hold
@@ -86,14 +86,14 @@ Everything below is metadata, and each piece has a way of being missing without 
    ```
 
 2. **Encrypted rootfs, unlocked from an initramfs.** Needed when the rootfs itself is confidential. The
-   initramfs then holds the unlock logic and must be part of the signed boot chain — see
+   initramfs then holds the unlock logic and must be part of the signed boot chain; see
    `chain-of-trust-wiring.md`, because an unsigned initramfs makes the whole design decorative.
 
 3. **fscrypt on a directory tree.** Cheapest to integrate; protects file contents and names, not metadata or
    the directory structure above the protected tree.
 
 **Design the recovery path with the enrolment.** A device whose only key slot is a TPM-sealed one is
-unrecoverable the moment the sealing policy stops matching — a firmware update, a board repair, a TPM
+unrecoverable the moment the sealing policy stops matching: a firmware update, a board repair, a TPM
 failure. LUKS supports multiple key slots precisely so a second, differently-held credential can exist:
 an escrow passphrase kept by whoever supports the fleet, or a recovery key generated per device and stored
 off it. Enrol it at manufacture, not after the first field failure, and treat it as a secret with its own
@@ -131,18 +131,18 @@ cat /etc/crypttab
 
 **Then prove the negative case, which is the only part that tests the design rather than the configuration:**
 
-- Read the raw partition and confirm it is not plaintext — `head -c 4096 /dev/<part> | strings` finding your
+- Read the raw partition and confirm it is not plaintext; `head -c 4096 /dev/<part> | strings` finding your
   data is a complete failure.
 - Change the measured state the key is sealed to (boot a different kernel, or extend a PCR) and confirm the
   unlock **fails**. A key that survives that was never bound to anything.
-- For the compromised-root threat specifically: confirm root cannot extract the key material —
+- For the compromised-root threat specifically: confirm root cannot extract the key material:
   `keyctl show`/`keyctl print` on a trusted key must return the wrapped blob, not the key.
 
 An encryption setup never observed refusing to unlock has not been shown to protect anything.
 
 ## Stated limits
 
-- **Sealing policy detail** — which PCR set suits a given update strategy — is not settled here. It depends on
+- **Sealing policy detail** (which PCR set suits a given update strategy) is not settled here. It depends on
   the boot chain, and getting it wrong is a field-bricking mistake, so the skill states the trade-off rather
   than a recommended PCR list.
 - **Vendor security blocks other than TPM 2.0** vary too much to generalise; read the part's own reference

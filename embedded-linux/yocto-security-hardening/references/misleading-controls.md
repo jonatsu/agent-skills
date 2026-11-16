@@ -21,8 +21,8 @@ passwordless root account. On master the `debug-tweaks` half of the condition is
 `bb.utils.contains`, but the inversion is unchanged.
 
 **Second-order trap.** `zap_empty_root_password` runs `sed 's%^root::%root:*:%'` over `/etc/shadow` and
-`/etc/passwd`. A root account carrying a real hash — from a vendor layer, an `EXTRA_USERS_PARAMS` line, or a
-postinst — passes untouched. **The feature's absence therefore does not mean root is secure**, only that root
+`/etc/passwd`. A root account carrying a real hash (from a vendor layer, an `EXTRA_USERS_PARAMS` line, or a
+postinst) passes untouched. **The feature's absence therefore does not mean root is secure**, only that root
 has no *empty* password.
 
 Master adds `add_empty_root_password_note`, which appends a line to `/etc/issue` when root's hash field is
@@ -50,7 +50,7 @@ sees only `serial-autologin-root` in a config has not found an autologin, and on
 `empty-root-password` has not ruled one out.
 
 `bb.utils.contains` requires all values; `bb.utils.contains_any` requires one. That distinction decides the
-meaning of most feature gates in this class — check which one a gate uses before reading it.
+meaning of most feature gates in this class; check which one a gate uses before reading it.
 
 ## 3. `read-only-rootfs-delayed-postinsts` disables a safety check
 
@@ -65,7 +65,7 @@ if bb.utils.contains("IMAGE_FEATURES", "read-only-rootfs", True, False, self.d) 
 ```
 
 With `read-only-rootfs` alone, a package that cannot be configured offline **fails the build**. Adding the
-delayed-postinsts feature removes that check and defers those postinsts to first boot — which needs a writable
+delayed-postinsts feature removes that check and defers those postinsts to first boot, which needs a writable
 rootfs at first boot, on a product that claims to be read-only.
 
 **Verify a fresh first boot, not a second boot:** an image whose deferred postinsts already ran looks clean
@@ -91,7 +91,7 @@ Two consequences the name hides:
 - **The kernel command line wins.** `rootflags=rw`, or a bootloader that appends `rw`, mounts the rootfs
   writable regardless of anything the image did. That half belongs to `u-boot-development`.
 
-Under `overlayfs-etc` the ssh-key relocation is deliberately skipped, because `/etc` is writable again —
+Under `overlayfs-etc` the ssh-key relocation is deliberately skipped, because `/etc` is writable again;
 `stateless-rootfs` re-enables it. So `read-only-rootfs` plus `overlayfs-etc` is a *different* configuration
 from `read-only-rootfs` alone, not a strictly stronger one.
 
@@ -103,13 +103,13 @@ from `read-only-rootfs` alone, not a strictly stronger one.
 require ${@bb.utils.contains('DISTRO_FEATURES', 'security', '${BPN}_security.inc', '', d)}
 ```
 
-and `linux-yocto_security.inc` is four lines, each conditional on a *further* feature — `apparmor`, `smack`,
+and `linux-yocto_security.inc` is four lines, each conditional on a *further* feature: `apparmor`, `smack`,
 `lkrg` in `DISTRO_FEATURES`, and `dm-verity-img` in `IMAGE_CLASSES`. **`security` on its own adds no kernel
 configuration at all.** Note that the verity fragment keys on `IMAGE_CLASSES`, a different mechanism from the
 other three.
 
 The layer warns at parse time when it is included without the feature, and that warning is silenceable with
-`SKIP_META_SECURITY_SANITY_CHECK = 1` — which is how the misreading survives.
+`SKIP_META_SECURITY_SANITY_CHECK = 1`, which is how the misreading survives.
 
 ```bash
 bitbake-getvar -r linux-yocto KERNEL_FEATURES   # every assignment site plus the final value
@@ -121,8 +121,8 @@ bitbake-getvar IMAGE_CLASSES                    # dm-verity-img is the verity tr
 
 ## 6. `IMAGE_INSTALL:remove` edits metadata; `PACKAGE_EXCLUDE` edits the install
 
-`IMAGE_INSTALL:remove` removes a name from a **list**. A package pulled in transitively — through a
-packagegroup's `RDEPENDS`, or another package's — was never in `IMAGE_INSTALL`, so removing it there is a
+`IMAGE_INSTALL:remove` removes a name from a **list**. A package pulled in transitively (through a
+packagegroup's `RDEPENDS`, or another package's) was never in `IMAGE_INSTALL`, so removing it there is a
 no-op against the thing you are trying to drop.
 
 `PACKAGE_EXCLUDE` is enforced by the package manager after dependency resolution.
@@ -139,7 +139,7 @@ with equivalents for rpm and deb. `BAD_RECOMMENDATIONS` sits at the same layer f
 relationship. **Not verified:** the behaviour when an excluded package is a hard dependency of something else
 in the image. Expect a build failure rather than a silent drop, and confirm before asserting it.
 
-**Verify against the manifest**, not the variable — `bitbake-getvar -r <image> IMAGE_INSTALL` returns
+**Verify against the manifest**, not the variable: `bitbake-getvar -r <image> IMAGE_INSTALL` returns
 packagegroups, not the resolved set:
 
 ```bash
@@ -149,7 +149,7 @@ grep -c '^<pkg> ' tmp/deploy/images/<machine>/<image>-<machine>.rootfs.manifest
 ## 7. `BB_SIGNATURE_HANDLER` is a checksum handler, not a signer
 
 `bitbake/lib/bb/siggen.py` at `yocto-5.0.12` selects a `SignatureGenerator` subclass by name, defaulting to
-`noop`. The class's whole state is hashing state — `basehash`, `taskhash`, `unihash`, `runtaskdeps`,
+`noop`. The class's whole state is hashing state: `basehash`, `taskhash`, `unihash`, `runtaskdeps`,
 `file_checksum_values`. A grep of all 1295 lines for `gpg|openssl|rsa|x509|hmac|verify_signature` returns
 nothing. "Signature" in BitBake means *task input hash* throughout, and `OEEquivHash` is hash equivalence, not
 signing.
@@ -157,7 +157,7 @@ signing.
 **Second trap:** an unrecognised handler name logs an error and falls back to `noop` rather than failing, so a
 typo silently disables hash equivalence.
 
-Signing sstate is a different set of variables entirely — see `build-and-supply-chain-trust.md`.
+Signing sstate is a different set of variables entirely; see `build-and-supply-chain-trust.md`.
 
 ## 8. `CONFIG_FIT_SIGNATURE` enables verification; it does not require it
 
@@ -174,12 +174,12 @@ about unsigned *FIT* images.
 ${UBOOT_MKIMAGE_SIGN} -F -k "${UBOOT_SIGN_KEYDIR}" -r ${KERNEL_OUTPUT_DIR}/$2 ${UBOOT_MKIMAGE_SIGN_ARGS}
 ```
 
-— `-r` is there, so OE marks the key required, but the whole block is inside
+`-r` is there, so OE marks the key required, but the whole block is inside
 `if [ "x${UBOOT_SIGN_ENABLE}" = "x1" ]`. With `UBOOT_SIGN_ENABLE = "0"` the FIT is assembled and never signed,
 and `FIT_GENERATE_KEYS = "1"` in that state only produces a warning that the keys will not be used. From 5.3 the
 same gate is `FIT_KERNEL_SIGN_ENABLE` in `kernel-fit-image.bbclass`, which defaults to `UBOOT_SIGN_ENABLE`.
 
-Which dtb the board actually boots is U-Boot's question — route the verification mechanics to
+Which dtb the board actually boots is U-Boot's question; route the verification mechanics to
 **u-boot-development**, and see `chain-of-trust-wiring.md` for what the build owns.
 
 ## Why this list shapes the skill

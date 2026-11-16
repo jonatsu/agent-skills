@@ -1,7 +1,7 @@
 # Mandatory Access Control in a Yocto Image
 
 Light by design: this file covers **choosing one, wiring it into the build, and confirming it is enforcing**.
-Policy authoring is a project in its own right and is not attempted here — see *Stated limit*.
+Policy authoring is a project in its own right and is not attempted here; see *Stated limit*.
 
 ## Choose one, and do it early
 
@@ -18,7 +18,7 @@ Three facts that decide the choice more often than preference does:
   has on the order of twenty access modes against SELinux's hundreds, and no MLS.
 - **Label-based frameworks need `xattr` in `DISTRO_FEATURES`** and filesystem support (`CONFIG_EXT4_FS_SECURITY`
   and friends). An image that strips `xattr` for attack-surface reasons has silently ruled out SELinux, SMACK
-  and IMA/EVM together — one of the few places where reducing surface disables a control.
+  and IMA/EVM together, one of the few places where reducing surface disables a control.
 - **Only one LSM stack is worth running**, and the effort is in the policy, not the packaging. Two half-written
   policies are worse than one finished one.
 
@@ -32,7 +32,7 @@ REQUIRED_DISTRO_FEATURES = "apparmor"
 ```
 
 **Without `apparmor` in `DISTRO_FEATURES` the recipe is skipped**, and a skipped recipe surfaces as BitBake
-reporting that nothing provides it — the same confusing failure shape as an invalid `IMAGE_FEATURES` entry.
+reporting that nothing provides it, the same confusing failure shape as an invalid `IMAGE_FEATURES` entry.
 So the minimum is:
 
 ```bitbake
@@ -40,17 +40,17 @@ DISTRO_FEATURES:append = " apparmor"
 IMAGE_INSTALL:append = " apparmor"
 ```
 
-The kernel side needs `CONFIG_SECURITY_APPARMOR=y` plus AppArmor being in the active LSM stack at boot —
+The kernel side needs `CONFIG_SECURITY_APPARMOR=y` plus AppArmor being in the active LSM stack at boot:
 `lsm=` on the kernel command line on current kernels, or `security=apparmor` / `apparmor=1` on older ones.
 `meta-security`'s `linux-yocto_security.inc` adds the AppArmor kernel feature, but only when **both**
 `security` and `apparmor` are in `DISTRO_FEATURES`; see `misleading-controls.md` §5 for why the `security`
-feature alone changes nothing. A vendor kernel gets none of this and needs the symbol set by a fragment —
+feature alone changes nothing. A vendor kernel gets none of this and needs the symbol set by a fragment:
 `kernel-hardening.md`.
 
 **A gap worth knowing before you rely on unit-level confinement:** OE-Core's systemd recipe has **no
 `apparmor` `PACKAGECONFIG` at all** (it has `selinux` and `smack`), and upstream systemd's `apparmor` meson
 option is an auto-detected feature. So whether `AppArmorProfile=` in a unit does anything depends on whether
-`libapparmor` happened to be in the sysroot when systemd was built — it is not declared by the metadata.
+`libapparmor` happened to be in the sysroot when systemd was built; it is not declared by the metadata.
 Check the built artefact rather than assuming either answer:
 
 ```sh
@@ -68,17 +68,17 @@ as release content, not as something applied on a running device.
 The layer is upstream at `git.yoctoproject.org/meta-selinux`. Four facts from its `conf/layer.conf` at
 scarthgap that decide whether it drops into an existing build:
 
-- **`LAYERDEPENDS_selinux = "core meta-python"`** — `meta-python` is a non-obvious second dependency, so
+- **`LAYERDEPENDS_selinux = "core meta-python"`**: `meta-python` is a non-obvious second dependency, so
   adding `meta-selinux` alone fails the layer-dependency check.
-- **`LAYERSERIES_COMPAT_selinux = "scarthgap"`** — a single release, narrower even than `meta-security`. The
+- **`LAYERSERIES_COMPAT_selinux = "scarthgap"`**: a single release, narrower even than `meta-security`. The
   branch must match exactly.
-- **`PREFERRED_PROVIDER_virtual/refpolicy ??= "refpolicy-targeted"`** — the reference policy ships in
+- **`PREFERRED_PROVIDER_virtual/refpolicy ??= "refpolicy-targeted"`**: the reference policy ships in
   variants (targeted, minimum, mls, standard); which one you build is the biggest single decision, because it
   sets how much policy you inherit versus write.
 - **The layer carries no root `LICENSE` or `COPYING` file** on that branch. Recipes declare their own
   licences; the layer does not. Resolve that before it becomes a product dependency.
 
-`selinux` is a `DISTRO_FEATURE`, not an `IMAGE_FEATURES` entry — OE-Core's systemd recipe, for instance,
+`selinux` is a `DISTRO_FEATURE`, not an `IMAGE_FEATURES` entry: OE-Core's systemd recipe, for instance,
 derives its `selinux` `PACKAGECONFIG` by filtering `DISTRO_FEATURES`. Labelling also needs `xattr` and
 filesystem security support.
 
@@ -87,7 +87,7 @@ Two operational facts that decide whether enforcement means anything, and that a
 - **Labels have to exist before enforcement can work.** A filesystem populated without labels, or one whose
   policy changed, needs a full relabel (`fixfiles relabel`, or the equivalent autorelabel trigger) followed by
   a reboot. Turning enforcement on over unlabelled content produces either a flood of denials or a policy that
-  permits everything it cannot classify — neither is the protection you configured.
+  permits everything it cannot classify; neither is the protection you configured.
 - **"Enforcing" does not mean "confined".** Login mappings decide which SELinux user a Linux account gets, and
   a default mapping can leave root effectively unconfined while `getenforce` proudly answers `Enforcing`.
   Check the mapping (`semanage login -l`) and the process context (`ps -eZ`), not the global mode.
@@ -116,7 +116,7 @@ your daemon's PID is confined by the profile you expect rather than by `unconfin
 **The other trap is the kernel command line**, and it is where vendor and training images routinely land: an
 image built with a full policy that boots with enforcement disabled (`enforcing=0`, or the LSM switched off
 outright) looks correctly configured from every angle except the running system. It is also the standard
-workaround when a policy blocks something — an update that will not install with enforcement on gets shipped
+workaround when a policy blocks something: an update that will not install with enforcement on gets shipped
 with enforcement off, and nobody turns it back on. Read `/proc/cmdline` as part of the check, and treat a
 disabling parameter as a finding regardless of what the metadata says.
 
@@ -125,12 +125,12 @@ is **denied**, with the denial visible in `dmesg` or the audit log. A policy nev
 has not been shown to work.
 
 SELinux's equivalents are `sestatus`, `getenforce` (`Enforcing`, not `Permissive`) and `ps -eZ`; SMACK's are
-under `/sys/fs/smackfs`. The same trap exists in both — permissive modes make a broken policy look installed.
+under `/sys/fs/smackfs`. The same trap exists in both: permissive modes make a broken policy look installed.
 
 ## Stated limit
 
 **This skill does not author MAC policy.** Writing an AppArmor profile or an SELinux policy module for a real
 daemon needs the daemon's actual file, capability and network behaviour, and the honest workflow is to start
-in complain or permissive mode, collect denials, and turn them into rules — not to generate a profile from a
+in complain or permissive mode, collect denials, and turn them into rules, not to generate a profile from a
 model's expectations. If a policy is needed, say that this is the workflow and that the material to teach it
 properly is not in this skill yet.

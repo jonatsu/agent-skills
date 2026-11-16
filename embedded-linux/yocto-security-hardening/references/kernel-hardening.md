@@ -7,7 +7,7 @@ symbol the kernel cannot honour produces a **warning**, and by default not even 
 
 Two mechanisms, and they are not interchangeable:
 
-- **`.cfg` fragments through `SRC_URI`** in a `linux-*.bbappend` — works with any kernel recipe, including a
+- **`.cfg` fragments through `SRC_URI`** in a `linux-*.bbappend`: works with any kernel recipe, including a
   vendor one:
 
   ```bitbake
@@ -28,7 +28,7 @@ Two mechanisms, and they are not interchangeable:
   **The spacing rule bites here:** a symbol you want off must be written exactly as the kernel writes it,
   `# CONFIG_FOO is not set`. `CONFIG_FOO=n` in a fragment is not the same thing and does not always take.
 
-- **`KERNEL_FEATURES` `.scc` features** — only for `linux-yocto`-derived recipes using the kernel-yocto
+- **`KERNEL_FEATURES` `.scc` features**: only for `linux-yocto`-derived recipes using the kernel-yocto
   tooling. A vendor kernel that inherits plain `kernel.bbclass` has no `.scc` machinery, and neither does it
   get the configuration audit below.
 
@@ -65,8 +65,8 @@ kernel's final `.config`. Three things follow, and all three are counter-intuiti
    KMETA_AUDIT_WERROR = "1"
    ```
 
-The analysis is also written to files under the kernel's meta directory — `cfg/mismatch.txt`,
-`cfg/invalid.txt`, `cfg/redefinition.txt` — which is what to read when the warning is truncated.
+The analysis is also written to files under the kernel's meta directory (`cfg/mismatch.txt`,
+`cfg/invalid.txt`, `cfg/redefinition.txt`), which is what to read when the warning is truncated.
 
 **The verification that does not depend on any of this** is to read the built configuration:
 
@@ -75,7 +75,7 @@ bitbake -e virtual/kernel | grep '^B='          # find the kernel build director
 grep -E 'FORTIFY_SOURCE|STACKPROTECTOR|RANDOMIZE_BASE|HARDENED_USERCOPY' <B>/.config
 ```
 
-and on target, `zcat /proc/config.gz` when `CONFIG_IKCONFIG_PROC=y` — which is itself a small disclosure and a
+and on target, `zcat /proc/config.gz` when `CONFIG_IKCONFIG_PROC=y`, which is itself a small disclosure and a
 deliberate choice for a production image.
 
 ## `kernel-hardening-checker`
@@ -86,7 +86,7 @@ config symbols and command-line settings could be tightened, against curated rec
 **Check the branch, not the release number.** `scarthgap` and `wrynose` carry 0.6.17.1, while `walnascar`
 carries 0.6.10, because the newer version was backported to the LTS branch.
 
-Install it into a **prod-test image, not production** — it is an analysis tool, and shipping it hands an
+Install it into a **prod-test image, not production**: it is an analysis tool, and shipping it hands an
 attacker your own gap list:
 
 ```bitbake
@@ -105,7 +105,7 @@ inventory of the drivers you shipped**, which a monolithic `.config` review is n
 grep '^kernel-module-' tmp/deploy/images/<machine>/<image>-<machine>.rootfs.manifest
 ```
 
-A module in that list that no hardware needs is a candidate for removal — and removing it is a config change,
+A module in that list that no hardware needs is a candidate for removal, and removing it is a config change,
 not a package exclusion, or the driver stays built into the kernel.
 
 ## `meta-security` and the `security` `DISTRO_FEATURE`
@@ -115,7 +115,7 @@ The feature enables nothing by itself; it gates four further conditions (`apparm
 compatibility: `meta-security-layer-map.md`.
 
 The dm-verity kernel fragment is enabled by `IMAGE_CLASSES` containing `dm-verity-img`, not by a
-`DISTRO_FEATURE` — see `chain-of-trust-wiring.md`.
+`DISTRO_FEATURE`; see `chain-of-trust-wiring.md`.
 
 ## MAC layers
 
