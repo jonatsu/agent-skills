@@ -32,7 +32,7 @@ Drop an entry only once it is processed or expired, one `session_id` at a time:
 
 ```bash
 sed -i '/"session_id":"<id>"/d' \
-  "${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/hooks/capture-pending.jsonl"
+  "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/capture-pending.jsonl"
 ```
 
 Use the in-place form. The hook may append while the sweep runs, and the familiar read-filter-rewrite shape
