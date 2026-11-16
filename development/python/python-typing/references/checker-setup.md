@@ -131,7 +131,7 @@ form, `# pyright: ignore[reportGeneralTypeIssues]`, names its rule. basedpyright
 default and `recommended` modes but honours it under `typeCheckingMode = "strict"`. A project running two
 checkers pays for both conventions, which is another reason to run one.
 
-For a whole file, `# mypy: ignore-errors` at the top is preferable to a per-line sweep — it is one visible
+For a whole file, `# mypy: ignore-errors` at the top is preferable to a per-line sweep; it is one visible
 marker rather than fifty invisible ones, and it greps.
 
 ## What to Check, and When
