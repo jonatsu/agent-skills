@@ -49,14 +49,18 @@ inside that subtree. An idea to evaluate goes to a ledger's candidate list when 
 backlog.
 
 When the repository has no ledger for the type, create `TODO.md` or `BACKLOG.md` at the root with a short header
-stating what belongs there, following `context-architecture`'s default layout when that skill is available.
-Those two are the only ledgers to create unasked: a roadmap item in a repository without a roadmap goes to the
-backlog, and the confirmation says so.
+stating what belongs there and that an entry leaves once it is done, handled elsewhere, or stale. Follow
+`context-architecture`'s default layout when that skill is available. Those two are the only ledgers to create
+unasked: a roadmap item in a repository without a roadmap goes to the backlog, and the confirmation says so.
 
 ## 4. Check for a Duplicate
 
 Search the chosen ledger, and its neighbours, for an entry on the same subject. When one exists, add the new
 information to it rather than writing a second entry, and say that you updated it.
+
+When that entry is already done, handled elsewhere, or stale, it leaves the ledger instead. Move anything a
+later reader needs to its durable home, delete the entry, and say so in the confirmation. A decision closed on
+evidence stays where the ledger keeps such decisions, so it is not reopened.
 
 ## 5. Write the Entry
 

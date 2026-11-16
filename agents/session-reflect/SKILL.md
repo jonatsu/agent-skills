@@ -79,6 +79,9 @@ repositories goes to memory or user instructions, wherever it happened to surfac
 user likes things done goes to memory. When the user states it as a standing rule for every session, it becomes
 a user-level rule, which is heavy, so propose it.
 
+When the session finished, superseded, or disproved work that a ledger entry tracks, remove the entry, after
+moving anything a later reader still needs to its durable home.
+
 **Classify a mistake before writing a rule for it.** A mechanical violation, one a fixed pattern describes (a
 banned call, an import shape, a file-location rule), gets a deterministic check, because a check fails where a
 sentence in a standards file does not. Only a real judgement call becomes prose, and it goes where the reviewer

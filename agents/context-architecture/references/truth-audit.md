@@ -73,8 +73,9 @@ usually need one owner and two pointers, not three edits.
   from a source a reader can look up. It adds an edit site to every change of the source. Replace it with a
   pointer plus whatever meaning or gotcha the source lacks. A self-referential count, such as "the three steps
   below", is the smallest case: delete the number and let the list speak.
-- **Misleading status:** a finished plan that reads as active, an investigation that reads as a contract, or a
-  draft that cannot be told from current guidance at first glance.
+- **Misleading status:** a finished plan that reads as active, an investigation that reads as a contract, a
+  draft that cannot be told from current guidance at first glance, or a ledger entry for work that is done,
+  handled elsewhere, or stale.
 - **Wrong home:** a fact far from the file someone edits when the fact changes; a concept used by two areas
   but documented inside one of them; a lasting rule trapped in a dated investigation.
 - **No update path:** nothing tells whoever changes the underlying truth to change this document. Propose a

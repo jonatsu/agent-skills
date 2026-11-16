@@ -162,7 +162,7 @@ units and dependency order, not just in a closing recommendation:
 4. **After corrections:** the implementer owns repairs; the reviewer checks the changed findings and affected evidence.
    Track severity, location, concrete failure or violated requirement, correction, and blocking status. Required checks
    and blocking findings must be resolved before the unit closes. Record nonblocking follow-ups with an owner and
-   reason.
+   reason in the repository's ledger, and remove each one there once it is done or no longer applies.
 5. **At final integration and operational cutover:** review cross-unit behavior, migration and recovery, packaging, and
    the applicable qualification evidence, and run the separate conformance review below. Before consequential external
    actions, review the exact proposed operation and obtain only authorization not already supplied. Unit approval does

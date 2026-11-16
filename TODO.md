@@ -25,16 +25,19 @@ the routing check (agent-setup's `docs/evaluations/skills/2026-10-04-engineering
   compared against those two, with the missing spec reported as a coverage limit, and a change governed by none of
   the three must be returned as general code review.
 
-## Core Working Rules Belong in the Skills
+## Skill-Authoring Rules Only in `AGENTS.md`
 
-Requested by the user on 2026-11-16. A core working rule should already live in the skill that does that work,
-not only in one repository's `AGENTS.md` or ledger header. The rule that prompted this: a ledger entry (TODO,
-backlog, roadmap) leaves the ledger once it is done, handled elsewhere, or stale, after anything a later reader
-needs has moved to its durable home. This repository states it in the `TODO.md` header and in `AGENTS.md`, but
-no skill does. A search of every `SKILL.md` for the rule found none. The skills that write ledger entries are
-`agents/note-for-later`, `engineering/implementation-planning`, `engineering/technical-design`,
-`agents/session-reflect`, and `agents/agents-context-docs`. Add the rule to each one that writes or closes an
-entry, sized to its job. Then sweep for other rules that exist only in a repository file, and list them here.
+Two generic rules for writing skills live only in this repository's `AGENTS.md`, so an agent that authors a
+skill with `skill-forge` anywhere else never sees them:
+
+- Every skill is complete for its own job. When two skills need a rule, each carries its own version sized to
+  that job, and a pointer to a sibling skill adds depth, never correctness.
+- Before writing a skill, ask what a user would have to say for it to load. Guidance for a moment nobody
+  verbalizes belongs in an agent's rules, because no description makes such a skill activate.
+
+Add both to `skills-for-skills/skill-forge/references/authoring.md`. A sweep on 2026-11-16 of `AGENTS.md` and
+this file's header found no others: the documentation rules are already in `writing-documentation`, and the
+remaining rules are specific to this repository.
 
 ## Description and Prose Pass Ledger
 

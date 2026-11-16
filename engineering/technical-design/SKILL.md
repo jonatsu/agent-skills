@@ -143,7 +143,8 @@ acquire product authority. Section 9 links existing decisions rather than duplic
 
 A design leads implementation, then follows it: once code exists, the code wins and the design is updated to match.
 The status line says so. Open items live in one questions register and one task ledger, linked from the design, never
-as "not designed" in its text.
+as "not designed" in its text. An item leaves the register or the ledger once it is settled or done, after its
+answer has moved into the design or the code.
 
 ## Write for the Reader
 
