@@ -1,6 +1,6 @@
 # sops-nix Option Reference
 
-## NixOS — Top-level Options
+## NixOS: Top-level Options
 
 | Option                      | Type             | Default                           | Description                                                     |
 | --------------------------- | ---------------- | --------------------------------- | --------------------------------------------------------------- |
@@ -24,7 +24,7 @@
 \* `useSystemdActivation` defaults to `true` only when `systemd.sysusers.enable` or `services.userborn.enable`
 is set (users managed by systemd); otherwise `false`.
 
-## NixOS — Per-Secret Options (`sops.secrets.<name>`)
+## NixOS: Per-Secret Options (`sops.secrets.<name>`)
 
 | Option           | Type         | Default               | Description                                          |
 | ---------------- | ------------ | --------------------- | ---------------------------------------------------- |

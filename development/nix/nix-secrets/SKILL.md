@@ -20,20 +20,20 @@ the world-readable Nix store.
 
 ### Decision matrix
 
-| Criterion            | agenix                        | sops-nix                               |
-| -------------------- | ----------------------------- | -------------------------------------- |
-| Simplicity           | Simpler — one file per secret | More complex — structured files        |
-| Encryption           | age (SSH keys)                | age, GPG, AWS KMS, GCP KMS, Vault      |
-| Secret structure     | One secret per `.age` file    | Multiple secrets per YAML/JSON file    |
-| Templates            | No                            | Yes — embed secrets in config files    |
-| Eval-time validation | No                            | Yes — checks sops files against config |
-| Scalability          | Good for few secrets          | Better for many grouped secrets        |
-| Home-manager         | Supported                     | Supported (requires systemd/user)      |
+| Criterion            | agenix                       | sops-nix                              |
+| -------------------- | ---------------------------- | ------------------------------------- |
+| Simplicity           | Simpler: one file per secret | More complex: structured files        |
+| Encryption           | age (SSH keys)               | age, GPG, AWS KMS, GCP KMS, Vault     |
+| Secret structure     | One secret per `.age` file   | Multiple secrets per YAML/JSON file   |
+| Templates            | No                           | Yes: embed secrets in config files    |
+| Eval-time validation | No                           | Yes: checks sops files against config |
+| Scalability          | Good for few secrets         | Better for many grouped secrets       |
+| Home-manager         | Supported                    | Supported (requires systemd/user)     |
 
 **Recommendation**: Start with agenix. Graduate to sops-nix when one-file-per-secret becomes painful.
 
 **agenix-rekey** (an agenix extension, not a third column): graduate to it when managing many hosts with plain
-agenix becomes painful — see [agenix-rekey (When to Graduate)](#agenix-rekey-when-to-graduate).
+agenix becomes painful; see [agenix-rekey (When to Graduate)](#agenix-rekey-when-to-graduate).
 
 ## Step 2: Generate Keys
 
@@ -153,18 +153,18 @@ myservice:
 [oddlama/agenix-rekey](https://github.com/oddlama/agenix-rekey) extends agenix for multi-host setups.
 Graduate to it when:
 
-- Maintaining `secrets.nix` recipient lists across many hosts becomes painful — agenix-rekey eliminates
+- Maintaining `secrets.nix` recipient lists across many hosts becomes painful: agenix-rekey eliminates
   `secrets.nix` by deriving recipients from evaluated host configs. Each secret is encrypted only to master
   identities (`age.secrets.<name>.rekeyFile` replaces `file`); per-host ciphertexts are derived at rekey time,
   lazily and cached.
 - You want a hardware-backed (YubiKey/FIDO2 via `age-plugin-yubikey`) or other master age identity in
   `age.rekey.masterIdentities`.
-- You need generated secrets — random passwords, SSH keypairs, DH params — declared via
+- You need generated secrets (random passwords, SSH keypairs, DH params) declared via
   `age.secrets.<name>.generator.script`.
 
 Verified gotchas before adopting:
 
-- `age.rekey.storageMode` (`"local"` or `"derivation"`) has **no default** — evaluation aborts if unset.
+- `age.rekey.storageMode` (`"local"` or `"derivation"`) has **no default**: evaluation aborts if unset.
 - The per-host key option is `age.rekey.hostPubkey` (singular, set once per host).
 - The CLI ships under the `agenix` binary name (`agenix edit|view|rekey|generate`), not `agenix-rekey`.
 
@@ -175,7 +175,7 @@ source, not from cached tables.
 
 Use one tool per module, or per host, when a configuration carries both agenix and sops-nix.
 
-### agenix — NixOS
+### agenix: NixOS
 
 ```nix
 # Flake input
@@ -197,7 +197,7 @@ inputs.agenix.url = "github:ryantm/agenix";
 }
 ```
 
-### agenix — home-manager
+### agenix: home-manager
 
 ```nix
 { config, agenix, ... }: {
@@ -218,7 +218,7 @@ take no `owner` or `group`; declare a service-owned secret in NixOS-level agenix
 See [references/agenix-options.md](references/agenix-options.md) for complete option reference and threat
 model.
 
-### sops-nix — NixOS
+### sops-nix: NixOS
 
 ```nix
 # Flake input
@@ -252,7 +252,7 @@ inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
 sops-nix rejects `neededForUsers` on a secret with a non-root `owner` or `group`.
 
-### sops-nix — home-manager
+### sops-nix: home-manager
 
 ```nix
 { config, sops-nix, ... }: {
@@ -337,18 +337,18 @@ The work is done when every item holds:
 - [ ] Services can read their secret files (owner, group, and mode checked)
 - [ ] Every secret is referenced through `.path`; no `builtins.readFile` or `.file` reaches a secret
 - [ ] The repository holds only encrypted secret files
-- [ ] No secret reached the Nix store — build the system, then scan its closure:
+- [ ] No secret reached the Nix store: build the system, then scan its closure:
   `nix build .#nixosConfigurations.<host>.config.system.build.toplevel --print-out-paths --no-link`, then
   `nix path-info -r <that-path> | grep -i secret`
-  (matches store path *names* only, not file contents — a clean result is necessary, not sufficient)
+  (matches store path *names* only, not file contents; a clean result is necessary, not sufficient)
 - [ ] sops-nix with impermanence: `useTmpfs = true`
 - [ ] Key rotation is written down: who holds each key, how to add or revoke a recipient, and the rekey command
 
 ## Reference Files
 
-- [references/agenix-options.md](references/agenix-options.md) — Complete agenix option reference and threat
+- [references/agenix-options.md](references/agenix-options.md): Complete agenix option reference and threat
   model
-- [references/sops-nix-options.md](references/sops-nix-options.md) — Complete sops-nix option reference
+- [references/sops-nix-options.md](references/sops-nix-options.md): Complete sops-nix option reference
   (NixOS, home-manager, templates)
-- [references/advanced-patterns.md](references/advanced-patterns.md) — Sharing secrets between services,
+- [references/advanced-patterns.md](references/advanced-patterns.md): Sharing secrets between services,
   impermanence compatibility, git diff in cleartext

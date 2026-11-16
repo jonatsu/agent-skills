@@ -2,12 +2,12 @@
 
 ## Threat Model
 
-- age encryption provides **confidentiality** but NOT authentication — there is no MAC (message authentication
+- age encryption provides **confidentiality** but NOT authentication: there is no MAC (message authentication
   code). A malicious party with write access to the repo could replace encrypted secrets.
-- agenix is NOT audited — use at your own risk for sensitive infrastructure.
+- agenix is NOT audited; use at your own risk for sensitive infrastructure.
 - Password-protected SSH keys do NOT work with ssh-agent for agenix decryption. Use unprotected keys or age
   keys directly.
-- Rekeying changes ALL encrypted files (age uses random nonces) — every `.age` file gets new ciphertext even
+- Rekeying changes ALL encrypted files (age uses random nonces): every `.age` file gets new ciphertext even
   if the plaintext is unchanged.
 
 ## NixOS Options
