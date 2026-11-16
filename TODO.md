@@ -335,13 +335,6 @@ mostly grep and search to find things, which suggests the layouts or the guidanc
 yet steer navigation. The cause is unknown. Candidates include link wording, pointer placement, and what the
 loaded instruction files say about navigation. Raised 2026-10-11; pick it up after the attributions repair.
 
-## Dash Overuse in Skill Packages
-
-Rewrite the em and en dashes in non-archived `SKILL.md` files and their references that no grammatical need
-justifies, with the punctuation the clause relationship calls for. Pattern 16 in
-`docs/findings/2026-10-11-documentation-flaw-patterns.md` describes the flaw; `rg -n '—|–'` lists the
-candidates. Each skill is one commit, and a real range keeps its dash.
-
 ## Unevaluated Candidate Sources
 
 Recorded and never fetched, read, or license-checked. The descriptions are path-based inferences, not evidence.
