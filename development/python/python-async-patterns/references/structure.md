@@ -178,7 +178,7 @@ interrupted by another task on the same loop, so a purely synchronous update nee
 
 ## Request Context Across Tasks
 
-`contextvars` carries per-request state — a request ID, a tenant, a trace span — through a call chain without
+`contextvars` carries per-request state (a request ID, a tenant, a trace span) through a call chain without
 threading it through every signature. It is the async-safe replacement for a thread-local, because the event
 loop interleaves requests on one thread and a thread-local would mix them up.
 
@@ -210,7 +210,7 @@ The same copy-on-spawn rule applies to `TaskGroup.create_task`.
 
 **Offloading to a thread splits on which call you use.** Measured on both versions: `asyncio.to_thread` copies
 the calling context into the worker thread, so a logging filter reading these variables still works there.
-`loop.run_in_executor` does **not** — the function runs with an empty context and every variable falls back to
+`loop.run_in_executor` does **not**: the function runs with an empty context and every variable falls back to
 its default, silently. Prefer `to_thread`; where you need a specific executor, carry the context yourself:
 
 ```python

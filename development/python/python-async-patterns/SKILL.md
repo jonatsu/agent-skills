@@ -172,7 +172,7 @@ The client's own connection pool is the other half of this, and it is per-client
 
 ## Cancellation Is Not an Error
 
-`CancelledError` inherits from `BaseException`, so `except Exception` does not catch it — deliberately. If you
+`CancelledError` inherits from `BaseException`, so `except Exception` does not catch it (deliberately). If you
 catch it explicitly, re-raise:
 
 ```python
@@ -191,8 +191,8 @@ process that hangs on Ctrl-C. Use `finally` for cleanup that must run either way
 
 ### Shield the Cleanup That Must Finish
 
-When a cleanup `await` must complete even though its task is being cancelled — committing a transaction,
-releasing a lease, flushing a final record — `asyncio.shield` detaches it from the cancellation:
+When a cleanup `await` must complete even though its task is being cancelled (committing a transaction,
+releasing a lease, flushing a final record), `asyncio.shield` detaches it from the cancellation:
 
 ```python
 try:

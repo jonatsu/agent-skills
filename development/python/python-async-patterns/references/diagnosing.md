@@ -90,7 +90,7 @@ coroutine 'fetch' was never awaited
 A coroutine was created and dropped, so its body never ran. Usually a forgotten `await`, or passing
 `fetch(url)` where a callable was expected.
 
-Under a `TaskGroup`, failures arrive as an `ExceptionGroup`. A plain `except ValueError` does not match one —
+Under a `TaskGroup`, failures arrive as an `ExceptionGroup`. A plain `except ValueError` does not match one;
 use `except*`, or `except ExceptionGroup` if you need the whole group.
 
 ## Already Inside a Running Loop
@@ -113,8 +113,8 @@ Jupyter supports `await` at the top level of a cell for exactly this reason; `as
 script entry point and belongs only there.
 
 **Do not reach for `nest_asyncio` to make the error go away.** It monkey-patches the loop to allow re-entrancy,
-which is not a property asyncio provides, and the failures it buys you — a task resumed inside another task's
-frame — are much harder to read than the `RuntimeError` it silenced. If a synchronous caller genuinely must
+which is not a property asyncio provides, and the failures it buys you (a task resumed inside another task's
+frame) are much harder to read than the `RuntimeError` it silenced. If a synchronous caller genuinely must
 drive async work while a loop runs elsewhere, run the coroutine on that loop from its own thread with
 `asyncio.run_coroutine_threadsafe`, or restructure so the boundary sits at the entry point.
 
