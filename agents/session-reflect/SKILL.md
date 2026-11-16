@@ -75,7 +75,9 @@ Look for each signal:
 | Anything deferred                                | The repository's ledger (its TODO, backlog, or roadmap)                   |
 
 Route each candidate to its own scope: a repo-specific fact stays in the repository, and a preference that spans
-repositories goes to memory or user instructions, wherever it happened to surface.
+repositories goes to memory or user instructions, wherever it happened to surface. A preference about how the
+user likes things done goes to memory. When the user states it as a standing rule for every session, it becomes
+a user-level rule, which is heavy, so propose it.
 
 **Classify a mistake before writing a rule for it.** A mechanical violation, one a fixed pattern describes (a
 banned call, an import shape, a file-location rule), gets a deterministic check, because a check fails where a

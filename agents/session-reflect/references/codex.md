@@ -20,10 +20,11 @@ The home is `${CODEX_HOME:-~/.codex}`; it is written `<home>` below.
 Codex learns from the session itself, so a preference stated plainly in the session usually reaches its memory
 without a write. A capture that must hold from the next session on goes to instructions instead.
 
-When the `memories` tools appear in the session, `add_ad_hoc_note` saves a note for a fact the user asked Codex
-to remember. Use it for those facts, and route the rest by the main table. The tools sit behind the
-undocumented `memories.dedicated_tools` setting, so check for them in the session rather than assuming either
-way.
+With memory on, write a fact the user asked to remember, forget, or correct as one small Markdown note under
+`<home>/memories/extensions/ad_hoc/notes/`. Consolidation folds the note into memory later; never edit the
+generated files beside it. Where the session offers the `add_ad_hoc_note` tool, use it instead. Codex's own
+memory prompt updates memory only when the user explicitly asks, so route every other candidate by the main
+table.
 
-Memory maintenance has nothing to prune by hand; the user turns memory use on or off for a session with
-`/memories`.
+For memory maintenance, propose a forget or correction note for each stale entry, and write it once the user
+approves. The user turns memory use on or off for a session with `/memories`.
