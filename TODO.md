@@ -164,6 +164,26 @@ description unchanged: in headless main sessions it loads on every substantive G
 description scored no better (`docs/evaluations/2026-11-16-github-and-history-triggers.md`). Short questions such
 as "did the latest run pass?" still rarely load it.
 
+## Pre-commit Stash Wipes Parallel Subagents' Edits
+
+Find a fix, in any repository, for commits that lose edits other agents are making in the same working tree.
+On 2026-11-16 the main session committed one batch of a dash pass while three subagents were still editing.
+pre-commit stashes every unstaged change before its hooks run and restores the stash afterwards. One
+subagent's edits made inside that window vanished twice, and a hook reported "files were modified by this hook"
+for changes it never made.
+
+The configuration cannot turn this off. In pre-commit 4.6.2, `pre_commit/commands/run.py` sets
+`stash = not args.all_files and not args.files`, so a hook run from `git commit` always stashes, and no
+`.pre-commit-config.yaml` key reaches that flag. Whether prek, the Rust reimplementation, offers a no-stash mode
+is unknown; it is installed through mise but has no version set. Candidate fixes, none tried yet:
+
+- give each editing subagent its own worktree, as guidance in `dispatching-subagents` and the agents' rules;
+- a git hook wrapper that runs `pre-commit run --files <staged paths>`, which skips the stash but checks the
+  working-tree content rather than the staged content, so it can pass a commit whose staged version would fail;
+- a no-stash mode in prek, if one exists.
+
+Until then, the session memory rule is to make no commit while subagents edit the same tree.
+
 ## Invocation Control Audit
 
 Checked 2026-09-11: no skill in this repository sets `disable-model-invocation` or `user-invocable`,
