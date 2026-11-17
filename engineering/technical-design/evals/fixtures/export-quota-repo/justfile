@@ -1,0 +1,11 @@
+# Lint and check formatting.
+lint:
+    ruff check .
+    ruff format --check .
+
+# Run the test suite.
+test:
+    python3 -m pytest
+
+# Run every check.
+check: lint test

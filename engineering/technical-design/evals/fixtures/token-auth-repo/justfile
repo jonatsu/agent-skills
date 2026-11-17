@@ -1,0 +1,15 @@
+# List the recipes.
+default:
+    @just --list
+
+# Run the test suite.
+test:
+    python3 -m pytest
+
+# Lint and check formatting.
+lint:
+    ruff check .
+    ruff format --check .
+
+# Run every check.
+check: lint test

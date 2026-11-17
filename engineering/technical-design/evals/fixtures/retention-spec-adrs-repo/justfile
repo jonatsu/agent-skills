@@ -1,0 +1,3 @@
+# Check relative links and ADR status lines.
+check:
+    python3 scripts/check_docs.py docs

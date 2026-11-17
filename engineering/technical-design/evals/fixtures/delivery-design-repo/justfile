@@ -1,0 +1,15 @@
+# Lint and check formatting.
+lint:
+    ruff check .
+    ruff format --check .
+
+# Run the test suite.
+test:
+    python3 -m pytest
+
+# Verify that every design document has the required headings.
+check-design:
+    python3 scripts/check_design.py docs/design
+
+# Run every check.
+check: lint test check-design

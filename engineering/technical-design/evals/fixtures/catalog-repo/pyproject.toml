@@ -1,0 +1,24 @@
+[project]
+name = "catalogcheck"
+version = "0.1.0"
+description = "Check product catalog files before they are published."
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+catalogcheck = "catalogcheck:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100

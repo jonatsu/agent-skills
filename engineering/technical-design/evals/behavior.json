@@ -36,6 +36,15 @@
     {
       "id": "02-idea-brainstorming-handoff",
       "prompt": "Use the supplied idea-brainstorming draft to design the selected neighborhood tool-library reservation service. Keep the marketplace parked and preserve access for residents without smartphones.",
+      "fixture": "fixtures/tool-library-draft-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/*-design.md"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "required_inputs": [
         "A draft recording the selected reservation-queue and volunteer-pickup direction, scope, exclusions, constraints, and open technical questions."
       ],
@@ -49,6 +58,15 @@
     {
       "id": "03-repository-grounded-design",
       "prompt": "Design how this repository should add expiring API tokens. Inspect the existing authentication implementation and tests before recommending the storage, validation, and migration behavior. Do not plan implementation tasks.",
+      "fixture": "fixtures/token-auth-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/*-design.md"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "required_inputs": [
         "A temporary repository fixture containing authentication code, persistence boundaries, tests, and repository instructions."
       ],
@@ -105,6 +123,15 @@
     {
       "id": "current-code-not-product-policy",
       "prompt": "Design the export quota behavior. Repository inspection shows that the current code limits free accounts to 100 exports each month, but no product artifact states that policy. Treat the code as evidence and determine what still needs product authority.",
+      "fixture": "fixtures/export-quota-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/*-design.md"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Distinguish verified current behavior from intended product policy.",
       "outcomes": [
         "Records the limit as verified current behavior rather than an unverified fact.",
@@ -117,6 +144,15 @@
     {
       "id": "negative-guarantee-design",
       "prompt": "Design tenant-safe dashboard exports from an accepted brainstorm. Administrators may export filtered records from their own tenant, and an export must never disclose another tenant's data. Define the system behavior without writing an implementation plan.",
+      "fixture": "fixtures/tenant-export-draft-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/*-design.md"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Translate an accepted prohibited outcome into design-owned system guarantees.",
       "outcomes": [
         "Turns the accepted prohibited outcome into explicit system invariants and boundary behavior.",
@@ -128,6 +164,15 @@
     {
       "id": "accepted-specification-input",
       "prompt": "Design the technical realization of the accepted tenant-export specification supplied with this request. Trace its observable requirements and negative guarantees, but do not rewrite the specification or plan implementation.",
+      "fixture": "fixtures/tenant-export-spec-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/*-design.md"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "required_inputs": [
         "An accepted requirements specification with a named revision, observable behavior, acceptance criteria, and a cross-tenant disclosure prohibition."
       ],
@@ -142,6 +187,15 @@
     {
       "id": "missing-requirement-return",
       "prompt": "While designing scheduled report delivery, you discover the accepted specification does not say what users observe when delivery repeatedly fails or whether they may retry manually. Continue the design.",
+      "fixture": "fixtures/scheduled-reports-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/scheduled-reports-design.md"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Return missing observable behavior to requirements specification.",
       "outcomes": [
         "Identifies repeated-failure and manual-retry behavior as requirements gaps rather than architecture details.",
@@ -153,6 +207,13 @@
     {
       "id": "arc42-default",
       "prompt": "Design a local catalog validator. It reads a UTF-8 JSON array of objects, requires a nonempty string id on each entry, rejects duplicate ids, never changes the input, and reports every entry issue. Parsing or read errors are distinct from invalid entries. There are no existing design docs or specified document format. Present the design in your answer.",
+      "fixture": "fixtures/catalog-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Choose the arc42 default and explain a bounded design.",
       "outcomes": [
         "Uses the twelve numbered arc42 sections in order, with a brief source/status preamble and unnumbered planning handoff.",
@@ -164,6 +225,15 @@
     {
       "id": "existing-design-format",
       "prompt": "Extend the supplied design to cover recovery after a worker restart. Keep its accepted delivery guarantees. The existing design has Purpose, Current behavior, Proposed behavior, Decisions, and Open questions sections; repository instructions require that layout for design docs. Present the revised document.",
+      "fixture": "fixtures/delivery-design-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/design/delivery.md"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Preserve an applicable repository format.",
       "outcomes": [
         "Preserves the established headings and terminology instead of adding twelve arc42 chapters or a second design.",
@@ -177,6 +247,13 @@
     {
       "id": "unrelated-docs-not-convention",
       "prompt": "Design a read-only UTF-8 JSON catalog validator requiring nonempty string ids and unique ids, reporting all entry issues and distinguishing read/parse failures. The repository contains only a README with Installation and Usage headings and an API reference. No architecture or design template is established. Present the design.",
+      "fixture": "fixtures/catalog-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Distinguish unrelated documentation from a design convention.",
       "outcomes": [
         "Uses arc42 rather than copying the README headings.",
@@ -196,6 +273,15 @@
     {
       "id": "requirements-and-adrs-in-format",
       "prompt": "Create an arc42 design from the supplied accepted specification and existing ADRs. The specification owns retention and recovery behavior; the ADRs already settle storage and identity. Do not reopen these decisions.",
+      "fixture": "fixtures/retention-spec-adrs-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/design/*-design.md"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Use requirements and decision sections without duplicating authority.",
       "outcomes": [
         "Sections 1 and 10 summarize or reference accepted requirements and preserve their revision and identifiers.",
