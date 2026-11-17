@@ -33,7 +33,9 @@ contradictory, or unaccepted user-visible behavior to `writing-specs`.
 
 When no spec governs the work and the design starts deciding user-visible behavior, user journeys, or acceptance that
 no spec covers, the design has grown large. Stop deciding that behavior, propose writing a spec with `writing-specs`,
-say why, and let the user decide. Record the decision in the design basis: the spec that now governs, or that the user
+say why, and let the user decide. Keep designing what holds under any answer, such as data flow, failure handling,
+and the mechanics the decision does not reach, and hand nothing to implementation planning until the user decides.
+Record the decision in the design basis: the spec that now governs, or that the user
 waived it and their reason. A waived spec leaves the accepted request as the basis, and the behavior the design fixes
 stays a labeled recommendation for the user to confirm.
 
