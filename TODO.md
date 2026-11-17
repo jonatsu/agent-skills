@@ -217,18 +217,12 @@ third-party skills from upstream, and a frontmatter change to one of those is ov
 
 Open sub-question: whether tightening `allowed-tools` rides along with this or stays separate.
 
-## Evaluation Harness Lives in agent-setup
+## Check the agent-setup Evaluation Harness
 
-Check agent-setup's progress on the harness whenever evaluation work starts here, and at least monthly. Its state is
-the status line of `docs/plans/evaluation/skill-evaluation-redesign.md` there. Once the harness runs, move this
-repository's evaluations onto it and stop running them by hand.
-
-- agent-setup holds the hand-run method of 2026-11-17 as `docs/plans/evaluation/headless-skill-evals-prototype.md`
-  (commit `a2d2946c`) and its run data under `docs/evaluations/` (commit `ff24ec03`). The round records stay here
-  under `docs/evaluations/`.
-- The harness validates case files against `checks/skill_checks/eval_cases.schema.json` at a pinned commit of this
-  repository; `skill-checks evals` runs the same validation here. Whether outcomes gain a machine-checkable form
-  beside their sentence is settled with the redesign's open question "What the schema pins".
+agent-setup builds the evaluation harness that will run this repository's eval cases. Check its progress whenever
+evaluation work starts here, and at least monthly, in the status line of
+`docs/plans/evaluation/skill-evaluation-redesign.md` there. Once the harness runs, move this repository's
+evaluations onto it and stop running them by hand.
 
 ## Compare `skill-forge` With Anthropic's `skill-creator` Plugin
 
@@ -236,9 +230,9 @@ Check `skill-forge` against Anthropic's official `skill-creator` plugin, includi
 skill: its agents and its evaluation pipeline, which could improve this repository's authoring and evaluation setup.
 Source: <https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator/skills/skill-creator>.
 `skill-forge`'s `ATTRIBUTIONS.md` already credits the plugin's skill at `fa59bc9037741ecfa131aa27938272605710d7b2`
-for ideas only; the agents and the pipeline have not been evaluated. Weigh the pipeline against the "Portable
-Skill-Fixture Harness" entry above. The plugin is `Apache-2.0`, so adapting material brings that license's
-obligations. Raised 2026-10-11.
+for ideas only; the agents and the pipeline have not been evaluated. Weigh the pipeline against agent-setup's
+evaluation harness (see "Check the agent-setup Evaluation Harness" above). The plugin is `Apache-2.0`, so adapting
+material brings that license's obligations. Raised 2026-10-11.
 
 ## Compare the Custom Agents With Anthropic's `pr-review-toolkit` Plugin
 
