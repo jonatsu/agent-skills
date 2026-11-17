@@ -9,13 +9,14 @@ them.
 
 All three skills improve on the base model, on both Sonnet and Opus. Scores below count a pass as 1 and a partial as
 0.5 per outcome, excluding outcomes the run correctly never reached and the defective case
-`10-compatible-migration`:
+`10-compatible-migration`. Seven long skill-arm documents were first graded from a truncated copy; the scores below use
+their full regrade, described in `2026-11-17-pipeline-skills-round-2.md`:
 
 | Skill                     | Sonnet without | Sonnet with | Opus without | Opus with |
 | ------------------------- | -------------- | ----------- | ------------ | --------- |
 | `idea-brainstorming`      | 0.81           | 0.93        | 0.82         | 0.93      |
-| `technical-design`        | 0.79           | 0.92        | 0.79         | 0.90      |
-| `implementation-planning` | 0.71           | 1.00        | 0.79         | 0.97      |
+| `technical-design`        | 0.79           | 0.91        | 0.79         | 0.91      |
+| `implementation-planning` | 0.71           | 0.97        | 0.79         | 0.97      |
 
 The largest gains are where the base model overreaches. Without the skill, both models planned
 `07-requirements-with-design-gap` by inventing the missing architecture (queued jobs, encryption scheme, status codes)
