@@ -188,7 +188,7 @@
       "prompt": "Design adding duplicate-id detection to an existing read-only catalog validator. The accepted requirement is to report all duplicate ids without changing existing read/parse errors or output ordering. Existing system documentation describes the parser, CLI and deployment, but does not establish a design-document format. Present a bounded change design.",
       "behavior": "Scale depth without losing recognizable format.",
       "outcomes": [
-        "Uses arc42 sections with concise applicability statements or references where sufficient.",
+        "Keeps arc42's section numbers and order, omits sections that would carry nothing, and links unchanged context where sufficient.",
         "Describes the affected design and links unchanged context rather than redesigning the entire tool.",
         "Does not invent quality targets, stakeholders, deployment changes or risks to fill sections."
       ]
