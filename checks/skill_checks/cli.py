@@ -17,6 +17,7 @@ from skill_checks.catalog import (
     find_skill_source,
 )
 from skill_checks.descriptions import check_descriptions, format_description_report
+from skill_checks.eval_cases import check_eval_cases
 from skill_checks.identity import IdentityError, wrong_identities, wrong_pushed_identities
 from skill_checks.names import duplicate_names
 from skill_checks.outside_references import check_packages
@@ -55,6 +56,7 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("attributions", help="check ATTRIBUTIONS.md against the provenance scheme")
     commands.add_parser("names", help="fail when two deployable skills share a name")
     commands.add_parser("references", help="fail on a reference out of a skill package")
+    commands.add_parser("evals", help="validate every skill's evals/*.json against the case schema")
     examples = commands.add_parser(
         "rust-examples", help="build, lint, and run the Rust code examples in skill packages"
     )
@@ -122,6 +124,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _run_names(root)
     if arguments.command == "references":
         return _run_references(root)
+    if arguments.command == "evals":
+        return _run_evals(root)
     if arguments.command == "rust-examples":
         return _run_rust_examples(root, rebuild_all=arguments.rebuild_all)
     if arguments.command == "locate":
@@ -195,6 +199,24 @@ def _run_references(root: Path) -> int:
         print(f"FAIL  {location}: {violation.reason}: {violation.reference}")
     print(f"references: {len(violations)} reference(s) out of their package or missing")
     return 1 if violations else 0
+
+
+def _run_evals(root: Path) -> int:
+    try:
+        sources = discover_skill_sources(root)
+    except SkillCatalogError as error:
+        print(f"skill-checks: {error}", file=sys.stderr)
+        return 2
+    findings = check_eval_cases(source.directory for source in sources)
+    for finding in findings:
+        location = (
+            f"{finding.path.relative_to(root)}:{finding.location}"
+            if finding.location
+            else finding.path.relative_to(root)
+        )
+        print(f"FAIL  {location}: {finding.message}")
+    print(f"evals: {len(findings)} finding(s)")
+    return 1 if findings else 0
 
 
 # The host package template, and the ignored directory the check builds in.

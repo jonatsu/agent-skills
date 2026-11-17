@@ -2,7 +2,7 @@
   "skill_name": "skill-forge",
   "mode": "client-selected activation",
   "run_contract": {
-    "supply_skill_path": false,
+    "supply_candidate_skill_path": false,
     "execution": "Run only during an authorized full evaluation; review lite starts no model runs.",
     "observe": "Whether the client selects skill-forge through its verified discovery mechanism, and which mode the agent enters.",
     "record": [
@@ -142,6 +142,7 @@
     {
       "id": "ambiguous-skill-help",
       "prompt": "Can you help me with this Agent Skill?",
+      "should_trigger": true,
       "expected_behavior": [
         "activate",
         "clarify whether the user wants the skill built or changed, judged, or simply used"

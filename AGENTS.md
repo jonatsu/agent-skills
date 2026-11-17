@@ -19,7 +19,7 @@ Read the focused source before acting:
 ```bash
 just check                     # history secrets scan, every hook, both test suites; run before calling work done
 just skill-check <skill-dir>   # both validators over one skill
-uv run --frozen skill-checks spec | policy | descriptions | names | references   # one check, whole tree
+uv run --frozen skill-checks spec | policy | descriptions | names | references | evals   # one check, whole tree
 uv run --frozen skill-checks rust-examples   # build, lint, and run every Rust skill example
 ```
 

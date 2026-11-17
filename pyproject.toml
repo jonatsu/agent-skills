@@ -3,7 +3,10 @@ name = "agent-skills-checks"
 version = "0.1.0"
 description = "Checks for the agent-skills repository's skill packages."
 requires-python = ">=3.12"
-dependencies = ["attrs>=25.3"]
+dependencies = [
+    "attrs>=25.3",
+    "jsonschema>=4.23",
+]
 
 [project.scripts]
 skill-checks = "skill_checks.cli:main"
@@ -16,6 +19,7 @@ dev = [
   "pyyaml>=6.0",
   # The Agent Skills specification validator; its command is `agentskills validate`.
   "skills-ref==0.1.1",
+  "types-jsonschema>=4.26.0.20261006",
 ]
 
 [build-system]

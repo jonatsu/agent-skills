@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jonatsu/agent-skills/checks/skill_checks/eval_cases.schema.json",
+  "title": "Agent skill eval cases",
+  "description": "One evals/*.json file in a skill package. Outcomes and assertions are sentences for a grader; the schema fixes their shape, not their meaning.",
+  "type": "object",
+  "required": ["skill_name", "mode", "run_contract", "cases"],
+  "additionalProperties": false,
+  "properties": {
+    "skill_name": {
+      "description": "The name of the skill package that holds the file.",
+      "$ref": "#/$defs/text"
+    },
+    "mode": {
+      "description": "What the file evaluates, such as \"explicit behavioral evaluation\" or \"client-selected activation\".",
+      "$ref": "#/$defs/text"
+    },
+    "run_contract": { "$ref": "#/$defs/run_contract" },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/behavior_case" },
+          { "$ref": "#/$defs/review_case" },
+          { "$ref": "#/$defs/activation_case" }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1 },
+    "texts": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/text" } },
+    "case_id": {
+      "description": "Unique within the file; lowercase words joined by hyphens, optionally led by a number.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "fixture": {
+      "description": "A directory under the file's evals/fixtures/, relative to the file. A run starts in a fresh copy of it.",
+      "type": "string",
+      "pattern": "^fixtures/[^/].*$"
+    },
+    "run_contract": {
+      "description": "How every case in the file runs and is graded. Only the skill-path flag is fixed; other keys describe the file's own needs.",
+      "type": "object",
+      "required": ["supply_candidate_skill_path"],
+      "properties": {
+        "supply_candidate_skill_path": {
+          "description": "Whether the run names the candidate skill's path. False means the agent must discover the skill itself.",
+          "type": "boolean"
+        },
+        "clean_context_per_case": { "type": "boolean" },
+        "grading": { "$ref": "#/$defs/text" },
+        "record": { "$ref": "#/$defs/texts" }
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "required": ["setup", "working_directory", "allowed_writes", "cleanup"],
+      "additionalProperties": false,
+      "properties": {
+        "setup": { "$ref": "#/$defs/text" },
+        "working_directory": { "$ref": "#/$defs/text" },
+        "allowed_writes": {
+          "description": "Paths or glob patterns the run may write, relative to the working directory; empty means none.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/text" }
+        },
+        "expected_artifact_pattern": { "$ref": "#/$defs/text" },
+        "cleanup": { "$ref": "#/$defs/text" }
+      }
+    },
+    "earlier_turns": {
+      "description": "Context the run receives as earlier turns of the conversation, before the prompt.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/text" }
+    },
+    "scripted_turns": {
+      "description": "Turns the run takes in order; turn 1 is the prompt itself.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["turn", "user", "expected"],
+        "additionalProperties": false,
+        "properties": {
+          "turn": { "type": "integer", "minimum": 1 },
+          "user": { "$ref": "#/$defs/text" },
+          "expected": { "$ref": "#/$defs/text" }
+        }
+      }
+    },
+    "behavior_case": {
+      "description": "Does following the skill produce the right work?",
+      "type": "object",
+      "required": ["id", "prompt", "behavior", "outcomes"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/case_id" },
+        "prompt": { "$ref": "#/$defs/text" },
+        "behavior": { "$ref": "#/$defs/text" },
+        "outcomes": { "$ref": "#/$defs/texts" },
+        "required_inputs": { "$ref": "#/$defs/texts" },
+        "fixture": { "$ref": "#/$defs/fixture" },
+        "workspace": { "$ref": "#/$defs/workspace" },
+        "conversation": {
+          "oneOf": [{ "$ref": "#/$defs/earlier_turns" }, { "$ref": "#/$defs/scripted_turns" }]
+        },
+        "planted": {
+          "description": "The defect a fixture plants for the case to find, for the grader only.",
+          "$ref": "#/$defs/text"
+        },
+        "skill_arm_only": {
+          "description": "True when the case runs only with the skill, such as a check of the skill's own rule.",
+          "type": "boolean"
+        }
+      },
+      "dependentRequired": { "workspace": ["fixture"] }
+    },
+    "review_case": {
+      "description": "Does the review reach the right verdict with the right evidence?",
+      "type": "object",
+      "required": ["id", "prompt", "assertions"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/case_id" },
+        "prompt": { "$ref": "#/$defs/text" },
+        "assertions": { "$ref": "#/$defs/texts" },
+        "expected_verdict": { "$ref": "#/$defs/text" },
+        "fixture": { "$ref": "#/$defs/fixture" }
+      }
+    },
+    "activation_case": {
+      "description": "Does the client load the skill for this request, or leave it unloaded?",
+      "type": "object",
+      "required": ["id", "prompt", "should_trigger", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/case_id" },
+        "prompt": { "$ref": "#/$defs/text" },
+        "should_trigger": { "type": "boolean" },
+        "reason": { "$ref": "#/$defs/text" },
+        "expected_behavior": { "$ref": "#/$defs/texts" }
+      }
+    }
+  }
+}

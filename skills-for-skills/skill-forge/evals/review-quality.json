@@ -2,7 +2,7 @@
   "skill_name": "skill-forge",
   "mode": "explicit review-mode quality",
   "run_contract": {
-    "supply_skill_path": true,
+    "supply_candidate_skill_path": true,
     "clean_context_per_case": true,
     "fixture_template": "SKILL.md.fixture",
     "fixture_setup": "Resolve fixture directories relative to this case file. Copy only the case's declared initial inputs into a fresh isolated workspace, materializing SKILL.md.fixture as SKILL.md there. Never rename templates in the source or deployed package. Keep expected outcomes and grading material outside the candidate workspace unless they are explicit task inputs.",
