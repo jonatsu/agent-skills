@@ -1,0 +1,12 @@
+- name: File server
+  hosts: nas
+  roles:
+    - backup
+- name: Home DNS
+  hosts: pi-dns
+  roles:
+    - dns
+- name: Media server
+  hosts: media
+  roles:
+    - media

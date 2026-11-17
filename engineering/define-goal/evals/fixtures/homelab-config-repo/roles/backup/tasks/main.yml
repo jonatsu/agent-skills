@@ -1,0 +1,10 @@
+- name: Install restic
+  ansible.builtin.package:
+    name: restic
+    state: present
+- name: Schedule the nightly backup to the offsite disk
+  ansible.builtin.cron:
+    name: restic nightly
+    hour: "2"
+    minute: "0"
+    job: /usr/local/bin/restic-nightly

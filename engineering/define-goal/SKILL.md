@@ -1,6 +1,6 @@
 ---
 name: define-goal
-description: Turn an intention, a plan, or a request into a measurable goal for an agent run, with the evidence that proves it met, and set it in the goal loop (/goal, /autopilot, create_goal) that keeps the agent working until it is. Use when asked to define, set, or sharpen a goal or objective, to start goal-backed or autopilot work, or to make "done" measurable before an unattended run; not for product acceptance criteria (writing-specs), implementation plans (implementation-planning), or ordinary tasks.
+description: Define goals at two scales, a project's lasting goals (purpose, success signal, scope, who decides), set up or retrofitted, wired into README and AGENTS.md; or one run's measurable finish line, armed in the goal loop (/goal, /autopilot, create_goal). Use to set up, state, or tidy a project's goals or purpose, or to set a goal before autopilot work; not for unformed ideas (idea-brainstorming), acceptance criteria (writing-specs), implementation plans (implementation-planning), or ordinary tasks.
 license: Apache-2.0
 metadata:
   author: Joonas Onatsu
@@ -8,10 +8,21 @@ metadata:
 
 # Define Goal
 
-Shape what the user wants into a goal an agent can pursue honestly, then arm it in the harness's goal loop so
-work continues until the evidence exists. A goal names an outcome and the evidence that proves it. In the
-engineering pipeline this step follows `implementation-planning` and precedes `incremental-implementation`; for
-a bounded request with no plan, it is the whole of the preparation.
+A goal names an outcome and the evidence that proves it. This skill writes goals at two scales, and the request
+decides which:
+
+- **Project goals** say where a whole project is going: its purpose, success signal, scope, and who decides a
+  change. They last as long as the project and bind every session. Use this mode when the user wants to set up,
+  state, retrofit, or tidy a project's goals or purpose, whether the project is new or already exists. Read
+  [references/project-goals.md](references/project-goals.md) and follow it; the rest of this file covers run
+  goals only.
+- **Run goals** set the finish line for one agent run and arm it in the harness's goal loop, so work continues
+  until the evidence exists. Use this mode for a goal, objective, or autopilot run. In the engineering pipeline
+  it follows `implementation-planning` and precedes `incremental-implementation`; for a bounded request with no
+  plan, it is the whole of the preparation.
+
+A run goal never rewrites the project goals. When the requested run would break them, stop and ask, because the
+project goals belong to their owner.
 
 Every harness with a goal feature runs the same loop: the user sets an objective, the harness resumes the agent
 whenever it would stop, and something judges whether the objective is met. The objective text is the only part of
@@ -25,9 +36,10 @@ pays for itself only when a loop or a long run needs an explicit finish line.
 
 Take the outcome from its authority rather than inventing it. An accepted plan supplies the final integration
 gate, a requirements specification supplies acceptance criteria, and a bounded request supplies its own
-result. When the purpose itself is unsettled, return to `idea-brainstorming`; when intended behavior or
-acceptance is open, to `writing-specs`; when the work spans several dependent units with no plan,
-to `implementation-planning`.
+result. When the repository states project goals, read them first and carry their scope and limits into the
+run goal's boundaries. The deliverable is the goal itself, not a plan file. When the purpose itself is
+unsettled, return to `idea-brainstorming`; when intended behavior or acceptance is open, to `writing-specs`; when
+the work spans several dependent units with no plan, to `implementation-planning`.
 
 ## Write the Goal
 

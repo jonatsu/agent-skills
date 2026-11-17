@@ -1,0 +1,4 @@
+- name: Install Jellyfin
+  ansible.builtin.package:
+    name: jellyfin
+    state: present

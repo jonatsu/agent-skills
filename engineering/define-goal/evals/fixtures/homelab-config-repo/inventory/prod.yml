@@ -1,0 +1,8 @@
+all:
+  hosts:
+    nas:
+      ansible_host: nas.home.arpa
+    pi-dns:
+      ansible_host: pi-dns.home.arpa
+    media:
+      ansible_host: media.home.arpa

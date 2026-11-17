@@ -15,4 +15,5 @@ The files adapt Apache-2.0 upstream material and were modified from it; keep `LI
 
 The upstream skill supplied the quality bar for a goal, the rejection of activity goals, the per-work-type
 quantification heuristics, the clarifying-question guidance, and one example pair. This package adapts and
-substantially extends them, and its `SKILL.md` is a rewrite.
+substantially extends them, and its `SKILL.md` is a rewrite. The project goals mode in
+`references/project-goals.md` is the author's own and takes nothing from it.

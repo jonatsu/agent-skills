@@ -1,0 +1,4 @@
+- name: Install the DNS server
+  ansible.builtin.package:
+    name: unbound
+    state: present

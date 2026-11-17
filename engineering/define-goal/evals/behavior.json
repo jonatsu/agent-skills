@@ -1,0 +1,160 @@
+{
+  "skill_name": "define-goal",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "grading": "Grade each outcome from the response, the files the run wrote, and its tool calls. The project goals cases are single turns of an interactive exchange: judge what the run proposed, asked, and wrote in that turn.",
+    "record": ["client", "model", "date", "source_revision", "prompt", "raw_result", "trace_location", "output_location", "duration", "result"]
+  },
+  "cases": [
+    {
+      "id": "new-project-elicitation",
+      "prompt": "I'm starting this photo backup project and want to set up its goals before we build anything. Honestly I'm not sure yet what it should be beyond backing up our photos.",
+      "fixture": "fixtures/new-project-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory for each run.",
+        "working_directory": ".",
+        "allowed_writes": [],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
+      "behavior": "Elicit a new project's goals when the user has no clear vision, contributing domain expertise.",
+      "outcomes": [
+        "Reads the repository's notes before asking, and builds its proposals on what they say.",
+        "Contributes domain knowledge as labeled recommendations, such as candidate purposes, success signals, or risks a backup project usually faces, rather than only asking open questions.",
+        "Steers toward a purpose, an observable success signal, and what is in and out of scope, rather than toward features or architecture.",
+        "Ends with exactly one consequential question, or with one confirmation request on a proposed draft.",
+        "Writes no goal document, spec, design, or plan before the user confirms the content."
+      ]
+    },
+    {
+      "id": "retrofit-reconstruct",
+      "prompt": "This repo has never said what it's actually for. Work out its goals from what's here and propose them. I'll confirm before anything gets written.",
+      "fixture": "fixtures/homelab-config-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory for each run.",
+        "working_directory": ".",
+        "allowed_writes": [],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
+      "behavior": "Reconstruct an existing repository's implicit goals for the user to confirm.",
+      "outcomes": [
+        "Inspects the README, AGENTS.md, TODO.md, the roles, and the runbook before proposing.",
+        "Proposes a purpose, at least one observable success signal, and what is in scope, what is out, and who decides a change.",
+        "Marks each proposed item as inferred from named evidence or as its own recommendation, and asks the user to confirm or correct the items that matter most.",
+        "Proposes where the goals will live and how AGENTS.md and the README will point to them, without writing those changes.",
+        "Writes no files."
+      ]
+    },
+    {
+      "id": "confirmed-goals-wiring",
+      "prompt": "Looks right. Go ahead: write it up and wire it in.",
+      "conversation": [
+        "The user asked to state this homelab repository's goals, and the agent proposed them from the repository's contents.",
+        "Agreed purpose: keep the family's files, home DNS, and media running on three machines with little upkeep, so that losing one machine loses no family data.",
+        "Agreed success signal: a quarterly restore test of a random file from the offsite backup succeeds, and the user's partner can perform it from the runbook alone.",
+        "Agreed scope: in, the three hosts and their services; out, cloud hosting, Kubernetes, and services nobody in the family uses. The user decides any change to these goals.",
+        "Agreed method: Ansible only, staging before prod, as AGENTS.md already says.",
+        "The user chose a dedicated goals file and approved adding a pointer to AGENTS.md and a purpose sentence to the README."
+      ],
+      "fixture": "fixtures/homelab-config-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory for each run.",
+        "working_directory": ".",
+        "allowed_writes": ["docs/*.md", "*.md", "AGENTS.md", "README.md"],
+        "cleanup": "Inspect the written files and trace, then delete the temporary workspace."
+      },
+      "behavior": "Write confirmed project goals to one owning file and wire them into what every session loads.",
+      "outcomes": [
+        "Writes the agreed goals to one dedicated file, keeping the agreed wording and adding no new policy.",
+        "Adds a line to AGENTS.md that points to the goals file and states that the user decides any change to it.",
+        "Makes the README's opening say what the project is for, with a link to the goals file.",
+        "Keeps one full copy of the goals: AGENTS.md and the README point to the file rather than restating it.",
+        "Places the goals file where the repository's layout suggests and reports the files it changed."
+      ]
+    },
+    {
+      "id": "consolidate-duplicated-goals",
+      "prompt": "Our goals feel inconsistent across the docs. Sort that out.",
+      "fixture": "fixtures/duplicated-goals-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory for each run.",
+        "working_directory": ".",
+        "allowed_writes": ["*.md", "docs/*.md"],
+        "cleanup": "Inspect the response, the written files, and the trace, then delete the temporary workspace."
+      },
+      "behavior": "Find goals stated in more than one place and consolidate them under one owner.",
+      "outcomes": [
+        "Finds both statements of the goals and names the specific conflict: which goal comes first.",
+        "Asks the user which priority is right instead of choosing one itself.",
+        "Proposes one owning location for the goals, with a pointer from the other file, rather than keeping two copies in sync.",
+        "Keeps the README's opening saying what the project is for.",
+        "Leaves the conflicting priority unresolved in any file it writes until the user decides."
+      ]
+    },
+    {
+      "id": "readme-placement-and-free-approach",
+      "prompt": "Write up the goals the way we discussed. Put them in the README, not a separate file.",
+      "conversation": [
+        "The user asked to set up goals for this photo backup project, and the agent helped shape them.",
+        "Agreed primary goal: no family photo exists in only one place; every photo from both laptops and the phone has a copy on the external disk within a day.",
+        "Agreed secondary goal: the user gets better at Rust. When the two conflict, the primary goal wins.",
+        "Agreed success signal: the user's partner can restore any chosen photo from the disk without help.",
+        "Agreed scope: in, local backups to the external disk and later a home NAS; out, cloud storage and a photo browsing interface. The user decides any change to these goals.",
+        "The user said: I don't want to dictate the approach or the tools. Let the agents pick, as long as the goals hold."
+      ],
+      "fixture": "fixtures/new-project-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory for each run.",
+        "working_directory": ".",
+        "allowed_writes": ["README.md", "AGENTS.md"],
+        "cleanup": "Inspect the written files and trace, then delete the temporary workspace."
+      },
+      "behavior": "Follow the user's placement, record two goals with their priority, and record a free choice of approach.",
+      "outcomes": [
+        "Writes the goals into the README as the user asked, with no separate goals file.",
+        "Records both goals with their priority and the rule that the primary goal wins a conflict.",
+        "Records explicitly that agents choose the approach and tools, rather than leaving method out.",
+        "Opens the README with what the project is for.",
+        "Creates or proposes an AGENTS.md entry that points to the goals in the README and states that the user decides any change to them."
+      ]
+    },
+    {
+      "id": "run-goal-from-project-goals",
+      "prompt": "Set up a goal for an autopilot run that adds a --dry-run flag to the sync command.",
+      "fixture": "fixtures/goals-in-place-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory for each run.",
+        "working_directory": ".",
+        "allowed_writes": [],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
+      "behavior": "Define a run goal whose boundaries come from the project's stated goals.",
+      "outcomes": [
+        "Reads the project goals before writing the run goal.",
+        "Carries the relevant project boundaries into the run goal, such as never changing the source folder and no network transfer.",
+        "States the objective, success criteria, verification with `just test` or an equivalent command, boundaries, and stop conditions.",
+        "Writes a goal condition of at most 500 characters that names a command and its pass signal.",
+        "Leaves the project goals unchanged."
+      ]
+    },
+    {
+      "id": "run-goal-from-activity",
+      "prompt": "Make the test suite better. Set that as the goal for an autopilot run.",
+      "fixture": "fixtures/goals-in-place-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory for each run.",
+        "working_directory": ".",
+        "allowed_writes": [],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
+      "behavior": "Rewrite an activity request into a measurable run goal without reopening the project's goals.",
+      "outcomes": [
+        "Treats the request as a goal for one run, not as a request to define or revise the project's goals.",
+        "Rewrites the activity into an observable outcome with a binary or quantitative check, or proposes one and asks the user to confirm it.",
+        "Keeps the run goal inside the project's stated scope.",
+        "Asks at most one short question, aimed at the missing threshold or evidence."
+      ]
+    }
+  ]
+}
