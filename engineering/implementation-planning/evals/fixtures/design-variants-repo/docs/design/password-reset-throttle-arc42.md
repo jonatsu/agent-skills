@@ -24,26 +24,33 @@ response.
 
 - `identity.reset.request_reset`: unchanged interface; consults the throttle before sending.
 - `identity.throttle.allow_reset(db, account_id, now) -> bool`: new; returns whether a send is allowed and records it
-  when it is.
+  when it is. Callers, including tests, pass the connection and the time in.
+- `identity.settings`: new; reads `RESET_EMAILS_PER_HOUR` and, in `database_path()`, `IDENTITY_DB` from the process
+  environment on each call, so a change takes effect when the process restarts.
+- `identity.maintenance`: new; run nightly as `python -m identity.maintenance`.
 - Table `reset_requests(account_id, sent_at)`: new, created by migration `0007_reset_requests.sql`.
 
 ## 6. Runtime View
 
 1. Caller submits an email address.
 2. `find_account` resolves it. Unknown address: return `GENERIC_RESPONSE`.
-3. `allow_reset` counts rows for the account with `sent_at` in the last 60 minutes. If the count is below
+3. `request_reset` opens a connection to `database_path()` and takes `now` from `datetime.now(UTC)`. `allow_reset`
+   counts rows for the account with `sent_at` in the last 60 minutes. If the count is below
    `RESET_EMAILS_PER_HOUR` (default 3), it inserts a row in the same transaction and returns True.
 4. On True, `send_email` runs. Either way, `GENERIC_RESPONSE` is returned.
 
 ## 7. Deployment View
 
-One release containing migration `0007_reset_requests.sql`. Rollback is the previous release; older code ignores the
-table.
+One release containing migration `0007_reset_requests.sql`, in a new top-level `migrations/` directory. The number
+continues the deployed database's sequence, so earlier files are not in this repository. The release applies it with
+`sqlite3 <db> < migrations/0007_reset_requests.sql`. The deployment schedules `python -m identity.maintenance` nightly
+with cron. Rollback is the previous release; older code ignores the table.
 
 ## 8. Crosscutting Concepts
 
 Fail closed: if the throttle table cannot be read or written, no email is sent and the generic response is returned.
-Log the account id on failure, never the email address. The nightly maintenance job deletes rows older than 24 hours.
+Log the account id on failure, never the email address. The new nightly maintenance job deletes rows older than 24
+hours.
 
 ## 9. Architecture Decisions
 
