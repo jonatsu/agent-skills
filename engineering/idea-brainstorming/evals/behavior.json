@@ -156,6 +156,13 @@
     {
       "id": "backward-refinement",
       "prompt": "While designing the tool-library reservation flow, we learned most users do not have smartphones. The earlier brainstorm assumed an app-only service. What should happen next?",
+      "fixture": "fixtures/app-only-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory for each candidate and baseline run.",
+        "working_directory": ".",
+        "allowed_writes": [],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Return an intent or scope change to idea-brainstorming.",
       "outcomes": [
         "Recognizes that the discovery changes product scope or intended experience rather than only technical design.",
