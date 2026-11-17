@@ -80,6 +80,16 @@ byte-identical with `diff -r`.
 
 Each case is single-turn, so the evaluation does not show a whole interactive session from an empty repository to
 wired goals. The fixtures are small, synthetic, and agent-written. The trigger test ran on Opus only, with fifteen
-requests. The user's acceptance test is still open: take one new project and one existing repository through the
-project goals mode, accept both results, then confirm that a fresh session in each cites its goals unprompted when
-choosing scope or method.
+requests.
+
+## Acceptance Test
+
+The user's acceptance test takes one new project and one existing repository through the project goals mode, accepts
+both results, and confirms that a fresh session in each cites its goals unprompted when choosing scope or method.
+
+The retrofit passed on a personal NixOS configuration. The request loaded `define-goal`, and the user accepted goals
+placed in the README by their choice: a purpose with an ordered conflict rule, a binary version 1.0 done-check, scope
+in and out, and the user as sole decider, with the method left to the existing `AGENTS.md`. The pointer in `AGENTS.md`
+carries the stop-and-ask instruction, and the goals hold no rule the user did not confirm. A fresh session asked "what
+should I work on next" read the goals first and proposed tasks aligned with them. The new-project half is still
+open.
