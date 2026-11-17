@@ -20,23 +20,25 @@ instead of guessing forward.
 
 | Document           | What it is                                                               | Written by                   | Used or checked by                   |
 | ------------------ | ------------------------------------------------------------------------ | ---------------------------- | ------------------------------------ |
+| Project goals      | What the project is for, its success signal, scope, and who decides      | `define-goal`                | Every later document and session     |
 | Idea draft         | A direction worth pursuing, with one observable sign of success          | `idea-brainstorming`         | The spec, or the design when no spec |
 | **Spec**           | What the finished product must do, and how its acceptance is judged      | `writing-specs`              | Design, plan, conformance review     |
 | Design             | How the system will do what the spec says, including how it fails        | `technical-design`           | Plan, conformance review             |
 | Plan               | The work in dependency order, each unit with its verification and review | `implementation-planning`    | Build, conformance review            |
-| Goal               | When an unattended run is finished, and the evidence that proves it      | `define-goal`                | The harness goal loop                |
+| Run goal           | When an unattended run is finished, and the evidence that proves it      | `define-goal`                | The harness goal loop                |
 | Code               | The change itself, landed as small verified commits                      | `incremental-implementation` | Unit review, conformance review      |
 | Conformance report | Whether the code matches the spec, design, and plan, with every mismatch | `conformance-review`         | Closes the work, or sends it back    |
 
 ```mermaid
 flowchart TD
+    goals[[Project goals<br/>define-goal]] -.->|bound every stage| draft
     idea([Idea or request]) --> draft[Idea draft<br/>idea-brainstorming]
     draft --> spec[Spec<br/>writing-specs]
     draft -->|small, behavior already clear| design
     spec --> design[Design<br/>technical-design]
     design -->|grows large: propose a spec| spec
     design --> plan[Plan<br/>implementation-planning]
-    plan --> goal[Goal<br/>define-goal]
+    plan --> goal[Run goal<br/>define-goal]
     plan -->|attended run| code
     goal --> code[Code<br/>incremental-implementation]
     code --> report[Conformance report<br/>conformance-review]
@@ -68,6 +70,12 @@ at `docs/specs/<name>.md` unless the repository has its own convention.
 
 ## Each stage
 
+**Project goals.** `define-goal` states, with the user, what the whole project is for: its purpose, success
+signal, what is in and out of scope, and who decides a change. They sit above the chain rather than in it: every
+later document must stay inside them, and they can be written for a new project or added to an existing one at any
+time without running the stages again. The user chooses where they live, and `AGENTS.md` points to them so every
+session loads them.
+
 **Idea draft.** `idea-brainstorming` widens the possibilities, then narrows to a direction, and saves it as a
 draft marked incomplete. It hands to `writing-specs` when user-visible behavior or acceptance needs a durable
 contract, and straight to `technical-design` when the direction is small and its behavior already clear.
@@ -84,7 +92,7 @@ whole design once.
 verification and its review stage: before implementation, after each substantive unit, after corrections, and at
 final integration. The final integration gate includes the conformance review.
 
-**Goal.** `define-goal` turns the plan's final gate, or a bounded request's own result, into a goal: an
+**Run goal.** `define-goal` turns the plan's final gate, or a bounded request's own result, into a goal: an
 objective, success criteria, the verification that proves them, boundaries, and stop conditions. It sets that goal
 in the running harness's goal loop, so an unattended run keeps working until the evidence exists. An attended run
 may skip it.
@@ -125,7 +133,7 @@ The pipeline has more than one door. A new product idea starts at the idea draft
 already clear starts at the design, or at the plan when it follows an existing convention, which then serves as
 the design. A bug starts with `systematic-debugging`, then `test-driven-development` for the failing test, and
 then code for the fix. A request for goal-backed or autopilot work starts at the goal, which sends it back to
-whichever earlier document is missing.
+whichever earlier document is missing. A project with no stated direction, new or old, starts at the project goals.
 
 ## Where the skills do not yet match
 

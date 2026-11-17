@@ -14,9 +14,9 @@ design.
 
 ## Establish the Design Basis
 
-Read the governing spec, overview or idea-brainstorming draft, repository instructions, relevant implementation, tests,
-interfaces, operations, and prior decisions before asking questions. Recover facts from those sources instead of asking
-the user to repeat them.
+Read the governing spec, project goals, overview or idea-brainstorming draft, repository instructions, relevant
+implementation, tests, interfaces, operations, and prior decisions before asking questions. Recover facts from those
+sources instead of asking the user to repeat them.
 
 Technical design may start from:
 

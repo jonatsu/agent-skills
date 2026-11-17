@@ -102,9 +102,9 @@ technical design, and whether each item is a user decision, recommendation, or p
 prohibited outcomes when they define success. Add actors, prior art, detailed measurements, or rejected alternatives
 only when they help the later reader.
 
-When the work advances a larger initiative, reference its governing overview near the beginning of the saved draft and
-state how the selected direction advances that intent. When the direction weakens the governing intent, revise it with
-the user before any handoff.
+When the work advances a larger initiative or a project with stated goals, reference that governing overview near the
+beginning of the saved draft and state how the selected direction advances that intent. When the direction weakens the
+governing intent, revise it with the user before any handoff.
 
 Keep the draft free of unearned detailed requirements, architecture, interfaces, schemas, file layouts, failure
 handling, and task breakdowns. An early technical direction is allowed only when it is marked provisional.

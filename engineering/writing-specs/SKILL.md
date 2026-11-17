@@ -16,9 +16,9 @@ intended observable behavior; it does not describe current code merely because t
 
 ## Establish the Spec Basis
 
-Read the governing overview or idea-brainstorming draft, accepted product decisions, relevant current behavior, domain
-evidence, and repository conventions before asking questions. Recover established facts instead of asking the user to
-repeat them.
+Read the project goals, governing overview or idea-brainstorming draft, accepted product decisions, relevant current
+behavior, domain evidence, and repository conventions before asking questions. Recover established facts instead of
+asking the user to repeat them.
 
 A spec may start from:
 
