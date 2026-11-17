@@ -37,6 +37,25 @@ Two skill gaps showed on both models:
 One partial also repeated on both models: on `no-premature-acceptance-brief`, the response said detailed acceptance
 belongs in a spec but not that architecture-dependent evidence belongs to technical design or planning.
 
+## Fixes and Their Check
+
+`idea-brainstorming` now asks first whether several outcomes share a purpose and can compose, and keeps composable
+ones together (`b4dd870`). `technical-design` now keeps designing what holds under any answer while a proposed spec
+is open (`4b2df37`). The affected cases ran three more times per model with the skill, graded the same way:
+
+| Case                         | Sonnet runs    | Opus runs       |
+| ---------------------------- | -------------- | --------------- |
+| `no-spec-design-grows-large` | 1.0, 1.0, 1.0  | 0.9, 0.9, 0.9   |
+| `multi-outcome-scope`        | 1.0, 1.0, 1.0  | 1.0, 1.0, 1.0   |
+| `composable-branches`        | 1.0, 0.5, 0.33 | 0.83, 0.83, 1.0 |
+
+Every run of `no-spec-design-grows-large` now continues the design; Opus loses half an outcome for keeping the
+decision in its reply rather than a written design basis. `multi-outcome-scope` shows that the composition rule did
+not stop agents from splitting outcomes that stand apart. On `composable-branches`, two Sonnet runs now answer the
+composition question but judge that the garden waitlist and surplus sharing "stand apart" because they serve
+different people, then ask which comes first. That is a weak judgment, since gardeners appear in both, but no longer
+a skipped step; the wording was not tuned further to one case.
+
 ## Case Defects
 
 - **`implementation-planning/10-compatible-migration`** asks to plan "the accepted migration" but supplies no design.

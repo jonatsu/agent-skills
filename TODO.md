@@ -301,13 +301,9 @@ These skills shipped with static review only, and their plans closed with the mo
 
 - `idea-brainstorming`, `technical-design` and `implementation-planning`. Round 1 ran their 28 self-contained cases
   without and with the skill on Sonnet and Opus (`docs/evaluations/2026-11-17-pipeline-skills-round-1.md`). All three
-  skills improve on the base model. Open from that round, each awaiting the user's decision on a drafted fix:
-
-  - `idea-brainstorming`: the rule for decomposing several outcomes overrides saying whether branches compose
-    (`composable-branches`).
-  - `technical-design`: with no spec, the skill stops the whole design rather than continuing the design that holds
-    under any answer (`no-spec-design-grows-large`).
-  - `technical-design/small-change-arc42` outcome 1 expects applicability lines that the skill tells agents to omit.
+  skills improve on the base model. The two skill gaps it found are fixed (`b4dd870`, `4b2df37`) and the stale
+  `small-change-arc42` outcome is corrected (`abbece7`). On `composable-branches`, Sonnet still sometimes judges the
+  two ideas separate; revisit only if other cases show the same weak composition judgment.
 
   **Next:** write synthetic fixtures for the 24 cases that depend on material the prompt calls "supplied" or on a
   repository to inspect, then run them the same way. Size each fixture by what round 1 showed, and put it under the
