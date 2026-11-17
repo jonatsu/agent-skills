@@ -299,23 +299,30 @@ These skills shipped with static review only, and their plans closed with the mo
 - `skill-forge`, including its review mode, which absorbed `skill-review` on 2026-09-28. The 2026-09-04 refresh
   left it `ready with risks` with no baseline or candidate run.
 
-- `idea-brainstorming`, `technical-design` and `implementation-planning`. Their `evals/behavior.json` files hold
-  53 cases, and none had run against a model before 2026-11-17. That day's first round runs the 28 cases that
-  need no supplied material, without and with the skill, once each on Sonnet and Opus in headless Claude Code.
+- `idea-brainstorming`, `technical-design` and `implementation-planning`. Round 1 ran their 28 self-contained cases
+  without and with the skill on Sonnet and Opus (`docs/evaluations/2026-11-17-pipeline-skills-round-1.md`). All three
+  skills improve on the base model. Open from that round, each awaiting the user's decision on a drafted fix:
 
-  **Next, after that round lands:** write synthetic fixtures for the 23 cases that depend on material the prompt
-  calls "supplied" or on a repository to inspect, then run them the same way. Size each fixture by what the first
-  round shows, and put it under the skill's `evals/fixtures/`. The cases are:
+  - `idea-brainstorming`: the rule for decomposing several outcomes overrides saying whether branches compose
+    (`composable-branches`).
+  - `technical-design`: with no spec, the skill stops the whole design rather than continuing the design that holds
+    under any answer (`no-spec-design-grows-large`).
+  - `technical-design/small-change-arc42` outcome 1 expects applicability lines that the skill tells agents to omit.
+
+  **Next:** write synthetic fixtures for the 24 cases that depend on material the prompt calls "supplied" or on a
+  repository to inspect, then run them the same way. Size each fixture by what round 1 showed, and put it under the
+  skill's `evals/fixtures/`. The cases are:
 
   - `idea-brainstorming`: `handoff-fidelity`, `backward-refinement` (its `handoff-repo` fixture may serve both);
   - `technical-design`: `02-idea-brainstorming-handoff`, `03-repository-grounded-design`,
     `current-code-not-product-policy`, `negative-guarantee-design`, `accepted-specification-input`,
     `missing-requirement-return`, `arc42-default`, `existing-design-format`, `unrelated-docs-not-convention`,
     `requirements-and-adrs-in-format`;
-  - `implementation-planning`: `06-accepted-design`, `12-verification-theater`, `negative-guarantee-verification`,
-    `review-gates-and-required-practices`, `review-availability-and-cost`, `specification-design-traceability`,
-    `stale-design-after-specification-change`, `plan-default-and-shared-preflight`, `accepted-design-formats`,
-    `plan-versus-execution-record`, `implementer-comprehension`.
+  - `implementation-planning`: `06-accepted-design`, `10-compatible-migration`, `12-verification-theater`,
+    `negative-guarantee-verification`, `review-gates-and-required-practices`, `review-availability-and-cost`,
+    `specification-design-traceability`, `stale-design-after-specification-change`,
+    `plan-default-and-shared-preflight`, `accepted-design-formats`, `plan-versus-execution-record`,
+    `implementer-comprehension`.
 
 ## Deferred Engineering Pipeline Designs
 
