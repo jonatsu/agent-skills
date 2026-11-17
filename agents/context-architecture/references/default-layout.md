@@ -88,6 +88,7 @@ seems to need two, split it.
 | Genre                 | Update semantics                                                          | Authority                                            | Dies when                                             |
 | --------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------- |
 | Floor (`AGENTS.md`)   | Grown from observed failures; accretion-tested                            | Binding rules + routing only                         | Never; it shrinks instead                             |
+| Project goals         | Changed only by the owner's decision                                      | Binding on purpose and scope for all other genres    | Never while the project lives; revised in place       |
 | `docs/reference/`     | Resyncs to code; wrong the moment code moves without it                   | Describes; live code outranks it                     | Subject removed → archive                             |
 | `docs/how-to/`        | Updated in place whenever the procedure changes                           | Describes a current procedure; live tooling outranks | Task stops recurring → archive                        |
 | `docs/specs/`         | Proposed until accepted; revisions expose affected downstream artifacts   | Accepted intended observable behavior within scope   | Behavior retires or a successor replaces it → archive |
@@ -109,6 +110,10 @@ scope; disagreement with current code is a gap to reconcile, not automatic evide
 Place a document by the question it answers. Each directory below says when a document belongs there and how
 to write it there; the directory's own `README.md` indexes what it holds.
 
+- **Project goals: what is this project for, and what will it not do?** Its purpose, success signal, scope, and
+  who decides a change, in one owning place: the README, the floor, or a file under `docs/` named with the
+  owner. The floor points to it and states who decides; the README opens with the purpose. They have no
+  directory of their own, because their name and place follow the project.
 - **`reference/`: how does this work now?** A description of a component, interface, or data model that a
   reader needs to understand before changing it. One subject per file, named for the subject. Record what each
   non-obvious fact was verified against, and update the file in the same change as the code it describes.
