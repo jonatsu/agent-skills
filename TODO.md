@@ -224,11 +224,9 @@ record (`docs/plans/evaluation/skill-evaluation-redesign.md`, as of commit `103b
 every requirement this entry used to list. Once the harness works, run this repository's evaluations through it
 instead of by hand.
 
-The pipeline-skill rounds of 2026-11-17 ran a working version of that method by hand: headless control and skill
-runs per case, fixture copying, contamination guards, blind bundles, and Sonnet graders. The Method sections of
-`docs/evaluations/2026-11-17-pipeline-skills-round-1.md` and `-round-2.md` describe it, including the two control-arm
-leaks and the truncated-bundle bias it had to fix. Carry those lessons into the harness requirements, and decide
-whether the runner, bundle, and scoring scripts become a tracked tool here or input to the agent-setup harness.
+The pipeline-skill rounds of 2026-11-17 ran a working version of that method by hand. The user decided it becomes a
+tool on the agent-setup side; `docs/plans/headless-skill-evals-draft.md` records the method, its learnings, the
+fixtures, and the scripts for that handoff. Hand it to agent-setup's redesign once its session is free.
 
 ## Eval Case Schema
 
