@@ -1,0 +1,14 @@
+# Synthetic tenants for the integration environment. Every value here is invented.
+tenants:
+  - id: tenant-alpha
+    admins: [alpha-admin]
+    members: [alpha-member]
+    records: 250
+  - id: tenant-beta
+    admins: [beta-admin]
+    members: [beta-member]
+    records: 250
+  - id: tenant-gamma
+    admins: [gamma-admin]
+    members: []
+    records: 0

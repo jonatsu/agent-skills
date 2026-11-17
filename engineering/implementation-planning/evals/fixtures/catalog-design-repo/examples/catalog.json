@@ -1,0 +1,4 @@
+[
+  {"id": "sku-1001", "name": "Desk lamp", "price_cents": 2499},
+  {"id": "sku-1002", "name": "Notebook", "price_cents": 399}
+]

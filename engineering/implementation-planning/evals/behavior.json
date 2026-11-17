@@ -24,6 +24,15 @@
     {
       "id": "06-accepted-design",
       "prompt": "Write the implementation plan for the accepted webhook-retry design supplied with this request. Inspect the repository first and preserve every design obligation.",
+      "fixture": "fixtures/webhook-retry-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "required_inputs": [
         "An accepted design defining behavior, interfaces, failure handling, compatibility, and operational obligations.",
         "A temporary repository fixture with implementation, tests, and configured validation commands."
@@ -80,6 +89,15 @@
     {
       "id": "10-compatible-migration",
       "prompt": "Plan the accepted migration from integer account IDs to opaque string IDs. The design requires old and new readers to coexist for one release, an incumbent regression gate, staged rollout, measurable rollback, and removal only after stored data and consumers have migrated.",
+      "fixture": "fixtures/migration-design-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Order a migration around its compatibility seam, rollout, and rollback obligations.",
       "outcomes": [
         "Places the compatibility seam and incumbent regression evidence before migration or rollout.",
@@ -115,6 +133,15 @@
     {
       "id": "12-verification-theater",
       "prompt": "The draft plan says to verify request deduplication by grepping for `idempotency_key` and checking that the tree is clean. Repair the plan's verification without implementing anything.",
+      "fixture": "fixtures/dedup-plan-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/request-dedup-implementation-plan.md"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Reject syntax-only evidence for a behavioral outcome.",
       "outcomes": [
         "Explains that substring presence and clean version-control state do not exercise deduplication behavior.",
@@ -125,6 +152,15 @@
     {
       "id": "negative-guarantee-verification",
       "prompt": "Plan implementation from an accepted tenant-export design. Administrators may export filtered records from their own tenant, and exports must never disclose another tenant's data. A real isolated integration environment with synthetic tenant data is available. Production contains sensitive data and is not authorized for probing. Several authorization and disclosure obligations may share integration coverage.",
+      "fixture": "fixtures/tenant-export-design-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Plan safe behavioral evidence for a negative guarantee without forcing one-to-one test mapping.",
       "outcomes": [
         "Traces the negative guarantee to one or more implementation units.",
@@ -138,6 +174,15 @@
     {
       "id": "review-gates-and-required-practices",
       "prompt": "Write the implementation plan for the accepted webhook-retry design supplied with this request. The repository has Python coding rules, required tests and lint/type gates, and an available skill catalog. The change spans validation, durable retry state, and operational rollout. Include everything an implementer needs without implementing it or spending additional model calls.",
+      "fixture": "fixtures/webhook-retry-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "required_inputs": [
         "An accepted design with bounded retries, persisted state, authorization, failure recovery, and rollout obligations.",
         "A temporary repository with current source/tests, authoritative Python rules, and configured verification commands.",
@@ -155,6 +200,15 @@
     {
       "id": "review-availability-and-cost",
       "prompt": "Revise the review strategy in this accepted multi-unit implementation plan. It currently asks for a fresh whole-repository agent review after every commit and every fix. The repository requires independent review of consequential units. The host cannot launch subagents, and no extra model spending is authorized. A human reviewer can be assigned later. Do not change the implementation or waive the repository review requirement.",
+      "fixture": "fixtures/review-plan-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/notification-preferences-implementation-plan.md"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "required_inputs": [
         "A plan with settled unit dependencies and the excessive review strategy described in the prompt.",
         "Repository policy requiring independent review of consequential changes."
@@ -171,6 +225,15 @@
     {
       "id": "specification-design-traceability",
       "prompt": "Write the implementation plan for the accepted account-export specification and its accepted technical design. The specification uses stable requirement anchors for format selection, resumability, retention, and cross-tenant nondisclosure. Do not implement anything.",
+      "fixture": "fixtures/account-export-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "required_inputs": [
         "An accepted requirements specification and a compatible accepted technical design that maps system guarantees to its anchors."
       ],
@@ -186,6 +249,15 @@
     {
       "id": "stale-design-after-specification-change",
       "prompt": "Plan the accepted report-sharing design. The governing specification was revised after design approval to prohibit public links, but the design still includes them.",
+      "fixture": "fixtures/report-sharing-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Stop planning from a design made stale by an accepted requirement change.",
       "outcomes": [
         "Detects that the accepted specification revision and design are incompatible.",
@@ -197,6 +269,13 @@
     {
       "id": "plan-default-and-shared-preflight",
       "prompt": "Plan implementation of the accepted catalog-validator design supplied with this case. Repository instructions define coding checks but no plan template. Present the plan; do not implement.",
+      "fixture": "fixtures/catalog-design-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Explain the approach before dependency-ordered work units.",
       "outcomes": [
         "Starts with an implementation overview explaining the outcome and ordering rationale before detailed paths and commands.",
@@ -211,6 +290,15 @@
     {
       "id": "accepted-design-formats",
       "prompt": "Plan the same accepted feature from each supplied design variant: one uses arc42, the other the repository’s established headings. Both settle identical behavior and architecture. The repository uses Goal, Work packages, and Acceptance for plans.",
+      "fixture": "fixtures/design-variants-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Separate design format from execution order and honor plan conventions.",
       "outcomes": [
         "Consumes either accepted design without requiring reformatting.",
@@ -225,6 +313,15 @@
     {
       "id": "plan-versus-execution-record",
       "prompt": "Prepare a plan for the accepted feature. The repository tracks execution in an issue checklist with attached check results; nothing has been implemented yet.",
+      "fixture": "fixtures/issue-tracked-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [
+          "docs/plans/"
+        ],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Keep intended work distinguishable from evidence.",
       "outcomes": [
         "States expected observations in the plan and uses the established tracker for future results.",
@@ -251,6 +348,13 @@
     {
       "id": "implementer-comprehension",
       "prompt": "Plan the accepted catalog validator for a capable implementer unfamiliar with the repository. Parser behavior must be established before entry checking is integrated, and CLI reporting must preserve both error classes. Present an actionable plan.",
+      "fixture": "fixtures/catalog-design-repo",
+      "workspace": {
+        "setup": "Copy the fixture to a new temporary directory before the run.",
+        "working_directory": ".",
+        "allowed_writes": [],
+        "cleanup": "Inspect the response and trace, then delete the temporary workspace."
+      },
       "behavior": "Evaluate whether an implementer can act and recognize completion.",
       "outcomes": [
         "The reader can identify the first action and explain what it unlocks.",

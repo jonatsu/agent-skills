@@ -1,0 +1,12 @@
+# Run unit tests.
+test:
+    uv run pytest tests --ignore=tests/integration
+
+# Check lint and formatting.
+lint:
+    uv run ruff check
+    uv run ruff format --check
+
+# Run integration tests against the isolated integration environment.
+integration:
+    RECORDS_BASE_URL=https://integration.records.example.com uv run pytest tests/integration

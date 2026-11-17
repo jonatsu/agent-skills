@@ -1,0 +1,22 @@
+[project]
+name = "auditlog"
+version = "1.2.0"
+requires-python = ">=3.12"
+
+[project.scripts]
+auditlog = "auditlog.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
