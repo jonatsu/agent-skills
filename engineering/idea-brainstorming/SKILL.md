@@ -40,9 +40,11 @@ Ask one consequential question at a time. Use bounded options when they reveal t
 options would constrain the idea. A response that asks for user input ends with exactly one question. Keep any other
 uncertainties as observations or parked questions for a later turn.
 
-Decompose a request with several independently valuable outcomes before exploring details. Name them, then ask only
-which outcome the user wants to consider first; that response carries no other question, cross-cutting or secondary.
-Keep the others as named stubs. Combine compatible ideas. Park an attractive tangent when it would expand or displace
+Decompose a request with several independently valuable outcomes before exploring details. First say whether they
+share a purpose and can compose. When they can, keep them together as one direction and ask the one question about
+their relationship that would most change it. When they stand apart, name them, then ask only which outcome the user
+wants to consider first; that response carries no other question, cross-cutting or secondary. Keep the others as
+named stubs. Combine compatible ideas. Park an attractive tangent when it would expand or displace
 the current purpose, and explain why it is deferred.
 
 When the user states a current purpose and mentions another idea as optional or future work, keep the current purpose
