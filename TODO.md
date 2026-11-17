@@ -224,6 +224,12 @@ record (`docs/plans/evaluation/skill-evaluation-redesign.md`, as of commit `103b
 every requirement this entry used to list. Once the harness works, run this repository's evaluations through it
 instead of by hand.
 
+The pipeline-skill rounds of 2026-11-17 ran a working version of that method by hand: headless control and skill
+runs per case, fixture copying, contamination guards, blind bundles, and Sonnet graders. The Method sections of
+`docs/evaluations/2026-11-17-pipeline-skills-round-1.md` and `-round-2.md` describe it, including the two control-arm
+leaks and the truncated-bundle bias it had to fix. Carry those lessons into the harness requirements, and decide
+whether the runner, bundle, and scoring scripts become a tracked tool here or input to the agent-setup harness.
+
 ## Eval Case Schema
 
 This repository owns the schema for `evals/*.json`, and the agent-setup harness validates case files against it
@@ -294,31 +300,10 @@ model evaluation is deferred to protect the weekly allowance. When allowance and
 
 ## Behavioral Evaluations Left by Completed Plans
 
-These skills shipped with static review only, and their plans closed with the model runs still deferred:
+This skill shipped with static review only, and its plan closed with the model runs still deferred:
 
 - `skill-forge`, including its review mode, which absorbed `skill-review` on 2026-09-28. The 2026-09-04 refresh
   left it `ready with risks` with no baseline or candidate run.
-
-- `idea-brainstorming`, `technical-design` and `implementation-planning`. Round 1 ran their 28 self-contained cases
-  without and with the skill on Sonnet and Opus (`docs/evaluations/2026-11-17-pipeline-skills-round-1.md`). All three
-  skills improve on the base model. The two skill gaps it found are fixed (`b4dd870`, `4b2df37`) and the stale
-  `small-change-arc42` outcome is corrected (`abbece7`). On `composable-branches`, Sonnet still sometimes judges the
-  two ideas separate; revisit only if other cases show the same weak composition judgment.
-
-  **Next:** write synthetic fixtures for the 24 cases that depend on material the prompt calls "supplied" or on a
-  repository to inspect, then run them the same way. Size each fixture by what round 1 showed, and put it under the
-  skill's `evals/fixtures/`. The cases are:
-
-  - `idea-brainstorming`: `handoff-fidelity`, `backward-refinement` (its `handoff-repo` fixture may serve both);
-  - `technical-design`: `02-idea-brainstorming-handoff`, `03-repository-grounded-design`,
-    `current-code-not-product-policy`, `negative-guarantee-design`, `accepted-specification-input`,
-    `missing-requirement-return`, `arc42-default`, `existing-design-format`, `unrelated-docs-not-convention`,
-    `requirements-and-adrs-in-format`;
-  - `implementation-planning`: `06-accepted-design`, `10-compatible-migration`, `12-verification-theater`,
-    `negative-guarantee-verification`, `review-gates-and-required-practices`, `review-availability-and-cost`,
-    `specification-design-traceability`, `stale-design-after-specification-change`,
-    `plan-default-and-shared-preflight`, `accepted-design-formats`, `plan-versus-execution-record`,
-    `implementer-comprehension`.
 
 ## Deferred Engineering Pipeline Designs
 
