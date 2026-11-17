@@ -219,30 +219,16 @@ Open sub-question: whether tightening `allowed-tools` rides along with this or s
 
 ## Evaluation Harness Lives in agent-setup
 
-The runner for package-local eval fixtures is being built in agent-setup, under its skill-evaluation redesign
-record (`docs/plans/evaluation/skill-evaluation-redesign.md`, as of commit `103b8edc`), whose principles carry
-every requirement this entry used to list. Once the harness works, run this repository's evaluations through it
-instead of by hand.
+Check agent-setup's progress on the harness whenever evaluation work starts here, and at least monthly. Its state is
+the status line of `docs/plans/evaluation/skill-evaluation-redesign.md` there. Once the harness runs, move this
+repository's evaluations onto it and stop running them by hand.
 
-The pipeline-skill rounds of 2026-11-17 ran a working version of that method by hand. agent-setup holds it as
-`docs/plans/evaluation/headless-skill-evals-prototype.md` (commit `a2d2946c`): the method, its learnings, the
-fixture inventory, and the scripts. The round records stay here under `docs/evaluations/`.
-
-## Eval Case Schema
-
-This repository owns the schema for `evals/*.json`, and the agent-setup harness validates case files against it
-at a pinned commit. The state at `2a9b898`:
-
-- All 14 files share the top-level fields `skill_name`, `mode`, `run_contract` and `cases`.
-- The `run_contract` keys drift: the skill-forge files `activation.json` and `review-quality.json` use
-  `supply_skill_path`, and the other twelve use `supply_candidate_skill_path`.
-- The `record` lists differ from file to file, and outcomes are free-text sentences.
-- No check validates the files, not even as JSON.
-
-Write a JSON Schema and a check in `just check` that validates every `**/evals/*.json` outside `evals/fixtures/`,
-which can hold its own `evals/`. Settle the drifting keys, and decide whether outcomes gain an optional
-machine-checkable form beside their sentence. Decide both together with the redesign's open question "What the
-schema pins". Writing the schema before the harness exists is fine.
+- agent-setup holds the hand-run method of 2026-11-17 as `docs/plans/evaluation/headless-skill-evals-prototype.md`
+  (commit `a2d2946c`) and its run data under `docs/evaluations/` (commit `ff24ec03`). The round records stay here
+  under `docs/evaluations/`.
+- The harness validates case files against `checks/skill_checks/eval_cases.schema.json` at a pinned commit of this
+  repository; `skill-checks evals` runs the same validation here. Whether outcomes gain a machine-checkable form
+  beside their sentence is settled with the redesign's open question "What the schema pins".
 
 ## Compare `skill-forge` With Anthropic's `skill-creator` Plugin
 
