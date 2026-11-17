@@ -22,8 +22,8 @@ Fill all three slots before anything is written:
 2. **Success signal.** At least one observation that shows the project is working. Use a binary check or a named
    person's judgment when no honest metric exists. Rewrite an activity, such as "improve the tooling", as the
    outcome it serves.
-3. **Scope and authority.** What is in, what is explicitly out, and who decides a change to these goals. The
-   who-decides line is what lets a later agent stop and ask instead of quietly widening the project.
+3. **Scope and authority.** What is in, what is explicitly out, and who decides a change to these goals, named as
+   the user names them, such as "the user" or a maintainer's role.
 
 ## What They Record on Request
 
@@ -52,8 +52,9 @@ decisions become goals. Ask one consequential question at a time, with your reco
 other open items as a short list for later turns. The user is often deciding the project's direction while
 answering, so a batch of questions gets rushed answers.
 
-Show the proposed goals in the reply and write nothing until the user confirms their content. Goals sit above specs,
-designs, and plans; leave features, architecture, and tasks to those skills.
+Show the proposed goals in the reply and write nothing until the user confirms their content. Then write the
+confirmed wording as it stands; a rule the user did not confirm is a new proposal for the next turn. Goals sit
+above specs, designs, and plans; leave features, architecture, and the choice between technologies to those skills.
 
 ## Place the Goals
 
@@ -62,7 +63,8 @@ Resolve where the goals live, in this order:
 1. a location the user names, including the README or `AGENTS.md`;
 2. existing goal documents, kept under their current name;
 3. the repository's documented convention; then
-4. a dedicated file, named with the user, where the repository keeps its documentation.
+4. a dedicated file, named with the user, beside the README when the repository's documentation folders each hold
+   a stated kind of document, such as runbooks, that goals are not.
 
 No fixed name is required: "goals", "purpose", or "product" can all fit. Keep one full copy. When the goals are
 already stated in more than one place, show where the copies disagree, ask which version holds, and propose one
@@ -73,8 +75,9 @@ owner with a pointer from the other files.
 Goals that no session loads do not steer the work. Propose these changes with the goals, and apply them once the user
 confirms:
 
-- `AGENTS.md`, or the repository's always-loaded instruction file, gets a line that points to the goals and states
-  who decides a change to them. Create the file when none exists and the user agrees.
+- `AGENTS.md`, or the repository's always-loaded instruction file, gets a line that points to the goals, states who
+  decides a change to them, and tells agents to stop and ask before work that would break them, so a later session
+  asks instead of quietly widening the project. Create the file when none exists and the user agrees.
 - The README opens with what the project is for, in a sentence or two, and links to the goals when they live
   elsewhere, because a reader who does not find that on the front page moves on.
 
