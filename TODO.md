@@ -224,9 +224,9 @@ record (`docs/plans/evaluation/skill-evaluation-redesign.md`, as of commit `103b
 every requirement this entry used to list. Once the harness works, run this repository's evaluations through it
 instead of by hand.
 
-The pipeline-skill rounds of 2026-11-17 ran a working version of that method by hand. The user decided it becomes a
-tool on the agent-setup side; `docs/plans/headless-skill-evals-draft.md` records the method, its learnings, the
-fixtures, and the scripts for that handoff. Hand it to agent-setup's redesign once its session is free.
+The pipeline-skill rounds of 2026-11-17 ran a working version of that method by hand. agent-setup holds it as
+`docs/plans/evaluation/headless-skill-evals-prototype.md` (commit `a2d2946c`): the method, its learnings, the
+fixture inventory, and the scripts. The round records stay here under `docs/evaluations/`.
 
 ## Eval Case Schema
 
