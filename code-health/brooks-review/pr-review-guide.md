@@ -35,7 +35,8 @@ Read the diff or files and answer:
 - Which files were modified?
 - Flag immediately if the PR changes more than 10 unrelated files — that itself is a
   🟡 Warning: Change Propagation (a PR that touches many unrelated things is a sign
-  that responsibilities are tangled).
+  that responsibilities are tangled). This counts unrelated files across the whole PR. The Critical threshold in
+  `references/decay-risks.md` counts the files one change must touch, and it applies separately in Step 2.
 
 ### Step 2: Scan for Change Propagation
 
