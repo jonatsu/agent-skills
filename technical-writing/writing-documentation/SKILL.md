@@ -96,7 +96,9 @@ place it.
 - **Tutorial:** build toward a usable result with visible checkpoints. Explain only what keeps progress clear.
   Show file placement when it matters.
 - **How-to guide:** address one task for a reader who already has the basics. Put prerequisites, decision forks,
-  expected results, and recovery beside the step they affect.
+  expected results, and recovery beside the step they affect. In a runbook, put the rule that decides the run,
+  such as when to rebuild, where no reader can miss it. Answer the questions the operator will ask in the guide
+  itself. Give commands they can copy as written, with no placeholder such as `NNNN` left to fill in.
 - **Reference:** mirror the structure of what it describes. Cover inputs, outputs, options, defaults, limits,
   and failure cases, each stated plainly enough to look up.
 - **Explanation:** answer one bounded "why" question: context, constraints, alternatives, and trade-offs.
