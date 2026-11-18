@@ -155,34 +155,10 @@ Match requested formats to the capabilities reported by the actual device.
 
 ## V4L2 Buffer Lifecycle
 
-The canonical mmap streaming sequence:
-
-1. `open()` the device
-2. Negotiate format with `VIDIOC_S_FMT` (or inspect with `VIDIOC_G_FMT`)
-3. Allocate buffers with `VIDIOC_REQBUFS`
-4. Inspect each buffer with `VIDIOC_QUERYBUF`
-5. `mmap()` the buffers
-6. Queue all buffers with `VIDIOC_QBUF` before starting
-7. Start streaming with `VIDIOC_STREAMON`
-8. Loop: `VIDIOC_DQBUF` → process frame → `VIDIOC_QBUF` (return the buffer)
-9. Stop with `VIDIOC_STREAMOFF`
-
 Leave a buffer alone while it is queued to the driver.
 During continued streaming, requeue completed buffers after processing so the queue does not starve.
 Shutdown and error handling may instead stop streaming and release buffers; a final dequeue need not be requeued
 when capture ends. Handle nonblocking readiness, `EAGAIN`, interrupted calls, and failed queues explicitly.
-
-### Blocking vs poll-based capture
-
-Use **blocking `DQBUF`** when:
-
-- There is a single capture source and no other FDs to watch
-- You want the simplest correctness story, with no risk of missing readiness
-
-Use **`poll()` / `epoll()` level-triggered** when:
-
-- Combining the camera with control sockets, IPC, or shutdown events
-- Capturing multiple video devices simultaneously
 
 ## Capture Performance Triage
 
@@ -204,21 +180,10 @@ yavta -f UYVY -s 640x480 -c200 -n4 /dev/video0
 | Cheap             | Cheap, FPS still low     | Sensor mode, bus format and lane count, host throughput ceiling                    |
 | Fine at first     | Degrades over a long run | Buffer leaks, queue starvation, logging left enabled, thermal or scheduler effects |
 
-Then tune in this order, one change at a time, keeping a before/after metric table:
-
-1. **Baseline**: frame rate, drop count, end-to-end latency, per-process CPU.
-2. **Queue health**: buffer count, how long userspace holds a buffer before requeue, whether the queue ever starves.
-3. **Copy and conversion**: an extra `memcpy`, YUV/RGB conversion, scaling or compression sitting in the hot path.
-4. **Readiness and wakeups**: blocking `DQBUF` vs `poll`/`epoll`, timer wakeups, busy waits.
-5. **Locking**: critical-section length before lock primitive. Shortening the hold is safer than swapping the
-   primitive, and a lock is often standing in for unclear buffer ownership.
-6. **DMA, cache and allocator**: cache-maintenance cost, and contiguous-memory constraints on vendor stacks.
-7. **Scheduler and system effects**: CPU affinity, competing threads, tracing or debug logging left on.
-
-Edge-triggered `epoll` is rarely the win it looks like. It removes redundant wakeups only where the loop drains
-readiness correctly, and it buys missed-event and state bugs in exchange. An insufficient buffer count, slow processing
-before `QBUF`, a needless `memcpy`, a long lock hold, and a queue that never recovers from a transient error all cost
-more in practice. Prove in `perf` or `ftrace` that the wakeup path is the bottleneck before restructuring it.
+Change one thing at a time and keep a before/after metric table. Prove in `perf` or `ftrace` that the wakeup path is
+the bottleneck before restructuring it; edge-triggered `epoll` removes redundant wakeups only where the loop drains
+readiness correctly, and otherwise buys missed-event bugs. On vendor stacks, also check cache-maintenance cost and
+contiguous-memory constraints.
 
 Reading a profile:
 
