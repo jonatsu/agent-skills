@@ -72,8 +72,8 @@ relocated itself. SPL runs at its link address. The procedure and the crash-outp
 - **Yocto images:** get the symbols through the debug filesystem, the SDK sysroot, or `oe-debuginfod`, all built from
   the same image.
 
-[references/userspace-and-yocto.md](references/userspace-and-yocto.md) has the setup and the Yocto features that
-changed recently, including `debug-tweaks`' removal.
+[references/userspace-and-yocto.md](references/userspace-and-yocto.md) has the setup and the current Yocto debug
+features, including the replacements for the removed `debug-tweaks`.
 
 ## 6. Tracing and Profiling
 
