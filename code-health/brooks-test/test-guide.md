@@ -30,7 +30,7 @@ After one answer, proceed. Do not ask more than one question.
 
 ## Analysis Process
 
-Work through these five steps in order.
+Work through these steps in order, from Step 1 to Step 5.
 
 ### Step 1: Scan for Test Obscurity
 
