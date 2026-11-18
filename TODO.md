@@ -298,6 +298,16 @@ material than to hardening's configure-and-verify lane. Decide placement as part
 Related and unfinished: post-quantum crypto has no upstream answer either; the two Yocto-native candidates
 (`meta-oqs`, `meta-quantum-safe`) are both self-described as experimental and never compared.
 
+## Compute the Brooks Health Scores in a Script
+
+The six `brooks-*` skills ask the model to compute scores in prose. `references/common.md` gives a base score of
+100 with per-finding deductions by strictness preset, and `brooks-health/health-guide.md` redistributes dimension
+weights, floors and rounds them, and then needs a rule that two runs must agree. That arithmetic belongs in code.
+Add a small script to each package that takes the finding counts, the preset and the skipped dimensions and prints
+the score, keep the tables as its data, and have each guide say to run it and report its number. Each package
+carries its own copy, because a skill may not run another skill's script. A prompt audit on 2026-11-18 raised it
+as two findings with no replacement text.
+
 ## Bare-Metal Conventions for `arm-assembly`
 
 `arm-assembly` covers base AAPCS32 and its variants, Linux userspace system calls, and ARMv7-A privileged code, and
