@@ -26,6 +26,10 @@ ordinary staging and commits do not need a history-rewrite procedure.
   the user's request. See [references/commit-messages.md](references/commit-messages.md) for the reasoning.
 - Verify the resulting Git object or ref. Command success alone does not prove that the intended content
   moved.
+- Read push state fresh before relying on it: it goes stale whenever the user pushes. Run `git status -sb` in
+  the same turn before a step that needs the commit on the remote or rewrites commits that may be published.
+  Run it as well when the user asks about push state. It compares against the last fetched remote-tracking
+  ref, so fetch first when the commit may have been pushed from another clone.
 - A claim marked `Verified on git <version>, <date>` was reproduced in a scratch repository on that date. A
   claim marked *reported, not measured here* is unverified; confirm it yourself before relying on it.
 
