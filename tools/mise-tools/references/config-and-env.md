@@ -126,12 +126,6 @@ reaches tools installed through the `go:` backend.
 - shell-style expansion and Tera-style templating can both participate.
 - for templating details and `.miserc.toml` limitations, load `references/templating-and-early-init.md`.
 
-## Reproducibility controls
-
-- use `min_version` when feature support matters
-- use exact pins or `mise.lock` when reproducibility matters
-- keep secrets out of committed config
-
 ## Verification commands
 
 - `mise cfg`

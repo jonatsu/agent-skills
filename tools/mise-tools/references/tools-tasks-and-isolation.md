@@ -2,19 +2,6 @@
 
 Prefer explicit, documented backends when they materially improve reproducibility or verification.
 
-High-value backend families from upstream docs:
-
-- core runtimes for first-party managed languages
-- `aqua:` and `github:` for many binary tools with stronger provenance support
-- ecosystem-specific backends like `npm:`, `pipx:`, `cargo:`, `go:` when appropriate
-
-Useful tool options:
-
-- exact or fuzzy version selection
-- OS or arch restrictions
-- install-order dependencies
-- postinstall hooks when truly needed
-
 Before turning a tool declaration into a subtable, read the TOML-scope rule in `config-and-env.md`.
 
 Useful command and override reminders from upstream docs:
@@ -56,16 +43,6 @@ Mise supports:
 - file tasks in `mise-tasks/` and related directories
 
 Prefer TOML tasks for small, declarative commands. Prefer file tasks for larger or more script-like logic.
-
-High-value task features:
-
-- `depends`
-- `sources` and `outputs`
-- aliases and descriptions
-- task-scoped `tools`
-- task-scoped env
-- output-mode control
-- watch workflows
 
 `mise watch` is useful for file-watching task loops and is worth considering before adding custom watcher
 scripts.
