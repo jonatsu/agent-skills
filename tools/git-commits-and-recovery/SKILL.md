@@ -56,12 +56,11 @@ When independent lanes need different branches or checkouts, isolate them in lin
 
 ## Branches
 
-Keep a branch short-lived and merge it within days, so it stays close to its base and merges cleanly. Name it
-for its work as `<type>/<short-description>`, such as `fix/login-redirect`, unless the repository has its own
-convention. Rebase a private branch onto its base to keep history linear. Keep a shared branch's history
-stable: a force-push to it needs explicit authorization and the protected push in
-[references/history-changing-operations.md](references/history-changing-operations.md#pushing). Delete a
-branch once it has merged; deleting one with unmerged work is a destructive operation.
+Name a branch for its work as `<type>/<short-description>`, such as `fix/login-redirect`, unless the repository
+has its own convention. Keep a shared branch's history stable: a force-push to it needs explicit authorization
+and the protected push in
+[references/history-changing-operations.md](references/history-changing-operations.md#pushing). Delete a branch
+once it has merged; deleting one with unmerged work is a destructive operation.
 
 ## Route by Operation
 
