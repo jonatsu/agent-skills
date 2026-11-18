@@ -63,9 +63,9 @@ Flags after the script name go to libFuzzer. A crash writes the input to a `cras
 that file back replays it deterministically. Once the cause is understood, turn the input into an ordinary
 regression test, or an `@example` on a Hypothesis test, so the ordinary suite keeps it covered.
 
-A 60-second run on a small pure-Python parser in this repository made about 200,000 executions per second and
-found nothing, while a copy with a deliberate off-by-one crashed within the first few inputs. A clean run is
-evidence only for the input shapes the harness can express.
+A short run often finds nothing in a small pure-Python parser, while a copy with a deliberate off-by-one crashes
+within the first few inputs. That contrast shows the harness works. A clean run is evidence only for the input
+shapes the harness can express.
 
 ## Reuse a Hypothesis Strategy
 

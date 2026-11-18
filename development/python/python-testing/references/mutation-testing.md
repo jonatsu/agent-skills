@@ -48,9 +48,9 @@ hours, so scope a run to the module under change.
 
 Read each survivor as one of three things:
 
-- **A real gap.** On this repository's own description checker, `for line in lines[1:]` mutated to
-  `lines[2:]` survived because every fixture put another key on the first frontmatter line. A second survivor
-  forced a `"warn" if ... else "FAIL"` label to always say `warn`, because no test asserted the failure label.
+- **A real gap.** In a description checker, `for line in lines[1:]` mutated to `lines[2:]`
+  survives when every fixture puts another key on the first frontmatter line. A mutant that forces a
+  `"warn" if ... else "FAIL"` label to always say `warn` survives when no test asserts the failure label.
   Write the test that kills it.
 - **An equivalent mutant.** `"utf-8"` mutated to `"UTF-8"` survives because codec lookup ignores case. No test
   can kill it; ignore it.
