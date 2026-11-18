@@ -9,7 +9,7 @@ metadata:
 
 # ast-grep structural tools
 
-Default to ast-grep when a request describes code as code: calls, declarations, arguments, nesting,
+Use ast-grep when a request describes code as code: calls, declarations, arguments, nesting,
 surrounding constructs, or the presence or absence of behavior. It ignores formatting, can restrict a match by
 parents, children, or neighbors, and can reuse captured nodes in a previewable rewrite. Use `rg` when the
 question is genuinely textual.
