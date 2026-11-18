@@ -187,8 +187,8 @@ or four.
 
 **Spend bold as a budget.** Bold reads as strong only against plain text around it. Bold the shortest span
 carrying a decision, and prefer restructuring to a longer bold run. Never use bold as a lead-in or decoration,
-and never give every list item a bold label. In someone else's prose, dense emphasis prompts inspection, not
-stripping.
+and never give every list item a bold label. Use italics the same way: sparingly, for emphasis, never as
+decoration. In someone else's prose, dense emphasis prompts inspection, not stripping.
 
 **Write a heading that predicts its section.** Where the section's message fits, state it: "Refunds take five
 working days", not "Refund information".
