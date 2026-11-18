@@ -32,26 +32,26 @@ UNTESTED OR UNVALIDATED WORK IS NOT COMPLETE
 A claim without fresh evidence is noise. A test that never failed proves little. A green run you did not read
 is not evidence.
 
-In `TEST-STRATEGY` the Iron Law binds differently but is not suspended: a plan is not evidence either. MUST
-NOT claim a risk is covered, a behavior is already tested, or a gap does not exist without having read the
+In `TEST-STRATEGY` the Iron Law binds differently but is not suspended: a plan is not evidence either. Do
+not claim a risk is covered, a behavior is already tested, or a gap does not exist without having read the
 tests that would prove it.
 
 ## Mode Gate
 
-MUST classify the task before doing anything else:
+Classify the task before doing anything else, because the mode decides whether the output is a plan or test code:
 
 - `TEST-STRATEGY`: decide **what** to test, at which level, and against which oracle - at any scale, from one
   change to a whole system, and before its code exists as readily as after. When there is no code yet, the
-  design, plan, or requirements are the input, and existing coverage is simply empty. Output is a plan. NEVER
-  writes test code in this mode. Classifying here MUST be followed by loading `references/test-strategy.md` -
-  the method is there, not below.
+  design, plan, or requirements are the input, and existing coverage is simply empty. Output is a plan, and no
+  test code is written in this mode. After classifying here, load `references/test-strategy.md`; the method is
+  there, not below.
 - `TEST-IMPLEMENTATION`: edit tests, fixtures, helpers, or test-only support.
 - `VALIDATION`: run bounded commands and report exact results.
 - `REGRESSION`: protect behavior that changed or previously broke.
 - `BUG-REPRO`: capture a failing test or minimal reproduction for a bug.
 
 When the request names a plan, an approach, coverage gaps, or "what should we test" and no test file is
-expected back, it is `TEST-STRATEGY`. Do NOT decline it as out of scope, and do NOT drift into writing tests
+expected back, it is `TEST-STRATEGY`. Do not decline it as out of scope, and do not drift into writing tests
 instead - a strategy delivered as code is a strategy nobody reviewed.
 
 Stop and hand back only when the work itself requires **changing** production code, product requirements, or
@@ -66,27 +66,26 @@ gap, return to the Verification Gate.
 
 ## Verification Gate
 
-BEFORE any success, completion, fixed, or passing claim:
+Before any success, completion, fixed, or passing claim:
 
-1. IDENTIFY the command that would prove the claim.
-2. RUN it fresh at the scope the claim requires. Discover the repo's runner rather than assuming one (test
+1. Identify the command that would prove the claim.
+2. Run it fresh at the scope the claim requires. Discover the repo's runner rather than assuming one (test
    config, task runner, CI workflow, or the neighboring tests' invocation). A focused test is the default;
    broaden validation for cross-cutting risk, repository rules, or an explicit user request.
-3. READ the output: exit status FIRST, then failure count, warnings, skips.
-4. STATE only what that output supports.
+3. Read the output: the exit status first, then the failure count, warnings, and skips.
+4. State only what that output supports.
 
 Skipping a step is not verifying, and reporting it as verified is a false claim.
 
 **Exit status settles pass/fail; printed output never does.** Agent shell-capture layers drop lines silently -
 the trailing summary line most often - so a suite that printed `OK` may have failed and a suite whose failures
-scrolled past may look clean. Observed on this repository's own toolchain rather than proven of shells
-generally; treat it as a property of whatever sits between the runner and you, and re-check it if that
-changes. Parse output for the *cause*, never for the verdict.
+scrolled past may look clean. Treat this as a property of whatever sits between the runner and you. Parse
+output for the *cause*, never for the verdict.
 
 **A non-zero exit from a runner that never ran is not a test result.** A missing dependency, an unresolvable
 import, a bad config, or an absent binary is an environment failure: report it as `BLOCKED` with the
-diagnostic, NEVER as a failing suite. The distinction MUST be made before any verdict - the exit-status rule
-alone would score a missing package as broken code.
+diagnostic, not as a failing suite. Decide this before any verdict, because the exit-status rule alone would
+score a missing package as broken code.
 
 | Claim                          | What proves it                    | What does NOT                 |
 | ------------------------------ | --------------------------------- | ----------------------------- |
@@ -111,7 +110,7 @@ MAY:
 - Recommend testability changes to production code - seams, injected clocks, exposed observability - as a
   handoff, never as an edit.
 
-MUST NOT:
+Do not:
 
 - Edit production code or application behavior.
 - Rewrite product requirements, architecture, or the production implementation strategy. Recommending a
@@ -121,7 +120,7 @@ MUST NOT:
   deadline is not hiding it; dropping it from the run and saying nothing is.
 - Change a test's expectation because it fails. The one exception: the product changed on purpose and the test
   correctly caught it. Then the expectation is stale, not wrong - say so, show the old and new expected
-  values, and get the user's confirmation BEFORE editing. NEVER hand back a green suite carrying a silently
+  values, and get the user's confirmation before editing. Never hand back a green suite carrying a silently
   changed expectation.
 - Convert behavior tests into brittle implementation-detail tests.
 - Present a strategy without naming what it deliberately leaves uncovered.
@@ -155,7 +154,7 @@ Applies to `TEST-IMPLEMENTATION`, `VALIDATION`, `REGRESSION`, and `BUG-REPRO`.
     checks, and `yocto-security-audit` for a Yocto image's `oeqa` and `testimage` suites. Then establish which runner,
     assertion library, and mocking library this project actually uses, from its config and its neighboring
     tests. If it stays unclear, ASK - do not default to the ecosystem's most popular choice. If the framework
-    is unfamiliar, read its own docs or `--help` before writing a line. NEVER invent an assertion API: a
+    is unfamiliar, read its own docs or `--help` before writing a line. Do not invent an assertion API, because a
     hallucinated matcher fails as a syntax error that reads like a broken test.
 05. Test design: apply the Suite Health Rules below. Test at the cheapest level that can fail for the right
     reason, assert observable behavior, and write failure messages that name what broke.
@@ -167,7 +166,7 @@ Applies to `TEST-IMPLEMENTATION`, `VALIDATION`, `REGRESSION`, and `BUG-REPRO`.
 10. Verdict: report what passed, failed, remains unverified, and why.
 
 Bound the fix-rerun loop. After a small fixed number of attempts on one test - pick it before you start and
-say what it was - STOP and escalate rather than trying again. The escalation MUST carry what was tried, what
+say what it was - STOP and escalate rather than trying again. The escalation carries what was tried, what
 each attempt changed, and the failure it kept producing; "still failing" is not a handoff. An agent that never
 stops retrying burns the budget that diagnosis needed.
 
@@ -183,10 +182,10 @@ still trusted a year later.
   rather than a magic number.
 - Give each test one behavior, arranged, acted on, and asserted in that order, and a title that names the
   behavior it protects. `test_case_3` is a test nobody will dare delete or fix.
-- MUST NOT mock what you are trying to prove. Mock at the boundary you do not own (third-party network, payment
+- Do not mock what you are trying to prove. Mock at the boundary you do not own (third-party network, payment
   provider, clock), not at the boundary you do; a test whose collaborators are all mocks proves only that the
   mocks agree.
-- Tests MUST be order-independent and self-seeding. Shared mutable fixtures are the usual cause when they are
+- Make tests order-independent and self-seeding; shared mutable fixtures are the usual cause when they are
   not.
 - Synchronize on the condition, never on the clock. A fixed sleep is too long on a fast machine and too short
   on a loaded one, and it is the largest single source of flake. Wait for the state you need: the element, the
@@ -224,14 +223,13 @@ Anti-patterns:
   sets the header, that the matcher matches. Its authors tested it; a failure there is their bug and your
   wasted run.
 - Tautological assertions: an expected value computed by the code under test, or by a reimplementation of its
-  algorithm, proves only that the code agrees with itself. The expectation MUST come from somewhere the
+  algorithm, proves only that the code agrees with itself. The expectation comes from somewhere the
   implementation cannot reach - a spec, a hand-worked case, a reference implementation, an invariant. Branches
   and loops inside a test are the usual symptom, and they carry their own untested oracle: keep the test
   straight-line and obvious.
 
 Strategy-mode anti-patterns:
 
-- Declining a strategy request as "not what this lane does". It is.
 - Answering with test code instead of a plan.
 - A coverage percentage presented as a coverage goal. It measures lines executed, never behaviors proven, and
   100% of it survives every assertion being deleted.
@@ -258,7 +256,7 @@ evidence:
 ### Defect handoff
 
 When the finding is a production defect rather than a test gap, the report IS the handoff - the implementation
-lane acts on it without re-deriving anything. MUST carry:
+lane acts on it without re-deriving anything. It carries:
 
 - **Trigger**: the minimal input, state, or sequence that produces it. Minimal means reduced, not merely the
   first case that happened to fail.
@@ -273,13 +271,13 @@ lane acts on it without re-deriving anything. MUST carry:
 - **Frequency**, when it is not deterministic: how many runs out of how many, and what differs between them.
   "Intermittent" without a rate is not a report.
 
-MUST NOT state the production cause as fact. A hypothesis is welcome, labelled as one - this lane sees the
+State the production cause as a labelled hypothesis, not as fact. This lane sees the
 symptom, and a confident wrong cause sends the fix to the wrong file.
 
-A defect found while doing something else is still reported, NEVER quietly worked around. Adjusting a test to
+A defect found while doing something else is still reported; do not work around it quietly. Adjusting a test to
 sidestep a real bug is hiding it, and the suite then certifies the bug as intended behavior.
 
-`TEST-STRATEGY` - a plan has no pass/fail, so MUST NOT report one. Report:
+`TEST-STRATEGY` - a plan has no pass/fail, so report no pass or fail. Report:
 
 - Ranked risks, highest blast radius first.
 - Coverage plan: behavior -> level -> oracle, one row each.

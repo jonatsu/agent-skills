@@ -15,7 +15,7 @@ The method behind `TEST-STRATEGY` mode. Load it when the deliverable is a plan r
 
 ## Pick the entry move
 
-Three starting points, and they diverge immediately. MUST identify which one before step 1.
+Three starting points, and they diverge immediately. Identify which one before step 1.
 
 | Starting point          | First move                                                                | Failure mode to avoid                                               |
 | ----------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -24,8 +24,8 @@ Three starting points, and they diverge immediately. MUST identify which one bef
 | A system or legacy tree | Find the highest-risk seam that is testable today; plan outward from it   | A grand plan nobody executes, or a rewrite disguised as a test plan |
 
 For a legacy tree with no tests, characterization tests come first: pin current behavior as-is, bugs included,
-so a refactor has a baseline. MUST label them as characterization, not as specifications - they encode what
-the system does, and somebody will later mistake that for what it should do.
+so a refactor has a baseline. Label them as characterization, not as specifications: they encode what the
+system does, and somebody will later mistake that for what it should do.
 
 ## Step 1: Name the behaviors, not the units
 
@@ -97,8 +97,8 @@ A charter is four lines, written before the session starts:
   feedback, unhandled input.
 - **Timebox** decided up front, never when interest runs out.
 
-The session's output is notes, NEVER a verdict: what was covered, what was NOT reached, bugs found, questions
-raised. MUST NOT report a charter as a gate - it is not repeatable, so nothing regressed when it stops
+The session's output is notes, not a verdict: what was covered, what was NOT reached, bugs found, questions
+raised. Do not report a charter as a gate: it is not repeatable, so nothing regressed when it stops
 passing, and treating it as one launders judgment into evidence.
 
 Allocate exploratory time when novelty, ambiguity, or residual high risk makes it valuable. Charter it rather
@@ -116,7 +116,7 @@ looks complete and produces assertion-free tests.
 | Invariant / property | A law that holds for all inputs                            | Round-trips, ordering, conservation, idempotency                                       |
 | Differential         | Compare against a reference or the previous implementation | Rewrites, ports, optimizations                                                         |
 | Metamorphic          | A known relation between two runs' outputs                 | No expected value exists, but scaling or reordering the input has a predictable effect |
-| Golden file          | Diff against a reviewed, committed artifact                | Large structured output; MUST be human-reviewable or it is a rubber stamp              |
+| Golden file          | Diff against a reviewed, committed artifact                | Large structured output; must be human-reviewable or it is a rubber stamp              |
 | Error contract       | Specific type, code, and message shape                     | Every failure path worth naming                                                        |
 
 An oracle that only asserts "did not throw" is not an oracle, and neither is a status code. `200` says the
@@ -125,7 +125,7 @@ named-field assertions) or the response can change past recognition without fail
 
 ## Step 5: Sweep the coverage taxonomy
 
-MUST walk this list per high-risk behavior rather than recalling edge cases freely. Recall reliably misses
+Walk this list per high-risk behavior rather than recalling edge cases freely. Recall reliably misses
 whole categories; a sweep makes the misses deliberate. Most entries will not apply - say so and move on.
 
 - **Equivalence classes**: partition the input domain, one representative per class.
@@ -156,7 +156,8 @@ whole categories; a sweep makes the misses deliberate. Most entries will not app
 ## Step 6: Record testability blockers
 
 When a behavior cannot be tested at the level its risk demands, that is a finding for the implementation lane.
-MUST report it and MUST NOT fix it here. Name the blocker, the change that would unblock it, and who owns it.
+Report a testability blocker and leave the fix to the implementation lane. Name the blocker, the change that
+would unblock it, and who owns it.
 
 Usual suspects: a clock read inline instead of injected, randomness with no seed, global or static mutable
 state, network or filesystem calls buried in a constructor, no seam between decision and side effect, a
