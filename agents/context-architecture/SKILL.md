@@ -72,11 +72,12 @@ Five concerns, in order of leverage. Topology is deliberately last.
    the accretion test are the whole remedy: shorten by deleting what changes no decision, never by thinning a
    rule.
 
-2. **Read-when sharpness.** Every index entry, document header, and skill description is a load/skip
-   classifier. Phrase it as the trigger condition ("read before gating a change"), never the topic
-   ("verification"). It must work under the lowest common denominator of identifier plus text search, with no
-   client discovery features assumed. Keep structural routes distinct from inline references so an incidental
-   mention cannot masquerade as a usable path.
+2. **Read-when sharpness and search findability.** Every index entry, document header, and skill description
+   is a load/skip classifier. Phrase it as the trigger condition ("read before gating a change"), never the
+   topic ("verification"). Agents reach most documents by search or by links between documents, not straight
+   from the floor, so every document must also be findable by the words its task uses: a subject name, and the
+   task's identifiers in its first lines. Keep structural routes distinct from inline references so an
+   incidental mention cannot masquerade as a usable path.
 
 3. **Genre separation with declared authority.** Each document belongs to exactly one genre, and each genre declares
    its update semantics and its place in the override chain. Live code outranks descriptions of current behavior;
@@ -98,7 +99,7 @@ Five concerns, in order of leverage. Topology is deliberately last.
 ## Cross-Agent Invariants
 
 - Durable state lives in agent-neutral files in the repository. The floor is `AGENTS.md`, with `CLAUDE.md` as
-  a symlink where a client requires that name.
+  a symlink for clients and versions that read only that name.
 - Client capabilities (skill auto-discovery, subagents, lifecycle hooks, proprietary memory, auto-compaction)
   are progressive enhancement. Every one of them gets a files-based fallback reachable from the floor. Put
   a skill's trigger in the floor only when it is a floor-level choice; otherwise route the floor to a focused
@@ -134,8 +135,8 @@ efficiency claims are hypotheses.
 
 ## Completion
 
-- Every created or moved document sits in exactly one genre and is reachable through structural routes rooted
-  in the floor.
+- Every created or moved document sits in exactly one genre, is reachable through structural routes rooted in
+  the floor, and carries its subject's search terms in its name and first lines.
 - The floor is no longer than the work found it, or the report states what was relocated and where.
 - Both checkers pass, or every remaining finding is reported with a reason.
 - Structural moves, deferred decisions, and unverified claims are reported explicitly.

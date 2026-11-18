@@ -330,11 +330,11 @@ rules, but the set is small, and borrowing the pattern avoids the dependency. Ke
 ## Repair the Context Documents Skills
 
 `docs/evaluations/2026-11-18-context-docs-skills-review.md` rates `agents-context-docs` and
-`context-architecture` `not ready`: Claude Code reaches documents mostly by search rather than by floor routes,
-the loading reference is stale for Claude Code and lacks Codex, and the floor template lacks boundary and goals
-slots. Open work:
+`context-architecture` `not ready`. Both skills are repaired from its findings: search findability beside
+routes, must-follow rules in files the client loads by itself, a current loading reference with Codex, and
+boundary and goals slots in the floor template. Whether the search-findability rules raise how often agents
+reach the right document is unmeasured. Open work:
 
-- Repair both skills from the record's findings once the user authorizes it.
 - Run the controlled comparison the record recommends (route wording, search surface, automatic loading). The
   user holds it until Anthropic fixes the safeguard false positives that stop model runs.
 - When agent-setup lands its Claude routing rule, compare Claude's floor-route rate before and after its commit

@@ -86,11 +86,23 @@ Progressive disclosure applies inside documents, not only between them. A docume
 "should I keep reading"; a section's first sentence answers it for the section. The reader who stops early
 should leave with a correct, if shallow, model, never a wrong one.
 
-## Maximize the Search Surface
+## Make Every Document Findable by Search
 
-Half of agent navigation is text search. Quote error messages verbatim rather than paraphrasing them; backtick
-every path, binary, option, and identifier; prefer distinctive literal names over generic descriptions. A
-symptom route that paraphrases its symptoms is invisible to the agent grepping the actual error.
+A route is one way in, and search is the other; a document must work through both. In the author's measured
+sessions (2026-11), Claude Code reached 40% of the documents it found by searching, and Codex 28%. Both took a
+route straight from the floor for under a tenth. Codex followed links between documents more often than Claude
+Code. Routes stay for human readers and for link-following agents, so keep them, and write each document so a
+search for the task's own words finds it:
+
+- Name the file for its subject in the words a task would use: `restore-a-backup.md`, not `ops-notes-2.md`.
+- Put the task's vocabulary and the literal identifiers in the title and first lines: the command, option,
+  service, error, or file the reader will search for.
+- Phrase each route's condition in that same vocabulary, so the route and the search meet on the same words.
+- Quote error messages verbatim rather than paraphrasing them, and backtick every path, binary, option, and
+  identifier. A symptom route that paraphrases its symptoms is invisible to the agent grepping the actual error.
+
+An agent searches first and confirms with what it finds, so a document reachable only by its route is reachable
+mostly in theory.
 
 ## Pointers in the Most Durable Form
 
@@ -145,4 +157,5 @@ present and non-topical (heuristically: non-empty), and no line-number reference
 documents. It recognizes trigger-keyed list items, compatible routing-table rows, and standalone Markdown
 inclusion links as structural. Inline links and incidental backticked paths remain references. An audit
 additionally reads for cold-start violations, genre mixing, missing stamps, missing authority lines,
-inventory counts, and paraphrased error messages.
+inventory counts, paraphrased error messages, and documents whose name and first lines lack their task's
+search terms.

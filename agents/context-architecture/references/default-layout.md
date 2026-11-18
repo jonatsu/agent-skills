@@ -78,7 +78,8 @@ answers a different question:
 | Both        | a subsystem with its own gates and its own findings: it indexes its own evidence and stops taxing the floor                                       |
 
 The scoped `AGENTS.md` is the strongest instrument available, because it is a routing root, an evidence index,
-and it loads by location. A finding owned by a subtree should never reach the root floor at all.
+and most clients load it by location. Codex loads it only when the session's working directory lies inside the
+subtree, so keep a floor route to it. A finding owned by a subtree should never reach the root floor at all.
 
 ## Genre Table
 

@@ -32,6 +32,9 @@ metrics and the failure-mode mapping.
      interpretation without rewriting the pre-run key.
    - **Missed loads**: documents the task needed that were never opened (judged against a pre-written
      answer key of which documents each task requires).
+   - **Way in**: for each needed document that was opened, whether the agent reached it by a route from the
+     floor, a link in another document, or a search. A search that found a routed document is a pass for the
+     document and a signal about the route.
    - Verbatim notes on where the agent hesitated, grepped fruitlessly, or asked the user.
 5. **Record.** Write a dated file in the repository's evaluations genre: task set version, client and model
    versions, the scores, and the defect list below. A walk test that ends only in conversation is unmeasured
@@ -46,6 +49,7 @@ Each observation indicts a specific layer; fix that layer, not the symptom:
 | Missed load: needed doc never found                           | Read-when line absent, topical, or missing the task's vocabulary      | Routing entry / doc header phrasing |
 | Wrong load: irrelevant doc opened confidently                 | Trigger overlap or over-broad description                             | Trigger ownership dedup             |
 | Fruitless grep: agent searched the right terms, found nothing | Search surface: paraphrased symptoms, missing literals                | The target document's wording       |
+| Route present, but the agent searched and missed the document | Name or first lines lack the task's words                             | The target document's name and head |
 | Token blowout before first action                             | Floor too heavy, or hub index too large to hold                       | Floor accretion / shard the hub     |
 | Agent acted on stale or wrong fact                            | Truth maintenance: missing stamp, unowned duplicate, unpruned finding | The fact's owning document          |
 | Agent asked the user something the repo answers               | Fact exists but unreachable, or authority unclear                     | Routing or authority line           |
@@ -58,9 +62,10 @@ Each observation indicts a specific layer; fix that layer, not the symptom:
   improved navigation or earned its maintenance cost.
 - One client's clean run does not generalize: client discovery and loading differ; every untested client is
   a coverage limit, not a supported claim.
-- Search behavior can bypass the intended topology. Record whether a route navigated to the answer or merely
-  confirmed one found by search, and preserve the task vocabulary that made either path successful. One
-  observed run is a question about relative leverage, not grounds to discard hub-and-spoke guidance.
+- Search usually bypasses the intended topology: agents take a floor route for a minority of reads. Judge a
+  document by whether the agent reached it at all, and a route by the way-in scores across runs. Preserve the
+  task vocabulary that made either path succeed. Low route use is not grounds to drop routes, which serve
+  human readers and link-following agents.
 - A structural change that improves no metric did not earn its maintenance cost; consider reverting it.
 - Repetition costs real tokens: add repeat runs only when variance would change a decision, and note the
   spend in the record.

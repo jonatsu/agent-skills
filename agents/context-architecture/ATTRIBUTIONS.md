@@ -23,8 +23,9 @@ orchestration code. Nothing was copied.
 - Version: published 2025-09-29
 
 Nothing was copied due to the license. It supplied the attention-budget and context-rot framing,
-just-in-time retrieval through lightweight identifiers, the smallest-set-of-high-signal-tokens heuristic, and
-compaction tuned for recall before precision.
+just-in-time retrieval through lightweight identifiers, the smallest-set-of-high-signal-tokens heuristic,
+compaction tuned for recall before precision, and the description of Claude Code as a hybrid that loads its
+instruction file up front and finds everything else by glob and grep, behind the search-findability rule.
 
 ### Agent Skills for Context Engineering Contributors: Agent Skills for Context Engineering
 
