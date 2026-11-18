@@ -246,6 +246,10 @@ flowchart LR
 ### Sequence Diagram Styling
 
 ```mermaid
+---
+config:
+  theme: forest
+---
 sequenceDiagram
     participant A
     participant B
@@ -255,13 +259,15 @@ sequenceDiagram
     B->>C: Message 2
 
     Note over A,C: Styled note
-
-    %%{init: {'theme':'forest'}}%%
 ```
 
 ### Class Diagram Styling
 
 ```mermaid
+---
+config:
+  theme: dark
+---
 classDiagram
     class User {
         +String name
@@ -273,8 +279,6 @@ classDiagram
     }
 
     User <|-- Admin
-
-    %%{init: {'theme':'dark'}}%%
 ```
 
 ## Directional Hints
