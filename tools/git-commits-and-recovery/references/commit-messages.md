@@ -61,7 +61,10 @@ prefer the second whenever both are available.
 ## Body
 
 **Write a body when the subject and the diff leave the reader without the reason for the change, or without an
-understanding of what it does.** Begin it one blank line after the subject and wrap at 72 columns.
+understanding of what it does.** Begin it one blank line after the subject and wrap at 72 columns. Indent each
+body line by two spaces unless the repository's convention differs. Leave footers unindented: Git reads an
+indented line as the continuation of the trailer above it, and an indented footer block as no trailer at all.
+Verified on git 2.53.0, 2026-11-18.
 
 A body carries the two things a reader of history cannot recover from the diff alone:
 
