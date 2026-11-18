@@ -54,7 +54,11 @@ omit empty sections and redundant descriptions.
 ## Value Types and Time
 
 Prefer frozen `attrs` classes and `attrs.evolve` for internal value types. Use frozen stdlib dataclasses when adding
-`attrs` brings little benefit, especially in dependency-free packages and small scripts. Mutable state is legitimate
+`attrs` brings little benefit, especially in dependency-free packages and small scripts. `attrs` is a runtime import,
+so adding it means adding it to every copy of the project's dependency list: `pyproject.toml`, a script's PEP 723
+block, and any type-checker hook's extra dependencies. A copy left out gives a check that cannot resolve the import.
+Adopting `attrs` does not mean adopting its validators or converters; validation that reports every failure at once
+stays hand-written. Mutable state is legitimate
 when updates are part of its model. Create mutable defaults per call or instance when sharing is unintended.
 
 Use domain types for dates, money, and structured values. Add wrappers when they protect meaningful invariants.
