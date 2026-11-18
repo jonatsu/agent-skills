@@ -37,7 +37,7 @@
 | `age.identityPaths`       | `listOf path` | required                         | Paths to identity keys           |
 | `age.package`             | `package`     | `pkgs.age`                       | age package to use               |
 
-**CRITICAL: home-manager agenix has NO `owner` or `group` options.** Secrets are owned by the user running
+Home-manager agenix has no `owner` or `group` options. Secrets are owned by the user running
 home-manager. If a service needs different ownership, use NixOS-level agenix instead.
 
 **HM secretsDir defaults:**

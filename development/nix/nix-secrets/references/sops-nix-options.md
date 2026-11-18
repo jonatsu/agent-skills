@@ -58,9 +58,9 @@ is set (users managed by systemd); otherwise `false`.
 | `sops.defaultSymlinkPath`       | `str`  | `%r/secrets`        | Default symlink path                          |
 | `sops.defaultSecretsMountPoint` | `str`  | `%r/secrets.d`      | Mount point for secrets                       |
 
-**CRITICAL: home-manager sops-nix has NO `owner`, `group`, `uid`, `gid`, `restartUnits`, `reloadUnits`, or
-`neededForUsers` options.** These are NixOS-only. For service restart on secret change, use
-`systemd.user.services.<name>.Unit.After = [ "sops-nix.service" ]`.
+Home-manager sops-nix has no `owner`, `group`, `uid`, `gid`, `restartUnits`, `reloadUnits`, or `neededForUsers`
+options; these are NixOS-only. It also has no restart-on-change option. To start a user service after secrets
+are decrypted, order it with `systemd.user.services.<name>.Unit.After = [ "sops-nix.service" ]`.
 
 ## Template Options
 
