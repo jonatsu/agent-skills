@@ -69,7 +69,7 @@ write the same filenames and the second overwrites the first.
 ## `testdata.json`: read it first
 
 Deployed beside every image and containing a dump of the build datastore's variables (functions and `BB*`
-variables excluded); 2221 variables in the image measured here. When it is present, "I have no metadata" is
+variables excluded). When it is present, "I have no metadata" is
 mostly untrue:
 
 ```bash

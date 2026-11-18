@@ -31,7 +31,7 @@ jq -r '.PN, .IMAGE_BASENAME' <image>.testdata.json
 ## Read testdata.json first
 
 Deployed beside every image, and it is a dump of the build datastore's variables (functions and `BB*` variables
-excluded): 2221 variables in the image measured here. If it is present, "no metadata" is largely untrue:
+excluded). If it is present, "no metadata" is largely untrue:
 
 ```bash
 T=<image>-<machine>.rootfs.testdata.json
