@@ -347,8 +347,10 @@ routes, must-follow rules in files the client loads by itself, a current loading
 boundary and goals slots in the floor template. Whether the search-findability rules raise how often agents
 reach the right document is unmeasured. Open work:
 
-- Run the controlled comparison the record recommends (route wording, search surface, automatic loading). The
-  user holds it until Anthropic fixes the safeguard false positives that stop model runs.
+- Re-review both skills against the record's controlled comparison, which hit its ceiling: in a small
+  repository every route and search condition reached the document. Aim for "ready with risks" at most. A
+  harder follow-up, with a task the floor has no route for or a larger document set, is optional and needs the
+  user's go-ahead for its runs.
 - Compare both agents' floor-route rate before and after agent-setup's routing rule ("Instruction Routes" in the
   global rules; agent-setup `84964278` and `4ab748c5`, live from 2026-11-18 16:20 +02:00). Run it once at
   least 100 discovered first reads per agent follow that time, with the same mining method as the record.

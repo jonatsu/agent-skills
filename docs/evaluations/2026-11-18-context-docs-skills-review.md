@@ -131,14 +131,44 @@ The user's global agent rules also steer toward search tools and name no rule fo
 - The accretion test and the checker that measures it.
 - The walk test as the behavioral gate, with its failure-mode table.
 
+## Controlled Comparison
+
+Twelve headless Claude Code 2.1.326 runs on Sonnet, three per condition, tested route wording against search
+findability after the repairs. Each run worked in a fresh copy of a synthetic ten-document Python repository,
+with the author's global instructions and skills loaded. Every run got the same task, adding a nullable
+`delivered_at` column. The rule it needed lived in one document: after adding a migration, run
+`python tools/rehash.py`, which rewrites a signed checksum file. Automatic loading was not tested, because the
+client documentation already fixes that behavior.
+
+| Route in `AGENTS.md`                         | Target document                       | Reached | By route | By search | Applied |
+| -------------------------------------------- | ------------------------------------- | ------: | -------: | --------: | ------: |
+| Plain ("Database notes: path")               | `notes-3.md`, rule in paragraph four  |     3/3 |        1 |         2 |     3/3 |
+| Trigger-keyed ("Before adding … a column …") | `notes-3.md`                          |     3/3 |        3 |         0 |    2/3¹ |
+| Plain                                        | `database-migrations.md`, terms first |     3/3 |        3 |         0 |     3/3 |
+| Trigger-keyed                                | `database-migrations.md`              |     3/3 |        3 |         0 |     3/3 |
+
+¹ The third run read the rule and drafted a plan that ran `rehash.py`, then stopped to ask before editing, as
+the global instructions direct for a new change. It counts as a stop for confirmation, not a missed rule.
+
+Every run reached the document, so the comparison hit its ceiling. A floor route led to the document in 10 of 12
+runs whatever its wording. The two search arrivals were both in the weakest condition, a plain route to a
+generically named file, where the agent searched for "migration" first and found the rule by its text. Three runs
+per condition cannot separate the conditions, but the result bounds the field measurement. When a route exists
+and the repository is small, Sonnet takes it. The low floor-route share measured in real sessions therefore points
+at routes that are missing for the task, or lost among many documents, more than at route wording. Search
+findability still decided the way in where the route was weakest, which supports keeping both repairs.
+
+The runs cost USD 2.66 at API rates. No safeguard event occurred.
+
 ## Evidence
 
 - **Executable check:** both validators on both packages; transcript-mining scripts over Claude Code and Codex
   sessions, with three hand-checked samples per client that led to two classifier corrections.
 - **Heuristic walkthrough:** both packages read in full against the measured behavior and the client documentation.
-- **Model evaluation:** none. A controlled comparison of route wording, search surface, and automatic loading on
-  a synthetic repository is the recommended next step, at about 50 to 70 headless runs on Sonnet and Opus.
+- **Model evaluation:** the controlled comparison above, scored from each run's own tool calls and final
+  repository state with no grader model; three runs' tool sequences were checked by hand against the scores.
 
-Coverage limits: OpenCode and Copilot CLI behavior was not measured; the Claude Code and Codex samples cover
-different repositories; the mining logic is kept in the author's private configuration repository, which
+Coverage limits: OpenCode and Copilot CLI behavior was not measured; the controlled comparison ran only Claude
+Code on Sonnet, in a repository small enough that every condition reached the document; the Claude Code and
+Codex samples cover different repositories; the mining logic is kept in the author's private configuration repository, which
 reproduces these counts row for row, so a reader of this record cannot regenerate them.
