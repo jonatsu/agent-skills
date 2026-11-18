@@ -50,7 +50,7 @@ be a problem.
 `uv add` is for anything the project actually needs.
 
 ```bash
-uv run --with httpx python -c "import httpx; print(httpx.get('https://example.com').status_code)"
+uv run --with httpx2 python -c "import httpx2; print(httpx2.get('https://example.com').status_code)"
 uv run --with pytest-randomly pytest      # try a plugin without adopting it
 ```
 

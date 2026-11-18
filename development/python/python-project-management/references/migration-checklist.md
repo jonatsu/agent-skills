@@ -11,7 +11,7 @@
 
 ```bash
 uv init --bare                      # pyproject.toml only, no layout changes
-uv add httpx rich                   # runtime dependencies, one reviewed batch
+uv add httpx2 rich                  # runtime dependencies, one reviewed batch
 uv add --group dev ruff mypy
 uv add --group test pytest pytest-cov
 uv sync --all-groups

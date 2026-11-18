@@ -4,13 +4,13 @@
 
 ```bash
 uv lock --upgrade                 # re-resolve everything within declared constraints
-uv lock --upgrade-package httpx   # re-resolve one package only
+uv lock --upgrade-package pydantic # re-resolve one package only
 uv sync                           # install what the new lock says
 ```
 
 `uv lock --upgrade` does not change `pyproject.toml`. It moves within the constraints already declared there,
 so a dependency capped at `<2.0` stays on 1.x. Raising the cap is a separate, deliberate edit through
-`uv add 'httpx>=2'`.
+`uv add 'pydantic>=2'`.
 
 Prefer `--upgrade-package` when chasing one fix. A full `--upgrade` moves everything at once, which makes a
 resulting failure expensive to attribute.

@@ -20,17 +20,17 @@ dependencies across. Local path and editable dependencies do work: `uv add --scr
 # /// script
 # requires-python = ">=3.11"
 # dependencies = [
-#     "httpx",
+#     "httpx2",
 #     "rich",
 # ]
 # ///
 
 """Fetch a URL and print the response as formatted JSON."""
 
-import httpx
+import httpx2
 from rich import print
 
-response = httpx.get("https://api.example.com/data")
+response = httpx2.get("https://api.example.com/data")
 response.raise_for_status()
 print(response.json())
 ```
@@ -42,8 +42,8 @@ starts with `#`.
 
 ```bash
 uv init --script myscript.py           # create with the metadata block
-uv add --script myscript.py httpx      # add a dependency
-uv remove --script myscript.py httpx   # remove one
+uv add --script myscript.py httpx2     # add a dependency
+uv remove --script myscript.py httpx2  # remove one
 uv run myscript.py                     # run, installing dependencies as needed
 ```
 
@@ -74,7 +74,7 @@ confuse a caller reading the script's output or logs.
 
 ```python
 # /// script
-# dependencies = ["httpx"]
+# dependencies = ["httpx2"]
 #
 # [tool.uv]
 # extra-index-url = ["https://pypi.company.com/simple/"]
