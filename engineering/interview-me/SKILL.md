@@ -83,7 +83,7 @@ a concrete choice, or ask what it depends on and settle that first. A non-commit
 decision is itself worth questioning. Silence on a branch is not agreement: ask.
 
 If I decline to decide, record the decision as deferred, together with what the deferral costs. A deferred
-decision MUST never read as resolved.
+decision never reads as resolved.
 
 ## Recommend Without Anchoring
 
@@ -136,7 +136,7 @@ Status is `resolved`, `provisional`, `deferred`, or `open`:
 
 - `provisional` is chosen but to be checked later; its row names what settles it. Wherever a provisional
   decision lands downstream, it stays marked provisional there too.
-- `deferred` is one I reached and chose not to settle, and a deferred row MUST carry what the deferral costs.
+- `deferred` is one I reached and chose not to settle, and a deferred row carries what the deferral costs.
 - `open` is a branch we never reached, or one whose upstream is unsettled.
 
 Record only decisions I actually made. Before acting on anything, present the final table, then what changed about
