@@ -86,7 +86,7 @@ Look for:
   (test-induced design damage)?
 - Does any single test create more than 3 mock objects?
 
-If mock setup-to-assertion ratio exceeds 3:1 → 🟡 Warning.
+If mock setup is more than 50% of the test code → 🔴 Critical, as `references/test-decay-risks.md` rates it.
 If production methods exist only for test access → 🔴 Critical (architecture is being
 distorted by the test suite).
 
