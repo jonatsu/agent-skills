@@ -6,7 +6,7 @@ Use `source-coverage.md` to keep those sources grounded in real evidence, except
 ## The Iron Law
 
 ```
-NEVER suggest fixes before completing risk diagnosis.
+Complete the diagnosis of each risk before proposing its remedy.
 EVERY finding must follow: Symptom → Source → Consequence → Remedy.
 ```
 

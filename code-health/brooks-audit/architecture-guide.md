@@ -21,20 +21,16 @@ Before drawing anything, establish what you can see.
 **If the user provided a full directory tree or pasted relevant file contents:** skip the
 proactive reading below and proceed to Step 1.
 
-**Otherwise, proactively read the project using these tools:**
+**Otherwise, proactively read the project with these steps. The commands are examples; use any tool that does the job.**
 
-1. **Top-level structure** — glob top two levels to identify module boundaries:
-   ```
-   Glob: **/*(depth 2, directories only)
-   ```
+1. **Top-level structure** — list directories two levels deep to identify module boundaries, for example with
+   `fd --type d --max-depth 2`.
 2. **Entry points** — read the package manifest or main config file (e.g., `package.json`,
    `go.mod`, `pom.xml`, `Cargo.toml`, `pyproject.toml`) to confirm language, framework,
    and declared dependencies.
-3. **Dependency edges** — grep import statements to discover inter-module calls. Run once
-   per language present; limit to the first 200 matches to avoid token overrun:
-   ```
-   Grep: "^\s*(import|from|require\(|use )" across *.ts|*.py|*.go|*.rs|*.java
-   ```
+3. **Dependency edges** — search import lines to discover inter-module calls, for example with
+   `rg '^\s*(import|from|require\(|use )'`. Run once per language present, over its source files. Limit the output to
+   the first 200 matches to avoid token overrun.
 4. **Large modules** — for any top-level directory with > 10 files, read the file matching
    `index.*`, `main.*`, or `__init__.*` to understand its stated responsibility.
 
