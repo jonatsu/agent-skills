@@ -121,15 +121,6 @@ default-groups = ["dev"]   # what a bare `uv sync` installs
 python-preference = "managed"
 ```
 
-## Version Specifiers
-
-| Specifier    | Meaning                          |
-| ------------ | -------------------------------- |
-| `>=1.0`      | At least 1.0                     |
-| `>=1.0,<2.0` | 1.x only                         |
-| `~=1.4`      | Compatible release: `>=1.4,<2.0` |
-| `==1.4.*`    | Any 1.4 patch                    |
-
 ## Committing `uv.lock`
 
 Commit `uv.lock` for reproducible development and CI, including for libraries.
