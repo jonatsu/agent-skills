@@ -14,8 +14,9 @@ Dependency auditing and update policy are in [dependency-maintenance.md](depende
 | zizmor         | Workflow security: excessive permissions, injection   |
 | pip-audit      | Known advisories in dependencies                      |
 
-Adopt ruff and mypy always. Add the shell and workflow tools when the repository actually contains shell
-scripts or GitHub Actions workflows; a hook over files that do not exist is noise.
+For a new project, adopt ruff and mypy. In an established project, keep the checkers it already runs.
+Add the shell and workflow tools when the repository actually contains shell scripts or GitHub Actions workflows;
+a hook over files that do not exist is noise.
 
 ## Hook Configuration
 
