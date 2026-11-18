@@ -23,14 +23,10 @@ adapt it when an established repository already carries deliberate conventions.
 - Configure markdownlint with descriptive rule aliases such as `ul-style`; put the corresponding `MDxxx`
   identifier in the adjacent comment. Parameterized rules use an object value such as
   `"ul-style": { "style": "consistent" }`, not a bare style string.
-- Keep markdownlint's unordered-list style compatible with mdformat's marker normalization. The shipped
-  `consistent` setting is compatible. A 2026-09-03 probe found that markdownlint 0.41.0 silently failed to
-  enforce `sublist`; 0.41.1 corrected markers across nested tables, fences, mixed nesting, loose lists,
-  interrupted lists, and seven levels without changing alphanumeric content, then reached a clean second
-  pass. `sublist` still conflicts with mdformat's single-marker output by design.
-- Keep MD060 table-column styling disabled. A 2026-09-03 markdownlint 0.41.1 probe preserved a three-row table
-  under compact and aligned modes and reached a clean second pass, but that narrow case does not outweigh the
-  table-content loss observed under 0.41.0.
+- Keep markdownlint's unordered-list style at `consistent`, which is compatible with mdformat's marker
+  normalization. `sublist` conflicts with mdformat's single-marker output by design.
+- Keep MD060 table-column styling disabled. markdownlint 0.41.0 lost table content under it, and later versions
+  were checked only on narrow cases.
 - Set mdformat-gfm's `[plugin.tables]` `compact_tables = true`. Padded cells widen to the longest row in the
   column, so editing one long prose cell repads and rewrites every line of the table; compact tables drop that
   padding without changing GitHub's rendered output. The setting needs mdformat-gfm 1.0.0 or later. The table

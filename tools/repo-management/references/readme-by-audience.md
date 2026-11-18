@@ -1,8 +1,7 @@
 # README by Audience
 
 A README answers the questions its reader will actually have, and different readers need different sections.
-Classify the repo (this mirrors the BOOTSTRAP audience question in Step 2), then pick the matching template
-asset and include only the sections marked for that type.
+Classify the repo, then pick the matching template asset and include only the sections marked for that type.
 
 ## Project types
 
