@@ -140,5 +140,5 @@ The user's global agent rules also steer toward search tools and name no rule fo
   a synthetic repository is the recommended next step, at about 50 to 70 headless runs on Sonnet and Opus.
 
 Coverage limits: OpenCode and Copilot CLI behavior was not measured; the Claude Code and Codex samples cover
-different repositories; the mining scripts are not yet kept in any repository, so the measurement cannot be
-regenerated from a tracked source.
+different repositories; the mining logic is kept in the author's private configuration repository, which
+reproduces these counts row for row, so a reader of this record cannot regenerate them.
