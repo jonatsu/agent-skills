@@ -137,29 +137,12 @@ With a `src/` layout, either install the package (`pip install -e .` or the proj
 
 ## Useful Invocations
 
-| Command                           | Use                                  |
-| --------------------------------- | ------------------------------------ |
-| `pytest --collect-only`           | What was actually collected          |
-| `pytest -rs`                      | Why tests were skipped               |
-| `pytest -x`                       | Stop at the first failure            |
-| `pytest --lf`                     | Rerun only last-failed               |
-| `pytest --ff`                     | Run last-failed first, then the rest |
-| `pytest -k "expiry and not slow"` | Select by name expression            |
-| `pytest --durations=10`           | The ten slowest tests                |
-| `pytest -p no:randomly`           | Disable a plugin for one run         |
+- `pytest --collect-only` shows what was actually collected.
+- `pytest -rs` shows why tests were skipped.
 
-## Plugins Worth Knowing
+## Plugins and Order Dependence
 
-Check what the project already has with `pytest --version` before adding any of these.
-
-| Plugin          | Purpose                                                         |
-| --------------- | --------------------------------------------------------------- |
-| pytest-cov      | Coverage measurement and thresholds                             |
-| pytest-xdist    | Parallel execution across processes                             |
-| pytest-randomly | Randomizes order, exposing inter-test dependencies              |
-| pytest-timeout  | Fails a hanging test instead of blocking the run                |
-| pytest-mock     | A `mocker` fixture wrapping `unittest.mock` with automatic undo |
-| pytest-subtests | Multiple independently-reported assertions in one test          |
+Check what the project already has with `pytest --version` before adding a plugin.
 
 pytest-xdist and pytest-randomly are the pair that surface order dependence: parallel execution breaks
 implicit sequencing, and randomization stops a suite from relying on alphabetical luck.
