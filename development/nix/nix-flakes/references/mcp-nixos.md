@@ -14,9 +14,8 @@ Exposes 2 tools:
 Known limitation: the Home Manager index is often sparse or empty: an empty result there does not prove an
 option is absent; cross-check another source.
 
-**Use before writing any flake expression**: verify package names exist, find correct option paths, check
-binary cache availability, look up flake inputs, search Nix function signatures. Prevents hallucinated
-attribute names.
+Use it to verify a package name, an option path, or binary-cache availability. Check only what you are not sure
+of, before writing it into a flake.
 
 ```python
 # Verify a package exists
