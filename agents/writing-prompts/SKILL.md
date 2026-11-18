@@ -82,7 +82,9 @@ The receiver starts cold. It has not seen the conversation, and it may not load 
 - **Rules it must follow.** The instructions that apply to this task and that it may not inherit, such as staging
   rules, writing style, or a required tool. Restate them; a reference to a file it will not read carries nothing.
 - **Tools.** The tool or family to use, the fallback, and a reminder to load any tool that loads on demand.
-- **Ownership.** The files it may edit, disjoint from any parallel worker, and what it must leave untouched.
+- **Ownership.** The files it may edit, disjoint from any parallel worker, and what it must leave untouched. Name
+  the folder for its working files, and the durable file each result belongs in, such as a tracked document or
+  ledger. You move each result there when the receiver returns.
 - **Stop condition.** When to stop and report instead of pushing on: scope exceeded, a check fails twice, or a
   decision belongs to you.
 - **Result.** The report's exact shape and size, verified facts kept apart from inference. Large output goes to a
