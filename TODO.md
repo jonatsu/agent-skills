@@ -306,7 +306,9 @@ weights, floors and rounds them, and then needs a rule that two runs must agree.
 Add a small script to each package that takes the finding counts, the preset and the skipped dimensions and prints
 the score, keep the tables as its data, and have each guide say to run it and report its number. Each package
 carries its own copy, because a skill may not run another skill's script. A prompt audit on 2026-11-18 raised it
-as two findings with no replacement text.
+as two findings with no replacement text. Move two related rules into the same script: `brooks-debt`'s Pain times
+Spread priority bands, and `brooks-health`'s caps on how many findings to report, which become a documented input
+limit while the prose says to report the most severe findings.
 
 ## Bare-Metal Conventions for `arm-assembly`
 
