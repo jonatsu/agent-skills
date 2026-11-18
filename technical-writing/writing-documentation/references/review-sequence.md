@@ -1,8 +1,7 @@
 # Review Sequence for High-Stakes Documents
 
 Read this before reviewing a design, specification, or reference that others will build on, and before
-delegating any review or readability pass to a subagent. The sequence below came from repeated use on design
-documents and reliably produced documents a first-time reader could implement from.
+delegating any review or readability pass to a subagent.
 
 ## The Sequence
 
@@ -33,13 +32,13 @@ A subagent inherits none of the conversation. Its prompt carries:
 - the path of the draft or report file it writes; and
 - the rule to report a place where it cannot derive a concept's purpose, rather than inventing one.
 
-Give it these rules as well, each of which prevents an observed failure:
+Give it these rules as well:
 
 - **Never merge sentences.** A shortening pass that merges sentences into semicolon chains makes the text
   denser, the opposite of its goal.
 - **Leave approved wording alone,** even where a shorter phrasing exists.
-- **Check each replacement, not only the defect it fixes.** A pass fixing a key-first opener rewrote the sentence
-  into the passive.
+- **Check each replacement, not only the defect it fixes.** A rewrite of a key-first opener can arrive in the
+  passive.
 
 ## Verify What a Pass Adds
 
