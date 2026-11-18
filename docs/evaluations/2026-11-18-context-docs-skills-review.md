@@ -19,22 +19,26 @@ repository policy validator (`quick_validate.py`), each `1 checked, 0 failed`.
 Transcript mining measured, for each document an agent read, the last place its path appeared before the read.
 The unit is the first read of each in-repository Markdown document per session, excluding the instruction file,
 skill packages, and scratch space. Reads whose path the user or a subagent brief supplied are counted apart. The
-sources are Claude Code and Codex session transcripts from 15 of the author's personal repositories over the 45
-days to 2026-11-18. Work repositories and one restricted repository are excluded. A search counts as discovery only
-when its own input did not already name the document.
+sources are Claude Code transcripts from 15 of the author's personal repositories over the 45 days to
+2026-11-18, and all of the author's Codex transcripts. Most Codex use is in work and restricted repositories,
+which the Claude Code sample excludes, so the two columns cover different repositories. Codex reads files through
+shell commands, so a Codex read is a command that prints a named document. A search counts as discovery only when
+its own input did not already name the document.
 
-| Last source before the read            | Claude Code (645 reads) | Codex (31 reads) |
-| -------------------------------------- | ----------------------- | ---------------- |
-| Search result (Grep, Glob, `rg`, `fd`) | 40%                     | 13%              |
-| Route from another document            | 20%                     | 29%              |
-| Route straight from the floor          | 6%                      | 26%              |
-| Other tool output, git, summaries      | 30%                     | 13%              |
-| No earlier mention                     | 4%                      | 19%              |
+| Last source before the read            | Claude Code (645 reads) | Codex (885 reads) |
+| -------------------------------------- | ----------------------- | ----------------- |
+| Search result (Grep, Glob, `rg`, `fd`) | 40%                     | 28%               |
+| Route from another document            | 20%                     | 38%               |
+| Route straight from the floor          | 6%                      | 9%                |
+| Other tool output, git, summaries      | 30%                     | 14%               |
+| No earlier mention                     | 4%                      | 12%               |
 
 Where the floor itself listed the document, Claude Code read it straight from the floor in 21% of cases (36 of
-175\) and reached it through a search in 38%; Codex read it straight from the floor in 8 of 14. The Codex sample
-is 13 sessions and decides nothing alone. The measurements carry error: the floor compared is today's version,
-and a search that follows a route may only confirm it.
+175), arrived through another document in 17%, and reached it through a search in 38%. Codex, over 256 such
+reads, went straight from the floor in 30%, through another document in 32%, and through a search in 30%. Codex
+follows links between documents far more than Claude Code does; both use the floor's own routes for a minority
+of reads. The measurements carry error: the floor compared is today's version, and a search that follows a route
+may only confirm it.
 
 Anthropic describes the Claude Code behavior as its design: "CLAUDE.md files are naively dropped into context up
 front, while primitives like glob and grep allow it to navigate its environment and retrieve files just-in-time"
@@ -135,5 +139,6 @@ The user's global agent rules also steer toward search tools and name no rule fo
 - **Model evaluation:** none. A controlled comparison of route wording, search surface, and automatic loading on
   a synthetic repository is the recommended next step, at about 50 to 70 headless runs on Sonnet and Opus.
 
-Coverage limits: OpenCode and Copilot CLI behavior was not measured; Codex coverage is small; the mining scripts are not
-yet kept in any repository, so the measurement cannot be regenerated from a tracked source.
+Coverage limits: OpenCode and Copilot CLI behavior was not measured; the Claude Code and Codex samples cover
+different repositories; the mining scripts are not yet kept in any repository, so the measurement cannot be
+regenerated from a tracked source.

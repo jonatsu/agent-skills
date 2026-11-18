@@ -335,8 +335,8 @@ the loading reference is stale for Claude Code and lacks Codex, and the floor te
 slots. Open work:
 
 - Repair both skills from the record's findings once the user authorizes it.
-- Run the controlled comparison the record recommends (route wording, search surface, automatic loading).
-- Measure Codex on the work and restricted repositories, counts only, if the user allows it.
+- Run the controlled comparison the record recommends (route wording, search surface, automatic loading). The
+  user holds it until Anthropic fixes the safeguard false positives that stop model runs.
 - When agent-setup lands its Claude routing rule, compare Claude's floor-route rate before and after its commit
   date, once at least 100 discovered first reads follow it.
 
