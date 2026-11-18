@@ -1,6 +1,6 @@
 ---
 name: mermaid-diagrams
-description: Comprehensive guide for creating software diagrams using Mermaid syntax. Use when users need to create, visualize, or document software through diagrams including class diagrams (domain modeling, object-oriented design), sequence diagrams (application flows, API interactions, code execution), flowcharts (processes, algorithms, user journeys), entity relationship diagrams (database schemas), C4 architecture diagrams (system context, containers, components), state diagrams, git graphs, pie charts, gantt charts, or any other diagram type. Triggers include requests to "diagram", "visualize", "model", "map out", "show the flow", or when explaining system architecture, database design, code structure, or user/application flows.
+description: Create and edit software diagrams in Mermaid syntax, kept as text in Markdown or rendered to images, including class, sequence, flowchart, entity-relationship, C4, architecture, state, git graph, Gantt, and pie diagrams. Use when asked to diagram, visualize, model, or map out a system, flow, database schema, or code structure, or when explaining architecture in docs. Not for draw.io or diagrams.net files (drawio-diagrams).
 license: MIT
 metadata:
   author: Leonardo Flores
@@ -227,19 +227,5 @@ flowchart LR
 
 ## When to Create Diagrams
 
-**Always diagram when:**
-
-- Starting new projects or features
-- Documenting complex systems
-- Explaining architecture decisions
-- Designing database schemas
-- Planning refactoring efforts
-- Onboarding new team members
-
-**Use diagrams to:**
-
-- Align stakeholders on technical decisions
-- Document domain models collaboratively
-- Visualize data flows and system interactions
-- Plan before coding
-- Create living documentation that evolves with code
+Draw a diagram when the user asks for one, or when a relationship or flow is easier to read as a picture than as
+prose.

@@ -321,8 +321,8 @@ flowchart LR
     A -.->|REST API| B
 
     %% Tooltips are defined with links
-    link A: API Documentation @ https://api.example.com
-    link B: Service Dashboard @ https://dashboard.example.com
+    click A "https://api.example.com" "API Documentation"
+    click B "https://dashboard.example.com" "Service Dashboard"
 ```
 
 ## Subgraph Styling
@@ -523,7 +523,7 @@ flowchart LR
 <html>
 <head>
     <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
         mermaid.initialize({
             startOnLoad: true,
             theme: 'dark',
