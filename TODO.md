@@ -327,14 +327,18 @@ Write an independent implementation with rules that fit our own sources. MIT wou
 rules, but the set is small, and borrowing the pattern avoids the dependency. Keep the LLM step out of
 `just check`, because each run costs a model call.
 
-## Agents Search Instead of Following Context Links
+## Repair the Context Documents Skills
 
-Check whether `context-architecture` actually makes agents navigate by links. Its `ATTRIBUTIONS.md` credits
-IWE's "Inclusion Links" (<https://iwe.md/docs/concepts/inclusion-links/>), whose intent is that an agent reading a
-context document follows the links in it to the specific information. In practice, the user has seen agents still
-mostly grep and search to find things, which suggests the layouts or the guidance this skill produces do not
-yet steer navigation. The cause is unknown. Candidates include link wording, pointer placement, and what the
-loaded instruction files say about navigation. Raised 2026-10-11; pick it up after the attributions repair.
+`docs/evaluations/2026-11-18-context-docs-skills-review.md` rates `agents-context-docs` and
+`context-architecture` `not ready`: Claude Code reaches documents mostly by search rather than by floor routes,
+the loading reference is stale for Claude Code and lacks Codex, and the floor template lacks boundary and goals
+slots. Open work:
+
+- Repair both skills from the record's findings once the user authorizes it.
+- Run the controlled comparison the record recommends (route wording, search surface, automatic loading).
+- Measure Codex on the work and restricted repositories, counts only, if the user allows it.
+- When agent-setup lands its Claude routing rule, compare Claude's floor-route rate before and after its commit
+  date, once at least 100 discovered first reads follow it.
 
 ## Unevaluated Candidate Sources
 
