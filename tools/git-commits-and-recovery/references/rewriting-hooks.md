@@ -65,7 +65,7 @@ Only the second is dangerous, and a warning that does not name the stage reads a
 
 ## Why `git status` Cannot Verify the Rewrite
 
-After committing into a dirty tree in a repo with a post-commit rewriting hook, MUST verify the artifact by
+After committing into a dirty tree in a repo with a post-commit rewriting hook, verify the artifact by
 its **content**, or by whatever drift check it has of its own. In the measured run `git status` showed the
 artifact modified, but indistinguishably from the sibling lane's edit that caused the collision, so it
 prompted no follow-up. It has also been observed showing the artifact clean. It is uninformative in both

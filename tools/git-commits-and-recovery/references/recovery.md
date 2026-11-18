@@ -16,7 +16,7 @@ worktree, use the `using-git-worktrees` skill.
 
 ## First Move, Always
 
-STOP state-changing commands. Read-only inspection does not add reflog entries; further commits, resets,
+Stop state-changing commands. Read-only inspection does not add reflog entries; further commits, resets,
 checkouts, rebases, merges, or cleanup can overwrite evidence or shorten the recovery path.
 
 ```bash
@@ -33,7 +33,7 @@ of it. HEAD's reflog is per-worktree; branch reflogs live in the common director
 The operative one here is the 30-day default for unreachable entries, which is what every case below depends
 on. Past that, `git fsck --lost-found` is the remaining hope, and only until the next `git gc`.
 
-MUST record the current hash before attempting any repair: `git rev-parse HEAD`. A repair that goes wrong is
+Record the current hash before attempting any repair: `git rev-parse HEAD`. A repair that goes wrong is
 recoverable only if you can name where you started.
 
 ## Commits Missing After a Reset, Rebase, or Amend
@@ -131,7 +131,7 @@ git commit -m "<your original message>"
 git log --oneline -1 -- <foreign-path>   # their file's last commit is still theirs
 ```
 
-The foreign file on disk is never touched by either step. Do NOT reach for a worktree-level restore
+The foreign file on disk is never touched by either step. Do not reach for a worktree-level restore
 (`git restore <path>`, `git checkout -- <path>`) here because that discards their working state, which is the
 one thing you are trying to protect. Some environments block those two commands outright for this reason.
 
@@ -166,7 +166,7 @@ Read the **None** rows of the ladder in [history-changing-operations.md](history
 rather than trusting a copy here. Arriving here after one of those, the work is gone and the only remaining
 question is what to say.
 
-Report what was lost, how, and what would have caught it. Then STOP. Do NOT walk the user through `fsck`, an
+Report what was lost, how, and what would have caught it. Then stop. Do not walk the user through `fsck`, an
 editor's local history, or an IDE's backup directory on the chance something turns up: a speculative recovery
 costs them time they do not have and reads as though a real path exists. If a genuine long shot applies, such
 as an editor retaining undo history or a branch being pushed before the force-push, name it once, precisely,

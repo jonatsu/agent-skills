@@ -35,4 +35,4 @@ write that message.
 - Say which question you answered: carries a signature, or verifies here.
 - Name `gpg.format` and whether `gpg.ssh.allowedSignersFile` is set, since an unset one makes every SSH-signed
   commit read as unsigned.
-- NEVER report "unsigned" from `%G?` alone without checking the object header.
+- Never report "unsigned" from `%G?` alone without checking the object header.
