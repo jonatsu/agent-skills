@@ -13,16 +13,16 @@ its early turns, say so at that point rather than trusting this backlog to recon
 
 1. **Check the transcript still exists.** Paths decay as old sessions are cleaned up. If `transcript_path` is
    gone the entry is unrecoverable; drop it, report it as expired, and move on.
-2. **NEVER read a transcript in full.** They routinely exceed the context window. Search it for the §1
+2. **Do not read a transcript in full.** They routinely exceed the context window. Search it for the §1
    signals, or hand the entry to a subagent that returns only candidates with quoted evidence.
 3. **Route to the entry's own project, not the current one.** Memory is siloed per project, and the correct
-   silo is `<dirname of transcript_path>/memory/`; derive it from the breadcrumb, NEVER assume the open
-   project's silo. A repo-scoped fact belongs in the `AGENTS.md`/`CLAUDE.md` at that entry's `cwd`; if that
-   checkout is absent, defer it rather than guessing.
+   silo is `<dirname of transcript_path>/memory/`; derive it from the breadcrumb, because the open
+   project's silo is the wrong one for another project's entry. A repo-scoped fact belongs in the
+   `AGENTS.md`/`CLAUDE.md` at that entry's `cwd`; if that checkout is absent, defer it rather than guessing.
 4. **Apply §2–§5 unchanged.** A candidate recovered from a transcript still goes through routing, thresholds,
    and the autonomy boundary.
 
-The iron law holds here too: evidence MUST be quoted from the transcript. A breadcrumb proves a compaction
+The iron law holds here too: quote the evidence from the transcript. A breadcrumb proves a compaction
 happened, not that anything was learned; most yield nothing, and "no candidates" is a correct result for an
 entry.
 
