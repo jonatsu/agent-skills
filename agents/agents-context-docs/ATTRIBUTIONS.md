@@ -54,6 +54,16 @@ No prose was copied or adapted due to the license. Independently expressed ideas
 frequency, the "true in any repository using the tool" test, self-duplication through file inclusion, tool and field
 descriptions as always-loaded text, and a rule repeated for emphasis counting as one rule.
 
+### Chad Stamm (RUMO): "How to Create Context Documents for AI Agents"
+
+- Source: <https://www.withrumo.com/blog/how-to-create-context-documents-for-ai-agents>
+- License: `LicenseRef-Proprietary`
+- Version: read 2026-11-18
+
+Nothing was copied due to the license. Independently expressed ideas: a written instruction for what to do when
+unsure, and hard limits backed by the tool's permission settings, both behind the template's `Boundaries`
+section.
+
 ### ISO: ISO 24495-1:2023, Plain language, Part 1: Governing principles and guidelines
 
 - Source: <https://www.iso.org/standard/78907.html>, preview of clauses 1 to 5.2.3 at

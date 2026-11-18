@@ -3,6 +3,14 @@
 Use this reference only when topology or verification depends on client behavior. Treat the known adapters as
 maintained defaults for their stated conditions, not as universal rules.
 
+## Contents
+
+- Capability discovery
+- Known compatibility default
+- What loads by itself and what needs a route
+- Known client details: Claude Code, Codex, OpenCode, Copilot CLI
+- Portable degradation
+
 ## Capability Discovery
 
 For each target client, determine:
@@ -11,6 +19,7 @@ For each target client, determine:
 - root and nested-file discovery;
 - include or pointer behavior;
 - path or glob scoping;
+- size limits and truncation;
 - reload behavior and any live loaded-context inspection;
 - symlink support in both the client and target filesystem.
 
@@ -23,40 +32,73 @@ Ordinary content updates do not require repeated online research.
 
 ## Known Compatibility Default
 
-For repositories targeting Claude Code, OpenCode, and Copilot CLI on a filesystem with symlinks, use a real
-`AGENTS.md` and a sibling `CLAUDE.md` symlink to it. This is the established compatibility default:
+For repositories targeting Claude Code, Codex, OpenCode, and Copilot CLI on a filesystem with symlinks, use a
+real `AGENTS.md` and a sibling `CLAUDE.md` symlink to it. Every client then reads the same content:
 
-| Repository state         | Claude Code           | OpenCode                                           | Copilot CLI                          |
-| ------------------------ | --------------------- | -------------------------------------------------- | ------------------------------------ |
-| `AGENTS.md` only         | not read *(reported)* | read *(documented)*                                | read *(documented)*                  |
-| `CLAUDE.md` only         | read *(measured)*     | fallback when `AGENTS.md` is absent *(documented)* | read *(documented)*                  |
-| Both real and divergent  | `CLAUDE.md`           | `AGENTS.md`                                        | both, with no defined conflict order |
-| One real and one symlink | same content          | same content                                       | same content                         |
+| Repository state         | Claude Code                       | Codex                      | OpenCode                                           | Copilot CLI                          |
+| ------------------------ | --------------------------------- | -------------------------- | -------------------------------------------------- | ------------------------------------ |
+| `AGENTS.md` only         | read since 2.1.277 *(documented)* | read *(documented)*        | read *(documented)*                                | read *(documented)*                  |
+| `CLAUDE.md` only         | read *(documented)*               | not read unless configured | fallback when `AGENTS.md` is absent *(documented)* | read *(documented)*                  |
+| Both real and divergent  | `CLAUDE.md` only                  | `AGENTS.md`                | `AGENTS.md`                                        | both, with no defined conflict order |
+| One real and one symlink | same content                      | same content               | same content                                       | same content                         |
 
-The OpenCode column describes the V1 default install. OpenCode V2 (rolling out 2026-09) discovers `AGENTS.md`
-only and drops the `CLAUDE.md` fallback, so the pair still works there (V2 reads the real `AGENTS.md` and
-ignores the symlink), but a repository that put guidance only in `CLAUDE.md` loses it under V2.
+Keep the symlink even though current Claude Code reads `AGENTS.md` alone. Claude Code reads `CLAUDE.md` only on
+versions before 2.1.277, in some first sessions after an upgrade, and when its `AGENTS.md` plugin is disabled.
 
 When creating the pair, make `AGENTS.md` real and use `ln -s AGENTS.md CLAUDE.md`. Never use `ln -f` or
 replace an existing real file. If symlinks are unsupported, preserve one canonical source and use the least
 duplicative verified adapter available; report any synchronization burden.
 
-The Claude Code `AGENTS.md` result is repeated user observation, not a controlled measurement. Claude Code
-documentation was verified against version 2.1.269 on 2026-09-16, and its instruction-loading model was
-unchanged between 2.1.239 and 2.1.269. OpenCode and Copilot CLI documentation was re-read on 2026-09-16;
-neither prints a version on its documentation pages, and OpenCode's is versioned only as V1 and V2 (below).
+Sources, read 2026-11-18: Claude Code memory documentation (<https://code.claude.com/docs/en/memory>, installed
+2.1.326) and Codex `AGENTS.md` guide (<https://developers.openai.com/codex/guides/agents-md>, installed 0.169.0).
+OpenCode and Copilot CLI documentation was last re-read on 2026-09-16; neither prints a version on its pages.
+
+## What Loads by Itself and What Needs a Route
+
+A route in the floor is guidance the agent may ignore. Measured sessions show agents reach most documents by
+search or by links between documents, and take a floor route for a minority of reads. So deliver a rule by the
+strongest mechanism the target clients share:
+
+- **Every session needs it:** the floor itself, as one imperative line.
+- **Work in one subtree needs it:** a nested instruction file the client loads by itself (Claude Code when it
+  touches a file there; OpenCode V2 as the agent reads into the subtree), plus a trigger-keyed floor route for
+  clients that do not descend or whose descent is unverified. Codex loads nested files only on the path from
+  the repository root to the working directory, so a session started at the root needs the route.
+- **Work on matching files needs it, Claude Code only:** a path-scoped rule (below), with the same route as the
+  portable fallback.
+- **Evidence or reference read at need:** a routed document that is also findable by search.
 
 ## Known Client Details
 
 ### Claude Code
 
-- Uses `CLAUDE.md` repository context in the measured setup.
-- Discovers nested context on demand according to documentation.
-- Parses relative includes to a documented depth of four.
-- Path scoping uses a `paths` frontmatter field of glob patterns, not an `applyTo` field; it is documented as
-  loading, and matching follows a symlinked path since 2.1.198. The earlier 2.1.239 non-load observation
-  predates that fix, so re-measure before relying on it in a critical path.
-- `/context` reports the loaded memory files; `/memory` browses auto-memory.
+- Reads `CLAUDE.md` and `CLAUDE.local.md` from the working directory and every directory above it at launch.
+  Reads `AGENTS.md` instead when neither exists there, since 2.1.277; the **Project instructions** setting
+  changes which files load.
+- Loads a subdirectory's `CLAUDE.md` once Claude reads, writes, or edits a file in that subdirectory, including
+  a single-file `cat` or `head` through Bash.
+- `@path` imports expand recursively to a depth of four hops, relative to the importing file. An import
+  organizes a long file but does not reduce its context cost, because the imported file loads with it.
+- Path-scoped rules are files under `.claude/rules/` with a `paths` frontmatter field of glob patterns. One loads
+  when Claude reads, writes, or edits a matching file, including through a symlinked path.
+- The documentation targets "under 200 lines per CLAUDE.md file" because "Longer files consume more context and
+  reduce adherence", and warns that of two contradicting instructions, "Claude may pick one arbitrarily".
+- `/context` reports the loaded memory files; `/doctor prompt-audit` (2.1.283 and later) reports stale,
+  missing-reference, and conflicting instructions without editing them.
+
+### Codex
+
+- Builds the instruction chain once per run, or once per interactive session; restart to pick up edits.
+- Reads `~/.codex/AGENTS.override.md`, or else `~/.codex/AGENTS.md`, then walks from the repository root down to
+  the working directory. In each directory it takes the first of `AGENTS.override.md`, `AGENTS.md`, and any name
+  in `project_doc_fallback_filenames`, one file per directory. Files nearer the working directory come later and
+  override earlier guidance.
+- Does not read files below the working directory, and does not read `CLAUDE.md` unless it is listed as a
+  fallback name.
+- Stops adding files once the combined size reaches `project_doc_max_bytes`, 32 KiB by default, and skips empty
+  files. Runtime `@`-include expansion is not documented.
+- Delivers the chain as a message headed "# AGENTS.md instructions". To list what loaded, run
+  `codex --ask-for-approval never "Show which instruction files are active."`.
 
 ### OpenCode
 
@@ -93,7 +135,8 @@ verified as necessary.
 
 When include expansion or nested discovery is unknown, use a trigger-keyed route in the canonical root file
 that names the condition and target path. A route is guidance rather than guaranteed runtime loading, so
-report that limitation. Avoid unverified path-scoping frontmatter.
+report that limitation, and keep any rule the agent must not miss in the floor itself. Avoid unverified
+path-scoping frontmatter.
 
-Nested files need their own verified adapters. For the known three-client target, place a real `AGENTS.md` and
+Nested files need their own verified adapters. For the known four-client target, place a real `AGENTS.md` and
 sibling `CLAUDE.md` symlink in each relevant package, then add a root route for clients that do not descend.

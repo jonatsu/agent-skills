@@ -43,7 +43,10 @@ hand-maintained text outside marked generated regions. For scoped files, add a t
 tells the agent when and what to read.
 
 Do not create `.claude/rules`, `.github/instructions`, `.github/copilot-instructions.md`, or any comparable
-client-specific surface unless a target-client requirement and repository need justify it.
+client-specific surface unless a target-client requirement and repository need justify it. A must-follow rule for
+one subtree or file type is such a need: agents take a floor route for a minority of reads, so deliver the rule
+by the mechanism each target client loads by itself (see "What Loads by Itself and What Needs a Route" in
+[loading-model.md](loading-model.md)), and keep the floor route as the fallback.
 
 ## 4. Verify the Outcome
 

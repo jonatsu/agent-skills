@@ -58,6 +58,10 @@ precedence, includes, nesting, reload behavior, or symlink support. Load only th
   being asked for, an index only when something follows the route. So keep on the floor the symptoms an agent
   meets **while already in trouble**, and leave the ones it looks up deliberately to the index. A symptom
   owned by a subtree belongs to that subtree's instruction file and should never reach the root at all.
+- Agents reach most documents by search or by links between documents, and take a floor route for a minority
+  of reads. So a route never delivers a must-follow rule: keep that rule on the floor or in a file the client
+  loads by itself. Name each routed file for its subject, and put the verbatim error or identifier a search
+  would use in its first lines.
 - **Write in plain language, and size detail to consequence.** Plain language, as ISO 24495-1:2023 defines
   it, lets the intended readers easily find what they need, understand what they find, and use that
   information. An instruction file is read under load by something deciding what to do next, often a different
@@ -90,7 +94,9 @@ reason, constraint, ordering dependency, or failure mode that the source does no
 
 A passage costs its size times how often it loads. A sentence in a root instruction file is paid by every
 session; the same sentence in a document reached by a pointer is paid only when followed. Weigh every addition
-and every cut by that product.
+and every cut by that product. An `@path` import moves text without saving any, because the imported file loads
+with the file that imports it. Claude Code's documentation targets under 200 lines per instruction file, since
+longer files reduce adherence, and the checker's default budget of 2,000 words sits near that.
 
 Those two tests judge a single addition. The **accretion test** judges the file: an edit that adds an
 obligation must leave the instruction file no longer than it found it, or state what it relocated and where.

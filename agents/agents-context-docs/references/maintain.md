@@ -26,11 +26,12 @@ moving it.
 
 Use these defaults where their conditions hold:
 
-- Preserve a real `AGENTS.md` with a sibling `CLAUDE.md` symlink for the known three-client target.
+- Preserve a real `AGENTS.md` with a sibling `CLAUDE.md` symlink for the known four-client target.
 - Never auto-resolve divergent real files. Present retain-A, retain-B, and merge options with their content
   consequences.
 - Keep agent-agnostic scoped guidance in a vendor-neutral location when practical.
-- Use trigger-keyed root routes for auxiliary rules because runtime include and nested discovery differ.
+- Deliver a must-follow scoped rule through a file the target clients load by themselves, and add a
+  trigger-keyed root route for clients that do not, because runtime include and nested discovery differ.
 - Keep shared centralized rules only when several directories genuinely own them; avoid link-to-link chains.
 - Separate generated blocks from hand-maintained knowledge before regeneration.
 

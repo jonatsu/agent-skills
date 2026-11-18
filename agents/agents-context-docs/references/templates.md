@@ -10,6 +10,9 @@ repository knowledge earns the recurring context cost.
 
 <One sentence that distinguishes this repository for an agent.>
 
+- The project goals live in [<goals file or section>](<path>): <owner> decides any change to them; stop and ask
+  before work that would break them.
+
 ## Commands
 
 - `<command>`: `<constraint or reason the runner does not state>`
@@ -21,6 +24,11 @@ repository knowledge earns the recurring context cost.
 ## Conventions
 
 - `<concrete, repository-evidenced convention>`
+
+## Boundaries
+
+- Never `<action>` without asking: `<the consequence it prevents>`
+- When unsure whether a task is in scope or safe, stop and ask rather than guess.
 
 ## Writing
 
@@ -71,6 +79,10 @@ summary. The fillable version is `../assets/AGENTS.template.md`.
 Keep `Writing` by default. It sets the writing standard for every document the repository's agents produce, so
 documents written without a writing skill still follow it. Delete it only when the repository's own writing
 rules already cover plain language.
+
+Keep the goals line when the project states its goals, so every session loads where they live and who decides
+a change. `Boundaries` collects every action that needs the user's approval, so an agent finds them without
+reading the whole file; back each hard limit with a hook, permission, or CI gate where one can enforce it.
 
 `Gotchas` holds one imperative line per entry. Its supporting evidence, meaning dates, commit identifiers,
 tool-version measurements, and superseded arrangements, goes to a findings file instead, indexed by symptom.

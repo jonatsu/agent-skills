@@ -2,6 +2,11 @@
 
 \<One or two lines: what this repo is, from an agent's perspective. Not a README rehash.>
 
+\<Keep the next line when the project states its goals, and delete it otherwise.>
+
+- The project goals live in [`<goals file or section>`](path): `<owner>` decides any change to them; stop and
+  ask before work that would break them.
+
 <!--
   Keep CLAUDE.md as a symlink to this file:  ln -s AGENTS.md CLAUDE.md
   Never use `ln -sf`. If CLAUDE.md already exists as a real file, reconcile the two
@@ -40,6 +45,14 @@ pasting a tree the agent can produce with one listing command.>
 that a diff shows whether it was followed.>
 
 - `<convention>`, never `<the alternative it replaces>`
+
+## Boundaries
+
+\<Collect here every action an agent must not take without asking, so it finds them without reading the whole
+file. Back each hard limit with a hook, permission, or CI gate where one can enforce it.>
+
+- Never `<action>` without asking: `<the consequence it prevents>`
+- When unsure whether a task is in scope or safe, stop and ask rather than guess.
 
 ## Writing
 
@@ -96,7 +109,9 @@ Open the matching file when the symptom appears. Every rule above stands without
 ## Pointers
 
 \<Delete if the repo has no auxiliary instruction files. Otherwise: use this list to guide agents that do
-not parse includes or discover nested files. Verify the pointer behavior for each target agent.>
+not parse includes or discover nested files. A route here is a fallback, not delivery: put a rule the agent
+must not miss in a file its client loads by itself, or on the floor. Verify the pointer behavior for each target
+agent.>
 
 Open the matching file yourself before working in its area. Treat this list as the instruction rather than a
 description of automatic loading.
