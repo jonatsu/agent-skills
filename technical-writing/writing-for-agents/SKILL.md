@@ -1,6 +1,6 @@
 ---
 name: writing-for-agents
-description: Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md or CLAUDE.md.
+description: Write or revise prose an agent reads, such as a skill body, AGENTS.md, CLAUDE.md, a shared rule file, or a document reached by a pointer. Use when wording a pointer, deciding what to inline and what to disclose behind one, writing steps and their completion criteria, or pruning such a document. Not for delegation briefs or prompts (writing-prompts), skill descriptions (writing-skill-descriptions), or instruction-file layout and loading (agents-context-docs).
 license: MIT
 metadata:
   author: Matt Pocock
