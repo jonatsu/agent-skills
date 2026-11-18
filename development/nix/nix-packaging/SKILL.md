@@ -320,11 +320,11 @@ small module system per program and emits an ordinary derivation usable anywhere
 a one-off env-var or PATH tweak; reach for a wrapper-module library once the wrapping needs generated config
 or cross-environment reuse.
 
-| Approach                      | Scope             | Portability                            |
-| ----------------------------- | ----------------- | -------------------------------------- |
-| `makeWrapper` + `symlinkJoin` | Single derivation | NixOS/HM only                          |
-| `nix-wrapper-modules`         | Module system     | NixOS, HM, nix-darwin, devshell, shell |
-| `buildFHSEnv`                 | FHS sandbox       | Anywhere (heavy)                       |
+| Approach                      | Scope             | Portability                                                         |
+| ----------------------------- | ----------------- | ------------------------------------------------------------------- |
+| `makeWrapper` + `symlinkJoin` | Single derivation | Any derivation consumer; baked-in config must be rebuilt per target |
+| `nix-wrapper-modules`         | Module system     | NixOS, HM, nix-darwin, devshell, shell                              |
+| `buildFHSEnv`                 | FHS sandbox       | Anywhere (heavy)                                                    |
 
 ## Unfree Packages
 
