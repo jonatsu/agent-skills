@@ -445,17 +445,6 @@ mmdc -i diagram.mmd -o output.svg -b "#ffffff"
 mmdc -i diagram.mmd -o output.svg -b "transparent"
 ```
 
-## Best Practices for Advanced Features
-
-1. **Use themes consistently** - Pick one theme for related diagrams
-2. **Don't over-style** - Too many colors can reduce clarity
-3. **Test hand-drawn look** - Some diagrams work better with classic look
-4. **Use ELK for complex layouts** - When dagre creates crossed lines
-5. **Comment complex configurations** - Explain non-obvious styling choices
-6. **Keep it accessible** - Ensure sufficient color contrast
-7. **Test exports** - Verify diagrams render correctly in target format
-8. **Version control configs** - Track theme changes in your repository
-
 ## Accessibility Considerations
 
 ```mermaid
@@ -475,14 +464,6 @@ flowchart TD
     B --> C[Meaningful Colors]
 ```
 
-**Accessibility tips:**
-
-- Use high contrast color combinations
-- Don't rely solely on color to convey meaning
-- Include descriptive text labels
-- Test with color blindness simulators
-- Consider dark mode alternatives
-
 ## Performance Considerations
 
 For large diagrams:
@@ -498,14 +479,6 @@ flowchart TD
     %% ELK handles complex layouts better
     %% Merge edges reduces visual clutter
 ```
-
-**Performance tips:**
-
-- Use ELK layout for diagrams with >20 nodes
-- Enable edge merging for simplified connections
-- Split very large diagrams into multiple focused views
-- Consider using subgraphs to organize complexity
-- Limit styling to essential elements
 
 ## Integration Examples
 

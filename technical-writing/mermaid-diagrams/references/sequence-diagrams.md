@@ -365,17 +365,6 @@ sequenceDiagram
     end
 ```
 
-## Best Practices
-
-1. **Order participants logically** - Typically: User → Frontend → Backend → Database
-2. **Use activations** - Shows when components are actively processing
-3. **Group related logic** - Use alt/opt/par to organize conditional flows
-4. **Add descriptive notes** - Explain complex logic or important details
-5. **Keep diagrams focused** - One scenario per diagram
-6. **Number messages** - Use autonumber for complex flows
-7. **Show error paths** - Document failure scenarios with alt/else
-8. **Indicate async operations** - Use open arrows for fire-and-forget messages
-
 ## Common Use Cases
 
 ### Authentication

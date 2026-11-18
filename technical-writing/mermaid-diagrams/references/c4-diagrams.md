@@ -329,19 +329,6 @@ C4Container
     Rel(search, event_bus, "Consumes events", "Kafka")
 ```
 
-## Best Practices
-
-01. **Use appropriate level** - Context for stakeholders, Container for architects, Component for developers
-02. **Keep it focused** - One system per Context diagram, one container per Component diagram
-03. **Show key relationships** - Don't clutter with every possible connection
-04. **Use consistent naming** - Same names across all diagram levels
-05. **Add technology details** - Specify frameworks, languages, protocols at Container/Component level
-06. **Update regularly** - Keep diagrams in sync with architecture
-07. **Use boundaries** - Group related containers/components logically
-08. **Document protocols** - Show communication methods (REST, gRPC, messaging)
-09. **Highlight external systems** - Use \*\_Ext variants for clarity
-10. **Start simple** - Begin with Context, drill down as needed
-
 ## Common Architecture Patterns
 
 ### Monolithic Application

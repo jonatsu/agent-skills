@@ -424,18 +424,6 @@ flowchart TD
     Wait --> End
 ```
 
-## Best Practices
-
-1. **Use meaningful labels** - Node text should be clear and action-oriented
-2. **Consistent node shapes** - Same shapes for same types of actions
-3. **Decision nodes as diamonds** - Standard convention for yes/no decisions
-4. **Flow top-to-bottom or left-to-right** - Natural reading direction
-5. **Start and end nodes** - Use stadium/pill shapes to mark entry/exit
-6. **Group related steps** - Use subgraphs for logical groupings
-7. **Color code** - Use colors to highlight different types of actions
-8. **Minimize crossing lines** - Reorganize for clarity
-9. **Keep it focused** - One process per diagram
-
 ## Common Patterns
 
 ### Simple Linear Flow

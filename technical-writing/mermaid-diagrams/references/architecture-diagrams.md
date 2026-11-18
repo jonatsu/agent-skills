@@ -179,14 +179,6 @@ architecture-beta
     client{group}:B --> T:api{group}
 ```
 
-## Best Practices
-
-1. Group services by environment (public/private) or layer (frontend/backend)
-2. Use consistent icons for service types
-3. Label edges with protocols (HTTPS, TCP, etc.)
-4. Use junctions for fan-out patterns
-5. Keep diagrams focused; split complex architectures into multiple views
-
 ## Reference
 
 - [Official Documentation](https://mermaid.js.org/syntax/architecture.html)

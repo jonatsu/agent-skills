@@ -309,15 +309,6 @@ classDiagram
     Order *-- LineItem
 ```
 
-## Tips for Effective Class Diagrams
-
-1. **Start with core entities** - Add attributes and methods incrementally
-2. **Show only relevant details** - Omit obvious getters/setters unless important
-3. **Use appropriate relationships** - Choose between association, aggregation, and composition carefully
-4. **Add multiplicity** - Clarifies how many instances participate
-5. **Group related classes** - Use notes or visual proximity
-6. **Document invariants** - Use notes to explain business rules
-
 ## Common Patterns
 
 ### Repository Pattern

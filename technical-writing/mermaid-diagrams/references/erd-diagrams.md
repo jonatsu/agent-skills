@@ -397,19 +397,6 @@ erDiagram
     }
 ```
 
-## Best Practices
-
-01. **Name entities in UPPERCASE** - Convention for clarity
-02. **Use singular names** - `USER` not `USERS`, `ORDER` not `ORDERS`
-03. **Define all constraints** - Document PKs, FKs, UKs, NOT NULL
-04. **Show cardinality accurately** - Be precise about one-to-many vs many-to-many
-05. **Include timestamps** - created_at, updated_at for auditing
-06. **Document computed columns** - Mark calculated/derived values
-07. **Add meaningful comments** - Use quotes for constraints and descriptions
-08. **Consider junction tables** - Explicitly model many-to-many relationships
-09. **Use appropriate types** - Match database-specific types
-10. **Show indexes** - Document UK (unique keys) beyond PKs
-
 ## Common Patterns
 
 ### Self-Referencing (Hierarchical)
@@ -507,14 +494,3 @@ erDiagram
         timestamp created_at "DEFAULT NOW()"
     }
 ```
-
-## Tips for Database Design
-
-1. **Normalize appropriately** - Balance normalization with query performance
-2. **Use surrogate keys** - UUID or auto-increment integers as PKs
-3. **Index foreign keys** - Essential for join performance
-4. **Plan for soft deletes** - Add deleted_at columns instead of hard deletes
-5. **Version critical data** - Maintain history for important entities
-6. **Set appropriate defaults** - created_at, status, boolean flags
-7. **Consider denormalization** - Counts and cached values for performance
-8. **Use enum/check constraints** - Enforce valid values at database level
