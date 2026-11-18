@@ -79,6 +79,8 @@ Before calling delegated work done:
 2. Run the repository's checks once over the combined result when any lane changed code.
 3. Spot-check each report's claims against the diff or the sources it cites, because lanes make systematic
    errors a summary hides.
+4. Move every result a lane left in its working folder into the durable file its brief named. You own what the
+   lanes leave behind, and nobody else will move it.
 
-Done when the checks pass on the combined tree, where any lane changed code, and every claim you relied on has
-been checked.
+Done when the checks pass on the combined tree, where any lane changed code, every claim you relied on has been
+checked, and every result sits in its durable file.
