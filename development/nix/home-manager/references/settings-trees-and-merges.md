@@ -64,7 +64,7 @@ Pick the tool by what you are merging:
 | Two plain attrsets that may share names at any depth    | `lib.recursiveUpdate`                                                     |
 | Two plain attrsets, guaranteed-disjoint top-level names | `//` is fine                                                              |
 
-NEVER use `//` to combine two trees that share a name unless you intend the right-hand side to win wholesale.
+Never use `//` to combine two trees that share a name unless you intend the right-hand side to win wholesale.
 The failure is silent: no error, no warning, and the merged value is exactly what `nix eval` reports.
 
 ## Trap 2: a nullable submodule parent drags in sibling defaults
@@ -77,7 +77,7 @@ That is how declaring a keyboard layout under cosmic-manager's `compositor` also
 `descale_xwayland = false`, which the compositor reads as "disable XWayland fractional scaling" while its own
 default is "fractional". A library's default can lag the program's.
 
-MUST, before setting one field of a typed group, enumerate its siblings and their defaults. Two ways, in order
+Before setting one field of a typed group, enumerate its siblings and their defaults. Two ways, in order
 of reliability:
 
 ```bash
@@ -131,7 +131,7 @@ The mechanism is real; the attribution shows where the pattern was read, not an 
 settings submodule therefore gives NO protection against a misspelled setting name: the type only checks
 declared keys you already spelled right.
 
-Do NOT justify choosing a typed surface over a freeform write on "type safety" grounds when the submodule is
+Do not justify choosing a typed surface over a freeform write on "type safety" grounds when the submodule is
 freeform. Both need the artefact read.
 
 ## Verification: build the artefact and read it
@@ -158,10 +158,10 @@ whose single line invokes `write_config` against a separate `data.json`; the JSO
 reading, and step 1 never names it. cosmic-manager is the same shape via `configurations.json`. Reading only
 the first path shows you a wrapper and tells you nothing.
 
-Do NOT go hunting for the `.drv` by listing the store: `nix path-info --derivation` answers it directly,
+Do not go hunting for the `.drv` by listing the store: `nix path-info --derivation` answers it directly,
 unbuilt path or not.
 
 When you have an attribute rather than a path, `nix derivation show <installable>` skips step 2 entirely.
 Note its output nests under a top-level `derivations` key, so indexing `.[].outputs` fails.
 
-MUST confirm both branches of any gate this way, not just the one you expect to be taken.
+Confirm both branches of any gate this way, not just the one you expect to be taken.

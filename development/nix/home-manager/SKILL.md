@@ -15,7 +15,7 @@ Home-manager owns user space: packages, dotfiles, and `programs.*`. Put `service
 > for a dendritic skill in the configuration repository itself. The option-level guidance below applies
 > either way.
 
-## Step 1: Choose the Deployment Mode
+## Deployment Mode
 
 | Mode             | Wiring                                                                            | Use when                                  |
 | ---------------- | --------------------------------------------------------------------------------- | ----------------------------------------- |
@@ -43,7 +43,7 @@ The two modes differ in more than plumbing: **standalone home-manager cannot set
 root**, including login shell registration in `/etc/shells`, system services, and font caches consumed by
 display managers. A config that works integrated can silently under-deliver standalone.
 
-## Step 2: `osConfig` Differs Between Modes
+## `osConfig` Differs Between Modes
 
 Home-manager exposes the host's NixOS configuration as `osConfig`, and sets
 `_module.args.osConfig = lib.mkDefault null`. On a standalone home it is therefore **bound and `null`, not
@@ -72,7 +72,7 @@ still throw on null.
 Config that must work in both modes should not reach into `osConfig` at all; pass what it needs through a
 module argument or an option instead.
 
-## Step 3: Packages and Programs
+## Packages and Programs
 
 | Question                                | Answer | Location                             |
 | --------------------------------------- | ------ | ------------------------------------ |
@@ -87,7 +87,7 @@ that, which is why `programs.direnv.enable` works and `home.packages = [ pkgs.di
 Put each package in exactly one of `environment.systemPackages` and `home.packages`. A package in both lands on
 `PATH` twice with ambiguous precedence, and the copies can differ in version once an overlay applies to only one.
 
-## Step 4: Overlay Scope
+## Overlay Scope
 
 The most common silent failure: **an overlay defined in home-manager does nothing when
 `useGlobalPkgs = true`.**
@@ -106,7 +106,7 @@ package sets; the cost of `false` is a second nixpkgs evaluation and a second co
 `useUserPackages = true` installs user packages into the system profile instead of `~/.nix-profile`, which is
 what makes them visible to services and display managers that start before the user session.
 
-## Step 5: Dotfiles
+## Dotfiles
 
 For **hand-written** config you edit often (Neovim, Emacs, shell), a normal `source = ./path` copies into the
 Nix store, so every tweak needs a rebuild. Symlink the live path instead:
@@ -122,7 +122,7 @@ Use `mkOutOfStoreSymlink` for hand-written config that Nix does not generate. Fo
 (`programs.*` output, templated config) the store copy is the source of truth, and a symlink breaks
 regeneration. The linked file is no longer reproducible: a deliberate trade for iteration speed.
 
-## Step 6: stateVersion and Build
+## stateVersion and Build
 
 ```nix
 { home.stateVersion = "25.11"; }   # release at FIRST home-manager use
