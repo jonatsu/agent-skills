@@ -184,14 +184,6 @@ is unknown; it is installed through mise but has no version set. Candidate fixes
 
 Until then, the session memory rule is to make no commit while subagents edit the same tree.
 
-## Unpushed Restore on the `archived` Branch
-
-The local `archived` branch holds `a82c1db`, "fix(find-skills): restore the deployed verify_skill.sh". It
-restores the archived `find-skills` script to its deployed blob `c8fb8f3` and excludes `archived/` from ruff,
-shfmt, and shellcheck. A plain `git push` from `main` does not send it, so it needs `git push origin archived`.
-The user may prune the `archived` branch soon. If the branch is pruned, the commit becomes moot, so delete this
-entry; otherwise push it.
-
 ## Invocation Control Audit
 
 Checked 2026-09-11: no skill in this repository sets `disable-model-invocation` or `user-invocable`,
@@ -437,12 +429,13 @@ Decided by the user on 2026-11-07 while designing `cli-ui-ux`. Candidate sources
 unread in full: `hyperb1iss/hyperskills` `tui-design` (MIT) and `wimpysworld/nix-config` `tui-design`
 (BlueOak-1.0.0). Check each license at a pinned commit before adapting anything.
 
-## Dedicated GitHub Actions Skill
+## CI/CD Skill
 
-Create a separate GitHub Actions skill if recurring work exceeds the short orientation in
-`tools/github-ops/references/actions-basics.md` (intended scope: matrix and cache design, self-hosted
-runners, reusable workflows, composite actions, environments and deployment gates, artifact retention, the
-expression language). Do not keep expanding the orientation file into a reference manual.
+Build a general CI/CD skill covering GitHub Actions and GitLab CI; the user needs it soon (decided 2026-11-18).
+Intended scope on both platforms: pipeline structure, matrix and cache design, self-hosted runners, reusable
+workflows and templates, environments and deployment gates, secrets, artifact retention, and each platform's
+expression or rules language. `tools/github-ops/references/actions-basics.md` stays a short orientation and points
+to the new skill rather than growing into a reference manual.
 
 Write independently from primary sources: `netresearch/github-project-skill` uses CC-BY-SA-4.0 for prose
 despite MIT for scripts and assets, so its prose cannot be lifted into this MIT repository.
