@@ -8,7 +8,7 @@ metadata:
 
 # Interview Me
 
-Interview me relentlessly about every aspect of the subject until we reach a shared understanding. The subject
+Interview me about the subject until we reach a shared understanding. The subject
 can be a plan, a design, a problem, a requirement, a decision, or a concept. Walk down each branch of its
 decision tree, resolving dependencies between decisions one by one. For each question, provide your recommended
 answer.
