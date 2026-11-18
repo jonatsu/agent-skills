@@ -96,7 +96,7 @@ A passage costs its size times how often it loads. A sentence in a root instruct
 session; the same sentence in a document reached by a pointer is paid only when followed. Weigh every addition
 and every cut by that product. An `@path` import moves text without saving any, because the imported file loads
 with the file that imports it. Claude Code's documentation targets under 200 lines per instruction file, since
-longer files reduce adherence, and the checker's default budget of 2,000 words sits near that.
+longer files reduce adherence, and the checker's default 2,000-word budget sits near that.
 
 Those two tests judge a single addition. The **accretion test** judges the file: an edit that adds an
 obligation must leave the instruction file no longer than it found it, or state what it relocated and where.
