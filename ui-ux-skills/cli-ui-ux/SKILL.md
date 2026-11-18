@@ -95,8 +95,6 @@ the reason for each, area by area. Read it when designing, converting, or review
 
 ## Rules for Every Mode
 
-Capable agents commonly miss these rules, so apply each one deliberately.
-
 ### Change the Contract Deliberately
 
 The machine contract is what scripts depend on: command and flag names and meanings, exit codes, machine-format
