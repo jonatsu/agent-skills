@@ -116,15 +116,15 @@ inside flat reference it focuses attention on a class of thing to look for. In a
 word lives in your prompts, your docs, and your codebase, the agent links that shared language to the material and
 reaches it more reliably.
 
-Hunt for opportunities to refactor with leading words. A triad spelled out at three sites, a pointer spending a sentence
-to gesture at one idea. Each is a passage begging to collapse into a single token:
+Look for a triad spelled out at three sites, or a pointer that spends a sentence gesturing at one idea. Each can
+collapse into a single token:
 
 - "fast, deterministic, low-overhead" → _tight_ (a _tight_ loop).
 - "a loop you believe in" → _red_, turning a fuzzy gate into a binary observable state (the loop goes _red_ on the bug,
   or it doesn't).
 
-You win twice: fewer tokens, and a sharper hook for the agent to hang its thinking on. Assume every document is carrying
-restatements that leading words retire. Go find them.
+You win twice: fewer tokens, and a sharper hook for the agent to hang its thinking on. Check whether the
+document spells out a restatement that a single leading word could replace.
 
 **Negation** is the failure mode beside this lever: steering by prohibition drags the forbidden behaviour into context
 and makes it _more_ available, not less. _Don't think of an elephant_, and the elephant is all there is; the negation is
