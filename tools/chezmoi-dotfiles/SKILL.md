@@ -172,8 +172,9 @@ Use templates for machine-dependent content. Test a rendered value with `chezmoi
 inspect a complete rendered target with `chezmoi cat <target>`.
 
 `.chezmoiscripts/` keeps scripts out of the target state; its subdirectory names do not select an operating
-system. Gate an operating-system-specific script in its rendered content. An empty rendered script does not
-run:
+system. Every file in it needs the `run_` prefix, and chezmoi rejects one without it even when `.chezmoiignore`
+lists it. Keep a script's other assets, such as a config it renders, in `.chezmoitemplates/`. Gate an
+operating-system-specific script in its rendered content. An empty rendered script does not run:
 
 ```gotemplate
 {{ if eq .chezmoi.os "linux" -}}
