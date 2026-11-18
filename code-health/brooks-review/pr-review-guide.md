@@ -25,7 +25,7 @@ For PRs > 500 lines: flag in the Summary that a PR this size is itself a Change 
 
 ## Analysis Process
 
-Work through these seven steps in order. Do not skip steps.
+Work through these seven steps in order, at the depth the scope table above sets.
 
 ### Step 1: Understand the scope
 
@@ -140,7 +140,7 @@ Label the risk as the test decay risk name (e.g., "Coverage Illusion", "Mock Abu
 "Test Obscurity").
 
 > **Note:** Step 7 is a fast check, not a full test audit. When systemic test problems
-> are found, note in the Summary: "Consider running `/brooks-lint:brooks-test` for a
+> are found, note in the Summary: "Consider running the `brooks-test` skill for a
 > complete test quality diagnosis."
 
 ---
