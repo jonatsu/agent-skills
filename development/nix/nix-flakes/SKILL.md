@@ -31,7 +31,7 @@ Or set via NixOS configuration:
 nix.settings.experimental-features = [ "nix-command" "flakes" ];
 ```
 
-## Step 1: Identify Flake Context
+## Flake Context
 
 Determine from the repository whether this is a new flake or an existing one:
 
@@ -50,7 +50,7 @@ If the project uses a dendritic-pattern framework (e.g. den), `flake.nix` is a m
 all logic lives in `modules/`. Look for a dendritic skill in the configuration repository itself before working
 there.
 
-## Step 2: Work with Inputs
+## Inputs
 
 ### Input types
 
@@ -160,7 +160,7 @@ Set Nix settings scoped to the flake. Any `nix.conf` option may appear here, but
 `--accept-flake-config`, or after interactive per-value confirmation (accepted values are persisted in
 `trusted-settings.json`). In the example above, only `bash-prompt` takes effect without acceptance.
 
-## Step 3: Work with Outputs
+## Outputs
 
 ### flake-parts outputs
 
@@ -215,12 +215,12 @@ meta = {
 };
 ```
 
-## Step 4: Run Flake Commands
+## Flake Commands
 
 [references/advanced-commands.md](references/advanced-commands.md) lists the build, run, develop, flake
 management, and profile commands, with installable resolution, output selection syntax, and the key flags.
 
-## Step 5: Verify
+## Verification
 
 The work is done when every item holds:
 
