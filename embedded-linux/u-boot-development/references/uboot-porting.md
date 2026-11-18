@@ -35,7 +35,8 @@ providers; editing another kernel checkout does not automatically update U-Boot'
 ## Trimming a defconfig
 
 A meta-option `select`s other options, sometimes through a chain, and `savedefconfig` omits every option a select or
-an `imply` sets. Unsetting a meta-option therefore drops options that no defconfig diff shows. In v2026.10,
+an `imply` sets. Unsetting a meta-option therefore drops options that no defconfig diff shows. In v2026.10, newer
+than this skill's v2025.10 baseline,
 `BOOTSTD_DEFAULTS` selects `BOOTMETH_DISTRO`, which selects `BOOTMETH_SCRIPT`, which selects `HUSH_PARSER`; see
 [boot Kconfig](https://github.com/u-boot/u-boot/blob/v2026.10/boot/Kconfig). Without hush, a boot script's `while`
 or `if` fails with `Unknown command 'while'`, and the simple parser rejects a command longer than
