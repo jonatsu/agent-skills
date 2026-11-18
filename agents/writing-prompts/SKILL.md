@@ -86,7 +86,9 @@ The receiver starts cold. It has not seen the conversation, and it may not load 
 - **Stop condition.** When to stop and report instead of pushing on: scope exceeded, a check fails twice, or a
   decision belongs to you.
 - **Result.** The report's exact shape and size, verified facts kept apart from inference. Large output goes to a
-  file, and the report returns its path.
+  file, and the report returns its path. Name that file for its subject, such as `<subject>-notes.md`. Claude Code
+  has refused subagents' Markdown files whose names start with `report`, `summary`, `findings`, or `analysis`, for
+  a cause not yet found.
 
 Keep the judgment calls and send the work. A brief that pastes the transcript hands over noise; a brief that asks the
 receiver to decide what you should decide hands over your job.
