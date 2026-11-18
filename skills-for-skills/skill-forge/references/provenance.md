@@ -5,7 +5,8 @@ relationship to it.
 
 Use the target repository's license for original work. Use the upstream license for derived work unless its
 terms permit and the author deliberately applies a compatible alternative. Verify licenses from the license
-text at a pinned upstream revision. Repository metadata alone is insufficient evidence.
+text at a pinned upstream revision. Repository metadata alone is insufficient evidence, and so is a licence
+named in a brief, a specification, or a plan: those are claims about the source, and they can be wrong.
 
 ## Classify Every Source
 

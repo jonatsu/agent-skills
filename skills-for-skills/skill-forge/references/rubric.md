@@ -77,7 +77,9 @@ Label every piece of evidence with one class, because a reader weighs them diffe
 
 Synthetic fixture examples are test data, not observed execution. An author's own results and claims are
 inputs for review to verify, and the report names which were independently checked, which remain claims, and
-which required behavior is untested.
+which required behavior is untested. An independent review catches what an author's self-review does not, such as
+a `SKILL.md` that routes to a reference file nobody wrote. Treat a skill that only its author has scored as
+unreviewed, and re-verify it.
 
 ## Verdicts
 
