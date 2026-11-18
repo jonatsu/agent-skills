@@ -337,8 +337,9 @@ reach the right document is unmeasured. Open work:
 
 - Run the controlled comparison the record recommends (route wording, search surface, automatic loading). The
   user holds it until Anthropic fixes the safeguard false positives that stop model runs.
-- When agent-setup lands its Claude routing rule, compare Claude's floor-route rate before and after its commit
-  date, once at least 100 discovered first reads follow it.
+- Compare both agents' floor-route rate before and after agent-setup's routing rule ("Instruction Routes" in the
+  global rules; agent-setup `84964278` and `4ab748c5`, live from 2026-11-18 16:20 +02:00). Run it once at
+  least 100 discovered first reads per agent follow that time, with the same mining method as the record.
 
 ## Unevaluated Candidate Sources
 
