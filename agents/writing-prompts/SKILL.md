@@ -49,7 +49,8 @@ Both branches build on the same core.
 - **Say what to do.** State the target behavior; a prohibition names the thing and makes it more likely. Keep a
   prohibition only for a hard guardrail, paired with what to do instead.
 - **Calibrated emphasis.** Write in normal register. Capitals and "CRITICAL" make current models over-apply a rule;
-  keep emphasis for the one guardrail that must not bend.
+  keep emphasis for the one guardrail that must not bend. A more precise word for the behaviour you want is not
+  emphasis: "exhaustive" in place of "thorough" changes what the model does without raising the volume.
 - **Examples teach the shape.** Use a few, make them varied and close to the real case, and mark them as examples.
   The receiver copies what they share, including what you did not mean.
 - **Match the style you want back.** A prompt written in heavy Markdown invites heavy Markdown.
