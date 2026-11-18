@@ -14,5 +14,5 @@ The package vendors upstream material, whose MIT license requires its notice to 
 - License: `MIT`
 - Version: `3027f20f3181758385a1bb8c022d4041dfb4de84`
 
-The skill body, its README, and every file under `references/` are vendored from upstream and adapted to this
-repository's skill conventions.
+The skill body and every file under `references/` are vendored from upstream and adapted to this repository's skill
+conventions.
