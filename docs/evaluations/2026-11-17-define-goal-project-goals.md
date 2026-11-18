@@ -84,12 +84,26 @@ requests.
 
 ## Acceptance Test
 
-The user's acceptance test takes one new project and one existing repository through the project goals mode, accepts
-both results, and confirms that a fresh session in each cites its goals unprompted when choosing scope or method.
+The user's acceptance test took one new project and one existing repository through the project goals mode,
+accepted both results, and confirmed that a fresh session in each cites its goals unprompted when choosing scope or
+method. Both passed.
 
 The retrofit passed on a personal NixOS configuration. The request loaded `define-goal`, and the user accepted goals
 placed in the README by their choice: a purpose with an ordered conflict rule, a binary version 1.0 done-check, scope
 in and out, and the user as sole decider, with the method left to the existing `AGENTS.md`. The pointer in `AGENTS.md`
 carries the stop-and-ask instruction, and the goals hold no rule the user did not confirm. A fresh session asked "what
-should I work on next" read the goals first and proposed tasks aligned with them. The new-project half is still
-open.
+should I work on next" read the goals first and proposed tasks aligned with them.
+
+The new-project half passed on a sandbox launcher whose design was written but whose goals were never stated. The
+request loaded `define-goal`. The agent reconstructed the purpose from the design document with its evidence, and
+labeled as its recommendations a conflict rule and a success signal the repository lacked. It asked one question,
+revised the goals from the user's corrections, and wrote nothing until the user accepted them. It argued for one
+full copy when the user asked for the goals in both the README and `AGENTS.md`. It then created `AGENTS.md` with the
+pointer and `CLAUDE.md` as a symlink to it, so Claude Code loads the pointer. Checking the user's corrections against
+the design, it found that the design depended on an outside tool the new goals exclude. It recorded the redesign in
+the backlog rather than changing the goals or the design. A fresh session asked "what should I work on next"
+named that redesign as the next task because the design contradicts the goals.
+
+One judgment call went beyond the confirmed wording: the user raised inbound network traffic during the turn, and
+the agent added it to the scope line, saying so and offering to revert it. The skill was not changed for this single
+case.
