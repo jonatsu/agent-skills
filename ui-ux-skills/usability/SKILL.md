@@ -36,14 +36,13 @@ not a statement of it.
 - **Quick check.** The user asks for a brief look, such as a quick or rough check. The same holds when the
   user states that only a few known people use the interface. Read no file under `references/`, and write only this:
 
-  1. The answer in one or two sentences: usable enough or not, and what to fix first.
+  1. The answer first: usable enough or not, and what to fix first.
   2. One sentence of assumptions.
-  3. At most three findings, each in two or three sentences: the problem, its severity with the consequence,
-     and the fix.
+  3. The few findings that matter most, each with the problem, its severity and consequence, and the fix.
   4. One sentence naming the test that would confirm them.
 
-  The whole report stays under 300 words, without headings. It still names the medium's skill when one
-  applies, and the domain standard when one applies.
+  Keep the report short enough to read at a glance, without headings. It still names the medium's skill when
+  one applies, and the domain standard when one applies.
 
 - **Full evaluation.** Every other request. Use the method the mode below selects and the full report shape.
 
