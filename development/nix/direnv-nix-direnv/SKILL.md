@@ -40,7 +40,8 @@ fi
 use flake
 ```
 
-Each tag has its own sha256; take the hash for the exact tag you pin, or the fetch fails.
+Each tag has its own sha256; take the hash for the exact tag you pin, or the fetch fails. The 3.1.2 hash was verified
+against that tag's `direnvrc` on 2026-11-18. Check for a newer release before copying the pin.
 
 **Non-flake** (`shell.nix`/`default.nix`): `use nix`.
 
