@@ -110,11 +110,10 @@ is current, which for security guidance is unsafe.
 | A removed feature or a moved default     | the Migration Guide for that release, under `docs.yoctoproject.org/<codename>/`   |
 
 Probe upstream at `git.openembedded.org/openembedded-core` (codename branches) and
-`git.openembedded.org/bitbake` (`yocto-5.3`-style tags). **`poky` is being wound down**: its `master` is
-retired and its tags stop before 5.3, so probing it returns confident false negatives, and the
-`yoctoproject/poky` GitHub mirror is a stub whose recursive tree returns two entries, so code search against it
-silently finds nothing. **Always fetch a known-present control file at the same ref**: a missing branch and a
-missing file both return 404.
+`git.openembedded.org/bitbake` (`yocto-5.3`-style tags). As of 2026-11-18, **`poky` is being wound down**: its
+`master` is retired and its tags stop before 5.3, so probing it returns confident false negatives. The
+`yoctoproject/poky` GitHub mirror is a stub, so code search against it silently finds nothing. **Always fetch a
+known-present control file at the same ref**: a missing branch and a missing file both return 404.
 
 ## Workflow
 

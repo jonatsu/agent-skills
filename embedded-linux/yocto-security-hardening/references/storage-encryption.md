@@ -67,7 +67,7 @@ Everything below is metadata, and each piece has a way of being missing without 
   layer or your own recipe; do not write it into a design as if it were available.
 
 - **`meta-encrypted-storage` is dead, and secondary write-ups still recommend it.** The only repository of
-  that name was last pushed in 2017 and has five stars. Treat any guidance routing LUKS through it as stale,
+  that name was last pushed in 2017 (checked 2026-11-18). Treat any guidance routing LUKS through it as stale,
   and build on `meta-oe`'s `cryptsetup` plus `meta-tpm` instead.
 
 - **Filesystem-level alternatives**: `fscrypt` and `fscryptctl` (per-directory encryption, no separate block
