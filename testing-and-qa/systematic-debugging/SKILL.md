@@ -39,6 +39,14 @@ test a focused explanation, and fix the cause rather than suppressing the sympto
 - A check that reads through a cache verifies the cache, not the store behind it. On Linux, a hash of data just
   copied to a doubtful device reads the page cache. Run `sync` and then, as root,
   `echo 3 > /proc/sys/vm/drop_caches` before hashing.
+- Time any run you are about to call a stall, and read the return condition of the console, stream, or poller
+  in its source. A timeout parameter shows only what the tool claims, not that time passed.
+- Show that each side of an old-versus-new comparison ran its own code. Print each side's module path or version
+  marker in the same command. An identical result is exactly what comparing one code base against itself
+  produces. `python -I` ignores `PYTHONPATH`, so both sides can import the same package.
+- Inspect a hung process before you kill it: what it runs (`ps`) and what it walks, such as a symlink cycle
+  under a tree walker. Treat the hang as a failing check. Fix its cause, then rerun until the process finishes,
+  because a killed hang returns on the next run.
 - A mitigation, destructive experiment, or risky architectural change needs authority of its own.
 - Use independent test review when the task, risk, or user requests it. `test-engineer` owns test work and does
   not own production changes.
