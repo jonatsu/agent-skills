@@ -83,6 +83,12 @@ The receiver starts cold. It has not seen the conversation, and it may not load 
 - **Rules it must follow.** The instructions that apply to this task and that it may not inherit, such as staging
   rules, writing style, or a required tool. Restate them; a reference to a file it will not read carries nothing.
 - **Tools.** The tool or family to use, the fallback, and a reminder to load any tool that loads on demand.
+  When the receiver fetches the web, give the whole fallback chain, including the escalation past an anti-bot
+  wall, and name the sites known to block crawlers. A chain written in the brief replaces the receiver's own
+  rule, so a missing step comes back as "blocked".
+- **Research lanes.** Tell the lane to do its reading itself and start no subagents, because a research lane
+  fans out on its own otherwise. Ask for each licence as read from the LICENSE file, and for "no licence stated"
+  where none exists.
 - **Ownership.** The files it may edit, disjoint from any parallel worker, and what it must leave untouched. Name
   the folder for its working files, and the durable file each result belongs in, such as a tracked document or
   ledger. You move each result there when the receiver returns.
