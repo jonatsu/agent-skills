@@ -233,6 +233,9 @@ Keep identifiers the reader uses directly: API fields, configuration keys, error
 keys. Introduce each with its meaning. A numbered series may keep its key in a title that also states the
 subject, as in `ADR-0014: Store rendered reports in object storage`.
 
+In evidence or a list of findings, cite only the identifiers whose presence changes the conclusion. Summarize
+the rest in one clause, such as "the other names agree", instead of listing them.
+
 Link every source the document names. A reader must reach every document they need by following links; one who
 needs a text search to find it has hit a defect.
 

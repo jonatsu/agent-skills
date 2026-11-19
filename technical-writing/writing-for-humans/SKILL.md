@@ -264,7 +264,8 @@ A result is **reader-ready** when one complete reading pass, as its intended rea
 - explanations precede the terms, conclusions, and instructions that depend on them;
 - relationships between claims are stated rather than left for the reader to rebuild;
 - every sentence is within its limit, and none fails the deletion test;
-- every unfamiliar term or identifier has its meaning at first use;
+- every unfamiliar term or identifier has its meaning at first use, and evidence names only the identifiers
+  that change the conclusion, summarizing the rest;
 - every confirmed AI-writing artifact is gone; and
 - every supported claim, number, condition, qualification, scope limit, and normative requirement survived.
 
