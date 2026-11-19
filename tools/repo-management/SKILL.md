@@ -23,7 +23,10 @@ rewriting; `git-history-investigation` answers history questions; `using-git-wor
 - **Targeted change:** add or revise named baseline files or hooks. Inspect only the affected files, their
   consumers, and the repository's existing conventions, since a request for one file is not a request for an
   audit.
-- **Bootstrap:** establish a baseline in a new or nearly empty repository.
+- **Bootstrap:** establish a baseline in a new or nearly empty repository. When the new repository is split from
+  an existing one, the bootstrap is done only when the in-flight state about the moved part has moved or been
+  rewritten too: open review items, TODO and backlog entries, notes, and plans. The README must also document
+  every install route and state a minimum interpreter version, not an exact one.
 - **Refresh:** compare an established repository with the preferred baseline, then fill approved gaps and
   leave healthy files as they are.
 - **Audit:** report tracked cruft, large files, committed secrets, or missing hygiene, and change nothing.
