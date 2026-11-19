@@ -67,7 +67,10 @@ better neighbor.
 - Does the description overlap a neighbor's trigger surface so that selection becomes arbitrary?
 - Does the guidance repeat, or conflict with, an always-loaded rule the agent already follows?
 - Does a repository-local skill in the consuming repository already cover the subject against its actual code?
-  A globally deployed copy then costs discovery budget in every session for no reader.
+  A globally deployed copy then costs discovery budget in every session for no reader. Find that repository by
+  the subject's marker files and list its local skills, such as `.agents/skills/` or `.claude/skills/`. Then
+  search the collection for skills that point at the one under review. If the skill is archived, each of those
+  pointers has to be rewritten in the same change.
 
 Deliberate overlap with its boundary stated where an agent reads it is acceptable. Duplication with two homes
 that can drift apart is a finding.

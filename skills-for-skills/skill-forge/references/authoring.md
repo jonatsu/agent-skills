@@ -50,6 +50,12 @@ Useful project evidence includes runbooks, API specifications, schemas, configur
 history, version-control fixes, and recorded failures with their resolutions. Label unsupported guidance as
 uncertain or omit it.
 
+Before you import guidance on a subject the target repository already lints or checks, diff each claim against
+that tool's configuration. Keep in the prose only what no gate enforces, because a restated rule is the copy that
+drifts. Read the source's original form too: a path-scoped rule belongs in the agent's rules, not in a skill. The
+diff is done when each claim either matches the configuration, has been dropped as enforced, or has its conflict
+settled with the user.
+
 **Observe the unaided failure before writing guidance.** When the user authorizes model runs for authoring,
 run the representative requests without the skill first. Write guidance for the failures that control run
 shows, and drop planned guidance whose control already succeeds, because that guidance pays context to change
@@ -170,6 +176,11 @@ That rule stops at the package boundary. When another skill also needs a rule, e
 version, sized to its job, because an agent often loads only one of them. A pointer to a sibling skill may add
 depth, never correctness. When a shared rule changes, update every skill that carries it.
 
+Name the skill with a qualified, multi-word name, such as `session-handoff`. Agents see every skill in one flat
+list, without its group folder, so the name alone must say what the skill does. A distinct name also lets a search
+find every mention of the skill without matching ordinary prose. When you touch a skill whose name is one common
+word, raise a rename as a question.
+
 Read [workflow-patterns.md](workflow-patterns.md) when real prerequisites, branching, iteration, gates, or
 strict output contracts make control flow consequential. Read [pro-agent.md](pro-agent.md) when deciding
 whether repeated or fragile logic belongs in a script.
@@ -181,6 +192,12 @@ justified by a request that needs it.
 
 When the `writing-for-agents` skill is available, load it for more depth on the levers that make agent-facing
 prose predictable, such as leading words, completion criteria, and pruning.
+
+Sweep the whole package before the first write of any create, edit, split, move, or rename: `SKILL.md` and every
+reference, not only the passage the task touches. Treat moved text as new writing. Run `writing-skill-descriptions`
+on each description the work creates or changes, including a neighbour's description edited only to add a routing
+exclusion. The sweep is done when every file has been read against `writing-for-agents`, every finding has been
+applied, and the report names the files swept and what changed.
 
 **Say what needs to be said; drop everything else.**
 

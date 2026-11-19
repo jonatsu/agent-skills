@@ -75,7 +75,11 @@ Preflight every selected client and case before the first model call:
 1. Resolve candidate, baseline, and fixtures by identity and source revision.
 2. Materialize required fixture templates in isolation, then run the rubric's hard-gate validators.
 3. Run every advertised fixture command and its meaningful failure path.
-4. Create a fresh workspace containing only declared initial inputs.
+4. Create a fresh workspace containing only declared initial inputs. Name it for its contents, such as
+   `<date>-calc`, so the agent treats the run as real work; an agent that reads a path naming a test, a
+   fixture, or the skill treats the run as a drill. Keep run logs in a sibling folder outside the workspace.
+   Turn off the client's memory generation for the run where it has one, such as Codex's
+   `--config memories.generate_memories=false`.
 5. Keep future turns, expected outputs, and grading material outside that workspace.
 6. Check the client version and runtime help for every selected flag.
 7. Verify candidate reads, allowed writes, output capture, trace capture, and continuation behavior.
