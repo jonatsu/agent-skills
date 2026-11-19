@@ -15,6 +15,11 @@ Take slice boundaries from the plan. When none exists, size each slice by a sing
 one endpoint, one component, or one migration, and decompose a larger unit with `implementation-planning`
 before starting. This skill governs how you land a slice, not how you choose it.
 
+Before starting, judge the extent of the work and of each slice. A slice may come without a sub-goal or success
+signal from the plan, or you may be slicing without a plan. When such a slice's result could come out vague or drift,
+propose a sub-goal and a success signal for it to the user. A slice with an obvious observable result needs none. On
+an unattended run, set them yourself and record each one in the ledger as a judgment call.
+
 ## Know What Done Means
 
 The work is done when every slice has landed green and, where a spec, technical design, or implementation plan
