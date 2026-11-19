@@ -99,8 +99,9 @@ it, the pass signal, the closing check when one applies, the boundary that matte
 Some judges read only the transcript and run no tools, so write a condition that recent output alone can
 confirm. Name the command and its pass signal, such as "`pytest tests/auth` exits 0", rather than "auth works".
 The closing check fits in one clause, such as "and a separate conformance review against `docs/design/auth.md`
-reports no material mismatch". Ending with "or stop and report when …" lets a judge recognize a goal that
-cannot be met.
+reports no material mismatch". Ending with "or stop and report when …, and do not continue or retry after such a
+stop" lets a judge recognize a goal that cannot be met; without it, a judge keeps rejecting a run that can only
+wait for the user.
 
 ## Arm the Goal
 
@@ -109,6 +110,9 @@ Identify the harness from your own tool list and system prompt, then read
 judges a goal. Some harnesses let only the user set one; there, hand the user the exact command to run with
 the condition filled in. Set a token or credit budget only when the user named one. Replace an active goal only
 after the user confirms the old one is finished or abandoned.
+
+For an unattended run on a task list, the `autopilot` skill covers the handover before the user leaves and the
+conduct during the run.
 
 In every harness, also write the five-part goal into the session's durable checkpoint or the plan's execution
 record. That copy survives a fresh session, and it is the source for every brief written while the goal runs.
