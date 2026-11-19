@@ -76,6 +76,15 @@ later document must stay inside them, and they can be written for a new project 
 time without running the stages again. The user chooses where they live, and `AGENTS.md` points to them so every
 session loads them.
 
+**Work goal.** Each piece of work carries its own goals and a success signal, set with the user and sized to the
+work; "target" means the same as goal here, and "success criteria" the same as success signal. A brainstorm heading
+to a next stage proposes them, and its success signal may stay provisional. The spec traces each goal to acceptance,
+the design gives the system as a whole a success signal, the plan gives every milestone a done criterion, and a
+large or uncertain unit or slice may get its own sub-goal. Work can belong to no project, such as a one-off task or a
+small patch to a fork. Where project goals exist, the work's goals stay inside them, and a plan that covers most of
+its project points to the project goals instead of restating them. Each stage proposes `define-goal` when goals are
+missing, and stops proposing once the user declines.
+
 **Idea draft.** `idea-brainstorming` widens the possibilities, then narrows to a direction, and saves it as a
 draft marked incomplete. It hands to `writing-specs` when user-visible behavior or acceptance needs a durable
 contract, and straight to `technical-design` when the direction is small and its behavior already clear.
