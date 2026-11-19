@@ -249,6 +249,9 @@ exposed:
 - review stages placed in the work, reviewers assigned, finding-resolution gates set, and review cost proportionate;
 - verification strong enough for each claim, and a final integration gate that proves the complete behavior and
   includes the separate conformance review;
+- names the user chose for an earlier shape of the work, such as a folder, command, or tool, re-checked. Ask
+  about each name whose reason a revision removed before the first commit, because a leftover name reads as if
+  the dropped decision still holds;
 - a completion record that will identify applied guidance, reviewed revisions, results, finding dispositions, and
   unverified obligations; and
 - the `writing-for-humans` **reader-ready** pass, read as an unfamiliar implementer: the first action and what it
