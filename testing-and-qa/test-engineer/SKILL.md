@@ -95,6 +95,11 @@ score a missing package as broken code.
 | Coverage is adequate           | Named risks mapped to named tests | A percentage                  |
 | Suite is green                 | Exit status read, skips counted   | Nothing scrolled past in red  |
 | Tests would catch a regression | Mutants introduced and killed     | The suite passing             |
+| New tool works                 | A run on its real target          | Its fixture suite passing     |
+
+Run a new tool against the real target it was built for, as its own gate after the suite is green, because
+fixtures encode the author's model of the input. Where the target is read-only or someone else's, run the
+read-only path. Report what the run showed, even when it passed.
 
 In a Python project, generate the mutants with mutmut rather than by hand; `python-testing` has the setup.
 
@@ -106,13 +111,15 @@ MAY:
 - Edit test configuration only when it is clearly test-only support.
 - Run validation commands, focused test commands, and coverage checks.
 - Report production defects with precise failing evidence.
+- Mutate production code for a mutation check, when the brief explicitly authorizes it and no mutation tool
+  fits, and restore it before reporting.
 - Read requirements, architecture, and production code to build a test strategy.
 - Recommend testability changes to production code - seams, injected clocks, exposed observability - as a
   handoff, never as an edit.
 
 Do not:
 
-- Edit production code or application behavior.
+- Edit production code or application behavior, beyond an explicitly authorized mutation that you restore.
 - Rewrite product requirements, architecture, or the production implementation strategy. Recommending a
   testability change is allowed; making one is not.
 - Weaken assertions to make tests pass.
@@ -159,7 +166,8 @@ Applies to `TEST-IMPLEMENTATION`, `VALIDATION`, `REGRESSION`, and `BUG-REPRO`.
 05. Test design: apply the Suite Health Rules below. Test at the cheapest level that can fail for the right
     reason, assert observable behavior, and write failure messages that name what broke.
 06. Red step: for new behavior or bug reproduction, run and record expected fail.
-07. Implementation: edit only tests and test-only support files.
+07. Implementation: edit only tests and test-only support files, plus any explicitly authorized mutation,
+    restored before the verdict.
 08. Green step: run the focused test. Broaden validation for cross-cutting risk, repository rules, or an
     explicit user request.
 09. Evidence: read command output, failures, warnings, skips, and exit status.
@@ -195,9 +203,14 @@ still trusted a year later.
   observe teaches the team to ignore failures.
 - A flaky test is a failing test. Quarantine it with a deadline and an owner, or delete it. Retry-until-green
   destroys the signal the suite exists for.
-- Ask what the suite would CATCH, not what it covers. Use an existing mutation tool only in an isolated
-  environment when the task authorizes it; when mutation needs manual production edits or unavailable tooling,
-  report it as a handoff. A mutation nothing kills is a finding.
+- Ask what the suite would CATCH, not what it covers. Use an existing mutation tool in an isolated environment
+  when the task authorizes it. When no tool fits and the brief explicitly authorizes manual mutation, break one
+  mechanism at a time in the brief's priority order, and confirm the matching test goes red. Copy the file aside
+  before you mutate it and restore it from the copy. Finish only when `git diff --stat -- <path>` is empty and
+  `git status --short` lists no production file. Otherwise, report the mutation as a handoff. A mutation nothing
+  kills is a finding, and the most valuable line in the report. A test's stated reason must survive the
+  mutation, not only its assertion. Pair a rejection-only assertion with the matching success on the identical
+  request.
 - Run the suite where it will be judged. CI differs from a developer machine in fonts, rendering, parallelism,
   resource contention, and network path, so a suite green only locally has not really been run. Where the
   environments must differ, make the difference explicit and reviewable.
@@ -248,6 +261,7 @@ evidence:
 
 - Tests added or updated.
 - Test-only support files changed.
+- Mutations run, which ones no test killed, and the restore check's output.
 - Commands run, with pass/fail counts when available.
 - What failed and the first useful failure cause.
 - What remains unverified and why.
