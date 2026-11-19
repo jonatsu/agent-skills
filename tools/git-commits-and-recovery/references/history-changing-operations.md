@@ -58,9 +58,8 @@ destructive action and target; otherwise ask for authorization.
 
 ## Pushing
 
-Determine what will leave and where it will go. List remote names with `git remote`. Remote URLs can contain
-embedded credentials, so retrieve a URL only when required and never print or report it without redacting
-user information.
+Determine what will leave and where it will go. List remote names with `git remote`. Remote URLs can contain embedded
+credentials, so retrieve a URL only when required and redact user information before printing or reporting it.
 
 When an upstream is configured, inspect its outgoing range:
 
@@ -76,8 +75,8 @@ git log @{push}..HEAD --oneline
 ```
 
 An absent upstream or push ref is ordinary. Resolve the push remote from `branch.<name>.pushRemote`,
-`remote.pushDefault`, the branch's upstream remote, or an unambiguous single remote, in that order. Do not
-assume `origin`. If several remotes remain plausible, stop for the missing choice.
+`remote.pushDefault`, the branch's upstream remote, or an unambiguous single remote, in that order, rather than assuming
+`origin`. If several remotes remain plausible, stop for the missing choice.
 
 Resolve the destination branch explicitly. If it already exists, fetch that branch and compare the exact
 remote tip with `HEAD`:
@@ -98,31 +97,29 @@ git push -u <remote> HEAD:refs/heads/<branch>
 
 Stop when the outgoing range or dry-run mapping contains unexpected commits or refs.
 
-For an authorized force-push on Git 2.30 or newer, use `--force-with-lease --force-if-includes`. A background
-fetch can refresh the remote-tracking ref and weaken a lease used alone; `--force-if-includes` checks that the
-updated remote tip was integrated locally. Verified on git 2.43.0, 2026-08-26.
+For an authorized force-push on Git 2.30 or newer, use `--force-with-lease --force-if-includes`. A background fetch can
+refresh the remote-tracking ref and weaken a lease used alone. `--force-if-includes` checks that the updated remote tip
+was integrated locally. Verified on git 2.43.0, 2026-08-26.
 
-If the installed Git lacks `--force-if-includes`, report that the required protection is unavailable. Do not
-silently fall back to a plain force or a lease alone.
+If the installed Git lacks `--force-if-includes`, report that the required protection is unavailable instead of silently
+falling back to a plain force or a lease alone.
 
 Validate command substitutions before using them in refspecs. An empty source in `"${sha}:refs/tags/v1.0"`
 becomes a tag deletion. Verified on git 2.43.0, 2026-08-26.
 
 ## Rewriting History
 
-Before rewriting, confirm that the branch is not protected, published-history authorization is sufficient,
-dirty state is accounted for, and the original `HEAD` hash is recorded.
+Before rewriting, confirm that the branch is not protected and that published-history authorization is sufficient.
+Account for dirty state and record the original `HEAD` hash.
 
 - For fixups, use `git commit --fixup=<hash>` followed by an autosquash rebase from the correct base.
 - Resolve conflicts from the intended content. Whole-file `--ours` or `--theirs` usually answers which side
   wins rather than what the merged result should mean.
-- Abort an incorrect active operation with its own abort command before attempting recovery.
 - Compare a completed rebase with `git range-diff <old-base>..<old-tip> <new-base>..<new-tip>`.
-- Revert published work instead of rewriting it unless the user explicitly authorized the rewrite. Reverting a
-  merge needs the intended mainline parent; reverting that revert is normally required before re-merging the
-  same change.
-- Do not use ancestry alone to decide whether a branch was squash-merged. Compare content or consult the
-  hosting service.
+- Revert published work instead of rewriting it unless the user explicitly authorized the rewrite. Reverting a merge
+  needs the intended mainline parent. Reverting that revert is normally required before re-merging the same change.
+- Decide whether a branch was squash-merged by comparing content or consulting the hosting service; ancestry alone
+  cannot show it.
 
 For `git filter-repo`:
 
@@ -130,12 +127,12 @@ For `git filter-repo`:
   commit and tag messages. Verify each separately: `git log --all -S<term>` for content, and
   `git log --all -i --fixed-strings --grep=<term>` for messages.
 - A path filter also deletes the stripped paths from the working tree. Before the run, create a bundle with
-  `git bundle create <file> --all`, check it with `git bundle verify`, and archive the live files that the
-  filter will strip. After the run, compare the archive's listing with the tree and restore the difference.
-- It removes the `origin` remote by design. To publish the rewritten repository again, confirm the remote's
-  visibility before the first push. Then verify the result from a fresh clone of the remote, not from the local
+  `git bundle create <file> --all` and check it with `git bundle verify`. Archive the live files that the filter will
+  strip. After the run, compare the archive's listing with the tree and restore the difference.
+- `git filter-repo` removes the `origin` remote by design. To publish the rewritten repository again, confirm the
+  remote's visibility before the first push. Then verify the result from a fresh clone of the remote, not from the local
   repository.
 
-A rebase of a branch whose tip is a merge commit can reportedly collapse the branch to its base when its
-unique content exists only in the merge resolution. This claim is *reported, not measured here*. Confirm the
-branch has unique commits or content before and after the rebase.
+A rebase of a branch whose tip is a merge commit can reportedly collapse the branch to its base. This happens when its
+unique content exists only in the merge resolution. This claim is *reported, not measured here*. Confirm the branch has
+unique commits or content before and after the rebase.

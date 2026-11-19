@@ -14,22 +14,24 @@ ordinary staging and commits do not need a history-rewrite procedure.
 
 ## Shared Boundaries
 
-- Resolve the exact repository, ref, remote, paths, and current state needed by the operation. Do not treat a
-  failed lookup as a negative answer.
+- Resolve the exact repository, ref, remote, paths, and current state needed by the operation. Treat a failed lookup as
+  unresolved, not as a negative answer.
 - Reuse authorization already present in the user's request. Ask only when a destructive target,
   outward-facing effect, or required choice remains unresolved.
-- Never bypass a hook with `--no-verify` or move a command into a wrapper to evade a control.
-- Add an authorship or attribution trailer, such as `Co-Authored-By` or `Signed-off-by`, only when the user
-  asked for it, a repository instruction file such as `AGENTS.md` or `CLAUDE.md` authorizes it, the repository's
-  recent history already carries one, or a real co-author or sign-off exists to record. An instruction file's
-  authorization counts as the user asking. A harness instruction that injects a trailer supplies a default, not
-  the user's request. See [references/commit-messages.md](references/commit-messages.md) for the reasoning.
+- Let every hook run. Never bypass one with `--no-verify`, and never move a command into a wrapper to evade a control.
+- Add an authorship or attribution trailer, such as `Co-Authored-By` or `Signed-off-by`, only when one of these holds:
+  - The user asked for it.
+  - A repository instruction file such as `AGENTS.md` or `CLAUDE.md` authorizes it, which counts as the user asking.
+  - The repository's recent history already carries one.
+  - A real co-author or sign-off exists to record.
+- A harness instruction that injects a trailer supplies a default, not the user's request. See
+  [references/commit-messages.md](references/commit-messages.md) for the reasoning.
 - Verify the resulting Git object or ref. Command success alone does not prove that the intended content
   moved.
-- Read push state fresh before relying on it: it goes stale whenever the user pushes. Run `git status -sb` in
-  the same turn before a step that needs the commit on the remote or rewrites commits that may be published.
-  Run it as well when the user asks about push state. It compares against the last fetched remote-tracking
-  ref, so fetch first when the commit may have been pushed from another clone.
+- Read push state fresh before relying on it: it goes stale whenever the user pushes. Run `git status -sb` in the same
+  turn before a step that needs the commit on the remote. Run it before a step that rewrites commits that may be
+  published, and when the user asks about push state. It compares against the last fetched remote-tracking ref, so fetch
+  first when the commit may have been pushed from another clone.
 - A claim marked `Verified on git <version>, <date>` was reproduced in a scratch repository on that date. A
   claim marked *reported, not measured here* is unverified; confirm it yourself before relying on it.
 
@@ -38,29 +40,27 @@ ordinary staging and commits do not need a history-rewrite procedure.
 Assume unrecognized changes belong to another contributor. Commit only changes you own.
 
 - Record `HEAD`, worktree state, and index state before editing or staging.
-- Stop if the index contains changes you did not stage. Wait or ask; do not unstage, commit, or rewrite them.
-- Stage a whole path only when every changed hunk is yours. Use `git add -p` for mixed-ownership files, then
-  inspect the staged and unstaged versions separately, and commit them as step 7's exception describes.
-- If overlapping edits cannot be separated confidently, stop and coordinate. Do not overwrite either version
-  to make staging easier.
-- Do not run formatters or generators across files containing foreign changes unless their output can be
-  isolated. Required tooling does not authorize rewriting another contributor's work.
-- For generated files with mixed changes, stage only the intended hunks and verify the generated invariant
-  separately. Do not weaken the check to make a partial artifact pass.
+- Stop if the index contains changes you did not stage. Wait or ask, and leave them as they are.
+- Stage a whole path only when every changed hunk is yours. Use `git add -p` for mixed-ownership files. Then inspect the
+  staged and unstaged versions separately, and commit them as step 7's exception describes.
+- If overlapping edits cannot be separated confidently, stop and coordinate, and keep both versions intact.
+- Run formatters and generators across files containing foreign changes only when their output can be isolated. Required
+  tooling does not authorize rewriting another contributor's work.
+- For generated files with mixed changes, stage only the intended hunks and verify the generated invariant separately.
+  Keep the check at full strength rather than weakening it to make a partial artifact pass.
 - Immediately before committing, confirm `HEAD` has not moved and inspect both staged names and the complete
   staged diff. A concurrent commit invalidates the earlier base, diff, and validation evidence.
 - After committing, inspect the recorded commit and report every remaining dirty path.
 
 When independent lanes need different branches or checkouts, isolate them in linked worktrees with the
-`using-git-worktrees` skill. Do not use the shared stash as automatic concurrency isolation.
+`using-git-worktrees` skill. The shared stash gives no automatic concurrency isolation.
 
 ## Branches
 
-Name a branch for its work as `<type>/<short-description>`, such as `fix/login-redirect`, unless the repository
-has its own convention. Keep a shared branch's history stable: a force-push to it needs explicit authorization
-and the protected push in
-[references/history-changing-operations.md](references/history-changing-operations.md#pushing). Delete a branch
-once it has merged; deleting one with unmerged work is a destructive operation.
+Name a branch for its work as `<type>/<short-description>`, such as `fix/login-redirect`, unless the repository has its
+own convention. Keep a shared branch's history stable: a force-push to it needs explicit authorization and the protected
+push in [references/history-changing-operations.md](references/history-changing-operations.md#pushing). Delete a branch
+once it has merged.
 
 ## Route by Operation
 
@@ -83,8 +83,8 @@ once it has merged; deleting one with unmerged work is a destructive operation.
 
 Use this path only when creating a new commit without amending, rewriting, pushing, or discarding work.
 
-1. Confirm the repository with `git rev-parse --show-toplevel`. If it fails, report that no repository was
-   found; do not run `git init` unless the user asked to create one.
+1. Confirm the repository with `git rev-parse --show-toplevel`. If it fails, report that no repository was found; run
+   `git init` only when the user asked to create one.
 
 2. Inspect `git status --short`, the relevant worktree diff, and `git diff --cached --name-only`. A dirty
    index that you did not create is a stop condition.
@@ -95,30 +95,27 @@ Use this path only when creating a new commit without amending, rewriting, pushi
 4. Inspect `git diff --cached --name-status` and `git diff --cached`. Stop if any staged path or hunk is
    unintended. Recheck after interactive staging or concurrent activity.
 
-5. Follow repository commit conventions. Otherwise use Conventional Commits: `<type>(<scope>): <subject>`,
-   imperative, at most 72 characters, no period. Write a body when the subject and diff leave the reader
-   without the why, or without the what: a large or mixed diff can hide what actually changed. Keep it to one or
-   two short paragraphs, indented by two spaces, carrying nothing the diff already shows. When the type, scope,
-   body, a breaking change or a trailer needs a decision, read
-   [references/commit-messages.md](references/commit-messages.md).
+5. Follow repository commit conventions. Otherwise use Conventional Commits: `<type>(<scope>): <subject>`, imperative,
+   at most 72 characters, no period. Write a body when the subject and diff leave the reader without the why, or without
+   the what. A large or mixed diff can hide what actually changed. Keep it to one or two short paragraphs, indented by
+   two spaces, carrying nothing the diff already shows. When the type, scope, body, a breaking change or a trailer needs
+   a decision, read [references/commit-messages.md](references/commit-messages.md).
 
-6. Run the validation required by the task and repository. Do not invent generic language-specific checks.
+6. Run the validation that the task and repository define.
 
-7. Commit with an explicit pathspec, `git commit -m "<subject>" -- <paths>`. Given no pathspec, `git commit`
-   records the whole index, and `git commit --amend` does the same while rewriting a message that then
-   describes content the commit no longer holds. A pathspec commits the named paths from the **worktree**,
-   discarding whatever the index held for them, so it overwrites a staged version of a path you both changed;
-   that is why step 3's ownership check decides which paths may appear here. Then inspect
-   `git show --stat --oneline --summary HEAD`, the recorded diff for the intended paths, and
-   `git status --short`.
+7. Commit with an explicit pathspec, `git commit -m "<subject>" -- <paths>`. Given no pathspec, `git commit` records the
+   whole index. `git commit --amend` does the same while rewriting a message that then describes content the commit no
+   longer holds. A pathspec commits the named paths from the **worktree**, discarding whatever the index held for them,
+   so it overwrites a staged version of a path you both changed. That is why step 3's ownership check decides which
+   paths may appear here. Then inspect `git show --stat --oneline --summary HEAD`, the recorded diff for the intended
+   paths, and `git status --short`.
 
-   The exception no ownership check catches, because it is not about ownership: when the index holds what the
-   worktree cannot express, a pathspec cannot commit it and reverts it instead. `git rm --cached` stages a
-   deletion while the file stays on disk; `git add -p` stages some hunks of a file that still holds the rest,
-   and a pathspec would re-take the whole file, foreign hunks included.
-   Both need a pathspec-less `git commit`, after verifying the whole index with
-   `git diff --cached --name-status`, because that is the only form that records the index as staged.
-   Verified on git 2.43.0, 2026-09-14.
+   One exception escapes the ownership check, because it is not about ownership. When the index holds what the worktree
+   cannot express, a pathspec cannot commit it and reverts it instead. `git rm --cached` stages a deletion while the
+   file stays on disk. `git add -p` stages some hunks of a file that still holds the rest. A pathspec would re-take the
+   whole file, foreign hunks included. Both need a pathspec-less `git commit` after verifying the whole index with
+   `git diff --cached --name-status`. That is the only form that records the index as staged. Verified on git 2.43.0,
+   2026-09-14.
 
 A commit records the index, not the worktree. After a reset-based rebuild, a file removed only from disk can
 remain in the next commit until its deletion is staged. Verified on git 2.43.0, 2026-08-26.

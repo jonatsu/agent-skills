@@ -1,11 +1,10 @@
 # Hooks That Rewrite Files During a Commit
 
-Everything here is about `pre-commit` (the framework) specifically. Under `husky`, `lefthook`, or bare
-`.git/hooks` scripts, none of it applies, because those runners do not stash, so the hook runs against your
-dirty tree and its rewrite survives or fails on its own terms.
+Everything here is about `pre-commit` (the framework) specifically. Under `husky`, `lefthook`, or bare `.git/hooks`
+scripts, none of it applies. Those runners do not stash. The hook runs against your dirty tree and its rewrite survives
+or fails on its own terms.
 
 Use the active hook, rather than the presence of a configuration file, to decide which framework applies.
-Verify rewritten artifacts by content after the commit.
 
 ## Detecting the Framework
 
@@ -24,9 +23,9 @@ writes this banner into the generated hook:
 ARGS=(hook-impl --config=.pre-commit-config.yaml --hook-type=pre-commit)
 ```
 
-Matching that banner detected a real install while rejecting both a hand-written hook and husky's. Matching
-the bare string `pre-commit` instead false-positives on any hand-written hook that mentions it in a comment,
-which is the ordinary way to write one.
+Matching that banner detected a real install while rejecting both a hand-written hook and husky's. Matching the bare
+string `pre-commit` instead false-positives on any hand-written hook with a comment that mentions it, and such comments
+are ordinary.
 
 **`--git-path` is absolute only from a linked worktree, or when `core.hooksPath` is itself absolute.**
 Otherwise it is relative to the **current directory**. Measured the same day, from two levels down:
@@ -40,8 +39,8 @@ Otherwise it is relative to the **current directory**. Measured the same day, fr
 | `core.hooksPath=/abs/path`               | `/abs/path/pre-commit`                      |
 | Linked worktree                          | `/abs/path/to/main/.git/hooks/pre-commit`   |
 
-Husky sets `core.hooksPath` **relatively**, so the redirected case is exactly as unsafe as the plain one.
-Never store the string and reuse it from elsewhere.
+Husky sets `core.hooksPath` **relatively**, so the redirected case is exactly as unsafe as the plain one. Resolve the
+path afresh where you use it, rather than storing the string and reusing it from elsewhere.
 
 ## The Stash Collision and Why the Stage Decides Everything
 
@@ -55,9 +54,9 @@ stash on restore, the fix is thrown away:
 **What happens next depends entirely on the hook's stage.** Verified on git 2.43.0 with pre-commit 4.6.2,
 2026-08-26:
 
-- **pre-commit stage:** the hook reports `files were modified by this hook`, the commit **ABORTS** (exit 1),
+- **pre-commit stage:** the hook reports `files were modified by this hook`, the commit **aborts** (exit 1),
   nothing is lost. Loud, and harmless.
-- **post-commit stage:** the commit object already exists before the hook runs, so the commit **SUCCEEDS**
+- **post-commit stage:** the commit object already exists before the hook runs, so the commit **succeeds**
   (exit 0) while the rollback discards the rewrite. HEAD then carries a stale generated artifact and nothing
   in the output says so.
 
@@ -65,8 +64,7 @@ Only the second is dangerous, and a warning that does not name the stage reads a
 
 ## Why `git status` Cannot Verify the Rewrite
 
-After committing into a dirty tree in a repo with a post-commit rewriting hook, verify the artifact by
-its **content**, or by whatever drift check it has of its own. In the measured run `git status` showed the
-artifact modified, but indistinguishably from the sibling lane's edit that caused the collision, so it
-prompted no follow-up. It has also been observed showing the artifact clean. It is uninformative in both
-directions, which is worse than being wrong in one.
+After committing into a dirty tree in a repo with a post-commit rewriting hook, verify the artifact by its **content**,
+or by whatever drift check it has of its own. In the measured run `git status` showed the artifact modified, but
+indistinguishably from the sibling lane's edit that caused the collision. It prompted no follow-up. It has also been
+observed showing the artifact clean. It is uninformative in both directions, which is worse than being wrong in one.

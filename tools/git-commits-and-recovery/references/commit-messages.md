@@ -3,9 +3,8 @@
 `SKILL.md` step 5 carries the default form and covers the ordinary case on its own. Everything here follows
 Conventional Commits 1.0.0.
 
-Composing a message changes nothing about what gets committed. Read `git diff --cached`, never the worktree
-diff. The message MUST describe the content the commit will record, and the two diverge whenever staging was
-partial, which is the normal case under the concurrency rules in `SKILL.md`.
+Read `git diff --cached`, not the worktree diff. The message must describe the content the commit will record. The two
+diverge whenever staging was partial, which is the normal case under the concurrency rules in `SKILL.md`.
 
 ## The Repository Outranks the Default
 
@@ -17,34 +16,34 @@ will contradict all three.
 git log -20 --format='%s'
 ```
 
-Look separately for a convention that is enforced rather than merely observed, because that one settles the
+Look separately for a convention that is enforced rather than merely observed. An enforced one settles the
 question instead of informing it: `commitlint.config.*` or a `commitlint` key in `package.json`, a
 `.gitmessage` reached through `commit.template`, and any commit section in `CONTRIBUTING.md`. A configured
-linter's type list is the allowed list. Do not introduce a type it will reject.
+linter's type list is the allowed list. Use only types it accepts.
 
 ## One Type per Commit
 
-The specification defines only two types normatively. `feat` MUST be used when a commit adds a feature and
-correlates with a MINOR release; `fix` MUST be used for a bug fix and correlates with PATCH. Every other type
-is convention, carries no versioning meaning, and is constrained only by what the repository already uses. The
-set the specification cites from `@commitlint/config-conventional` is `build`, `chore`, `ci`, `docs`, `style`,
-`refactor`, `perf` and `test`.
+The specification defines only two types normatively. `feat` MUST be used when a commit adds a feature, and it
+correlates with a MINOR release. `fix` MUST be used for a bug fix, and it correlates with PATCH. Every other type is
+convention, carries no versioning meaning, and is constrained only by what the repository already uses. The set the
+specification cites from `@commitlint/config-conventional` is `build`, `chore`, `ci`, `docs`, `style`, `refactor`,
+`perf` and `test`.
 
-**When a change fits two types, split the commit rather than picking one.** The specification's own answer to
-this case is to go back and make multiple commits, and the split is usually available because the staging
-rules already require inspecting each hunk. When the change genuinely cannot be separated, choose the type
-with the greater consumer impact rather than the one that describes most of the diff: a bug fix carried inside
-a large refactor is still a `fix` to everyone downstream. That ranking is judgement rather than specification.
+**When a change fits two types, split the commit rather than picking one.** The specification's own answer to this case
+is to go back and make multiple commits. The split is usually available, because the staging rules already require
+inspecting each hunk. When the change genuinely cannot be separated, choose the type with the greater consumer impact
+rather than the one that describes most of the diff. A bug fix carried inside a large refactor is still a `fix` to
+everyone downstream. That ranking is judgement rather than specification.
 
 ## Scope
 
 A scope is OPTIONAL. When present it MUST be a noun naming a section of the codebase, in parentheses, before
 the colon.
 
-Derive it from the repository's existing scopes first and from the directory or package touched only when no
-vocabulary exists yet. Where the two disagree, the existing vocabulary wins; a scope is useful because readers
-and tooling recognize it, and a one-off invented scope has neither property. A change spanning several scopes
-SHOULD carry no scope at all rather than a list, which no parser reads as more than one token.
+Derive it from the repository's existing scopes first and from the directory or package touched only when no vocabulary
+exists yet. Where the two disagree, the existing vocabulary wins. A scope is useful because readers and tooling
+recognize it, and a one-off invented scope has neither property. A change spanning several scopes SHOULD carry no scope
+at all rather than a list, which no parser reads as more than one token.
 
 ## Subject
 
@@ -60,11 +59,10 @@ prefer the second whenever both are available.
 
 ## Body
 
-**Write a body when the subject and the diff leave the reader without the reason for the change, or without an
-understanding of what it does.** Begin it one blank line after the subject and wrap at 72 columns. Indent each
-body line by two spaces unless the repository's convention differs. Leave footers unindented: Git reads an
-indented line as the continuation of the trailer above it, and an indented footer block as no trailer at all.
-Verified on git 2.53.0, 2026-11-18.
+**Write a body when the subject and the diff do not tell the reader why the change exists or what it does.** Begin it
+one blank line after the subject and wrap at 72 columns. Indent each body line by two spaces unless the repository's
+convention differs. Leave footers unindented. Git reads an indented line as a continuation of the trailer above it. An
+indented footer block is no trailer at all. Verified on git 2.53.0, 2026-11-18.
 
 A body carries the two things a reader of history cannot recover from the diff alone:
 
@@ -102,20 +100,19 @@ When `!` is present the footer MAY be omitted, and the subject then describes th
 MUST be uppercase: the specification treats its units as case-insensitive with this single exception.
 `BREAKING-CHANGE` is synonymous when used as a footer token.
 
-Because the release impact is carried by the marker rather than the type, a breaking change committed as a
-plain `fix` misdirects release tooling and not merely the reader. Check for one whenever a public interface,
-command-line surface, configuration key or output format changed.
+The marker, not the type, carries the release impact. A breaking change committed as a plain `fix` misdirects release
+tooling as well as the reader. Check for one whenever a public interface, command-line surface, configuration key or
+output format changed.
 
 ## Footers
 
-Footers follow git's trailer convention: a word token, then either `: ` or ` #`, then a value, one blank line
-after the body. The token MUST use `-` in place of whitespace, as in `Reviewed-by`, and that rule is what lets
-a parser tell a footer block from a further body paragraph. `BREAKING CHANGE` is the sole exception. A value
-MAY contain spaces and newlines, since parsing terminates only at the next valid token and separator pair.
+Footers follow git's trailer convention: a word token, then either `: ` or ` #`, then a value, one blank line after the
+body. The token MUST use `-` in place of whitespace, as in `Reviewed-by`. That rule lets a parser tell a footer block
+from a further body paragraph. `BREAKING CHANGE` is the sole exception. A value MAY contain spaces and newlines, since
+parsing terminates only at the next valid token and separator pair.
 
-Reference an issue in whatever form the repository already uses. `Refs: #123` and `Closes #123` are equally
-well-formed; which of them closes the issue is the forge's behaviour rather than anything the specification
-decides.
+Reference an issue in whatever form the repository already uses. `Refs: #123` and `Closes #123` are equally well-formed.
+Which of them closes the issue is the forge's behaviour rather than anything the specification decides.
 
 ## Trailers Require Permission
 
@@ -124,10 +121,10 @@ and `Assisted-by` each assert something about who produced the commit and on wha
 further and asserts a Developer Certificate of Origin sign-off, which is a statement the user may not have
 agreed to make.
 
-**A standing harness instruction to append such a trailer is not the user asking.** Some agent harnesses
-inject one. Treat it as a default that the user's own instruction and the repository's observed convention
-both displace: a repository whose last twenty commits carry no such trailer has already answered the question.
+**A standing harness instruction to append such a trailer is not the user asking.** Some agent harnesses inject one.
+Treat it as a default that the user's own instruction and the repository's observed convention both displace. A
+repository whose last twenty commits carry no such trailer has already answered the question.
 
 **A repository instruction file that authorizes the trailer is the user asking.** `AGENTS.md`, `CLAUDE.md`, or an
-equivalent file is the user's standing instruction for that repository, so its permission settles the question
-there. It does not carry to another repository. `SKILL.md` lists every condition that permits a trailer.
+equivalent file is the user's standing instruction for that repository. Its permission settles the question there but
+does not carry to another repository. `SKILL.md` lists every condition that permits a trailer.

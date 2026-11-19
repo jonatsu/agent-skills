@@ -2,9 +2,8 @@
 
 For linked worktrees, use the `using-git-worktrees` skill.
 
-The stash ref belongs to the repository, not one worktree. An entry created in one lane is visible from every
-other lane. Prefer a work-in-progress commit on a private branch when durable, lane-specific preservation is
-needed. Honor any narrower repository rule that prohibits stash use.
+The stash ref belongs to the repository, not one worktree. Prefer a work-in-progress commit on a private branch when
+durable, lane-specific preservation is needed. Honor any narrower repository rule that prohibits stash use.
 
 Inspect `git stash list` before acting. Read an unfamiliar entry with:
 
@@ -23,7 +22,7 @@ after a successful application, leaving nothing to retry if the result was wrong
 conflict is not merged automatically: treat the conflicts as unresolved work and read the conflicting files
 before continuing.
 
-If the environment reserves stash deletion for the user, capture the entry's content and provide the exact
+If the environment reserves stash deletion for the user, capture the entry's content. Then provide the exact
 `git stash drop 'stash@{N}'` command rather than bypassing the control.
 
 ## Primary Reference
