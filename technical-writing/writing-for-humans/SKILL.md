@@ -274,8 +274,9 @@ that, so never present a reader-ready result as reader-tested.
 
 When a condition fails, revise the passage and run the complete pass again, because a revision can introduce a
 defect. **Check each replacement, not only the defect it removed:** a rewrite of a key-first opener can arrive
-in the passive, and a merged triad can drop a number. Then search once more for the five marks that most often
-survive: a not-X-but-Y contrast, a restating closer, an em dash, an unearned triad, and a bold run. Name the
+in the passive, and a merged triad can drop a number. Then search once more for the six marks that most often
+survive: a not-X-but-Y contrast, a restating closer, an em dash, an unearned triad, a bold run, and a bold
+lead-in (a line or paragraph that opens with a bold phrase ending in a full stop or colon). Name the
 most repeated visible move, and inspect it when it appears three or more times or dominates two consecutive
 paragraphs; a repeated move that carries the argument stays.
 
