@@ -140,6 +140,10 @@ Read environment-specific or deployment-specific values, and secrets, from confi
 single-file script or one-off utility needs no configuration surface, so name such values as constants at the
 top instead. Read a secret from the environment, never inline.
 
+When a routine rename or move forces edits to a tool's source or tests, the tool hardcodes identity that should
+be data. Make membership structural, such as a directory boundary, a configuration entry, or a descriptor, so the
+rename becomes a data change.
+
 ### Global State
 
 Pass dependencies explicitly rather than reaching for shared mutable global state, which hides coupling and
