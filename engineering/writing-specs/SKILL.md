@@ -36,6 +36,19 @@ observable result, boundaries, and acceptance and no later reader needs a durabl
 `technical-design` or `implementation-planning` as its remaining decisions require, because a spec written only to fill
 a stage has no reader.
 
+The spec carries the work's goals and its success signal, set with the user and sized to the work: on a small change
+they are one line. A request that already states its outcome supplies the goal; confirm it rather than asking the user
+to restate it. When project goals exist, the spec's goals stay inside them. When the spec covers most of what its
+project is for, keep the shared goals once, in the project goals, and let the spec point there and add only its own.
+
+When the work belongs to a project, repository, or component with no stated goals, propose setting them with
+`define-goal`, and say what the work gains. When the work may stand alone, such as a one-off task, ask once whether it
+belongs to something lasting. When the user declines, record the decline in the spec, and do not propose it again for
+this work.
+
+On an unattended run, nobody can answer a proposal. Make the reversible choice yourself and record it in the ledger as
+a judgment call, or park the question there when only the user can answer it.
+
 Repository inspection establishes current behavior and technical constraints, not desired policy. Treat unsupported
 users, priorities, entitlements, retention rules, service levels, and compliance duties as provisional until the user
 or an authoritative product artifact supplies them.
@@ -102,6 +115,9 @@ honest measurement is unavailable, use a binary observation or named human judgm
 Acceptance criteria describe evidence-bearing outcomes, not task completion or source shape. Cover consequential
 positive behavior and negative guarantees. A criterion may use a concrete input and expected output, a state transition,
 an externally observable invariant, or a qualified human judgment.
+
+Trace each goal in the draft or request to the acceptance criteria that prove it. A goal with no criterion, or a
+criterion that serves no goal, is an open question for the user.
 
 Keep verification design in its proper phase. The spec may require conformance to an existing protocol, schema, policy,
 or reusable fixture when that artifact is itself part of the requirement. Technical design chooses the system contracts
