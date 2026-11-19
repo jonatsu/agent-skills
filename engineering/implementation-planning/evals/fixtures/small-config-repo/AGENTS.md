@@ -1,4 +1,4 @@
-# Fixture Instructions
+# Repository Instructions
 
 This repository uses `just check-config` for configuration validation. Keep timeout settings together in
 `config/defaults.yaml`, define their accepted values in `config/schema.json`, and document them in the same order in

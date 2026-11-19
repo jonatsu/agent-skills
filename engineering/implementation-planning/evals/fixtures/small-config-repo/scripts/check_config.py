@@ -1,4 +1,4 @@
-"""Validate this fixture's flat integer configuration against its JSON schema."""
+"""Validate the flat integer configuration against its JSON schema."""
 
 import json
 import sys
@@ -7,7 +7,7 @@ from typing import Any
 
 
 def load_defaults(path: Path) -> dict[str, int]:
-    """Load the fixture's flat key and integer-value YAML subset."""
+    """Load the flat key and integer-value YAML subset."""
     defaults: dict[str, int] = {}
     for line_number, raw_line in enumerate(path.read_text().splitlines(), start=1):
         line = raw_line.strip()
@@ -24,7 +24,7 @@ def load_defaults(path: Path) -> dict[str, int]:
 
 
 def validate(defaults: dict[str, int], schema: dict[str, Any]) -> list[str]:
-    """Return every schema violation relevant to the fixture."""
+    """Return every schema violation relevant to these defaults."""
     errors: list[str] = []
     properties = schema.get("properties", {})
     required = schema.get("required", [])
@@ -51,7 +51,7 @@ def validate(defaults: dict[str, int], schema: dict[str, Any]) -> list[str]:
 
 
 def main() -> int:
-    """Validate paths supplied by the fixture's Just recipe."""
+    """Validate paths supplied by the Just recipe."""
     if len(sys.argv) != 3:
         print("usage: check_config.py DEFAULTS SCHEMA", file=sys.stderr)
         return 2
