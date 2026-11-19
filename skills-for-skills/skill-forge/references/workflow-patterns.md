@@ -12,7 +12,7 @@ Choose control flow from the task's real dependencies. Most skills need ordinary
   useful.
 - **Template:** use when downstream consumers require a stable output structure.
 
-Do not turn these patterns into skill categories or combine them without a concrete need.
+Treat these patterns as control-flow choices, not skill categories, and combine them only with a concrete need.
 
 ## Checklists
 
@@ -28,4 +28,4 @@ authorized earlier. State exactly what decision or authority is required.
 ## Output Contracts
 
 Use a strict template when software or a formal process consumes the output. Use a flexible outline when only
-information order matters. Avoid templates that standardize phrasing without improving correctness or use.
+information order matters. Use templates that improve correctness or use, not ones that only standardize phrasing.

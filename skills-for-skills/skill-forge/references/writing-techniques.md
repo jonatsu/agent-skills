@@ -5,8 +5,8 @@ makes another worse.
 
 ## Match the Form to the Failure
 
-Name the failure first, from a control run or a recorded failure where one exists, then write it in the form
-that prevents it:
+Name the failure first, from a control run or a recorded failure where one exists. Then write it in the form that
+prevents it:
 
 | Failure                                                        | Form that prevents it                                                                  |
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
@@ -18,16 +18,15 @@ that prevents it:
 A prohibition aimed at a shape problem gives the agent something to negotiate with and tends to produce more of
 the unwanted content. A recipe leaves nothing to negotiate, since the output matches it or does not.
 
-Write a recipe without nuance clauses. An appended "unless it matters" reopens every item to judgment; express
-a real exception as its own condition. An exemption clause does not scope a rule reliably either, so when part
-of the output must escape a rule, restructure so the rule cannot reach it.
+Write a recipe without nuance clauses. An appended "unless it matters" reopens every item to judgment; express a real
+exception as its own condition. An exemption clause does not scope a rule reliably either. When part of the output must
+escape a rule, restructure so the rule cannot reach it.
 
 ## State the Reason Beside the Constraint
 
-Give each constraint the agent must apply to unforeseen cases its reason, in the same sentence or the next.
-The reason lets the agent extend the rule to a case the author never listed, and it replaces emphasis such as
-capitals, which raises attention without saying why. A mechanical fact, such as a field name or an exit status,
-needs no reason.
+Give each constraint the agent must apply to unforeseen cases its reason, in the same sentence or the next. The reason
+lets the agent extend the rule to a case the author never listed. It also replaces emphasis such as capitals, which
+raises attention without saying why. A mechanical fact, such as a field name or an exit status, needs no reason.
 
 ## Iron Laws
 

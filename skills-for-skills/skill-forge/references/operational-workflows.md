@@ -1,8 +1,8 @@
 # Operational Workflow Design
 
-Establish the behavior of consequential operations before deciding how to package their instructions and
-helpers. Apply this guidance when the workflow needs to coordinate state changes, repeat an operation whose
-completion is uncertain, resume later, or interact with another actor changing the same state.
+Establish the behavior of consequential operations before deciding how to package their instructions and helpers. Apply
+this guidance when the workflow needs to coordinate state changes or repeat an operation whose completion is uncertain.
+It also applies when the workflow must resume later or interact with another actor changing the same state.
 
 A procedure that only explains supplied material can remain ordinary instructions. Document length and the
 number of authoring steps do not create a need for operational machinery.
@@ -31,10 +31,9 @@ Distinguish a rule the agent is expected to follow from a condition checked or e
 allowed effect in prose does not restrict the agent's actual permissions. Human review supplies judgment or
 authorization; it does not by itself prevent an operation from running against changed input.
 
-Prefer a verified guarantee supplied by an existing tool or runtime. State which guarantee the workflow
-relies on and how the author checked it. If other actors can change the same state, determine what protects
-the interval between checking a condition and acting on it. An earlier read alone does not protect that
-interval.
+Prefer a verified guarantee supplied by an existing tool or runtime. State which guarantee the workflow relies on and
+how the author checked it. If other actors can change the same state, determine what protects the interval. That
+interval runs between checking a condition and acting on it, and an earlier read alone does not protect it.
 
 When the available environment cannot supply a required guarantee, state the limitation and the affected
 operation. Resolve it before declaring the candidate complete. Reuse existing authority; ask the user only
@@ -45,14 +44,14 @@ evidence their decision supplies and what subsequent operations may rely on it.
 
 ## Example: Publication With a Lost Acknowledgment
 
-Suppose a report service accepts an operation ID and an approved report revision. Its verified API contract
-atomically permits one publication per ID, returns the existing result for the same ID and content, and
-rejects different content under that ID. It also supports authoritative lookup by ID.
+Suppose a report service accepts an operation ID and an approved report revision. Its verified API contract atomically
+permits one publication per ID and returns the existing result for the same ID and content. It rejects different content
+under that ID. It also supports authoritative lookup by ID.
 
-The skill's contract must preserve that ID and approved revision across invocations. Source and approval
-records govern what may be published; the service record governs whether publication happened. The service
-enforces uniqueness. The skill must still check that the content is the approved revision and verify the
-returned publication identity and content before recording completion.
+The skill's contract must preserve that ID and approved revision across invocations. Source and approval records govern
+what may be published; the service record governs whether publication happened. The service enforces uniqueness. The
+skill must still check that the content is the approved revision. Before recording completion, it must verify the
+returned publication identity and content.
 
 If the request succeeds but its acknowledgment is lost, a later invocation follows this decision path:
 

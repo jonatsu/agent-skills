@@ -16,9 +16,9 @@ evidence classes, and verdicts.
 
 ## 1. Establish the Contract
 
-Read the user's request and applicable repository instructions. Inventory the complete package. Read
-`SKILL.md` and the instruction resources relevant to its contract, and inspect scripts, assets, binaries,
-generated files, and large references at the depth the review requires.
+Read the user's request and applicable repository instructions. Inventory the complete package. Read `SKILL.md` and the
+instruction resources relevant to its contract. Inspect scripts, assets, binaries, generated files, and large references
+at the depth the review requires.
 
 Identify:
 
@@ -32,14 +32,13 @@ Identify:
 - safety, authorization, licensing, and provenance obligations; and
 - whether this is review lite or an authorized full evaluation.
 
-Where the package leaves these implicit, infer only what the package and its environment support, and mark
-consequential uncertainty rather than grading against an invented contract. Record unread files and
-unavailable environments as coverage limits.
+Where the package leaves these implicit, infer only what the package and its environment support. Mark consequential
+uncertainty rather than grading against an invented contract. Record unread files and unavailable environments as
+coverage limits.
 
-For a revision, identify the behavior that must stay stable and the corrections the user authorized. Inspect
-available prior versions, cases, and execution evidence. The author's claims and cases are inputs to verify,
-not the whole contract: derive obligations from the intended task, and name the consequential boundaries the
-author's cases omit.
+For a revision, identify the behavior that must stay stable and the corrections the user authorized. Inspect available
+prior versions, cases, and execution evidence. The author's claims and cases are inputs to verify, not the whole
+contract. Derive obligations from the intended task, and name the consequential boundaries the author's cases omit.
 
 ## 2. Check the Hard Gates
 
@@ -80,9 +79,8 @@ Read [review-lenses.md](review-lenses.md) when a lens needs its diagnostic quest
 
 ## 4. Choose the Tier
 
-Perform review lite unless the user has authorized full evaluation. When the rubric's conditions for
-recommending full evaluation hold, recommend it with the cost details the rubric lists, and continue with
-review lite while the user decides.
+Perform review lite unless the user has authorized full evaluation. When the rubric's conditions for recommending full
+evaluation hold, recommend it with the cost details the rubric lists. Continue with review lite while the user decides.
 
 ## 5. Run Full Evaluation When Authorized
 

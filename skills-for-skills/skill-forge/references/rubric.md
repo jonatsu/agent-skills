@@ -31,8 +31,8 @@ A hard gate is pass or fail, never a quality point. Any failed gate makes the sk
 - Required license or provenance material is missing or inaccurate.
 - A promised resource link is broken, a bundled script is unusable, or scaffold placeholder text remains.
 - Instructions contradict each other so that no reliable execution path remains.
-- The skill performs unsafe behavior or side effects beyond the user's authority, including consequential
-  network access, credential use, writes, or destruction that its described purpose does not disclose.
+- The skill performs unsafe behavior or side effects beyond the user's authority. This includes consequential network
+  access, credential use, writes, or destruction that its described purpose does not disclose.
 
 Run the vendored specification validator, then the policy validator, and report each result separately:
 
@@ -75,11 +75,10 @@ Label every piece of evidence with one class, because a reader weighs them diffe
 - **Heuristic walkthrough:** a request traced through the package by reading, with no model run.
 - **Model evaluation:** an observed model run with its recorded trace.
 
-Synthetic fixture examples are test data, not observed execution. An author's own results and claims are
-inputs for review to verify, and the report names which were independently checked, which remain claims, and
-which required behavior is untested. An independent review catches what an author's self-review does not, such as
-a `SKILL.md` that routes to a reference file nobody wrote. Treat a skill that only its author has scored as
-unreviewed, and re-verify it.
+Synthetic fixture examples are test data, not observed execution. An author's own results and claims are inputs for
+review to verify. The report names which were independently checked, which remain claims, and which required behavior is
+untested. An independent review catches what an author's self-review does not, such as a `SKILL.md` that routes to a
+reference file nobody wrote. Treat a skill that only its author has scored as unreviewed, and re-verify it.
 
 ## Verdicts
 

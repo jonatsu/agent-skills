@@ -19,9 +19,9 @@ When updating a skill, inventory the complete package before editing. Read `SKIL
 resources the change affects. Inspect scripts, assets, binaries, generated files, and large references at the
 depth the change requires.
 
-Before substantially changing an existing workflow, record the externally visible behavior that must stay
-stable: representative inputs, expected outcomes, known failure behavior, and available execution evidence.
-Separate requirements being preserved from defects the requested change should correct.
+Before substantially changing an existing workflow, record the externally visible behavior that must stay stable.
+Include representative inputs, expected outcomes, known failure behavior, and available execution evidence. Separate
+requirements being preserved from defects the requested change should correct.
 
 Establish:
 
@@ -74,22 +74,23 @@ Before adding guidance, check whether the agent can recover it from an authorita
 that source when it is accurate and available during use. Include the information when the source is
 unavailable, unreliable, or silent on the judgment the skill must supply.
 
-**Version facts.** Avoid pinning a tool's version by default. A pin in an install command or a version check in a
-script goes stale within weeks, and makes an agent install an old release on purpose. Record a version as
-*current known* instead: one line per tool naming the version and the date the skill's claims were last checked,
-and the command or document that confirms them, such as `--help` or the changelog. Keep minimum requirements in
-`compatibility`. Pin only where the version is the subject, and state the reason beside the pin: guidance that
-differs per release line, such as Yocto releases; behavior that exists only from a given version; or a known-bad
-release to avoid.
+**Version facts.** Leave a tool's version unpinned by default. A pin in an install command or a version check in a
+script goes stale within weeks, and makes an agent install an old release on purpose. Record a version as *current
+known* instead: one line per tool naming the version, the date the skill's claims were last checked, and the command
+or document that confirms them, such as `--help` or the changelog. Keep minimum requirements in `compatibility`. Pin
+only where the version is the subject, and state the reason beside the pin. Three cases qualify:
 
-The step is complete when every item in the list above has an answer or a named gap, and each planned rule has
+- guidance that differs per release line, such as Yocto releases;
+- behavior that exists only from a given version; and
+- a known-bad release to avoid.
+
+The step is complete when every item in the "Establish" list has an answer or a named gap, and each planned rule has
 a grounding.
 
 ## 2. Choose Scope, Invocation, and Clients
 
-Choose portable or repository-specific scope under "Portable is the default" in `SKILL.md`. A portable skill
-may require tools intrinsic to its job; declare them in `compatibility`, check them when used, and report
-missing dependencies.
+Choose portable or repository-specific scope under "Portable is the default" in `SKILL.md`. A portable skill may require
+tools intrinsic to its job. Declare them in `compatibility`, check them when used, and report missing dependencies.
 
 Choose the invocation goal separately from scope. Decide from the job and representative requests whether the
 agent should select the skill or the user should invoke it explicitly. When both goals stay plausible and the
@@ -98,10 +99,9 @@ explicit-only skill needs a verified client mechanism, because description wordi
 policy. A habit with neither path belongs in always-loaded instructions or another deliberately loaded
 artifact.
 
-Identify how each declared client loads the skill under that goal, and verify each client separately, since
-one client's discovery result says nothing about another's. When a real invocation path exists, repair weak
-routing rather than abandoning the skill. When no declared client can load the behavior reliably, change the
-artifact form.
+Identify how each declared client loads the skill under that goal. Verify each client separately, since one client's
+discovery result says nothing about another's. When a real invocation path exists, repair weak routing rather than
+abandoning the skill. When no declared client can load the behavior reliably, change the artifact form.
 
 The step is done when scope, invocation goal, and each declared client's loading path are stated, or the
 artifact form has changed.
@@ -112,13 +112,13 @@ Every new skill records its current author in `metadata.author` and its license 
 top-level `license` field. These conservative policies may exceed a license's legal minimum. Discover
 authorship and licensing from authoritative repository or upstream sources.
 
-An external source is attribution-bearing when reading it changes what the skill contains: adopted ideas,
-mechanisms, structure, examples, terminology, or failure modes, even when no wording or code is copied. Record
-each such source in `ATTRIBUTIONS.md`, naming the exact influence and separating independently expressed ideas
-from copied or adapted material. Copied, adapted, translated, or vendored material also ships its upstream
-license text. Subject documentation the skill is extensively built on gets a first-party entry; a single fact
-checked against `--help` or a manual page needs none, so cite it near the affected claim when useful. Preserve
-every existing provenance file during updates.
+An external source is attribution-bearing when reading it changes what the skill contains. Adopted ideas, mechanisms,
+structure, examples, terminology, or failure modes count, even when no wording or code is copied. Record each such
+source in `ATTRIBUTIONS.md`, naming the exact influence and separating independently expressed ideas from copied or
+adapted material. Copied, adapted, translated, or vendored material also ships its upstream license text. Subject
+documentation the skill is extensively built on gets a first-party entry. A single fact checked against `--help` or a
+manual page needs none, so cite it near the affected claim when useful. Preserve every existing provenance file during
+updates.
 
 Read [provenance.md](provenance.md) whenever an external source influenced the skill or supplied adapted or
 vendored material, and before writing or changing `ATTRIBUTIONS.md`.
@@ -128,10 +128,10 @@ influencing source has its `ATTRIBUTIONS.md` entry.
 
 ## 4. Design the Package
 
-Establish how the workflow behaves before choosing files. When it coordinates several state changes, may
-repeat an operation after uncertain completion, pauses for later resumption, or shares mutable state with
-another actor, read [operational-workflows.md](operational-workflows.md) and settle its contract before
-treating the candidate as complete.
+Establish how the workflow behaves before choosing files. Read [operational-workflows.md](operational-workflows.md) when
+the workflow meets any of these conditions. It coordinates several state changes, may repeat an operation after
+uncertain completion, pauses for later resumption, or shares mutable state with another actor. Settle its contract
+before treating the candidate as complete.
 
 Design for lean execution and progressive loading. Keep routing in metadata, shared execution guidance in
 `SKILL.md`, and branch-specific material in resources. Make routing possible before loading the detail it
@@ -162,9 +162,9 @@ Keep triage and source ordering in `SKILL.md`. Put the stable event schema in th
 only when an existing tool cannot normalize timestamps reliably. Include the asset because the consumer
 requires that exact template.
 
-Link each reference directly from `SKILL.md` or from the mode file that uses it. Open a reference longer than
-about 100 lines with a table of contents, because an agent often previews the first lines of a file and needs
-to see its whole scope there.
+Link each reference directly from `SKILL.md` or from the mode file that uses it. Open a reference longer than about 100
+lines with a table of contents. An agent often previews the first lines of a file and needs to see its whole scope
+there.
 
 Routing metadata may enter broad client context, while the body and each reference add context only when
 loaded. A client may execute a script without loading its source; verify that before relying on the saving.
@@ -172,9 +172,9 @@ loaded. A client may execute a script without loading its source; verify that be
 Keep each meaning in one authoritative place, and leave facts that a reliable live source provides cheaply to
 that source. A short, self-contained skill is complete when it contains everything its task needs.
 
-That rule stops at the package boundary. When another skill also needs a rule, each skill carries its own
-version, sized to its job, because an agent often loads only one of them. A pointer to a sibling skill may add
-depth, never correctness. When a shared rule changes, update every skill that carries it.
+That rule stops at the package boundary. When another skill also needs a rule, each skill carries its own version, sized
+to its job. An agent often loads only one of them. A pointer to a sibling skill may add depth, never correctness. When a
+shared rule changes, update every skill that carries it.
 
 Name the skill with a qualified, multi-word name, such as `session-handoff`. Agents see every skill in one flat
 list, without its group folder, so the name alone must say what the skill does. A distinct name also lets a search
@@ -190,14 +190,14 @@ justified by a request that needs it.
 
 ## 5. Write for Reliable Behavior
 
-When the `writing-for-agents` skill is available, load it for more depth on the levers that make agent-facing
+When the `writing-for-agents` skill is available, load it for more depth. It covers the levers that make agent-facing
 prose predictable, such as leading words, completion criteria, and pruning.
 
-Sweep the whole package before the first write of any create, edit, split, move, or rename: `SKILL.md` and every
-reference, not only the passage the task touches. Treat moved text as new writing. Run `writing-skill-descriptions`
-on each description the work creates or changes, including a neighbour's description edited only to add a routing
-exclusion. The sweep is done when every file has been read against `writing-for-agents`, every finding has been
-applied, and the report names the files swept and what changed.
+Before the first write of any create, edit, split, move, or rename, sweep the whole package. Read `SKILL.md` and every
+reference, not only the passage the task touches. Treat moved text as new writing. Run `writing-skill-descriptions` on
+each description the work creates or changes, including a neighbour's description edited only to add a routing
+exclusion. The sweep is done when three things hold. Every file has been read against `writing-for-agents`. Every
+finding has been applied. The report names the files swept and what changed.
 
 **Say what needs to be said; drop everything else.**
 
@@ -206,15 +206,14 @@ Remove filler, repetition, obvious explanations, and generic advice. Preserve ne
 constraints, failure handling, and examples that resolve ambiguity. Prefer the shortest clear and complete
 explanation over cryptic compression.
 
-Write the skill in plain language, as ISO 24495-1:2023 defines it: an agent on any client or model can easily
-find what it needs, understand what it finds, and use that information. Use familiar words and one term per
-concept, and define a domain term on first use. Give each instruction a complete sentence within 20 words, with
-any condition first, and keep other sentences within 25 words. Keep the articles and verbs that compressed
-shorthand drops.
+Write the skill in plain language, as ISO 24495-1:2023 defines it. An agent on any client or model can easily find what
+it needs, understand what it finds, and use that information. Use familiar words and one term per concept, and define a
+domain term on first use. Give each instruction a complete sentence within 20 words, with any condition first, and keep
+other sentences within 25 words. Keep the articles and verbs that compressed shorthand drops.
 
-Match specificity to risk: constrain fragile operations closely and leave room for judgment where several
-approaches are valid. Teach a reusable procedure for a class of tasks rather than the answer to one example,
-while keeping the exact commands, formats, and templates that correct execution depends on.
+Match specificity to risk: constrain fragile operations closely and leave room for judgment where several approaches are
+valid. Teach a reusable procedure for a class of tasks rather than the answer to one example. Keep the exact commands,
+formats, and templates that correct execution depends on.
 
 Choose a recommended default when one approach usually fits. Give each exception the condition that selects
 it, rather than presenting an undifferentiated menu.
@@ -229,13 +228,13 @@ the condition for loading a reference. Move later branch detail behind a conditi
 Write the initial description with the `writing-skill-descriptions` skill, passing it the scope and
 invocation goal chosen in step 2.
 
-Use a checklist only when order or prerequisites matter; independent rules and judgment read better as prose.
-Reuse the user's existing authorization, and add a confirmation gate only when the eventual action needs
-information or approval the user has not already supplied.
+Use a checklist only when order or prerequisites matter; independent rules and judgment read better as prose. Reuse the
+user's existing authorization. Add a confirmation gate only when the eventual action needs information or approval the
+user has not already supplied.
 
-Make the package's described purpose match its behavior. Disclose consequential network access, credential
-use, writes, destructive actions, and authority requirements, since an undisclosed one fails a hard gate in
-[rubric.md](rubric.md). Inspect and test bundled executables and dependencies.
+Make the package's described purpose match its behavior. Disclose consequential network access, credential use, writes,
+destructive actions, and authority requirements. An undisclosed one fails a hard gate in [rubric.md](rubric.md). Inspect
+and test bundled executables and dependencies.
 
 The step is done when the draft is complete, with no placeholder left, and you can name the failure each
 guidance passage prevents.
@@ -253,9 +252,9 @@ structural preflight, which must finish before review lite or any model-based te
 A preflight failure is a package defect, not skill behavior; repair it before testing. Preflight proves
 loadability and fixture readiness, not that the skill improves behavior.
 
-Run every new or changed script with representative success, invalid-input, and dependency-failure cases,
-using safe fixtures for stateful behavior. Run the language's standard format, lint, and type checks on each
-new or changed script where they are available, and report any check you could not run.
+Run every new or changed script with representative success, invalid-input, and dependency-failure cases, using safe
+fixtures for stateful behavior. Run the language's standard format, lint, and type checks on each new or changed script
+where they are available. Report any check you could not run.
 
 Read [testing-guide.md](testing-guide.md) to define cases, walk them, check loading boundaries, and prepare
 discovery cases when routing is new or changed.
@@ -283,8 +282,7 @@ Before delivery, confirm:
 Follow the target repository's applicable mechanical checks and deployment workflow. Add further checks only
 when the skill's domain or risk requires them.
 
-Report the status the [rubric's verdicts](rubric.md#verdicts) allow. Deliver the candidate with its intended
-behavior, relevant cases, author-side results labeled by evidence class, environment, untested clients, and
-unresolved evidence gaps. When the user authorizes full evaluation, hand that package to review mode or the
-target repository's review process, and let that process choose isolation, permissions, baselines, graders,
-repetitions, and client coverage.
+Report the status the [rubric's verdicts](rubric.md#verdicts) allow. Deliver the candidate with its intended behavior,
+relevant cases, author-side results labeled by evidence class, environment, untested clients, and unresolved evidence
+gaps. When the user authorizes full evaluation, hand that package to review mode or the target repository's review
+process. Let that process choose isolation, permissions, baselines, graders, repetitions, and client coverage.

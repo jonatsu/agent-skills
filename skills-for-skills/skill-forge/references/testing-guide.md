@@ -19,9 +19,8 @@ independent review can reuse.
 
 ## Walk Cases Heuristically
 
-Trace each representative request through the package without a model call. Check that the main file routes
-every required decision and resource before its point of use, and inspect outcomes rather than exact wording
-or heading names.
+Trace each representative request through the package without a model call. Check that the main file routes every
+required decision and resource before its point of use. Inspect outcomes rather than exact wording or heading names.
 
 Use deterministic checks for files, schemas, calculations, and other mechanical facts. Use human inspection for
 coherence, usefulness, unstated decisions, and unforeseen defects.

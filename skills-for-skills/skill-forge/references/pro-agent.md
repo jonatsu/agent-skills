@@ -3,13 +3,13 @@
 Use a bundled script when deterministic execution materially improves reliability or avoids repeatedly
 recreating the same operation.
 
-Run traces are the strongest signal. When the traces of several test or real-use runs show each one writing
-the same helper, bundle that helper as a script: every run is already paying to rebuild it, and each rebuild
-is a fresh chance to get it wrong.
+Run traces are the strongest signal. Suppose the traces of several test or real-use runs show each one writing the same
+helper. Bundle that helper as a script. Every run is already paying to rebuild it, and each rebuild is a fresh chance to
+get it wrong.
 
-Use an existing tool directly for a simple one-off command. Do not bundle a script merely to wrap an available
-command. Pin a version only when repeatability requires it, with the reason beside the pin (see *Version facts*
-in `authoring.md`), and declare runtime prerequisites in `SKILL.md` or `compatibility`.
+Use an existing tool directly for a simple one-off command. Bundle a script only when it does more than wrap an
+available command. Pin a version only when repeatability requires it, with the reason beside the pin (see *Version
+facts* in `authoring.md`). Declare runtime prerequisites in `SKILL.md` or `compatibility`.
 
 Good candidates include:
 
@@ -18,16 +18,16 @@ Good candidates include:
 - fragile command sequences whose errors are hard to diagnose; and
 - calculations or output formats that must be reproducible.
 
-Keep work in agent instructions when it depends on judgment, varies substantially by context, or is clearer as
-a direct tool call. Determinism alone does not justify a script when the operation is trivial and unlikely to
-recur.
+Keep work in agent instructions when it depends on judgment or varies substantially by context. Keep it there as well
+when a direct tool call is clearer. Determinism alone does not justify a script when the operation is trivial and
+unlikely to recur.
 
-Write each bundled script to its language's established conventions. Use the coding guidance your environment
-supplies for that language, such as installed skills, rules, or a style guide the repository declares, and load
-it before the script's first line. Where no such guidance exists, follow the language's community standard and
-its standard formatter, linter, and type checker. A portable script stays self-contained, so a convention that
-needs a dependency or an import from outside the package yields to that constraint. Say so in a comment where a
-reader would otherwise read it as an oversight.
+Write each bundled script to its language's established conventions. Use the coding guidance your environment supplies
+for that language, such as installed skills, rules, or a style guide the repository declares. Load it before the
+script's first line. Where no such guidance exists, follow the language's community standard and its standard formatter,
+linter, and type checker. A portable script stays self-contained, so a convention that needs a dependency or an import
+from outside the package yields to that constraint. Say so in a comment where a reader would otherwise read it as an
+oversight.
 
 For every bundled script:
 
@@ -48,21 +48,20 @@ For every bundled script:
 
 ## Stateful Script Contracts
 
-For scripts that change state, document the behavior of repeated invocation: how an already-completed
-operation is recognized, when retry is safe, and what the caller must do after partial or uncertain
-completion. Identify any existing tool guarantee the script relies on and verify that it applies to the
-actual invocation. Use the [operational-workflow contract](operational-workflows.md) when these decisions span
-several operations or invocations.
+For scripts that change state, document the behavior of repeated invocation. Cover how an already-completed operation is
+recognized and when retry is safe. Cover also what the caller must do after partial or uncertain completion. Identify
+any existing tool guarantee the script relies on and verify that it applies to the actual invocation. Use the
+[operational-workflow contract](operational-workflows.md) when these decisions span several operations or invocations.
 
-Where recovery depends on the distinction, make completed, partial, and unknown outcomes distinguishable.
-Return the operation identity or other evidence the caller needs to inspect or continue the work. Do not
-report success merely because a request was accepted.
+Where recovery depends on the distinction, make completed, partial, and unknown outcomes distinguishable. Return the
+operation identity or other evidence the caller needs to inspect or continue the work. Report success only after the
+operation completes, not merely because a request was accepted.
 
 Pure transformations need no operation identity or recovery state when repeating them has no consequential
 effect. Match the interface to the caller's actual decisions.
 
 ## Vendored Tools
 
-Vendored tools are a separate case. Keep their upstream source and license intact, pin the revision, record
-omissions or modifications in `ATTRIBUTIONS.md`, and invoke them through their declared runtime rather than
-absorbing their logic into the skill's own scripts.
+Vendored tools are a separate case. Keep their upstream source and license intact, pin the revision, and record
+omissions or modifications in `ATTRIBUTIONS.md`. Invoke them through their declared runtime rather than absorbing their
+logic into the skill's own scripts.

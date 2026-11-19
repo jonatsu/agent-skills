@@ -104,16 +104,15 @@ Judge each control-flow structure against the condition that justifies it in
 against [writing-techniques.md](writing-techniques.md). Freedom should follow fragility: open-ended judgment
 needs principles and criteria, and fragile operations need exact sequences, validation, or scripts.
 
-For workflows that change state, repeat operations, resume later, or share mutable state, check the author's
-contract against the six questions in [operational-workflows.md](operational-workflows.md) and against the
-implementation and verified tool contracts. Statements such as "retry safely" or "verify success" fail when
-the caller must invent how.
+For workflows that change state, repeat operations, resume later, or share mutable state, check the author's contract
+against the six questions in [operational-workflows.md](operational-workflows.md). Check it against the implementation
+and verified tool contracts too. Statements such as "retry safely" or "verify success" fail when the caller must invent
+how.
 
-Trace a successful operation, an interruption after a consequential effect, and continuation against changed
-state where they apply. For state-changing scripts, check whether callers can recognize completed work,
-distinguish partial or unknown outcomes, keep the identities they need, and tell whether retry is safe.
-Review-lite traces stay heuristic unless safe execution evidence exists, and they never authorize external
-writes.
+Trace a successful operation, an interruption after a consequential effect, and continuation against changed state where
+they apply. For state-changing scripts, check whether callers can recognize completed work and distinguish partial or
+unknown outcomes. Check also whether they keep the identities they need and can tell whether retry is safe. Review-lite
+traces stay heuristic unless safe execution evidence exists, and they never authorize external writes.
 
 Separate demonstrated failures, design omissions, and missing execution evidence, each with its concrete
 consequence. Require a phase framework, checkpoint schema, or recovery machinery only where the task needs one.
@@ -149,9 +148,9 @@ Check relationships across files, since these defects look correct in isolation:
 A contradiction is material when it leaves the agent with competing actions or a false belief; cosmetic
 wording variation is not.
 
-For revisions, compare changed behavior against the preservation requirements. Separate authorized corrections
-from unintended regressions, check that changes to tests or expected results have independent justification,
-and add counterexamples where the requirements expose gaps in the supplied cases.
+For revisions, compare changed behavior against the preservation requirements. Separate authorized corrections from
+unintended regressions. Check that changes to tests or expected results have independent justification, and add
+counterexamples where the requirements expose gaps in the supplied cases.
 
 Keep the review proportional: independence does not require duplicating adequate checks or launching another
 agent.
@@ -171,11 +170,10 @@ when it causes a concrete problem, or when the self-contained constraint does no
 
 ## Portability and Scope
 
-Judge format, runtime, and client portability against [portability.md](portability.md), which owns the
-authoring rules, including the standalone-script requirement. Read every bundled script and ask what it would
-do on a machine that has never seen the authoring repository. A script that runs only under its author's
-checkout is a portability defect however portable the prose is, and it passes every check until someone else
-installs the skill.
+Judge format, runtime, and client portability against [portability.md](portability.md), which owns the authoring rules,
+including the standalone-script requirement. Read every bundled script and ask what it would do on a machine that has
+never seen the authoring repository. A script that runs only under its author's checkout is a portability defect however
+portable the prose is. It passes every check until someone else installs the skill.
 
 Infer repo-local scope only from declared `metadata.scope: repo-local`, never because undeclared local
 bindings make that reading convenient. Inside a repo-local skill, report avoidable environment coupling as a

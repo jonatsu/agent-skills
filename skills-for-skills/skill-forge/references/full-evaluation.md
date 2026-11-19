@@ -48,25 +48,24 @@ For each case record:
 Start with the smallest set that spans the important behavior. Add a case when a failure exposes a distinct
 boundary, and keep useful cases as regression fixtures rather than growing the suite to a quota.
 
-**Add pressure scenarios when the skill's value is compliance.** A skill that enforces a rule an agent is
-tempted to skip has not been tested until the temptation is present. Write a realistic request that stacks
-competing incentives, such as a deadline, sunk effort, or an authority figure urging the shortcut, and end it
-in a forced choice between the rule and the shortcut. A skill that holds only when nothing pushes against it
-fails in exactly the situation it exists for.
+**Add pressure scenarios when the skill's value is compliance.** A skill that enforces a rule an agent is tempted to
+skip has not been tested until the temptation is present. Write a realistic request that stacks competing incentives,
+such as a deadline, sunk effort, or an authority figure urging the shortcut. End it in a forced choice between the rule
+and the shortcut. A skill that holds only when nothing pushes against it fails in exactly the situation it exists for.
 
-When the subject is itself a reviewing skill, test whether the reviewer identifies the supported defect, cites
-relevant evidence, explains its consequence, and proposes a proportionate repair. Include valid alternatives
-the reviewer could wrongly flag. A correct verdict alone is insufficient, and an unsupported finding is a
+When the subject is itself a reviewing skill, test whether the reviewer identifies the supported defect and cites
+relevant evidence. Test also whether it explains the consequence and proposes a proportionate repair. Include valid
+alternatives the reviewer could wrongly flag. A correct verdict alone is insufficient, and an unsupported finding is a
 review failure.
 
 ## Keep Fixtures Inert
 
-Fixture skills stay out of normal skill discovery, because a client that catalogs one offers it as a real
-skill. Ship each as a `SKILL.md.fixture` template or outside deployed discovery paths. Materialize it as
-`SKILL.md` only in a fresh, isolated workspace, with the case's declared resources at their original relative
-paths, and leave source and deployed templates unchanged. Check the intended clients for accidental fixture
-exposure, and report a client whose catalog cannot be inspected as a verification limit. Keep expected outcomes
-and grading material out of the candidate workspace unless the case supplies them as task evidence.
+Fixture skills stay out of normal skill discovery, because a client that catalogs one offers it as a real skill. Ship
+each as a `SKILL.md.fixture` template or outside deployed discovery paths. Materialize it as `SKILL.md` only in a fresh,
+isolated workspace, with the case's declared resources at their original relative paths. Leave source and deployed
+templates unchanged. Check the intended clients for accidental fixture exposure. Report a client whose catalog cannot be
+inspected as a verification limit. Keep expected outcomes and grading material out of the candidate workspace unless the
+case supplies them as task evidence.
 
 ## Preflight the Harness
 
@@ -75,11 +74,10 @@ Preflight every selected client and case before the first model call:
 1. Resolve candidate, baseline, and fixtures by identity and source revision.
 2. Materialize required fixture templates in isolation, then run the rubric's hard-gate validators.
 3. Run every advertised fixture command and its meaningful failure path.
-4. Create a fresh workspace containing only declared initial inputs. Name it for its contents, such as
-   `<date>-calc`, so the agent treats the run as real work; an agent that reads a path naming a test, a
-   fixture, or the skill treats the run as a drill. Keep run logs in a sibling folder outside the workspace.
-   Turn off the client's memory generation for the run where it has one, such as Codex's
-   `--config memories.generate_memories=false`.
+4. Create a fresh workspace containing only declared initial inputs. Name it for its contents, such as `<date>-calc`, so
+   the agent treats the run as real work. An agent that reads a path naming a test, a fixture, or the skill treats the
+   run as a drill. Keep run logs in a sibling folder outside the workspace. Turn off the client's memory generation for
+   the run where it has one, such as Codex's `--config memories.generate_memories=false`.
 5. Keep future turns, expected outputs, and grading material outside that workspace.
 6. Check the client version and runtime help for every selected flag.
 7. Verify candidate reads, allowed writes, output capture, trace capture, and continuation behavior.
@@ -119,8 +117,8 @@ Choose the baseline from the decision:
 A baseline is optional when a focused regression case already answers the decision; record why an omitted
 baseline adds too little value for its cost.
 
-For multi-turn cases, expose each turn only when sent. Inspect artifacts and permissions before continuation,
-and recheck the restored sandbox and working directory, because clients may change them on resume.
+For multi-turn cases, expose each turn only when sent. Inspect artifacts and permissions before continuation. Recheck
+the restored sandbox and working directory, because clients may change them on resume.
 
 ## Evaluate Discovery
 
@@ -128,10 +126,9 @@ Run the discovery cases prepared under [testing-guide.md](testing-guide.md). In 
 withhold the candidate path and any instruction to load it.
 
 Prefer an observable load signal, after verifying that the client exposes one. When none exists, grade several
-distinctive behavioral fingerprints, and validate that grader against a known explicit-invocation positive
-before trusting a negative result. Evidence that the forbidden behavior occurred is stronger than the absence
-of preferred vocabulary. Report "no observable load signal" rather than claiming non-activation when the
-client hides selection.
+distinctive behavioral fingerprints. Validate that grader against a known explicit-invocation positive before trusting a
+negative result. Evidence that the forbidden behavior occurred is stronger than the absence of preferred vocabulary.
+Report "no observable load signal" rather than claiming non-activation when the client hides selection.
 
 The `writing-skill-descriptions` skill owns trigger-rate measurement and description optimization,
 including repetitions, thresholds, and held-out queries.
@@ -169,8 +166,8 @@ Grade strictly:
   file but without the underlying task done is a fail.
 - **The assertion carries the burden of proof.** When the captured evidence does not show the pass, record a
   fail.
-- **Check the output's own claims.** List the facts it states, the steps it says it took, and the checks it
-  says passed, then verify each against the trace and artifacts. An unverified self-claim is not evidence.
+- **Check the output's own claims.** List the facts it states, the steps it says it took, and the checks it says passed.
+  Then verify each against the trace and artifacts. An unverified self-claim is not evidence.
 
 Record pass or fail with concrete evidence for every assertion. Reject an assertion that:
 
@@ -179,9 +176,9 @@ Record pass or fail with concrete evidence for every assertion. Reject an assert
 - encodes one preferred wording instead of behavior; or
 - cannot be verified from the captured evidence.
 
-When independence matters, compare outputs blind before causal analysis. Hide arm identity from the comparer,
-unblind only after the preference is recorded, and then inspect the traces and skill differences that may
-explain the result.
+When independence matters, compare outputs blind before causal analysis. Hide arm identity from the comparer, and
+unblind only after the preference is recorded. Then inspect the traces and skill differences that may explain the
+result.
 
 Present important artifacts to the user for qualitative review through any channel that preserves the
 evidence, such as the conversation, downloadable files, or a viewer.
@@ -201,14 +198,14 @@ passes.
 Report raw counts for small samples. One run is a count, not a rate, and variance statistics need enough
 repetitions to mean something.
 
-Diagnose inconsistent results before adding instructions. The cause may be ambiguous guidance, model variance,
-a flaky environment, a weak grader, or an invalid fixture. Asking the agent afterward how the skill could have
-been clearer yields a hypothesis for the next revision, not evidence; a rerun confirms or refutes it.
+Diagnose inconsistent results before adding instructions. The cause may be ambiguous guidance, model variance, a flaky
+environment, a weak grader, or an invalid fixture. Asking the agent afterward how the skill could have been clearer
+yields a hypothesis for the next revision, not evidence. A rerun confirms or refutes it.
 
 ## Repair and Stop
 
-Generalize from the failure, not the fixture wording. Add or strengthen the failing outcome before editing the
-skill, make the smallest repair, and rerun the failure with its nearest passing boundary.
+Generalize from the failure, not the fixture wording. Add or strengthen the failing outcome before editing the skill.
+Make the smallest repair. Rerun the failure with its nearest passing boundary.
 
 Stop when:
 
@@ -223,8 +220,8 @@ that could change the decision.
 
 ## Regression Cases for This Skill
 
-When the subject is `skill-forge` itself, baselines, graders, and the main synthesis work without
-`skill-forge` as guidance, because a grader following the candidate's own rules cannot judge them.
+When the subject is `skill-forge` itself, baselines, graders, and the main synthesis work without `skill-forge` as
+guidance. A grader following the candidate's own rules cannot judge them.
 
 - Run [../evals/activation.json](../evals/activation.json) through each selected client's actual discovery
   mechanism, without supplying the skill path.
