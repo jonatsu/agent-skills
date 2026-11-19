@@ -8,7 +8,7 @@ Test behavior at the level where it must hold, not the implementation that deliv
 with real inputs and outputs, mocking only a genuine side-effect boundary such as a third-party service, the
 network, or the clock. Integration-test across real boundaries, and drive the whole path end to end for
 anything a user runs or calls. When a change crosses a boundary, write the integration or end-to-end test that
-covers it: a green unit suite over mocked boundaries says nothing about the wired system. Run each check across
+covers it. A green unit suite over mocked boundaries says nothing about the wired system. Run each check across
 all its affected files at once. Formatting, linting, and a green build do not prove behavior.
 
 ## How to Write a Test
@@ -20,9 +20,9 @@ fast, so the feedback loop stays tight. Set coverage goals by risk and rate of c
 percentage, and track the trend to catch a regression. Treat a green suite as a merge gate for production
 changes. Write suites that read as documentation of how the system behaves.
 
-Plan the scope up front, aligned with the requirements: separate what must be validated from how it is
+Plan the scope up front, aligned with the requirements. Separate what must be validated from how it is
 implemented, and include manual steps for a high-risk or UX-heavy change that automation does not cover. Hold
-each test to the standard of the code it guards: keep it simple, make it fail when the behavior breaks, and
+each test to the standard of the code it guards. Keep it simple, make it fail when the behavior breaks, and
 keep it quiet on unrelated changes. Change a test only when a requirement or independent evidence shows it
 wrong, and say why. When you change core logic, write the test first to pin the requirement. Report what you
 exercised and what you left uncovered. When verification is blocked, find another route, preserve the work, and

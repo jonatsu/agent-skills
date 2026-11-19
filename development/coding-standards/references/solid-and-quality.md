@@ -13,8 +13,8 @@ must absorb change without a rewrite.
 - Liskov Substitution: a subtype must stand in for its base type without surprising a caller.
 - Interface Segregation: prefer several small, specific interfaces over one broad interface a client only
   partly uses.
-- Dependency Inversion: depend on an abstraction, and let both the caller and the implementation depend on it,
-  rather than binding a high-level unit to a concrete low-level one.
+- Dependency Inversion: depend on an abstraction that both the caller and the implementation share, rather
+  than binding a high-level unit to a concrete low-level one.
 
 ## Refactoring Discipline
 

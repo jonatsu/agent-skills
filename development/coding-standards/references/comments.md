@@ -1,9 +1,9 @@
 # Commenting Standards
 
 A comment earns its place by carrying reasoning the code cannot show on its own. It explains why the code
-exists or behaves as it does: a constraint, a trade-off, a rejected alternative, a gotcha. It does not narrate
-what the code does or how it does it, which a fluent reader of the language already sees. Silence is the correct
-output when the code needs no comment, not a gap to fill.
+exists or behaves as it does: a constraint, a trade-off, a rejected alternative, a gotcha. It leaves what the
+code does and how it does it to the code, which a fluent reader of the language already sees. Silence is the
+correct output when the code needs no comment, not a gap to fill.
 
 Before writing a comment, ask whether a better name would remove the need. When it would, rename the variable,
 function, or constant instead. A comment is the fallback for reasoning that naming cannot carry.
@@ -56,8 +56,8 @@ one works.
 
 ## Annotations
 
-Use a labelled annotation for work left undone or a hazard, and name the condition that resolves it, so the
-note is actionable rather than a standing reminder:
+Use a labelled annotation for work left undone or a hazard. Name the condition that resolves it, so the note is
+actionable rather than a standing reminder:
 
 ```text
 TODO: replace with proper user authentication after the security review lands
@@ -81,13 +81,13 @@ SECURITY: validate this input against injection before it reaches the query
 A comment about the code beside it gets corrected by the next person editing that code. A comment about anything
 else rots silently, so avoid the forms that go wrong without anything failing:
 
-- Do not bake a current setting value into a comment. A retention window, port, size, or delay goes stale the
-  moment someone re-tunes the code. Describe the role and let the code be the source of truth for the number:
-  write "retention is tuned below", not "30-day retention".
-- Do not state a countable inventory of other files, such as "seven modules do X: a, b, c". Its truth changes
-  whenever any unrelated file changes, and a reader cannot tell a stale list from a current one. State the
-  predicate instead, such as "any module that reads X without a fallback", and let the reader derive the set.
-  This governs prose docs as much as comments.
+- Describe a setting's role and leave its current value to the code. A retention window, port, size, or delay
+  goes stale the moment someone re-tunes the code, so the code stays the source of truth for the number: write
+  "retention is tuned below", not "30-day retention".
+- State a predicate in place of a countable inventory of other files, such as "any module that reads X without a
+  fallback" in place of "seven modules do X: a, b, c". An inventory changes truth whenever any unrelated file
+  changes, and a reader cannot tell a stale list from a current one. The reader derives the set from the
+  predicate. This governs prose docs as much as comments.
 - State the configuration as it stands, not the debugging story that produced it. Once a bug is resolved,
   comment the resulting choice and why it holds, not the conflict you hit and worked around. The process belongs
   in version control, not the source.

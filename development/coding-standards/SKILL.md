@@ -11,7 +11,7 @@ metadata:
 Language-agnostic defaults for writing and changing code. Understand the code you change, and follow the
 repository's conventions and existing patterns before inventing replacements. Apply these defaults where a
 choice is undecided. Recommend a change to existing code only when incorrect behavior, a security flaw, or
-concrete reliability or maintenance harm supports it, not because a default differs.
+concrete reliability or maintenance harm supports it. A difference from a default is not enough.
 
 Preserve existing guarantees unless an authorized change requires otherwise. Keep each change cohesive and
 scoped, and write for the next reader: clarity over cleverness. Complexity is code a reader cannot grasp
@@ -53,18 +53,18 @@ language rule with a stronger convention wins.
 ## Types and Interfaces
 
 Make illegal states unrepresentable: let the type system reject invalid data instead of guarding against it at
-runtime. Model a constrained value as an enum or a newtype rather than a bare string, and reach for a
-discriminated union where a value carries a variant tag. In a typed language, annotate public signatures and
-boundaries, and let inference cover the obvious locals. Expose the smallest public API that meets the need, and
-default to private. Accept an interface or trait as a parameter, and return a concrete type. Depend on
-abstractions rather than concrete implementations at a module boundary. Treat an escape from the type system,
-such as `any`, an unchecked cast, or a suppressed checker error, as a cost to justify in a comment.
+runtime. Model a constrained value as an enum or a newtype rather than a bare string. Reach for a discriminated
+union where a value carries a variant tag. In a typed language, annotate public signatures and boundaries, and
+let inference cover the obvious locals. Expose the smallest public API that meets the need, and default to
+private. Accept an interface or trait as a parameter, and return a concrete type. Depend on abstractions rather
+than concrete implementations at a module boundary. Justify in a comment each escape from the type system, such
+as `any`, an unchecked cast, or a suppressed checker error.
 
 ## Code Organization
 
 Organize by feature or domain rather than by technical type, keep related code together, and let tests mirror
 the source tree. Treat the layout below as the softest default, the starting point when nothing more specific
-applies; a repository's own conventions, a framework's expected layout, or a language rule always win.
+applies. A repository's own conventions, a framework's expected layout, or a language rule always win.
 
 ```text
 src/
@@ -82,9 +82,9 @@ tests/
 
 Keep source files small and cohesive: roughly 200-400 lines, with ~800 as an upper limit. Past that limit,
 extract a module; keep a larger file only when it is one cohesive unit that resists division. Test files follow
-the same limits. The exception is bulk that is data rather than authored logic, such as generated code,
-snapshots, fixtures, vendored sources, or a large inline test corpus, where the size is content to store rather
-than code to read.
+the same limits. Bulk that is data rather than authored logic is the exception: generated code, snapshots,
+fixtures, vendored sources, or a large inline test corpus. There the size is content to store rather than code
+to read.
 
 ### Formatting
 
@@ -138,7 +138,7 @@ context, such as a `0` index or a `2` that halves. Name any literal that appears
 
 Read environment-specific or deployment-specific values, and secrets, from configuration or the environment. A
 single-file script or one-off utility needs no configuration surface, so name such values as constants at the
-top instead. Read a secret from the environment, never inline.
+top instead.
 
 When a routine rename or move forces edits to a tool's source or tests, the tool hardcodes identity that should
 be data. Make membership structural, such as a directory boundary, a configuration entry, or a descriptor, so the
@@ -163,10 +163,10 @@ and file content.
 
 Handle every error by class. Recover from what is absent or partial by falling back to a documented default.
 Fail closed on what is present but invalid: a wrong type, an out-of-range value, an unknown key. Name the
-offending key and the shape you expected. When you re-raise an error, add the context the caller lacks. Surface each
-failure where its user will see it, phrased so they can act on it, and record the technical detail where an
-operator can find it. In a CLI or other single-artifact tool, write a clear message to stderr and exit nonzero;
-in a service or UI, show a user-facing message and log the full context.
+offending key and the shape you expected. When you re-raise an error, add the context the caller lacks. Surface
+each failure where its user will see it, phrased so they can act on it. Record the technical detail where an
+operator can find it. In a CLI or other single-artifact tool, write a clear message to stderr and exit nonzero.
+In a service or UI, show a user-facing message and log the full context.
 
 When you ship a deliverable product or application rather than a scratch script, make its behavior configurable
 and treat the configuration schema as an interface: document every option and its default, and validate it on
