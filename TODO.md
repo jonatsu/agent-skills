@@ -410,6 +410,14 @@ folder, the `name` field, every pointer from other skills, and the installing co
 name, so tell the agent-setup session in the same hand-off. Search the whole repository for the old name and sort
 mentions of the skill from the word in ordinary prose before committing.
 
+## Worked Example for `test-engineer`
+
+`test-engineer` has no worked example: its strategy reference teaches by rule alone, and its deliverable template
+is an empty skeleton. Take the example from a real testing engagement, never an invented one, because an invented
+example shows the format without showing the method works on a real system. When such an engagement happens, carry
+one behavior through risk, level, size, oracle, taxonomy sweep, and non-goal, in about 25 lines in
+`references/test-strategy.md`. Public `test-engineer` skills have no worked example to borrow either.
+
 ## Unevaluated Candidate Sources
 
 Recorded and never fetched, read, or license-checked. The descriptions are path-based inferences, not evidence.
