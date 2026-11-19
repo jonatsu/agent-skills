@@ -36,6 +36,19 @@ Repository inspection may settle implementation-local facts and ordinary techniq
 and local conventions. A public-behavior, compatibility, material-cost, or architecture decision stays with design even
 when inspection could answer it.
 
+Check that the basis names the work's goals and a success signal for the result as a whole. A request that already
+states its outcome supplies the goal; confirm it with the user rather than asking them to restate it. When a design
+gives no success signal, return that gap to `technical-design`. When project goals exist, the plan's goals stay inside
+them; when the plan covers most of what its project is for, point to the project goals and add only the plan's own.
+
+When the work belongs to a project, repository, or component with no stated goals, propose setting them with
+`define-goal`, and say what the work gains. When the work may stand alone, such as a one-off task, ask once whether it
+belongs to something lasting. When the user declines, record the decline in the plan, and do not propose it again for
+this work.
+
+On an unattended run, nobody can answer a proposal. Make the reversible choice yourself and record it in the ledger as
+a judgment call, or park the question there when only the user can answer it.
+
 ### Route Design Gaps Back
 
 For each gap, record what is missing, its downstream consequence, and the design section or owner that must resolve
@@ -80,6 +93,14 @@ Size work units by independently verifiable outcome. Prefer a vertical slice tha
 foundation unit only when it establishes a meaningful contract or seam and has useful verification of its own. Split
 further when risk, reviewability, or repository workflow requires it, never by duration or file count. A unit whose
 title needs an "and", or that spans two independent subsystems, is two units.
+
+Every milestone or phase traces to a goal or the success signal and carries a done criterion: measurable, or a named
+person's judgment where no honest metric exists. That includes a later milestone that is named but not yet planned. A
+criterion not known yet is an open item in the plan, never silence.
+
+Judge each unit's extent. For a unit large or uncertain enough that its outcome could drift, propose a sub-goal and a
+success signal for it. A small unit with an obvious result needs only its completion evidence. Size this to the plan:
+a short plan whose units are all small carries no sub-goals.
 
 Order units by dependency and risk rather than imposing universal phases. Parallel work requires disjoint ownership or
 an accepted stable interface. Keep shared files, generated artifacts, and dependency-ordered changes with one owner.
