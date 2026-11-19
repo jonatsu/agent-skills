@@ -12,7 +12,7 @@ Execute an accepted plan as working software, one verified slice at a time, so a
 that caused it rather than in a pile of untested changes.
 
 Take slice boundaries from the plan. When none exists, size each slice by a single observable outcome, such as
-one endpoint, one component, or one migration, and decompose a larger unit with `implementation-planning`
+one endpoint, one component, or one migration. Decompose a larger unit with `implementation-planning`
 before starting. This skill governs how you land a slice, not how you choose it.
 
 Before starting, judge the extent of the work and of each slice. A slice may come without a sub-goal or success
@@ -22,51 +22,51 @@ an unattended run, set them yourself and record each one in the ledger as a judg
 
 ## Know What Done Means
 
-The work is done when every slice has landed green and, where a spec, technical design, or implementation plan
-governs it, a separately dispatched conformance review against those documents finds no material mismatch. A
-plan from `implementation-planning` already schedules that review as its final gate; this covers the plan-less
-path too. Skip it only with a stated reason, or at the user's direction.
+The work is done when every slice has landed green. Where a spec, technical design, or implementation plan
+governs it, done also requires a separately dispatched conformance review against those documents that finds no
+material mismatch. A plan from `implementation-planning` already schedules that review as its final gate; this
+covers the plan-less path too. Skip it only with a stated reason, or at the user's direction.
 
-Dispatch the review after the last slice lands, to a fresh subagent or review lane whose brief names
+Dispatch the review after the last slice lands. Send it to a fresh subagent or review lane whose brief names
 `conformance-review` and supplies each governing document with its revision and the delivered change. The
 code reviewer judges correctness and stays on that job. Fix a mismatch in the code as a new slice, then rerun the
 review. Report a mismatch that needs a document changed to that document's owner instead of editing it.
 
-For a long or unattended run, set the finish line first with `define-goal`, which writes this closing check into
-the goal so the harness re-sends it at every stop.
+For a long or unattended run, set the finish line first with `define-goal`. It writes this closing check into
+the goal, so the harness re-sends it at every stop.
 
 ## Run the Increment Cycle
 
 Land one slice at a time, and finish each before starting the next:
 
 1. **Implement** the smallest slice that produces a complete, observable behavior.
-2. **Verify** it with the repository's own commands, such as tests, build, type check, and lint, running each
+2. **Verify** it with the repository's own commands, such as tests, build, type check, and lint. Run each
    only where a change since its last run could affect its result. Add a test when the behavior has none (see
    `test-driven-development`).
 3. **Commit** the verified slice as one logical change, with a message describing it, where commits are
-   authorized; otherwise leave it as one reviewable, checkpointed unit.
+   authorized. Otherwise leave it as one reviewable, checkpointed unit.
 4. **Carry forward** to the next slice, and revisit a landed one only with cause.
 
 Verify each slice before writing the next: a bug carried past its slice makes every later slice suspect and hides
 which change caused it.
 
-Beyond the review stages the plan places, judge from the code's complexity and the project's size when a
-maintainability review should run beside the correctness review, such as `clean-code-reviewer` beside
-`code-reviewer`, and ask the user for a ruling when unsure. Fold its findings in before the next slice builds on
+Beyond the review stages the plan places, decide from the code's complexity and the project's size whether a
+maintainability review should join the correctness review. An example is `clean-code-reviewer` beside
+`code-reviewer`. Ask the user for a ruling when unsure. Fold its findings in before the next slice builds on
 the code. A correctness review alone misses the naming, placement, and comments that make the next change hard to
 find.
 
 ## Keep Every Slice Landable
 
-- **Green between slices.** After each slice the project builds and existing tests pass, because another
+- **Green between slices.** After each slice the project builds and existing tests pass. Another
   session, or your own next step, inherits whatever state a stopping point leaves.
 - **One logical change per commit.** Keep a refactor, a feature, and a config change in separate commits. A
   mixed commit hides bugs and turns a revert into an all-or-nothing choice.
 - **Flag incomplete work rather than withholding it.** When a feature needs more slices than one merge should
-  expose, merge it behind a default-off flag instead of holding a long-lived branch, so incomplete work reaches
+  expose, merge it behind a default-off flag instead of holding a long-lived branch. Incomplete work then reaches
   the main line without becoming user-visible.
 - **Build for reversibility.** Prefer additive changes; they revert cleanly. Keep a modification to existing
-  code minimal and focused, pair a schema migration with its rollback, and put a deletion and its replacement
+  code minimal and focused, and pair a schema migration with its rollback. Put a deletion and its replacement
   in separate commits, so either half reverts alone.
 - **Default to safe.** New behavior takes the conservative default; anything risky or destructive is opt-in.
 
