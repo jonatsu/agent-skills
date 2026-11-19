@@ -398,6 +398,18 @@ if it is, use Vale rather than writing a measurer here.
 Decided on 2026-11-19: the user chose option 1. Option 3 stays open until measuring the skills' own sentences is
 wanted.
 
+## Rename the Single-Word Skills
+
+Three skills have a single-word name: `accessibility`, `usability`, and `autopilot`. `skill-forge` now asks for a
+qualified, multi-word name, because agents see every skill in one flat list without its group folder, and a common
+word makes every search for the skill also match ordinary prose. The user agreed on 2026-11-19 that a rename should be
+considered.
+
+For each skill, propose a multi-word name that says what it does, and let the user choose. A rename then changes the
+folder, the `name` field, every pointer from other skills, and the installing configuration, which selects skills by
+name, so tell the agent-setup session in the same hand-off. Search the whole repository for the old name and sort
+mentions of the skill from the word in ordinary prose before committing.
+
 ## Unevaluated Candidate Sources
 
 Recorded and never fetched, read, or license-checked. The descriptions are path-based inferences, not evidence.
