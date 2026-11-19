@@ -1,8 +1,4 @@
-# Tool Library Handoff Fixture
+# Neighbourhood Tool Library
 
-This fixture is a disposable repository for the `handoff-fidelity` behavioral case. An evaluation runner copies the
-directory to a fresh temporary workspace for every candidate and baseline run. It may write only
-`docs/plans/tool-library-draft.md`, inspect that artifact and its execution trace, then delete the workspace.
-
-The fixture remains unchanged. It gives the run a documented draft convention and a governing overview. The saved draft
-cannot alter the source repository or another case's state.
+Planning documents for a neighbourhood tool library. The overview in `docs/plans/tool-library-overview.md` states
+what the initiative is for, and drafts for later design work sit beside it in `docs/plans/`.

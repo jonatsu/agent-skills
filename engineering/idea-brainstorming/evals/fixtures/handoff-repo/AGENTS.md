@@ -1,6 +1,6 @@
-# Evaluation Fixture Instructions
+# Repository Instructions
 
-This repository stores plan and design drafts in `docs/plans/`. The governing overview for this evaluation is
-`docs/plans/tool-library-overview.md`.
+This repository holds planning documents only. Plan and design drafts live in `docs/plans/`, and the governing
+overview for the tool library is `docs/plans/tool-library-overview.md`.
 
-The handoff evaluation may create one descriptive `docs/plans/*-draft.md` file. Do not write any other file.
+Save a draft as one descriptive `docs/plans/<topic>-draft.md` file, and change no other file.
