@@ -49,7 +49,7 @@ parsing, sequencing and retries, cache invalidation, anything with a clock or a 
 author wrote.
 
 Blast radius rises with: data loss or corruption, security and authorization, money, silent wrongness (the
-worst class - it has no alarm), cross-tenant leakage, irreversibility, and how many downstream consumers trust
+worst class, because it has no alarm), cross-tenant leakage, irreversibility, and how many downstream consumers trust
 the output.
 
 Rank the list and put the ranking in the deliverable. A ranked list survives a budget cut; an unranked one
@@ -58,23 +58,23 @@ gets truncated arbitrarily at whatever point the team ran out of time.
 ## Step 3: Allocate levels
 
 For each behavior, the deciding question is: **what would this level catch that the cheaper level below it
-cannot?** No answer means do not test it there.
+cannot?** No answer means the behavior does not belong at that level.
 
 | Level                 | Buys                                                             | Costs                                 | Use when                                                                    |
 | --------------------- | ---------------------------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------- |
 | Unit                  | Fast, precise localization, exhaustive input coverage            | Proves nothing about wiring           | Logic with real branching, algorithms, parsers, calculations                |
-| Integration           | Real collaborator behavior - schema, transaction, serialization  | Slower, needs setup                   | Anything crossing a persistence, network, or process boundary               |
+| Integration           | Real collaborator behavior: schema, transaction, serialization   | Slower, needs setup                   | Anything crossing a persistence, network, or process boundary               |
 | Contract              | Both sides of an interface stay compatible, tested independently | Needs a shared artifact               | Services or teams that deploy separately                                    |
 | End-to-end            | The assembled system actually starts and serves                  | Slowest, flakiest, worst localization | A handful of critical user journeys, and the smoke path                     |
 | Property-based        | Whole input classes at once; finds inputs nobody imagined        | Needs an invariant worth stating      | Round-trips, encoders, sorting, idempotency, anything with an algebraic law |
 | Manual or exploratory | Judgment, aesthetics, and the unknown-unknowns                   | Not repeatable, not a gate            | Usability, visual output, first pass on a novel area                        |
 
 **Size is a second axis, and it is not the same question as level.** Level asks how much of the system is
-exercised; size asks what the test is allowed to *touch* - small (one process, no network, no disk, no
+exercised. Size asks what the test is allowed to *touch*: small (one process, no network, no disk, no
 sleeping), medium (one machine: localhost, a temp dir, a local database), large (several machines or a real
 external system). The two are independent: an integration test can be small, a unit test that reaches a shared
-fixture on disk is not. Record both, because size - not level - decides whether a test can run in a fast
-hermetic parallel shard, and it is the axis a slow suite is usually failing on. (The small/medium/large
+fixture on disk is not. Record both, because size, not level, decides whether a test can run in a fast
+hermetic parallel shard. It is the axis a slow suite is usually failing on. (The small/medium/large
 framing is from *Software Engineering at Google*, ch. 11.)
 
 Rules that resolve most arguments:
@@ -86,7 +86,7 @@ Rules that resolve most arguments:
 
 ### Making the exploratory row actionable
 
-"Manual or exploratory" in the table above is a real allocation, not a shrug - but it only produces findings
+"Manual or exploratory" in the table above is a real allocation, not a shrug, but it only produces findings
 if it is chartered. An uncharted session is browsing, and it reports as "looked fine".
 
 A charter is four lines, written before the session starts:
@@ -95,15 +95,15 @@ A charter is four lines, written before the session starts:
 - **With** the data, roles, tools, or conditions to use.
 - **To discover** the class of problem being hunted: crashes, wrong output, confusing states, missing
   feedback, unhandled input.
-- **Timebox** decided up front, never when interest runs out.
+- **Timebox** decided up front, not when interest runs out.
 
-The session's output is notes, not a verdict: what was covered, what was NOT reached, bugs found, questions
-raised. Do not report a charter as a gate: it is not repeatable, so nothing regressed when it stops
-passing, and treating it as one launders judgment into evidence.
+The session's output is notes, not a verdict: what was covered, what was not reached, bugs found, questions
+raised. Report a charter as notes, never as a gate: it is not repeatable, so nothing regressed when it stops
+passing, and treating it as a gate launders judgment into evidence.
 
-Allocate exploratory time when novelty, ambiguity, or residual high risk makes it valuable. Charter it rather
-than browsing: exploratory testing can find a problem nobody thought to specify, but it is not required for a
-fully specified, low-risk change.
+Allocate exploratory time when novelty, ambiguity, or residual high risk makes it valuable. Exploratory
+testing can find a problem nobody thought to specify, but it is not required for a fully specified, low-risk
+change.
 
 ## Step 4: Choose an oracle for each
 
@@ -120,16 +120,16 @@ looks complete and produces assertion-free tests.
 | Error contract       | Specific type, code, and message shape                     | Every failure path worth naming                                                        |
 
 An oracle that only asserts "did not throw" is not an oracle, and neither is a status code. `200` says the
-request was handled, never that the payload is right - pair it with a shape check (schema, contract, or
-named-field assertions) or the response can change past recognition without failing a test.
+request was handled, not that the payload is right. Pair it with a shape check (schema, contract, or
+named-field assertions), or the response can change past recognition without failing a test.
 
 ## Step 5: Sweep the coverage taxonomy
 
 Walk this list per high-risk behavior rather than recalling edge cases freely. Recall reliably misses
-whole categories; a sweep makes the misses deliberate. Most entries will not apply - say so and move on.
+whole categories; a sweep makes the misses deliberate. Most entries will not apply; say so and move on.
 
 - **Equivalence classes**: partition the input domain, one representative per class.
-- **Boundaries**: at, either side of, and beyond every limit - 0, 1, n, n+1, empty, single, max, overflow.
+- **Boundaries**: at, either side of, and beyond every limit: 0, 1, n, n+1, empty, single, max, overflow.
 - **Null and absence**: null, undefined, empty string, empty collection, missing field, explicit null vs
   absent.
 - **Type and shape**: wrong type, extra fields, unicode, very long, control characters, malformed encoding.
@@ -155,9 +155,8 @@ whole categories; a sweep makes the misses deliberate. Most entries will not app
 
 ## Step 6: Record testability blockers
 
-When a behavior cannot be tested at the level its risk demands, that is a finding for the implementation lane.
-Report a testability blocker and leave the fix to the implementation lane. Name the blocker, the change that
-would unblock it, and who owns it.
+When a behavior cannot be tested at the level its risk demands, that is a finding for the implementation lane,
+which owns the fix. Name the blocker, the change that would unblock it, and who owns it.
 
 Usual suspects: a clock read inline instead of injected, randomness with no seed, global or static mutable
 state, network or filesystem calls buried in a constructor, no seam between decision and side effect, a
@@ -173,8 +172,8 @@ answer. "Not tested" with a reason is a decision; "not tested" silently is a hol
 
 ## Suite health rules
 
-Carry the Suite Health Rules in `SKILL.md` into the plan: they decide whether the suite is still trusted a year
-later, and a plan that ignores them schedules flaky, order-dependent, or mock-only tests.
+Carry the Suite Health Rules in `SKILL.md` into the plan. They decide whether the suite is still trusted a year
+later; a plan that ignores them schedules flaky, order-dependent, or mock-only tests.
 
 ## Deliverable template
 
