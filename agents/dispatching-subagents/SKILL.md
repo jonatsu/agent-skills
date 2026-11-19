@@ -38,7 +38,15 @@ The split is done when every lane has a boundary no other lane crosses and every
 
 Default to one lane at a time. Run lanes in parallel only when they passed the independence test and each is
 cheap; the harness configuration sets the ceiling, so stay under it rather than assuming a number. Send parallel
-dispatches together in one turn so they run concurrently.
+dispatches together in one turn so they run concurrently. For research, send a second wave of lanes rather
+than a wider first one.
+
+When the user asks for speed on several independent plan units, batch builders in parallel even when they are
+not cheap, within the harness ceiling. Keep the shared files yourself, such as registries, settings, and
+migration tables, and wire in the snippets each builder returns. Brief each builder to point every install path
+at a temporary target, because a probe install can write the real home directory. One scoped review and one live
+check cover the batch, and each unit keeps its own commit. The batch is done when its live check passes, because
+green suites have missed defects that only the live check found.
 
 Own the only orchestration layer. A lane does its task itself and dispatches no subagents or reviewers of its
 own; review comes from you, after it reports. While a lane runs, do other work, never the lane's own task.
