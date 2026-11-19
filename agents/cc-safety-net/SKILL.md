@@ -78,7 +78,10 @@ those only as part of a workflow below.
    reason. `explain` exits 0 for both allowed and blocked verdicts; read the verdict from the
    output, not the exit status.
 4. Report the reason in plain language. For a genuine hazard, suggest the safer alternative the
-   reason names, such as `git stash` before `git reset --hard`.
+   reason names, such as `git stash` before `git reset --hard`. When the blocked command was deleting a
+   tracked file that has local changes (`git.rm-force`, or `git.restore-unstaged` for `git restore`), show
+   `git diff -- <path>` and ask whether those changes may go. Once the user confirms, run
+   `git rm --cached <path>`, then `rm` the file by name.
 
 ## Triage a false positive
 
