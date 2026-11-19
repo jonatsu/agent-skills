@@ -16,8 +16,9 @@ decides which:
   state, retrofit, or tidy a project's goals or purpose, whether the project is new or already exists. Read
   [references/project-goals.md](references/project-goals.md) and follow it; the rest of this file covers run
   goals only.
-- **Run goals** set the finish line for one agent run and arm it in the harness's goal loop, so work continues
-  until the evidence exists. Use this mode for a goal, objective, or autopilot run. In the engineering pipeline
+- **Run goals** set the finish line for one task or agent run and arm it in the harness's goal loop, so work
+  continues until the evidence exists. Use this mode for a goal, objective, or autopilot run, including a one-off
+  task that belongs to no project. In the engineering pipeline
   it follows `implementation-planning` and precedes `incremental-implementation`; for a bounded request with no
   plan, it is the whole of the preparation.
 

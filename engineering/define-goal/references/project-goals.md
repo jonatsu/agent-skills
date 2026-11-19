@@ -4,6 +4,9 @@ Project goals say where a whole project is going: why it exists, what success lo
 not do. They bind every session's work on scope and purpose, they change only when the owner decides, and they last
 as long as the project. Read this file when a user wants to set up, state, retrofit, or tidy a project's goals.
 
+Project goals are for something that lasts, such as a repository, a tool, or a component that keeps being developed.
+A task's goal, such as one autopilot run's, is a run goal; see the run-goal sections of `SKILL.md`.
+
 ## Contents
 
 - What the goals always record
@@ -47,6 +50,9 @@ feature must keep. An exploratory or research workspace often has a concrete pri
 secondary one, and may leave the approach open on purpose. Personal infrastructure needs what must keep working and
 how much upkeep is acceptable.
 
+When the confirmed goals reach beyond what the project's name says, or fall well short of it, raise renaming as a
+question. The name is the user's decision.
+
 Mark each item as the user's decision, inferred from named evidence, or your recommendation; only the user's
 decisions become goals. Ask one consequential question at a time, with your recommended answer, and keep the
 other open items as a short list for later turns. The user is often deciding the project's direction while
@@ -69,6 +75,13 @@ Resolve where the goals live, in this order:
 No fixed name is required: "goals", "purpose", or "product" can all fit. Keep one full copy. When the goals are
 already stated in more than one place, show where the copies disagree, ask which version holds, and propose one
 owner with a pointer from the other files.
+
+When the goals cover one component of a larger repository, keep them with the component, such as in its README, and
+have the repository's `AGENTS.md` point to them. The repository's own goals, where they exist, bound the component's.
+
+A spec, design, or plan keeps its own narrower goals and points to the project goals rather than restating them. When
+the work covers most of what the project is for, the shared part stays here, and the work's document adds only its
+own goals and milestones.
 
 ## Wire Them In
 
