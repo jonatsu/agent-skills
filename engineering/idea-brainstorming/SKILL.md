@@ -33,8 +33,12 @@ After a direction starts to narrow, check whether its goal describes an observab
 an activity from available context when the interpretation is well supported and reversible. Ask one consequential
 question when the missing outcome could change the product direction.
 
-Identify one observable success signal before the next-phase handoff. Use a binary observation or human judgment when
-honest measurement is unavailable. Quantify only when the metric, method, and threshold represent genuine success.
+Judge from the context whether the brainstorm is heading to a next stage, such as a spec, design, or plan. When it is,
+propose the work's goals and one observable success signal to the user before the handoff, sized to the work: on a
+small direction they are one line, set in one exchange. The success signal may stay provisional at this stage; label it
+so in the draft. Use a binary observation or human judgment when honest measurement is unavailable, and quantify only
+when the metric, method, and threshold represent genuine success. A brainstorm that is not meant to become further work
+needs none of this.
 
 Ask one consequential question at a time. Use bounded options when they reveal the decision; use an open question when
 options would constrain the idea. A response that asks for user input ends with exactly one question. Keep any other
@@ -92,19 +96,29 @@ revised intent.
 ## Draft and Handoff
 
 Synthesize an explicitly incomplete draft when the intended outcome, promising direction, scope, consequential
-constraints, observable success signal, and open questions can each be written in one sentence without guessing. It
+constraints, goals, success signal, and open questions can each be written in one sentence without guessing. It
 should let a spec writer or technical designer continue without reconstructing the conversation or inventing purpose or
 scope.
 
 Record the original idea, purpose, intent, desired outcome, branches considered, current direction, scope, exclusions,
-parked ideas, consequential constraints and assumptions, observable success signal, bounded questions for the spec or
-technical design, and whether each item is a user decision, recommendation, or provisional idea. Record consequential
-prohibited outcomes when they define success. Add actors, prior art, detailed measurements, or rejected alternatives
-only when they help the later reader.
+parked ideas, consequential constraints and assumptions, goals, success signal and whether it is provisional,
+bounded questions for the spec or technical design, and whether each item is a user decision, recommendation, or
+provisional idea. Record consequential prohibited outcomes when they define success. Add actors, prior art, detailed
+measurements, or rejected alternatives only when they help the later reader.
 
 When the work advances a larger initiative or a project with stated goals, reference that governing overview near the
 beginning of the saved draft and state how the selected direction advances that intent. When the direction weakens the
-governing intent, revise it with the user before any handoff.
+governing intent, revise it with the user before any handoff. When the draft covers most of what its project is for,
+keep the shared goals once, in the project goals, and let the draft point there and add only its own.
+
+When the direction belongs to a project, repository, or component with no stated goals, propose setting them with
+`define-goal`, and say what the work gains. When the work may stand alone, such as a one-off task, ask once whether it
+belongs to something lasting. When the work will run unattended or as a goal-backed run, propose `define-goal` for its
+run goal, whether or not a project exists. When the user declines either, record the decline in the draft, and do not
+propose it again for this work.
+
+On an unattended run, nobody can answer a proposal. Make the reversible choice yourself and record it in the ledger as
+a judgment call, or park the question there when only the user can answer it.
 
 Keep the draft free of unearned detailed requirements, architecture, interfaces, schemas, file layouts, failure
 handling, and task breakdowns. An early technical direction is allowed only when it is marked provisional.
