@@ -50,6 +50,12 @@ Land one slice at a time, and finish each before starting the next:
 Verify each slice before writing the next: a bug carried past its slice makes every later slice suspect and hides
 which change caused it.
 
+Beyond the review stages the plan places, judge from the code's complexity and the project's size when a
+maintainability review should run beside the correctness review, such as `clean-code-reviewer` beside
+`code-reviewer`, and ask the user for a ruling when unsure. Fold its findings in before the next slice builds on
+the code. A correctness review alone misses the naming, placement, and comments that make the next change hard to
+find.
+
 ## Keep Every Slice Landable
 
 - **Green between slices.** After each slice the project builds and existing tests pass, because another
