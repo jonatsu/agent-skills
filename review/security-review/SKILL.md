@@ -119,6 +119,12 @@ For secret scanning, prefer `betterleaks` over `gitleaks` where both are availab
 credential into the tree to prove that a scanner fires; a scanner that is silent on a planted key has told you
 nothing useful, and the planted key outlives the test.
 
+Gitleaks has reported a clean history where betterleaks found secrets, and it prints "0 commits scanned" even
+while it scans. To prove the scanner runs at all, scan a synthetic GitHub token (`ghp_` plus 36 alphanumerics)
+in a scratch directory outside the tree. A bare AWS key ID makes a misleading control: betterleaks reports one
+only beside a secret access key, and it filters values that end in `EXAMPLE`. A rule's pattern does not show
+what the scanner reports, so confirm against the binary.
+
 Where you cannot run a configured check, say which one and why under Coverage Limits. Do not present a review
 as complete when this step was skipped.
 
