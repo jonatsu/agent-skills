@@ -36,10 +36,6 @@ When the type is unclear, ask. Default to the generic `assets/README.template.md
 license text are maintained in `CONTRIBUTING.md` and `LICENSE`; restating them here creates two copies that
 drift.
 
-This matrix says which sections a type needs. It does not say how to make the result good: for the hook, the
-ordering, what evidence earns a place above the fold, and when a section should be cut, apply
-`writing-readmes`. For prose quality inside whichever template you pick, apply `writing-for-humans`.
-
 ## Provenance
 
 The project-type taxonomy, section matrix, and audience templates are adapted (MIT) from
