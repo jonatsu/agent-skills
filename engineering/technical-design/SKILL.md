@@ -18,6 +18,21 @@ Read the governing spec, project goals, overview or idea-brainstorming draft, re
 implementation, tests, interfaces, operations, and prior decisions before asking questions. Recover facts from those
 sources instead of asking the user to repeat them.
 
+State the design's success signal for the system as a whole and trace it to the work's goals. Make it measurable, or
+name whose judgment decides it. A request that already states its outcome supplies the goal; confirm it with the user
+rather than asking them to restate it. When the basis carries no goals, set them with the user before designing past the
+basis. Size this to the work: on a small change, the goals and success signal are one line, set in one exchange. When
+project goals exist, the design's goals stay inside them; when the design covers most of what its project is for, point
+to the project goals and add only the design's own.
+
+When the work belongs to a project, repository, or component with no stated goals, propose setting them with
+`define-goal`, and say what the work gains. When the work may stand alone, such as a one-off task, ask once whether it
+belongs to something lasting. When the user declines, record the decline in the design basis, and do not propose it
+again for this work.
+
+On an unattended run, nobody can answer a proposal. Make the reversible choice yourself and record it in the ledger as
+a judgment call, or park the question there when only the user can answer it.
+
 Technical design may start from:
 
 - an accepted spec with settled observable behavior and acceptance;
