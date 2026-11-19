@@ -211,7 +211,8 @@ Open sub-question: whether tightening `allowed-tools` rides along with this or s
 
 ## Check the agent-setup Evaluation Harness
 
-agent-setup builds the evaluation harness that will run this repository's eval cases. Check its progress whenever
+agent-setup builds the evaluation harness, `agent-eval-tool` in `src/tools/agent-eval-tool/`, that will run this
+repository's eval cases. Check its progress whenever
 evaluation work starts here, and at least monthly, in the status line of
 `docs/plans/evaluation/skill-evaluation-redesign.md` there. Once the harness runs, move this repository's
 evaluations onto it and stop running them by hand.
