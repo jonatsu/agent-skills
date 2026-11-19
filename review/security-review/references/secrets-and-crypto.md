@@ -10,23 +10,23 @@ Report the location and the credential type. Never copy the value into a report,
 a chat message.
 
 Look beyond source files. Credentials collect in lockfiles and dependency URLs, container image layers and
-build arguments, CI configuration and workflow files, editor and tool configuration, test fixtures and
-recorded HTTP interactions, notebooks, and infrastructure state files. A state file that a provisioning tool
-writes commonly holds every secret the deployment uses in plaintext.
+build arguments, and CI configuration and workflow files. They also collect in editor and tool configuration,
+test fixtures and recorded HTTP interactions, notebooks, and infrastructure state files. A state file that a
+provisioning tool writes commonly holds every secret the deployment uses in plaintext.
 
 Distinguish a real credential from a placeholder before flagging. Sample environment files, documentation, and
-obvious dummy values are not findings. Vendor keys intended to be public are not findings either; confirm that
-against the vendor's documentation rather than against the variable name, because a publishable key and a
-secret key often differ by one word.
+obvious dummy values are not findings. Vendor keys intended to be public are not findings either. Confirm that
+against the vendor's documentation, not the variable name. A publishable key and a secret key often differ by
+one word.
 
 Run the secrets scanner the project configures, under the tooling rules in step 6 of `SKILL.md`.
 
 ## Secret Handling at Runtime
 
 Configuration supplied by the environment or by a secret manager is the baseline. Beyond that, check that
-secrets are not passed as command-line arguments where the process table exposes them, not written to logs or
-crash reports, not embedded in URLs where proxies and history retain them, and not returned by a diagnostic or
-health endpoint.
+secrets are not passed as command-line arguments where the process table exposes them. Check that they are not
+written to logs or crash reports. Check that they are not embedded in URLs where proxies and history retain
+them. Check that no diagnostic or health endpoint returns them.
 
 Ask whether the system can rotate a credential without redeployment, and whether anything caches a secret past
 its rotation.
@@ -59,8 +59,8 @@ Specific constructions worth checking:
 - key material generated or stored alongside the data it protects, so a single read compromises both; and
 - certificate or hostname verification disabled, which is usually a development workaround that shipped.
 
-Do not write a cryptographic primitive by hand, and treat any hand-rolled construction in review as a finding
-in its own right regardless of whether you can break it.
+Use an established library rather than a hand-written cryptographic primitive. Treat any hand-rolled
+construction in review as a finding in its own right, regardless of whether you can break it.
 
 ## Transport and Storage
 
@@ -80,12 +80,12 @@ what limits a database compromise, and it costs queryability.
 Identify what the system stores about people, then check three things: whether it needs to store it, how long
 it keeps it, and who can read it.
 
-In logs and telemetry, check that authentication material, tokens, session identifiers, full payment data,
-government identifiers, and request bodies that carry any of these are redacted before they are written.
+Check that logs and telemetry redact authentication material, tokens, session identifiers, full payment data,
+and government identifiers before writing them. Check the same for request bodies that carry any of these.
 Redaction has to happen at the logging boundary. A rule that depends on every call site remembering will be
 wrong somewhere.
 
 Errors are the other leak, and `logic-and-availability.md` covers the failure path itself.
 
-Also check what the system sends outward: crash reporters, analytics, error trackers, and support tooling all
+Also check what the system sends outward. Crash reporters, analytics, error trackers, and support tooling all
 receive whatever the request context carried unless something strips it.

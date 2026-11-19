@@ -41,14 +41,14 @@ Look specifically for:
 - stored procedures that themselves build dynamic SQL.
 
 For document stores, the injection is usually structural rather than lexical. When a request body deserializes
-straight into a query filter, the attacker supplies operators instead of values and turns an equality check
+straight into a query filter, the attacker supplies operators instead of values. That turns an equality check
 into a comparison or a regular expression. Coerce each field to its expected scalar type before it reaches the
 query, and reject operator keys.
 
 ## Operating System Commands
 
-Prefer a library call to a subprocess. When a subprocess is genuinely required, pass an argument vector and do
-not involve a shell. A shell string built from user input is a critical defect regardless of the escaping
+Prefer a library call to a subprocess. When a subprocess is genuinely required, run the program directly with
+an argument vector. A shell string built from user input is a critical defect regardless of the escaping
 applied.
 
 Argument-vector execution is necessary but not sufficient. Also check:
@@ -66,29 +66,29 @@ Argument-vector execution is necessary but not sufficient. Also check:
 Traversal is not solved by rejecting `..`. Encodings, alternate separators, Unicode normalization, and
 symbolic links all reintroduce it.
 
-The reliable sequence is to reject absolute paths and drive letters, join the candidate to the base directory,
-resolve the result fully with symlinks followed, and then verify that the resolved path is still inside the
-resolved base. Reject anything else. Where the identifier need not be a path at all, prefer an opaque
-identifier mapped server-side to a stored location.
+The reliable sequence starts by rejecting absolute paths and drive letters. Join the candidate to the base
+directory, and resolve the result fully with symlinks followed. Then verify that the resolved path is still
+inside the resolved base. Reject anything else. Where the identifier need not be a path at all, prefer an
+opaque identifier mapped server-side to a stored location.
 
-For archives, apply the same containment check to every member before extraction, and reject entries that are
-absolute, that traverse upward, that are symbolic or hard links, or that expand far beyond their compressed
+For archives, apply the same containment check to every member before extraction. Reject absolute entries,
+entries that traverse upward, symbolic or hard links, and entries that expand far beyond their compressed
 size.
 
 ## Uploads and Stored Files
 
 An upload is untrusted content and an untrusted name, and the two fail differently.
 
-The name must never become the storage path. Generate the stored name server-side, keep the submitted name as
-a display label only, and apply the containment check above if any part of the submitted name reaches the
-filesystem. A name can also carry a traversal sequence, a null byte, a leading dash, a reserved device name,
-or a right-to-left override that disguises the extension.
+The submitted name must never become the storage path. Generate the stored name server-side and keep the
+submitted name as a display label only. Apply the containment check above if any part of the submitted name
+reaches the filesystem. A name can also carry a traversal sequence, a null byte, a leading dash, or a reserved
+device name. It can also carry a right-to-left override that disguises the extension.
 
 The content must be identified by inspection rather than by declaration. The submitted content type and the
 extension are both attacker-supplied. Determine the type from the bytes, then check it against an allowlist of
-permitted types, and reject anything else rather than trying to repair it. A file that passes as one type and
-parses as another is the polyglot case, and the defence is to re-encode or transform the file rather than to
-store what arrived.
+permitted types. Reject anything else rather than trying to repair it. A file that passes as one type and
+parses as another is the polyglot case. The defence is to re-encode or transform the file rather than to store
+what arrived.
 
 Then check where the file lands and what reads it:
 
@@ -108,12 +108,13 @@ for any of the above.
 
 ## Mass Assignment
 
-Binding a request body straight onto a persisted object lets the caller set fields the form never showed:
-a role, an owner, a tenant, a price, a verified flag, an identifier. The defect is the binding, not the field.
+Binding a request body straight onto a persisted object lets the caller set fields the form never showed.
+Examples are a role, an owner, a tenant, a price, a verified flag, and an identifier. The defect is the
+binding, not the field.
 
-Bind to an explicit allowlist of the fields the operation may change, and prefer a separate input type over
-the persistence type so that adding a column cannot silently widen the interface. A denylist of protected
-fields fails on the next field somebody adds.
+Bind to an explicit allowlist of the fields the operation may change. Prefer a separate input type over the
+persistence type, so that adding a column cannot silently widen the interface. A denylist of protected fields
+fails on the next field somebody adds.
 
 ## Server-Side Request Forgery
 
@@ -125,12 +126,13 @@ Blocklists of private ranges fail. DNS resolves to a private address after the c
 request to a new host, and alternate address encodings evade string comparison.
 
 Prefer an allowlist of destination hosts. Where the destination is genuinely open, the request path must
-enforce the scheme, resolve the hostname and check every resolved address against private, loopback,
-link-local, and metadata ranges, connect to the checked address rather than re-resolving, refuse redirects or
-re-run the whole check per hop, set connection and read timeouts, and cap the response size.
+enforce the scheme and resolve the hostname. It must check every resolved address against private, loopback,
+link-local, and metadata ranges, and connect to the checked address rather than re-resolving. It must refuse
+redirects or re-run the whole check per hop. It must set connection and read timeouts and cap the response
+size.
 
-Treat any component that fetches a user-supplied URL as an SSRF surface, including document converters,
-webhook senders, link previewers, and image processors.
+Treat any component that fetches a user-supplied URL as an SSRF surface. Document converters, webhook senders,
+link previewers, and image processors all qualify.
 
 ## Deserialization and Parsers
 
@@ -163,17 +165,17 @@ critical.
 ## Output Encoding
 
 Injection into a browser is the same defect viewed from the other side. The correct encoding depends on where
-the value lands, and there are five distinct contexts: HTML element text, attribute values, URL components,
-inline script, and inline style. A single escaping function applied everywhere is wrong in at least three of
-them.
+the value lands. There are five distinct contexts: HTML element text, attribute values, URL components, inline
+script, and inline style. A single escaping function applied everywhere is wrong in at least three of them.
 
-Frameworks that auto-escape element text still do not protect an attacker-controlled URL used in a link or a
-redirect, an attribute name, a full attribute-value injection, or the escape hatches every framework provides
-for raw markup. Those escape hatches are the thing to grep for.
+Frameworks that auto-escape element text still leave an attacker-controlled URL used in a link or a redirect
+unprotected. They also leave an attribute name or a full attribute-value injection unprotected. The escape
+hatches every framework provides for raw markup are also unprotected. Those escape hatches are the thing to
+grep for.
 
-Where markup genuinely must come from users, sanitize with a maintained allowlist-based library, on the
-server, and serve the result under a content security policy that does not enable inline script.
+Where markup genuinely must come from users, sanitize it on the server with a maintained allowlist-based
+library. Serve the result under a content security policy that disables inline script.
 
-The same principle covers other sinks that are easy to miss: header values assembled from input, redirect
-targets taken from a parameter, spreadsheet cells that begin with a formula character, log lines that carry
-untrusted newlines, and filenames echoed into a `Content-Disposition` header.
+The same principle covers other sinks that are easy to miss. These include header values assembled from input,
+redirect targets taken from a parameter, and spreadsheet cells that begin with a formula character. They also
+include log lines that carry untrusted newlines and filenames echoed into a `Content-Disposition` header.

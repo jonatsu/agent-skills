@@ -1,7 +1,7 @@
 # Platform, Configuration, and Supply Chain
 
 The defects here rarely appear in application code. They live in the files that decide how the application
-runs and where its dependencies come from, which is why a review scoped to source files misses them.
+runs and where its dependencies come from. A review scoped to source files therefore misses them.
 
 ## Application Configuration
 
@@ -9,9 +9,8 @@ Configuration defects follow a single pattern. A permissive default is correct f
 reaches production because nothing distinguishes the two.
 
 Check that debug output, interactive debuggers, verbose error pages, seeded accounts, and development-only
-routes cannot be enabled in production, and that the switch is not a value an attacker can influence. Check
-that the application fails to start on a missing security-critical setting rather than falling back to a
-default.
+routes cannot be enabled in production. Check that an attacker cannot influence the switch. Check that the
+application fails to start on a missing security-critical setting rather than falling back to a default.
 
 For anything served to a browser, review the response headers as a set. A content security policy is the one
 that carries weight, and it carries none if it allows inline script or an unrestricted script source. Frame
@@ -26,9 +25,10 @@ session rides on a cookie, a permissive origin policy also undoes the CSRF contr
 
 ## Network Exposure and Service Boundaries
 
-Ask what the service listens on and who can reach it. A management interface, a metrics endpoint, a debugger
-port, a database, or a cache bound to a routable address rather than to loopback or a private network is a
-finding whether or not it has authentication, because the exposure is the thing you can verify.
+Ask what the service listens on and who can reach it. This applies to a management interface, a metrics
+endpoint, a debugger port, a database, and a cache. Any of them bound to a routable address, rather than to
+loopback or a private network, is a finding. The finding stands whether or not the service has authentication,
+because the exposure is the thing you can verify.
 
 Inside a cluster, check whether the network permits any workload to reach any other. Flat networking turns one
 compromised container into access to every service.
@@ -46,15 +46,15 @@ Read the image definition as a security artifact:
   boundary the container exists to provide; and
 - secrets supplied as environment variables in the manifest rather than mounted from a secret store.
 
-For orchestrated deployments, extend the same reading to the workload manifest: the security context, the
-service account and its permissions, the absence of resource limits, and secrets committed to the manifest.
+For orchestrated deployments, extend the same reading to the workload manifest. Check the security context,
+the service account and its permissions, missing resource limits, and secrets committed to the manifest.
 
 ## Infrastructure as Code
 
 Treat the definition as the deployed state. The recurring findings are storage and network resources open to
-the public internet, permission policies that grant a wildcard action or a wildcard resource, logging and
-audit trails disabled, encryption at rest not enabled where the provider offers it, and state files that hold
-plaintext secrets and are stored without access control.
+the public internet, and permission policies that grant a wildcard action or a wildcard resource. They also
+include logging and audit trails disabled and encryption at rest not enabled where the provider offers it. A
+state file that holds plaintext secrets and is stored without access control is a finding too.
 
 Trace a permission grant to what actually needs it. A role that carries administrative permissions because
 narrowing them was difficult is the finding, and naming the specific actions required is the remediation.
@@ -64,14 +64,14 @@ narrowing them was difficult is the finding, and naming the specific actions req
 CI has production credentials and executes code, which makes it a high-value target that reviews routinely
 skip.
 
-Check for a workflow trigger that runs with repository secrets against code from an untrusted fork, which
-hands the secrets to whoever opens a pull request. Check for untrusted input, including a branch name, a pull
-request title, or an issue body, interpolated into a shell step, which is command injection with the runner's
+Check for a workflow trigger that runs with repository secrets against code from an untrusted fork. That hands
+the secrets to whoever opens a pull request. Check whether untrusted input (a branch name, a pull request
+title, an issue body) is interpolated into a shell step. That is command injection with the runner's
 credentials. Check that third-party actions and build plugins are pinned to an immutable revision rather than
-to a tag, and that credentials given to a job are scoped to what the job needs and are not exposed to every
-step.
+to a tag. Check that credentials given to a job are scoped to what the job needs. Check that they are not
+exposed to every step.
 
-Check whether the pipeline can be made to skip its own security gates, and whether an artifact can be
+Check whether the pipeline can be made to skip its own security gates. Check whether an artifact can be
 published without passing them.
 
 ## Dependencies
@@ -80,13 +80,13 @@ Run the project's configured audit tool and read its output rather than forwardi
 matters when the vulnerable code path is reachable from this application, and a critical advisory in a
 development-only dependency is usually not urgent. Say which you determined and which you assumed.
 
-Independent of advisories, check that lockfiles exist and are committed, that installation uses the lockfile
-rather than resolving afresh, that no dependency is fetched from a mutable reference such as a branch or a
-`latest` tag, and that install-time scripts from dependencies are considered.
+Independent of advisories, check that lockfiles exist and are committed, and that installation uses the
+lockfile rather than resolving afresh. Check that no dependency is fetched from a mutable reference, such as a
+branch or a `latest` tag. Consider the install-time scripts from dependencies.
 
-Check for the naming risks too: a dependency whose name closely resembles a popular package, an internal
-package name that a public registry could also serve, and a dependency that is unmaintained or has recently
-changed ownership.
+Check for the naming risks too. Look for a dependency whose name closely resembles a popular package. Look for
+an internal package name that a public registry could also serve. Look for a dependency that is unmaintained
+or has recently changed ownership.
 
 ## Build and Artifact Integrity
 

@@ -81,9 +81,9 @@ positives.
 | Records written by another tenant or user       | Internal service addresses from configuration |
 | WebSocket frames and streamed chunks            | Values an administrator alone can write       |
 
-Operator-controlled is not the same as safe. It is safe against an external attacker and still relevant if
-the threat model includes a malicious operator, a compromised build, or configuration that a tenant supplies.
-Say which model you applied.
+Operator-controlled is not the same as safe. It is safe against an external attacker. It stays relevant if the
+threat model includes a malicious operator, a compromised build, or configuration that a tenant supplies. Say
+which model you applied.
 
 Then ask two more questions. Does the framework, runtime, or library already neutralize this by default, and
 is that default still on? Is there validation, an allowlist, or a sanitizer between the entry point and this
@@ -111,22 +111,22 @@ against that project's own documentation and cite it in the finding.
 ### 6. Run the checks the project already configures
 
 Prefer the project's own tooling over improvised greps, and never install anything to review with it. Look
-for a lockfile audit (`pip-audit`, `npm audit`, `cargo audit`, `govulncheck`, `bundler-audit`), a configured
-secrets scanner, a SAST job in CI, and container or IaC scanning. Run what is configured and present, then
-read the output critically rather than pasting it.
+for a lockfile audit (`pip-audit`, `npm audit`, `cargo audit`, `govulncheck`, `bundler-audit`). Also look for a
+configured secrets scanner, a SAST job in CI, and container or IaC scanning. Run what is configured and present,
+then read the output critically rather than pasting it.
 
 For secret scanning, prefer `betterleaks` over `gitleaks` where both are available. Never write a real-looking
-credential into the tree to prove that a scanner fires; a scanner that is silent on a planted key has told you
+credential into the tree to prove that a scanner fires. A scanner that is silent on a planted key has told you
 nothing useful, and the planted key outlives the test.
 
 Gitleaks has reported a clean history where betterleaks found secrets, and it prints "0 commits scanned" even
-while it scans. To prove the scanner runs at all, scan a synthetic GitHub token (`ghp_` plus 36 alphanumerics)
-in a scratch directory outside the tree. A bare AWS key ID makes a misleading control: betterleaks reports one
-only beside a secret access key, and it filters values that end in `EXAMPLE`. A rule's pattern does not show
-what the scanner reports, so confirm against the binary.
+while it scans. To prove the scanner runs at all, scan a synthetic GitHub token. Create the token as `ghp_` plus 36
+alphanumerics, and scan it in a scratch directory outside the tree. A bare AWS key ID makes a misleading control,
+because betterleaks reports one only beside a secret access key. Betterleaks also filters values that end in
+`EXAMPLE`. A rule's pattern does not show what the scanner reports, so confirm against the binary.
 
-Where you cannot run a configured check, say which one and why under Coverage Limits. Do not present a review
-as complete when this step was skipped.
+Where you cannot run a configured check, say which one and why under Coverage Limits. Mark the review
+incomplete when this step was skipped.
 
 ### 7. Gate on confidence, then on severity
 
@@ -148,8 +148,8 @@ Severity describes impact once exploitability is established.
 
 ### 8. Report
 
-Follow the output contract below. Done when every trust boundary from step 2 has been through steps 3 to 5, or
-is named under Coverage Limits with the reason it was not.
+Follow the output contract below. Done when every trust boundary from step 2 has been through steps 3 to 5. A
+boundary that skipped them is named under Coverage Limits, with the reason.
 
 ## Common False Positives
 
@@ -164,8 +164,8 @@ Verify each of these before flagging it:
   collision is practical against both and the fast hash is the finding.
 - Non-cryptographic randomness used for jitter, sampling, or a UI value.
 - Missing TLS, `Secure` cookie flags, and HSTS in code that only ever runs locally or behind a terminating
-  proxy. Report the missing production configuration, not the local default. Do not recommend HSTS without
-  saying what it locks the domain into.
+  proxy. Report the missing production configuration, not the local default. Recommend HSTS together with
+  what it locks the domain into.
 - Dead code, commented code, and docstrings.
 - A construct fed only by a constant or by operator-controlled configuration.
 - A path that already requires authentication. Note the requirement instead of claiming an unauthenticated
@@ -183,7 +183,7 @@ Never fabricate a CVE identifier, an exploit chain, or a proof of concept. Label
 demonstrated as unverified. Do not run an exploit against infrastructure you were not asked to test.
 
 Never copy a discovered secret's value into the report, a commit, or a message. Give its location and its
-type, and treat any secret that reached version control as already compromised and needing rotation.
+type. Treat any secret that reached version control as already compromised and needing rotation.
 
 Record the controls that are working. A report that lists only gaps reads as reflexive and gets discounted.
 
@@ -191,8 +191,8 @@ State your coverage limits: what you did not read, which tool you could not run,
 not settle.
 
 Write the report for a developer who is not a security specialist. Name each vulnerability class in words at
-first use, such as server-side request forgery (SSRF), and apply `writing-for-humans` and its reader-ready check
-before delivering.
+first use, such as server-side request forgery (SSRF). Before delivering, apply `writing-for-humans` and its
+reader-ready check.
 
 ## Output Contract
 
@@ -238,7 +238,7 @@ limits. Silence is not the same as a clean result.
 
 Move to fixes only when the user names the findings to fix. Then:
 
-1. Fix one finding per change. Do not bundle unrelated findings into one commit.
+1. Fix one finding per change, and give each its own commit.
 2. Read enough of the surrounding code to know why the insecure form is there. Insecure code usually survives
    because something depends on it.
 3. Say what the fix breaks before making it, when it changes an interface, a default, or an operational

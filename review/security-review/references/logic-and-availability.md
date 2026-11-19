@@ -30,10 +30,10 @@ that has no compensating action, is exploitable by making the later step fail.
 Any check followed by a separate action on shared state is a candidate. The attacker's tool is concurrency, so
 the question is what two simultaneous requests do.
 
-Look for a read-check-write sequence over a balance, a quota, a stock count, a coupon redemption, a
-one-time token, or a uniqueness constraint. The correct forms are a conditional update the database performs
-atomically, a row lock held across the check and the write, a unique constraint that makes the second write
-fail, or an idempotency key the caller supplies.
+Look for a read-check-write sequence over a balance, a quota, a stock count, or a coupon redemption. The same
+sequence over a one-time token or a uniqueness constraint also qualifies. The correct forms are a conditional
+update the database performs atomically or a row lock held across the check and the write. A unique constraint
+that makes the second write fail also works, as does an idempotency key the caller supplies.
 
 An application-level lock is correct only within one process. In any deployment with more than one instance,
 it is not a control. Say so when you see it.
@@ -51,12 +51,12 @@ Check that limits are keyed on something the attacker cannot rotate freely. A li
 header or on an unvalidated forwarded address is not a limit. Check that a limit exists per account as well as
 per source, because otherwise a distributed attempt passes.
 
-Separately, check the bounds on individual requests: maximum body size, maximum upload size, maximum items in
-a batch, maximum page size, maximum nesting depth in parsed input, maximum expansion for anything decompressed,
-and a timeout on every outbound call. An unbounded page size turns a normal endpoint into a data-export
-endpoint.
+Separately, check the bounds on individual requests. These include maximum body size, maximum upload size,
+maximum items in a batch, and maximum page size. They also include maximum nesting depth in parsed input,
+maximum expansion for anything decompressed, and a timeout on every outbound call. An unbounded page size
+turns a normal endpoint into a data-export endpoint.
 
-Check that a failure in a dependency does not consume the caller's resources indefinitely. Connection pools
+Check that a dependency failure holds the caller's resources only for a bounded time. Connection pools
 exhausted by a slow dependency take down endpoints that do not use it.
 
 ## Error Handling
@@ -64,26 +64,28 @@ exhausted by a slow dependency take down endpoints that do not use it.
 The question is what the code does on the failure path, and whether that path was designed at all.
 
 Fail-closed is the requirement for anything that authorizes, validates, or verifies. Look for a caught
-exception around an authorization or signature check whose handler continues, a default return value that is
-permissive, a timeout on an authorization service treated as an allow, and a cache miss treated as a pass.
+exception around an authorization or signature check whose handler continues. A permissive default return
+value is another sign. So are a timeout on an authorization service treated as an allow and a cache miss
+treated as a pass.
 
 Look also for a defect that succeeds partially and reports success, so the caller believes a security-relevant
 step ran.
 
-Then check what the failure discloses. A stack trace, a query fragment, an internal path, a version banner, or
-a differently-worded message for a different failure cause all give an attacker information. Return one generic
-message with a correlation identifier and keep the detail in the server log.
+Then check what the failure discloses. A stack trace, a query fragment, an internal path, or a version banner
+gives an attacker information. So does a differently-worded message for a different failure cause. Return one
+generic message with a correlation identifier and keep the detail in the server log.
 
 ## Audit Logging
 
-Logging is a security control when it makes an incident reconstructable. Check that authentication successes
-and failures, authorization denials, privilege and role changes, credential and configuration changes, and
-significant data access are recorded with who, what, when, and from where.
+Logging is a security control when it makes an incident reconstructable. Check that these events are recorded:
+authentication successes and failures, authorization denials, and privilege and role changes. Check also
+credential and configuration changes and significant data access. Each record needs who, what, when, and from
+where.
 
-Then check the parts that make the log trustworthy: that the application cannot silently drop records, that a
-user cannot forge entries by injecting newlines or control characters into a logged field, that the retention
-period is long enough for an incident to be noticed, and that log storage is not writable by the systems the
-log is meant to hold accountable.
+Then check the parts that make the log trustworthy. Confirm that the application cannot silently drop records.
+Confirm that a user cannot forge entries by injecting newlines or control characters into a logged field.
+Confirm that the retention period is long enough for an incident to be noticed. Confirm that log storage is
+not writable by the systems the log is meant to hold accountable.
 
 Confirm that something reads the log. A security event nobody alerts on is a record, not a control, and saying
 so is more useful than reporting the log as adequate.
