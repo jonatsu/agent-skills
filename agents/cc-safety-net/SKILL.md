@@ -20,7 +20,7 @@ latest on the registry, which reports on a version the hooks are not running. Co
 
 ## Learn the current CLI
 
-The installed CLI is the authority for command syntax. Do not guess flags.
+The installed CLI is the authority for command syntax. Take every flag from its help output.
 
 ```bash
 cc-safety-net --help
@@ -78,10 +78,10 @@ those only as part of a workflow below.
    reason. `explain` exits 0 for both allowed and blocked verdicts; read the verdict from the
    output, not the exit status.
 4. Report the reason in plain language. For a genuine hazard, suggest the safer alternative the
-   reason names, such as `git stash` before `git reset --hard`. When the blocked command was deleting a
-   tracked file that has local changes (`git.rm-force`, or `git.restore-unstaged` for `git restore`), show
-   `git diff -- <path>` and ask whether those changes may go. Once the user confirms, run
-   `git rm --cached <path>`, then `rm` the file by name.
+   reason names, such as `git stash` before `git reset --hard`. A blocked deletion of a tracked file
+   with local changes (`git.rm-force`, or `git.restore-unstaged` for `git restore`) needs the user's
+   decision. Show `git diff -- <path>` and ask whether those changes may go. Once the user confirms,
+   run `git rm --cached <path>`, then `rm` the file by name.
 
 ## Triage a false positive
 
@@ -91,19 +91,17 @@ those only as part of a workflow below.
 3. If a custom rule fired, fix that rulebook: disable or reword it with an override, or edit the
    rule (see configure rules), then re-run `explain` to confirm the new verdict.
 4. If a built-in rule fired, no rule edit can relax it. Check the reason for a documented escape
-   hatch, such as `CC_SAFETY_NET_WORKTREE=1` for local git discards in linked worktrees (git
-   discards in a temp-root repository outside the workspace are already allowed), or
-   `rule wrapper add` when a trusted transparent wrapper hid the real command from the analyzer.
-   Pass the wrapper name as a separate argv value, or shell-escape it as one argument. If the
-   user explicitly wants that built-in rule off, read its id from the `ruleId` field of
-   `explain --json` and propose a per-rule policy override (see configure the policy). Otherwise
-   explain the risk the rule guards against and suggest reporting the case at
-   <https://github.com/kenryu42/cc-safety-net/issues>.
+   hatch. `CC_SAFETY_NET_WORKTREE=1` allows local git discards in linked worktrees (git discards in
+   a temp-root repository outside the workspace are already allowed). `rule wrapper add` covers a
+   trusted transparent wrapper that hid the real command from the analyzer. Pass the wrapper name
+   as a separate argv value, or shell-escape it as one argument. If the user explicitly wants that
+   built-in rule off, read its id from the `ruleId` field of `explain --json`. Then propose a
+   per-rule policy override (see configure the policy). Otherwise explain the risk the rule guards
+   against and suggest reporting the case at <https://github.com/kenryu42/cc-safety-net/issues>.
 
 ## Configure rules
 
-Use information already provided in the user's prompt. Ask only when the scope, action, rule
-intent, merge behavior, or target command is unclear.
+Ask only when the scope, action, rule intent, merge behavior, or target command is unclear.
 
 01. Determine the requested scope from the prompt when possible:
     - User: applies to all projects.
@@ -126,11 +124,11 @@ intent, merge behavior, or target command is unclear.
     - Do not offer to add a GitHub source with `owner/repo`; installing rules from a GitHub
       source is outside this workflow.
     - If the user explicitly asks to install existing GitHub rulebooks instead of authoring them,
-      use `cc-safety-net rule add owner/repo --only <rulebook...>`; omit `--only` only
-      when they want every rulebook, and add `--ref <ref>` only when they name a non-default ref.
+      use `cc-safety-net rule add owner/repo --only <rulebook...>`. Omit `--only` only when they
+      want every rulebook, and add `--ref <ref>` only when they name a non-default ref.
       `rule add --only <rulebook...>` with no source selects from the official
       `cc-safety-net/rulebooks` repository, whose curated rulebooks block destructive Terraform,
-      AWS, gcloud, and Azure CLI operations; prefer installing one of those over authoring when it
+      AWS, gcloud, and Azure CLI operations. Prefer installing one of those over authoring when it
       already covers the request.
     - For transparent wrappers, prefer `cc-safety-net rule wrapper add` with the trusted
       wrapper name passed as a separate argv value, or shell-escaped as one argument, over editing
@@ -151,28 +149,25 @@ intent, merge behavior, or target command is unclear.
 
 Rule invariants:
 
-- Do not use legacy inline `.safety-net.json` or `~/.cc-safety-net/config.json` rules. Convert
-  existing legacy files with `cc-safety-net rule migrate`.
+- Write rules in rulebooks, and convert legacy inline `.safety-net.json` or
+  `~/.cc-safety-net/config.json` rules with `cc-safety-net rule migrate`.
 - Every rule command must be listed in `allowed_commands`. The `tests` fixtures are optional;
   `rule verify` evaluates `rulebook_version` 2 fixtures against the rulebook's own rules, and
   fixture commands are analyzer input that CC Safety Net never executes.
 - A blocked fixture, when present, must specify the expected `rule`, and that rule must exist in
   the rulebook.
-- Local source names are bare names such as `project-rules`; do not put filesystem paths in
-  `rules`.
-- A saved rulebook is live. There is no pending state and nothing to run afterwards, so verify the
-  edit rather than activating it.
-- A missing or invalid rulebook file makes that source inactive, and an unreadable or invalid
-  `rule.json` makes every source in its scope inactive: those rules stop applying while other
+- Local source names in `rules` are bare names such as `project-rules`, not filesystem paths.
+- A missing or invalid rulebook file makes that source inactive. An unreadable or invalid
+  `rule.json` makes every source in its scope inactive. Those rules stop applying while other
   custom rules and built-in protections stay active. Fix the file named in the diagnostic.
 - A duplicate rulebook name keeps the first claim, user scope before project scope, and ignores
   the later rulebook.
 - `cc-safety-net rule add owner/repo` fetches remote rulebooks, validates them, and vendors
-  each one into `<rulebook-name>/rulebook.json`; `cc-safety-net rule update [source]`
+  each one into `<rulebook-name>/rulebook.json`. `cc-safety-net rule update [source]`
   re-fetches and overwrites those copies and prints what changed. The runtime never fetches, and a
   remote source with no vendored file reports that `rule update` has to vendor it first.
 - `rule sync` is deprecated: it only migrates lock and cache leftovers from an earlier version.
-  Never run it as a validation or activation step.
+  Never run it as a validation or activation step; validate with `rule verify` and `rule list`.
 
 ## Configure the policy
 
@@ -191,10 +186,10 @@ error, so validate against it rather than guessing further fields):
   `overrides` mapping a built-in rule id (`git.reset-hard`, `secret.basename.env`) to `"on"` or
   `"off"`. Get the id for a blocked command from the `ruleId` field of `explain --json`.
 - `destructive_command_protection.allow_paths`: absolute or `~/` paths where recursive delete
-  targets are permitted. `secret_protection.allow_paths`: exact user-managed files or directories,
-  or a folder followed by `**/` and an exact file name (for example `~/code/**/.env.local`; the
-  folder cannot be home or above it), exempted from built-in secret patterns. Deny paths and
-  Coding CLI protections still win. Other glob forms are rejected.
+  targets are permitted. `secret_protection.allow_paths`: paths exempted from built-in secret
+  patterns, namely exact user-managed files or directories, or a folder followed by `**/` and an
+  exact file name (for example `~/code/**/.env.local`; the folder cannot be home or above it).
+  Deny paths and Coding CLI protections still win. Other glob forms are rejected.
   `secret_protection.deny_paths`: extra paths protected like built-in secrets.
 - `audit.retention_days`: days of audit history to keep, user scope only.
 
@@ -202,7 +197,7 @@ error, so validate against it rather than guessing further fields):
    paths it loaded, `cc-safety-net rule list` for custom rules, plus whatever project
    context the request depends on. Read an existing `policy.json` before proposing changes to it.
 2. Write the proposed policy JSON to an unprotected path such as `policy-proposal.json`. For
-   project scope, set only the fields the team intends to control; an unset field inherits
+   project scope, set only the fields the team intends to control. An unset field inherits
    from the user policy, and `apply` writes only the fields the proposal sets.
    Applying replaces the target file, so the proposal is the complete policy, not a patch. Audit
    settings are user scope only; a project proposal cannot set them.
@@ -211,7 +206,7 @@ error, so validate against it rather than guessing further fields):
    error and re-check until it passes.
 4. Ask the user to run the apply in their own terminal and quote the exact command:
    `cc-safety-net policy apply policy-proposal.json` (with `--global` when that is the
-   scope). It confirms interactively, there is no `--yes` flag, and agent invocations of
+   scope). It confirms interactively and has no `--yes` flag. Agent invocations of
    `policy apply` are blocked by design, so never run it, wrap it, or write the file yourself.
 5. Once the user confirms they applied it, run `cc-safety-net status` and report the
    effective policy, including any project scope deltas it prints.
@@ -246,11 +241,11 @@ version.
 
 1. Get `<version>` from `cc-safety-net --version`.
 
-2. Locate an installed copy of the repository, if one exists. **Do not derive its path by counting
-   directories up from this file** — this package is vendored, so it does not sit inside the
-   upstream repository and any such arithmetic lands somewhere unrelated. Ask the package
-   manager instead, and accept a candidate only when its own `package.json` says
-   `"name": "cc-safety-net"` at version `<version>` and a `src/` directory sits beside it:
+2. Locate an installed copy of the repository, if one exists. Ask the package manager for its path.
+   Counting directories up from this file lands somewhere unrelated, because this package is
+   vendored and does not sit inside the upstream repository. Accept a candidate only when its own
+   `package.json` says `"name": "cc-safety-net"` at version `<version>` and a `src/` directory
+   sits beside it:
 
    ```bash
    npm root -g                 # global installs
@@ -259,12 +254,12 @@ version.
 
    A plugin install also ships the full repository under its own cache directory; `doctor` names
    the path it loaded. If nothing matches the running version, treat the candidate as unavailable
-   and continue to the next step rather than reading a version you are not running.
+   and continue to the next step. Read only the version you are running.
 
 3. If no matching local root exists (skill-only installs, a mismatched plugin, or guidance
    without a file path), resolve the immutable commit recorded with the published package using
    `npm view "cc-safety-net@<version>" gitHead`. Require a 40-character lowercase hexadecimal
-   commit and fetch that exact commit into a fresh owner-only temporary directory:
+   commit. Fetch that exact commit into a fresh owner-only temporary directory:
 
    ```bash
    set -euo pipefail
@@ -281,8 +276,8 @@ version.
    trap - EXIT
    ```
 
-   Never answer from `main`; it can contain unreleased behavior the installed version does not
-   have.
+   Answer from that commit, never from `main`, which can contain unreleased behavior the
+   installed version does not have.
 
 4. Read `docs/` first; `residual-risk.md` and `secret-protection-known-limitations.md` exist to
    answer whether something is a known gap. For behavior questions, continue into
@@ -296,8 +291,9 @@ version.
 ## Safety rules
 
 - Help the user operate CC Safety Net, never evade it. Do not change levels, uninstall, edit
-  config, or propose a policy that weakens protection to get a blocked command through unless the
-  user explicitly asks for that outcome and understands what the block guards against.
+  config, or propose a policy that weakens protection to get a blocked command through. Do any of
+  these only when the user explicitly asks for that outcome and understands what the block guards
+  against.
 - Never run `hook`; it is the integration entry point that reads hook JSON from stdin, not a
   user-facing command.
 - `logs --prune-legacy` permanently deletes legacy logs. Run it only on an explicit request, and
@@ -305,5 +301,5 @@ version.
 - `rule remove --delete-source` deletes the local source directory. Ask before using it.
 - Prefer `gui --no-open` and give the user the URL instead of opening a browser from a session.
 - If a command prints an `UPDATE_AVAILABLE:` line, ask the user once whether to run
-  `cc-safety-net update`, continue the workflow without waiting either way, and do
+  `cc-safety-net update`. Continue the workflow without waiting either way, and do
   not raise it again.
