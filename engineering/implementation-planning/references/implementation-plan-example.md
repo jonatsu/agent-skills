@@ -72,7 +72,7 @@ Extend `src/catalog/input.py` to read UTF-8 JSON and require an array root. Retu
 or classify the read, decoding, parsing or root-shape failure. Preserve the current JSON parser's
 strictness. Keep diagnostics out of this module so the CLI retains control of streams and exit codes.
 
-Extend `tests/test_input.py` with the boundary cases. Do not change caller-visible reporting yet.
+Extend `tests/test_input.py` with the boundary cases. Leave caller-visible reporting unchanged for now.
 
 ### Dependencies and Constraints
 
@@ -143,7 +143,7 @@ with invocation, report fields, issue codes and exit meanings. Preserve existing
 
 Depends on reviewed units 1 and 2. Besides the shared checks, run the documentation checks for
 `docs/usage.md`. Use disposable paths and capture both streams. No generator is involved, so
-inspect any tool-produced file changes before including necessary consequences; leave unrelated
+inspect any tool-produced file changes before including necessary consequences. Leave unrelated
 changes outside the unit.
 
 ### Verification and Completion

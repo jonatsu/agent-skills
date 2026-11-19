@@ -24,12 +24,12 @@ sections and decision records. Derive work units from dependencies and outcomes,
 Planning normally requires an accepted technical design. Requirements alone are insufficient when behavior,
 architecture, interfaces, failure handling, compatibility, or migration choices remain open. A small change may use an
 existing implementation or settled repository convention as design authority when no consequential design decision
-remains; state that basis instead of manufacturing a design document.
+remains. State that basis instead of manufacturing a design document.
 
 Judge acceptance from the design's substance, not its status label. A document is not accepted for planning when it
 contains consequential recommendations awaiting confirmation, unresolved behavioral or safety obligations, or
 architecture added after the user's latest confirmation. When an accepted spec exists, require the design to
-name a compatible revision; a newer accepted requirement leaves the affected work blocked until technical design
+name a compatible revision. A newer accepted requirement leaves the affected work blocked until technical design
 reconciles it.
 
 Repository inspection may settle implementation-local facts and ordinary techniques already constrained by the design
@@ -37,34 +37,34 @@ and local conventions. A public-behavior, compatibility, material-cost, or archi
 when inspection could answer it.
 
 Check that the basis names the work's goals and a success signal for the result as a whole. A request that already
-states its outcome supplies the goal; confirm it with the user rather than asking them to restate it. When a design
+states its outcome supplies the goal. Confirm it with the user rather than asking them to restate it. When a design
 gives no success signal, return that gap to `technical-design`. When project goals exist, the plan's goals stay inside
-them; when the plan covers most of what its project is for, point to the project goals and add only the plan's own.
+them. When the plan covers most of what its project is for, point to the project goals and add only the plan's own.
 
 When the work belongs to a project, repository, or component with no stated goals, propose setting them with
-`define-goal`, and say what the work gains. When the work may stand alone, such as a one-off task, ask once whether it
-belongs to something lasting. When the user declines, record the decline in the plan, and do not propose it again for
+`define-goal`. Say what the work gains. When the work may stand alone, such as a one-off task, ask once whether it
+belongs to something lasting. When the user declines, record the decline in the plan. Do not propose it again for
 this work.
 
 On an unattended run, nobody can answer a proposal. Make the reversible choice yourself and record it in the ledger as
-a judgment call, or park the question there when only the user can answer it.
+a judgment call. When only the user can answer, park the question in the ledger instead.
 
 ### Route Design Gaps Back
 
 For each gap, record what is missing, its downstream consequence, and the design section or owner that must resolve
 it. Return missing behavior, architecture, interfaces, failure policy, compatibility, or migration strategy to
-`technical-design`; missing or contradictory intended behavior and acceptance to `writing-specs`; and changed purpose
-or product scope to `idea-brainstorming`.
+`technical-design`. Return missing or contradictory intended behavior and acceptance to `writing-specs`. Return
+changed purpose or product scope to `idea-brainstorming`.
 
 Then plan only what the gaps leave settled. Plan genuinely independent, already-designed branches, and state the limit
 on the blocked ones. **When unresolved consequential design controls all remaining work, stop after reporting the
-gaps.** Resume once the design is settled, rather than writing a conditional plan, decomposing a design decision into
-units, or sketching the work that would follow each possible answer: that work pre-empts the decision design owns.
+gaps.** Resume once the design is settled. Until then, write no conditional plan, decompose no design decision into
+units, and sketch no work that would follow each possible answer: that work pre-empts the decision design owns.
 
-An accepted design should reach planning already pressure-tested. Where it did not, or where planning itself
-introduces a consequential decision the design's pressure-test did not cover, such as a migration path or an ordering
-with a hard-to-reverse step, pressure-test that decision with `interview-me` before committing the plan to it. Skip
-only with a stated reason, or at the user's direction.
+An accepted design should reach planning already pressure-tested. Where it did not, pressure-test the open decisions
+with `interview-me` before committing the plan to them. The same holds for a consequential decision that planning
+itself introduces and the design's pressure-test did not cover, such as a migration path or an ordering with a
+hard-to-reverse step. Skip only with a stated reason, or at the user's direction.
 
 ## Establish Required Practices
 
@@ -78,7 +78,7 @@ framework migration.
 Define shared environment setup, coding guidance, and review procedures once, in a shared preflight section, and give
 each requirement a short name or anchor. Every unit applies the shared preflight by default, including the default
 review gate, and names only its own additions and exceptions. For each requirement, name the skill or authoritative
-rule, the work that triggers it, and when it must be read before editing or verification; an unattached appendix or a
+rule, the work that triggers it, and when it must be read before editing or verification. An unattached appendix or a
 general instruction to "follow best practices" is insufficient. Record missing required guidance or unavailable
 tooling as a prerequisite with its owner and downstream effect. Require completion evidence for the applicable coding
 rules and checks, not merely a claim that a skill was loaded.
@@ -94,9 +94,9 @@ foundation unit only when it establishes a meaningful contract or seam and has u
 further when risk, reviewability, or repository workflow requires it, never by duration or file count. A unit whose
 title needs an "and", or that spans two independent subsystems, is two units.
 
-Every milestone or phase traces to a goal or the success signal and carries a done criterion: measurable, or a named
-person's judgment where no honest metric exists. That includes a later milestone that is named but not yet planned. A
-criterion not known yet is an open item in the plan, never silence.
+Every milestone or phase traces to a goal or the success signal and carries a done criterion. The criterion is
+measurable, or a named person's judgment where no honest metric exists. That includes a later milestone that is
+named but not yet planned. A criterion not known yet is an open item in the plan, never silence.
 
 Judge each unit's extent. For a unit large or uncertain enough that its outcome could drift, propose a sub-goal and a
 success signal for it. A small unit with an obvious result needs only its completion evidence. Size this to the plan:
@@ -183,23 +183,23 @@ units and dependency order, not just in a closing recommendation:
 4. **After corrections:** the implementer owns repairs; the reviewer checks the changed findings and affected evidence.
    Track severity, location, concrete failure or violated requirement, correction, and blocking status. Required checks
    and blocking findings must be resolved before the unit closes. Record nonblocking follow-ups with an owner and
-   reason in the repository's ledger, and remove each one there once it is done or no longer applies.
+   reason in the repository's ledger. Remove each one there once it is done or no longer applies.
 5. **At final integration and operational cutover:** review cross-unit behavior, migration and recovery, packaging, and
-   the applicable qualification evidence, and run the separate conformance review below. Before consequential external
+   the applicable qualification evidence. Run the separate conformance review below. Before consequential external
    actions, review the exact proposed operation and obtain only authorization not already supplied. Unit approval does
    not supply deployment or risk acceptance.
 
 Whenever an accepted spec, design, or plan governs the outcome, the final integration gate includes a
-conformance review dispatched separately from the code review, so the code reviewer stays focused on correctness. Its
-reviewer is a fresh subagent, lane, session, or person, and its brief names `conformance-review` and supplies the
+conformance review. Dispatch it separately from the code review, so the code reviewer stays focused on correctness.
+Its reviewer is a fresh subagent, lane, session, or person. Its brief names `conformance-review` and supplies the
 spec, design, and plan locations and the base and head revisions. Record its material findings in the same
-review record as the code review's; both close before the gate does, so the conformance review adds a reviewer, not a
+review record as the code review's. Both close before the gate does, so the conformance review adds a reviewer, not a
 parallel approval path.
 
 By default, plan one focused independent review per substantive unit, then the final integration code review and the
 conformance review for multi-unit changes. Hand each reviewer a compact brief: base and head revisions, the relevant
-diff and contracts, test evidence, and open findings. Reuse the unit reviewer and unchanged evidence across units,
-and broaden a recheck only for changed scope, new failures, or a concrete dependency impact, rather than replaying the
+diff and contracts, test evidence, and open findings. Reuse the unit reviewer and unchanged evidence across units.
+Broaden a recheck only for changed scope, new failures, or a concrete dependency impact, rather than replaying the
 session or reviewing every file or commit separately. Scale the strategy to the work instead of imposing independent
 agents or a full audit on every minor edit.
 
@@ -210,15 +210,15 @@ work. Neither the implementer nor reviewer may waive a consequential requirement
 
 ## Write for the Reader
 
-A plan is read by an implementer who was not in the design conversation. Write it with `writing-documentation`.
+Write the plan with `writing-documentation`.
 Explain each repository-specific concept, tool, and convention where the plan first relies on it, once. State the basis
-revisions and scope once, in the preamble. Link the spec, design, and plan while preserving their authority:
-the spec owns intended observable behavior, the design owns its technical realization, and the plan owns
+revisions and scope once, in the preamble. Link the spec, design, and plan while preserving their authority.
+The spec owns intended observable behavior, the design owns its technical realization, and the plan owns
 execution order.
 
 ## Record and Place the Plan
 
-Keep intended work distinct from execution evidence. The plan states actions and expected observations; the
+Keep intended work distinct from execution evidence. The plan states actions and expected observations. The
 repository's existing tracker or completion-record convention holds actual results, deviations, reviewed revisions, and
 unresolved findings. Link that record rather than creating a competing ledger. If no convention exists, use one clearly
 separated execution-record section in the plan. Keep status in that record and write expected results as expectations,
@@ -250,13 +250,13 @@ exposed:
 - verification strong enough for each claim, and a final integration gate that proves the complete behavior and
   includes the separate conformance review;
 - names the user chose for an earlier shape of the work, such as a folder, command, or tool, re-checked. Ask
-  about each name whose reason a revision removed before the first commit, because a leftover name reads as if
+  about each name whose reason a revision removed before the first commit. A leftover name reads as if
   the dropped decision still holds;
 - a completion record that will identify applied guidance, reviewed revisions, results, finding dispositions, and
   unverified obligations; and
-- the `writing-for-humans` **reader-ready** pass, read as an unfamiliar implementer: the first action and what it
-  unlocks, how each unit achieves its outcome, what completion looks like, and how to respond to a failed check are
-  all clear without reconstructing the spec or design conversation.
+- the `writing-for-humans` **reader-ready** pass, read as an unfamiliar implementer. The first action and what it
+  unlocks, how each unit achieves its outcome, what completion looks like, and how to respond to a failed check must
+  all be clear without reconstructing the spec or design conversation.
 
 Headings and command lists alone do not establish an actionable plan.
 
