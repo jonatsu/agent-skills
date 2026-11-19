@@ -20,19 +20,20 @@ history.
 
 ## Reversibility
 
-| Operation                                 | Recovery                        | Cost           |
-| ----------------------------------------- | ------------------------------- | -------------- |
-| Amend or local branch move                | Reflog                          | Cheap          |
-| `git reset --soft` or `--mixed`           | Reflog; worktree remains        | Cheap          |
-| Rebase                                    | Abort; otherwise `ORIG_HEAD`    | Cheap          |
-| Merge                                     | Abort; otherwise `ORIG_HEAD`    | Conditional    |
-| Cherry-pick                               | Abort; otherwise reflog         | Cheap          |
-| `git branch -D`                           | Reflog while commit is retained | Partial        |
-| `git reset --hard` with a dirty tree      | Reflog for commits              | None for edits |
-| `git restore` or `git checkout -- <path>` | None for overwritten edits      | None           |
-| Force-push over work never fetched        | Nothing under local control     | None           |
-| `git worktree remove --force` (dirty)     | None for uncommitted content    | None           |
-| `git clean -f`, `-fd`, or `-fdx`          | None                            | None           |
+| Operation                                 | Recovery                        | Cost             |
+| ----------------------------------------- | ------------------------------- | ---------------- |
+| Amend or local branch move                | Reflog                          | Cheap            |
+| `git reset --soft` or `--mixed`           | Reflog; worktree remains        | Cheap            |
+| Rebase                                    | Abort; otherwise `ORIG_HEAD`    | Cheap            |
+| Merge                                     | Abort; otherwise `ORIG_HEAD`    | Conditional      |
+| Cherry-pick                               | Abort; otherwise reflog         | Cheap            |
+| `git branch -D`                           | Reflog while commit is retained | Partial          |
+| `git reset --hard` with a dirty tree      | Reflog for commits              | None for edits   |
+| `git restore` or `git checkout -- <path>` | None for overwritten edits      | None             |
+| Force-push over work never fetched        | Nothing under local control     | None             |
+| `git worktree remove --force` (dirty)     | None for uncommitted content    | None             |
+| `git clean -f`, `-fd`, or `-fdx`          | None                            | None             |
+| `git filter-repo`                         | A bundle taken before the run   | None without one |
 
 Each active operation has its own abort; run it before anything else. [recovery.md](recovery.md) covers
 reading `ORIG_HEAD` and the reflog once an operation has completed.
@@ -122,6 +123,18 @@ dirty state is accounted for, and the original `HEAD` hash is recorded.
   same change.
 - Do not use ancestry alone to decide whether a branch was squash-merged. Compare content or consult the
   hosting service.
+
+For `git filter-repo`:
+
+- `--replace-text` rewrites file content only. Pass `--replace-message` with the same expressions file for
+  commit and tag messages. Verify each separately: `git log --all -S<term>` for content, and
+  `git log --all -i --fixed-strings --grep=<term>` for messages.
+- A path filter also deletes the stripped paths from the working tree. Before the run, create a bundle with
+  `git bundle create <file> --all`, check it with `git bundle verify`, and archive the live files that the
+  filter will strip. After the run, compare the archive's listing with the tree and restore the difference.
+- It removes the `origin` remote by design. To publish the rewritten repository again, confirm the remote's
+  visibility before the first push. Then verify the result from a fresh clone of the remote, not from the local
+  repository.
 
 A rebase of a branch whose tip is a merge commit can reportedly collapse the branch to its base when its
 unique content exists only in the merge resolution. This claim is *reported, not measured here*. Confirm the
