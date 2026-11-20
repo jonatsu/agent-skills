@@ -22,6 +22,7 @@ representations, physical objects or space, and time) and adds a fifth, behaviou
 - Can the user tell what state the system is in, including its mode, without acting?
 - Does every action get a response the user notices, within about a second?
 - Does a long operation show that it is running, and does its end say how it went?
+- Can the user tell empty, still loading, and failed apart, because each looks different?
 
 Words: a status line or a spoken confirmation. Visuals: an indicator, a progress bar, a changed control.
 Physical: a click, a detent, a light beside the control. Time: a response within the limits in
@@ -39,6 +40,7 @@ Sources: Nielsen 1, Shneiderman 3 (feedback) and 4 (closure), Norman's feedback 
 - Does the interface work like the others its users already know, on the same platform or device class?
 - Does the layout of the controls map onto what they control?
 - Does the same word, icon, or control mean the same thing everywhere in the interface?
+- Does the interface follow the user's own settings, such as text size, dark mode, reduced motion, and language?
 
 Words: domain vocabulary, not internal names. Visuals: platform conventions for icons and layout. Physical: up
 means more, a control sits next to what it affects. Time and behaviour: steps in the order users think of them.
@@ -107,8 +109,13 @@ Sources: Nielsen 7 and 10, Shneiderman 2, ISO 9241-110 learnability, Quesenbery'
 
 - Does each screen, display, or prompt carry only what the current task needs?
 - Does secondary information compete with what the user must see?
+- Does anything the system adds, such as an on-screen keyboard, a banner, or a toast, stay clear of what the
+  user is working on?
 
 Words: short prompts, especially in voice, where users cannot skim. Visuals: one clear primary action.
+
+An on-screen keyboard that covers the focused field is the familiar failure: the user types into a field they
+cannot see.
 
 Sources: Nielsen 8, ISO 9241-112 conciseness (as ISO 9241-110 lists it), and Gerhardt-Powals' principle of
 showing only the needed information.

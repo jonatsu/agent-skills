@@ -154,3 +154,13 @@ These skills supplied design ideas: the split into a principle audit, a task wal
 review, and inputs stated first. They also supplied questions per principle and the door lens. Two more ideas
 were a severity scale with a fixed report and the closing limit that real users confirm the findings. Every
 sentence was written independently; no prose or code was copied.
+
+### Miqdad Badjuber: antislop `antislop-human` skill
+
+- Source: <https://github.com/miqdadbadjuber/anti-slop>, `skills/antislop-human/`
+- License: `MIT`
+- Version: `44b3547ed6d6f21eed777271602da113efc53c94`
+
+The skill supplied three ideas: empty, loading, and failed states must look different, an interface follows the
+user's own settings, and nothing the system adds may cover what the user is working on. The questions were
+written independently; no text was copied.
