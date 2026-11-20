@@ -3,7 +3,7 @@
 ## Scope and review basis
 
 This record covers the twelve packages under `reverse-engineering/` and the retained Ghidra exporters. The\
-[accepted implementation plan](../plans/reverse-engineering-set-implementation-plan.md) defines their contracts, source\
+[accepted implementation plan][plan] defines their contracts, source\
 revisions, boundaries, review gates, and integration obligations. Evidence below distinguishes executable checks,\
 heuristic walkthroughs, and unmeasured behavior.
 
@@ -80,3 +80,5 @@ targets.
 The new `reverse-engineering` group requires a matching entry in the separate installer configuration before its pin\
 update. No external configuration, installed skills, running MCP services, remote branches, or deployment state was\
 changed.
+
+[plan]: https://github.com/jonatsu/agent-skills/blob/766ea6d5ea9bb97b0d2db479d7c25ae915c2f814/docs/plans/reverse-engineering-set-implementation-plan.md
