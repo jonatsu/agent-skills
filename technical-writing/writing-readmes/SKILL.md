@@ -116,7 +116,7 @@ project's own sources give, and state nothing they do not.
 Concrete evidence answers question 3 and no amount of description substitutes.
 
 - A short, real, copy-pasteable example with its actual output.
-- A screenshot, terminal recording or diagram where the result is visual.
+- A screenshot, terminal recording or diagram where the result is visual, with alt text stating what it shows.
 - Real values, not `foo` and `bar`. Invented placeholder data reads as a project nobody has run.
 - Sourced figures for any claim of popularity, speed, or adoption. "Trusted by thousands" and "blazing fast" are
   claims a stranger cannot check, so give the number and its source, or cut the claim.
