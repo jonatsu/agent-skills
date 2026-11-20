@@ -13,6 +13,9 @@ skill-checks = "skill_checks.cli:main"
 
 [dependency-groups]
 dev = [
+  # markdown-tools' scripts parse Markdown with it; their tests run them in this environment.
+  "markdown-it-py>=4.3.0",
+  "mdit-py-plugins>=0.7.0",
   "mypy>=1.17",
   "pre-commit>=4",
   "pytest>=8.4",
