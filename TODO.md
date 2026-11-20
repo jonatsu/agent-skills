@@ -406,6 +406,13 @@ example shows the format without showing the method works on a real system. When
 one behavior through risk, level, size, oracle, taxonomy sweep, and non-goal, in about 25 lines in
 `references/test-strategy.md`. Public `test-engineer` skills have no worked example to borrow either.
 
+## Compare `antislop-code` With `coding-standards`
+
+Compare the `antislop-code` skill from [antislop](https://github.com/miqdadbadjuber/anti-slop) (MIT, commit
+`44b3547`) with `development/coding-standards`, the way `docs/evaluations/2026-11-20-anti-slop-source.md`
+compared its writing and human skills: which code-slop patterns our skill lacks, and which techniques are worth
+writing independently. The user asked for it after the writing and human-factors work from that review lands.
+
 ## Unevaluated Candidate Sources
 
 Recorded and never fetched, read, or license-checked. The descriptions are path-based inferences, not evidence.
