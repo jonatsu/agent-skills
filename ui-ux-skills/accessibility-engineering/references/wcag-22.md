@@ -31,7 +31,13 @@ nothing about their level. Read the level marker.
 ## Thresholds
 
 - **1.4.3 Contrast (Minimum), AA:** text at least 4.5:1, and large-scale text at least 3:1. Incidental text,
-  such as inactive controls or decoration, and logotypes have no requirement.
+  such as inactive controls or decoration, and logotypes have no requirement. Large-scale text is at least 18
+  point (24 CSS pixels), or 14 point (about 18.7 CSS pixels) when bold.
+
+  The ratio is (L1 + 0.05) / (L2 + 0.05), where L1 is the relative luminance of the lighter colour and L2 of the
+  darker. For relative luminance, divide each sRGB channel by 255. Linearize it: c / 12.92 when c is at most
+  0.04045, otherwise ((c + 0.055) / 1.055) to the power 2.4. Then L = 0.2126 R + 0.7152 G + 0.0722 B. Compare the
+  unrounded ratio with the threshold: 4.499:1 fails 4.5:1.
 
 - **1.4.4 Resize Text, AA:** text resizes to 200 percent without assistive technology and without loss of
   content or function. Blocking zoom with `user-scalable=no` or a low `maximum-scale` is the usual failure.

@@ -73,3 +73,13 @@ numbers, titles, and measurements and copies no text.
 
 The survey supplied the common screen reader and browser pairings that the testing guidance names. No text or
 tables were copied.
+
+### Miqdad Badjuber: antislop `antislop-human` skill
+
+- Source: <https://github.com/miqdadbadjuber/anti-slop>, `skills/antislop-human/`
+- License: `MIT`
+- Version: `44b3547ed6d6f21eed777271602da113efc53c94`
+
+The skill supplied two ideas: an agent should compute a contrast ratio rather than judge it by eye, and text over
+an image fails at its lowest-contrast point. `scripts/contrast.py` and the rule around it were written
+independently; no code or text was copied.

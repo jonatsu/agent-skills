@@ -63,6 +63,19 @@ Cite each finding by number, name, and level, such as "1.4.3 Contrast (Minimum),
 borderline, say so and give both readings. Check thresholds and new criteria in
 [references/wcag-22.md](references/wcag-22.md) before you cite them, because several are commonly misquoted.
 
+### Measure Contrast
+
+Compute every contrast ratio before you state or rely on one. Grey pairs look stronger than they measure, so a
+ratio judged by eye is a guess. Run the bundled script from this skill's directory:
+
+```sh
+python3 scripts/contrast.py FOREGROUND BACKGROUND [BACKGROUND ...]
+```
+
+For text over an image or a gradient, pass each colour the text crosses as another background; the worst ratio
+decides. The script composites a translucent foreground and prints a verdict for each threshold. Without Python,
+apply the formula in [references/wcag-22.md](references/wcag-22.md).
+
 ### Fix With Native Elements First
 
 Use the native element with the needed role and keyboard behaviour, such as `button`, `a href`, `input`,
