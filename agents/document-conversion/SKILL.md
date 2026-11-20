@@ -97,10 +97,10 @@ Check for an existing install and use it when it satisfies the task:
 
 ```bash
 markitdown --version
-python3 <skill-root>/scripts/inspect_installation.py
+python3 <skill-root>/scripts/inspect-installation.py
 ```
 
-`inspect_installation.py` reports both converters and runs with neither present. When no suitable MarkItDown
+`inspect-installation.py` reports both converters and runs with neither present. When no suitable MarkItDown
 install exists, `references/markitdown_setup.md` has the venv, extras and verification detail.
 
 ```bash
@@ -190,14 +190,14 @@ every other interpreter. Derive the one that can import it from the console scri
 `references/markitdown_setup.md` shows:
 
 ```bash
-python <skill-root>/scripts/batch_convert.py documents/ markdown/ \
+python <skill-root>/scripts/batch-convert.py documents/ markdown/ \
   --recursive --extensions .pdf .docx .pptx .xlsx --manifest markdown/manifest.json
 ```
 
 Existing outputs are skipped unless `--overwrite` is given. Plugins stay disabled unless `--plugins` is set,
 and audio formats that can invoke external transcription require `--allow-external-services`.
 
-`scripts/convert_literature.py` converts a PDF collection with YAML front-matter provenance and can organize
+`scripts/convert-literature.py` converts a PDF collection with YAML front-matter provenance and can organize
 output by a year inferred from filenames such as `Smith_2025_Title.pdf`. Recipes are in
 `references/workflows.md`.
 

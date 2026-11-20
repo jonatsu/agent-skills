@@ -60,7 +60,7 @@ Signature checks are only one validation layer; they do not make the parser sand
 ## 3. Batch Directory Conversion
 
 ```bash
-python <skill-root>/scripts/batch_convert.py inputs/ outputs/ \
+python <skill-root>/scripts/batch-convert.py inputs/ outputs/ \
   --recursive \
   --extensions .pdf .docx .pptx .xlsx .csv .html \
   --manifest outputs/manifest.json
@@ -81,7 +81,7 @@ Retry failed files after installing the missing format extra:
 
 ```bash
 uv pip install "markitdown[pdf,docx,pptx,xlsx]"
-python <skill-root>/scripts/batch_convert.py inputs/ outputs/ --recursive --overwrite
+python <skill-root>/scripts/batch-convert.py inputs/ outputs/ --recursive --overwrite
 ```
 
 Use a fresh output directory when comparing converter versions.
@@ -101,7 +101,7 @@ Author_Year_Title.pdf
 Convert and build indexes:
 
 ```bash
-python <skill-root>/scripts/convert_literature.py papers/ literature/ \
+python <skill-root>/scripts/convert-literature.py papers/ literature/ \
   --recursive \
   --create-index
 ```
@@ -109,7 +109,7 @@ python <skill-root>/scripts/convert_literature.py papers/ literature/ \
 Organize by inferred year:
 
 ```bash
-python <skill-root>/scripts/convert_literature.py papers/ literature/ \
+python <skill-root>/scripts/convert-literature.py papers/ literature/ \
   --recursive \
   --organize-by-year \
   --create-index

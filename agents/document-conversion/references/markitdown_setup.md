@@ -10,10 +10,10 @@ New code should use `result.markdown`;
 
 ```bash
 markitdown --version
-python3 <skill-root>/scripts/inspect_installation.py
+python3 <skill-root>/scripts/inspect-installation.py
 ```
 
-`inspect_installation.py` runs without either converter present and reports both, plus the extras, plugin
+`inspect-installation.py` runs without either converter present and reports both, plus the extras, plugin
 entry points and external executables available. It exits non-zero only when **neither** converter is
 usable, because either one alone satisfies most of this skill's job. It reports each installed converter's version
 without judging it; compare against SKILL.md's Sources section when a detail here looks wrong.
@@ -27,19 +27,19 @@ That isolation is not a dead end: **the console script's shebang names the inter
 
 ```bash
 MARKITDOWN_PYTHON=$(head -1 "$(command -v markitdown)" | sed 's|^#!||')
-"$MARKITDOWN_PYTHON" <skill-root>/scripts/inspect_installation.py
-"$MARKITDOWN_PYTHON" <skill-root>/scripts/batch_convert.py documents/ markdown/
+"$MARKITDOWN_PYTHON" <skill-root>/scripts/inspect-installation.py
+"$MARKITDOWN_PYTHON" <skill-root>/scripts/batch-convert.py documents/ markdown/
 ```
 
 This needs no second install and no network, and it survives an upgrade because nothing version-specific is
 written down. It works for any installer that produces a console script, which is all of the above.
 
-Check it before relying on it: `inspect_installation.py` under that interpreter should report
+Check it before relying on it: `inspect-installation.py` under that interpreter should report
 `import health: OK`. If the shebang points at a wrapper rather than a real interpreter, fall back to an
 ephemeral environment instead:
 
 ```bash
-uv run --with "markitdown[all]" python <skill-root>/scripts/batch_convert.py documents/ markdown/
+uv run --with "markitdown[all]" python <skill-root>/scripts/batch-convert.py documents/ markdown/
 ```
 
 ## Install

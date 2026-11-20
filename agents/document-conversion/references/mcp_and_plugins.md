@@ -124,7 +124,7 @@ List discovered plugins without enabling them:
 
 ```bash
 markitdown --list-plugins
-python <skill-root>/scripts/inspect_installation.py
+python <skill-root>/scripts/inspect-installation.py
 ```
 
 Enable plugins for one CLI conversion:
