@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Grade the scripted outcomes of a usability behavioral-evaluation workspace.
 
-Usage: grade.py CASE WORKSPACE   (CASE is u1..u5)
+Usage: grade.py CASE WORKSPACE   (CASE is u1..u6)
 
 Reads WORKSPACE/usability-review.md and prints one line per scripted outcome: PASS or FAIL. Every other outcome in
 behavior.json is graded by reading the report.
@@ -42,6 +42,8 @@ def main() -> None:
     elif case == "u3":
         say("P2", words <= 400, f"words={words}")
         no_score("P3", text)
+    elif case == "u6":
+        no_score("V7", text)
     elif case == "u4":
         hits = sorted(
             {m.group(0) for m in SCORE.finditer(text)}

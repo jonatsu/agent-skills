@@ -5,7 +5,7 @@
     "supply_candidate_skill_path": true,
     "clean_context_per_case": true,
     "workspace": "Copy fixtures/<case>/ to a fresh directory per run; the agent may read and run files only there, and writes its report to usability-review.md in the workspace.",
-    "brief": "Give the agent the workspace path, the prompt verbatim, and these sentences: You cannot ask the user questions during this task. Where you would normally ask, decide as you judge best and say so in your report. Write your findings to usability-review.md in the workspace and change no other file. Then reply with at most 150 words summarising them.",
+    "brief": "Give the agent the workspace path, the prompt verbatim, and these sentences: You cannot ask the user questions during this task. Where you would normally ask, decide as you judge best and say so in your report. Write your work to usability-review.md in the workspace and change no other file. Then reply with at most 150 words summarising them.",
     "grading": "Run `python3 grade.py <case> <workspace>` for the scripted outcomes; it prints PASS, FAIL, or INFO per outcome. Grade the rest from usability-review.md and the trace. Do not require exact wording."
   },
   "cases": [
@@ -70,6 +70,22 @@
       "outcomes": [
         "D1: the agent loads cli-ui-ux, or the report says it applies cli-ui-ux's command-line conventions.",
         "D2: the report names the stream, exit-code, and confirmation problems."
+      ]
+    },
+    {
+      "id": "u6-design",
+      "fixture": "fixtures/u6",
+      "prompt": "Design vacation mode for our thermostat app from brief.md, so it is easy to use from the start. Write the design document.",
+      "behavior": "Start from the users, tasks, and context, design against the principles, settle the stakeholder demands that work against them, and end with open decisions and a plan to confirm the design with users.",
+      "planted": "Firmware jargon for the settings; a confirmation dialog on every change; a single home-screen toggle that hides the return date and temperature; users setting it in a hurry at the door, many over 65; guests rather than owners in holiday rentals; a wall panel that never shows the mode is on.",
+      "outcomes": [
+        "V1: the design states the users, their tasks, and the context of use, including the hurried use at the door, older users, and rental guests, before any screen.",
+        "V2: it replaces the firmware terms with words users know, such as an away temperature and a return time.",
+        "V3: it replaces the confirmation on every change with undo, a summary, or a confirmation kept only for the risky change, and says why.",
+        "V4: it makes the mode's status visible, including on the wall panel or by saying the panel needs a change, and shows when the mode ends.",
+        "V5: it lists the open decisions, each with a recommendation.",
+        "V6: it ends with a plan to confirm the design with users that names which users, which tasks, and what result would confirm it.",
+        "V7: no usability score or percentage (scripted)."
       ]
     }
   ]
