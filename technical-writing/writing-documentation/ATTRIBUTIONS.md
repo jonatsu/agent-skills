@@ -195,6 +195,15 @@ The skill supplied:
 
 Nothing was copied.
 
+### Miqdad Badjuber: antislop `antislop-human` skill
+
+- Source: <https://github.com/miqdadbadjuber/anti-slop>, `skills/antislop-human/`
+- License: `MIT`
+- Version: `44b3547ed6d6f21eed777271602da113efc53c94`
+
+The skill supplied the idea that every image and diagram needs a text alternative. The rules were written independently;
+no text was copied.
+
 ## Upstream License Notice
 
 Copyright (c) 2026 Pete Pei

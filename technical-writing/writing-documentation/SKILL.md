@@ -212,7 +212,8 @@ Add a diagram beside the text it explains when a design or plan covers:
 
 Use a flowchart for structure and decisions, a sequence diagram for ordered interactions, and a state diagram for
 a lifecycle. In Markdown, use Mermaid unless the set follows another convention. Explain any diagram or
-screenshot the reader must act on, and never rely on color alone.
+screenshot the reader must act on, and never rely on color alone. Give every image and diagram a text alternative
+that states what the reader should take from it.
 
 ## Write Understandable Prose
 
