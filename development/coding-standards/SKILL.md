@@ -1,6 +1,6 @@
 ---
 name: coding-standards
-description: "Write, refactor, and check code against language-agnostic standards: design principles, naming, comments, formatting, types, errors, logging, and code smells. Use before writing a new file or function, when refactoring, when applying the quality gate before a commit, or when checking a change against these standards. Language-specific style belongs to that language's skill (python-style), a broad PR or design review to brooks-review, and writing tests to test-engineer."
+description: "Write, refactor, and check code against language-agnostic standards: design principles, naming, comments, formatting, types, errors, logging, and code smells. Use before writing a new file or function, when copying or adapting code from another project, when refactoring, when applying the quality gate before a commit, or when checking a change against these standards. Language-specific style belongs to that language's skill (python-style), a broad PR or design review to brooks-review, and writing tests to test-engineer."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -152,6 +152,26 @@ makes tests order-dependent.
 ### Dead Code
 
 Delete unused code. Version control keeps the history if you ever need it back.
+
+## Reusing Third-party Code
+
+Before copying or adapting code, configuration, or text from another project, read its license at the revision you
+take, in the license file itself. Repository metadata is not enough: `gh repo view` reports no license when the
+license is not one top-level file, as with a REUSE-style `LICENSES/` directory. Follow that license's own terms for
+notice and redistribution. Where they forbid the intended use, write an independent version instead.
+
+Treat the result as derived from the original when any of these holds:
+
+- a contiguous run of the original survives apart from renaming;
+- it keeps the original's steps, their order, and their decomposition, even in another language;
+- identifiers, comments, error strings, or magic constants carry over; or
+- it is the original's text, copied and then edited, rather than rewritten.
+
+Derived code stays under the original's terms. Carry its copyright and license notice in the form the license
+requires, following the repository's convention for third-party code, such as a header comment or a notices
+file. State the degree of rewrite accurately in the notice and the commit message: a claim of independent writing
+misstates which license governs the code. When it is unclear whether code is derived or where its notice belongs,
+ask the user before committing it.
 
 ## Input Validation
 
