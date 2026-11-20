@@ -211,9 +211,9 @@ argument parsing and a call into the library, so integration tests can reach the
 
 ## Documentation
 
-Document every public item with `///`, starting with a one-line summary. Add an `# Errors` section to a
-function returning `Result`, a `# Panics` section when it can panic, and a `# Safety` section to every
-`pub unsafe fn`. The default `missing_safety_doc` lint requires the last, and the pedantic `missing_errors_doc`
+Document every public item with `///`, starting with a one-line summary that says what the signature cannot. Add an
+`# Errors` section to a function returning `Result`, a `# Panics` section when it can panic, and a `# Safety` section to
+every `pub unsafe fn`. The default `missing_safety_doc` lint requires the last, and the pedantic `missing_errors_doc`
 and `missing_panics_doc` lints check the others.
 
 Code in a doc comment is a doctest that `cargo test` runs. `cargo nextest` does not run doctests, so a project
