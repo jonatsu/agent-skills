@@ -30,6 +30,10 @@
 - License: `MIT`
 - Version: 18.22.0
 
-These sources supplied the per-harness facts in `references/harnesses.md`: how each goal loop is armed, judged,
-and ended, how each treats a permission prompt or question with nobody present, and what survives compaction. No
-text was copied.
+These sources supplied the per-harness facts in `references/harnesses.md`:
+
+- how each goal loop is armed, judged, and ended;
+- how each treats a permission prompt or question with nobody present;
+- what survives compaction.
+
+No text was copied.
