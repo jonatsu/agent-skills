@@ -398,18 +398,6 @@ if it is, use Vale rather than writing a measurer here.
 Decided on 2026-11-19: the user chose option 1. Option 3 stays open until measuring the skills' own sentences is
 wanted.
 
-## Rename the Single-Word Skills
-
-Three skills have a single-word name: `accessibility`, `usability`, and `autopilot`. `skill-forge` now asks for a
-qualified, multi-word name, because agents see every skill in one flat list without its group folder, and a common
-word makes every search for the skill also match ordinary prose. The user agreed on 2026-11-19 that a rename should be
-considered.
-
-For each skill, propose a multi-word name that says what it does, and let the user choose. A rename then changes the
-folder, the `name` field, every pointer from other skills, and the installing configuration, which selects skills by
-name, so tell the agent-setup session in the same hand-off. Search the whole repository for the old name and sort
-mentions of the skill from the word in ordinary prose before committing.
-
 ## Worked Example for `test-engineer`
 
 `test-engineer` has no worked example: its strategy reference teaches by rule alone, and its deliverable template
@@ -485,16 +473,16 @@ What the assessment established:
   secrets; the output stays local.
 - **Keep it separate from `session-handoff`,** which briefs a different recipient; this answers the user now.
 
-## `usability` Eval Gaps
+## `usability-engineering` Eval Gaps
 
-The `ui-ux-skills/usability` evaluation (`docs/evaluations/2026-11-16-usability-skill.md`) has no case for
+The `ui-ux-skills/usability-engineering` evaluation (`docs/evaluations/2026-11-16-usability-skill.md`) has no case for
 design mode, review mode, the holistic review, or a voice interface, and ran once per model on one client. Add
 a case for each, built on fixtures unlike the existing five, and rerun with at least two repetitions. While
 there, make `evals/grade.py` ignore a report that says it gives no score.
 
-## `accessibility` Eval Gaps
+## `accessibility-engineering` Eval Gaps
 
-The `ui-ux-skills/accessibility` evaluation (`docs/evaluations/2026-11-16-accessibility-skill.md`) has no case
+The `ui-ux-skills/accessibility-engineering` evaluation (`docs/evaluations/2026-11-16-accessibility-skill.md`) has no case
 for design mode, review mode, the quick check and its 300-word cap, a target the user sets at AAA, a document or
 native app under EN 301 549 clauses 10 and 11, or a clean page where the agent finds no failure and must still
 refuse to write "conforms". It ran once per model on one client. Add a case for each, such as a review of a diff
