@@ -1,4 +1,4 @@
-"""Behavioral tests for the mermaid-diagrams skill's check_mermaid.py, run as the command agents call."""
+"""Behavioral tests for the mermaid-diagrams skill's check-mermaid.py, run as the command agents call."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from pathlib import Path
 
 from skill_locator import skill_directory
 
-SCRIPT = skill_directory("mermaid-diagrams") / "scripts" / "check_mermaid.py"
+SCRIPT = skill_directory("mermaid-diagrams") / "scripts" / "check-mermaid.py"
 
 EXIT_CLEAN = 0
 EXIT_FAILED = 1
@@ -118,7 +118,7 @@ class RejectsBadInvocations(CheckMermaidTestCase):
         path = self.write("doc.md", MARKDOWN)
         result = self.run_check(str(path), mermaidx="no-such-mermaidx")
         self.assertEqual(result.returncode, EXIT_USAGE)
-        self.assertTrue(result.stderr.startswith("check_mermaid: error: mermaidx not found"))
+        self.assertTrue(result.stderr.startswith("check-mermaid: error: mermaidx not found"))
         self.assertIn("pipx install mermaidx", result.stderr)
 
     def test_missing_file_exits_two(self) -> None:
@@ -133,7 +133,7 @@ class RejectsBadInvocations(CheckMermaidTestCase):
 
 class RunsStandalone(CheckMermaidTestCase):
     def test_a_copy_outside_the_repository_works(self) -> None:
-        copy = self.directory / "check_mermaid.py"
+        copy = self.directory / "check-mermaid.py"
         _ = shutil.copy(SCRIPT, copy)
         path = self.write("doc.md", MARKDOWN)
         result = subprocess.run(

@@ -208,7 +208,7 @@ A diagram that fails to parse renders as an error box, or as nothing, and nobody
 delivering, run the bundled check from this skill's directory over every file you wrote a diagram in:
 
 ```bash
-python3 scripts/check_mermaid.py docs/design.md diagrams/flow.mmd
+python3 scripts/check-mermaid.py docs/design.md diagrams/flow.mmd
 ```
 
 It renders each fenced `mermaid` block and each `.mmd` file with `mermaidx`, offline and without a browser. Each

@@ -13,7 +13,7 @@ Exit status: 0 when every diagram renders, 1 when one or more fail, 2 on a usage
 error, a missing file, or a missing mermaidx.
 
 Example:
-    python3 check_mermaid.py docs/*.md diagrams/flow.mmd
+    python3 check-mermaid.py docs/*.md diagrams/flow.mmd
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-PROGRAM = "check_mermaid"
+PROGRAM = "check-mermaid"
 EXIT_CLEAN = 0
 EXIT_FAILED = 1
 EXIT_USAGE = 2
@@ -129,9 +129,9 @@ def render(diagram: Diagram, mermaidx: str) -> Failure | None:
 
 def parse_arguments(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        prog="check_mermaid.py",
+        prog="check-mermaid.py",
         description="Check that every Mermaid diagram in Markdown or .mmd files renders, using mermaidx.",
-        epilog="Example: python3 check_mermaid.py docs/*.md diagrams/flow.mmd",
+        epilog="Example: python3 check-mermaid.py docs/*.md diagrams/flow.mmd",
     )
     _ = parser.add_argument(
         "files", nargs="+", type=Path, metavar="FILE", help="Markdown, .mmd, or .mermaid file"
