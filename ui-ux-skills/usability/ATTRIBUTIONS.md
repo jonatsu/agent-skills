@@ -70,8 +70,8 @@ copied.
 - License: `LicenseRef-Proprietary`
 - Version: 1996
 
-The principle of showing only the information the user needs at a given time supports the minimal principle.
-The list was read as reproduced by secondary sources; no prose was copied.
+The list supplied the principle of showing only the information the user needs at a given time, which supports
+the minimal principle. The list was read as reproduced by secondary sources; no prose was copied.
 
 ### George A. Miller: The Magical Number Seven, Plus or Minus Two
 
@@ -151,6 +151,6 @@ not reproduced.
 - Version: `ac30238`
 
 These skills supplied design ideas: the split into a principle audit, a task walkthrough, and a holistic
-review; inputs stated first; questions per principle; the door lens; a severity scale with a fixed report; and
-the closing limit that real users confirm the findings. Every sentence was written independently; no prose or
-code was copied.
+review, and inputs stated first. They also supplied questions per principle and the door lens. Two more ideas
+were a severity scale with a fixed report and the closing limit that real users confirm the findings. Every
+sentence was written independently; no prose or code was copied.

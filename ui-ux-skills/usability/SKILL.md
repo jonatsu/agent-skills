@@ -24,9 +24,9 @@ A usability review does not cover accessibility conformance, such as WCAG. Where
 diverse users, recommend an accessibility review, which the `accessibility` skill carries out.
 
 A safety-critical interface follows its own domain's standards and process, which this skill does not replace.
-Examples are control rooms (ISO 11064), process-automation HMIs (ANSI/ISA-101), indicator and actuator coding
-(IEC 60073), and medical devices (IEC 62366-1). Name a standard in your report only when you can verify that
-it applies.
+Examples are control rooms (ISO 11064), process-automation human-machine interfaces (ANSI/ISA-101), indicator
+and actuator coding (IEC 60073), and medical devices (IEC 62366-1). Name a standard in your report only when you
+can verify that it applies.
 
 ## Fit the Effort to the Job
 
@@ -34,15 +34,15 @@ Choose the depth before you start, from what the request or the project states. 
 not a statement of it.
 
 - **Quick check.** The user asks for a brief look, such as a quick or rough check. The same holds when the
-  user states that only a few known people use the interface. Read no file under `references/`, and write only this:
+  user states that only a few known people use the interface. Leave `references/` unread, and write only this:
 
   1. The answer first: usable enough or not, and what to fix first.
   2. One sentence of assumptions.
   3. The few findings that matter most, each with the problem, its severity and consequence, and the fix.
   4. One sentence naming the test that would confirm them.
 
-  Keep the report short enough to read at a glance, without headings. It still names the medium's skill when
-  one applies, and the domain standard when one applies.
+  Keep the report short enough to read at a glance, without headings. It still names the medium's skill and the
+  domain standard, each when one applies.
 
 - **Full evaluation.** Every other request. Use the method the mode below selects and the full report shape.
 
@@ -65,7 +65,9 @@ Norman's design principles, and ISO 9241-110.
 Translate each principle into the medium through its interaction dimensions: words, visuals, physical objects
 or space, time, and behaviour. Each medium carries a principle in the dimensions it has. A voice interface has no
 visuals, so its status lives in words and timing. A washing machine dial carries its state in position and
-markings. Propose fixes that the medium can build. Flag any fix that needs a change to the hardware or platform.
+markings.
+
+Propose fixes that the medium can build. Flag any fix that needs a change to the hardware or platform.
 [references/principles.md](references/principles.md) holds each principle's questions per dimension and the
 sources behind them.
 
@@ -91,11 +93,11 @@ absent feedback. A door that people push when it must be pulled has a design fau
     [references/holistic-review.md](references/holistic-review.md).
 - **Review**: a proposed or recent change. Judge what changed and what it touches, with the questions in
   [references/principles.md](references/principles.md). Check that it keeps the interface's existing
-  conventions, and that it weakens no principle the old version met. Report in the full report shape, with
+  conventions, and that every principle the old version met still holds. Report in the full report shape, with
   findings only about the change.
 
 When a finding rests on a quantitative law, such as Fitts's law or the response-time limits, read
-[references/laws.md](references/laws.md) first. Several of them are commonly misquoted.
+[references/laws.md](references/laws.md) first. Several such laws are commonly misquoted.
 
 ## Rate Severity by Consequence
 
@@ -109,9 +111,11 @@ Rate each finding on Nielsen's scale, from what the problem costs the user:
 | 3      | Major; high priority            |
 | 4      | Catastrophe; fix before release |
 
-Judge three factors: how often it occurs, how badly it hurts when it does, and whether users overcome it once
-they know. State that consequence in words beside the rating, for example: "every caller who asks for an
-agent is sent back to the main menu". Order findings by rating, worst first.
+Judge three factors: frequency, impact, and persistence. Frequency is how often it occurs, impact is how badly it
+hurts when it does, and persistence is whether users overcome it once they know.
+
+State that consequence in words beside the rating. An example: "every caller who asks for an agent is sent back
+to the main menu". Order findings by rating, worst first.
 
 Report severity only in this form. A total score, a grade, or a percentage of principles met claims a
 measurement nobody made, so leave them out. The same holds for predicted success rates and task times.
@@ -148,7 +152,7 @@ Plan a test this way:
   device or a voice interface. Read a score against a comparison point, such as the previous version, not as a
   pass mark.
 
-For hardware, test a paper, cardboard, or breadboard prototype before the design is frozen, because changing it
+For hardware, test a paper, cardboard, or breadboard prototype before the design is frozen. Changing it
 afterwards costs most.
 
 ## Attributions

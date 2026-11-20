@@ -60,5 +60,5 @@ Use it when the user wants speed over depth, and say that you used it.
 
 The walkthrough covers learnability for first-time users only. It says little about efficiency for experts,
 and it predicts rather than measures. Different evaluators reach different conclusions, so recommend a test with
-first-time users on the same task. Report no predicted success rate or task time, because the walkthrough
-cannot measure either.
+first-time users on the same task. Give consequences in words, and leave out any predicted success rate or task
+time, because the walkthrough cannot measure either.

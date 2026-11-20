@@ -7,8 +7,8 @@ succeed.
 ## Steps
 
 1. **State the inputs.** Name the users, their main tasks, and the context of use. The context covers the
-   device, the environment, how often they use it, and what a failure costs them. Take them from the request
-   and the project's files. Where they are missing, choose plausible ones and list them as assumptions.
+   device, the environment, how often they use it, and what a failure costs them. Take the inputs from the
+   request and the project's files. Where one is missing, choose a plausible value and list it as an assumption.
 2. **Narrow the scope.** Choose the screens, states, or tasks to inspect. A whole product in one pass yields a
    shallow list.
 3. **Pass one: learn the flow.** Go through each main task once as the user would. Note the states, modes,
@@ -20,7 +20,7 @@ succeed.
    0: say why and drop it.
 6. **Write the fix.** Give each finding a concrete fix that the medium can build. Where a fix trades against
    another principle, name the trade-off.
-7. **Report** in the shape `SKILL.md` gives.
+7. **Report.** Write the report in the shape `SKILL.md` gives.
 
 The audit is done when three things hold. Every in-scope task has been walked once. Every principle has been
 asked of every element in scope. Every finding has a rating, a consequence, and a fix.

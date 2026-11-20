@@ -91,7 +91,7 @@ Words: a visible name on every control and field. Visuals: menus and examples. P
 each button, as on a microwave keypad. Voice: the options offered, not expected to be guessed.
 
 A signifier is the perceivable cue; an affordance is the action an object allows. Norman's revised account says
-signifiers matter more to designers than affordances, so fix a hidden function by adding a signifier.
+signifiers matter more to designers than affordances. Fix a hidden function by adding a signifier.
 
 Sources: Nielsen 6, Shneiderman 8, Norman's signifiers and discoverability.
 
