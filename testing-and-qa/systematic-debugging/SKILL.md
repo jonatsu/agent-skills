@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: Investigate failures, regressions, and intermittent behavior to find and verify the root cause. Use when debugging an error, tracing an unexpected result, or diagnosing why a test or process fails intermittently. For test strategy or coverage review without failure diagnosis, use test-engineer.
+description: Investigate failures, regressions, and intermittent behavior to find and verify the root cause. Use when debugging an error, a failed command, test, build, hook, or check, tracing an unexpected result, or diagnosing why a test or process fails intermittently. For test strategy or coverage review without failure diagnosis, use test-engineer.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -9,13 +9,14 @@ metadata:
 # Systematic Debugging
 
 Investigate the failure before proposing a code change. The goal is convergent reasoning: collect evidence,
-test a focused explanation, and fix the cause rather than suppressing the symptom.
+test a focused explanation, and fix the cause rather than suppressing the symptom. Investigate a failed command,
+test, check, hook, build, or review the same way before you call it a blocker or ask the user about it.
 
 ## Workflow
 
 1. **Capture the failure.** State the expected and actual behavior. Read the complete error, stack trace, log,
    and recent changes. Make a minimal reproduction when feasible. When you cannot reproduce it, gather bounded
-   evidence such as exact inputs, versions, environment, logs, and frequency, and report a suspected cause
+   evidence, such as exact inputs, versions, environment, logs, and frequency. Then report a suspected cause
    rather than a root cause. An explicitly authorized mitigation may proceed when it is labeled as a
    mitigation, its risk is understood, and its result is verified.
 2. **Map the failure path.** For a deep stack trace or invalid value, trace callers and values backward to the
@@ -23,11 +24,14 @@ test a focused explanation, and fix the cause rather than suppressing the sympto
    configuration. Redact secrets. For flaky asynchronous work, wait for the observable completion condition
    instead of tuning arbitrary delays.
 3. **Test a focused hypothesis.** Predict what a small experiment will show, change one behavioral variable,
-   and read the result. Keep investigation notes where the repository puts task artifacts, or in the response;
-   leave tracked project files untouched until the fix. After three refuted hypotheses, recheck the reproduction
+   and read the result. Keep investigation notes where the repository puts task artifacts, or in the response.
+   Leave tracked project files untouched until the fix. After three refuted hypotheses, recheck the reproduction
    and assumptions, widen the search, or consider whether the architecture needs discussion.
-4. **Fix and verify.** When the causal chain is supported, state it and make the smallest cause-level change.
-   Run the reproduction and relevant regression checks, read their output, and report any remaining uncertainty.
+4. **Fix and verify.** When the causal chain is supported, state it. When the required behavior is settled and
+   the fix is local, reversible, and in scope, make the smallest cause-level change. Run the reproduction and
+   relevant regression checks, read their output, and report any remaining uncertainty. Some fixes change
+   accepted behavior, architecture, compatibility, data preservation, risk, cost, or scope. Put such a choice to
+   the user with its options and your recommendation.
 
 ## Guardrails
 
@@ -47,7 +51,9 @@ test a focused explanation, and fix the cause rather than suppressing the sympto
 - Inspect a hung process before you kill it: what it runs (`ps`) and what it walks, such as a symlink cycle
   under a tree walker. Treat the hang as a failing check. Fix its cause, then rerun until the process finishes,
   because a killed hang returns on the next run.
-- A mitigation, destructive experiment, or risky architectural change needs authority of its own.
+- A mitigation or a destructive experiment needs authority of its own.
+- When a branch of the work cannot proceed, keep its evidence (the command, its output, and the state) where the
+  user will find it, and continue with independent authorized work.
 - Use independent test review when the task, risk, or user requests it. `test-engineer` owns test work and does
   not own production changes.
 
@@ -57,3 +63,4 @@ test a focused explanation, and fix the cause rather than suppressing the sympto
 - The cause is explained when known; otherwise the report distinguishes evidence, hypothesis, and mitigation.
 - The implemented change is scoped to the supported cause.
 - Relevant verification ran, its output was read, and remaining risk is reported.
+- Any blocker was declared after investigation, with its evidence kept.
