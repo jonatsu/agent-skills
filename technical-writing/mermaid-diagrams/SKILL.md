@@ -171,6 +171,10 @@ For in-depth guidance on specific diagram types, see:
 
 Keep one diagram per concept; split a large diagram into focused views.
 
+Give every diagram `accTitle` and `accDescr`, which Mermaid writes into the SVG for assistive technology. Never
+let a styled colour carry meaning alone: put the meaning in a label or a shape too, and check the diagram under
+the `dark` theme when readers may use dark mode.
+
 ## Configuration and Theming
 
 Configure diagrams using frontmatter:

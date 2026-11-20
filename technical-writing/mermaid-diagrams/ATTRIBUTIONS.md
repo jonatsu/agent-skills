@@ -16,3 +16,12 @@ The package vendors upstream material, whose MIT license requires its notice to 
 
 The skill body and every file under `references/` are vendored from upstream and adapted to this repository's skill
 conventions.
+
+### Miqdad Badjuber: antislop `antislop-human` skill
+
+- Source: <https://github.com/miqdadbadjuber/anti-slop>, `skills/antislop-human/`
+- License: `MIT`
+- Version: `44b3547ed6d6f21eed777271602da113efc53c94`
+
+The skill supplied two ideas, carried over from web interfaces: a diagram needs a text alternative, and colour
+never carries meaning alone, in light or dark mode. The rules were written independently; no text was copied.
