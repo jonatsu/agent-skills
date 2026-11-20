@@ -40,16 +40,10 @@ def load_schema() -> dict[str, Any]:
 
 def eval_files(skill_directories: Iterable[Path]) -> tuple[Path, ...]:
     """Return the case files directly inside each skill's `evals/` directory."""
-    return tuple(
-        sorted(
-            path for directory in skill_directories for path in (directory / "evals").glob("*.json")
-        )
-    )
+    return tuple(sorted(path for directory in skill_directories for path in (directory / "evals").glob("*.json")))
 
 
-def check_eval_file(
-    path: Path, skill_directory: Path, validator: Draft202012Validator
-) -> list[EvalFinding]:
+def check_eval_file(path: Path, skill_directory: Path, validator: Draft202012Validator) -> list[EvalFinding]:
     """Return every finding for one case file, or none when it is valid."""
     try:
         document = json.loads(path.read_text(encoding="utf-8"))
@@ -57,9 +51,7 @@ def check_eval_file(
         return [EvalFinding(path, "", f"cannot read as JSON: {error}")]
     findings = [
         finding
-        for error in sorted(
-            validator.iter_errors(document), key=lambda error: list(error.absolute_path)
-        )
+        for error in sorted(validator.iter_errors(document), key=lambda error: list(error.absolute_path))
         for finding in _schema_findings(path, error)
     ]
     if not isinstance(document, dict):
@@ -101,13 +93,9 @@ def _case_findings(path: Path, cases: list[Any]) -> list[EvalFinding]:
             continue
         target = (path.parent / fixture).resolve()
         if not target.is_relative_to(fixtures_root) or target == fixtures_root:
-            findings.append(
-                EvalFinding(path, f"cases/{index}/fixture", f"{fixture!r} leaves evals/fixtures/")
-            )
+            findings.append(EvalFinding(path, f"cases/{index}/fixture", f"{fixture!r} leaves evals/fixtures/"))
         elif not target.is_dir():
-            findings.append(
-                EvalFinding(path, f"cases/{index}/fixture", f"{fixture!r} is not a directory")
-            )
+            findings.append(EvalFinding(path, f"cases/{index}/fixture", f"{fixture!r} is not a directory"))
     return findings
 
 
@@ -119,14 +107,10 @@ def _schema_findings(path: Path, error: ValidationError) -> list[EvalFinding]:
     # A case matching no shape reports only "not valid under any of the given schemas". Report the errors of
     # the shape its own fields name instead, so the message says what to fix.
     if error.validator == "oneOf" and isinstance(error.instance, dict):
-        shape = next(
-            (index for index, key in enumerate(CASE_SHAPE_KEYS) if key in error.instance), None
-        )
+        shape = next((index for index, key in enumerate(CASE_SHAPE_KEYS) if key in error.instance), None)
         branch = [inner for inner in error.context or [] if inner.relative_schema_path[0] == shape]
         if branch:
-            return [
-                EvalFinding(path, _location(inner.absolute_path), inner.message) for inner in branch
-            ]
+            return [EvalFinding(path, _location(inner.absolute_path), inner.message) for inner in branch]
         return [
             EvalFinding(
                 path,

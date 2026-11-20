@@ -77,9 +77,7 @@ def test_plain_toml_counts_only_in_a_package_with_rust_examples(
     write_skill: Callable[[str], Path],
 ) -> None:
     rust = write_skill("development/rust-x")
-    (rust / "SKILL.md").write_text(
-        f"{FENCE}rust\nfn a() {{}}\n{FENCE}\n{FENCE}toml\n[lints]\n{FENCE}\n"
-    )
+    (rust / "SKILL.md").write_text(f"{FENCE}rust\nfn a() {{}}\n{FENCE}\n{FENCE}toml\n[lints]\n{FENCE}\n")
     other = write_skill("development/python-x")
     (other / "SKILL.md").write_text(f"{FENCE}toml\n[project]\n{FENCE}\n")
     subprocess.run(["git", "init", "-q"], cwd=rust.parent.parent, check=True)
@@ -221,9 +219,7 @@ def test_a_correct_example_passes(workspace: Workspace, info: str, code: str) ->
         ),
     ],
 )
-def test_a_planted_failure_is_caught(
-    workspace: Workspace, info: str, code: str, message: str
-) -> None:
+def test_a_planted_failure_is_caught(workspace: Workspace, info: str, code: str, message: str) -> None:
     assert message in _message(_check(workspace, info, code))
 
 

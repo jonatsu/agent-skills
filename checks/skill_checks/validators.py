@@ -135,15 +135,12 @@ def _command_prefix(kind: ValidatorKind, repo_root: Path) -> tuple[str, ...]:
     command = shutil.which(SPECIFICATION_COMMAND, path=str(Path(sys.executable).parent))
     if command is None:
         raise FileNotFoundError(
-            f"specification validator {SPECIFICATION_COMMAND!r} not found beside {sys.executable}; "
-            "run uv sync"
+            f"specification validator {SPECIFICATION_COMMAND!r} not found beside {sys.executable}; run uv sync"
         )
     return (command, "validate")
 
 
-def _parse_result(
-    kind: ValidatorKind, source: SkillSource, result: CommandResult
-) -> ValidationRecord:
+def _parse_result(kind: ValidatorKind, source: SkillSource, result: CommandResult) -> ValidationRecord:
     if kind is ValidatorKind.SPECIFICATION:
         return ValidationRecord(
             source,
@@ -188,9 +185,7 @@ def format_validation_report(report: ValidationReport, repo_root: Path) -> tuple
             lines.extend((f"FAIL  {relative}", f"      {record.raw_failure}"))
     lines.append("")
     if report.kind is ValidatorKind.POLICY:
-        lines.append(
-            f"{report.checked} checked, {report.failures} failed, {report.warnings} with warnings"
-        )
+        lines.append(f"{report.checked} checked, {report.failures} failed, {report.warnings} with warnings")
     else:
         lines.append(f"{report.checked} checked, {report.failures} failed")
     return "\n".join(lines) + "\n", ""

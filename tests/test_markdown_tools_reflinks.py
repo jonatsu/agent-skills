@@ -112,8 +112,7 @@ class ReportsConversionLoss(ReflinksTestCase):
             result.stdout.splitlines(),
             [
                 f"{self.old_path}:{line_of(OLD, 'the site')}: link lost: [the site](https://example.com/a)",
-                f"{self.new_path}:{line_of(new, 'the site')}: "
-                "link added: [the site](https://example.com/other)",
+                f"{self.new_path}:{line_of(new, 'the site')}: link added: [the site](https://example.com/other)",
             ],
         )
 
@@ -145,9 +144,7 @@ class ReportsConversionLoss(ReflinksTestCase):
             f"{self.old_path}:{line_of(OLD, 'the **guide**')}: link lost: [the **guide**]",
             result.stdout,
         )
-        self.assertIn(
-            f"{self.new_path}:{line_of(new, 'the guide')}: link added: [the guide]", result.stdout
-        )
+        self.assertIn(f"{self.new_path}:{line_of(new, 'the guide')}: link added: [the guide]", result.stdout)
 
     def test_changed_text_is_reported(self) -> None:
         new = NEW.replace("[the site][site]", "[our site][site]")
@@ -254,9 +251,7 @@ class HandlesPairsAndErrors(ReflinksTestCase):
         result = self.run_check(str(old_path), str(new_path), str(old_path), str(broken))
         self.assertEqual(result.returncode, EXIT_FINDINGS)
         self.assertIn(f"{old_path}:6: link lost:", result.stdout)
-        self.assertTrue(
-            result.stderr.startswith("reflinks: 2 file pair(s), 1 link(s) lost, 1 link(s) added")
-        )
+        self.assertTrue(result.stderr.startswith("reflinks: 2 file pair(s), 1 link(s) lost, 1 link(s) added"))
 
     def test_a_missing_file_exits_two(self) -> None:
         new_path = self.write("new.md", NEW)
@@ -269,9 +264,7 @@ class HandlesPairsAndErrors(ReflinksTestCase):
         new_path = self.write("new.md", NEW)
         result = self.run_check(str(new_path))
         self.assertEqual(result.returncode, EXIT_USAGE)
-        self.assertIn(
-            "reflinks.py: error: invalid arguments: expected OLD NEW pairs", result.stderr
-        )
+        self.assertIn("reflinks.py: error: invalid arguments: expected OLD NEW pairs", result.stderr)
         self.assertIn("hint:", result.stderr)
 
     def test_no_arguments_exits_two(self) -> None:
@@ -291,9 +284,7 @@ class HandlesPairsAndErrors(ReflinksTestCase):
             check=False,
         )
         self.assertEqual(result.returncode, EXIT_USAGE)
-        self.assertTrue(
-            result.stderr.startswith("reflinks.py: error: cannot import"), result.stderr
-        )
+        self.assertTrue(result.stderr.startswith("reflinks.py: error: cannot import"), result.stderr)
         self.assertIn("uv run", result.stderr)
 
 

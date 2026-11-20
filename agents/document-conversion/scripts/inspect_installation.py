@@ -150,9 +150,7 @@ def inspect_installation() -> dict[str, Any]:
         "python": platform.python_version(),
         "anydoc": inspect_anydoc(),
         "markitdown": inspect_markitdown(),
-        "optional_distributions": {
-            name: distribution_version(name) for name in OPTIONAL_DISTRIBUTIONS
-        },
+        "optional_distributions": {name: distribution_version(name) for name in OPTIONAL_DISTRIBUTIONS},
         "plugins": discover_plugins(),
         "executables": {
             "anydoc": shutil.which("anydoc"),

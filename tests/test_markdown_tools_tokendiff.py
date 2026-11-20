@@ -50,9 +50,7 @@ class TokendiffTestCase(unittest.TestCase):
             cwd=cwd,
         )
 
-    def compare(
-        self, source: str, destination: str, *extra: str
-    ) -> subprocess.CompletedProcess[str]:
+    def compare(self, source: str, destination: str, *extra: str) -> subprocess.CompletedProcess[str]:
         source_path = self.write("source.md", source)
         destination_path = self.write("destination.md", destination)
         return self.run_check("--from", str(source_path), "--to", str(destination_path), *extra)
@@ -69,14 +67,10 @@ class ReportsLostWords(TokendiffTestCase):
         result = self.compare(SOURCE, moved)
         self.assertEqual(result.returncode, EXIT_CLEAN, result.stdout)
         self.assertEqual(result.stdout, "")
-        self.assertRegex(
-            result.stderr, r"^tokendiff: \d+ source token\(s\), 0 lost occurrence\(s\), 0 distinct"
-        )
+        self.assertRegex(result.stderr, r"^tokendiff: \d+ source token\(s\), 0 lost occurrence\(s\), 0 distinct")
 
     def test_a_lost_word_is_reported_with_its_counts(self) -> None:
-        result = self.compare(
-            SOURCE, SOURCE.replace("small, and the widget is fast", "small, and fast")
-        )
+        result = self.compare(SOURCE, SOURCE.replace("small, and the widget is fast", "small, and fast"))
         self.assertEqual(result.returncode, EXIT_LOST)
         self.assertEqual(result.stdout, "is: lost 1 of 2\nthe: lost 1 of 2\nwidget: lost 1 of 3\n")
         self.assertTrue(
@@ -90,9 +84,7 @@ class ReportsLostWords(TokendiffTestCase):
         self.assertEqual(result.returncode, EXIT_LOST)
 
     def test_a_token_compares_case_sensitively_and_keeps_inner_punctuation(self) -> None:
-        result = self.compare(
-            "Widget docs/setup.md v1.2-beta end.\n", "widget docs/setup.md v1.2-beta end\n"
-        )
+        result = self.compare("Widget docs/setup.md v1.2-beta end.\n", "widget docs/setup.md v1.2-beta end\n")
         self.assertEqual(result.stdout, "Widget: lost 1 of 1\n")
 
     def test_inline_code_counts_but_a_fenced_block_does_not(self) -> None:
@@ -115,27 +107,19 @@ class ReportsLostWords(TokendiffTestCase):
         self.assertEqual(result.returncode, EXIT_CLEAN, result.stdout)
 
     def test_link_destinations_do_not_count_but_link_text_does(self) -> None:
-        result = self.compare(
-            "See [the guide](docs/old-path.md).\n", "See [the manual](docs/new-path.md).\n"
-        )
+        result = self.compare("See [the guide](docs/old-path.md).\n", "See [the manual](docs/new-path.md).\n")
         self.assertEqual(result.stdout, "guide: lost 1 of 1\n")
 
     def test_html_block_text_counts_but_its_tags_do_not(self) -> None:
-        result = self.compare(
-            "<details><summary>Fold</summary>\nInside\n</details>\n", "Fold Inside\n"
-        )
+        result = self.compare("<details><summary>Fold</summary>\nInside\n</details>\n", "Fold Inside\n")
         self.assertEqual(result.returncode, EXIT_CLEAN, result.stdout)
 
 
 class IgnoresDeliberateDeletions(TokendiffTestCase):
     def test_ignore_removes_a_word_from_the_comparison(self) -> None:
-        result = self.compare(
-            "keep drop other\n", "keep\n", "--ignore", "drop", "--ignore", "other"
-        )
+        result = self.compare("keep drop other\n", "keep\n", "--ignore", "drop", "--ignore", "other")
         self.assertEqual(result.returncode, EXIT_CLEAN, result.stdout)
-        self.assertTrue(
-            result.stderr.startswith("tokendiff: 1 source token(s), 0 lost"), result.stderr
-        )
+        self.assertTrue(result.stderr.startswith("tokendiff: 1 source token(s), 0 lost"), result.stderr)
 
     def test_ignore_leaves_other_losses_reported(self) -> None:
         result = self.compare("keep drop other\n", "keep\n", "--ignore", "drop")
@@ -177,9 +161,7 @@ class RejectsBadInvocations(TokendiffTestCase):
         result = self.run_check("--from", str(self.directory / "absent.md"), "--to", str(present))
         self.assertEqual(result.returncode, EXIT_USAGE)
         self.assertEqual(result.stdout, "")
-        self.assertTrue(
-            result.stderr.startswith("tokendiff.py: error: cannot read "), result.stderr
-        )
+        self.assertTrue(result.stderr.startswith("tokendiff.py: error: cannot read "), result.stderr)
 
     def test_a_missing_ignore_file_exits_two(self) -> None:
         present = self.write("present.md", "word\n")
@@ -213,9 +195,7 @@ class RejectsBadInvocations(TokendiffTestCase):
             check=False,
         )
         self.assertEqual(result.returncode, EXIT_USAGE)
-        self.assertTrue(
-            result.stderr.startswith("tokendiff.py: error: cannot import"), result.stderr
-        )
+        self.assertTrue(result.stderr.startswith("tokendiff.py: error: cannot import"), result.stderr)
 
 
 class RunsStandalone(TokendiffTestCase):
@@ -224,9 +204,7 @@ class RunsStandalone(TokendiffTestCase):
         _ = shutil.copy(SCRIPT, copy)
         _ = self.write("source.md", "alpha beta\n")
         _ = self.write("destination.md", "alpha\n")
-        result = self.run_check(
-            "--from", "source.md", "--to", "destination.md", script=copy, cwd=self.directory
-        )
+        result = self.run_check("--from", "source.md", "--to", "destination.md", script=copy, cwd=self.directory)
         self.assertEqual(result.returncode, EXIT_LOST, result.stderr)
         self.assertEqual(result.stdout, "beta: lost 1 of 1\n")
 

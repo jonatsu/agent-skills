@@ -103,9 +103,7 @@ def format_description_report(report: DescriptionReport, repo_root: Path) -> str
         lines.append(f"{label}  {_display_path(finding.source.skill_md, repo_root)}")
         lines.append(f"      {finding.message}")
     lines.append("")
-    lines.append(
-        f"{report.checked} checked, {report.failures} failed, {report.warnings} over budget"
-    )
+    lines.append(f"{report.checked} checked, {report.failures} failed, {report.warnings} over budget")
     return "\n".join(lines) + "\n"
 
 

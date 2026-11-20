@@ -88,9 +88,7 @@ def _make_key(home: Path, uid: str, keyring: Path) -> None:
     _gpg(home, "--output", str(keyring), "--export", uid)
 
 
-def _build_suite(
-    root: Path, suite: str, by_arch: dict[str, list[Deb]], home: Path, *, tamper: bool = False
-) -> None:
+def _build_suite(root: Path, suite: str, by_arch: dict[str, list[Deb]], home: Path, *, tamper: bool = False) -> None:
     """Write a dists/ suite whose InRelease is clearsigned with the key in `home`."""
     indices: dict[str, bytes] = {}
     for arch, debs in by_arch.items():
@@ -151,9 +149,7 @@ class AptFetchTests(unittest.TestCase):
         # A flat repository: indices under flat/, Filename relative to the archive root, no signature.
         flat_index = _packages_index([cls.HELLO_1, cls.ARM_ONLY], prefix="flat/")
         _write(root / "flat" / "Packages", flat_index)
-        _write(
-            root / "flat" / "Release", _release({"Packages": flat_index}, "amd64 arm64").encode()
-        )
+        _write(root / "flat" / "Release", _release({"Packages": flat_index}, "amd64 arm64").encode())
         for deb in (cls.HELLO_1, cls.ARM_ONLY):
             _write(root / "flat" / deb.filename, deb.content)
 
@@ -172,13 +168,9 @@ class AptFetchTests(unittest.TestCase):
         self.out = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.out)
 
-    def _run(
-        self, *args: str, keyring: Path | None = None, signed: bool = True
-    ) -> subprocess.CompletedProcess[str]:
+    def _run(self, *args: str, keyring: Path | None = None, signed: bool = True) -> subprocess.CompletedProcess[str]:
         options = ["-k", str(keyring or self.keyring)] if signed else []
-        env = {
-            key: value for key, value in os.environ.items() if not key.lower().endswith("_proxy")
-        }
+        env = {key: value for key, value in os.environ.items() if not key.lower().endswith("_proxy")}
         return subprocess.run(
             ["sh", str(SCRIPT), *options, "-o", str(self.out / "debs"), *args],
             check=False,
@@ -188,26 +180,18 @@ class AptFetchTests(unittest.TestCase):
         )
 
     def _downloaded(self) -> list[str]:
-        return (
-            sorted(path.name for path in (self.out / "debs").glob("*"))
-            if (self.out / "debs").exists()
-            else []
-        )
+        return sorted(path.name for path in (self.out / "debs").glob("*")) if (self.out / "debs").exists() else []
 
     def test_list_includes_the_all_index_and_excludes_other_architectures(self) -> None:
         result = self._run("-l", self.base, "stable", "x86_64")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(
-            result.stdout.splitlines(), ["docs\t1.0\tall", "hello\t1.0\tamd64", "hello\t2.0\tamd64"]
-        )
+        self.assertEqual(result.stdout.splitlines(), ["docs\t1.0\tall", "hello\t1.0\tamd64", "hello\t2.0\tamd64"])
 
     def test_download_of_a_pinned_version_verifies_and_lands(self) -> None:
         result = self._run(self.base, "stable", "amd64", "hello=2.0", "docs")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(self._downloaded(), ["docs_1.0_all.deb", "hello_2.0_amd64.deb"])
-        self.assertEqual(
-            (self.out / "debs" / "hello_2.0_amd64.deb").read_bytes(), self.HELLO_2.content
-        )
+        self.assertEqual((self.out / "debs" / "hello_2.0_amd64.deb").read_bytes(), self.HELLO_2.content)
 
     def test_ambiguous_version_fails_and_names_the_versions(self) -> None:
         result = self._run(self.base, "stable", "amd64", "hello")

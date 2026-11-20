@@ -167,9 +167,7 @@ def _cell_defects(cell_id: str, cell: ET.Element, ids: dict[str, ET.Element]) ->
         defects.append(f"vertex {cell_id!r} has no <mxGeometry>, so it has no position or size")
     if is_edge:
         if geometry is None:
-            defects.append(
-                f'edge {cell_id!r} has no <mxGeometry relative="1" as="geometry"/>; it will not render'
-            )
+            defects.append(f'edge {cell_id!r} has no <mxGeometry relative="1" as="geometry"/>; it will not render')
         for end in ("source", "target"):
             terminal = cell.get(end)
             if terminal is not None and terminal not in ids:
@@ -215,15 +213,11 @@ def run_extract(path: Path, output: Path) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     commands = parser.add_subparsers(dest="command", required=True)
     check = commands.add_parser("check", help="report structural defects")
     check.add_argument("files", nargs="+", type=Path)
-    extract = commands.add_parser(
-        "extract", help="write the diagram as an uncompressed .drawio file"
-    )
+    extract = commands.add_parser("extract", help="write the diagram as an uncompressed .drawio file")
     extract.add_argument("file", type=Path)
     extract.add_argument("-o", "--output", type=Path, required=True)
     args = parser.parse_args(argv)

@@ -103,9 +103,7 @@ def check_attribution_text(path: Path, text: str) -> list[AttributionFinding]:
                 elif title in seen_sections:
                     fail(number, f"section '{title}' appears twice")
                 else:
-                    if seen_sections and SECTION_ORDER.index(title) < SECTION_ORDER.index(
-                        seen_sections[-1]
-                    ):
+                    if seen_sections and SECTION_ORDER.index(title) < SECTION_ORDER.index(seen_sections[-1]):
                         fail(
                             number,
                             f"section '{title}' is out of order; use {', '.join(SECTION_ORDER)}",
@@ -148,15 +146,11 @@ def check_attribution_text(path: Path, text: str) -> list[AttributionFinding]:
 def _license_findings(path: Path, line: int, value: str) -> list[AttributionFinding]:
     match = LICENSE_VALUE_RE.match(value.strip())
     if match is None:
-        return [
-            AttributionFinding(path, line, "a license must be one SPDX expression in backticks")
-        ]
+        return [AttributionFinding(path, line, "a license must be one SPDX expression in backticks")]
     expression = match.group(1)
     leftover = LICENSE_TOKEN_RE.sub("", expression).strip()
     tokens = LICENSE_TOKEN_RE.findall(expression)
-    identifiers = [
-        token for token in tokens if token not in LICENSE_OPERATORS and token not in "()"
-    ]
+    identifiers = [token for token in tokens if token not in LICENSE_OPERATORS and token not in "()"]
     if leftover or not identifiers:
         return [AttributionFinding(path, line, f"'{expression}' is not an SPDX license expression")]
     return []

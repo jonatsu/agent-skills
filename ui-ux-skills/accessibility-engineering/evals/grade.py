@@ -37,9 +37,7 @@ CODE = re.compile(r"```.*?```|`[^`\n]*`", re.DOTALL)
 
 def no_score(key: str, text: str) -> None:
     prose = CODE.sub("", text)
-    hits = sorted(
-        {m.group(0) for m in SCORE.finditer(prose) if not NEGATED.search(prose[: m.start()])}
-    )
+    hits = sorted({m.group(0) for m in SCORE.finditer(prose) if not NEGATED.search(prose[: m.start()])})
     say(key, not hits, f"score-like text={hits[:5]}")
 
 
@@ -51,9 +49,7 @@ FOCUS_STYLE = re.compile(
 # The script must change aria-expanded; a static attribute exposes no state change.
 EXPANDED_SET = re.compile(r"setAttribute\(\s*['\"]aria-expanded|\.ariaExpanded\s*=", re.IGNORECASE)
 # aria-hidden="true" on anything but a decorative inline element hides content, such as the list of links.
-HIDDEN_CONTAINER = re.compile(
-    r'<(?!span\b|svg\b|i\b|img\b)\w+[^>]*aria-hidden\s*=\s*["\']?true', re.IGNORECASE
-)
+HIDDEN_CONTAINER = re.compile(r'<(?!span\b|svg\b|i\b|img\b)\w+[^>]*aria-hidden\s*=\s*["\']?true', re.IGNORECASE)
 
 
 def grade_menu(html: str) -> None:

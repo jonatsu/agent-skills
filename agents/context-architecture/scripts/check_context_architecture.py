@@ -86,17 +86,13 @@ ROUTE_LIST_PREFIX = re.compile(
     re.IGNORECASE,
 )
 LIST_MARKER = re.compile(r"^[ \t]*-[ \t]+")
-CONTINUATION_BLOCK = re.compile(
-    r"^(?:[-+*](?:\s|$)|\d+[.)](?:\s|$)|#{1,6}(?:\s|$)|[|>]|`{3,}|~{3,})"
-)
+CONTINUATION_BLOCK = re.compile(r"^(?:[-+*](?:\s|$)|\d+[.)](?:\s|$)|#{1,6}(?:\s|$)|[|>]|`{3,}|~{3,})")
 ROUTE_TARGET_HEADERS = {"file", "read"}
 # Linked rows before a trigger-less table is read as an index rather than content.
 MINIMUM_ROUTED_ROWS = 2
 ROUTE_TRIGGER_HEADER = re.compile(r"^(?:read when|symptom|read before\b|if you\b)")
 # Line-number references that rot: file.ext:123 for code extensions, or GitHub-style #L123.
-LINE_REF = re.compile(
-    r"\b\S+\.(?:md|nix|py|sh|bash|rs|go|ts|js|c|h|cpp|yaml|yml|toml|lock|pl|json):\d+\b|#L\d+\b"
-)
+LINE_REF = re.compile(r"\b\S+\.(?:md|nix|py|sh|bash|rs|go|ts|js|c|h|cpp|yaml|yml|toml|lock|pl|json):\d+\b|#L\d+\b")
 
 EXIT_OK = 0
 EXIT_FINDINGS = 1
@@ -216,8 +212,7 @@ def _repository_files(root: Path, excludes: tuple[str, ...]) -> Iterator[Path]:
             if name != ".git"
             and not os.path.lexists(base / name / ".git")
             and not any(
-                fnmatch.fnmatch(f"/{(base / name).relative_to(root).as_posix()}/", pattern)
-                for pattern in excludes
+                fnmatch.fnmatch(f"/{(base / name).relative_to(root).as_posix()}/", pattern) for pattern in excludes
             )
         ]
         for name in filenames:
@@ -250,11 +245,7 @@ def _structural_paths(text: str, base: Path, root: Path) -> set[Path]:
     """Resolve deliberate parent-child routes rather than incidental references."""
     text = _routing_text(text)
     found: set[Path] = set()
-    raw_paths = [
-        match.group(1)
-        for line in text.splitlines()
-        if (match := STANDALONE_MD_LINK.fullmatch(line))
-    ]
+    raw_paths = [match.group(1) for line in text.splitlines() if (match := STANDALONE_MD_LINK.fullmatch(line))]
     for entry in _routing_entries(text):
         if not entry.trigger:
             continue
@@ -471,9 +462,7 @@ def check_routing_table_headers(document_text: str, relative: str) -> list[Findi
     return findings
 
 
-def _candidates(
-    root: Path, docs_dirs: tuple[str, ...], excludes: tuple[str, ...]
-) -> list[tuple[str, Path]]:
+def _candidates(root: Path, docs_dirs: tuple[str, ...], excludes: tuple[str, ...]) -> list[tuple[str, Path]]:
     """Yield (root-relative path, path) for every document the checks apply to.
 
     Every Markdown file under the docs directories, plus root-level Markdown
@@ -486,11 +475,7 @@ def _candidates(
         if path.suffix == ".md"
         and (
             any(base in path.parents for base in bases)
-            or (
-                path.parent == root
-                and path.name not in FLOOR_NAMES
-                and path.name not in DEFAULT_ROOT_EXEMPT
-            )
+            or (path.parent == root and path.name not in FLOOR_NAMES and path.name not in DEFAULT_ROOT_EXEMPT)
         )
     ]
     return [(path.relative_to(root).as_posix(), path) for path in sorted(found)]
@@ -516,8 +501,7 @@ def _has_source_pin(text: str) -> bool:
     """Recognize explicit revision or SHA-256 pins in prose at the document head."""
     prose = _without_fenced_code("\n".join(text.splitlines()[:PIN_HEAD_LINES]))
     head = "\n".join(
-        "" if line.startswith(("    ", "\t")) else line.rstrip().removesuffix("\\")
-        for line in prose.splitlines()
+        "" if line.startswith(("    ", "\t")) else line.rstrip().removesuffix("\\") for line in prose.splitlines()
     )
     head = PIN_CODE_SPAN.sub(
         lambda match: match[0] if PIN_LITERAL.fullmatch(match[0]) else " ",

@@ -242,11 +242,7 @@ def escape_markdown(value: str) -> str:
 
 def create_index(records: list[LiteratureRecord], output_dir: Path) -> None:
     """Write a Markdown index and JSON catalog."""
-    eligible = [
-        record
-        for record in records
-        if record.output is not None and (output_dir / record.output).is_file()
-    ]
+    eligible = [record for record in records if record.output is not None and (output_dir / record.output).is_file()]
     eligible.sort(
         key=lambda record: (
             record.year is None,
@@ -351,11 +347,7 @@ def main() -> int:
 
     iterator = input_dir.rglob("*") if args.recursive else input_dir.iterdir()
     papers = sorted(
-        (
-            path
-            for path in iterator
-            if path.suffix.lower() == ".pdf" and (path.is_file() or path.is_symlink())
-        ),
+        (path for path in iterator if path.suffix.lower() == ".pdf" and (path.is_file() or path.is_symlink())),
         key=lambda path: path.as_posix(),
     )
 
@@ -392,15 +384,9 @@ def main() -> int:
         create_index(records, output_dir)
 
     counts = {
-        status: sum(record.status == status for record in records)
-        for status in ("converted", "skipped", "failed")
+        status: sum(record.status == status for record in records) for status in ("converted", "skipped", "failed")
     }
-    print(
-        "Summary: "
-        f"{counts['converted']} converted, "
-        f"{counts['skipped']} skipped, "
-        f"{counts['failed']} failed"
-    )
+    print(f"Summary: {counts['converted']} converted, {counts['skipped']} skipped, {counts['failed']} failed")
     if not papers:
         print("No PDF files found")
 

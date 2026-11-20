@@ -101,9 +101,7 @@ def relative_luminance(colour: Colour) -> float:
         value = channel / 255
         return value / 12.92 if value <= 0.04045 else ((value + 0.055) / 1.055) ** 2.4
 
-    return (
-        0.2126 * linear(colour.red) + 0.7152 * linear(colour.green) + 0.0722 * linear(colour.blue)
-    )
+    return 0.2126 * linear(colour.red) + 0.7152 * linear(colour.green) + 0.0722 * linear(colour.blue)
 
 
 def contrast_ratio(first: Colour, second: Colour) -> float:
@@ -156,14 +154,9 @@ def measure(foreground: Colour, background: Colour) -> Measurement:
 def build_report(foreground: Colour, backgrounds: list[Colour]) -> Report:
     measurements = [measure(foreground, background) for background in backgrounds]
     worst = min(measurements, key=lambda measurement: measurement.ratio)
-    described = (
-        foreground.hex()
-        if foreground.alpha >= 1.0
-        else f"{foreground.hex()} at alpha {foreground.alpha:.2f}"
-    )
+    described = foreground.hex() if foreground.alpha >= 1.0 else f"{foreground.hex()} at alpha {foreground.alpha:.2f}"
     verdicts = [
-        Verdict(use, criterion, threshold, worst.ratio >= threshold)
-        for use, criterion, threshold in THRESHOLDS
+        Verdict(use, criterion, threshold, worst.ratio >= threshold) for use, criterion, threshold in THRESHOLDS
     ]
     return Report(described, measurements, worst, verdicts)
 
@@ -184,12 +177,8 @@ def parse_arguments(arguments: list[str]) -> argparse.Namespace:
         description="Compute the WCAG 2.x contrast ratio of a foreground colour against each background.",
         epilog="Several backgrounds report each ratio and judge the worst, for text over an image or gradient.",
     )
-    _ = parser.add_argument(
-        "foreground", help="hex colour of the text or control, optionally with alpha"
-    )
-    _ = parser.add_argument(
-        "backgrounds", nargs="+", metavar="background", help="opaque hex background colour"
-    )
+    _ = parser.add_argument("foreground", help="hex colour of the text or control, optionally with alpha")
+    _ = parser.add_argument("backgrounds", nargs="+", metavar="background", help="opaque hex background colour")
     _ = parser.add_argument("--json", action="store_true", help="print the report as JSON")
     return parser.parse_args(arguments)
 

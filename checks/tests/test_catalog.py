@@ -17,9 +17,7 @@ def directories(root: Path) -> list[Path]:
     return [source.directory for source in discover_skill_sources(root)]
 
 
-def test_discovery_covers_every_deployable_group(
-    tmp_path: Path, write_skill: Callable[[str], Path]
-) -> None:
+def test_discovery_covers_every_deployable_group(tmp_path: Path, write_skill: Callable[[str], Path]) -> None:
     domain = write_skill("engineering/technical-design")
     nested = write_skill("development/python/python-style")
     claude = write_skill("claude/session-reflect")
@@ -45,9 +43,7 @@ def test_discovery_skips_non_deployable_trees(
     assert directories(tmp_path) == [active]
 
 
-def test_explicit_names_bypass_the_exclusions(
-    tmp_path: Path, write_skill: Callable[[str], Path]
-) -> None:
+def test_explicit_names_bypass_the_exclusions(tmp_path: Path, write_skill: Callable[[str], Path]) -> None:
     fixture = write_skill("tests/fixture")
 
     sources = discover_skill_sources(tmp_path, (Path("tests/fixture"),), working_directory=tmp_path)
@@ -70,9 +66,7 @@ def test_an_empty_catalog_fails(tmp_path: Path) -> None:
         discover_skill_sources(tmp_path)
 
 
-def test_a_symlinked_skill_file_is_not_a_skill(
-    tmp_path: Path, write_skill: Callable[[str], Path]
-) -> None:
+def test_a_symlinked_skill_file_is_not_a_skill(tmp_path: Path, write_skill: Callable[[str], Path]) -> None:
     active = write_skill("engineering/active")
     linked = tmp_path / "engineering/linked"
     linked.mkdir()
@@ -81,9 +75,7 @@ def test_a_symlinked_skill_file_is_not_a_skill(
     assert directories(tmp_path) == [active]
 
 
-def test_find_skill_source_returns_the_unique_match(
-    tmp_path: Path, write_skill: Callable[[str], Path]
-) -> None:
+def test_find_skill_source_returns_the_unique_match(tmp_path: Path, write_skill: Callable[[str], Path]) -> None:
     example = write_skill("engineering/example")
     write_skill("review/sibling")
 

@@ -47,8 +47,7 @@ class CheckAgentContextTests(unittest.TestCase):
         _write(
             self.root,
             "AGENTS.md",
-            "# Root\n\nA rule.\n\n| Symptom | Read |\n"
-            "| --- | --- |\n| It broke | `docs/findings/thing.md` |\n",
+            "# Root\n\nA rule.\n\n| Symptom | Read |\n| --- | --- |\n| It broke | `docs/findings/thing.md` |\n",
         )
         _write(self.root, "docs/findings/thing.md", "# Thing\n\nEvidence.\n")
 
@@ -83,8 +82,7 @@ class CheckAgentContextTests(unittest.TestCase):
         _write(
             self.root,
             f"docs/findings/{index_name}",
-            "# Findings\n\n| Symptom | Read |\n| --- | --- |\n"
-            "| It broke | [thing.md](thing.md) |\n",
+            "# Findings\n\n| Symptom | Read |\n| --- | --- |\n| It broke | [thing.md](thing.md) |\n",
         )
         _write(self.root, "docs/findings/thing.md", "# Thing\n\nEvidence.\n")
 

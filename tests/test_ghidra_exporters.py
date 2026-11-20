@@ -61,9 +61,7 @@ class GhidraPythonExporterTests(unittest.TestCase):
 
     def run_exporter(self, arguments: list[str] | None = None) -> None:
         """Supply only the script host boundary; execute the actual exporter."""
-        modules = {
-            name: ModuleType(name) for name in ("ghidra", "ghidra.app", "ghidra.app.decompiler")
-        }
+        modules = {name: ModuleType(name) for name in ("ghidra", "ghidra.app", "ghidra.app.decompiler")}
         modules["ghidra.app.decompiler"].DecompInterface = self.factory
         host = {
             "getScriptArgs": lambda: [str(self.output)] if arguments is None else arguments,

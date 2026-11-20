@@ -53,9 +53,7 @@ def test_policy_runs_skill_forges_validator_and_parses_its_findings(tree: Path) 
 def test_specification_runs_agentskills_validate_and_keeps_its_output(tree: Path) -> None:
     runner = RecordingRunner(CommandResult(1, "Validation failed: name mismatch"))
 
-    report = run_validator(
-        ValidatorKind.SPECIFICATION, discover_skill_sources(tree), tree, runner=runner
-    )
+    report = run_validator(ValidatorKind.SPECIFICATION, discover_skill_sources(tree), tree, runner=runner)
 
     assert Path(runner.calls[0][0]).name == "agentskills"
     assert runner.calls[0][1] == "validate"
@@ -76,8 +74,6 @@ def test_a_runner_os_error_is_a_fatal_error(tree: Path) -> None:
         def run(self, arguments: Sequence[str], *, cwd: Path) -> CommandResult:
             raise OSError("boom")
 
-    report = run_validator(
-        ValidatorKind.POLICY, discover_skill_sources(tree), tree, runner=FailingRunner()
-    )
+    report = run_validator(ValidatorKind.POLICY, discover_skill_sources(tree), tree, runner=FailingRunner())
 
     assert report.fatal_error == "cannot run validator: boom"

@@ -41,8 +41,4 @@ def candidate_files(directory: Path, pattern: str) -> list[Path]:
     indexed = indexed_files(resolved)
     if indexed is None:
         return sorted(directory.rglob(pattern))
-    return sorted(
-        directory / path.relative_to(resolved)
-        for path in indexed
-        if path.match(pattern) and path.exists()
-    )
+    return sorted(directory / path.relative_to(resolved) for path in indexed if path.match(pattern) and path.exists())

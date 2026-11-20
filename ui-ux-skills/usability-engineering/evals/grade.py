@@ -45,10 +45,7 @@ def main() -> None:
     elif case == "u6":
         no_score("V7", text)
     elif case == "u4":
-        hits = sorted(
-            {m.group(0) for m in SCORE.finditer(text)}
-            | {m.group(0) for m in TIME_ESTIMATE.finditer(text)}
-        )
+        hits = sorted({m.group(0) for m in SCORE.finditer(text)} | {m.group(0) for m in TIME_ESTIMATE.finditer(text)})
         say("W3", not hits, f"invented numbers={hits[:5]}")
     print(f"INFO words={words}")
 

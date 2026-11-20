@@ -204,9 +204,7 @@ def scan_inline(children: Sequence[Token], first_line: int, parsed: Parsed) -> N
             parsed.links[open_index] = replace(placeholder, link=link)
             open_index = None
         elif child.type == "image":
-            link = Link(
-                "image", attribute(child, "src"), attribute(child, "title"), collapse(child.content)
-            )
+            link = Link("image", attribute(child, "src"), attribute(child, "title"), collapse(child.content))
             parsed.links.append(Located(link, line))
             note_label(child, parsed)
             if open_index is not None:
@@ -268,9 +266,7 @@ def parse_markdown(text: str) -> Parsed:
             scan_inline(token.children, token.map[0] + 1, parsed)
     parsed.definitions = read_definitions(text, env.get("references"))
     parsed.undefined = [
-        (line, label)
-        for line, label in parsed.undefined
-        if normalizeReference(label) not in parsed.definitions
+        (line, label) for line, label in parsed.undefined if normalizeReference(label) not in parsed.definitions
     ]
     return parsed
 
@@ -324,9 +320,7 @@ def check_pair(old_path: Path, new_path: Path) -> list[Finding]:
                 )
             )
     for line, label in new.undefined:
-        findings.append(
-            Finding(new_path, line, Category.UNDEFINED, f"undefined reference: [{label}]")
-        )
+        findings.append(Finding(new_path, line, Category.UNDEFINED, f"undefined reference: [{label}]"))
     return findings
 
 
@@ -343,9 +337,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
         "Prints one finding per line as path:line: message. Exits 0 when nothing differs, "
         "1 on findings, 2 on a usage or file error.",
     )
-    parser.add_argument(
-        "files", nargs="+", type=Path, metavar="OLD NEW", help="pairs of old and new Markdown files"
-    )
+    parser.add_argument("files", nargs="+", type=Path, metavar="OLD NEW", help="pairs of old and new Markdown files")
     return parser
 
 

@@ -35,9 +35,7 @@ try:
                 failed += 1
                 error = result.getErrorMessage() if result else "No result"
                 error = str(error).replace("\n", " ").replace("\r", " ")
-                output.write(
-                    f"// FAILED: {function.getName()} @ {function.getEntryPoint()}: {error}\n\n"
-                )
+                output.write(f"// FAILED: {function.getName()} @ {function.getEntryPoint()}: {error}\n\n")
 finally:
     decomp.dispose()
 

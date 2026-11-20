@@ -135,9 +135,7 @@ def snapshot(root: Path) -> dict[str, str]:
                 digest = hashlib.sha256(path.read_bytes()).hexdigest()
                 result[str(path.relative_to(root))] = "sha256:" + digest
             else:
-                result[str(path.relative_to(root))] = (
-                    f"size:{stat.st_size}:mtime:{stat.st_mtime_ns}"
-                )
+                result[str(path.relative_to(root))] = f"size:{stat.st_size}:mtime:{stat.st_mtime_ns}"
     return result
 
 
@@ -150,9 +148,7 @@ def compare(before: dict[str, str], after: dict[str, str]) -> FileChanges:
 
 
 def directory_size(root: Path) -> int:
-    return sum(
-        path.stat().st_size for path in root.rglob("*") if path.is_file() and not path.is_symlink()
-    )
+    return sum(path.stat().st_size for path in root.rglob("*") if path.is_file() and not path.is_symlink())
 
 
 @dataclass(frozen=True)
@@ -373,9 +369,7 @@ def build_parser() -> argparse.ArgumentParser:
         description="Probe a command-line tool in a throwaway sandbox and print the results as JSON.",
         epilog="example: probe_cli.py --workdir . --help-for deploy --modes pipe,tty -- ./bin/mytool",
     )
-    parser.add_argument(
-        "--workdir", type=Path, help="directory copied into each sandbox as the working directory"
-    )
+    parser.add_argument("--workdir", type=Path, help="directory copied into each sandbox as the working directory")
     parser.add_argument(
         "--probe",
         action="append",
@@ -405,9 +399,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=",".join(DEFAULT_MODES),
         help=f"comma-separated modes from {', '.join(MODES)} (default: %(default)s)",
     )
-    parser.add_argument(
-        "--timeout", type=float, default=10.0, help="seconds per probe (default: %(default)s)"
-    )
+    parser.add_argument("--timeout", type=float, default=10.0, help="seconds per probe (default: %(default)s)")
     parser.add_argument(
         "--env",
         action="append",
@@ -470,9 +462,7 @@ def main(argv: list[str] | None = None) -> int:
     modes = [mode.strip() for mode in options.modes.split(",") if mode.strip()]
     unknown = [mode for mode in modes if mode not in MODES]
     if unknown or not modes:
-        parser.error(
-            f"unknown mode {', '.join(unknown) or '(none)'}; choose from {', '.join(MODES)}"
-        )
+        parser.error(f"unknown mode {', '.join(unknown) or '(none)'}; choose from {', '.join(MODES)}")
     if options.timeout <= 0:
         parser.error("--timeout must be positive")
     try:
@@ -511,11 +501,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"probe_cli.py: error: {error}", file=sys.stderr)
         return EXIT_ENVIRONMENT
 
-    results = [
-        asdict(run_probe(prefix, probe, mode, source, options))
-        for probe in probes
-        for mode in modes
-    ]
+    results = [asdict(run_probe(prefix, probe, mode, source, options)) for probe in probes for mode in modes]
     report = {
         "command": prefix,
         "workdir": str(source) if source else None,

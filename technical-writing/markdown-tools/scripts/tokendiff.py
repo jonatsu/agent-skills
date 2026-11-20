@@ -185,11 +185,7 @@ def run(arguments: Sequence[str] | None) -> int:
         # Deleting a key a Counter does not hold is a no-op, so an ignored word absent from a side is fine.
         del source[word]
         del destination[word]
-    lost = {
-        token: count - destination[token]
-        for token, count in source.items()
-        if count > destination[token]
-    }
+    lost = {token: count - destination[token] for token, count in source.items() if count > destination[token]}
     for token in sorted(lost, key=lambda name: (-lost[name], name)):
         print(f"{token}: lost {lost[token]} of {source[token]}")
     print(

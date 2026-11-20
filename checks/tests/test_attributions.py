@@ -71,14 +71,9 @@ def test_departures_from_the_scheme_fail(old: str, new: str, message: str) -> No
 def test_sections_out_of_order_fail() -> None:
     first, rest = VALID.split("## Third-party Sources", 1)
     third, notice = rest.split("## Upstream License Notice", 1)
-    reordered = first.replace(
-        "## First-party Sources", "## Third-party Sources" + third + "## First-party Sources"
-    )
+    reordered = first.replace("## First-party Sources", "## Third-party Sources" + third + "## First-party Sources")
 
-    assert any(
-        "out of order" in text
-        for text in messages(reordered + "## Upstream License Notice" + notice)
-    )
+    assert any("out of order" in text for text in messages(reordered + "## Upstream License Notice" + notice))
 
 
 def test_spdx_expressions_pass() -> None:

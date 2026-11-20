@@ -18,9 +18,7 @@ from skill_checks.identity import (
 from skill_checks.names import duplicate_names
 
 
-def test_two_packages_with_one_name_are_reported(
-    tmp_path: Path, write_skill: Callable[[str], Path]
-) -> None:
+def test_two_packages_with_one_name_are_reported(tmp_path: Path, write_skill: Callable[[str], Path]) -> None:
     first = write_skill("engineering/shared-name")
     second = write_skill("review/nested/shared-name")
     write_skill("review/unique")
@@ -52,18 +50,14 @@ def test_another_address_fails_for_each_role(repository: Path) -> None:
     assert len(wrong_identities()) == 2
 
 
-def test_an_author_override_alone_is_caught(
-    repository: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_an_author_override_alone_is_caught(repository: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     subprocess.run(["git", "config", "user.email", NOREPLY_ADDRESS], check=True)
     monkeypatch.setenv("GIT_AUTHOR_EMAIL", "someone@example.com")
 
     assert wrong_identities() == (f"GIT_AUTHOR_IDENT uses another address than {NOREPLY_ADDRESS}",)
 
 
-def test_no_configured_identity_is_an_error(
-    repository: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_no_configured_identity_is_an_error(repository: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     subprocess.run(["git", "config", "--unset", "user.name"], check=True)
     monkeypatch.setenv("GIT_AUTHOR_NAME", "")
     monkeypatch.setenv("GIT_COMMITTER_NAME", "")
@@ -79,9 +73,7 @@ def commit(message: str, email: str) -> str:
         check=True,
         env={**os.environ, **environment},
     )
-    return subprocess.run(
-        ["git", "rev-parse", "HEAD"], capture_output=True, check=True, text=True
-    ).stdout.strip()
+    return subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, check=True, text=True).stdout.strip()
 
 
 def test_a_push_of_noreply_commits_passes(repository: Path) -> None:

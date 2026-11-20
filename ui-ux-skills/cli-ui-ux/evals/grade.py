@@ -48,9 +48,7 @@ def run(cmd, cwd, env=None, stdin=subprocess.DEVNULL, timeout=20):
     full_env = {"PATH": os.environ["PATH"], "HOME": cwd, "LANG": "C.UTF-8"}
     full_env.update(env or {})
     try:
-        r = subprocess.run(
-            cmd, cwd=cwd, env=full_env, stdin=stdin, capture_output=True, text=True, timeout=timeout
-        )
+        r = subprocess.run(cmd, cwd=cwd, env=full_env, stdin=stdin, capture_output=True, text=True, timeout=timeout)
         return r.returncode, r.stdout, r.stderr
     except subprocess.TimeoutExpired:
         return "timeout", "", ""
@@ -177,8 +175,7 @@ def grade_r3(ws):
     say(
         "I5",
         None if rc == 0 else False,
-        f"pytest rc={rc} {tail!r}; test files={extra}; "
-        f"CLOUDUP_REGION in tests={'CLOUDUP_REGION' in tests}",
+        f"pytest rc={rc} {tail!r}; test files={extra}; CLOUDUP_REGION in tests={'CLOUDUP_REGION' in tests}",
     )
     shutil.rmtree(tmp)
 
@@ -269,12 +266,7 @@ def grade_r5(ws):
     )
     rc, out, err = run([os.path.join(w, "shipit"), "deploy", "--env", "staging"], w, timeout=5)
     names_flag = bool(re.search(r"--[a-z]", err + out))
-    ok = (
-        rc not in (0, "timeout")
-        and not os.path.exists(log)
-        and "Traceback" not in err
-        and names_flag
-    )
+    ok = rc not in (0, "timeout") and not os.path.exists(log) and "Traceback" not in err and names_flag
     say("K2", ok, f"rc={rc} deployed={os.path.exists(log)} msg={(err or out).strip()[:120]!r}")
     _, help_out, _ = run([os.path.join(w, "shipit"), "deploy", "--help"], w)
     flag = next(
@@ -286,9 +278,7 @@ def grade_r5(ws):
         None,
     )
     if flag:
-        rc, out, err = run(
-            [os.path.join(w, "shipit"), "deploy", "--env", "staging", flag], w, timeout=5
-        )
+        rc, out, err = run([os.path.join(w, "shipit"), "deploy", "--env", "staging", flag], w, timeout=5)
         say("K3", rc == 0 and os.path.exists(log), f"flag={flag} rc={rc}")
     else:
         say("K3", None, f"no known skip flag in help: {help_out.strip()[:200]!r}")
@@ -325,11 +315,7 @@ def new_script_files(w):
         ):
             continue
         text = path.read_text(encoding="utf-8", errors="replace")
-        if (
-            os.access(path, os.X_OK)
-            or text.startswith("#!")
-            or rel.suffix in (".py", ".sh", ".bash")
-        ):
+        if os.access(path, os.X_OK) or text.startswith("#!") or rel.suffix in (".py", ".sh", ".bash"):
             found.append((str(rel), text))
     return found
 
@@ -369,8 +355,7 @@ def grade_r6(ws):
         if "make-image" in json.dumps(r["body"]):
             return True
         return any(
-            d["recipe"] not in seen and mentions_builder(d["recipe"], (*seen, name))
-            for d in r.get("dependencies", [])
+            d["recipe"] not in seen and mentions_builder(d["recipe"], (*seen, name)) for d in r.get("dependencies", [])
         )
 
     builders = [n for n, r in public.items() if r["parameters"] and mentions_builder(n)]
@@ -422,17 +407,9 @@ def grade_r6(ws):
     bodies = {name: json.dumps(r["body"]) for name, r in recipes.items()}
     prompting = sorted(n for n, b in bodies.items() if re.search(r"\bread\b", b))
     invented = sorted(
-        {
-            m
-            for b in bodies.values()
-            for m in re.findall(r"\b[A-Z][A-Z0-9_]*_(?:NO_INPUT|NON_INTERACTIVE)\b", b)
-        }
+        {m for b in bodies.values() for m in re.findall(r"\b[A-Z][A-Z0-9_]*_(?:NO_INPUT|NON_INTERACTIVE)\b", b)}
     )
-    lines = (
-        len(Path(w, "justfile").read_text(encoding="utf-8").splitlines())
-        if Path(w, "justfile").exists()
-        else 0
-    )
+    lines = len(Path(w, "justfile").read_text(encoding="utf-8").splitlines()) if Path(w, "justfile").exists() else 0
     say(
         "L7",
         not prompting and not invented,

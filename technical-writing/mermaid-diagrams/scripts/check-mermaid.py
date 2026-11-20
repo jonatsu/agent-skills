@@ -122,11 +122,7 @@ def failure_message(stderr: str) -> tuple[str, int | None]:
         if "Mermaid rendering failed" in line:
             message = FAILURE_PREFIX.sub("", line)
             expecting = next(
-                (
-                    candidate
-                    for candidate in lines[position + 1 :]
-                    if candidate.startswith("Expecting")
-                ),
+                (candidate for candidate in lines[position + 1 :] if candidate.startswith("Expecting")),
                 None,
             )
             if expecting:
@@ -173,9 +169,7 @@ def parse_arguments(argv: list[str]) -> argparse.Namespace:
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    _ = parser.add_argument(
-        "files", nargs="+", type=Path, metavar="FILE", help="Markdown, .mmd, or .mermaid file"
-    )
+    _ = parser.add_argument("files", nargs="+", type=Path, metavar="FILE", help="Markdown, .mmd, or .mermaid file")
     _ = parser.add_argument(
         "--mermaidx",
         default=DEFAULT_RENDERER,

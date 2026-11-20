@@ -22,9 +22,7 @@ def text_of(content: object) -> str:
     if isinstance(content, str):
         return content
     if isinstance(content, list):
-        parts = [
-            b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text"
-        ]
+        parts = [b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text"]
         return "\n".join(p for p in parts if p)
     return ""
 
@@ -62,11 +60,7 @@ def extract(path: Path) -> None:
             print(f"--- DENIED {rec.get('timestamp', '')}\n{denial[:400]}\n")
             continue
         human = text_of(content).strip()
-        if (
-            not human
-            or human.startswith("<local-command")
-            or human.startswith("<command-name>/clear")
-        ):
+        if not human or human.startswith("<local-command") or human.startswith("<command-name>/clear"):
             continue
         print(f"=== USER {rec.get('timestamp', '')}")
         if last_assistant:

@@ -227,12 +227,7 @@ def _rendering(text: str) -> str:
     The parser configuration repeats the script's on purpose: the tests judge the script against their own
     rendering, so a mistake in the script's setup cannot hide in both.
     """
-    parser = (
-        MarkdownIt("commonmark")
-        .enable(["table", "strikethrough"])
-        .use(front_matter_plugin)
-        .use(footnote_plugin)
-    )
+    parser = MarkdownIt("commonmark").enable(["table", "strikethrough"]).use(front_matter_plugin).use(footnote_plugin)
     return re.sub(
         r"\s+",
         " ",
@@ -307,12 +302,8 @@ class MdwrapTests(ScriptTestCase):
         self.assertEqual(self._check(original, "--width", "20"), (EXIT_CLEAN, ""))
 
     def test_a_paragraph_with_a_long_line_is_rejoined_and_rewrapped(self) -> None:
-        text = self._write(
-            "one two\nthree four five six seven eight nine ten\nfive six\n", "--width", "20"
-        )
-        self.assertEqual(
-            text, "one two three four\\\nfive six seven\\\neight nine ten five\\\nsix\n"
-        )
+        text = self._write("one two\nthree four five six seven eight nine ten\nfive six\n", "--width", "20")
+        self.assertEqual(text, "one two three four\\\nfive six seven\\\neight nine ten five\\\nsix\n")
 
     def test_a_conformant_block_is_untouched(self) -> None:
         original = "short line one\\\nshort line two\n"
@@ -342,14 +333,10 @@ class MdwrapTests(ScriptTestCase):
         words = ["word"] * 40
         openers = ("-", "+", "*", "1.", "#", ">", "===", "---", "***", "___", "|", "```")
         cases = [(opener, position) for opener in openers for position in range(5, 35)]
-        paragraphs = [
-            " ".join([*words[:position], opener, *words[position:]]) for opener, position in cases
-        ]
+        paragraphs = [" ".join([*words[:position], opener, *words[position:]]) for opener, position in cases]
         for soft in ((), ("--soft",)):
             text = self._write("\n\n".join(paragraphs) + "\n", "--width", "40", *soft)
-            for (opener, position), block, paragraph in zip(
-                cases, text.split("\n\n"), paragraphs, strict=True
-            ):
+            for (opener, position), block, paragraph in zip(cases, text.split("\n\n"), paragraphs, strict=True):
                 with self.subTest(opener=opener, position=position, soft=bool(soft)):
                     lines = block.splitlines()
                     self.assertFalse(any(BLOCK_OPENER.match(line) for line in lines[1:]), lines)
@@ -359,9 +346,7 @@ class MdwrapTests(ScriptTestCase):
         span = "`" + "inline code " * 12 + "`"
         link = "[link text that is long](https://example.com/" + "y" * 40 + ")"
         # The span is longer than the width, so the run reports it as over the limit.
-        status, text, out = self._write_any(
-            f"Before {span} middle {link} after.\n", "--width", "60"
-        )
+        status, text, out = self._write_any(f"Before {span} middle {link} after.\n", "--width", "60")
         self.assertEqual(status, EXIT_FINDINGS)
         self.assertEqual(out, "doc.md:1: over limit: a word longer than 60 characters\n")
         joined = text.replace("\\\n", " ")
@@ -418,9 +403,7 @@ class MdwrapTests(ScriptTestCase):
             f"sys.argv = ['mdwrap.py', {str(self._file('text\n'))!r}]\n"
             f"runpy.run_path({str(SCRIPT)!r}, run_name='__main__')\n"
         )
-        result = subprocess.run(
-            [sys.executable, "-c", program], check=False, capture_output=True, text=True
-        )
+        result = subprocess.run([sys.executable, "-c", program], check=False, capture_output=True, text=True)
         self.assertEqual(result.returncode, EXIT_ERROR)
         self.assertIn("mdwrap: error: cannot import a required package", result.stderr)
         self.assertIn("uv run scripts/mdwrap.py", result.stderr)
@@ -437,9 +420,7 @@ class MdwrapTests(ScriptTestCase):
         status, _, _ = self._write_any(f"{LONG}\n")
         self.assertEqual(status, EXIT_CLEAN)
         status, _, out = self._write_any(f"$$ {LONG}\n")
-        self.assertEqual(
-            (status, out), (EXIT_FINDINGS, "doc.md:1: skipped: possible display math\n")
-        )
+        self.assertEqual((status, out), (EXIT_FINDINGS, "doc.md:1: skipped: possible display math\n"))
 
     def test_a_line_with_no_whitespace_past_the_width_is_left_alone(self) -> None:
         # markdownlint's MD013 accepts it, because no break can shorten it.
@@ -549,7 +530,9 @@ class MdwrapStructureTests(ScriptTestCase):
         self.assertFalse(any(line.startswith("2026.") for line in text.splitlines()))
 
     def test_a_line_start_escape_is_dropped_when_the_word_moves_mid_line(self) -> None:
-        original = "The example release shipped in the year\n2018\\. It was a good one and this sentence keeps going on.\n"
+        original = (
+            "The example release shipped in the year\n2018\\. It was a good one and this sentence keeps going on.\n"
+        )
         text = self._write(original, "--width", "50")
         self.assertIn("year 2018. It", text)
         self.assertNotIn("\\.", text)
@@ -569,8 +552,7 @@ class MdwrapStructureTests(ScriptTestCase):
         self.assertEqual(status, EXIT_FINDINGS)
         self.assertEqual(
             out,
-            "doc.md:1: rewrap: line exceeds 60 characters\n"
-            "doc.md:3: rewrap: line exceeds 60 characters\n",
+            "doc.md:1: rewrap: line exceeds 60 characters\ndoc.md:3: rewrap: line exceeds 60 characters\n",
         )
         status, text, out = self._write_any(REPRODUCTIONS["long-link"], "--width", "60")
         # The unbreakable URL ends up alone on its line, which MD013 accepts, so nothing is left to report.
@@ -591,12 +573,8 @@ class MdwrapStructureTests(ScriptTestCase):
     def test_list_continuations_indented_four_spaces_are_wrapped(self) -> None:
         text = self._write(REPRODUCTIONS["nested-list"], "--width", "60")
         self.assertTrue(all(len(line) <= 60 for line in text.splitlines()), text)
-        self.assertIn(
-            "    - Nested example item indented four spaces that is long\\\n      enough", text
-        )
-        self.assertIn(
-            "    A continuation paragraph indented four spaces that is\\\n    long enough", text
-        )
+        self.assertIn("    - Nested example item indented four spaces that is long\\\n      enough", text)
+        self.assertIn("    A continuation paragraph indented four spaces that is\\\n    long enough", text)
 
     def test_the_first_line_of_a_footnote_definition_is_wrapped(self) -> None:
         text = self._write(REPRODUCTIONS["footnote"], "--width", "60")
@@ -662,9 +640,7 @@ class MdwrapStructureTests(ScriptTestCase):
             for width in range(20, 70):
                 with self.subTest(name=name, width=width):
                     text = self._write(REPRODUCTIONS[name], "--width", str(width))
-                    self.assertFalse(
-                        any(BLOCK_OPENER.match(line) for line in text.splitlines()[1:]), text
-                    )
+                    self.assertFalse(any(BLOCK_OPENER.match(line) for line in text.splitlines()[1:]), text)
                     self.assertEqual(_rendering(text), _rendering(REPRODUCTIONS[name]))
 
     def test_an_unreadable_file_stops_every_write(self) -> None:
@@ -681,9 +657,7 @@ class MdwrapStructureTests(ScriptTestCase):
         self.assertEqual(status, EXIT_ERROR)
         self.assertIn("cannot read", err)
         self.assertEqual(self._text(third), f"{LONG}\n")
-        self.assertEqual(
-            sorted(path.name for path in self.root.iterdir()), ["bad.md", "first.md", "third.md"]
-        )
+        self.assertEqual(sorted(path.name for path in self.root.iterdir()), ["bad.md", "first.md", "third.md"])
 
     def test_several_files_are_rewritten_through_temporary_files(self) -> None:
         one = self._file(f"{LONG}\n", "one.md")

@@ -44,9 +44,7 @@ class SentenceLimitsStayInStep(unittest.TestCase):
 
     def test_canonical_skill_states_procedural_then_descriptive_limit(self) -> None:
         limits = word_limits(*CANONICAL, CANONICAL_LIMIT)
-        self.assertEqual(
-            len(limits), 2, f"{CANONICAL[0]} should state exactly two word limits: {limits}"
-        )
+        self.assertEqual(len(limits), 2, f"{CANONICAL[0]} should state exactly two word limits: {limits}")
         procedural, descriptive = limits
         self.assertLess(procedural, descriptive, f"{CANONICAL[0]} limits out of order: {limits}")
 

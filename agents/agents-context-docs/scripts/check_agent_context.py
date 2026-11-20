@@ -170,8 +170,7 @@ def _repository_files(root: Path, excludes: tuple[str, ...]) -> Iterator[Path]:
             if name != ".git"
             and not os.path.lexists(base / name / ".git")
             and not any(
-                fnmatch.fnmatch(f"/{(base / name).relative_to(root).as_posix()}/", pattern)
-                for pattern in excludes
+                fnmatch.fnmatch(f"/{(base / name).relative_to(root).as_posix()}/", pattern) for pattern in excludes
             )
         ]
         for name in filenames:
@@ -213,9 +212,7 @@ def evidence_links(text: str, evidence_dir: str) -> list[str]:
     return list(seen)
 
 
-def check_links(
-    relative: str, path: Path, text: str, config: Config, referenced: set[str]
-) -> list[Finding]:
+def check_links(relative: str, path: Path, text: str, config: Config, referenced: set[str]) -> list[Finding]:
     """Resolve every evidence reference in one file, recording what it points at."""
     findings: list[Finding] = []
     for reference in evidence_links(text, config.evidence_dir):
@@ -290,9 +287,7 @@ def resolve_index_reference(reference: str, path: Path, config: Config) -> Path:
     return fallback if fallback.is_file() else candidate
 
 
-def check_index(
-    relative: str, path: Path, text: str, config: Config, referenced: set[str]
-) -> list[Finding]:
+def check_index(relative: str, path: Path, text: str, config: Config, referenced: set[str]) -> list[Finding]:
     """Resolve one index's entries, recording the evidence files it reaches.
 
     Only references landing inside the evidence directory count. An index may
@@ -370,9 +365,7 @@ def check_orphans(config: Config, referenced: set[str]) -> list[Finding]:
     for path in sorted(evidence_root.glob("*.md")):
         relative = path.relative_to(config.root).as_posix()
         if relative not in referenced:
-            findings.append(
-                Finding("orphaned", relative, "no instruction file or index reaches it")
-            )
+            findings.append(Finding("orphaned", relative, "no instruction file or index reaches it"))
     return findings
 
 
@@ -408,15 +401,11 @@ def parse_budget_override(value: str) -> tuple[str, int]:
     """Parse one `PATH=N` override, rejecting anything ambiguous."""
     path, separator, count = value.partition("=")
     if not separator or not path:
-        raise argparse.ArgumentTypeError(
-            f"expected PATH=N, got {value!r}; for example AGENTS.md=2400"
-        )
+        raise argparse.ArgumentTypeError(f"expected PATH=N, got {value!r}; for example AGENTS.md=2400")
     try:
         return path, int(count)
     except ValueError:
-        raise argparse.ArgumentTypeError(
-            f"budget for {path!r} must be an integer, got {count!r}"
-        ) from None
+        raise argparse.ArgumentTypeError(f"budget for {path!r} must be an integer, got {count!r}") from None
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -469,9 +458,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=",".join(DEFAULT_NAMES),
         help=f"instruction filenames (default: {','.join(DEFAULT_NAMES)})",
     )
-    parser.add_argument(
-        "--json", action="store_true", help="emit machine-readable output on stdout"
-    )
+    parser.add_argument("--json", action="store_true", help="emit machine-readable output on stdout")
     return parser
 
 

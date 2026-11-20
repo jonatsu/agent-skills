@@ -44,9 +44,7 @@ BUNDLED_DIRECTORIES = ("references", "scripts", "assets", "evals")
 # command shown for another repository -- so only prose and links promise real files.
 FENCED_BLOCK_RE = re.compile(r"^```.*?^```", re.DOTALL | re.MULTILINE)
 MARKDOWN_LINK_RE = re.compile(r"\]\(([^)\s]+)")
-BUNDLED_PATH_RE = re.compile(
-    r"(?<![\w./-])((?:" + "|".join(BUNDLED_DIRECTORIES) + r")/[\w.:@+-]+(?:/[\w.:@+-]+)*)"
-)
+BUNDLED_PATH_RE = re.compile(r"(?<![\w./-])((?:" + "|".join(BUNDLED_DIRECTORIES) + r")/[\w.:@+-]+(?:/[\w.:@+-]+)*)")
 EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "ftp://", "#", "/", "<")
 
 
@@ -97,9 +95,7 @@ def check_bundled_references(skill_path: Path, body: str) -> list[str]:
                 "deployed skill cannot reach its surrounding repository"
             )
         elif not (skill_path / reference).exists():
-            errors.append(
-                f"SKILL.md references {reference!r} but no such file ships with the skill"
-            )
+            errors.append(f"SKILL.md references {reference!r} but no such file ships with the skill")
     return errors
 
 

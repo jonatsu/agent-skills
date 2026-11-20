@@ -18,9 +18,7 @@ INIT_SCRIPT = SCRIPT_ROOT / "init_skill.py"
 VALIDATE_SCRIPT = SCRIPT_ROOT / "quick_validate.py"
 
 
-def _run_python(
-    script: Path, *arguments: str, env: dict[str, str] | None = None
-) -> subprocess.CompletedProcess[str]:
+def _run_python(script: Path, *arguments: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         [sys.executable, str(script), *arguments],
         check=False,
@@ -171,8 +169,7 @@ class QuickValidateTests(unittest.TestCase):
                 "---\n"
             )
             (skill_directory / "ATTRIBUTIONS.md").write_text(
-                "# Attributions\n\n"
-                "An external source influenced one independently expressed idea.\n"
+                "# Attributions\n\nAn external source influenced one independently expressed idea.\n"
             )
 
             result = _run_python(VALIDATE_SCRIPT, str(skill_directory))
@@ -221,9 +218,7 @@ def _write_skill(skill_directory: Path, body: str) -> None:
         f"\n# Sample Skill\n\n{body}\n",
         encoding="utf-8",
     )
-    (skill_directory / "ATTRIBUTIONS.md").write_text(
-        "# Attributions\n\nIndependently written.\n", encoding="utf-8"
-    )
+    (skill_directory / "ATTRIBUTIONS.md").write_text("# Attributions\n\nIndependently written.\n", encoding="utf-8")
 
 
 class BundledReferenceTests(unittest.TestCase):
@@ -299,8 +294,7 @@ class BundledReferenceTests(unittest.TestCase):
             skill_directory = Path(temporary_directory) / "sample-skill"
             _write_skill(
                 skill_directory,
-                "See the [specification](https://agentskills.io/specification) "
-                "and the [heading](#sample-skill).",
+                "See the [specification](https://agentskills.io/specification) and the [heading](#sample-skill).",
             )
 
             result = _run_python(VALIDATE_SCRIPT, str(skill_directory))

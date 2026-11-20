@@ -82,11 +82,7 @@ def discover_files(
     """Return deterministic candidates without opening any files."""
     iterator = input_dir.rglob("*") if recursive else input_dir.iterdir()
     return sorted(
-        (
-            path
-            for path in iterator
-            if path.suffix.lower() in extensions and (path.is_file() or path.is_symlink())
-        ),
+        (path for path in iterator if path.suffix.lower() in extensions and (path.is_file() or path.is_symlink())),
         key=lambda path: path.as_posix(),
     )
 
@@ -241,10 +237,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--allow-external-services",
         action="store_true",
-        help=(
-            "Allow audio extensions that may invoke Google Web Speech. "
-            "Required for .wav, .mp3, .m4a, or .mp4."
-        ),
+        help=("Allow audio extensions that may invoke Google Web Speech. Required for .wav, .mp3, .m4a, or .mp4."),
     )
     parser.add_argument(
         "--allow-empty",
@@ -341,15 +334,9 @@ def main() -> int:
         )
 
     counts = {
-        status: sum(record.status == status for record in records)
-        for status in ("converted", "skipped", "failed")
+        status: sum(record.status == status for record in records) for status in ("converted", "skipped", "failed")
     }
-    print(
-        "Summary: "
-        f"{counts['converted']} converted, "
-        f"{counts['skipped']} skipped, "
-        f"{counts['failed']} failed"
-    )
+    print(f"Summary: {counts['converted']} converted, {counts['skipped']} skipped, {counts['failed']} failed")
 
     if not candidates:
         print(f"No matching files found for: {', '.join(extensions)}")

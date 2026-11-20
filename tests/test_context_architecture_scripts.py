@@ -74,8 +74,7 @@ class CheckContextArchitectureTests(unittest.TestCase):
         _write(
             self.root,
             "docs/index.md",
-            "# Index\n\nUse the child before changing the documentation structure.\n\n"
-            "[Child](child.md)\n",
+            "# Index\n\nUse the child before changing the documentation structure.\n\n[Child](child.md)\n",
         )
         _write(self.root, "docs/child.md", "# Child\n")
 
@@ -112,10 +111,7 @@ class CheckContextArchitectureTests(unittest.TestCase):
         _write(
             self.root,
             "AGENTS.md",
-            "# Root\n\n"
-            "| Symptom | Read |\n"
-            "| --- | --- |\n"
-            "| The build reports stale output | `docs/finding.md` |\n",
+            "# Root\n\n| Symptom | Read |\n| --- | --- |\n| The build reports stale output | `docs/finding.md` |\n",
         )
         _write(self.root, "docs/finding.md", "# Finding\n")
 
@@ -191,10 +187,7 @@ class CheckContextArchitectureTests(unittest.TestCase):
         _write(
             self.root,
             "AGENTS.md",
-            "# Root\n\n"
-            "| Read when | File |\n"
-            "| --- | --- |\n"
-            "| | [Service instructions](docs/service.md) |\n",
+            "# Root\n\n| Read when | File |\n| --- | --- |\n| | [Service instructions](docs/service.md) |\n",
         )
         _write(self.root, "docs/service.md", "# Service\n")
 
@@ -279,9 +272,7 @@ class CheckContextArchitectureTests(unittest.TestCase):
         result = _run(self.root)
 
         self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
-        self.assertIn(
-            "docs/index.md: line 3: routing list item has an empty trigger", result.stdout
-        )
+        self.assertIn("docs/index.md: line 3: routing list item has an empty trigger", result.stdout)
         self.assertIn("docs/child.md: unreachable", result.stdout)
 
     def test_wrapping_does_not_promote_an_incidental_list_link(self) -> None:
@@ -322,9 +313,7 @@ class CheckContextArchitectureTests(unittest.TestCase):
         _write(
             self.root,
             "docs/index.md",
-            "# Index\n"
-            + "\n" * 14
-            + f"Sources are pinned to SHA-256 `{digest}`.\nSee `driver.c:42`.\n",
+            "# Index\n" + "\n" * 14 + f"Sources are pinned to SHA-256 `{digest}`.\nSee `driver.c:42`.\n",
         )
         result = _run(self.root)
         self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
@@ -344,9 +333,7 @@ class CheckContextArchitectureTests(unittest.TestCase):
         )
         for declaration in declarations:
             with self.subTest(declaration=declaration):
-                _write(
-                    self.root, "docs/index.md", f"# Index\n\n{declaration}\n\nSee `driver.c:42`.\n"
-                )
+                _write(self.root, "docs/index.md", f"# Index\n\n{declaration}\n\nSee `driver.c:42`.\n")
                 result = _run(self.root)
                 self.assertEqual(result.returncode, EXIT_FINDINGS, result.stdout)
                 self.assertIn("line-number reference", result.stdout)
@@ -403,9 +390,7 @@ class CheckContextArchitectureTests(unittest.TestCase):
         )
         for route in routes:
             with self.subTest(route=route):
-                _write(
-                    self.root, "docs/index.md", f"# Index\n\n{route}\n\n[route]: child.md#details\n"
-                )
+                _write(self.root, "docs/index.md", f"# Index\n\n{route}\n\n[route]: child.md#details\n")
                 _write(self.root, "docs/child.md", "# Child\n")
                 result = _run(self.root)
                 self.assertEqual(result.returncode, EXIT_OK, result.stdout)

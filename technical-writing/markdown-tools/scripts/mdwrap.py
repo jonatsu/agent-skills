@@ -104,9 +104,7 @@ BLOCK_START = re.compile(
 )
 DELIMITER_RUN = re.compile(r"^[*_~]+$")
 # A line holding only one of these is a thematic break, a setext underline or a complete HTML tag (a block).
-RULE_WORD = re.compile(
-    rf"^(?:\*{{3,}}|_{{3,}}|-+|=+|<{_TAG_NAME}(?:{_ATTRIBUTE})*\s*/?>|</{_TAG_NAME}\s*>)$"
-)
+RULE_WORD = re.compile(rf"^(?:\*{{3,}}|_{{3,}}|-+|=+|<{_TAG_NAME}(?:{_ATTRIBUTE})*\s*/?>|</{_TAG_NAME}\s*>)$")
 LIST_MARKER = re.compile(r"(?<![^\s>])(?:[-+*]|\d{1,9}[.)])(?=\s)")
 FOOTNOTE_LABEL = re.compile(r"\[\^[^\]\s]+\]:[ ]*")
 MDFORMAT_SWITCH = re.compile(r"<!--\s*mdformat\s+(off|on)\s*-->")
@@ -372,9 +370,7 @@ def container_prefix(first_line: str, content: str) -> tuple[str, str] | None:
     if not text or not source.endswith(text):
         return None
     first = source[: len(source) - len(text)]
-    other = LIST_MARKER.sub(
-        lambda marker: " " * len(marker.group()), FOOTNOTE_LABEL.sub(FOOTNOTE_INDENT, first)
-    )
+    other = LIST_MARKER.sub(lambda marker: " " * len(marker.group()), FOOTNOTE_LABEL.sub(FOOTNOTE_INDENT, first))
     return first, other
 
 
@@ -387,9 +383,7 @@ def too_long(line: str, width: int) -> bool:
     return len(line) > width and any(character.isspace() for character in line[width:])
 
 
-def wrap_segment(
-    segment: Segment, lead: str, other_prefix: str, options: Options
-) -> list[str] | None:
+def wrap_segment(segment: Segment, lead: str, other_prefix: str, options: Options) -> list[str] | None:
     """Wrap one segment into lines, or return None when the prefixes leave no room for text.
 
     Every line but the segment's last ends with the hard-break marker unless `--soft` is set. The room reserved
@@ -404,9 +398,7 @@ def wrap_segment(
         return None
     packed = fill(segment.words, first_room, other_room)
     return [
-        (lead if index == 0 else other_prefix)
-        + render_line(words)
-        + (inner if index < len(packed) - 1 else closing)
+        (lead if index == 0 else other_prefix) + render_line(words) + (inner if index < len(packed) - 1 else closing)
         for index, words in enumerate(packed)
     ]
 
@@ -478,12 +470,7 @@ def paragraphs(tokens: Sequence[Token]) -> list[Paragraph]:
             switch = MDFORMAT_SWITCH.fullmatch(token.content.strip())
             if switch:
                 enabled = switch.group(1) == "on"
-        elif (
-            token.type == "paragraph_open"
-            and enabled
-            and token.map
-            and tokens[index + 1].type == "inline"
-        ):
+        elif token.type == "paragraph_open" and enabled and token.map and tokens[index + 1].type == "inline":
             found.append(Paragraph(token.map[0], token.map[1], tokens[index + 1].content))
     return found
 
@@ -546,9 +533,7 @@ def parse_document(document: Document) -> tuple[MarkdownIt, list[Token]]:
     markdown = build_markdown_parser(front_matter=True)
     tokens = markdown.parse(text)
     lookalike = (
-        bool(tokens)
-        and tokens[0].type == "front_matter"
-        and not looks_like_front_matter(tokens[0].content.split("\n"))
+        bool(tokens) and tokens[0].type == "front_matter" and not looks_like_front_matter(tokens[0].content.split("\n"))
     )
     if lookalike:
         markdown = build_markdown_parser(front_matter=False)
@@ -612,9 +597,7 @@ def process_text(text: str, options: Options) -> Outcome:
 
     accepted, rejected = verified(document, markdown, candidates)
     for rewrite in rejected:
-        findings.append(
-            Finding(rewrite.paragraph.start + 1, Kind.SKIPPED, "rewrap would change the rendering")
-        )
+        findings.append(Finding(rewrite.paragraph.start + 1, Kind.SKIPPED, "rewrap would change the rendering"))
     for rewrite in accepted:
         line = rewrite.paragraph.start + 1
         findings.append(Finding(line, Kind.REWRAP, f"line exceeds {options.width} characters"))
@@ -651,9 +634,7 @@ def write_files(results: Sequence[FileResult]) -> None:
             if result.output is None:
                 continue
             target = result.path.resolve()
-            descriptor, name = tempfile.mkstemp(
-                dir=target.parent, prefix=f".{target.name}.", suffix=".tmp"
-            )
+            descriptor, name = tempfile.mkstemp(dir=target.parent, prefix=f".{target.name}.", suffix=".tmp")
             temporary = Path(name)
             staged.append((temporary, target))
             with os.fdopen(descriptor, "wb") as handle:
@@ -698,12 +679,8 @@ def build_argument_parser() -> argparse.ArgumentParser:
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument(
-        "files", nargs="+", type=Path, metavar="FILE", help="Markdown files to check"
-    )
-    parser.add_argument(
-        "--write", action="store_true", help="rewrap the files in place instead of reporting"
-    )
+    parser.add_argument("files", nargs="+", type=Path, metavar="FILE", help="Markdown files to check")
+    parser.add_argument("--write", action="store_true", help="rewrap the files in place instead of reporting")
     parser.add_argument(
         "--soft",
         action="store_true",

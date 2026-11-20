@@ -163,9 +163,7 @@ def main():
     s.set_defaults(func=cmd_tag)
 
     s = sub.add_parser("stats", help="Show inventory statistics")
-    s.add_argument(
-        "--output", choices=["text", "json"], default="text", help="output format (default: text)"
-    )
+    s.add_argument("--output", choices=["text", "json"], default="text", help="output format (default: text)")
     s.set_defaults(func=cmd_stats)
 
     args = p.parse_args()

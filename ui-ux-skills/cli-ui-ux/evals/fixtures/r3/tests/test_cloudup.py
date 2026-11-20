@@ -9,9 +9,7 @@ TOOL = os.path.join(HERE, "..", "cloudup.py")
 def run(args, cwd, env_extra=None):
     env = {"PATH": os.environ["PATH"], "HOME": str(cwd), "XDG_CONFIG_HOME": str(cwd / "xdg")}
     env.update(env_extra or {})
-    return subprocess.run(
-        [sys.executable, TOOL, *args], cwd=cwd, env=env, capture_output=True, text=True
-    )
+    return subprocess.run([sys.executable, TOOL, *args], cwd=cwd, env=env, capture_output=True, text=True)
 
 
 def test_defaults(tmp_path):

@@ -136,9 +136,7 @@ class ProbeGuardHarnessTests(unittest.TestCase):
 
     def test_unbalanced_quotes_still_find_the_command(self) -> None:
         result = _run(_claude("pyocd erase --chip; echo 'oops"))
-        self.assertEqual(
-            json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"], "ask"
-        )
+        self.assertEqual(json.loads(result.stdout)["hookSpecificOutput"]["permissionDecision"], "ask")
 
 
 if __name__ == "__main__":

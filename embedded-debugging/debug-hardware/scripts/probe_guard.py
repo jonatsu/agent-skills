@@ -40,9 +40,7 @@ OPENOCD_DESTRUCTIVE = re.compile(
 )
 # `flash write_image erase` erases only the sectors it rewrites: ordinary flashing.
 OPENOCD_FLASHING_ERASE = re.compile(r"\bwrite_image\s+erase\b", re.IGNORECASE)
-GDB_MONITOR_DESTRUCTIVE = re.compile(
-    r"\bmon(?:itor)?\b.*(?:erase|\b(?:un)?lock\b|recover|option_write)", re.IGNORECASE
-)
+GDB_MONITOR_DESTRUCTIVE = re.compile(r"\bmon(?:itor)?\b.*(?:erase|\b(?:un)?lock\b|recover|option_write)", re.IGNORECASE)
 ESPTOOL_ERASE = frozenset({"erase_flash", "erase-flash", "erase_region", "erase-region"})
 ESPEFUSE_WRITES = re.compile(r"^(?:burn|write[_-]protect|read[_-]protect)", re.IGNORECASE)
 
@@ -152,9 +150,7 @@ def check_pyocd(word: str, args: list[str]) -> str | None:
 
 
 def check_probe_rs(word: str, args: list[str]) -> str | None:
-    is_cargo_plugin = word in {"cargo-embed", "cargo-flash"} or (
-        word == "cargo" and args[:1] in (["embed"], ["flash"])
-    )
+    is_cargo_plugin = word in {"cargo-embed", "cargo-flash"} or (word == "cargo" and args[:1] in (["embed"], ["flash"]))
     if word != "probe-rs" and not is_cargo_plugin:
         return None
     if word == "probe-rs" and args[:1] == ["erase"]:
@@ -213,9 +209,7 @@ def check_espressif(word: str, args: list[str]) -> str | None:
         write = next((arg for arg in args if ESPEFUSE_WRITES.match(arg)), None)
         return f"the eFuse write `{write}`, which is permanent" if write else None
     if word == "idf.py":
-        action = next(
-            (arg for arg in args if arg in ESPTOOL_ERASE or arg.startswith("efuse-burn")), None
-        )
+        action = next((arg for arg in args if arg in ESPTOOL_ERASE or arg.startswith("efuse-burn")), None)
         return f"`idf.py {action}`" if action else None
     return None
 
@@ -293,9 +287,7 @@ def respond(harness: str, reason: str) -> int:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="Ask before destructive debug-probe shell commands."
-    )
+    parser = argparse.ArgumentParser(description="Ask before destructive debug-probe shell commands.")
     parser.add_argument("--harness", required=True, choices=("claude", "codex", "copilot"))
     harness = parser.parse_args(argv).harness
     try:

@@ -51,9 +51,7 @@ class ComputesWcagRatios(unittest.TestCase):
         self.assertAlmostEqual(worst_ratio("000", "fff"), 21.0, places=6)
 
     def test_order_of_colours_does_not_change_the_ratio(self) -> None:
-        self.assertAlmostEqual(
-            worst_ratio("#777777", "#ffffff"), worst_ratio("#ffffff", "#777777"), places=9
-        )
+        self.assertAlmostEqual(worst_ratio("#777777", "#ffffff"), worst_ratio("#ffffff", "#777777"), places=9)
 
     def test_grey_777_on_white_fails_normal_text_and_passes_large(self) -> None:
         self.assertAlmostEqual(worst_ratio("777777", "ffffff"), 4.478, places=3)
@@ -67,9 +65,7 @@ class ComputesWcagRatios(unittest.TestCase):
         self.assertFalse(passes("777777", "ffffff")["normal text"])
 
     def test_three_digit_and_six_digit_forms_agree(self) -> None:
-        self.assertAlmostEqual(
-            worst_ratio("#777", "#fff"), worst_ratio("#777777", "#ffffff"), places=9
-        )
+        self.assertAlmostEqual(worst_ratio("#777", "#fff"), worst_ratio("#777777", "#ffffff"), places=9)
 
 
 class NeverRoundsAcrossAThreshold(unittest.TestCase):
@@ -105,9 +101,7 @@ class CompositesTranslucentForegrounds(unittest.TestCase):
         self.assertAlmostEqual(float(worst["ratio"]), 4.0, places=2)
 
     def test_opaque_alpha_matches_the_plain_colour(self) -> None:
-        self.assertAlmostEqual(
-            worst_ratio("777777ff", "ffffff"), worst_ratio("777777", "ffffff"), places=9
-        )
+        self.assertAlmostEqual(worst_ratio("777777ff", "ffffff"), worst_ratio("777777", "ffffff"), places=9)
 
 
 class RejectsWhatItCannotMeasure(unittest.TestCase):

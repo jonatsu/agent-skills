@@ -40,9 +40,7 @@ RUST_LABELS = frozenset({"run", "compile_fail"})
 TOML_LABELS = frozenset({"manifest", "clippy-config"})
 ERROR_CODE_RE = re.compile(r"^E\d{4}$")
 # A fence may sit inside block quotes and be indented with spaces or tabs, as in a list item.
-FENCE_RE = re.compile(
-    r"^(?P<quote>(?:[ \t]*>)*)(?P<indent>[ \t]*)(?P<fence>`{3,}|~{3,})(?P<info>.*)$"
-)
+FENCE_RE = re.compile(r"^(?P<quote>(?:[ \t]*>)*)(?P<indent>[ \t]*)(?P<fence>`{3,}|~{3,})(?P<info>.*)$")
 QUOTE_MARKER_RE = re.compile(r"^[ \t]*> ?")
 MAIN_RE = re.compile(r"^\s*(?:pub\s+)?(?:async\s+)?fn\s+main\s*\(", re.MULTILINE)
 COMPILER_ERROR_CODE_RE = re.compile(r"error\[(E\d{4})\]")
@@ -62,9 +60,7 @@ COMMAND_TIMEOUT_SECONDS = 600
 RUN_TIMEOUT_SECONDS = 60
 DRAIN_TIMEOUT_SECONDS = 10
 OUTPUT_LINES_SHOWN = 40
-MANIFEST_PACKAGE = (
-    '[package]\nname = "manifest-example"\nversion = "0.0.0"\nedition = "2024"\npublish = false\n\n'
-)
+MANIFEST_PACKAGE = '[package]\nname = "manifest-example"\nversion = "0.0.0"\nedition = "2024"\npublish = false\n\n'
 
 
 class RustToolchainMissing(Exception):
@@ -128,9 +124,7 @@ def collect_package_examples(packages: Iterable[Path]) -> tuple[Example, ...]:
     return tuple(examples)
 
 
-def collect_examples(
-    markdown_files: Iterable[Path], *, include_plain_toml: bool = False
-) -> tuple[Example, ...]:
+def collect_examples(markdown_files: Iterable[Path], *, include_plain_toml: bool = False) -> tuple[Example, ...]:
     """Return every Rust and checked TOML block in the files, in file and line order."""
     examples: list[Example] = []
     for path in markdown_files:
@@ -204,11 +198,7 @@ def label_problem(example: Example) -> str | None:
         return None
     if example.language != "rust":
         return f"write the language as `rust`, not `{example.language}`, so the block is checked"
-    unknown = [
-        label
-        for label in example.labels
-        if label not in RUST_LABELS and not ERROR_CODE_RE.match(label)
-    ]
+    unknown = [label for label in example.labels if label not in RUST_LABELS and not ERROR_CODE_RE.match(label)]
     if unknown:
         return f"unknown label {', '.join(unknown)}; use `text` for a block that is not checked"
     codes = [label for label in example.labels if ERROR_CODE_RE.match(label)]
@@ -247,9 +237,7 @@ class Workspace:
         return self.root / "passed.txt"
 
 
-def check_examples(
-    examples: Sequence[Example], workspace: Workspace, *, use_record: bool = True
-) -> ExampleReport:
+def check_examples(examples: Sequence[Example], workspace: Workspace, *, use_record: bool = True) -> ExampleReport:
     """Prove every example, skipping those recorded as passed under the same inputs.
 
     Raises:
@@ -350,9 +338,7 @@ def _prove(example: Example, workspace: Workspace, key: str) -> ExampleFinding |
             _restore_library(workspace)
 
 
-def _prove_builds(
-    example: Example, workspace: Workspace, selector: list[str]
-) -> ExampleFinding | None:
+def _prove_builds(example: Example, workspace: Workspace, selector: list[str]) -> ExampleFinding | None:
     lint = ["cargo", "clippy", "--locked", "--quiet", *selector]
     for extra, what in (([], "clippy"), (["--profile", "test"], "clippy under cfg(test)")):
         result = _run([*lint, *extra, "--", "-D", "warnings"], workspace.host, _target(workspace))
@@ -360,16 +346,12 @@ def _prove_builds(
             return ExampleFinding(example, f"{what} failed", result.output)
     if "run" not in example.labels:
         return None
-    tests = _run(
-        ["cargo", "test", "--locked", "--quiet", *selector], workspace.host, _target(workspace)
-    )
+    tests = _run(["cargo", "test", "--locked", "--quiet", *selector], workspace.host, _target(workspace))
     if tests.status != 0:
         return ExampleFinding(example, _status_message("its tests", tests), tests.output)
     if not example.is_binary:
         return None
-    build = _run(
-        ["cargo", "build", "--locked", "--quiet", *selector], workspace.host, _target(workspace)
-    )
+    build = _run(["cargo", "build", "--locked", "--quiet", *selector], workspace.host, _target(workspace))
     if build.status != 0:
         return ExampleFinding(example, "build before running failed", build.output)
     binary = workspace.host_target / "debug" / selector[1]
@@ -379,12 +361,8 @@ def _prove_builds(
     return None
 
 
-def _prove_compile_fail(
-    example: Example, workspace: Workspace, selector: list[str]
-) -> ExampleFinding | None:
-    result = _run(
-        ["cargo", "build", "--locked", "--quiet", *selector], workspace.host, _target(workspace)
-    )
+def _prove_compile_fail(example: Example, workspace: Workspace, selector: list[str]) -> ExampleFinding | None:
+    result = _run(["cargo", "build", "--locked", "--quiet", *selector], workspace.host, _target(workspace))
     code = example.expected_error
     expected = code or f"`error: {example.expected_message}`"
     if result.status == 0:
@@ -396,9 +374,7 @@ def _prove_compile_fail(
     else:
         matches = not codes and messages == {example.expected_message}
     if not matches:
-        found = ", ".join(
-            [*sorted(codes), *(f"`error: {message}`" for message in sorted(messages))]
-        )
+        found = ", ".join([*sorted(codes), *(f"`error: {message}`" for message in sorted(messages))])
         return ExampleFinding(example, f"expected only {expected}, found {found}", result.output)
     return None
 
@@ -419,9 +395,7 @@ def _prove_toml(example: Example, workspace: Workspace, key: str) -> ExampleFind
         (crate / "clippy.toml").write_text(example.code, encoding="utf-8")
     environment = {"CARGO_TARGET_DIR": str(workspace.root.resolve() / "toml-target")}
     try:
-        result = _run(
-            ["cargo", "clippy", "--quiet", "--offline", "--", "-D", "warnings"], crate, environment
-        )
+        result = _run(["cargo", "clippy", "--quiet", "--offline", "--", "-D", "warnings"], crate, environment)
     finally:
         shutil.rmtree(crate, ignore_errors=True)
     if result.status != 0:
@@ -495,9 +469,7 @@ def format_report(report: ExampleReport, root: Path) -> str:
     for finding in report.findings:
         example = finding.example
         labels = ",".join((example.language, *example.labels))
-        lines.append(
-            f"FAIL  {example.path.relative_to(root)}:{example.line} [{labels}]: {finding.message}"
-        )
+        lines.append(f"FAIL  {example.path.relative_to(root)}:{example.line} [{labels}]: {finding.message}")
         excerpt = finding.output.strip().splitlines()[:OUTPUT_LINES_SHOWN]
         lines.extend(f"      {line}" for line in excerpt)
     lines.append(

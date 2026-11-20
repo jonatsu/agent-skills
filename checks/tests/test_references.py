@@ -57,9 +57,7 @@ def test_a_reference_out_of_the_package_fails(tmp_path: Path, relative: str, tex
         ("scripts/run.py", 'DATA = HERE / "../references/data.md"\n'),
     ],
 )
-def test_a_reference_inside_the_package_or_plain_prose_passes(
-    tmp_path: Path, relative: str, text: str
-) -> None:
+def test_a_reference_inside_the_package_or_plain_prose_passes(tmp_path: Path, relative: str, text: str) -> None:
     make_package(tmp_path, "skill", {relative: text, "references/my notes.md": "Notes.\n"})
 
     assert check_packages((tmp_path,)) == ()

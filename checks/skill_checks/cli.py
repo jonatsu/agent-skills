@@ -87,9 +87,7 @@ def find_repository_root() -> Path:
     Raises:
         SkillCatalogError: If the current directory is not inside a Git checkout.
     """
-    result = subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False
-    )
+    result = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=False)
     if result.returncode != 0:
         raise SkillCatalogError(f"cannot find repository root: {result.stderr.strip()}")
     return Path(result.stdout.strip()).resolve()

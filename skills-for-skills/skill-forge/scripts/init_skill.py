@@ -59,8 +59,7 @@ def render_skill(
     if scope == "repo-local":
         metadata += "  scope: repo-local\n"
         opening = (
-            f"This skill serves the {repository} repository.\n\n"
-            "[TODO: State its purpose and essential instructions.]"
+            f"This skill serves the {repository} repository.\n\n[TODO: State its purpose and essential instructions.]"
         )
 
     title = " ".join(word.capitalize() for word in skill_name.split("-"))

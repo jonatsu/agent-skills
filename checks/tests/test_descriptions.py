@@ -60,9 +60,7 @@ def test_unicode_counts_characters_not_utf8_bytes(tmp_path: Path) -> None:
 
 
 def test_description_on_the_first_frontmatter_line_is_found(tmp_path: Path) -> None:
-    skill = source(
-        tmp_path, None, raw=b"---\ndescription: " + b"x" * 513 + b"\nname: example\n---\n"
-    )
+    skill = source(tmp_path, None, raw=b"---\ndescription: " + b"x" * 513 + b"\nname: example\n---\n")
 
     report = check_descriptions((skill,))
 

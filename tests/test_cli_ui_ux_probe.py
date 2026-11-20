@@ -68,9 +68,7 @@ class ProbeCliTest(unittest.TestCase):
         (self.root / "cache").mkdir()
         (self.root / "cache" / "obj.bin").write_bytes(b"data")
 
-    def probe(
-        self, *arguments: str, env: dict[str, str] | None = None
-    ) -> subprocess.CompletedProcess[str]:
+    def probe(self, *arguments: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
             [sys.executable, str(SCRIPT), *arguments],
             capture_output=True,
@@ -111,18 +109,14 @@ class ProbeCliTest(unittest.TestCase):
         self.assertFalse(self.find(report, ["list"], "tty-dumb")["output"]["ansi"])
 
     def test_bad_tool_shows_colour_when_piped_and_errors_on_stdout(self) -> None:
-        report = self.report(
-            "--workdir", str(self.root), "--modes", "pipe", "--", sys.executable, "bad.py"
-        )
+        report = self.report("--workdir", str(self.root), "--modes", "pipe", "--", sys.executable, "bad.py")
         unknown = self.find(report, ["--probe-cli-unknown-flag"], "pipe")
         self.assertEqual(unknown["exit_code"], 0)
         self.assertTrue(unknown["stdout"]["ansi"])
         self.assertEqual(unknown["stderr"]["text"], "")
 
     def test_destructive_bare_run_is_recorded_and_confined_to_the_copy(self) -> None:
-        report = self.report(
-            "--workdir", str(self.root), "--modes", "pipe", "--", sys.executable, "bad.py"
-        )
+        report = self.report("--workdir", str(self.root), "--modes", "pipe", "--", sys.executable, "bad.py")
         bare = self.find(report, [], "pipe")
         self.assertEqual(bare["workdir_changes"]["deleted"], ["cache/obj.bin"])
         self.assertTrue((self.root / "cache" / "obj.bin").exists())
@@ -239,9 +233,7 @@ class ProbeCliTest(unittest.TestCase):
         self.assertNotEqual(runtime, "/run/user/0")
 
     def test_home_from_must_be_a_directory(self) -> None:
-        result = self.probe(
-            "--home-from", str(self.root / "missing"), "--", sys.executable, "-c", "pass"
-        )
+        result = self.probe("--home-from", str(self.root / "missing"), "--", sys.executable, "-c", "pass")
         self.assertEqual(result.returncode, EXIT_ENVIRONMENT)
 
 
