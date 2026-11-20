@@ -38,6 +38,8 @@ or harm, never the difference alone.
 - **Default:** `--quiet` (`-q`) silences the stderr confirmation only. It never silences the stdout result,
   because a script that passes `--quiet` still needs the ID.
 - **Default:** a read command prints its data and nothing else.
+- **Rule:** an empty result and a failure stay distinguishable. A read that finds nothing exits 0 with empty
+  stdout; a read that could not look exits non-zero with an error.
 - **Rule:** a command that runs another program owns no stdout; see Commands That Run Another Command.
 - **Default:** next-step hints ("Next, run `tool login`") appear only after onboarding steps such as `init` or
   first login, and only when stderr is a terminal.
@@ -71,6 +73,8 @@ or harm, never the difference alone.
   `--color never`.
 - **Default:** use the basic 16 ANSI colours, so terminal themes control contrast. Use no background colours,
   which clash with light or dark themes.
+- **Rule:** keep information out of dim (faint) text and bright black (colour 8). Several common themes render
+  both close to the background, so the text vanishes.
 - **Rule:** colour and symbols add to text and never replace it. Status words stay in the text so that they
   survive `grep`, screen readers, and colour blindness.
 
@@ -245,6 +249,8 @@ tell the two apart, so these rules override the general ones above.
   terminal.
 - **Default:** prefer a count or phase (`[2/4] uploading`, `120/400 files`) over a bare spinner, and give a
   spinner a description of the work.
+- **Rule:** clear a redrawn progress line before writing anything else to the terminal, so a warning or a
+  result never lands on top of it or gets overwritten by it.
 
 ## Compatibility and Deprecation
 

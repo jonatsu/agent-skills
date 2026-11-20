@@ -136,3 +136,13 @@ copied.
 The heuristics supplied the usability questions in "Fit the Surface to the Job": system status, error
 prevention, recovery from errors, recognition rather than recall, consistency, and user control. They were
 restated for command-line tasks; nothing was copied.
+
+### Miqdad Badjuber: antislop `antislop-human` skill
+
+- Source: <https://github.com/miqdadbadjuber/anti-slop>, `skills/antislop-human/`
+- License: `MIT`
+- Version: `44b3547ed6d6f21eed777271602da113efc53c94`
+
+The skill supplied three ideas, carried over from web interfaces: low-contrast text vanishes on some themes, a redrawn
+status line must not cover other output, and an empty result must look different from a failure. The rules were written
+independently; no text was copied.
