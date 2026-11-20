@@ -162,7 +162,7 @@ to check, and the report shape.
 Before running a tool you are testing or reviewing, sort its commands into four groups: read-only, changes data,
 destroys data, and reaches beyond the machine. Use its help text and code to sort them. Then:
 
-- Run probes through `scripts/probe_cli.py`, which gives every run a sandbox copy of the working directory, a
+- Run probes through `scripts/probe-cli.py`, which gives every run a sandbox copy of the working directory, a
   temporary HOME, an empty runtime directory, an environment without inherited credentials, a timeout, and a
   killed process group. The empty `XDG_RUNTIME_DIR` keeps the tool away from real per-user sockets, such as
   those of systemd user services or Podman.
@@ -174,8 +174,8 @@ destroys data, and reaches beyond the machine. Use its help text and code to sor
 - When the tool writes to absolute paths, system files such as `/etc`, services, or devices, stop. Recommend a
   container or a sandbox such as `bwrap`, and ask the user before running it.
 
-From this skill's directory, run `python3 scripts/probe_cli.py --help` for its options. A typical call is
-`python3 scripts/probe_cli.py --workdir . --help-for deploy --modes pipe,tty -- ./bin/tool`.
+From this skill's directory, run `python3 scripts/probe-cli.py --help` for its options. A typical call is
+`python3 scripts/probe-cli.py --workdir . --help-for deploy --modes pipe,tty -- ./bin/tool`.
 
 ## Attributions
 

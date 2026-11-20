@@ -2,7 +2,7 @@
 """Run a command-line tool through a matrix of probes inside a throwaway sandbox and report JSON.
 
 Usage:
-    probe_cli.py [options] -- COMMAND [ARGS...]
+    probe-cli.py [options] -- COMMAND [ARGS...]
 
 COMMAND and ARGS form the invocation prefix, such as `./bin/mytool` or `python3 tool.py`. Each probe appends
 its own arguments to that prefix and runs in a fresh sandbox: a copy of `--workdir` (or an empty directory) as
@@ -365,9 +365,9 @@ def parse_env(values: list[str]) -> dict[str, str]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="probe_cli.py",
+        prog="probe-cli.py",
         description="Probe a command-line tool in a throwaway sandbox and print the results as JSON.",
-        epilog="example: probe_cli.py --workdir . --help-for deploy --modes pipe,tty -- ./bin/mytool",
+        epilog="example: probe-cli.py --workdir . --help-for deploy --modes pipe,tty -- ./bin/mytool",
     )
     parser.add_argument("--workdir", type=Path, help="directory copied into each sandbox as the working directory")
     parser.add_argument(
@@ -498,7 +498,7 @@ def main(argv: list[str] | None = None) -> int:
         prefix = resolve_prefix(command, source)
         options.wrapper = network_wrapper(options.isolate_network)
     except ProbeEnvironmentError as error:
-        print(f"probe_cli.py: error: {error}", file=sys.stderr)
+        print(f"probe-cli.py: error: {error}", file=sys.stderr)
         return EXIT_ENVIRONMENT
 
     results = [asdict(run_probe(prefix, probe, mode, source, options)) for probe in probes for mode in modes]

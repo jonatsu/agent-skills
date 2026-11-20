@@ -1,4 +1,4 @@
-"""Behavioral tests for the cli-ui-ux skill's probe_cli.py against synthetic command-line tools."""
+"""Behavioral tests for the cli-ui-ux skill's probe-cli.py against synthetic command-line tools."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from typing import Any
 
 from skill_locator import skill_directory
 
-SCRIPT = skill_directory("cli-ui-ux") / "scripts" / "probe_cli.py"
+SCRIPT = skill_directory("cli-ui-ux") / "scripts" / "probe-cli.py"
 
 EXIT_OK = 0
 EXIT_USAGE = 2

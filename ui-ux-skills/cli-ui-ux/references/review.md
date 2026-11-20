@@ -25,7 +25,7 @@ The step is done when every command has a group and you know which ones are safe
 
 ## Probe the Tool
 
-Run `scripts/probe_cli.py` from the skill's directory with the tool's working directory as `--workdir`. Add
+Run `scripts/probe-cli.py` from the skill's directory with the tool's working directory as `--workdir`. Add
 `--help-for` for each subcommand, `--probe` for each read-only command worth observing, `--skip-bare` when
 the bare command acts, and `--home-from` when the tool loads libraries or config from HOME. Use
 `--modes pipe,tty,tty-no-color,tty-dumb` to cover colour handling, and `--isolate-network` when the tool might
