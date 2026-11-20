@@ -1,8 +1,9 @@
 # Evaluations
 
-Each dated file records one evaluation of candidate or authored skills. skill-forge's
+Each dated file records evaluation evidence that a later decision cites, such as behaviour runs, usage counts, or a
+review of one of our skills with open findings. `AGENTS.md` says when to write one. skill-forge's
 `references/full-evaluation.md` defines the method; this page covers running a behaviour evaluation here with
-Claude Code subagents.
+Claude Code subagents, and lists the third-party sources declined with nothing taken.
 
 ## Running a Behaviour Evaluation
 
@@ -31,3 +32,7 @@ code shows the skill's effect. Grade the gaps a control leaves open instead, suc
 shutdown deadline, a child that escapes its process group, or input a lenient parser accepts. Grade behaviour,
 never one convention where the skill allows alternatives, such as exiting 128 plus the signal number versus
 re-raising the signal.
+
+## Declined Sources
+
+None yet. Each entry gives the source URL and commit, the date it was read, and why it was declined.

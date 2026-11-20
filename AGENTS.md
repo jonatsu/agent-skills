@@ -107,6 +107,11 @@ A durable document describes its subject as it stands. These rules come from
 
 - Record the current state only. Repairs, reviews, investigations, and the dates they happened belong in Git
   history and the repository's ledgers, as do lists of what was checked and found irrelevant.
+- Write a `docs/evaluations/` record only for evidence a later decision will cite and that costs real work to
+  reproduce: model runs, usage counts, or a review of one of our own skills whose findings stay open. For a
+  third-party source, put each idea worth taking in a `TODO.md` entry that names the source by URL and commit,
+  and record what a skill takes in its `ATTRIBUTIONS.md`. A source declined with nothing taken gets one line,
+  with its reason, under "Declined Sources" in `docs/evaluations/README.md`.
 - Pin material with identifiers that survive regeneration: a release, tag, or commit, the version the material
   embeds, or the date it carries. Keep the precision the evidence supports; without a recorded pin, give the read
   date rather than deriving one.
