@@ -14,7 +14,7 @@ but not sufficient for a good experience (Morville).
 3. **Check the wider facets.** Morville's honeycomb names seven facets of user experience: useful, usable,
    desirable, findable, accessible, credible, and valuable. For each one that matters here, say what supports
    or undermines it. Leave the usable facet to the heuristic audit, and the accessible facet to a
-   separate review with the `accessibility` skill.
+   separate review with the `accessibility-engineering` skill.
 4. **Find the weakest link.** Name the one or two facets or qualities that most limit the experience. Give the
    evidence from the interface for each.
 5. **Report.** Write the report in the shape `SKILL.md` gives. Each finding names the quality or facet it affects.

@@ -1,12 +1,12 @@
 ---
-name: accessibility
-description: Design, evaluate, review, and fix interfaces for accessibility against WCAG 2.2, by default at Level AA, for web content and native apps, with EN 301 549 for non-web software, documents, and hardware such as kiosks. Use when checking whether a page, app, component, or device meets WCAG or accessibility requirements, fixing barriers for keyboard or screen reader users, preparing an accessibility statement, or planning accessibility testing. Use usability for general ease of use and cli-ui-ux for command-line tools.
+name: accessibility-engineering
+description: Design, evaluate, review, and fix interfaces for accessibility against WCAG 2.2, by default at Level AA, for web content and native apps, with EN 301 549 for non-web software, documents, and hardware such as kiosks. Use when checking whether a page, app, component, or device meets WCAG or accessibility requirements, fixing barriers for keyboard or screen reader users, preparing an accessibility statement, or planning accessibility testing. Use usability-engineering for general ease of use and cli-ui-ux for command-line tools.
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-# Accessibility
+# Accessibility Engineering
 
 Make interfaces usable by disabled people, and judge them against the requirements that define that. Judge web
 content and native apps against the Web Content Accessibility Guidelines (WCAG) 2.2. Judge other software,
@@ -18,7 +18,7 @@ general policy.
 
 When a skill exists for the medium, load it as well, because its conventions are more specific. For a
 command-line tool, load `cli-ui-ux`. Its conventions include colour that never carries meaning alone, output
-that works without a terminal, and no animation in a pipe. General ease of use belongs to `usability`.
+that works without a terminal, and no animation in a pipe. General ease of use belongs to `usability-engineering`.
 
 When the user names a law or a contract, check which WCAG version and level it cites before you judge.
 [references/standards.md](references/standards.md) holds the versions the main regulations cite, and how EN

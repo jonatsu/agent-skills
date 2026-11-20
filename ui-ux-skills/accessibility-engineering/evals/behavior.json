@@ -1,5 +1,5 @@
 {
-  "skill_name": "accessibility",
+  "skill_name": "accessibility-engineering",
   "mode": "explicit behavioral evaluation",
   "run_contract": {
     "supply_candidate_skill_path": true,

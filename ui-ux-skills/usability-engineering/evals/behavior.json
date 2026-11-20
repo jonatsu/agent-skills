@@ -1,5 +1,5 @@
 {
-  "skill_name": "usability",
+  "skill_name": "usability-engineering",
   "mode": "explicit behavioral evaluation",
   "run_contract": {
     "supply_candidate_skill_path": true,
@@ -65,7 +65,7 @@
       "fixture": "fixtures/u5",
       "prompt": "Review the usability of our notes command-line tool.",
       "skill_arm_only": true,
-      "behavior": "Defer to the medium-specific cli-ui-ux skill for a command-line tool, and use usability only for what that skill does not cover.",
+      "behavior": "Defer to the medium-specific cli-ui-ux skill for a command-line tool, and use usability-engineering only for what that skill does not cover.",
       "planted": "Bold codes in piped output; 'unknown command' on stdout with exit 0; `rm` with no confirmation and a traceback on a bad index; 'OK' on stdout; no help.",
       "outcomes": [
         "D1: the agent loads cli-ui-ux, or the report says it applies cli-ui-ux's command-line conventions.",

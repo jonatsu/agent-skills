@@ -1,12 +1,12 @@
 ---
-name: usability
-description: Design, evaluate, and review the usability of any interface people operate, from GUIs, web and mobile apps to voice interfaces, device panels, and other human-machine interfaces, using established principles and methods such as heuristic evaluation and cognitive walkthroughs. Use when judging whether an interface is easy to learn and use, finding usability problems in a design or change, or planning a usability evaluation. Use cli-ui-ux for command-line tools and accessibility for WCAG and accessibility audits.
+name: usability-engineering
+description: Design, evaluate, and review the usability of any interface people operate, from GUIs, web and mobile apps to voice interfaces, device panels, and other human-machine interfaces, using established principles and methods such as heuristic evaluation and cognitive walkthroughs. Use when judging whether an interface is easy to learn and use, finding usability problems in a design or change, or planning a usability evaluation. Use cli-ui-ux for command-line tools and accessibility-engineering for WCAG and accessibility audits.
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-# Usability
+# Usability Engineering
 
 Judge and shape how easily people learn and use an interface to reach their goals. The interface may be a
 screen, a web or mobile app, a voice dialogue, a device panel, or any other human-machine interface. ISO
@@ -21,7 +21,7 @@ command-line tool or a project's task commands, that is `cli-ui-ux`. Use this sk
 leaves open, and say which skill your report follows.
 
 A usability review does not cover accessibility conformance, such as WCAG. Where the interface has public or
-diverse users, recommend an accessibility review, which the `accessibility` skill carries out.
+diverse users, recommend an accessibility review, which the `accessibility-engineering` skill carries out.
 
 A safety-critical interface follows its own domain's standards and process, which this skill does not replace.
 Examples are control rooms (ISO 11064), process-automation human-machine interfaces (ANSI/ISA-101), indicator
