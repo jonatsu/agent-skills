@@ -105,7 +105,7 @@ independently, and nothing was copied.
 - License: `Apache-2.0`
 - Version: `ca8e5b3c56e51e336449a99d79b42b45ea690b86`
 
-The linter supplied two ideas for the bundled-reference check in `scripts/quick_validate.py`: collecting both Markdown
+The linter supplied two ideas for the bundled-reference check in `scripts/quick-validate.py`: collecting both Markdown
 link targets and bare paths under the bundled resource directories, and stripping fenced code blocks first. The
 implementation is independently written, and no code or wording was copied.
 

@@ -63,7 +63,7 @@ nothing. Without authorization, tie each rule to a recorded failure, a user corr
 source instead. A control run is observation: comparing the finished candidate against a baseline belongs to
 full evaluation.
 
-For a new skill, run `python3 <skill-forge-root>/scripts/init_skill.py --help`. Use the initializer when its
+For a new skill, run `python3 <skill-forge-root>/scripts/init-skill.py --help`. Use the initializer when its
 minimal scaffold fits the requested package, and replace every generated placeholder before validation.
 Create files manually when the scaffold would need more cleanup than it saves.
 

@@ -28,7 +28,7 @@ except ModuleNotFoundError:  # pragma: no cover - depends on the caller's runner
     # broken invocation, and a gate must not record it as a policy failure.
     print(
         "error: PyYAML is required. Run this script with a PEP 723-aware runner, "
-        "for example: uv run quick_validate.py <skill-directory>",
+        "for example: uv run quick-validate.py <skill-directory>",
         file=sys.stderr,
     )
     sys.exit(2)

@@ -14,8 +14,8 @@ from skill_locator import REPOSITORY_ROOT, skill_directory
 # The repository root carries the mise.toml that pins the Python and uv the scripts run under.
 SKILLS_ROOT = REPOSITORY_ROOT
 SCRIPT_ROOT = skill_directory("skill-forge") / "scripts"
-INIT_SCRIPT = SCRIPT_ROOT / "init_skill.py"
-VALIDATE_SCRIPT = SCRIPT_ROOT / "quick_validate.py"
+INIT_SCRIPT = SCRIPT_ROOT / "init-skill.py"
+VALIDATE_SCRIPT = SCRIPT_ROOT / "quick-validate.py"
 
 
 def _run_python(script: Path, *arguments: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:

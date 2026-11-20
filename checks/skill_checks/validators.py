@@ -1,7 +1,7 @@
 """Adapters for the two authoritative skill validators.
 
 The specification validator is `skills-ref` from PyPI, pinned in this project's lockfile, whose command is
-`agentskills validate`. The policy validator is skill-forge's own `scripts/quick_validate.py`. Running a script
+`agentskills validate`. The policy validator is skill-forge's own `scripts/quick-validate.py`. Running a script
 from inside a sibling package is allowed here because both ship at the same commit of this repository.
 """
 
@@ -21,7 +21,7 @@ from skill_checks.catalog import SkillCatalogError, SkillSource, find_skill_sour
 
 SPECIFICATION_COMMAND: Final = "agentskills"
 POLICY_SKILL: Final = "skill-forge"
-POLICY_SCRIPT: Final = Path("scripts") / "quick_validate.py"
+POLICY_SCRIPT: Final = Path("scripts") / "quick-validate.py"
 
 
 class ValidatorKind(enum.Enum):
@@ -170,7 +170,7 @@ def format_validation_report(report: ValidationReport, repo_root: Path) -> tuple
         label = "skill-forge policy" if report.kind is ValidatorKind.POLICY else "specification"
         return "", f"FAIL  {label} validator unavailable\n      {report.fatal_error}\n"
     heading = (
-        "Skill Forge local policy (quick_validate)"
+        "Skill Forge local policy (quick-validate)"
         if report.kind is ValidatorKind.POLICY
         else "Agent Skills specification (skills-ref)"
     )

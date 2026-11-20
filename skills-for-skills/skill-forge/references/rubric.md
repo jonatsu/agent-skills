@@ -39,7 +39,7 @@ Run the vendored specification validator, then the policy validator, and report 
 ```bash
 uv run --isolated --no-dev --project <skill-forge-root>/scripts/skills-ref \
   skills-ref validate <skill-directory>
-uv run <skill-forge-root>/scripts/quick_validate.py <skill-directory>
+uv run <skill-forge-root>/scripts/quick-validate.py <skill-directory>
 ```
 
 The policy validator exits 0 for a valid skill, 1 for policy failures, and 2 for invalid invocation. Name the

@@ -19,7 +19,7 @@ dev = [
   "mypy>=1.17",
   "pre-commit>=4",
   "pytest>=8.4",
-  # skill-forge's bundled policy validator, quick_validate.py, parses frontmatter with it.
+  # skill-forge's bundled policy validator, quick-validate.py, parses frontmatter with it.
   "pyyaml>=6.0",
   # The Agent Skills specification validator; its command is `agentskills validate`.
   "skills-ref==0.1.1",
