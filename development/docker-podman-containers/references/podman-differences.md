@@ -69,13 +69,16 @@ target-version checks.
 - `.kube` wraps `podman kube play` against a `Yaml=` path; `podman kube play --down`/`--replace` manages that
   workload outside Quadlet.
 
-## Buildah and Containerfile
+## Buildah and the Dockerfile
 
-- `podman build` uses Buildah's Go API; Buildah is likewise daemonless. `Containerfile` and `Dockerfile` share
-  identical syntax and both names are recognized (`Containerfile` is Podman's preferred name). The
-  `dockerfile-patterns.md` guidance applies as-is.
-- Podman/Buildah-specific: a `LABEL io.containers.capabilities=CAP1,CAP2` in the Containerfile records the
-  capability subset the resulting container should run with (no Docker equivalent).
+- `podman build` uses Buildah's Go API; Buildah is likewise daemonless. Podman reads a build file named either
+  `Containerfile` or `Dockerfile`, with identical syntax, while `docker build` looks only for `Dockerfile` unless
+  given `-f`. Name the build file `Dockerfile` and call it a Dockerfile in prose, so one file builds unchanged
+  under either engine. Mention `Containerfile` only where a tool's documentation names it as an accepted
+  alternative. The `dockerfile-patterns.md` guidance applies as-is.
+- Podman/Buildah-specific: a `LABEL io.containers.capabilities=CAP1,CAP2` in the Dockerfile records the
+  capability subset the resulting container should run with (no Docker equivalent). The list must be a subset of
+  Podman's default capabilities; otherwise Podman prints an error and runs the container with its defaults.
 
 ## Security-Default Divergences
 
