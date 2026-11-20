@@ -190,8 +190,8 @@ justified by a request that needs it.
 
 ## 5. Write for Reliable Behavior
 
-When the `writing-for-agents` skill is available, load it for more depth. It covers the levers that make agent-facing
-prose predictable, such as leading words, completion criteria, and pruning.
+The `writing-for-agents` skill, loaded before the first write, covers the levers that make agent-facing prose
+predictable, such as leading words, completion criteria, and pruning.
 
 Before the first write of any create, edit, split, move, or rename, sweep the whole package. Read `SKILL.md` and every
 reference, not only the passage the task touches. Treat moved text as new writing. Run `writing-skill-descriptions` on

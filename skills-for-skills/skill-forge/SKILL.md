@@ -16,7 +16,8 @@ its task, and both modes below serve that one standard.
 
 ## Choose the Mode
 
-- **Author** when the request creates, extracts, edits, restructures, or repairs a skill package. Read
+- **Author** when the request creates, extracts, edits, restructures, or repairs a skill package, however small
+  the edit. Load the `writing-for-agents` skill before the first write when it is available, then read
   [references/authoring.md](references/authoring.md) and follow its steps.
 - **Review** when the request asks whether a skill is correct, effective, safe, or ready, or compares a skill
   against a revision or baseline. Read [references/review.md](references/review.md) and follow its steps.
