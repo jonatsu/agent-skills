@@ -10,7 +10,7 @@ from pathlib import Path
 
 from skill_locator import skill_directory
 
-CHECK_SCRIPT = skill_directory("context-architecture") / "scripts" / "check_context_architecture.py"
+CHECK_SCRIPT = skill_directory("context-architecture") / "scripts" / "check-context-architecture.py"
 
 EXIT_OK = 0
 EXIT_FINDINGS = 1

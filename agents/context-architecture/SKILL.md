@@ -109,7 +109,7 @@ Five concerns, in order of leverage. Topology is deliberately last.
 
 ## Enforcement
 
-Run `scripts/check_context_architecture.py <repository-root>` after any change and resolve every finding. It
+Run `scripts/check-context-architecture.py <repository-root>` after any change and resolve every finding. It
 measures the system level: documents no structural route reaches, routing entries without a trigger condition,
 and line-number references that rot. The default structural route is a trigger-keyed list item starting
 with `Read when`, `Symptom`, `Read before`, or `If you`, followed by a condition and Markdown document link.
@@ -117,7 +117,7 @@ The condition and link may wrap onto indented continuation lines in the same lis
 A trigger-keyed routing table or standalone Markdown inclusion link also routes for compatibility.
 Inline links and incidental backticked paths do not establish reachability. See
 [references/writing-rules.md](references/writing-rules.md) for the exact forms and table headers.
-Pair it with the `agents-context-docs` skill's `check_agent_context.py` for the instruction-file level;
+Pair it with the `agents-context-docs` skill's `check-agent-context.py` for the instruction-file level;
 neither substitutes for the other. Propose wiring both into the repository's gates.
 
 **Run both before calling a restructure done, because they can be made to disagree.** Moving an evidence index
