@@ -7,8 +7,8 @@ rules they demonstrate are the ones in `SKILL.md`.
 Read the note under each pair. A rewrite is only correct because something specific survived it, and the note
 names what.
 
-Examples are fenced rather than quoted so that a formatter cannot reflow them and so that the marks under
-discussion, headings and bold runs among them, stay visible as source.
+Examples are fenced rather than quoted so that a formatter cannot reflow them. The same choice keeps the marks
+under discussion, headings and bold runs among them, visible as source.
 
 ## Not X But Y
 
@@ -151,7 +151,7 @@ including a confidence score.
 ```
 
 The first sentence had no content. The second was a genuine list, but "reports its confidence" is part of
-recording decisions rather than a third thing, so the rewrite states two and subordinates the third. Keep
+recording decisions rather than a third thing. The rewrite therefore states two and subordinates the third. Keep
 three items where the subject has three.
 
 ## Serves As, Stands As, Boasts
@@ -233,7 +233,7 @@ output collisions are detected before any write.
 Every label restated the opening of its own item, so the bold marked nothing. Prose carried it in one
 sentence, and the rewrite then had room for the distinction the list omitted.
 
-A labelled list survives where the labels differ in kind and a reader scans for them, as in a table of
+A labelled list survives where the labels differ in kind and a reader scans for them. An example is a table of
 statuses where `active`, `landed`, and `superseded` are the thing being looked up.
 
 ## A Heading Restated

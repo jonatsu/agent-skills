@@ -1,6 +1,6 @@
 ---
 name: writing-for-humans
-description: "Write, edit, shorten, or review technical prose at the sentence and paragraph level in any language, preserving every claim and the author's voice and removing AI-writing artifacts. Use for documentation, specs, PRDs, and design documents, reports, issues, commit messages, user-facing errors, and plain-language (ISO 24495-1), readability, or de-bloat passes. Not for document structure or type (writing-documentation), agent instruction files (writing-for-agents), or fiction, poetry, marketing, or chat."
+description: "Write, edit, shorten, or review prose a person reads, at the sentence and paragraph level in any language, keeping every claim and the author's voice and removing AI-writing artifacts. Use before writing or finishing documentation, specs, design documents, reports, READMEs, issues, pull request bodies, commit messages, or user-facing errors; for plain-language (ISO 24495-1), readability, or de-bloat passes; and when text reads as AI-generated. Not for document structure or type (writing-documentation), agent instruction files (writing-for-agents), or fiction, poetry, marketing, or chat."
 license: MIT AND CC-BY-4.0
 metadata:
   author: Joonas Onatsu
@@ -14,11 +14,11 @@ type, what belongs in it, and where each concept is explained. A spec, PRD, or d
 skills, and the skill that owns its content as well.
 
 Plain language, as ISO 24495-1:2023 defines it, is wording, structure, and design so clear that the intended
-readers can easily find what they need, understand what they find, and use that information. The standard
-groups its guidelines under four principles: relevant, findable, understandable, and usable. This skill applies
-the understandable principle to each sentence and paragraph, and the other three at the scale of a passage: the
-deletion test keeps it relevant, leading with the point keeps it findable, and the **reader-ready** pass is the
-first step of usable.
+readers can do three things. They can easily find what they need, understand what they find, and use that
+information. The standard groups its guidelines under four principles: relevant, findable, understandable, and
+usable. This skill applies the understandable principle to each sentence and paragraph. It applies the other
+three at the scale of a passage: the deletion test keeps it relevant, leading with the point keeps it findable,
+and the **reader-ready** pass is the first step of usable.
 
 Write in the language the request, the surrounding text, or the audience establishes, and default to English.
 The rules are language-general unless marked as an English convention. In another language, that language's
@@ -46,9 +46,9 @@ where the source itself is vague.
 **Keep quotations exact.** Keep each quotation visibly quoted and separate. Never repair one silently or use an
 ellipsis to change what the speaker claimed.
 
-**Edit prose only.** Leave code blocks, inline code, frontmatter, link targets, table syntax, identifiers,
-commands, and quotations as they are unless the user includes them in scope. Confirmed AI-writing artifacts are
-the exception, below.
+**Edit prose only.** Leave these as they are unless the user includes them in scope: code blocks, inline code,
+frontmatter, link targets, table syntax, identifiers, commands, and quotations. Confirmed AI-writing artifacts
+are the exception, below.
 
 **Write inclusively.** Use "they" for a person whose pronouns the text does not state, and never infer pronouns
 from a name. Use a gendered term only where the subject requires it.
@@ -59,9 +59,9 @@ The default style is this skill plus the repository's own conventions. It applie
 established, which is most of the time.
 
 When you edit someone else's prose, keep their register and terminology and add no personality the source lacks.
-That limits your edits; it does not protect a defect. A plain-language request asks for a new register: replace
-formal or bureaucratic wording with the words the intended reader uses, address that reader as "you" where the
-text tells them what happens to them or what to do, and keep only the terms whose defined meaning matters.
+That limits your edits; it does not protect a defect. A plain-language request asks for a new register. Replace
+formal or bureaucratic wording with the words the intended reader uses. Address that reader as "you" where the
+text tells them what happens to them or what to do. Keep only the terms whose defined meaning matters.
 
 Voice matching overrides the default only with an explicit request and at least one sample. If the sample is
 missing, ask for one. Match the sample's formality, person, terminology, and degree of personality. AI-writing
@@ -182,7 +182,7 @@ opens with "Additionally", "Furthermore", "Moreover", or "In addition". Name the
 sentences. Never write a run of very short bullets. Give list items parallel grammatical form.
 
 **Count a list of three.** Three is the length a model reaches for when content has no length of its own. Check
-that each item adds something the others do not, then merge them, develop the strongest, or let the list be two
+that each item adds something the others do not. Then merge them, develop the strongest, or let the list be two
 or four.
 
 **Spend bold as a budget.** Bold reads as strong only against plain text around it. Bold the shortest span
@@ -212,7 +212,7 @@ often shortens little, because most of its length is content. The remaining leve
 author's decision.
 
 Besides the three recurring forms, the usual noise is a filler clause ("is documented in", "as described above",
-"it is worth noting"), a closer that restates its paragraph, and a sentence announcing the next one.
+"it is worth noting"), a closer that restates its paragraph, or a sentence announcing the next one.
 
 Split sentences while shortening, and never merge them. Merging short sentences into a semicolon chain saves
 words and makes the text denser. Protect every word that carries a limit, condition, exception, or
@@ -242,16 +242,15 @@ Rewrite the passage while keeping its claims, qualifications, normative force, a
 invisible mark without changing visible text, and keep legitimate accessibility, authorship, and application
 metadata.
 
-Treat one dash, adverb, transition, rhetorical question, bold run, stacked qualifier, or repeated opening as a
-prompt to inspect the
-passage, not as a finding. Several sharing a passage are a finding. **Surface style is never evidence of
+One dash, adverb, transition, rhetorical question, bold run, stacked qualifier, or repeated opening is a prompt
+to inspect the passage, not a finding. Several sharing a passage are a finding. **Surface style is never evidence of
 authorship:** settle that question from draft history, revision history, or disclosed AI use.
 
 Outside English, diagnose by category and derive the signatures from the text. A model's tells in one language
 are not translations of its tells in another.
 
 Load [references/diagnostics.md](references/diagnostics.md) for a long draft, a difficult diagnosis, or the final
-scan; its categories apply to any language and its examples are English. Load
+scan. Its categories apply to any language, and its examples are English. Load
 [references/rewrites.md](references/rewrites.md) when the size of an edit is the question rather than its
 target.
 
@@ -274,18 +273,21 @@ that, so never present a reader-ready result as reader-tested.
 
 When a condition fails, revise the passage and run the complete pass again, because a revision can introduce a
 defect. **Check each replacement, not only the defect it removed:** a rewrite of a key-first opener can arrive
-in the passive, and a merged triad can drop a number. Then search once more for the six marks that most often
-survive: a not-X-but-Y contrast, a restating closer, an em dash, an unearned triad, a bold run, and a bold
-lead-in (a line or paragraph that opens with a bold phrase ending in a full stop or colon). Name the
-most repeated visible move, and inspect it when it appears three or more times or dominates two consecutive
-paragraphs; a repeated move that carries the argument stays.
+in the passive, and a merged triad can drop a number.
+
+Then search once more for the six marks that most often survive: a not-X-but-Y contrast, a restating closer, an
+em dash, an unearned triad, a bold run, and a bold lead-in. A bold lead-in is a line or paragraph that opens
+with a bold phrase ending in a full stop or colon. Name the most repeated visible move. Inspect it when it
+appears three or more times or dominates two consecutive paragraphs. A repeated move that carries the argument
+stays.
 
 **Leave a working sentence alone.** A limit is a ceiling, not a quota of edits. Check for over-correction as
 well: fabricated informality, variation for its own sake, and roughness added to look handmade.
 
 For a rewrite, return the edited text or file change with no change summary, self-review, or confidence
-statement unless asked. For a review, separate proposed prose edits, issues that need the author's input, and
-passages left unchanged because their evidence or intended voice is unclear.
+statement unless asked. For a review, separate three groups. They are
+proposed prose edits, issues that need the author's input, and passages left unchanged because their evidence or
+intended voice is unclear.
 
 Clarity may override a stylistic default that would make the prose awkward, misleading, or less precise. The
 guardrails always bind.

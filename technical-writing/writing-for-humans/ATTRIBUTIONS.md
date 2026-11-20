@@ -16,8 +16,8 @@ changed. The upstream license texts stay with the skill in `LICENSE.upstream`, a
 - Version: v0.4.2 (`05fc6c8a77d4a8efc08ddfdc4d01534cb98ed2c8`)
 
 Adapted: the technical-prose rules on audience, terminology, sentences, paragraphs, Markdown, action writing,
-headings, formal prose, and clarity overrides, reworked in scope, organization, and wording to fit copy editing and
-AI-mark removal.
+headings, formal prose, and clarity overrides. The package reworked their scope, organization, and wording to fit
+copy editing and AI-mark removal.
 
 ### Hardik Pandya: stop-slop
 
@@ -34,9 +34,9 @@ The repository supplied the chat-residue, promotional-language, and false-agency
 - Version: `9862685f575c65a8247f90369951df1b3416e3d6`
 
 The repository, built on Wikipedia's "Signs of AI writing", supplied the weak-signal threshold, the writing-sample
-override, the account of why model prose reads as it does, and the marks that justify acting on one sighting, such as
-the announced run-up, the objection nobody raised, and the closer that restates its paragraph. Nothing was copied;
-the worked examples are original.
+override, and the account of why model prose reads as it does. It supplied the marks that justify acting on one
+sighting. Examples are the announced run-up, the objection nobody raised, and the closer that restates its
+paragraph. Nothing was copied; the worked examples are original.
 
 ### jpeggdev: humanize-writing
 
@@ -73,10 +73,10 @@ revision restarts the complete reader pass. Nothing was copied.
 - Version: Issue 9, 2025-01-15
 
 ASD holds the copyright, and the standard is free to obtain but not free to redistribute. It informed the
-procedural and descriptive sentence classes and their limits, one instruction per sentence, the condition before the
-command it governs, the ceiling on noun clusters, the preference for simple tenses, and the paragraph topic sentence
-with its six-sentence ceiling. The skill does not implement the standard, and no rule text or dictionary entry was
-copied.
+procedural and descriptive sentence classes and their limits, one instruction per sentence, and the condition before
+the command it governs. It also informed the ceiling on noun clusters, the preference for simple tenses, and the
+paragraph topic sentence with its six-sentence ceiling. The skill does not implement the standard, and no rule
+text or dictionary entry was copied.
 
 ### ISO: ISO 24495-1:2023, Plain language, Part 1: Governing principles and guidelines
 
@@ -104,8 +104,8 @@ standard's guideline names, including headings that help readers predict what co
 - License: `MIT`
 - Version: `113656b0a6a6cbeb3b3c2bb7cf3bc29349cb05cf`
 
-The skill supplied the protection of numbers and scope limits, the one-reading check in the reader-ready pass,
-and the example of a heading that states its message. Nothing was copied.
+The skill supplied the protection of numbers and scope limits and the one-reading check in the reader-ready
+pass. It also supplied the example of a heading that states its message. Nothing was copied.
 
 ### softaworks: agent-toolkit `writing-clearly-and-concisely` skill
 

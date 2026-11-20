@@ -4,7 +4,7 @@ Use this reference for a long draft, a difficult diagnosis, or the final AI-mark
 diagnostic aid, not a blocklist.
 
 The category headings below apply to prose in any language. The example strings under them are English. For
-another language, match the category and derive its signatures from the text itself; a translated English
+another language, match the category and derive its signatures from the text itself. A translated English
 example is not that language's tell, and the absence of the English strings does not make a passage clean.
 
 Remove definitive production residue when found. Treat ordinary stylistic features as weak signals that need
@@ -156,5 +156,5 @@ Do not hyphenate an "-ly" adverb compound: "highly qualified", not "highly-quali
 phrase that reads as one unit: "high school", "real estate", "machine learning".
 
 Keep a conventional or ambiguity-preventing hyphen, such as "state-of-the-art", "cost-effective", and
-"user-friendly". Where a project names a dictionary or style guide, that source governs; where none is named,
-preserve the established usage in the surrounding text rather than correcting it.
+"user-friendly". Where a project names a dictionary or style guide, that source governs. Where none is
+named, preserve the established usage in the surrounding text rather than correcting it.
