@@ -35,6 +35,14 @@ review. Report a mismatch that needs a document changed to that document's owner
 For a long or unattended run, set the finish line first with `define-goal`. It writes this closing check into
 the goal, so the harness re-sends it at every stop.
 
+## Load the Skills the Work Names
+
+A plan, handoff, or brief that names skills is an instruction to load them. Load each one when the first slice
+that needs it begins. Before writing a new file, reread any skill loaded many slices earlier; its rules fade with
+distance from the load. Where the repository overrides a skill's default, state which default and why. When a
+named skill turns out not to apply, say so, because the plan then holds a claim to correct. This is done when
+every named skill is loaded before its slice or reported as not applying.
+
 ## Run the Increment Cycle
 
 Land one slice at a time, and finish each before starting the next:
