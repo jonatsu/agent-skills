@@ -23,12 +23,6 @@ checksum = "sha256:4a5cc2f53e6f0f8c59092a6cc38291eb729d46a7dd95d3ae582008881b849
 url = "https://github.com/casey/just/releases/download/1.58.0/just-1.58.0-x86_64-unknown-linux-musl.tar.gz"
 url_api = "https://api.github.com/repos/casey/just/releases/assets/500509978"
 
-[[tools."pipx:pre-commit"]]
-version = "4.6.2"
-backend = "pipx:pre-commit"
-specifiers = ["4.6.2"]
-uv = { path = ".mise/locks/pipx-pre-commit/4.6.2", digest = "sha256:cd51ca264f893fb15db32141dcb319ed9a0ec62e60b47ca06d30d3311711125f" }
-
 [[tools.python]]
 version = "3.12.14"
 backend = "core:python"

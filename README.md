@@ -40,7 +40,7 @@ version `mise.lock` pins.
 ```sh
 mise install
 uv sync
-pre-commit install
+uv run pre-commit install
 just check
 ```
 

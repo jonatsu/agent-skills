@@ -11,7 +11,7 @@ secrets:
 
 # Every pre-commit hook over the whole tree.
 hooks:
-    pre-commit run --all-files
+    {{ uv }} pre-commit run --all-files
 
 # The checks' own tests and the bundled-script tests.
 test:

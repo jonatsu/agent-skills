@@ -14,6 +14,7 @@ skill-checks = "skill_checks.cli:main"
 [dependency-groups]
 dev = [
   "mypy>=1.17",
+  "pre-commit>=4",
   "pytest>=8.4",
   # skill-forge's bundled policy validator, quick_validate.py, parses frontmatter with it.
   "pyyaml>=6.0",
