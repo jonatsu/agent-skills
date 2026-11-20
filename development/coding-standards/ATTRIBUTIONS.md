@@ -52,3 +52,13 @@ framing and the rename-instead-of-commenting rule in `references/comments.md`. N
 The skill supplied the subjects of the formatting guidance, the type-system escape-hatch sentence, premature
 optimization under KISS, and the sequential-await and over-fetching items in the performance checklist of
 `references/solid-and-quality.md`. Nothing was copied.
+
+### Miqdad Badjuber: antislop `antislop-code` skill
+
+- Source: <https://github.com/miqdadbadjuber/anti-slop>, `skills/antislop-code/`
+- License: `MIT`
+- Version: `44b3547ed6d6f21eed777271602da113efc53c94`
+
+The skill supplied four ideas for the comment rules: a doc-comment says only what the signature cannot, keeping a
+comment and its length are separate tests, a label survives only with a checkable fact, and numbered step comments
+point to functions waiting to be extracted. The rules were written independently; no text was copied.

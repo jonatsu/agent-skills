@@ -110,7 +110,9 @@ stack trace. Keep closures short where they are idiomatic.
 Write clear code and names first, and reach for a comment second. Use a comment to explain why: non-obvious
 intent, a constraint, an algorithm choice, a workaround, or a governing decision, never to restate what the
 code already shows. When a better name would remove the need, rename instead. Keep a public API's doc-comment,
-which is a contract for callers who will not read the implementation. `references/comments.md` carries the
+which is a contract for callers who will not read the implementation. Write in it only what the signature cannot
+say, such as units, valid ranges, side effects, error conditions, and ownership; a doc-comment that restates the
+parameter names and types tells the reader nothing new. `references/comments.md` carries the
 worked examples, the annotation vocabulary, and the anti-patterns.
 
 Keep an external reference only when it prevents an editing mistake. Reference a mechanism first, then a stable

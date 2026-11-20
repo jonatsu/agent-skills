@@ -75,6 +75,13 @@ SECURITY: validate this input against injection before it reaches the query
   source.
 - Decorative dividers and banner comments. They add visual noise and no meaning.
 - A comment that restates the function or variable name.
+- A label with no checkable fact, such as "Important", "Main logic", or an end marker like "end if". Keep a
+  label only when it states something a reader could verify, such as "retries only on 5xx responses".
+- Emoji and capitals for emphasis. Use the annotation vocabulary above when a comment needs weight.
+- Numbered step comments narrating a long function. When the flow needs step labels to be followed, extract each
+  step into a function whose name says what the label said.
+- A comment that is worth keeping but too long. Deciding to keep it and deciding its length are separate tests:
+  cut it to the sentence that carries the reason.
 
 ## Keep Comments From Going Stale
 
@@ -94,5 +101,8 @@ else rots silently, so avoid the forms that go wrong without anything failing:
 
 ## Cleaning Up a Legacy File
 
-Strip the existing comments first, then add each one back only after justifying it against the rules above.
+In a file whose cleanup is the task, strip the existing comments first, except license and copyright headers,
+shebang and encoding lines, and tool directives such as `# noqa`, `# type: ignore`, `// @ts-ignore`, and
+`// eslint-disable`, which change how tools treat the code. Then add each removed comment back only after
+justifying it against the rules above. Confirm afterwards that the diff touches only comment lines.
 Rebuilding the set from nothing is more reliable than editing a pile of comments that never earned their place.
