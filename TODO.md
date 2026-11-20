@@ -476,14 +476,14 @@ What the assessment established:
 ## `usability-engineering` Eval Gaps
 
 The `ui-ux-skills/usability-engineering` evaluation (`docs/evaluations/2026-11-16-usability-skill.md`) has no case for
-design mode, review mode, the holistic review, or a voice interface, and ran once per model on one client. Add
+review mode, the holistic review, or a voice interface, and ran once per model on one client. Add
 a case for each, built on fixtures unlike the existing five, and rerun with at least two repetitions. While
 there, make `evals/grade.py` ignore a report that says it gives no score.
 
 ## `accessibility-engineering` Eval Gaps
 
 The `ui-ux-skills/accessibility-engineering` evaluation (`docs/evaluations/2026-11-16-accessibility-skill.md`) has no case
-for design mode, review mode, the quick check and its 300-word cap, a target the user sets at AAA, a document or
+for review mode, the quick check and its 300-word cap, a target the user sets at AAA, a document or
 native app under EN 301 549 clauses 10 and 11, or a clean page where the agent finds no failure and must still
 refuse to write "conforms". It ran once per model on one client. Add a case for each, such as a review of a diff
 that adds a sticky header and a 20-pixel icon button, and rerun with at least two repetitions. The description
