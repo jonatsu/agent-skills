@@ -51,20 +51,21 @@ green suites have missed defects that only the live check found.
 Own the only orchestration layer. A lane does its task itself and dispatches no subagents or reviewers of its
 own; review comes from you, after it reports. While a lane runs, do other work, never the lane's own task.
 
-Every lane reports with one of four statuses: `DONE`, `DONE_WITH_CONCERNS`, `NEEDS_CONTEXT`, or `BLOCKED`. A
+Every lane reports with one of four statuses: done, done with concerns, needs context, or blocked. A
 subagent whose definition already carries this contract needs nothing more. Any other gets the contract in its
 brief: read [references/status-contract.md](references/status-contract.md) and paste it in verbatim.
 
 ## Act on the Return
 
-- **DONE:** verify it (next section) before building on it.
-- **DONE_WITH_CONCERNS:** read the concerns first. A doubt about correctness or scope is settled before review;
+- **Done:** verify it (next section) before building on it.
+- **Done with concerns:** read the concerns first. A doubt about correctness or scope is settled before review;
   an observation is noted and review proceeds.
-- **NEEDS_CONTEXT:** supply what is missing and send the same lane back.
-- **BLOCKED:** change something before re-dispatching: more context, a stronger tier, a smaller task, or your
+- **Needs context:** supply what is missing and send the same lane back.
+- **Blocked:** change something before re-dispatching: more context, a stronger tier, a smaller task, or your
   ruling on a plan defect. The same brief to the same tier fails the same way.
 
-Treat every report as claims to check, not facts: a subagent's summary can be incomplete or optimistic.
+Treat every report as claims to check, not facts: a subagent's summary can be incomplete or optimistic. Tell the
+user what a lane did and what remains, in plain words, not its status.
 
 ## Review and Fix Rounds
 
