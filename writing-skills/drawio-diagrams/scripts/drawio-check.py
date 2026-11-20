@@ -4,8 +4,8 @@
 Reads `.drawio` and `.xml` files, and editable `.drawio.svg` and `.drawio.png` images, whether their pages are
 stored plain or compressed. Uses only the Python standard library.
 
-    drawio_check.py check FILE...           report structural defects; exit 1 when any is found
-    drawio_check.py extract FILE -o OUT     write the diagram as an uncompressed .drawio file
+    drawio-check.py check FILE...           report structural defects; exit 1 when any is found
+    drawio-check.py extract FILE -o OUT     write the diagram as an uncompressed .drawio file
 
 Exit status: 0 when clean, 1 when `check` finds a defect, 2 when a file cannot be read or decoded.
 """

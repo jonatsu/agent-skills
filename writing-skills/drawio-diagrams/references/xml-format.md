@@ -110,6 +110,6 @@ whole file invalid.
 ## Compressed Pages
 
 A page whose `<diagram>` holds Base64 text instead of an `<mxGraphModel>` is compressed: the model XML was
-URL-encoded, deflated without a zlib header, and Base64-encoded. `scripts/drawio_check.py extract` reverses it. New
+URL-encoded, deflated without a zlib header, and Base64-encoded. `scripts/drawio-check.py extract` reverses it. New
 files from the draw.io desktop app and the CLI's `-f xml` export are plain, so compression usually appears in older
 files or ones saved with File > Properties > Compressed turned on.

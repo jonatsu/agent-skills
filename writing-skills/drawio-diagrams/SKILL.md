@@ -91,7 +91,7 @@ Extract it to plain XML first. A page saved compressed holds Base64 text instead
 hides the diagram inside its metadata:
 
 ```bash
-python3 <skill-dir>/scripts/drawio_check.py extract diagram.drawio.svg -o work.drawio
+python3 <skill-dir>/scripts/drawio-check.py extract diagram.drawio.svg -o work.drawio
 ```
 
 Edit `work.drawio`. Keep every existing cell id, because edges and layers refer to cells by id. A cell inside a
@@ -106,7 +106,7 @@ back. It keeps that page's compression and leaves every other page untouched. Th
 ## 5. Check the Diagram
 
 ```bash
-python3 <skill-dir>/scripts/drawio_check.py check name.drawio
+python3 <skill-dir>/scripts/drawio-check.py check name.drawio
 ```
 
 It reports missing root cells, duplicate ids, dangling parents and edge endpoints, and vertices or edges without

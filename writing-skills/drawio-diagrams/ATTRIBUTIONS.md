@@ -22,7 +22,7 @@ that holds both its ends, and reaching the Windows app from WSL2. Nothing was co
 - License: `Apache-2.0`
 - Version: `8c19abbdc3b214d6141989e5a2905defa7529902`
 
-These files are the official description of the file format that `scripts/drawio_check.py` and
+These files are the official description of the file format that `scripts/drawio-check.py` and
 `references/xml-format.md` are written against. `references/xml-format.md` links to them; nothing was copied.
 
 ## Third-party Sources
