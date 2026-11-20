@@ -372,6 +372,23 @@ checkers to home-grown ones (2026-10-11), so first compare a maintained tool suc
 only for what no maintained tool covers. Write them from scratch from this description, carrying nothing from the
 work project.
 
+On 2026-11-20 a session in that project handed over three more tools of the same kind, each a candidate for its
+own skill:
+
+- **Reference-link conversion check:** after links are converted to reference style, verify that every
+  destination, anchor, and visible text survived, by comparing each file with its committed version. Candidate
+  home: `repo-management`, beside `mdwrap.py`, or `writing-documentation`.
+- **Offline Mermaid render check:** render every Mermaid block in a set of Markdown files to SVG without a
+  browser, and fail on a block that does not render. Candidate home: `mermaid-diagrams`. Compare the maintained
+  Mermaid CLI first.
+- **Token-loss check for a move or merge:** count word tokens in the source files and the destination files, and
+  report any token the destination has fewer of, ignoring Mermaid blocks. It proves a content-preserving
+  restructure dropped nothing. Candidate home: `context-architecture`, which owns sharding and merging documents,
+  or `writing-documentation`.
+
+All five are agent utilities for routine documentation work, of the same kind as `mdwrap.py`, and none is urgent.
+The same rule applies to all five: compare maintained tools first, and write anything ported from scratch.
+
 ## Prose-Limit Tests or a Third-Party Prose Checker
 
 Open question for the user: should the repository keep its own test for prose-style limits, or move that job to a
@@ -405,6 +422,14 @@ is an empty skeleton. Take the example from a real testing engagement, never an 
 example shows the format without showing the method works on a real system. When such an engagement happens, carry
 one behavior through risk, level, size, oracle, taxonomy sweep, and non-goal, in about 25 lines in
 `references/test-strategy.md`. Public `test-engineer` skills have no worked example to borrow either.
+
+## Recount `writing-for-humans` Loads
+
+The 2026-11-16 usage count (`docs/evaluations/2026-11-16-skill-usage.md`) found `writing-for-humans` loaded in
+only 5 main sessions across 1,245 transcripts, although agents write prose people read in most sessions. Its
+description now triggers before any such writing, and the writing, commit, and GitHub skills tell agents to load
+it instead of pointing to it for depth. From 2026-12-04, two weeks after that change, recount its loads with the
+same method and compare. If loads stay rare, measure the description with a trigger evaluation.
 
 ## Compare `antislop-code` With `coding-standards`
 
