@@ -38,6 +38,11 @@ spans, inline HTML, autolinks, and link destinations never break, and a two-spac
 stays. The script refuses any rewrap that would change the rendered output, and reports that paragraph as
 `skipped` with its reason; fix a skipped paragraph by hand. It writes nothing unless every file it was given parses.
 
+Pass `--line-length-mode stern` or `strict` when the repository's MD013 configuration sets that option.
+
+Run the linter without `--fix` first, and review the diff of anything `--fix` changes. Its list renumbering (MD029)
+changes step numbers without updating prose that cites a step by number.
+
 Rewrapping is done when check mode exits 0 and the repository's Markdown hooks pass.
 
 ## Check Links and Anchors

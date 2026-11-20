@@ -102,6 +102,12 @@ BLOCK_START = re.compile(
     r"^(?:[-+*]|\d{1,9}[.)]|#{1,6}|>.*|=+|-+|\*{3,}|_{3,}|```.*|~~~.*|\|.*|\$\$.*|\[\^[^\]]*\]:.*"
     r"|<[!?].*|</?[A-Za-z][A-Za-z0-9-]*(?:/?>.*)?)$"
 )
+# markdownlint's MD018 fix reads any unindented line that starts with `#` and a character other than `#`, space or tab
+# as a heading missing its space, such as `#140)`, and inserts one. CommonMark reads it as text, so it is kept out
+# of BLOCK_START and refused separately.
+LINT_HEADING = re.compile(r"^#")
+# A line that MD013's stern mode accepts however long: no whitespace after its leading `#`, `>` and spaces.
+NOT_WRAPPABLE = re.compile(r"^(?:[#>\s]*\s)?\S*$")
 DELIMITER_RUN = re.compile(r"^[*_~]+$")
 # A line holding only one of these is a thematic break, a setext underline or a complete HTML tag (a block).
 RULE_WORD = re.compile(rf"^(?:\*{{3,}}|_{{3,}}|-+|=+|<{_TAG_NAME}(?:{_ATTRIBUTE})*\s*/?>|</{_TAG_NAME}\s*>)$")
@@ -146,6 +152,14 @@ class Rewrite:
     merged_breaks: int  # hard breaks of the source that the rewrap turns into ordinary wraps
 
 
+class LengthMode(StrEnum):
+    """How a line counts as too long; the values are markdownlint's MD013 modes."""
+
+    DEFAULT = "default"
+    STERN = "stern"
+    STRICT = "strict"
+
+
 class Kind(StrEnum):
     """The kind of a finding; the values are the words printed in the report."""
 
@@ -165,6 +179,7 @@ class Finding:
 class Options:
     width: int
     soft: bool
+    length_mode: LengthMode = LengthMode.DEFAULT
 
 
 @dataclass(frozen=True)
@@ -318,7 +333,8 @@ def may_break(line: Sequence[Word], following: Word) -> bool:
     A word that ends in an odd number of backslashes would turn the line break into a hard break (or, with the
     marker appended, into an escaped backslash). A `<br>` tag in mid-text would read as a deliberate break on
     the next run. A delimiter run such as `*` changes its flanking when it ends a line, and a line that holds
-    only a rule word or a tag would be a thematic break, a setext underline or an HTML block.
+    only a rule word or a tag would be a thematic break, a setext underline or an HTML block. A line opening
+    with `#` would become a heading under markdownlint's MD018 fix.
     """
     last = line[-1].text
     trailing = len(last) - len(last.rstrip("\\"))
@@ -328,6 +344,7 @@ def may_break(line: Sequence[Word], following: Word) -> bool:
         and not DELIMITER_RUN.match(last)
         and not (len(line) == 1 and RULE_WORD.match(line[0].opening))
         and not BLOCK_START.match(following.opening)
+        and not LINT_HEADING.match(following.opening)
     )
 
 
@@ -374,13 +391,21 @@ def container_prefix(first_line: str, content: str) -> tuple[str, str] | None:
     return first, other
 
 
-def too_long(line: str, width: int) -> bool:
-    """Return whether a line breaks the width the way markdownlint's MD013 counts it.
+def too_long(line: str, width: int, mode: LengthMode = LengthMode.DEFAULT) -> bool:
+    """Return whether a line breaks the width the way markdownlint's MD013 counts it in the given mode.
 
-    MD013 accepts a line that runs past the width with no whitespace beyond it, such as one ending in a long URL,
-    because no break can shorten it. Rewrapping such a line would change a file the linter already passes.
+    The default mode accepts a line that runs past the width with no whitespace beyond it, such as one ending in
+    a long URL, because no break can shorten it. Stern mode accepts only a line with no whitespace after its
+    leading markers, and strict mode accepts no line past the width. Stern mode also accepts a line holding only
+    links, which this function cannot see, so such a line may be rewrapped although the linter passes it.
     """
-    return len(line) > width and any(character.isspace() for character in line[width:])
+    if len(line) <= width:
+        return False
+    if mode is LengthMode.STRICT:
+        return True
+    if mode is LengthMode.STERN:
+        return not NOT_WRAPPABLE.match(line)
+    return any(character.isspace() for character in line[width:])
 
 
 def wrap_segment(segment: Segment, lead: str, other_prefix: str, options: Options) -> list[str] | None:
@@ -429,7 +454,7 @@ def rewrap_paragraph(lines: Sequence[str], paragraph: Paragraph, options: Option
         if segment_lines is None:
             return "container prefix leaves no room for text"
         wrapped.extend(segment_lines)
-    over_limit = any(too_long(line, options.width) for line in wrapped)
+    over_limit = any(too_long(line, options.width, options.length_mode) for line in wrapped)
     return Rewrite(paragraph, tuple(wrapped), over_limit, scanner.merged)
 
 
@@ -554,7 +579,7 @@ def plan_paragraphs(
     findings: list[Finding] = []
     for paragraph in paragraphs(tokens):
         numbers = range(paragraph.start, paragraph.end)
-        if not any(too_long(lines[number], options.width) for number in numbers):
+        if not any(too_long(lines[number], options.width, options.length_mode) for number in numbers):
             continue
         result = rewrap_paragraph(lines, paragraph, options)
         if isinstance(result, str):
@@ -692,6 +717,15 @@ def build_argument_parser() -> argparse.ArgumentParser:
         default=DEFAULT_WIDTH,
         help=f"maximum line length (default {DEFAULT_WIDTH}, minimum {MIN_WIDTH})",
     )
+    parser.add_argument(
+        "--line-length-mode",
+        choices=[mode.value for mode in LengthMode],
+        default=LengthMode.DEFAULT.value,
+        help=(
+            "count too-long lines as markdownlint's MD013 does: default allows a last word past the width, "
+            "stern allows only a line with no space to break at, strict allows nothing (default: default)"
+        ),
+    )
     return parser
 
 
@@ -714,7 +748,7 @@ def exit_status(totals: Counter[Kind], *, write: bool) -> int:
 
 def main(arguments: Sequence[str] | None = None) -> int:
     parsed = build_argument_parser().parse_args(arguments)
-    options = Options(parsed.width, parsed.soft)
+    options = Options(parsed.width, parsed.soft, LengthMode(parsed.line_length_mode))
 
     results: list[FileResult] = []
     failed = False

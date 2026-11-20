@@ -393,7 +393,7 @@ class MdwrapTests(ScriptTestCase):
         self.assertEqual(result.returncode, EXIT_CLEAN)
         self.assertIn("example:", result.stdout)
         self.assertIn("--write --width 100", result.stdout)
-        for option in ("--write", "--soft", "--width"):
+        for option in ("--write", "--soft", "--width", "--line-length-mode"):
             self.assertIn(option, result.stdout)
 
     def test_a_missing_dependency_exits_with_a_hint(self) -> None:
@@ -528,6 +528,45 @@ class MdwrapStructureTests(ScriptTestCase):
         text = self._write(REPRODUCTIONS["number-line-start"], "--width", "60")
         self.assertIn("2026.", text)
         self.assertFalse(any(line.startswith("2026.") for line in text.splitlines()))
+
+    def test_a_word_starting_with_a_hash_never_opens_a_line(self) -> None:
+        # markdownlint's MD018 fix turns a line starting `#140)` into the heading `# 140)`.
+        original = "The check runs " + "word " * 21 + "before a burn (issue #140) and to a burned unit afterwards.\n"
+        for width in range(20, 161):
+            for soft in ((), ("--soft",)):
+                with self.subTest(width=width, soft=bool(soft)):
+                    text = self._write(original, "--width", str(width), *soft)
+                    self.assertFalse(any(line.startswith("#") for line in text.splitlines()), text)
+                    self.assertEqual(_rendering(text), _rendering(original))
+
+    def test_line_length_modes_count_as_markdownlint_does(self) -> None:
+        # The four example lines of markdownlint's MD013 documentation; the first is exactly the width.
+        lines = (
+            "IF THIS LINE IS THE MAXIMUM LENGTH",
+            "This line is okay because there are-no-spaces-beyond-that-length",
+            "This line is a violation because there are spaces beyond that length",
+            "This-line-is-okay-because-there-are-no-spaces-anywhere-within",
+        )
+        original = "\n\n".join(lines) + "\n"  # one paragraph per line, on lines 1, 3, 5 and 7
+        expected = {"default": {5}, "stern": {3, 5}, "strict": {3, 5, 7}}
+        for mode, flagged in expected.items():
+            with self.subTest(mode=mode):
+                status, out = self._check(original, "--width", "34", "--line-length-mode", mode)
+                self.assertEqual(status, EXIT_FINDINGS)
+                self.assertEqual({int(line.split(":")[1]) for line in out.splitlines()}, flagged, out)
+
+    def test_stern_mode_rewraps_until_only_unbreakable_lines_are_long(self) -> None:
+        url = "https://example.com/" + "a" * 60
+        status, text, out = self._write_any(
+            f"See {url} for the details.\n", "--width", "40", "--line-length-mode", "stern"
+        )
+        self.assertEqual((status, out), (EXIT_CLEAN, ""))
+        self.assertIn(f"\n{url}\\\n", text)
+
+    def test_strict_mode_reports_a_line_no_break_can_shorten(self) -> None:
+        status, text, out = self._write_any(f"{'x' * 50}\n", "--width", "40", "--line-length-mode", "strict")
+        self.assertEqual((status, text), (EXIT_FINDINGS, f"{'x' * 50}\n"))
+        self.assertEqual(out, "doc.md:1: over limit: a word longer than 40 characters\n")
 
     def test_a_line_start_escape_is_dropped_when_the_word_moves_mid_line(self) -> None:
         original = (

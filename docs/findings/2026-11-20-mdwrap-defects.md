@@ -41,8 +41,14 @@ and after and refuses any change.
     then flattened. Fixed: line endings and the mark are preserved.
 13. **Partial writes.** A missing file stopped a run after earlier files were written. Fixed: every file is read and
     processed before any is written, through a temporary file and a rename.
+14. **A wrapped line could start with a word beginning `#`.** CommonMark reads `#140)` at a line start as text, but
+    markdownlint's MD018 fix reads it as a heading missing its space and turns it into `# 140)`. Fixed: no wrapped
+    line starts with `#`.
+15. **Only MD013's default mode was counted.** A repository that sets MD013's `stern` or `strict` option failed the
+    linter while check mode reported nothing to rewrap. Fixed with `--line-length-mode`.
 
 ## Limitations
 
 A stranded short last line is not rebalanced. Width counts code points, not display columns. A paragraph that may be
-display math (`$$`) is skipped. YAML frontmatter closed by `...` is not recognized.
+display math (`$$`) is skipped. YAML frontmatter closed by `...` is not recognized. In stern mode, a line holding
+only links counts as too long, although MD013 accepts it.
