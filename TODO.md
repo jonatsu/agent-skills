@@ -556,3 +556,22 @@ Findings worth keeping so the review is not repeated:
   commit — so curation must precede grouping.
 - Licenses differ: keepachangelog.com is MIT (adaptable with attribution); semver.org is CC BY 3.0 (state the
   rules in our own words with a citation). Both verified 2026-09-03.
+
+## Plain Status Labels in `dispatching-subagents`
+
+The user asked on 2026-11-20 to rename the subagent report statuses. Underscored codes such as `DONE_WITH_CONCERNS`
+and `NEEDS_CONTEXT` gain nothing over plain words, and they leak into reports to the user. Choose plain labels, such
+as "done", "done with concerns", "needs context", and "blocked", and update
+`agents/dispatching-subagents/SKILL.md` and `references/status-contract.md` together. agent-setup carries its own
+copy of the contract in its agent fragments and agent templates, so hand that session the new wording in the same
+change.
+
+## Hyphenated Script Names
+
+The user asked on 2026-11-20 for bundled script names joined by hyphens, not underscores, and skill-forge now says so
+for new scripts. Fifteen existing scripts still use underscores, among them `quick_validate.py`, `init_skill.py`,
+`probe_cli.py`, `drawio_check.py`, and the context and document-conversion checkers; list them with
+`git ls-files '*/scripts/*' | rg _`. Before renaming each one, find every reader: its skill's text, tests, the
+`justfile`, `.pre-commit-config.yaml`, `checks/`, eval fixtures, and agent-setup. A test or check that imports a script
+as a module needs a subprocess call or an import by path instead. Leave the vendored `skills-ref` and `brooks-*`
+files alone.

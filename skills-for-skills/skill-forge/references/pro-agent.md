@@ -76,3 +76,6 @@ the output as text and acts on it:
 - exit 0 when the check finds nothing, 1 when it finds a problem, and 2 for a usage error or a missing dependency.
 
 A person reading the same output must still understand it.
+
+Name the script file in lowercase words joined by hyphens, such as `check-links.py`: it is a command an agent runs,
+not a module anything imports, so tests run it as a subprocess.
