@@ -372,22 +372,19 @@ checkers to home-grown ones (2026-10-11), so first compare a maintained tool suc
 only for what no maintained tool covers. Write them from scratch from this description, carrying nothing from the
 work project.
 
-On 2026-11-20 a session in that project handed over three more tools of the same kind, each a candidate for its
+On 2026-11-20 a session in that project handed over more tools of the same kind, each a candidate for its
 own skill:
 
 - **Reference-link conversion check:** after links are converted to reference style, verify that every
   destination, anchor, and visible text survived, by comparing each file with its committed version. Candidate
   home: `repo-management`, beside `mdwrap.py`, or `writing-documentation`.
-- **Offline Mermaid render check:** render every Mermaid block in a set of Markdown files to SVG without a
-  browser, and fail on a block that does not render. Candidate home: `mermaid-diagrams`. Compare the maintained
-  Mermaid CLI first.
 - **Token-loss check for a move or merge:** count word tokens in the source files and the destination files, and
   report any token the destination has fewer of, ignoring Mermaid blocks. It proves a content-preserving
   restructure dropped nothing. Candidate home: `context-architecture`, which owns sharding and merging documents,
   or `writing-documentation`.
 
-All five are agent utilities for routine documentation work, of the same kind as `mdwrap.py`, and none is urgent.
-The same rule applies to all five: compare maintained tools first, and write anything ported from scratch.
+All of them are agent utilities for routine documentation work, of the same kind as `mdwrap.py`, and none is urgent.
+The same rule applies to each: compare maintained tools first, and write anything ported from scratch.
 
 ## Prose-Limit Tests or a Third-Party Prose Checker
 

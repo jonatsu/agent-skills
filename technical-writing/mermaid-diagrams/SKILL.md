@@ -202,6 +202,20 @@ flowchart LR
 - `look: classic` - Traditional Mermaid style
 - `look: handDrawn` - Sketch-like appearance
 
+## Check That Every Diagram Renders
+
+A diagram that fails to parse renders as an error box, or as nothing, and nobody notices until a reader does. Before
+delivering, run the bundled check from this skill's directory over every file you wrote a diagram in:
+
+```bash
+python3 scripts/check_mermaid.py docs/design.md diagrams/flow.mmd
+```
+
+It renders each fenced `mermaid` block and each `.mmd` file with `mermaidx`, offline and without a browser. Each
+failure prints as `path:line: message`, at the file line where Mermaid found the error. Exit 0 means every diagram
+renders, 1 means at least one failed, and 2 means a usage error or a missing `mermaidx`. The check is done when every
+diagram renders. It proves the syntax, not the layout, so look at an export of any diagram a reader must act on.
+
 ## Exporting and Rendering
 
 **Native support in:**
@@ -212,6 +226,8 @@ flowchart LR
 
 **Export options:**
 
+- [mermaidx](https://github.com/MohammadRaziei/mermaidx) - Offline, with no browser or Node.js:
+  `mermaidx -i input.mmd -o output.svg`
 - [Mermaid Live Editor](https://mermaid.live) - Online editor with PNG/SVG export
 - Mermaid CLI - `npm install -g @mermaid-js/mermaid-cli` then `mmdc -i input.mmd -o output.png`
 - Docker - `docker run --rm -v $(pwd):/data minlag/mermaid-cli -i /data/input.mmd -o /data/output.png`
