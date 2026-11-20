@@ -20,7 +20,7 @@ fix outside the workspace the agent sees.
    skills under evaluation; the skill arm is told which `SKILL.md` files to read first. Name any file the agent
    writes by its subject, such as `usability-review.md`, because the harness refuses a subagent's Markdown file
    whose name starts with `report`.
-4. Run at most three subagents at once, the harness limit, and grade each workspace as its run finishes.
+4. Run subagents within the harness's concurrency ceiling, and grade each workspace as its run finishes.
 5. Keep each run's transcript with its result, then read the code as well as the grades.
 6. Delete every workspace when the record is written.
 
