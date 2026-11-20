@@ -4,7 +4,7 @@ Keeps every user turn a person typed, with the tail of the assistant text before
 tool call. Drops tool output, compaction summaries, and injected meta turns, which usually cuts a transcript to a
 few percent of its size.
 
-Usage: python3 extract_transcript.py <transcript.jsonl>
+Usage: python3 extract-transcript.py <transcript.jsonl>
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ import json
 import sys
 from pathlib import Path
 
-USAGE = "usage: python3 extract_transcript.py <transcript.jsonl>"
+USAGE = "usage: python3 extract-transcript.py <transcript.jsonl>"
 CONTEXT_CHARS = 600
 DENIAL_MARKERS = ("denied", "blocked by", "BLOCKED", "permission to use")
 
@@ -74,7 +74,7 @@ def main(argv: list[str]) -> int:
         return 2
     path = Path(argv[1])
     if not path.is_file():
-        print(f"extract_transcript: no such file: {path}", file=sys.stderr)
+        print(f"extract-transcript: no such file: {path}", file=sys.stderr)
         return 1
     extract(path)
     return 0

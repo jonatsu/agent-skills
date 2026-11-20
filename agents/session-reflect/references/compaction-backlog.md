@@ -14,7 +14,7 @@ its early turns, say so at that point rather than trusting this backlog to recon
 1. **Check the transcript still exists.** Paths decay as old sessions are cleaned up. If `transcript_path` is
    gone the entry is unrecoverable; drop it, report it as expired, and move on.
 2. **Do not read a transcript in full.** They routinely exceed the context window. For a Claude Code transcript,
-   run `python3 scripts/extract_transcript.py <transcript_path>` from this skill's folder first. It keeps the turns
+   run `python3 scripts/extract-transcript.py <transcript_path>` from this skill's folder first. It keeps the turns
    a person typed, the assistant text just before each, and every denied tool call, usually a few percent of the
    file. Search that extract for the §1 signals, or hand it to a subagent that returns only candidates with quoted
    evidence. Read a long extract in ranges of a few hundred lines, because a single read of a very long file can
