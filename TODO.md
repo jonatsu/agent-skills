@@ -398,13 +398,6 @@ description now triggers before any such writing, and the writing, commit, and G
 it instead of pointing to it for depth. From 2026-12-04, two weeks after that change, recount its loads with the
 same method and compare. If loads stay rare, measure the description with a trigger evaluation.
 
-## Compare `antislop-code` With `coding-standards`
-
-Compare the `antislop-code` skill from [antislop](https://github.com/miqdadbadjuber/anti-slop) (MIT, commit
-`44b3547`) with `development/coding-standards`, the way `docs/evaluations/2026-11-20-anti-slop-source.md`
-compared its writing and human skills: which code-slop patterns our skill lacks, and which techniques are worth
-writing independently. The user asked for it after the writing and human-factors work from that review lands.
-
 ## Unevaluated Candidate Sources
 
 Recorded and never fetched, read, or license-checked. The descriptions are path-based inferences, not evidence.
