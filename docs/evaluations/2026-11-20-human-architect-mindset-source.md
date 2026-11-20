@@ -1,9 +1,10 @@
 # Adoption Review: human-architect-mindset
 
 Date: 2026-11-20. Source: <https://github.com/bencium/bencium-marketplace>, directory `human-architect-mindset/`, commit
-`5de46a39b4640fa419560cd0b67e4c4b50dac802`, MIT (copyright 2026 bencium.io). Read in full: `SKILL.md` (801 lines).
-Outlined, with sections read where a finding cites them: `REFERENCE.md` (855), `EXAMPLES.md` (755), `CHECKLIST.md`
-(575), and the plugin's `README.md` (320). Cites are `file:line`; skill files are relative to
+`5de46a39b4640fa419560cd0b67e4c4b50dac802`, MIT (copyright 2026 bencium.io). Read in full: `SKILL.md` (801 lines). Read
+in full except the SDD and AI-tooling sections: `REFERENCE.md` (855) and `CHECKLIST.md` (575). Outlined, with sections
+read where a finding cites them: `EXAMPLES.md` (755), whose worked scenarios illustrate the same rules, and the
+plugin's `README.md` (320). Cites are `file:line`; skill files are relative to
 `human-architect-mindset/skills/human-architect-mindset/`. Compared against `engineering/technical-design`,
 `engineering/domain-modeling`, `engineering/implementation-planning`, `engineering/writing-specs`, and an
 architecture-reviewer subagent definition that loads `technical-design` and `brooks-audit`. The method is skill-forge
@@ -14,10 +15,9 @@ review lite: no model runs.
 Do not adopt the skill. It fails both validators, its three reference files are unreachable from `SKILL.md`, and it
 mixes four jobs under triggers broad enough to fire on most engineering requests. Its sound architectural content
 (domain first, systems and failure modes, constraint navigation, tradeoffs) is already carried by `technical-design`,
-`domain-modeling`, and the architecture-reviewer. Three ideas are worth writing independently: a constraint-fit check
-for organizational and contractual limits, a rule that a departure from an existing architectural commitment is named
-and justified, and an upstream contract change treated as a failure mode with a detection question. The verdict is
-`invalid`.
+`domain-modeling`, and the architecture-reviewer. Five ideas are worth writing independently, listed under "Ideas Worth
+Writing Independently". The strongest is that a change can succeed and still be wrong, so a design says how long that
+takes to notice. The verdict is `invalid`.
 
 ## Validity
 
@@ -82,28 +82,52 @@ cost, failure mode, and reversibility (`SKILL.md:96-99`), and observability, rol
 `domain-modeling` owns domain vocabulary and bounded contexts. `implementation-planning` owns decomposition into
 independently verifiable units, which is the useful core of the "AI-aware decomposition" pillar. `writing-specs`
 owns requirements, acceptance, and owners. The architecture-reviewer's six lenses already cover proportionality,
-blast radius, hidden coupling, failure modes, trust boundaries, and unstated assumptions.
+blast radius, hidden coupling, failure modes, trust boundaries, and unstated assumptions. Its fourth lens already asks
+what breaks at an order of magnitude more input, which covers the source's scale questions (`CHECKLIST.md:277-281`).
+`brooks-audit` carries a Conway's Law check (`architecture-guide.md:165`), and `writing-documentation` owns decision
+records, so the source's decision-record template (`REFERENCE.md:781-824`) adds nothing. The source's AI task-boundary
+patterns (`REFERENCE.md:546-678`) are covered by `writing-prompts`, `dispatching-subagents`, and
+`implementation-planning`, including its rule that a delegated judgment call comes back as options, not a decision
+(`REFERENCE.md:609-616`).
 
 ## Ideas Worth Writing Independently
 
-These are written fresh if adopted; nothing is copied, and the source gets an `ATTRIBUTIONS.md` entry in whichever
-skill takes an idea.
+An idea qualifies when it would change what an agent does in a design or review, a search of `technical-design`,
+`domain-modeling`, `writing-specs`, the `brooks` skills, and the reviewer definition finds no rule that already does
+it, and it stands without the source's loyalty or AI-tooling framing. These are written fresh if adopted; nothing is
+copied, and the source gets an `ATTRIBUTIONS.md` entry in whichever skill takes an idea. Ordered by expected effect:
 
+- **A change that succeeds and is wrong.** The source's cascade template asks what breaks if a change fails, if it
+  succeeds but is wrong, and if it is slow, then how long until anyone knows (`REFERENCE.md:391-420`). Its failure
+  taxonomy separates silent and incorrect-result failures from crashes and timeouts (`REFERENCE.md:364-389`). Ours
+  asks about a dependency being slow or down and about races, never about a wrong result that reports success, and
+  nothing asks for time to detection. Owner: the reviewer's failure-modes lens, and `technical-design`'s "degraded
+  operation, recovery" item (`SKILL.md:131`).
 - **Constraint fit.** A design can be sound in isolation and still unable to ship: it needs a change from a team that
   does not own the system, an approval nobody has, or a break in a contract or deprecation timeline already
   promised. The source's constraint taxonomy (`SKILL.md:170-205`) names this; neither `technical-design` nor the
-  reviewer asks who owns and approves what the design touches, or what cannot change even if it is wrong. Owner:
-  `technical-design`'s investigation section, and the reviewer's soundness lens.
+  reviewer asks who owns and approves what the design touches, or what cannot change even if it is wrong. The
+  checklist adds the sharpest form: who has authority but not context, and who has context but not authority
+  (`CHECKLIST.md:298-303`). Owner: `technical-design`'s investigation section, and the reviewer's soundness lens.
+- **Handling a constraint that blocks the design.** Work within it, negotiate by finding the need behind it and
+  meeting that need another way, or escalate with a concrete proposal; set it aside only with recorded risk acceptance
+  (`REFERENCE.md:522-542`). `technical-design` keeps risk acceptance with the user (`SKILL.md:98`) but gives no move
+  for a constraint that blocks the recommended option. Owner: `technical-design`.
 - **Departing from a commitment.** When a design abandons an existing decision, pattern, or stack, it states what the
   departure gains over evolving the current one and how the transition runs. The source frames this as loyalty
   (`SKILL.md:76-87`, `REFERENCE.md:48-90`); the usable rule is the justification, not the framing. Owner: the same
   two places.
 - **Upstream contract change as a failure mode.** A dependency can change its interface without notice, as well as
   go slow or down, and the design should say how the change would be detected and by whom (`SKILL.md:162-168`,
-  `REFERENCE.md:684-720`). Owner: the reviewer's failure-modes lens; `technical-design` already lists observability.
+  `CHECKLIST.md:251-261`). Owner: the reviewer's failure-modes lens; `technical-design` already lists observability.
+
+Smaller and optional: `domain-modeling` could ask who may override a domain rule, and could treat support tickets as
+evidence of where domain assumptions fail (`REFERENCE.md:288-321`).
 
 ## Not Worth Taking
 
 The loyalty philosophy and its claims about AI character (`SKILL.md:34-50`), the SDD extension, the AI-tooling list,
 the announcement line, the 20 fixed questions asked before every architecture, and the role matrix that assigns
-"achieve 100% test coverage" to AI (`SKILL.md:771`).
+"achieve 100% test coverage" to AI (`SKILL.md:771`). The political-constraint checklist (`CHECKLIST.md:312-318`) is
+not taken either: questions such as which teams have historically resisted change ask an agent to judge people it
+cannot observe, and the useful part is already in constraint fit.
