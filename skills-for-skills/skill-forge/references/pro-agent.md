@@ -65,3 +65,14 @@ effect. Match the interface to the caller's actual decisions.
 Vendored tools are a separate case. Keep their upstream source and license intact, pin the revision, and record
 omissions or modifications in `ATTRIBUTIONS.md`. Invoke them through their declared runtime rather than absorbing their
 logic into the skill's own scripts.
+
+Design the script's command-line interface with the `cli-ui-ux` skill where it is available, for an agent as the
+primary caller. Keep its defaults for streams, error lines, and exit statuses, and fit the rest to a caller that reads
+the output as text and acts on it:
+
+- one finding per line on stdout, as `path:line: message`, and a one-line summary on stderr;
+- no colour, progress display, or prompt;
+- `--help` with one realistic example, because an agent reads it before the first call; and
+- exit 0 when the check finds nothing, 1 when it finds a problem, and 2 for a usage error or a missing dependency.
+
+A person reading the same output must still understand it.
