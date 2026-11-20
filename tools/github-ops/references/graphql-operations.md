@@ -1,15 +1,15 @@
 # GraphQL Operations
 
-Load this when a task needs something `gh` has no subcommand for, or when a `--json` field you expected does
-not exist. For ordinary PR and issue work, use `gh`; it is shorter, and reaching for GraphQL first is the
+Load this when `gh` has no subcommand for the needed operation, or when an expected `--json` field does not
+exist. For ordinary PR and issue work, use `gh`; it is shorter, and reaching for GraphQL first is the
 common overreach.
 
-This file does not restate the versioned GraphQL schema. Use current documentation or live introspection when
+For the versioned GraphQL schema, use current documentation or live introspection when
 the host permits it. A copied schema would drift while still reading as authoritative.
 
 ## Resolve Required Node IDs
 
-Many mutations take opaque node IDs rather than numbers. Resolve the exact input type and then query the ID
+Many mutations take opaque node IDs rather than numbers. Resolve the exact input type, then query the ID
 from a human-readable identifier:
 
 ```bash
@@ -26,8 +26,8 @@ Two things bite here:
 - **`-f` and `-F` are not the same.** `-f` sends a string; `-F` interprets the value by type, which is what an
   `Int!` or `Boolean!` variable needs. Passing a number with `-f` yields a type error that reads as a schema
   problem.
-- **Node IDs are opaque and typed by their use.** Do not construct one or assume that an issue ID is valid
-  where a pull-request or review-thread ID is required.
+- **Node IDs are opaque and typed by their use.** Resolve each ID by query; never construct one. An issue ID
+  is not valid where a pull-request or review-thread ID is required.
 
 ## Discover the Schema
 
@@ -68,8 +68,8 @@ state. A returned payload proves only what its selected fields show; an empty ou
 
 Connections return the first page and a `pageInfo`, and nothing signals that more exist unless you ask. A
 query returning 100 review threads on a PR with 250 is a correct response to the question you asked. Request
-`pageInfo { hasNextPage endCursor }` on every connection and loop until it is false, or accept that the result
-is a lower bound and say so.
+`pageInfo { hasNextPage endCursor }` on every connection and loop until `hasNextPage` is false. Alternatively,
+accept that the result is a lower bound and say so.
 
 ## Track Query Cost
 
@@ -87,7 +87,7 @@ Including `rateLimit` in the query itself reports the cost of that same query.
 
 ## Operations Known to Need GraphQL
 
-**This list is short and shrinks.** Measured:
+This list is short and shrinks. Measured:
 
 - Resolving a review thread needs GraphQL because neither `gh` nor REST exposes the operation.
 - Replying to a review thread uses REST through `gh api`; it has no dedicated `gh` subcommand.
@@ -95,8 +95,8 @@ Including `rateLimit` in the query itself reports the cost of that same query.
 - Adding a pull request to a required merge queue uses `gh pr merge`.
 - Reading `mergeStateStatus` uses `gh pr view --json mergeStateStatus`.
 
-**"No `gh` subcommand" and "needs GraphQL" are different findings**, and the reply row is where conflating
-them goes wrong: `gh` has no verb for it, yet REST does, so `gh api --method POST` reaches it without a
+**"No `gh` subcommand" and "needs GraphQL" are different findings.** The reply row is where conflating
+them goes wrong. `gh` has no verb for it, yet REST does, so `gh api --method POST` reaches it without a
 mutation. Rule out REST before concluding GraphQL. The CLI is the narrowest of the three surfaces.
 
 The last rows were once widely described as GraphQL-only. Re-run the subcommand-help discovery procedure in
