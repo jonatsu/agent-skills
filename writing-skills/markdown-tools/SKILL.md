@@ -44,11 +44,15 @@ Rewrapping is done when check mode exits 0 and the repository's Markdown hooks p
 
 Use [lychee](https://github.com/lycheeverse/lychee), a maintained link checker, rather than a script. Offline, it
 checks every relative link's target file, every `#fragment` against the target's headings with GitHub's slug rules,
-and reference-style definitions, without touching the network:
+reference-style definitions, and `<img src>` in HTML blocks, without touching the network:
 
 ```bash
-lychee --offline --include-fragments --no-progress docs/*.md README.md
+lychee --offline --include-fragments --no-progress --root-dir . .
 ```
+
+Add `--root-dir .` when the documents use root-relative links such as `/docs/setup.md`; without it, lychee reports
+every one of them as unresolvable, valid or not. Renaming a heading breaks links in files the commit never touched,
+so check the whole tree, not only the changed files.
 
 It prints each broken link with its file, line and column, and exits 2 when any link is broken. Install it with a
 package manager, `mise use -g lychee`, or `cargo install lychee`. A repository can run it as a pre-commit hook:
@@ -58,7 +62,8 @@ package manager, `mise use -g lychee`, or `cargo install lychee`. A repository c
   rev: lychee-v0.24.2
   hooks:
     - id: lychee
-      args: ["--offline", "--include-fragments", "--no-progress"]
+      args: ["--offline", "--include-fragments", "--no-progress", "--root-dir", ".", "."]
+      pass_filenames: false
 ```
 
 Run it after moving or renaming a file, and after changing a heading. The check is done when it exits 0.
