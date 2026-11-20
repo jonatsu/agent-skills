@@ -11,7 +11,7 @@ from pathlib import Path
 
 from skill_locator import skill_directory
 
-CHECK_SCRIPT = skill_directory("agents-context-docs") / "scripts" / "check_agent_context.py"
+CHECK_SCRIPT = skill_directory("agents-context-docs") / "scripts" / "check-agent-context.py"
 
 EXIT_OK = 0
 EXIT_FINDINGS = 1

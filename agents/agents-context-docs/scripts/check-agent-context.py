@@ -411,7 +411,7 @@ def parse_budget_override(value: str) -> tuple[str, int]:
 def build_parser() -> argparse.ArgumentParser:
     """Construct the command-line interface."""
     parser = argparse.ArgumentParser(
-        prog="check_agent_context.py",
+        prog="check-agent-context.py",
         description=("Report instruction files that lost their evidence, or grew past budget."),
         epilog=(
             "Findings: dangling (an evidence link that does not resolve), "
@@ -423,7 +423,7 @@ def build_parser() -> argparse.ArgumentParser:
             "are reported as warnings and never fail the run. "
             f"{DATED_HINT} "
             "Exit 0 clean, 1 findings, 2 bad invocation. "
-            "Example: check_agent_context.py . --budget-for AGENTS.md=2400"
+            "Example: check-agent-context.py . --budget-for AGENTS.md=2400"
         ),
     )
     parser.add_argument("root", nargs="?", default=".", help="repository root (default: .)")

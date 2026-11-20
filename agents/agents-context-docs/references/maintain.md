@@ -71,7 +71,7 @@ boundaries, and placeholder removal. Test loading in a fresh or reload-capable c
 topology changed and a suitable client is available. Report what was not exercised.
 
 Check the resulting file as a whole, not only the lines the edit touched.
-`../scripts/check_agent_context.py` answers the last three mechanically; the first is a judgment call and stays
+`../scripts/check-agent-context.py` answers the last three mechanically; the first is a judgment call and stays
 with the agent.
 
 - Runnable commands appear early enough to be found, and carry the flags and constraints their runner does not

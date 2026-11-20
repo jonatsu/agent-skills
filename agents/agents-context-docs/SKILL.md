@@ -2,7 +2,7 @@
 name: agents-context-docs
 description: Create, maintain, and audit repo-local AGENTS.md, CLAUDE.md, scoped agent instructions, and llms.txt. Owns instruction-file internals; the documentation layout above them (which documents exist and how they are organized and routed) belongs to context-architecture, which is also the entry point for repositories with no established layout.
 license: Apache-2.0
-compatibility: Requires Python 3.9 or later on PATH for scripts/check_agent_context.py. Every other capability works without it.
+compatibility: Requires Python 3.9 or later on PATH for scripts/check-agent-context.py. Every other capability works without it.
 metadata:
   author: Joonas Onatsu
 ---
@@ -113,7 +113,7 @@ was not deliberately superseded. Verify referenced paths and commands, link targ
 generated-content boundaries, and the absence of placeholders. Use a fresh or reload-capable session when live
 loading verification is available; otherwise state the limitation.
 
-Then run `scripts/check_agent_context.py <repository-root>`. Resolve every failing finding, and review each
+Then run `scripts/check-agent-context.py <repository-root>`. Resolve every failing finding, and review each
 advisory warning. A `dated` warning is a prompt, not a defect. Keep a date that records a decision (who decided
 what, and when), such as a decision-ledger row or a rule's origin. Move a date that records a measurement or an
 incident to the evidence file. The checker answers the accretion
