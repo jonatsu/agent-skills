@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Grade the scripted outcomes of an accessibility behavioral-evaluation workspace.
 
-Usage: grade.py CASE WORKSPACE   (CASE is a1 to a5; a4 has no scripted outcome)
+Usage: grade.py CASE WORKSPACE   (CASE is a1 to a6; a4 has no scripted outcome)
 
 Prints one line per scripted outcome: PASS or FAIL. Every other outcome in behavior.json is graded by reading
 WORKSPACE/accessibility-review.md and the changed files.
@@ -119,6 +119,8 @@ def main() -> None:
         grade_menu((workspace / "account-menu.html").read_text(encoding="utf-8", errors="replace"))
     elif case == "a3":
         no_score("C4", text)
+    elif case == "a6":
+        no_score("F5", text)
     elif case == "a5":
         grade_cli(workspace / "deploy-status")
     print(f"INFO words={len(text.split())}")

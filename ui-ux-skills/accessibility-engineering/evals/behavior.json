@@ -5,7 +5,7 @@
     "supply_candidate_skill_path": true,
     "clean_context_per_case": true,
     "workspace": "Copy fixtures/<case>/ to a fresh directory per run; the agent may read and run files only there, and writes its report to accessibility-review.md in the workspace.",
-    "brief": "Give the agent the workspace path, the prompt verbatim, and these sentences: You cannot ask the user questions during this task. Where you would normally ask, decide as you judge best and say so in your report. Write your findings to accessibility-review.md in the workspace, and change no other file unless the request asks you to fix one. Then reply with at most 150 words summarising them.",
+    "brief": "Give the agent the workspace path, the prompt verbatim, and these sentences: You cannot ask the user questions during this task. Where you would normally ask, decide as you judge best and say so in your report. Write your work to accessibility-review.md in the workspace, and change no other file unless the request asks you to fix one. Then reply with at most 150 words summarising them.",
     "grading": "Run `python3 grade.py <case> <workspace>` for the scripted outcomes; it prints PASS, FAIL, or INFO per outcome. Grade the rest from accessibility-review.md, the changed files, and the trace. Do not require exact wording."
   },
   "cases": [
@@ -72,6 +72,20 @@
       "outcomes": [
         "D1: the trace shows the agent loading cli-ui-ux, or reading its SKILL.md.",
         "D2: with stdout piped, the tool prints each state as a word and writes no carriage return or colour code (scripted)."
+      ]
+    },
+    {
+      "id": "a6-design",
+      "fixture": "fixtures/a6",
+      "prompt": "We're about to start building the clinic booking widget in brief.md. Write its accessibility design first, so we build it right from the start.",
+      "behavior": "Work through the design before anything exists: settle each planted barrier with a concrete design decision tied to its WCAG 2.2 criterion, cover every way of use, and end with a test plan rather than a conformance claim.",
+      "planted": "Colour alone marks free and taken slots; double booking by dragging only; 20-pixel slot targets; a slot's time only in a hover tooltip; a 3-minute hold that clears the form with no extension; placeholder-only field names; the email typed twice; password paste blocked plus a distorted-image code; errors shown only as a red border.",
+      "outcomes": [
+        "F1: the design settles at least seven of the nine planted barriers, each with a concrete decision rather than a general intent.",
+        "F2: it applies the WCAG 2.2 criteria correctly for at least three of these four: a single-pointer alternative to dragging (2.5.7), targets of at least 24 by 24 CSS pixels as the AA requirement (2.5.8, with 44 only as AAA or a choice), no second entry of the email (3.3.7), and sign-in without the image code or the paste block (3.3.8).",
+        "F3: it covers ways of use beyond a screen reader: the keyboard, zoom and reflow, and at least one of speech, switch, or low-vision use.",
+        "F4: it ends with a test plan that names keyboard and assistive-technology checks and testing with disabled users.",
+        "F5: it does not claim that the design conforms, and gives no score or percentage of criteria met (scripted for the score)."
       ]
     }
   ]
