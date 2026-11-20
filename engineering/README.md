@@ -1,9 +1,9 @@
 # Engineering Pipeline
 
-This document states how the core engineering skills are indended to fit and work together, from an vague, unformed
-idea into an actionable one, and from that into a specification, design, plan all the way to completed work. The
-skills were built one at a time, and each describes only its own neighbors; this is
-the one place that describes the whole. Where a skill
+This document states how the core engineering skills are intended to fit and work together, from a vague,
+unformed idea to an actionable one, and from there through a spec, a design and a plan to completed work. The
+skills were built one at a time, and each describes only its own neighbors; this is the one place that describes
+the whole. Where a skill
 and this document disagree, the disagreement is a finding to resolve, not a silent correction in either
 direction.
 
@@ -117,10 +117,7 @@ them.
 ## Review lanes
 
 The plan names an independent review after each substantive unit and at final integration. Each harness supplies
-that reviewer differently. Claude Code and Codex share the same ten subagents, `code-reviewer`,
-`security-auditor`, `plan-critic`, and `test-engineer` among them. Oh-My-Pi runs eight of them and keeps its
-built-in `reviewer` and `security-reviewer` in place of `code-reviewer` and `security-auditor`. Copilot CLI has
-one generated custom agent, `code-reviewer`; its other review lanes run as skills in the main session.
+that reviewer in its own way, as a subagent, a separate session, or a review skill run in the main session.
 
 ## Skills used at any stage
 
@@ -143,11 +140,3 @@ already clear starts at the design, or at the plan when it follows an existing c
 the design. A bug starts with `systematic-debugging`, then `test-driven-development` for the failing test, and
 then code for the fix. A request for goal-backed or autopilot work starts at the goal, which sends it back to
 whichever earlier document is missing. A project with no stated direction, new or old, starts at the project goals.
-
-## Where the skills do not yet match
-
-The routing check of 2026-10-04 (agent-setup's `docs/evaluations/skills/2026-10-04-engineering-pipeline-routing.md`) compared
-the skills with this intent. In practice the spec is almost never written: in a month of Claude sessions the
-design skill loaded in 22 transcripts and the spec skill in 2. The conformance review loaded only when a brief
-named it, so the closing check rarely runs, and no review lane carries it. Nothing yet prompts a spec when a
-design grows large. The proposals that close these gaps are open decisions, recorded in that check.
