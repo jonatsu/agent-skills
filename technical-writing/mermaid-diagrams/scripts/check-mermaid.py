@@ -27,6 +27,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 PROGRAM = "check-mermaid"
+DEFAULT_RENDERER = "mermaidx"
+INSTALL_HINT = "hint: install it with `pipx install mermaidx` or `mise use -g pipx:mermaidx`"
 EXIT_CLEAN = 0
 EXIT_FAILED = 1
 EXIT_USAGE = 2
@@ -36,6 +38,9 @@ DIAGRAM_SUFFIXES = {".mmd", ".mermaid"}
 OPENING_FENCE = re.compile(r"^(?P<indent> {0,3})(?P<fence>`{3,}|~{3,})\s*mermaid\b")
 PARSE_LINE = re.compile(r"\bon line (\d+)")
 FAILURE_PREFIX = re.compile(r"^.*?Mermaid rendering failed:\s*(?:Error:\s*)?")
+# Quiet, diagram source on stdin, SVG on stdout. The SVG is discarded: mermaidx needs an output to run a full
+# render, and only a full render reaches the errors a parse alone would miss.
+RENDER_ARGUMENTS = ("-q", "-i", "-", "-f", "svg", "-o", "-")
 
 
 @dataclass(frozen=True)
@@ -56,8 +61,25 @@ class Failure:
     message: str
 
 
+def closing_fence_pattern(fence: str) -> re.Pattern[str]:
+    """Match the line that closes a fence: the same character, at least as many times, indented up to three."""
+    return re.compile(rf"^ {{0,3}}{re.escape(fence[0])}{{{len(fence)},}}\s*$")
+
+
+def strip_fence_indent(line: str, width: int) -> str:
+    """Remove up to `width` leading spaces, as CommonMark does for the lines of an indented fence.
+
+    Any indentation beyond the fence's own stays, because diagram types such as mindmap read it.
+    """
+    leading = len(line) - len(line.lstrip(" "))
+    return line[min(width, leading) :]
+
+
 def markdown_diagrams(path: Path, text: str) -> list[Diagram]:
-    """Return every fenced mermaid block in a Markdown text."""
+    """Return every fenced mermaid block in a Markdown text.
+
+    A fence with no closing line runs to the end of the file, as CommonMark specifies.
+    """
     diagrams: list[Diagram] = []
     lines = text.splitlines()
     index = 0
@@ -68,14 +90,12 @@ def markdown_diagrams(path: Path, text: str) -> list[Diagram]:
             continue
         fence = opening["fence"]
         indent = len(opening["indent"])
-        closing = re.compile(rf"^ {{0,3}}{re.escape(fence[0])}{{{len(fence)},}}\s*$")
+        closing = closing_fence_pattern(fence)
         start = index
         while index < len(lines) and not closing.match(lines[index]):
             index += 1
-        body = [
-            line[indent:] if line[:indent].isspace() else line.lstrip()
-            for line in lines[start:index]
-        ]
+        body = [strip_fence_indent(line, indent) for line in lines[start:index]]
+        # `start` indexes the first body line from 0; files number lines from 1.
         diagrams.append(Diagram(path, start + 1, "\n".join(body) + "\n"))
         index += 1
     return diagrams
@@ -90,24 +110,45 @@ def diagrams_in(path: Path) -> list[Diagram]:
 
 
 def failure_message(stderr: str) -> tuple[str, int | None]:
-    """Reduce mermaidx's error output to one line, and the diagram line it names."""
+    """Reduce mermaidx's error output to one line, and the diagram line it names.
+
+    On a parse error mermaidx prints a Python traceback ending in
+    `RuntimeError: Mermaid rendering failed: Error: Parse error on line N:`, then an excerpt of the source with a
+    caret, then `Expecting ..., got ...`. N counts from 1 within the diagram source, not the file. The message keeps
+    the error line and the first `Expecting` line; the excerpt does not fit on one line.
+    """
     lines = [line.strip() for line in stderr.splitlines() if line.strip()]
     for position, line in enumerate(lines):
         if "Mermaid rendering failed" in line:
             message = FAILURE_PREFIX.sub("", line)
-            expecting = [later for later in lines[position + 1 :] if later.startswith("Expecting")]
+            expecting = next(
+                (
+                    candidate
+                    for candidate in lines[position + 1 :]
+                    if candidate.startswith("Expecting")
+                ),
+                None,
+            )
             if expecting:
-                message = f"{message} {expecting[0]}"
-            number = PARSE_LINE.search(message)
-            return message, int(number.group(1)) if number else None
+                message = f"{message} {expecting}"
+            parse_line_match = PARSE_LINE.search(message)
+            return message, int(parse_line_match.group(1)) if parse_line_match else None
+    # Without the marker, the last line of output is the best one-line summary there is.
     return (lines[-1] if lines else "mermaidx failed with no message"), None
+
+
+def file_line(diagram: Diagram, diagram_line: int | None) -> int:
+    """Turn a line number within the diagram source into a line of its file; without one, use the diagram's start."""
+    if diagram_line is None:
+        return diagram.first_line
+    return diagram.first_line + diagram_line - 1
 
 
 def render(diagram: Diagram, mermaidx: str) -> Failure | None:
     """Render one diagram, returning its failure or None when it renders."""
     try:
         result = subprocess.run(
-            [mermaidx, "-q", "-i", "-", "-f", "svg", "-o", "-"],
+            [mermaidx, *RENDER_ARGUMENTS],
             input=diagram.source,
             capture_output=True,
             text=True,
@@ -123,24 +164,23 @@ def render(diagram: Diagram, mermaidx: str) -> Failure | None:
     if result.returncode == 0:
         return None
     message, diagram_line = failure_message(result.stderr)
-    line = diagram.first_line + diagram_line - 1 if diagram_line else diagram.first_line
-    return Failure(diagram.path, line, message)
+    return Failure(diagram.path, file_line(diagram, diagram_line), message)
 
 
 def parse_arguments(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        prog="check-mermaid.py",
-        description="Check that every Mermaid diagram in Markdown or .mmd files renders, using mermaidx.",
-        epilog="Example: python3 check-mermaid.py docs/*.md diagrams/flow.mmd",
+        prog=f"{PROGRAM}.py",
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     _ = parser.add_argument(
         "files", nargs="+", type=Path, metavar="FILE", help="Markdown, .mmd, or .mermaid file"
     )
     _ = parser.add_argument(
         "--mermaidx",
-        default="mermaidx",
+        default=DEFAULT_RENDERER,
         metavar="PATH",
-        help="mermaidx executable (default: mermaidx)",
+        help=f"mermaidx executable (default: {DEFAULT_RENDERER})",
     )
     return parser.parse_args(argv)
 
@@ -152,8 +192,7 @@ def main(argv: list[str]) -> int:
     mermaidx = shutil.which(requested)
     if mermaidx is None:
         print(
-            f"{PROGRAM}: error: mermaidx not found: {requested}\n"
-            + "hint: install it with `pipx install mermaidx` or `mise use -g pipx:mermaidx`",
+            f"{PROGRAM}: error: mermaidx not found: {requested}\n{INSTALL_HINT}",
             file=sys.stderr,
         )
         return EXIT_USAGE
