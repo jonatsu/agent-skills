@@ -9,33 +9,32 @@ metadata:
 # Writing READMEs
 
 Use this skill for a project's front door: the README, the quickstart or getting-started page, the
-documentation landing page. A front door is the first thing a stranger reads about the project, and it is
-judged in about ten seconds by someone who has not decided to care yet. Every other document is read by
-someone who already chose the project.
+documentation landing page. A front door is the first thing a stranger reads about the project. Someone who
+has not decided to care yet judges it in about ten seconds. Every other document is read by someone who
+already chose the project.
 
 - `writing-documentation` owns tutorials, how-to guides, references, explanations, runbooks and decision
   records.
 - `repo-management` owns repository scaffolding and the README templates and audience matrix.
 - `context-architecture` owns the truth audit that checks a README's claims against the tree.
-- `writing-for-humans` carries sentence-level editing in more depth; this skill's own prose rules and Before
-  Delivery checks close every draft here.
+- `writing-for-humans` owns the sentences. Load it before drafting prose, and finish with its reader-ready pass
+  as well as this skill's Before Delivery checks.
 
 Plain language, as ISO 24495-1:2023 defines it, is wording, structure, and design so clear that the intended
-readers can easily find what they need, understand what they find, and use that information. The five questions
-below apply the standard's relevant and findable principles to a stranger who has not yet chosen the project,
-and "Write for a Stranger" applies its understandable principle.
+readers can easily do three things. They find what they need, understand what they find, and use that
+information. The five questions below apply the standard's relevant and findable principles to a stranger who
+has not yet chosen the project. "Write for a Stranger" applies its understandable principle.
 
-A review request splits by what is being judged: **does it read well** is this skill, **is it still true** is
+A review request splits by what is being judged. "Does it read well" is this skill; "is it still true" is
 `context-architecture`'s truth audit. A thorough review wants both.
 
 ## Iron Law
 
 **Every section answers a reader question, or it goes.**
 
-A front door is not a form to complete. A section earns its place by answering something the reader is
-actually asking at the moment they reach it, not by being conventional or appearing in a template. Given a
-list of sections, an agent fills all of them, and the result is uniformly flat because nothing in it was
-chosen.
+A section earns its place by answering something the reader is actually asking at the moment they reach it.
+Convention and presence in a template earn nothing. Given a list of sections, an agent fills all of them, and
+the result is uniformly flat because nothing in it was chosen.
 
 ## Workflow
 
@@ -46,7 +45,7 @@ chosen.
 - **Rewrite.** Diagnose against the five questions first: which are unanswered, which are answered out of
   order, which sections answer nothing. Show the diagnosis before the replacement. This mode changes the
   framing, not the facts. Done when every accurate claim of the original survives or is listed as cut with its
-  reason, and every Before Delivery item passes.
+  reason. Every Before Delivery item must pass too.
 - **Critique.** Report against the five questions and the Iron Law, worst first, each finding naming the
   reader question it fails. Judge quality only, and route factual verification to `context-architecture`'s
   truth audit. Done when every section is mapped to a question or reported as answering none.
@@ -57,28 +56,28 @@ Return text or a diff for an existing file unless the user asked for an in-place
 
 A stranger works through these in order. They abandon the page at the first one that goes unanswered.
 
-1. **What is this?** One sentence, concrete, no metaphor. They should be able to repeat it to a colleague.
+1. **What is this?** One sentence, concrete and literal. They should be able to repeat it to a colleague.
 2. **Is it for me?** Who it serves, what problem it solves, and (the part most READMEs skip) what it does
    not do and who should use something else.
 3. **Does it actually work?** Evidence before claims. Output, a screenshot, a real example with a real result.
 4. **How do I start?** The shortest path from nothing to a working result.
-5. **Where do I go next?** Pointers onward. Where readers will get stuck, order them by how fast they resolve:
-   in-tool help, then a diagnostic command, then the FAQ, then issue search, then a human. "See the docs" is
-   the weakest version of this.
+5. **Where do I go next?** Pointers onward. Where readers will get stuck, order the pointers by how fast they
+   resolve. Use this order: in-tool help, a diagnostic command, the FAQ, issue search, then a human. "See the
+   docs" is the weakest version of this.
 
 Order sections by these questions rather than by convention. Any candidate section maps to one of the five or
 gets cut. Three consequences are commonly got wrong:
 
 - **Question 3 comes before question 4.** A reader who is not yet convinced will not run your install command.
   Show the thing working, then tell them how to get it.
-- **Question 2 requires a limit.** A front door that claims no boundary reads as marketing, and a reader who
+- **Question 2 requires a limit.** A front door that claims no boundary reads as marketing. A reader who
   discovers the boundary after installing is angrier than one who was told. Naming the alternatives and who
   each suits costs nothing and buys more credibility than any claim you can make about yourself.
 - **Where the project resembles something the reader already has, say the reader's objection out loud.** State
   it verbatim, *"But doesn't X already do this?"*, then answer it with a concrete scenario. Hoping the
   reader infers the difference leaves the whole document's case unmade.
 
-A released project has a sixth reader the five questions miss: the **returning user**, asking *what changed
+A released project has a sixth reader the five questions miss: the returning user, asking *what changed
 for me*. They look in the README, not the changelog. Where a version boundary breaks something, keep the
 migration note here.
 
@@ -89,12 +88,12 @@ it to:
 
 - **A title, then one sentence.** Not a paragraph. The sentence names what the thing is and what it is for,
   in the reader's vocabulary rather than the implementation's.
-- **The point first.** Open on what the project is, not on the problem domain's history, "In today's world",
-  or the project name restated as a definition.
+- **The point first.** Open on what the project is. Do not open on the problem domain's history, "In today's
+  world", or the project name restated as a definition.
 - **Words the reader already knows.** A term the reader must already know to parse the first sentence has
   cost you the reader.
 
-Test it by deleting everything after the first five lines and asking whether a stranger could say what the
+Test the opening by deleting everything after the first five lines. Ask whether a stranger could say what the
 project is and whether it is for them. If not, the opening is not carrying its weight, no matter what follows.
 
 ## Write for a Stranger
@@ -109,7 +108,7 @@ adapted from ASD-STE100; ISO 24495-1 judges a text by how well its readers use i
 the verb that carries the meaning, and give each concept one term.
 
 Lead each section and paragraph with its point. Bold only the one-line label above a code block or a hazard the
-reader must not miss, never the opening words of every list item. Keep every fact, number, and condition the
+reader must not miss. Never bold the opening words of every list item. Keep every fact, number, and condition the
 project's own sources give, and state nothing they do not.
 
 ## Show It Working Before Asking for Anything
@@ -160,29 +159,29 @@ Each device solves one reader problem, and a recommendation that cannot name the
 - **Table of contents**: from roughly six top-level sections, where a reader would otherwise scroll past
   three screens to reach a section they already know they want. It goes below the opening block, never above
   it.
-- **Badges**: one per distinct trust question a skeptical adopter would otherwise check by hand: does it run
-  on my system, is it maintained, does the suite pass, what licence, what version. Five is the observed
-  ceiling. Omitting one is a decision too: a project with no build carries no build badge.
+- **Badges**: one per distinct trust question a skeptical adopter would otherwise check by hand. Typical
+  questions: does it run on my system, is it maintained, does the suite pass, what licence, what version.
+  Five is the observed ceiling. Omitting one is a decision too: a project with no build carries no build badge.
 - **Centered masthead**: only where three or more elements stack above the fold. Where prose starts a line or
   two after the title, leave it left-aligned.
-- **Raw HTML**: where the layout is something Markdown cannot express: grouped badge rows, a bordered box, a
-  forced line break inside a table cell, an image sized to signal importance. A document that is linear text
-  and code gains nothing from it.
+- **Raw HTML**: where the layout is something Markdown cannot express. Examples: grouped badge rows, a
+  bordered box, a forced line break inside a table cell, an image sized to signal importance. A document that
+  is linear text and code gains nothing from it.
 - **Admonitions**: for a skippable aside, never a required step, so that skimming past one costs nothing.
   Calibrate the type to the severity rather than repeating one. GitHub-only; they degrade to blockquotes
   elsewhere.
 - **Emoji**: where they do a job, such as marking each section in a long table of contents for scanning.
 
-Undirected length is the defect, not length: every aid and every line traces to a reader problem. A long
+The defect is undirected length, not length itself: every aid and every line traces to a reader problem. A long
 document with the aids that make it navigable beats a short one that had to cut real content. The plain
-version reaches the user first because a reader who wanted no badges and got them has to remove them, while a
-reader who wanted them has to say one word.
+version reaches the user first because the costs are asymmetric. A reader who wanted no badges and got them
+has to remove them, while a reader who wanted them has to say one word.
 
 ## Humor Is Allowed, in Exactly One Place
 
-Personality is not a cost. **A joke lives in the motivating sentence before an instruction, never inside a
-bullet, a step, a table cell, or any sentence the reader must act on correctly.** Keep every section a reader
-consults under pressure dry: prerequisites, install, troubleshooting. Follow each joke with the dry
+Personality is not a cost. A joke lives in the motivating sentence before an instruction. A joke never lives
+inside a bullet, a step, a table cell, or any sentence the reader must act on correctly. Keep every section a
+reader consults under pressure dry: prerequisites, install, troubleshooting. Follow each joke with the dry
 specification it introduces; that is what keeps the humor from costing credibility.
 
 A joke inside an instruction creates real ambiguity about whether a step is optional. An in-joke is safe only
@@ -212,5 +211,6 @@ profile. With no documentation set to match, this skill's defaults govern.
 - Does each section lead with its point, with bold limited to code-block labels and hazards?
 - Did every fact, number, and condition from the project's sources survive, with nothing added they do not state?
 
-Read [references/exemplars.md](references/exemplars.md) for the evidence behind these rules and the finer
-moves: table-of-contents forms, categorized badge rows, opening shapes, and named moves with their conditions.
+Read [references/exemplars.md](references/exemplars.md) for the evidence behind these rules. It also holds the
+finer moves: table-of-contents forms, categorized badge rows, opening shapes, and named moves with their
+conditions.
