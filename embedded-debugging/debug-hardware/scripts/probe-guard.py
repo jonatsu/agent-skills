@@ -6,9 +6,9 @@ on stdin, finds every command on the shell line, and flags erase, unlock, recove
 fuse operations for the common probe and flashing tools. Plain flashing passes, because agreeing to the task
 authorizes it. Uses only the Python standard library.
 
-    probe_guard.py --harness claude     answer "ask" in Claude Code's hookSpecificOutput form
-    probe_guard.py --harness copilot    answer "ask" in Copilot CLI's flat form
-    probe_guard.py --harness codex      deny with exit 2 and a reason, since Codex hooks cannot ask
+    probe-guard.py --harness claude     answer "ask" in Claude Code's hookSpecificOutput form
+    probe-guard.py --harness copilot    answer "ask" in Copilot CLI's flat form
+    probe-guard.py --harness codex      deny with exit 2 and a reason, since Codex hooks cannot ask
 
 The check reads command text, so it is best effort: an operation hidden in a script, a recipe, an OpenOCD `.cfg`
 file, or a J-Link command file's contents passes unseen. An unreadable payload passes silently rather than

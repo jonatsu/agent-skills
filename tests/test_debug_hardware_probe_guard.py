@@ -9,7 +9,7 @@ import unittest
 
 from skill_locator import skill_directory
 
-GUARD_SCRIPT = skill_directory("debug-hardware") / "scripts" / "probe_guard.py"
+GUARD_SCRIPT = skill_directory("debug-hardware") / "scripts" / "probe-guard.py"
 
 EXIT_ALLOW = 0
 EXIT_DENY = 2

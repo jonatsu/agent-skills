@@ -1,6 +1,6 @@
 # The Probe Guard Hook
 
-`scripts/probe_guard.py`, in this skill's directory, is a pre-tool-use hook that makes the "always ask" tier
+`scripts/probe-guard.py`, in this skill's directory, is a pre-tool-use hook that makes the "always ask" tier
 enforced rather than remembered. It reads each shell command an agent is about to run and stops erase, unlock,
 recover, protection, option-byte, and fuse operations until the user approves. Plain flashing and every read, halt,
 and reset pass. It needs only `python3`.
@@ -8,11 +8,11 @@ and reset pass. It needs only `python3`.
 ## When to Install It
 
 Install it in a repository the first time hardware work starts there and the repository lacks it: look for
-`.agents/hooks/probe_guard.py`. It belongs to that project, never to the user's global configuration. Tell the user
+`.agents/hooks/probe-guard.py`. It belongs to that project, never to the user's global configuration. Tell the user
 what you are adding, and ask whether they want the files committed or kept out of version control; a personal
 setup may belong in the project's ignore file or in `.claude/settings.local.json`.
 
-1. Copy `scripts/probe_guard.py` from this skill's directory to `.agents/hooks/probe_guard.py` in the project, so the
+1. Copy `scripts/probe-guard.py` from this skill's directory to `.agents/hooks/probe-guard.py` in the project, so the
    project keeps working when the skill moves or changes.
 2. Register it for each harness the project uses, as below. Merge into an existing file rather than replacing it.
 3. Tell the user to start a new session, and to approve or trust the hook where the harness asks.
@@ -32,7 +32,7 @@ after the user accepts the workspace trust dialog, alongside the user's own hook
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.agents/hooks/probe_guard.py\" --harness claude"
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.agents/hooks/probe-guard.py\" --harness claude"
           }
         ]
       }
@@ -55,7 +55,7 @@ to the user's, and resolves `cwd` from the repository root.
     "preToolUse": [
       {
         "type": "command",
-        "bash": "python3 .agents/hooks/probe_guard.py --harness copilot",
+        "bash": "python3 .agents/hooks/probe-guard.py --harness copilot",
         "cwd": ".",
         "timeoutSec": 30,
         "matcher": "bash"
@@ -81,7 +81,7 @@ reviews and trusts it in `/hooks`; editing the hook later needs that approval ag
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$(git rev-parse --show-toplevel)/.agents/hooks/probe_guard.py\" --harness codex",
+            "command": "python3 \"$(git rev-parse --show-toplevel)/.agents/hooks/probe-guard.py\" --harness codex",
             "statusMessage": "Checking for destructive probe commands"
           }
         ]
@@ -127,7 +127,7 @@ them:
 
 ```bash
 echo '{"tool_name":"Bash","tool_input":{"command":"pyocd erase --chip"}}' \
-  | python3 .agents/hooks/probe_guard.py --harness claude
+  | python3 .agents/hooks/probe-guard.py --harness claude
 ```
 
 The command should print an `ask` answer naming `pyocd`. A harmless command such as `pyocd list` prints nothing.
