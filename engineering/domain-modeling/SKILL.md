@@ -26,6 +26,9 @@ this skill to capture them; when this skill's questioning widens into a full des
   choice: "You said *account*: the Customer or the User? Those are different things."
 - **Stress-test with concrete scenarios.** When a relationship is asserted, invent a specific edge case that
   probes the boundary between concepts and forces a precise answer, rather than accepting the general statement.
+- **Ask who may break a rule.** When a domain rule is stated, ask who may override it and what follows. An override
+  path is part of the model. Where support tickets or incident reports exist, read them for where users and the
+  stated rules part ways.
 - **Cross-check against the code.** When behavior is claimed, check whether the code agrees. Surface a
   contradiction as a question: "The code cancels whole Orders, but you said partial cancellation exists. Which
   is right?"

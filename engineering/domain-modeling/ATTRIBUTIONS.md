@@ -20,3 +20,12 @@ relationships with edge cases, and cross-check claims against code), inline capt
 vocabulary-only glossary, and lazy creation of single-context or multi-context files. `references/glossary-format.md`
 adapts the glossary entry shape from `CONTEXT-FORMAT.md`. This package adapts and rewords the material, and its worked
 terms are independent.
+
+### bencium.io: `human-architect-mindset` skill
+
+- Source: <https://github.com/bencium/bencium-marketplace>, `human-architect-mindset/skills/human-architect-mindset/`
+- License: `MIT`
+- Version: `5de46a39b4640fa419560cd0b67e4c4b50dac802`
+
+The skill supplied asking who may override a domain rule, and reading support tickets for where users and the stated
+rules part ways. Nothing was copied.
