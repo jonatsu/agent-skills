@@ -1,6 +1,6 @@
 ---
 name: accessibility-engineering
-description: Design, evaluate, review, and fix interfaces for accessibility against WCAG 2.2, by default at Level AA, for web content and native apps, with EN 301 549 for non-web software, documents, and hardware such as kiosks. Use when checking whether a page, app, component, or device meets WCAG or accessibility requirements, fixing barriers for keyboard or screen reader users, preparing an accessibility statement, or planning accessibility testing. Use usability-engineering for general ease of use and cli-ui-ux for command-line tools.
+description: Design, build, evaluate, review, and fix interfaces for accessibility against WCAG 2.2, by default at Level AA, for web content and native apps, with EN 301 549 for non-web software, documents, and hardware such as kiosks. Use when designing or building a page, app, component, or device so it is accessible from the start; when checking whether one meets WCAG or accessibility requirements; when fixing barriers for keyboard or screen reader users; or when preparing an accessibility statement or planning accessibility testing. Use usability-engineering for general ease of use and cli-ui-ux for command-line tools.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -87,13 +87,35 @@ checks, what automated tools can and cannot find, and how to involve users.
 
 ## Modes
 
-- **Design**: before the interface exists. List the users' ways of perceiving and operating it: sight,
-  hearing, touch, speech, a keyboard, a switch, or a screen reader. For each, decide how the design meets the
-  criteria at the target level. End with the test plan.
+- **Design**: before the interface exists, or while it is built. Work through these steps in order, and record
+  how the design meets each at the target level:
+
+  1. **Ways of use.** Sight, hearing, touch, speech, a keyboard, a switch, or a screen reader.
+  2. **Structure.** Native elements first, as [Fix With Native Elements First](#fix-with-native-elements-first)
+     says, then headings, a page title, and the page language (1.3.1, 2.4.2, 2.4.6, 3.1.1, 4.1.2).
+  3. **Operation.** Every function works by keyboard, in a logical focus order. Focus stays visible and
+     uncovered. Dragging has a single-pointer alternative, and targets are at least 24 by 24 CSS pixels
+     (2.1.1, 2.4.3, 2.4.7, 2.4.11, 2.5.7, 2.5.8).
+  4. **Presentation.** Text contrast is at least 4.5:1, or 3:1 for large text and for controls. Colour is never
+     the only cue, and the layout reflows at 320 CSS pixels (1.4.1, 1.4.3, 1.4.10, 1.4.11).
+  5. **Input and errors.** Each label is visible and matches the accessible name. Errors are named in text with
+     a suggestion. Nothing asks for data twice, and sign-in needs no memory test (2.5.3, 3.3.1, 3.3.2, 3.3.3,
+     3.3.7, 3.3.8).
+  6. **Media and change.** Images and media have text alternatives, captions, and audio description. Status
+     messages are announced, and time limits and motion stay under the user's control (1.1.1, 1.2.2, 1.2.5,
+     2.2.1, 2.2.2, 4.1.3).
+  7. **Test plan**, from [Name the Tests That Confirm It](#name-the-tests-that-confirm-it).
+
+  For hardware or other non-web software, map each step to its EN 301 549 clause with
+  [references/standards.md](references/standards.md). The design is done when every step holds a decision, or
+  an open question with a recommendation.
+
 - **Evaluate**: an existing page, app, document, or device. Check every criterion at the target level within
   the scope, and report in the shape below.
+
 - **Review**: a proposed or recent change. Check what changed and what it touches, at the target level, and
   that no barrier came back. Report the findings in the five parts below, then the tests.
+
 - **Fix**: change the code by the rules above. Report what you changed, with the criterion each change
   meets, the barriers that remain, and the tests.
 
