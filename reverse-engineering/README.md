@@ -1,6 +1,6 @@
 # Reverse Engineering
 
-Fourteen self-contained skills support evidence-driven investigation of binaries, firmware, protocols, and memory\
+These skills support evidence-driven investigation of binaries, firmware, protocols, and memory\
 captures. Choose a skill by the question to answer. Tool requirements apply to the selected route, rather than the\
 whole group.
 
@@ -32,9 +32,7 @@ carries the essentials for its own job.
 ## Use and install
 
 Copy an individual folder into the chosen client's skills directory, or select `reverse-engineering` as the Kasetto\
-source group. The repository's [installation example](../README.md#using-a-skill) describes group selection. Adding the\
-group to an existing managed installation requires a corresponding installer configuration entry before updating its\
-pinned repository revision.
+source group. The repository's [installation example](../README.md#using-a-skill) describes group selection.
 
 The skills discover relevant tools and recommend missing prerequisites; they do not assume permission to install them.\
 Ghidra supports GUI/MCP and headless routes. Symbolic analysis separates angr from Triton, and custom bytecode machines\
