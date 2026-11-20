@@ -356,36 +356,6 @@ reach the right document is unmeasured. Open work:
   global rules; agent-setup `84964278` and `4ab748c5`, live from 2026-11-18 16:20 +02:00). Run it once at
   least 100 discovered first reads per agent follow that time, with the same mining method as the record.
 
-## Markdown Link and Anchor Checks in `repo-management`
-
-The user asked on 2026-11-19 for a relative-link checker to move into a global skill. One work project carries two
-small Python scripts that run as `local` pre-commit hooks and by hand after every docs edit. The link checker reports
-each relative Markdown link, inline or reference definition, whose target file does not exist, skipping external
-schemes and stripping fragments. The anchor checker reports each `file.md#fragment` link whose heading does not
-exist, with GitHub's slug rules. Given no paths, both read `git ls-files`, so they crash on a file deleted but not
-yet committed. They caught broken links after file moves and heading renames that `markdownlint` did not report.
-
-The natural home is `tools/repo-management/scripts/`, beside `mdwrap.py`, with tests like
-`tests/test_repo_management_mdwrap.py` and a pre-commit hook example in the skill. The user prefers third-party
-checkers to home-grown ones (2026-10-11), so first compare a maintained tool such as `lychee` in offline mode, and
-`markdownlint`'s MD051, which checks only fragments within one file, against the two checks above. Port the scripts
-only for what no maintained tool covers. Write them from scratch from this description, carrying nothing from the
-work project.
-
-On 2026-11-20 a session in that project handed over more tools of the same kind, each a candidate for its
-own skill:
-
-- **Reference-link conversion check:** after links are converted to reference style, verify that every
-  destination, anchor, and visible text survived, by comparing each file with its committed version. Candidate
-  home: `repo-management`, beside `mdwrap.py`, or `writing-documentation`.
-- **Token-loss check for a move or merge:** count word tokens in the source files and the destination files, and
-  report any token the destination has fewer of, ignoring Mermaid blocks. It proves a content-preserving
-  restructure dropped nothing. Candidate home: `context-architecture`, which owns sharding and merging documents,
-  or `writing-documentation`.
-
-All of them are agent utilities for routine documentation work, of the same kind as `mdwrap.py`, and none is urgent.
-The same rule applies to each: compare maintained tools first, and write anything ported from scratch.
-
 ## Prose-Limit Tests or a Third-Party Prose Checker
 
 Open question for the user: should the repository keep its own test for prose-style limits, or move that job to a
