@@ -1,8 +1,9 @@
 # AGENTS.md: agent-skills
 
 Instructions for agents working in this repository; `CLAUDE.md` is a symlink to this file. The repository holds
-skill packages and the checks behind `just check`, nothing that deploys them. The author's private configuration
-repository installs them from a pinned commit of this one.
+skill packages and the checks behind `just check`, nothing that installs them. It stands alone: describe it on
+its own terms, and name a repository that installs or consumes these skills only in `TODO.md` and other ledgers
+that track work between the two.
 
 Read the focused source before acting:
 
@@ -19,8 +20,7 @@ Read the focused source before acting:
 ```bash
 just check                     # history secrets scan, every hook, both test suites; run before calling work done
 just skill-check <skill-dir>   # both validators over one skill
-uv run --frozen skill-checks spec | policy | descriptions | names | references | evals   # one check, whole tree
-uv run --frozen skill-checks rust-examples   # build, lint, and run every Rust skill example
+uv run --frozen skill-checks --help   # each single check over the whole tree, such as spec or rust-examples
 ```
 
 **Running only one validator is the mistake the pair exists to prevent.** The specification validator passes a
@@ -53,11 +53,10 @@ first fails.
 - **Then by subject.** A skill that fits two domains goes where a reader would look first. **A skill name must
   stay unique across every group**; `just check` fails on a duplicate, because agents receive every skill flat.
 - **Never by how it is loaded.** Whether an agent lists a skill in every session or loads it on demand is the
-  installing configuration's choice, made by skill name; no directory here encodes it.
-- **A new group, or emptying one, needs a matching change where the skills are installed.** The installing
-  configuration names each group as a Kasetto `sub-dir` and tracks `main`, and Kasetto finds skills exactly one
-  level below each one, so a skill in a group it does not name stops deploying at the next push. Say so in the
-  commit body.
+  installer's choice, made by skill name; no directory here encodes it.
+- **A new group, or emptying one, changes what an installer receives.** A Kasetto entry names one group as its
+  `sub-dir` and finds skills exactly one level below it, so a skill moved into a group no entry names stops
+  reaching that installer. Say so in the commit body.
 
 ## Writing and Reviewing Skills
 
@@ -124,7 +123,7 @@ A durable document describes its subject as it stands. These rules come from
 
 ## Archive Without Losing Structure
 
-- Keep every package file byte-identical to the last deployed version: `SKILL.md`, references, scripts,
+- Keep every package file byte-identical to its last version on `main`: `SKILL.md`, references, scripts,
   attribution and upstream licence files.
 - Archived skills live on the `archived` branch, never on `main`. Copy the package there as `archived/<skill>/`,
   then remove it from `main`. When archiving an entire domain, keep it as `archived/<domain>/<skill>/` rather
