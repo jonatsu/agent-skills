@@ -4,10 +4,9 @@ My set of [Agent Skills](https://agentskills.io/specification) for various aspec
 development: planning, design, specs, reviews and testing. A second focus is embedded Linux, with firmware
 debugging and reverse engineering alongside it.
 
-This repository holds the skills and the checks that keep them valid; it installs nothing. The author's private
-configuration repository installs them through [Kasetto](https://github.com/pivoshenko/kasetto).
-If you want a managed, versioned skill catalog with an installer, this is the wrong place; if you want working
-skills to copy or adapt, it is the right one.
+This repository holds the skills and the checks that keep them valid; it installs nothing. If you want a
+managed, versioned skill catalog with an installer, this is the wrong place; if you want working skills to copy
+or adapt, it is the right one.
 
 ## How the skills are checked
 
@@ -21,9 +20,9 @@ Copy a skill's folder, such as `engineering/technical-design/`, into your agent'
 `~/.claude/skills/` for Claude Code. The folder needs nothing outside itself. Check the skill's `license` field
 before reusing it; see [Licensing](#licensing).
 
-To install a whole group with Kasetto, point an entry at this repository, pin a commit, and name the group as
-the `sub-dir`. Kasetto discovers skills exactly one level under that directory, so a nested group such as
-`development/python` needs its own entry:
+To install a whole group with [Kasetto](https://github.com/pivoshenko/kasetto), point an entry at this
+repository, pin a commit, and name the group as the `sub-dir`. Kasetto discovers skills exactly one level under
+that directory, so a nested group such as `development/python` needs its own entry:
 
 ```yaml
 skills:
