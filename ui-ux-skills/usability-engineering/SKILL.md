@@ -1,6 +1,6 @@
 ---
 name: usability-engineering
-description: Design, evaluate, and review the usability of any interface people operate, from GUIs, web and mobile apps to voice interfaces, device panels, and other human-machine interfaces, using established principles and methods such as heuristic evaluation and cognitive walkthroughs. Use when judging whether an interface is easy to learn and use, finding usability problems in a design or change, or planning a usability evaluation. Use cli-ui-ux for command-line tools and accessibility-engineering for WCAG and accessibility audits.
+description: Design, evaluate, and review the usability of any interface people operate, from GUIs, web and mobile apps to voice interfaces, device panels, and other human-machine interfaces, using established principles and methods such as heuristic evaluation and cognitive walkthroughs. Use when designing an interface, flow, or device panel so it is easy to learn and use from the start; when judging whether an existing one is; when finding usability problems in a design or change; or when planning a usability evaluation. Use cli-ui-ux for command-line tools and accessibility-engineering for WCAG and other accessibility requirements.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -44,7 +44,8 @@ not a statement of it.
   Keep the report short enough to read at a glance, without headings. It still names the medium's skill and the
   domain standard, each when one applies.
 
-- **Full evaluation.** Every other request. Use the method the mode below selects and the full report shape.
+- **Full evaluation.** Every other evaluation or review request. Use the method the mode below selects and the
+  full report shape. A design request follows the Design mode instead, from the first step.
 
 An explicit request for a walkthrough always uses the walkthrough, even when it says "quick".
 
@@ -76,7 +77,7 @@ absent feedback. A door that people push when it must be pulled has a design fau
 
 ## Modes
 
-- **Design**: before the interface exists. Write the design in this order:
+- **Design**: before the interface exists, or while it is built. Write the design in this order:
   1. The users, their tasks, and the context of use.
   2. The conventions of the medium and platform that the users already know.
   3. For each principle, how each dimension of the medium meets it, using the questions in
