@@ -1,12 +1,12 @@
 ---
-name: autopilot
+name: autopilot-run
 description: Run an agreed task list unattended, from the handover before the user leaves to the report when they return, without stalling on permission prompts or questions nobody can answer. Use when the user says to keep going without them, work through a list overnight or while they are away, or run on autopilot, and when such a run resumes after compaction. Not for writing a goal condition alone (define-goal) or planning the list (implementation-planning).
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-# Autopilot
+# Autopilot Run
 
 An autopilot run works through a task list the user agreed, while nobody watches. The user's absence changes
 three things. A permission prompt or a question dialog waits forever, so the run must never raise one. A decision

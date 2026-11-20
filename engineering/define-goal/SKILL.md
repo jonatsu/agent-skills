@@ -112,7 +112,7 @@ judges a goal. Some harnesses let only the user set one; there, hand the user th
 the condition filled in. Set a token or credit budget only when the user named one. Replace an active goal only
 after the user confirms the old one is finished or abandoned.
 
-For an unattended run on a task list, the `autopilot` skill covers the handover before the user leaves and the
+For an unattended run on a task list, the `autopilot-run` skill covers the handover before the user leaves and the
 conduct during the run.
 
 In every harness, also write the five-part goal into the session's durable checkpoint or the plan's execution
