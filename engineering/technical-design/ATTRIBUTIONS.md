@@ -3,8 +3,8 @@
 - Author: Joonas Onatsu
 - License: `MIT AND CC-BY-SA-4.0`
 
-The package adapts arc42 material under CC-BY-SA-4.0, which requires attribution, an indication of changes, and
-sharing adaptations under the same license; those resources are `assets/arc42-design-template.md`,
+The package adapts arc42 material under CC-BY-SA-4.0. That license requires attribution, an indication of changes, and
+sharing adaptations under the same license. The adapted resources are `assets/arc42-design-template.md`,
 `references/arc42-writing-guide.md`, and `references/arc42-example.md`. The rest of the package is under `MIT`. Keep
 `LICENSE.upstream` with the skill.
 
@@ -54,7 +54,7 @@ copied.
 - License: `MIT`
 - Version: `b36e0829c6d0140e93cfef2ca599b1b07d4a7797`
 
-The source pair showed the value to a reader of separate design and implementation-plan artifacts, and its boundary
+The source pair showed the value to a reader of separate design and implementation-plan artifacts. Its boundary
 leaks informed this skill's separation of design from task sequencing and its design-to-plan handoff. Nothing was
 copied.
 

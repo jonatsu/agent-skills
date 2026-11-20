@@ -1,6 +1,6 @@
 # <System or change> Design
 
-Status: \<proposed or accepted, with date and acceptance evidence; once implemented, the code wins
+Status: \<proposed or accepted, with date and acceptance evidence. Once implemented, the code wins
 and this design is updated to match>
 Design basis: \<governing spec revision, or the accepted request and the user's decision on a proposed
 spec; scope, baseline and documentation convention>

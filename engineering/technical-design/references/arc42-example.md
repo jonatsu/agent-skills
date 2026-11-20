@@ -2,8 +2,8 @@
 
 Teaching example: this is a fictional system with the requirements below assumed accepted.
 It demonstrates document form, not an inspected repository or measured implementation.
-The companion worked plan is bundled with the `implementation-planning` skill; locate that skill
-through the available skill catalog rather than assuming a neighboring installation path.
+The companion worked plan is bundled with the `implementation-planning` skill. Locate that skill
+through the available skill catalog, not a neighboring installation path.
 
 Status: accepted within this example; once implemented, the code wins and this design follows it.
 Format: arc42; no repository design convention exists. Open items: none.
@@ -152,7 +152,7 @@ entry a direct reason for correction while keeping issue order tied to input ord
 ## 10. Quality Requirements
 
 A catalog containing a non-object, an invalid identifier and a later duplicate reports each
-affected index with its code, rather than stopping at the first invalid entry (R2, R3). After
+affected index with its code (R2, R3). Checking continues past the first invalid entry. After
 both a passing and a failing check, the input's bytes are unchanged and no write was attempted (R5).
 
 ## 11. Risks and Technical Debt
@@ -174,7 +174,7 @@ that needs validation tied to an immutable artifact must supply that artifact.
 ## Planning Handoff
 
 Preserve the distinction between input failures and entry issues, exact identifier equality,
-ordered complete reporting and the prohibition on input writes. These obligations need both
+ordered complete reporting and read-only input access. These obligations need both
 component-level and command-line verification. No product or architecture decision remains open
 within the example's stated scope.
 

@@ -4,14 +4,14 @@ Use this guide with [the template](../assets/arc42-design-template.md).
 The [worked design](arc42-example.md) demonstrates the intended depth for a small system.
 
 The twelve sections give readers stable places to find information. They do not prescribe equal
-lengths. Keep the section numbers and their order; omit a section that would carry nothing rather
-than filling it with an applicability line, and tailor the subsections. Missing evidence or an
+lengths. Keep the section numbers and their order. Omit a section that would carry nothing rather
+than filling it with an applicability line. Tailor the subsections. Missing evidence or an
 unresolved requirement stays visible in the questions register rather than becoming invented content.
 
 ## Establish the Reader's View
 
 Start with the problem and boundary so readers understand what the system does before meeting its
-internals. Name the governing spec, or the accepted request when no spec exists, and distinguish the
+internals. Name the governing spec, or the accepted request when no spec exists. Distinguish the
 observed baseline from the proposed design. For a bounded change, explain affected behavior and link
 unchanged context.
 
@@ -35,17 +35,17 @@ responsible for each action. Keep implementation task sequences out of runtime s
 | 5. Building Block View       | What are the parts, their responsibilities and their interfaces? | Overall diagram, decomposition rationale and responsibility table. Explain selected internals where complexity or risk justifies it; avoid a file inventory.                            |
 | 6. Runtime View              | How do the parts cooperate in important situations?              | Representative scenarios, including important failure and recovery paths. Use components from section 5 and explain the interactions. Stop before routine call-by-call detail.          |
 | 7. Deployment View           | Where do the parts run and communicate?                          | Component-to-environment mapping with relevant constraints. A local tool may need only a paragraph; deployment architecture is distinct from rollout task order.                        |
-| 8. Crosscutting Concepts     | Which mechanisms apply across components?                        | Explain each relevant concept once, including its scope, rationale and limits. Do not fill an exhaustive catalogue of possible topics.                                                  |
+| 8. Crosscutting Concepts     | Which mechanisms apply across components?                        | Explain each relevant concept once, including its scope, rationale and limits. Cover the relevant topics, not an exhaustive catalogue.                                                  |
 | 9. Architecture Decisions    | Why were consequential alternatives resolved this way?           | Link existing ADRs or record the decision, status, rationale and consequences. Use section 4 for the short strategic overview.                                                          |
 | 10. Quality Requirements     | What observable conditions define the required quality?          | Reference accepted requirements; expand scenarios with context, stimulus and response measure when needed. Keep proposals provisional and reuse existing identifiers.                   |
-| 11. Risks and Technical Debt | What could go wrong, and what remains unresolved?                | Prioritized risks with consequences and mitigation options. Do not manufacture risks or disguise unresolved acceptance as technical debt.                                               |
+| 11. Risks and Technical Debt | What could go wrong, and what remains unresolved?                | Prioritized risks with consequences and mitigation options. List only real risks, and label unresolved acceptance as such, not as technical debt.                                       |
 | 12. Glossary                 | Which words need a shared meaning?                               | Brief definitions or links to the existing glossary. Define a term at first use as well when the explanation depends on it.                                                             |
 
 ## Preserve Authority and Coherence
 
 Sections 1 and 10 provide architecture readers with requirements context; the governing spec continues
 to own intended behavior and acceptance. If quality goals are missing, label proposed scenarios as
-assumptions for confirmation, so service levels and product policy stay the user's choice.
+assumptions for confirmation. This keeps service levels and product policy the user's choice.
 
 Keep each full explanation in one place. A brief summary plus a link helps orientation; repeating
 the same contract in several chapters creates opportunities for disagreement. Reference existing ADRs
