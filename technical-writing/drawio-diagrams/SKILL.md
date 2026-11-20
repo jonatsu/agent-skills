@@ -77,7 +77,8 @@ timeout --kill-after=10 120 drawio -x -f xml --normalize --layout verticalFlow -
 
 The presets are `verticalFlow`, `horizontalFlow`, `verticalTree`, `horizontalTree`, `radialTree`, and `organic`. By
 hand, keep to a grid: shapes about 120 by 60, 40 to 60 pixels apart side by side and 80 to 120 between rows. Keep
-labels short, and give color a meaning, such as one fill per tier, rather than decoration.
+labels short, and give color a meaning, such as one fill per tier, rather than decoration. Carry that meaning in
+a label or shape as well.
 
 For a vendor or industry icon (a cloud service, network gear, Kubernetes, P&ID, electrical symbols, a product logo),
 call the MCP server's `search_shapes` with a few keywords, such as `aws lambda`, and copy the returned `style`, `w`, and
@@ -119,7 +120,8 @@ timeout --kill-after=10 120 drawio -x -f png -b 10 -o /tmp/preview.png name.draw
 ```
 
 The step is done when the checker exits 0 and, where the CLI exists, the preview shows every label whole and no
-shape overlapping another.
+shape overlapping another. Where readers may use dark mode, every label must also stay readable on a dark
+background.
 
 When the user wants to look at the diagram in the editor, the MCP server's `open_drawio_xml` opens it in their
 browser. Call it only on that request, because every call opens a new browser tab. Its `postLayout` and `routing`

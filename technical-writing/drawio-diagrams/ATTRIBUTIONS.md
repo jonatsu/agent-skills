@@ -45,3 +45,12 @@ container-relative coordinates when editing, and grid spacing for hand-placed la
 
 The skill suggested decoding compressed pages before working on a diagram and giving color a meaning rather than
 using it as decoration. Nothing was copied.
+
+### Miqdad Badjuber: antislop `antislop-human` skill
+
+- Source: <https://github.com/miqdadbadjuber/anti-slop>, `skills/antislop-human/`
+- License: `MIT`
+- Version: `44b3547ed6d6f21eed777271602da113efc53c94`
+
+The skill supplied two ideas, carried over from web interfaces: colour never carries meaning alone, and a
+diagram must stay readable in dark mode. The rules were written independently; no text was copied.
