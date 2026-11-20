@@ -57,6 +57,17 @@ The skill supplied the task non-substitution rule, the quotation-integrity and c
 authorship-provenance and over-correction guards, the editing-distortion diagnostics, and the compound-hyphenation
 guidance. Nothing was copied.
 
+### Miqdad Badjuber: antislop `antislop-human` skill
+
+- Source: <https://github.com/miqdadbadjuber/anti-slop>, `skills/antislop-human/`
+- License: `MIT`
+- Version: `44b3547ed6d6f21eed777271602da113efc53c94`
+
+The skill supplied six patterns: the labelled takeaway, the temporal runway, the staccato run, the false range,
+scare quotes, and capitals for emphasis. It also supplied four techniques: the mind-verb test for false agency, the
+carve-out for mentioned phrases, the closing question about machine-written passages, and naming what to keep in a
+review. The rules were written independently; no text was copied.
+
 ### Matt Pocock: `writing-for-agents` skill
 
 - Source: <https://github.com/mattpocock/skills>, `skills/productivity/writing-for-agents/SKILL.md`

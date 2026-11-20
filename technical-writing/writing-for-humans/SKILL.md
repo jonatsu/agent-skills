@@ -188,7 +188,9 @@ or four.
 **Spend bold as a budget.** Bold reads as strong only against plain text around it. Bold the shortest span
 carrying a decision, and prefer restructuring to a longer bold run. Never use bold as a lead-in or decoration,
 and never give every list item a bold label. Use italics the same way: sparingly, for emphasis, never as
-decoration. In someone else's prose, dense emphasis prompts inspection, not stripping.
+decoration. In someone else's prose, dense emphasis prompts inspection, not stripping. Emphasize with bold or
+italics only: capitals are for acronyms and literal identifiers, and quotation marks are for quoting or mentioning
+a phrase, never for distance from an ordinary word.
 
 **Write a heading that predicts its section.** Where the section's message fits, state it: "Refunds take five
 working days", not "Refund information".
@@ -229,10 +231,12 @@ Reach for this account when a passage reads wrong but matches nothing listed.
 Act on one sighting of:
 
 - chat residue, assistant-facing language, and meta-commentary announcing the text;
-- empty promotion, canned transitions, manufactured revelations, and concluding slogans;
+- empty promotion, canned transitions, manufactured revelations, concluding slogans, and a line that labels a
+  conclusion instead of stating it ("the takeaway is simple:", "that distinction matters");
 - a negative half nobody claimed ("not just X, but Y"), unless it corrects a belief the reader holds;
 - an aphorism standing in for the claim ("at its core", "the real question is");
-- a run-up announcing the point ("here's the thing") or an objection nobody raised ("to be clear");
+- a run-up announcing the point ("here's the thing"), a temporal runway ("in today's fast-paced world"), or an
+  objection nobody raised ("to be clear");
 - process residue reporting how the writer checked the text;
 - false agency hiding an actor the source can name;
 - unresolved placeholders ("TBD", "[insert source]") and leaked tool or citation tokens ("oaicite"); and
@@ -242,8 +246,10 @@ Rewrite the passage while keeping its claims, qualifications, normative force, a
 invisible mark without changing visible text, and keep legitimate accessibility, authorship, and application
 metadata.
 
-One dash, adverb, transition, rhetorical question, bold run, stacked qualifier, or repeated opening is a prompt
-to inspect the passage, not a finding. Several sharing a passage are a finding. **Surface style is never evidence of
+One dash, adverb, transition, rhetorical question, bold run, run of short fragments, word in scare quotes, word in
+capitals for emphasis, stacked qualifier, or repeated opening is a prompt to inspect the passage, not a finding.
+Several sharing a passage are a finding. A phrase that is quoted, discussed, or given as an example is mentioned,
+not used, and is never a finding. **Surface style is never evidence of
 authorship:** settle that question from draft history, revision history, or disclosed AI use.
 
 Outside English, diagnose by category and derive the signatures from the text. A model's tells in one language
@@ -275,6 +281,9 @@ When a condition fails, revise the passage and run the complete pass again, beca
 defect. **Check each replacement, not only the defect it removed:** a rewrite of a key-first opener can arrive
 in the passive, and a merged triad can drop a number.
 
+End the pass with one question: which passage would this reader most likely take as machine-written? Revise it,
+or confirm that it carries content the reader needs.
+
 Then search once more for the six marks that most often survive: a not-X-but-Y contrast, a restating closer, an
 em dash, an unearned triad, a bold run, and a bold lead-in. A bold lead-in is a line or paragraph that opens
 with a bold phrase ending in a full stop or colon. Name the most repeated visible move. Inspect it when it
@@ -285,9 +294,10 @@ stays.
 well: fabricated informality, variation for its own sake, and roughness added to look handmade.
 
 For a rewrite, return the edited text or file change with no change summary, self-review, or confidence
-statement unless asked. For a review, separate three groups. They are
-proposed prose edits, issues that need the author's input, and passages left unchanged because their evidence or
-intended voice is unclear.
+statement unless asked. For a review, separate three groups: proposed prose edits,
+issues that need the author's input, and passages left unchanged because their evidence or intended voice is
+unclear. Name what to keep as well: specific detail that is hard to fabricate, a view the author leaves mixed or
+unresolved, and a genuine aside.
 
 Clarity may override a stylistic default that would make the prose awkward, misleading, or less precise. The
 guardrails always bind.

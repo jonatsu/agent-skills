@@ -40,7 +40,8 @@ constraint can be stated without changing the claim.
 ## False Agency
 
 Flag a sentence when it gives an inanimate abstraction a human action and hides an actor the source can
-establish:
+establish. Test the verb: one that needs a mind (understands, knows, decides, wants) hides an actor. An ordinary
+product verb ("the report shows", "the build fails") does not.
 
 | Pattern                       | Safer action                                           |
 | ----------------------------- | ------------------------------------------------------ |
@@ -95,6 +96,10 @@ Each of these stages a point instead of making it, and one sighting justifies a 
   answers, and an option a reader would genuinely weigh.
 - **A gap filled with a guess:** "It likely began in the 1990s", written straight after admitting no source
   exists. Cut the guess or state the gap, and remove knowledge-cutoff disclaimers with it.
+- **A staccato run:** several short fragments in a row staged as a punchline ("Fast. Simple. Done."). Write the
+  sentence they abbreviate.
+- **A false range:** "from first click to final invoice", where the two ends share no scale. Name the actual
+  members, or state the scope.
 
 ## Clustered Rhetorical Setup
 
