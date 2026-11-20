@@ -85,8 +85,8 @@ Leave internal document keys, such as requirement or decision identifiers, out o
 repository's convention calls for them. A reader of history often lacks the document that decodes them.
 Reference an issue or document in a footer, in the repository's form.
 
-Draft the body, then apply the deletion test from `writing-for-humans` to each sentence. A first draft usually
-halves.
+Load `writing-for-humans` before drafting the body, then apply its deletion test to each sentence. A first draft
+usually halves.
 
 ## Breaking Changes
 
