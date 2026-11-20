@@ -81,6 +81,15 @@ Exemplar README analysed for structure, opening, prose and tone, formatting, and
 
 Exemplar README analysed for structure, opening, prose and tone, formatting, and weaknesses.
 
+### Miqdad Badjuber: antislop `antislop-human` skill
+
+- Source: <https://github.com/miqdadbadjuber/anti-slop>, `skills/antislop-human/`
+- License: `MIT`
+- Version: `44b3547ed6d6f21eed777271602da113efc53c94`
+
+The skill supplied the empty social-proof pattern: a claim of popularity, speed, or adoption with no figure a
+reader can check. The rule was written independently; no text was copied.
+
 ### ISO: ISO 24495-1:2023, Plain language, Part 1: Governing principles and guidelines
 
 - Source: <https://www.iso.org/standard/78907.html>, preview of clauses 1 to 5.2.3 at

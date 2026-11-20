@@ -118,6 +118,8 @@ Concrete evidence answers question 3 and no amount of description substitutes.
 - A short, real, copy-pasteable example with its actual output.
 - A screenshot, terminal recording or diagram where the result is visual.
 - Real values, not `foo` and `bar`. Invented placeholder data reads as a project nobody has run.
+- Sourced figures for any claim of popularity, speed, or adoption. "Trusted by thousands" and "blazing fast" are
+  claims a stranger cannot check, so give the number and its source, or cut the claim.
 
 Keep it minimal. Strip setup that does not affect the result. One example that runs beats three that
 illustrate.
@@ -204,6 +206,7 @@ profile. With no documentation set to match, this skill's defaults govern.
 - Does every section map to one of the five questions?
 - Are Contributing, Changelog and License pointers rather than prose?
 - Is every example real, with real values and verified output?
+- Does every popularity, speed, or adoption claim carry a sourced figure?
 - Is every device present either requested, or already conventional in the surrounding set?
 - Were the devices you did not add named as recommendations, with the trigger that justifies each?
 - Does every sentence carry one idea within its limit, with each condition before its command?
