@@ -32,41 +32,58 @@ nothing about their level. Read the level marker.
 
 - **1.4.3 Contrast (Minimum), AA:** text at least 4.5:1, and large-scale text at least 3:1. Incidental text,
   such as inactive controls or decoration, and logotypes have no requirement.
+
 - **1.4.4 Resize Text, AA:** text resizes to 200 percent without assistive technology and without loss of
-  content or function. Blocking zoom with `user-scalable=no` or a low `maximum-scale` is the usual failure,
-  the one the W3C test rule "Meta viewport allows for zoom" checks; confirm that it stops a 200 percent resize.
+  content or function. Blocking zoom with `user-scalable=no` or a low `maximum-scale` is the usual failure.
+  The W3C test rule "Meta viewport allows for zoom" checks for it. Confirm that the setting stops a 200 percent
+  resize.
+
 - **1.4.10 Reflow, AA:** no scrolling in two directions at 320 CSS pixels wide, or 256 high for content that
   scrolls sideways. That width equals a 1280-pixel window at 400 percent zoom. Content that needs a
   two-dimensional layout, such as maps, data tables, and video, is exempt.
+
 - **1.4.11 Non-text Contrast, AA:** controls, their states, and meaningful graphics at least 3:1 against what
   is next to them.
-- **1.4.12 Text Spacing, AA:** nothing is lost when users set line height to 1.5, paragraph spacing to 2,
-  letter spacing to 0.12, and word spacing to 0.16 times the font size.
+
+- **1.4.12 Text Spacing, AA:** nothing is lost when users apply four settings, each a multiple of the font
+  size. The values are line height 1.5, paragraph spacing 2, letter spacing 0.12, and word spacing 0.16.
+
 - **2.4.11 Focus Not Obscured (Minimum), AA:** a focused control is not entirely hidden by author content,
   such as a sticky header or a cookie banner.
+
 - **2.4.13 Focus Appearance** is AAA, not AA.
+
 - **2.5.8 Target Size (Minimum), AA:** pointer targets at least 24 by 24 CSS pixels, with exceptions for
   spacing, an equivalent control, inline links, browser controls, and essential sizes. The 44-pixel figure is
   the AAA criterion 2.5.5.
+
 - **2.5.7 Dragging Movements, AA:** anything done by dragging can also be done with single clicks or taps.
+
 - **3.3.7 Redundant Entry, A:** information the user already entered in the same process is filled in again
-  or offered for selection, unless re-entry is essential, needed for security, or no longer valid.
+  or offered for selection. The exceptions are re-entry that is essential or needed for security, and
+  information that is no longer valid.
+
 - **3.3.8 Accessible Authentication (Minimum), AA:** no step of logging in needs a cognitive function test,
-  such as recalling a password or solving a puzzle, unless the step offers one of four exceptions: an
-  alternative method without such a test, a mechanism that helps complete it, a test that asks the user to
-  recognise objects, or a test that asks them to identify content they provided themselves. A password field
-  that blocks paste or password managers removes the usual mechanism, so it fails unless an alternative
-  exists.
+  such as recalling a password or solving a puzzle. A step is exempt when it offers one of four exceptions:
+
+  - an alternative method without such a test;
+  - a mechanism that helps complete it;
+  - a test that asks the user to recognise objects;
+  - a test that asks the user to identify content they provided themselves.
+
+  A password field that blocks paste or password managers removes the usual mechanism, so it fails unless an
+  alternative exists.
+
 - **4.1.2 Name, Role, Value, A:** standard HTML controls meet it when used as specified; custom controls must
   supply name, role, state, and value themselves.
+
 - **4.1.3 Status Messages, AA:** a status message is announced by assistive technology without taking focus,
   through a role or property such as `role="status"` or `role="alert"`.
 
 ## What Is Normative
 
 Only the Recommendation's text is normative. Understanding WCAG 2.2 and Techniques for WCAG 2.2 are
-informative: content may pass a criterion without any documented technique, and a failure technique is an
-example, not an automatic fail.
+informative, so content may pass a criterion without any documented technique.
 
 WCAG 3 is a Working Draft, last dated 10 September 2026. It does not replace WCAG 2 and cannot be used for
 conformance, so target WCAG 2.2.

@@ -13,8 +13,8 @@ A web page conforms to WCAG 2.2 only when it meets all five:
 4. **Accessibility-supported technologies only.** Content that relies on a technology in a way assistive
    technology does not support must also be available in a way it does.
 5. **Non-interference.** Technologies used in a non-conforming way do not block the rest of the page. Four
-   criteria apply to all content on the page, relied upon or not: 1.4.2 Audio Control, 2.1.2 No Keyboard Trap,
-   2.3.1 Three Flashes or Below Threshold, and 2.2.2 Pause, Stop, Hide.
+   criteria apply to all content on the page, relied upon or not. They are 1.4.2 Audio Control, 2.1.2 No
+   Keyboard Trap, 2.3.1 Three Flashes or Below Threshold, and 2.2.2 Pause, Stop, Hide.
 
 A criterion that does not apply to the content, such as captions on a page with no video, is satisfied.
 
@@ -41,8 +41,8 @@ WCAG defines two statements of partial conformance and no others:
 - for content in a language that assistive technology does not yet support.
 
 A partial-conformance statement begins "This page does not conform, but would conform to WCAG 2.2 at level X if
-…", and identifies the content that does not conform so users can recognise it. Third-party content has a
-second route: when the page is monitored and non-conforming content is repaired or removed within two business
+…". It also identifies the content that does not conform, so users can recognise it. Third-party content has a
+second route. When the page is monitored and non-conforming content is repaired or removed within two business
 days, a conformance claim may rest on that monitoring.
 
 A page that fails a criterion in its own content does not conform. Say that, list the failures, and give the

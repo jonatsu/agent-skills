@@ -20,26 +20,28 @@ by clause number and title only.
 | 13     | Relay and emergency services                                                                                                              |
 
 Each requirement starts with a condition, "Where ICT …", and applies only when the condition holds. Meeting
-clauses 9.1 to 9.4 and 9.6 equals WCAG 2.2 Level AA. Clause 9 also holds 9.7, which WCAG does not contain: a web
-page must not block the browser's modes that apply the user's preference settings, or override documented
-platform accessibility features, unless that is essential. Clauses 10.7 and 11.7 require the same of documents
-and software. So meeting WCAG 2.2 AA does not by itself meet clause 9.
+clauses 9.1 to 9.4 and 9.6 equals WCAG 2.2 Level AA. Clause 9 also holds 9.7, which WCAG does not contain. A web
+page must not block the browser's modes that apply the user's preference settings, unless that is essential.
+The same holds for overriding documented platform accessibility features. Clauses 10.7 and 11.7 require the same
+of documents and software. So meeting WCAG 2.2 AA does not by itself meet clause 9.
 
 - **Native apps and software:** clause 11 restates the WCAG criteria for software. A web view inside a native
   app falls under clause 11, not clause 9.
 - **Documents:** clause 10 covers files that are not web pages, such as downloadable PDFs. ISO 14289 (PDF/UA)
   is the technical standard for accessible PDF.
-- **Closed functionality,** such as a kiosk or a ticket machine that users cannot connect their own assistive
-  technology to: clause 5.1 requires the device to provide access itself. Its sub-clauses cover non-visual
-  access (5.1.3), text enlargement (5.1.4), visual output for sound (5.1.5), operation without a keyboard
-  interface (5.1.6), and access without speech (5.1.7). Clause 5.2 covers turning accessibility features on,
-  and 5.5 tactilely discernible operable parts.
-- **Stationary ICT,** such as a kiosk fixed to the floor or a wall: clause 8.3 sets measured limits above the
-  floor of the access space. No part of a display screen is lower than 800 mm (8.3.2), and information needed
-  to operate it is no higher than 1 600 mm (8.3.3.1). At least one of each operable part is between 800 and
-  1 100 mm (8.3.5.1); where the design cannot allow that, operable parts sit between 380 and 1 220 mm
-  (8.3.5.2). Clause 8.3 also sets reach depth, forward and side reach, and the free space underneath, and
-  clause 8.4 covers operable parts such as numeric keys.
+- **Closed functionality:** a device, such as a kiosk or a ticket machine, that users cannot connect their own
+  assistive technology to. Clause 5.1 requires the device to provide access itself. Its sub-clauses cover
+  non-visual access (5.1.3), text enlargement (5.1.4), visual output for sound (5.1.5), operation without a
+  keyboard interface (5.1.6), and access without speech (5.1.7). Clause 5.2 covers turning accessibility
+  features on, and 5.5 tactilely discernible operable parts.
+- **Stationary ICT:** a device such as a kiosk fixed to the floor or a wall. Clause 8.3 sets measured limits
+  above the floor of the access space:
+  - No part of a display screen is lower than 800 mm (8.3.2).
+  - Information needed to operate the ICT is no higher than 1 600 mm (8.3.3.1).
+  - At least one of each operable part is between 800 and 1 100 mm (8.3.5.1).
+  - Where the design cannot allow that, operable parts sit between 380 and 1 220 mm (8.3.5.2).
+  - Clause 8.3 also sets reach depth, forward and side reach, and the free space underneath, and clause 8.4
+    covers operable parts such as numeric keys.
 
 The W3C Note WCAG2ICT (11 December 2025) explains how to read WCAG for non-web content: "web page" becomes
 "document" or "software". It is informative, and EN 301 549 clauses 10 and 11 are meant to agree with it.

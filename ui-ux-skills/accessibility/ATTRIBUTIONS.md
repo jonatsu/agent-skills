@@ -12,8 +12,8 @@
 - Version: W3C Recommendation of 12 December 2024, tag `WCAG22-20241212`
 
 The skill's target, its criteria, levels, thresholds, conformance requirements, and claim contents come from
-the Recommendation. Success criterion numbers and names are quoted as the Recommendation states them, under the
-W3C Document License, which permits copying with this attribution; every explanation was written independently.
+the Recommendation. Success criterion numbers and names are quoted as the Recommendation states them. The W3C
+Document License permits that copying with this attribution. Every explanation was written independently.
 Copyright © 2020-2024 World Wide Web Consortium.
 
 ### W3C: WCAG Evaluation Methodology (WCAG-EM) 2.0
@@ -59,9 +59,9 @@ The page supplied how to involve disabled users and the limits of what their res
 - Version: V4.1.1 (2026-09)
 
 The standard supplied the clause structure, the conditional form of its requirements, the user-preference
-clauses, the sub-clauses for closed functionality, and the measured limits for stationary ICT, and its rules
-for non-web documents, software, and hardware. ETSI forbids reproduction, so the skill cites clause numbers,
-titles, and measurements and copies no text.
+clauses, and the sub-clauses for closed functionality. It also supplied the measured limits for stationary ICT
+and its rules for non-web documents, software, and hardware. ETSI forbids reproduction, so the skill cites clause
+numbers, titles, and measurements and copies no text.
 
 ## Third-party Sources
 

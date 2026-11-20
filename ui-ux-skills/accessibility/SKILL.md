@@ -8,16 +8,17 @@ metadata:
 
 # Accessibility
 
-Make interfaces usable by disabled people, and judge them against the requirements that define that: the Web
-Content Accessibility Guidelines (WCAG) 2.2 for web content and native apps, and EN 301 549 for other software,
-documents, and hardware. The default target is WCAG 2.2 Level AA, which means every Level A and AA success
-criterion. Use Level AAA only when the user names it, because W3C does not recommend AAA as a general policy.
+Make interfaces usable by disabled people, and judge them against the requirements that define that. Judge web
+content and native apps against the Web Content Accessibility Guidelines (WCAG) 2.2. Judge other software,
+documents, and hardware against EN 301 549. The default target is WCAG 2.2 Level AA, which means every Level A
+and AA success criterion. Use Level AAA only when the user names it, because W3C does not recommend AAA as a
+general policy.
 
 ## Which Guidance Applies
 
 When a skill exists for the medium, load it as well, because its conventions are more specific. For a
-command-line tool, that is `cli-ui-ux`: colour that never carries meaning alone, output that works without a
-terminal, and no animation in a pipe. General ease of use belongs to `usability`.
+command-line tool, load `cli-ui-ux`. Its conventions include colour that never carries meaning alone, output
+that works without a terminal, and no animation in a pipe. General ease of use belongs to `usability`.
 
 When the user names a law or a contract, check which WCAG version and level it cites before you judge.
 [references/standards.md](references/standards.md) holds the versions the main regulations cite, and how EN
@@ -32,7 +33,7 @@ An evaluation takes one of two depths. Design, review, and fix work keep to thei
   Report the barriers you find and the test that would confirm them, in under 300 words. A quick check never
   supports a conformance claim, so say so.
 - **Full evaluation.** Every other evaluation request. Cover every criterion at the target level for the pages,
-  screens, or processes in scope, and use the full report shape.
+  screens, or processes in scope. Use the full report shape.
 
 ## Rules for Every Mode
 
@@ -44,8 +45,7 @@ when every page in it does. For a document or software, the unit is the whole do
 Reading the source, or a clean automated scan, cannot show conformance, because many criteria need human
 judgement and testing with assistive technology.
 
-- When you find a failure, say plainly that the page does not conform at the target level, and list the
-  failures.
+- When you find a failure, state that the page does not conform at the target level. List the failures.
 - When you find none, say what you checked and what still needs checking. Never write "conforms" or
   "compliant" on that evidence.
 - WCAG allows a statement of partial conformance only for third-party content the author does not control,
@@ -53,7 +53,7 @@ judgement and testing with assistive technology.
   does not conform.
 
 [references/conformance.md](references/conformance.md) holds the five requirements, what a claim must contain,
-and the evaluation method for a full audit.
+and the method for a full evaluation.
 
 ### Read Each Criterion Exactly
 
@@ -65,12 +65,12 @@ borderline, say so and give both readings. Check thresholds and new criteria in
 
 ### Fix With Native Elements First
 
-Use the native element that already has the needed role and keyboard behaviour, such as `button`, `a href`,
-`input`, `select`, or `details`. Add ARIA only where no native element exists, and then supply every behaviour
-the role promises: an ARIA role changes what assistive technology announces, not how the control works. A link
-goes somewhere and a button does something, so an action such as signing out is a button. Never put
-`aria-hidden="true"` or `role="presentation"` on a focusable element. Site navigation is a disclosure, a
-button that shows a list of links, not an ARIA `menu`.
+Use the native element with the needed role and keyboard behaviour, such as `button`, `a href`, `input`,
+`select`, or `details`. Add ARIA only where no native element exists, and then supply every behaviour the role
+promises. An ARIA role changes what assistive technology announces, not how the control works. A link goes
+somewhere and a button does something, so an action such as signing out is a button. Keep every focusable
+element exposed to assistive technology: never put `aria-hidden="true"` or `role="presentation"` on one. Site
+navigation is a disclosure, a button that shows a list of links, not an ARIA `menu`.
 
 ### Name the Tests That Confirm It
 
@@ -107,15 +107,15 @@ Rate each finding by who it blocks and how badly, and state that consequence in 
 | Major    | The task is possible only with great effort or outside help |
 | Minor    | The task works, with avoidable difficulty                   |
 
-The criterion's level states the requirement, and the severity states its consequence; report both. A score,
-a grade, or a percentage of criteria met claims a measurement nobody made, so leave them out.
+The criterion's level states the requirement, and the severity states its consequence; report both. Use words,
+not a score, a grade, or a percentage of criteria met, because those claim a measurement nobody made.
 
 ## Report Shape
 
 An evaluation reports in four parts:
 
-1. **Answer.** Whether it meets the target, which is "does not conform" as soon as one failure is found, and
-   what to fix first.
+1. **Answer.** Whether it meets the target, and what to fix first. One failure makes the answer "does not
+   conform".
 2. **Scope and method.** The target version and level, what you examined, and how: source reading, a scan, or
    testing.
 3. **Findings.** Give each one, worst first, with five parts:
