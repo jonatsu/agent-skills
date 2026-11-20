@@ -6,7 +6,9 @@ relationship to it.
 Use the target repository's license for original work. Use the upstream license for derived work unless its terms permit
 and the author deliberately applies a compatible alternative. Verify licenses from the license text at a pinned upstream
 revision. Repository metadata alone is insufficient evidence. So is a license named in a brief, a specification, or a
-plan: those are claims about the source, and they can be wrong.
+plan: those are claims about the source, and they can be wrong. A null `licenseInfo` from `gh repo view` means GitHub
+detected no single top-level license file, as with a REUSE-style `LICENSES/` directory, not that the repository has
+none.
 
 ## Classify Every Source
 
@@ -19,6 +21,17 @@ Classify each source read during authoring by what changed after reading it:
 | Idea influenced independently written content  | A third-party entry in `ATTRIBUTIONS.md`            |
 | Copied, adapted, or translated material        | An entry, plus `LICENSE.upstream`                   |
 | Vendored code or assets                        | An entry, plus `LICENSE.upstream`                   |
+
+Classify material as adapted, not independently written, when any of these holds:
+
+- a contiguous run of the original survives apart from renaming;
+- it keeps the original's steps, their order, and their decomposition, even in another language;
+- identifiers, comments, error strings, or magic constants carry over; or
+- it is the original's text, copied and then edited, rather than rewritten.
+
+Record the degree of rewrite as it is. An entry that claims independent writing for adapted material misstates which
+license governs it. One that calls rewritten material copied credits your changes, and their defects, to the upstream
+author.
 
 A **first-party** source is published by the project the skill is about: its manuals, documentation, code, and material
 built from them. Every other source is **third-party**: training material, books, other projects, and other people's
@@ -42,7 +55,8 @@ beside the material it covers.
 
 Check the upstream license before adapting material. When its terms do not permit the intended use or redistribution,
 write an independent replacement from domain knowledge. Do not copy the restricted expression. If a source or its
-license cannot be verified, stop before making an authoritative attribution claim. Report what is missing.
+license cannot be verified, stop before making an authoritative attribution claim. Report what is missing. When it is
+unclear whether material is adapted, or where a notice must go, ask the user before writing the entry.
 
 ## Write ATTRIBUTIONS.md
 
