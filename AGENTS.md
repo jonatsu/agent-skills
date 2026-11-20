@@ -49,7 +49,8 @@ first fails.
 ## Placing a Skill
 
 - **By coupling.** Agent-agnostic skills go in a domain at the root. A skill that works with only one agent,
-  because it is about that agent's own files or features, goes in a directory named for that agent.
+  because it is about that agent's own files or features, goes in a directory named for that agent. No skill
+  needs one yet.
 - **Then by subject.** A skill that fits two domains goes where a reader would look first. **A skill name must
   stay unique across every group**; `just check` fails on a duplicate, because agents receive every skill flat.
 - **Never by how it is loaded.** Whether an agent lists a skill in every session or loads it on demand is the
