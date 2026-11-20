@@ -110,13 +110,15 @@ checks, what automated tools can and cannot find, and how to involve users.
      uncovered. Dragging has a single-pointer alternative, and targets are at least 24 by 24 CSS pixels
      (2.1.1, 2.4.3, 2.4.7, 2.4.11, 2.5.7, 2.5.8).
   4. **Presentation.** Text contrast is at least 4.5:1, or 3:1 for large text and for controls. Colour is never
-     the only cue, and the layout reflows at 320 CSS pixels (1.4.1, 1.4.3, 1.4.10, 1.4.11).
+     the only cue, and the layout reflows at 320 CSS pixels (1.4.1, 1.4.3, 1.4.10, 1.4.11). Check contrast and
+     focus in every theme the interface ships, such as light, dark, and high contrast.
   5. **Input and errors.** Each label is visible and matches the accessible name. Errors are named in text with
      a suggestion. Nothing asks for data twice, and sign-in needs no memory test (2.5.3, 3.3.1, 3.3.2, 3.3.3,
      3.3.7, 3.3.8).
   6. **Media and change.** Images and media have text alternatives, captions, and audio description. Status
      messages are announced, and time limits and motion stay under the user's control (1.1.1, 1.2.2, 1.2.5,
-     2.2.1, 2.2.2, 4.1.3).
+     2.2.1, 2.2.2, 4.1.3). Honour the platform's reduced-motion setting for animation an interaction triggers;
+     below AAA, report its absence as a recommendation, not a failure.
   7. **Test plan**, from [Name the Tests That Confirm It](#name-the-tests-that-confirm-it).
 
   For hardware or other non-web software, map each step to its EN 301 549 clause with

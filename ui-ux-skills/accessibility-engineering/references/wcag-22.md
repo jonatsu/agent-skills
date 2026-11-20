@@ -54,6 +54,12 @@ nothing about their level. Read the level marker.
 - **1.4.12 Text Spacing, AA:** nothing is lost when users apply four settings, each a multiple of the font
   size. The values are line height 1.5, paragraph spacing 2, letter spacing 0.12, and word spacing 0.16.
 
+- **2.2.2 Pause, Stop, Hide, A:** moving, blinking, or scrolling content that starts automatically, lasts more
+  than five seconds, and is shown alongside other content needs a way to pause, stop, or hide it.
+
+- **2.3.3 Animation from Interactions** is AAA, not AA. Honouring the platform's reduced-motion setting, such
+  as CSS `prefers-reduced-motion` (technique C39), is a sufficient way to meet it.
+
 - **2.4.11 Focus Not Obscured (Minimum), AA:** a focused control is not entirely hidden by author content,
   such as a sticky header or a cookie banner.
 

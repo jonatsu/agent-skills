@@ -80,6 +80,7 @@ tables were copied.
 - License: `MIT`
 - Version: `44b3547ed6d6f21eed777271602da113efc53c94`
 
-The skill supplied two ideas: an agent should compute a contrast ratio rather than judge it by eye, and text over
-an image fails at its lowest-contrast point. `scripts/contrast.py` and the rule around it were written
+The skill supplied four ideas: an agent should compute a contrast ratio rather than judge it by eye, text over
+an image fails at its lowest-contrast point, the reduced-motion setting deserves honouring, and every shipped
+theme needs checking. `scripts/contrast.py` and the rule around it were written
 independently; no code or text was copied.
