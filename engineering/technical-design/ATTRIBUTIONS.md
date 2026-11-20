@@ -75,3 +75,13 @@ system guarantees. Nothing was copied.
 
 Nothing was copied due to the license. The article supplied the accepted-specification input and the traceability
 seam between requirements and technical design.
+
+### bencium.io: `human-architect-mindset` skill
+
+- Source: <https://github.com/bencium/bencium-marketplace>, `human-architect-mindset/skills/human-architect-mindset/`
+- License: `MIT`
+- Version: `5de46a39b4640fa419560cd0b67e4c4b50dac802`
+
+The skill supplied four ideas: establishing who owns and approves what a design touches, including where authority
+and context sit apart; justifying a departure from an existing decision; the moves for a constraint that blocks the
+recommended option; and failures that report success, with their time to detection. Nothing was copied.

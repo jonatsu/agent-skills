@@ -63,6 +63,11 @@ Inspect the surfaces that could change the recommendation. Depending on the subj
 public and internal interfaces, and state and data flow. Also establish dependencies, tests, operational behavior,
 compatibility obligations, and relevant prior decisions.
 
+Establish who owns each system the design touches and who must approve the change. Note where whoever holds the
+authority lacks the context, or whoever holds the context lacks the authority. Establish what cannot change even where
+it is wrong, such as a published contract, a promised deprecation timeline, or a format others depend on. A design
+that needs another owner's change, or an approval nobody has secured, carries it as a blocking question.
+
 Use the smallest design depth that settles the consequential system choices. Expand the relevant analysis for security,
 authorization, persistent data, migrations, compatibility, external dependencies, material cost, or difficult recovery.
 
@@ -96,7 +101,13 @@ change is reconciled.
 Present alternatives only when a real consequential choice remains. Explain the difference, benefit, cost, likely
 failure mode, and reversibility of each live option. Recommend a direction with reasons. Facts may be researched;
 product judgment and material risk acceptance remain with the user. Once decided, the document states each rejected
-alternative directly, with the reason it lost.
+alternative directly, with the reason it lost. When the recommendation departs from an existing decision, pattern, or
+stack, state what the departure gains over evolving the current one. State how the transition runs while the old one
+remains in use.
+
+When a constraint blocks the recommended option, design within it, or find the need behind it and propose another way
+to meet that need. Otherwise, put a concrete proposal to whoever owns the constraint. Set it aside only when the user
+accepts the risk, and record that acceptance in the decisions section.
 
 Keep the design moving between the user's decisions. When an aspect is settled, take the most load-bearing
 unresolved one next: the aspect others depend on most, or the one carrying the most risk. Develop it as far as
@@ -129,6 +140,8 @@ Settle the parts relevant to the requested outcome:
 - interfaces, contracts, states, transitions, and data flow;
 - invariants and prohibited behavior, including access and disclosure boundaries;
 - validation, errors, degraded operation, recovery, and idempotency;
+- failures that report success, such as a wrong result or an upstream interface that changed without notice, and how
+  long each takes to detect;
 - security, privacy, accessibility, performance, and operational consequences;
 - compatibility and migration behavior; and
 - observability, rollout, and rollback when the change requires them.
