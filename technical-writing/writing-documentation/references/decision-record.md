@@ -1,18 +1,18 @@
 # Decision Records
 
-Read this before writing a decision record, joining an existing series, or choosing a format for a set that has
+Read this before writing a decision record, joining an existing series, or choosing a format for a set with
 none. `SKILL.md` holds the gate that decides whether to write one.
 
 ## Match the Record's Weight to the Decision
 
-A record that clears the gate but stays contained needs only the **light form**: a title and a few sentences
-saying what was decided, why, and the main alternative rejected with its reason. Most records need no more. The
-value is recording that a decision was made and why.
+A record that clears the gate but stays contained needs only the **light form**. That is a title and a few
+sentences saying what was decided, why, and the main alternative rejected with its reason. Most records need no
+more. The value is recording that a decision was made and why.
 
-Use the **full form** when wide later work builds on the decision, such as a framework, dependency, data model,
-protocol, authentication or authorization strategy, hosting or build platform, or cross-boundary contract. Use it
-too when the rejected alternatives carry most of the weight and a reviewer needs them separable. The full form
-carries five elements:
+Use the **full form** when wide later work builds on the decision. Examples are a framework, dependency, data
+model, protocol, authentication or authorization strategy, hosting or build platform, and cross-boundary
+contract. Use it too when the rejected alternatives carry most of the weight and a reviewer needs them
+separable. The full form carries five elements:
 
 - **Status and date:** proposed, accepted, superseded, or deprecated, and when. Without a status a record cannot
   be superseded; without a date it cannot be read against the conditions that produced it.
@@ -24,7 +24,7 @@ carries five elements:
   that arrive later, such as knowledge the team must acquire.
 
 Freeze a record once it is accepted. When the decision changes, write a new record that references and
-supersedes the old one, and never rewrite or delete the original. It is the evidence for why the earlier choice
+supersedes the old one. Never rewrite or delete the original. The original is the evidence for why the earlier choice
 was reasonable under its conditions.
 
 ## Find the Existing Convention First
@@ -42,8 +42,8 @@ say so rather than introducing a third scheme.
 ## Numbering and Files
 
 Continue the series exactly as it runs. Do not restart the sequence, renumber earlier records, or add a second
-pattern alongside the first. Take the next number when you start writing rather than when you finish, so two
-records written at once do not collide.
+pattern alongside the first. Take the next number when you start writing rather than when you finish. Two
+records written at once then do not collide.
 
 Common patterns appear in these forms:
 
@@ -54,8 +54,8 @@ Common patterns appear in these forms:
 | Dated               | `2026-03-11-store-reports-in-object-storage.md` |
 
 Where no convention exists, use `docs/decisions/` with zero-padded sequential Markdown files, as
-`context-architecture`'s default layout does. Match the markup
-of the surrounding documentation set, not this default, when the two differ.
+`context-architecture`'s default layout does. Match the markup of the surrounding documentation set, not this
+default, when the two differ.
 
 ## Format Standards
 
@@ -65,7 +65,7 @@ of the surrounding documentation set, not this default, when the two differ.
   the alternatives carry most of the weight and reviewers need them separable.
 
 Both express the full form's five elements. Neither is better in the abstract. Match the series being joined.
-For a series with no convention, start with the light form and let a record grow into one of these standards only
+For a series with no convention, start with the light form. Let a record grow into one of these standards only
 where its blast radius or its alternatives require it.
 
 ## Status and Supersession
@@ -74,7 +74,7 @@ A status is one of proposed, accepted, superseded, or deprecated. Superseded mea
 decision; deprecated means it no longer applies and nothing replaced it. Both keep their original body.
 
 Record supersession from both ends: the new record names what it supersedes, and the old record's status names
-what replaced it. A one-directional pointer leaves a reader who finds the old record first with no way forward.
+its replacement. A one-directional pointer leaves a reader who finds the old record first with no way forward.
 
 Some sets amend rather than supersede, adding dated entries beneath a frozen body for facts that changed
 without reversing the decision. Follow the set's convention where it has one, and keep the original body intact
@@ -82,8 +82,8 @@ either way.
 
 ## Worked Example
 
-The subject here is a software decision, but the shape holds for a process or organizational one: what was
-decided, under which conditions, against what alternatives, and at what cost.
+The subject here is a software decision, but the shape holds for a process or organizational one. The shape
+records what was decided, under which conditions, against what alternatives, and at what cost.
 
 ```markdown
 # ADR-0014: Store rendered reports in object storage
@@ -142,4 +142,4 @@ metadata and the storage key in the `reports` table. Serve downloads as presigne
 ```
 
 The rejection lines carry the record. A reader who proposes a network filesystem next year finds the reason it
-was declined and the condition that would change the answer, which is the capacity to operate one.
+was declined. That reader also finds the condition that would change the answer: the capacity to operate one.

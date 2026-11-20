@@ -14,7 +14,7 @@ with the material. The notice is reproduced under "Upstream License Notice".
 - License: `MIT`
 - Version: read on or before 2026-08-21
 
-Adapted and trimmed: this skill is built on its structure, workflow, and checklists, including the
+Adapted and trimmed. This skill is built on its structure, workflow, and checklists. These include the
 document-composition job, the task taxonomy, examples, accessibility and error-recovery guidance, and response
 modes.
 
@@ -69,9 +69,14 @@ The skill suggested the exemplar-evidence approach behind "Match an Established 
 - License: `MIT`
 - Version: read on or before 2026-09-09
 
-The skill supplied the main ideas for the decision-record section and the changelog reference: writing a record on a
-cost-to-reverse trigger, a status lifecycle with superseded records kept, a rejection reason for each alternative,
-and checking an existing series for its location and format before writing into it. Nothing was copied.
+The skill supplied the main ideas for the decision-record section and the changelog reference:
+
+- writing a record on a cost-to-reverse trigger;
+- a status lifecycle with superseded records kept;
+- a rejection reason for each alternative; and
+- checking an existing series for its location and format before writing into it.
+
+Nothing was copied.
 
 ### Matt Pocock: `domain-modeling` skill and `ADR-FORMAT.md`
 
@@ -79,9 +84,9 @@ and checking an existing series for its location and format before writing into 
 - License: `MIT`
 - Version: `959a8e9f1edc3adbe2f7e3054bb6fbefa6696260`
 
-The skill supplied the three-part gate for whether a decision warrants a record (hard to reverse, surprising
-without context, and the result of a real trade-off) and the tiering of a record's weight to the decision's blast
-radius. Nothing was copied.
+The skill supplied two ideas. One was the three-part gate for whether a decision warrants a record: hard to
+reverse, surprising without context, and the result of a real trade-off. The other was the tiering of a record's
+weight to the decision's blast radius. Nothing was copied.
 
 ### Matt Pocock: `writing-for-agents` skill
 
@@ -89,9 +94,10 @@ radius. Nothing was copied.
 - License: `MIT`
 - Version: `c55ee46073ed923f86ce59a5eb3b6d895095d1b7`
 
-The skill supplied the `authority map`, `locator`, and `reader-ready` leading words and checkable completion
-criteria. It formerly supplied the single-owner pointer from this skill to `writing-for-humans`; the current skill
-carries its own prose rules instead. Nothing was copied.
+The skill supplied the `authority map` and `reader-ready` leading words and checkable completion criteria. It
+also supplied a `locator` leading word, which the current skill no longer uses. It formerly supplied the
+single-owner pointer from this skill to `writing-for-humans`; the current skill carries its own prose rules and
+its own pointer. Nothing was copied.
 
 ### Eren Suner: "Agent Skill for Documentation"
 
@@ -109,9 +115,9 @@ information, and delivery of unresolved evidence gaps. Nothing was copied.
 - License: `CC-BY-SA-4.0`
 - Version: `957c09ca40b4a1edc23874f713e01937d50d54d5`
 
-Diátaxis supplied the four-type classification, the two classifying questions (action or understanding, study or
-work), the content that typically leaks into each type, and the method of improving a set one piece at a time.
-Nothing was copied due to the content license.
+Diátaxis supplied the four-type classification and the two classifying questions (action or understanding, study
+or work). It also supplied the content that typically leaks into each type and the method of improving a set one
+piece at a time. Nothing was copied due to the content license.
 
 ### Keith Patton: `diataxis-agent-skill`
 
@@ -137,11 +143,13 @@ The convention supplied the grouping vocabulary (added, changed, deprecated, rem
 - License: `LicenseRef-Proprietary`
 - Version: Issue 9, 2025-01-15
 
-ASD holds the copyright, and the standard is free to obtain but not free to redistribute. It informed "Write Notes
-and Safety Instructions": a note carries information only, a warning marks risk of injury and a caution risk of
-damage, and a safety instruction puts the signal word before the command. It also informed the procedural and
-descriptive sentence classes with their limits, the condition before its command, and the six-sentence paragraph.
-The skill does not implement the standard, and no rule text or dictionary entry was copied.
+ASD holds the copyright, and the standard is free to obtain but not free to redistribute. It informed "Notes and
+Safety Instructions" in three rules. A note carries information only. A warning marks risk of injury and a caution
+risk of damage. A safety instruction puts the signal word before the command.
+
+It also informed the procedural and descriptive sentence classes with their limits, the condition before its
+command, and the six-sentence paragraph. The skill does not implement the standard, and no rule text or
+dictionary entry was copied.
 
 ### ISO: ISO 24495-1:2023, Plain language, Part 1: Governing principles and guidelines
 
@@ -179,9 +187,13 @@ message. Nothing was copied.
 - License: `MIT`
 - Version: `5951eb7d985018459c62428378926c07f4199794`
 
-The skill supplied the rule that a primary audience settles conflicts between audiences, with the runbook example,
-the requirement that a document work when read straight through, and the rule against carrying meaning by bold,
-color, or position alone. Nothing was copied.
+The skill supplied:
+
+- the rule that a primary audience settles conflicts between audiences, with the runbook example;
+- the requirement that a document work when read straight through; and
+- the rule against carrying meaning by bold, color, or position alone.
+
+Nothing was copied.
 
 ## Upstream License Notice
 
