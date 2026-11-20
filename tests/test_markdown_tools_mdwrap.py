@@ -1,4 +1,4 @@
-"""Behavioral tests for the repo-management skill's Markdown rewrap script."""
+"""Behavioral tests for the markdown-tools skill's Markdown rewrap script."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from pathlib import Path
 
 from skill_locator import skill_directory
 
-SCRIPT = skill_directory("repo-management") / "scripts" / "mdwrap.py"
+SCRIPT = skill_directory("markdown-tools") / "scripts" / "mdwrap.py"
 
 EXIT_CLEAN = 0
 EXIT_WOULD_CHANGE = 1

@@ -46,8 +46,8 @@ adapt it when an established repository already carries deliberate conventions.
   indistinguishable from a working one on a tree that happens to be clean.
 - Give wrapping to one tool. The shipped profile uses mdformat `wrap = "keep"`. Markdownlint supplies the numeric
   ceiling, 120 for prose and headings, and EditorConfig deliberately leaves Markdown line length unset. Adopting the
-  profile in a repository with long prose lines reports every one of them at once. Rewrap them with `scripts/mdwrap.py`
-  before the first commit under the hooks.
+  profile in a repository with long prose lines reports every one of them at once. Rewrap them with the `markdown-tools`
+  skill's `mdwrap.py` before the first commit under the hooks.
 - Keep mdformat's line ending at `lf` to agree with the global EditorConfig rule. `keep` leaves CRLF Markdown
   unchanged, so editorconfig-checker fails on every pass while mdformat reports success.
 - Keep an inline code span on one physical line. CommonMark turns its internal line ending into a space, so mdformat
@@ -130,7 +130,7 @@ done
 ```
 
 A token added on purpose, such as a `text` fence tag, is then the only difference; confirm it by diffing the
-sorted token streams. The same check covers a `scripts/mdwrap.py` rewrap, since its hard-break backslashes are
+sorted token streams. The same check covers an `mdwrap.py` rewrap, since its hard-break backslashes are
 not alphanumeric.
 
 For a subtree that stays excluded, apply surgical edits only; do not hand-run the formatters over it to make it "pass" a

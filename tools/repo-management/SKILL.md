@@ -101,13 +101,8 @@ trailing-backslash hard break (`\`). A soft wrap is short only in the raw file: 
 line. The backslash, rather than two trailing spaces, stays visible and survives editors that trim whitespace. Where a
 repository already soft-wraps by convention, keep its convention.
 
-Rewrap with `scripts/mdwrap.py` whenever a line-length rule reports long prose, typically right after the Markdown hooks
-are enabled on existing documents. Run it with the files to list the blocks it would change. Run it again with
-`--write`, then run the hook pipeline twice to its fixed point. Set `--width` to the repository's markdownlint
-`line_length`; it defaults to 120. The script leaves front matter, headings, tables, code, reference definitions, HTML
-blocks and alert markers alone. It keeps every code span and link on one line. It keeps list, heading, quote and fence
-markers off the start of a wrapped line. In report mode it exits 1 when a block would change, so it can also gate a
-commit.
+Rewrap long prose with the `markdown-tools` skill's `mdwrap.py`, typically right after the Markdown hooks are
+enabled on existing documents.
 
 ## Run Hygiene Audits When Requested
 
@@ -171,7 +166,6 @@ Report exact validation results and untested environments.
 - Repository configuration: `.editorconfig`, `.gitattributes`, `.pre-commit-config.yaml`,
   `.markdownlint-cli2.jsonc`, `.mdformat.toml`, `.secretlintrc.json`, `.shellcheckrc`, `.yamlfmt.yaml`, and
   `.yamllint.yaml`
-- Script: `scripts/mdwrap.py`, the Markdown prose rewrapper; standard library only, tested on Python 3.12 and 3.13
 
 ## Provenance
 
