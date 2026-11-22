@@ -27,6 +27,9 @@ lsusb -d 1050:; lsusb -d 20a0:42b2   # Yubico vendor ID; Nitrokey 3A NFC ID
   a stub; `sec#` means the primary secret is absent, `ssb>` means the subkey is on a card.
 - Generate in a temporary `GNUPGHOME` on tmpfs (`$XDG_RUNTIME_DIR`). Save and restore the daily `GNUPGHOME` rather than
   unsetting it, because a non-default daily path breaks when unset.
+- A plugged-in card with keys becomes gpg's default signing key even in a fresh `--homedir`, because that home's agent
+  starts scdaemon. A throwaway keyring that must sign with its own key needs `disable-scdaemon` in its
+  `gpg-agent.conf`, or `--local-user` on each call.
 - Make the old key's revocation certificate before a reset; after it, the old key cannot sign one. gpg prefixes the
   armor line of a generated revocation with a colon so it cannot be imported by accident; remove it to use it.
 - keys.openpgp.org: `gpg --send-keys` cannot start user-ID verification. Upload with
