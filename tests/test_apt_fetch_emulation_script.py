@@ -84,6 +84,8 @@ def _gpg(home: Path, *args: str) -> None:
 
 def _make_key(home: Path, uid: str, keyring: Path) -> None:
     home.mkdir(mode=0o700)
+    # Keep any plugged-in OpenPGP card out of the throwaway home: gpg would pick its key as the default signer.
+    _ = (home / "gpg-agent.conf").write_text("disable-scdaemon\n", encoding="utf-8")
     _gpg(home, "--passphrase", "", "--quick-gen-key", uid, "ed25519", "sign", "never")
     _gpg(home, "--output", str(keyring), "--export", uid)
 
