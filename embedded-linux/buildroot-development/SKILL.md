@@ -49,7 +49,7 @@ files do not need a second approval because they live outside the output directo
 
 | Task                                                                                                   | Reference                                                        |
 | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
-| Package infrastructure, fetch inputs, dependencies, local-source iteration, rebuild selection          | [Package infrastructure](references/buildroot-packages.md)       |
+| Package infrastructure, fetch inputs, dependencies, rebuilds, hardening and compiler flags             | [Package infrastructure](references/buildroot-packages.md)       |
 | Board configuration, overlays, hooks, image assembly/capacity, provenance, kernel config persistence   | [Board support](references/buildroot-board-support.md)           |
 | External trees, external toolchains, out-of-tree application builds, SDKs, legal-info, reproducibility | [Advanced topics](references/buildroot-advanced.md)              |
 | Hidden symbols, unmet dependencies, conditional selection, configuration cycles                        | [Kconfig troubleshooting](references/kconfig-troubleshooting.md) |

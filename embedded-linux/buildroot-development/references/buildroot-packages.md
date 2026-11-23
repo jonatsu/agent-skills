@@ -14,6 +14,7 @@ or a `select` that warns, see `kconfig-troubleshooting.md`.
 - [Local Source Iteration](#local-source-iteration)
 - [Host Package Dependencies](#host-package-dependencies)
 - [Build Order and Runtime Presence](#build-order-and-runtime-presence)
+- [Hardening and Compiler Flags](#hardening-and-compiler-flags)
 - [Debugging Package Failures](#debugging-package-failures)
 
 ## Package Infrastructure Types
@@ -293,6 +294,33 @@ build: the listed packages finish before this one configures. Express what must 
   `depends on`. A bare `depends on` restricts availability; it enables nothing.
 - Add the same build-time libraries to `<PKG>_DEPENDENCIES`. A Make dependency can install a package whose symbol is
   unselected, so keep the two lists consistent rather than relying on that side effect.
+
+## Hardening and Compiler Flags
+
+Buildroot's "Security Hardening Options" menu sets the hardening for every target package:
+
+| Option                 | Effect                                                                                         |
+| ---------------------- | ---------------------------------------------------------------------------------------------- |
+| `BR2_PIC_PIE`          | Position-independent executables; default where the toolchain and shared libraries support it  |
+| `BR2_SSP_*`            | Stack protector: `REGULAR`, `STRONG` (the default when supported), or `ALL`, which costs speed |
+| `BR2_RELRO_*`          | `PARTIAL` or `FULL`; full RELRO makes the GOT read-only, costs start-up time, and selects PIE  |
+| `BR2_FORTIFY_SOURCE_*` | `_1` (the default, compile-time checks), `_2` (adds run-time checks), `_3` (GCC 12 or newer)   |
+
+The two halves reach packages by different routes, so a package that ignores one route loses part of the hardening:
+
+- The toolchain wrapper adds the stack protector, PIE, and RELRO to every compile that goes through it, even when a
+  package ignores `CFLAGS`.
+- `_FORTIFY_SOURCE` travels only in `TARGET_CFLAGS` and `TARGET_CPPFLAGS`. A package that drops them builds without
+  fortification. Fortification also needs glibc and an optimisation level above `-O0`.
+
+`TARGET_CONFIGURE_OPTS` exports `CC`, `CXX`, `CPPFLAGS`, `CFLAGS`, `CXXFLAGS`, and `LDFLAGS`. A `generic-package`
+passes them as `$(MAKE) $(TARGET_CONFIGURE_OPTS)`, which makes them `make` command-line variables. A command-line
+variable overrides a plain `CFLAGS += ...` in the package's own Makefile, so the package's own flags vanish. Fix the
+package's Makefile to keep its flags in a separate variable placed after `$(CFLAGS)`, or to use
+`override CFLAGS += ...`. Never hard-code `gcc` or `CFLAGS = ...` there, because that drops the cross compiler or the
+Buildroot flags.
+
+To confirm what a package compiled with, rebuild it with `make <pkg>-rebuild V=1` and read the compiler lines.
 
 ## Debugging Package Failures
 
