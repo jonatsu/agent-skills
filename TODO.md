@@ -320,6 +320,16 @@ table layout), semihosting calls, startup code that copies `.data` and zeroes `.
 of common RTOSes. Ground it in the ARMv7-M Architecture Reference Manual, Arm's semihosting specification, and each
 RTOS's own port sources, then remove the exclusion from the skill's scope statement.
 
+## Better Sources for Testing Timing and Interrupts in MCU Firmware
+
+The C and C++ testing skill's advice on testing MCU timing, interrupt handlers, and concurrency rests on thin
+evidence. Section 6.4 of `docs/evaluations/2026-11-23-c-cpp-embedded-sources/c-cpp-testing.md` holds what exists. Only
+the fake clock and the directly called time callback have an expert source, Grenning's free conference paper (PDF page
+17). Calling an interrupt service routine from a test, register-level fakes for interrupt state, and the limits of host
+tests are inference or come from one low-authority article. Find primary or expert sources: Grenning's and Feathers'
+books, vendor application notes from ST, NXP, Nordic, TI, or Microchip, RTOS test documentation, and published talks.
+Then mark each piece of the skill's advice with its source, or drop the piece that no source supports.
+
 ## Risk Scan for Third-Party Skills
 
 Vet an upstream skill for risky code before adopting, adapting or re-pinning it. Raised 2026-10-10 by a
