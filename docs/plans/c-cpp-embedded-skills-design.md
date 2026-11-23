@@ -231,6 +231,20 @@ schemas and `dt_binding_check`).
 It is inspired by `UtsavBalar1231/kernel-development-skills` (MIT). Its material is rewritten, not copied, and the
 upstream skill's stale `Assisted-by:` rule is not carried, in line with the attribution principle.
 
+### `linux-userspace-device-access` (new, in `embedded-linux/`)
+
+The userspace counterpart of `linux-kernel-development`: application code on the device that talks to hardware
+through the kernel's userspace interfaces. It covers GPIO, I2C, SPI, UIO, serial and RS-485, input, LEDs,
+backlight, hwmon, IIO, the watchdog, uevents, and the device tree. Its first decision is whether the device needs
+a kernel driver instead. Language rules stay in `c-cpp-style`, and bring-up commands such as `gpioget` stay in
+`embedded-linux-bringup`.
+
+Body sections: choose kernel driver or userspace access, read the target kernel and libraries first, the current
+interface per device class, permissions with udev and systemd, stable device names, and a done check. References:
+`buses.md` (GPIO, I2C, SPI, UIO, and `/dev/mem`), `other-interfaces.md` (serial, input, LED and backlight, hwmon and
+IIO, watchdog, uevents, device tree), and `permissions.md` (udev rules, groups, and systemd sandboxing). The
+sources are in `docs/evaluations/2026-11-23-c-cpp-embedded-sources/userspace-device-access.md`.
+
 ### `u-boot-development` (extended)
 
 Adds a reference, `uboot-coding.md`: U-Boot's coding-style deviations from the kernel, its own `.clang-format`, the
