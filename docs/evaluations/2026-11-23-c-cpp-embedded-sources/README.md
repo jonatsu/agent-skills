@@ -11,10 +11,11 @@ match each place's own conventions, with improvements added on top.
 | [embedded-linux-practice.md](embedded-linux-practice.md)   | Yocto and OpenEmbedded, Buildroot, expert training material, device robustness, and product security                                    |
 | [c-cpp-testing.md](c-cpp-testing.md)                       | Unit test frameworks, Valgrind and sanitizers, coverage, on-target, kernel, U-Boot, and MCU firmware testing, with a tool set per place |
 | [language-standards.md](language-standards.md)             | Compiler defaults per build system and release, the standards projects and SDKs declare, and proposed default standards                 |
+| [clangd.md](clangd.md)                                     | clangd configuration, compilation databases per tree, formatting through clangd, and cross-build pitfalls, with a recipe per tree       |
 | [third-party-skills.md](third-party-skills.md)             | About 90 third-party agent skills surveyed, 11 assessed in depth, with licences, pins, and red flags                                    |
 | [work-session-refinements.md](work-session-refinements.md) | Eight refinements found by applying a draft C rule set to two small tools, with the tool versions used                                  |
 
-Five Sonnet research lanes wrote the first five files from primary sources where reachable, and each marks what a
+Six Sonnet research lanes wrote the first six files from primary sources where reachable, and each marks what a
 source says apart from its own inference. Each file lists what it could not reach.
 
 ## What the Sources Settle

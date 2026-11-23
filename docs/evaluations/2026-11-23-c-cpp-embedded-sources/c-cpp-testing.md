@@ -343,6 +343,11 @@ Documented facts are thin. What I found:
   bare `unit_testing` board.
 - Valgrind's Helgrind and DRD target POSIX pthreads programs (doc, section 2). Inference: they and TSan check host code
   that uses pthreads; they cannot see interrupt handlers or RTOS tasks on a target.
+- Fake time and time-driven callbacks, expert source: Grenning's paper (PDF page 17) puts time behind a `TimeService`
+  interface and replaces it in tests with a `FakeTimeService`. The test sets the fake time with
+  `FakeTimeService_SetDay` and `FakeTimeService_SetMinute`, then calls the scheduler's wake-up callback directly, "as the
+  RTOS will do in the product", and checks a spy for the outcome. The paper does not discuss interrupt service routines,
+  so calling an ISR the same way is an inference from this pattern.
 - Fake time and interrupts, inference only (no primary source read): put the clock behind a function (`now_ms()`) or HAL
   interface and let the test advance it; call the interrupt service routine as an ordinary function from the test after
   setting the fake register state (VanderVoord's register fakes make the state settable); keep the ISR thin so the logic
