@@ -29,10 +29,10 @@ Done when an outsider could send an acceptable change by following this file alo
 ## SECURITY.md
 
 Name one private reporting channel that works today. That is GitHub's private vulnerability reporting, or an
-address the maintainers read. Private vulnerability reporting is a repository setting that owners enable. List
-enabling it as a step for the user rather than assuming it is on. Add a supported-versions table only for a
-project with versioned releases. State a response window only where the maintainers commit to it. A missed promise
-costs more trust than no promise.
+address the maintainers read. Private vulnerability reporting is a repository setting that owners enable. Never
+assume it is on: list enabling it as a step for the user, which `github-ops` can carry out. Add a
+supported-versions table only for a project with versioned releases. State a response window only where the
+maintainers commit to it. A missed promise costs more trust than no promise.
 
 Done when a reporter knows where to report, what to include, and what happens next, without opening a public
 issue.

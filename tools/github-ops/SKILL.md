@@ -1,6 +1,6 @@
 ---
 name: github-ops
-description: Manage GitHub operations with the gh CLI and REST or GraphQL APIs. Use for pull requests, blocked merges, branch protection and rulesets, Actions workflows and runs, authentication or permission failures, rate limits, and incomplete API or search results. Use git-commits-and-recovery for local commits, rebases, and recovery. Excludes general issue triage.
+description: Manage GitHub operations with the gh CLI and REST or GraphQL APIs. Use for pull requests, blocked merges, branch protection and rulesets, Actions workflows and runs, CODEOWNERS, Dependabot configuration, repository settings such as private vulnerability reporting, authentication or permission failures, rate limits, and incomplete API or search results. Use git-commits-and-recovery for local commits, rebases, and recovery. Excludes general issue triage.
 license: MIT
 compatibility: Requires GitHub CLI (gh); jq is optional. GitHub Enterprise features vary by server version.
 metadata:
@@ -220,6 +220,24 @@ Read `references/actions-basics.md` whenever a task touches Actions, for example
 For substantial workflow authoring or debugging, pair the orientation with current official documentation.
 
 Skip it for PR, issue, or repository work that never reaches a workflow.
+
+## Configure Repository Files and Settings
+
+This skill owns the GitHub-only configuration of a repository: `CODEOWNERS`, `.github/dependabot.yml`, the
+workflows above, and settings changed through the API. `repo-landing-docs` owns the landing documents, such as
+`SECURITY.md`. `repo-setup` owns the local configuration files and hooks.
+
+- **`CODEOWNERS`:** GitHub reads it from `.github/`, the root, or `docs/`, and uses the first one it finds. The
+  last matching pattern wins, so put broad patterns first. Each owner needs write access, and a team must also be
+  visible. GitHub skips a line with invalid syntax without failing, so open the file on GitHub, where errors are
+  highlighted. Owners become required reviewers only when branch protection enables "Require review from Code
+  Owners".
+- **`.github/dependabot.yml`:** set `version: 2`, then one `updates` entry per ecosystem. Each entry needs
+  `package-ecosystem`, `directory` or `directories`, and `schedule.interval`. Use `groups` to combine updates
+  into fewer pull requests.
+- **Private vulnerability reporting:** check it with `gh api repos/OWNER/REPO/private-vulnerability-reporting`,
+  and enable it with the same path and `-X PUT`, which needs admin access. A setting change is visible to everyone
+  who can see the repository, so confirm it with the user before making it.
 
 ## Handle Bulk and Cross-Repository Work
 

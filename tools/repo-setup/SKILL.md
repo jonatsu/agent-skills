@@ -105,8 +105,8 @@ enabled on existing documents.
 - Run one credential scanner: Betterleaks by default, or Gitleaks or Secretlint's recommended preset when the
   repository or the user selects it. Secretlint's home-path, dotenv, and pattern rules may run beside it, since
   they cover what it does not.
-- Treat GitHub settings, dependency automation, CI, releases, and history rewrites as separate requests. List
-  them as follow-ups rather than applying them as part of setup.
+- Treat GitHub settings, CODEOWNERS, Dependabot, CI, releases, and history rewrites as separate requests. List
+  them as follow-ups rather than applying them as part of setup; `github-ops` owns the GitHub ones.
 
 ## Verify Completion
 
