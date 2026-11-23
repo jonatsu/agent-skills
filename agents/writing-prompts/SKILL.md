@@ -82,6 +82,8 @@ The receiver starts cold. It has not seen the conversation, and it may not load 
 - **What you established.** Paths with line numbers, decisions taken, hypotheses ruled out, so it does not redo them.
 - **Rules it must follow.** The instructions that apply to this task and that it may not inherit, such as staging
   rules, writing style, or a required tool. Restate them; a reference to a file it will not read carries nothing.
+  Name the domain skills the work needs and tell the receiver to load them, such as `cli-ui-ux` and
+  `usability-engineering` for a command a person runs.
 - **Tools.** The tool or family to use, the fallback, and a reminder to load any tool that loads on demand.
   When the receiver fetches the web, give the whole fallback chain, including the escalation past an anti-bot
   wall, and name the sites known to block crawlers. A chain written in the brief replaces the receiver's own
