@@ -20,7 +20,8 @@ decides which:
   continues until the evidence exists. Use this mode for a goal, objective, or autopilot run, including a one-off
   task that belongs to no project. In the engineering pipeline
   it follows `implementation-planning` and precedes `incremental-implementation`; for a bounded request with no
-  plan, it is the whole of the preparation.
+  plan, it is the whole of the preparation. Run, outcome, unit, and slice mean what `implementation-planning`'s
+  Planning Terms define.
 
 A run goal never rewrites the project goals. When the requested run would break them, stop and ask, because the
 project goals belong to their owner.

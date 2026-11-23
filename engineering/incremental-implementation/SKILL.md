@@ -11,8 +11,9 @@ metadata:
 Execute an accepted plan as working software, one verified slice at a time, so a defect surfaces in the slice
 that caused it rather than in a pile of untested changes.
 
-Take slice boundaries from the plan. When none exists, size each slice by a single observable outcome, such as
-one endpoint, one component, or one migration. Decompose a larger unit with `implementation-planning`
+Take slices from the plan's units; a unit lands in one or more slices. When no plan exists, size each slice by a
+single observable result, such as one endpoint, one component, or one migration. Unit, slice, and follow-up mean
+what `implementation-planning`'s Planning Terms define. Decompose a larger unit with `implementation-planning`
 before starting. This skill governs how you land a slice, not how you choose it.
 
 Before starting, judge the extent of the work and of each slice. A slice may come without a sub-goal or success
@@ -88,4 +89,4 @@ Stop and re-slice when you notice:
 - an incomplete feature about to become user-visible because the flag is "later."
 
 The move against each is the same: shrink the slice until it verifies, commit what is green, and record anything
-out of scope as a separate task rather than folding it in.
+out of scope as a follow-up in the ledger rather than folding it in.

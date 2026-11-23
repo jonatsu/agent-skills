@@ -99,7 +99,9 @@ whole design once.
 
 **Plan.** `implementation-planning` turns the accepted design into dependency-ordered units, each with its
 verification and its review stage: before implementation, after each substantive unit, after corrections, and at
-final integration. The final integration gate includes the conformance review.
+final integration. The final integration gate includes the conformance review. Its Planning Terms section defines the
+words the planning and execution skills share: roadmap item, outcome, run, implementation plan, unit, slice,
+execution record, and follow-up.
 
 **Run goal.** `define-goal` turns the plan's final gate, or a bounded request's own result, into a goal: an
 objective, success criteria, the verification that proves them, boundaries, and stop conditions. It sets that goal

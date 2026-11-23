@@ -61,7 +61,7 @@ Every unit applies P1 and P2.
 
 ## Unit 1: Classified Input Loading
 
-### Outcome and Rationale
+### Result and Rationale
 
 The CLI can distinguish a usable catalog from an input failure before entry checking starts
 (R1, R4; design sections 5 and 6.2).
@@ -95,7 +95,7 @@ Remove only disposable test artifacts. The source catalog must require no restor
 
 ## Unit 2: Complete Entry Checking
 
-### Outcome and Rationale
+### Result and Rationale
 
 Every invalid entry receives its prescribed issue under the identity and ordering rules, while
 valid catalogs remain distinguishable (R2, R3; design section 8.1).
@@ -125,7 +125,7 @@ Verify all issues are retained in input order and the input values are unchanged
 
 ## Unit 3: CLI Reporting and Integration
 
-### Outcome and Rationale
+### Result and Rationale
 
 Callers of the complete tool receive stable output and exit status for valid catalogs, entry
 issues and input failures (R1–R5; design sections 6 and 8.2).

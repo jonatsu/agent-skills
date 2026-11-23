@@ -6,7 +6,7 @@ Execution record: \<existing tracker, or the separate record section below>
 
 <!-- Authoring scaffold: replace prompts and remove these instructions.
 Use the repository's established plan format when one applies. Repeat the work-unit section
-for independently verifiable outcomes. Omit Recovery when no special response is needed. -->
+for independently verifiable results. Omit Recovery when no special response is needed. -->
 
 ## Implementation Overview
 
@@ -19,15 +19,15 @@ Name shared environment setup, applicable guidance, common checks and the defaul
 Give each requirement an anchor. Every unit applies them by default and names only its additions
 and exceptions. Record missing tools or review assignments and the work they block.
 
-## Unit 1: <Observable Outcome>
+## Unit 1: <Observable Result>
 
-### Outcome and Rationale
+### Result and Rationale
 
 Explain what becomes possible and why this unit exists, appending the requirement and design keys it satisfies.
 
 ### Changes
 
-Describe how the affected surfaces produce the outcome. Name verified paths and symbols where useful.
+Describe how the affected surfaces produce the result. Name verified paths and symbols where useful.
 Identify tool-owned generated outputs and how unexpected changes will be inspected.
 
 ### Dependencies and Constraints
@@ -52,6 +52,6 @@ Name qualification and authorization requirements for any operational cutover.
 
 ## Execution Record
 
-Use this section only if the repository has no existing tracker or completion-record convention.
+Use this section only if the repository has no existing tracker or execution-record convention.
 Record actual results, reviewed revisions, deviations and unresolved findings separately from the
 intended approach. Planned commands and expected observations are not completion evidence.

@@ -12,6 +12,22 @@ Turn an accepted design into an actionable route to completed, verified behavior
 may not know the repository, decision history, or local tooling. Preserve design obligations and keep consequential
 product or architecture decisions outside the plan.
 
+## Planning Terms
+
+These words carry one meaning each in `implementation-planning`, `define-goal`, `autopilot-run`, and
+`incremental-implementation`. Use them in new plans and ledgers. A repository that already names these concepts
+differently keeps its own words unless the user decides otherwise.
+
+- **Roadmap item:** a ledger entry that names one outcome.
+- **Outcome:** a capability the user can see, shown by observable behavior.
+- **Run:** one goal-backed build toward an outcome, with its own finish line, the run goal.
+- **Implementation plan:** the dependency-ordered units for one run.
+- **Unit** (work unit): an independently verifiable piece of a plan. Its result is what it delivers, such as a
+  behavior, a contract, or a migration state.
+- **Slice:** one landed, verified increment. A unit lands in one or more slices.
+- **Execution record:** the plan's account of what each unit landed, with its commit and evidence.
+- **Follow-up:** out-of-scope work found during a run, recorded in the ledger.
+
 ## Verify the Design Basis
 
 Read the governing spec and design, repository instructions, relevant implementation, tests,
@@ -19,7 +35,7 @@ interfaces, migrations, operational assets, and configured tooling before decomp
 design when they exist, and keep each shared constraint in its authoritative home.
 
 Consume accepted designs in arc42 or the repository's own format without requiring reformatting. Refer to their actual
-sections and decision records. Derive work units from dependencies and outcomes, never from design chapter order.
+sections and decision records. Derive work units from dependencies and results, never from design chapter order.
 
 Planning normally requires an accepted technical design. Requirements alone are insufficient when behavior,
 architecture, interfaces, failure handling, compatibility, or migration choices remain open. A small change may use an
@@ -89,16 +105,16 @@ Identify prerequisites, baseline evidence, contracts or seams that unlock later 
 assumptions worth testing early, and integration or migration dependencies. Include rollout, rollback, cleanup, and
 documentation dependencies when the governing design requires them.
 
-Size work units by independently verifiable outcome. Prefer a vertical slice that produces observable behavior. Use a
-foundation unit only when it establishes a meaningful contract or seam and has useful verification of its own. Split
-further when risk, reviewability, or repository workflow requires it, never by duration or file count. A unit whose
-title needs an "and", or that spans two independent subsystems, is two units.
+Size work units by independently verifiable result. Prefer a unit that cuts through every layer to produce observable
+behavior. Use a foundation unit only when it establishes a meaningful contract or seam and has useful verification of
+its own. Split further when risk, reviewability, or repository workflow requires it, never by duration or file count. A
+unit whose title needs an "and", or that spans two independent subsystems, is two units.
 
 Every milestone or phase traces to a goal or the success signal and carries a done criterion. The criterion is
 measurable, or a named person's judgment where no honest metric exists. That includes a later milestone that is
 named but not yet planned. A criterion not known yet is an open item in the plan, never silence.
 
-Judge each unit's extent. For a unit large or uncertain enough that its outcome could drift, propose a sub-goal and a
+Judge each unit's extent. For a unit large or uncertain enough that its result could drift, propose a sub-goal and a
 success signal for it. A small unit with an obvious result needs only its completion evidence. Size this to the plan:
 a short plan whose units are all small carries no sub-goals.
 
@@ -115,13 +131,13 @@ paired design illustrates the design-to-plan boundary.
 
 Start with a short implementation overview: what changes, how the work reaches the outcome, and which dependencies
 determine the order. Put this explanation before paths and commands. Include a dependency diagram when the flow needs
-one. Then give each unit these sections: Outcome and rationale; Changes; Dependencies and constraints; Verification
+one. Then give each unit these sections: Result and rationale; Changes; Dependencies and constraints; Verification
 and completion; and Recovery when a failure needs a specific response. Follow repository headings when they differ.
 
-Explain how the changes produce the outcome in connected prose, rather than presenting a list of files to edit.
+Explain how the changes produce the result in connected prose, rather than presenting a list of files to edit.
 Within that structure, make these facts recoverable:
 
-- **Outcome:** the behavior, capability, migration state, or visible result;
+- **Result:** the behavior, capability, migration state, or visible result;
 - **Requirements and design obligations:** the accepted behavior and technical decisions it satisfies, stated
   first, with requirement and design keys appended rather than leading the sentence;
 - **Affected surfaces:** verified files, symbols, configuration, data, documentation, or operational assets;
@@ -140,7 +156,7 @@ fragments, migrations, or non-obvious algorithms when they materially clarify an
 complete files to implementation, because the code becomes their source of truth.
 
 Assign generated files, dependency locks, migrations, documentation, and operational configuration to the unit whose
-outcome requires them. Identify expected generated outputs and the tools that own them. Inspect unexpected changes
+result requires them. Identify expected generated outputs and the tools that own them. Inspect unexpected changes
 before including them; explain necessary consequences and keep unrelated changes outside the work. An unexpected
 output that changes scope or a consequential contract returns to the appropriate design or authority boundary.
 
@@ -156,7 +172,7 @@ overlaps.
 Name the environment and safe data when verification can mutate state, contact services, expose secrets, or incur cost.
 Report unavailable safe evidence instead of substituting an unauthorized live check.
 
-Behavioral outcomes require behavioral tests or real-system observations. Formatting, linting, typing, builds, syntax
+Behavioral results require behavioral tests or real-system observations. Formatting, linting, typing, builds, syntax
 checks, substring searches, and clean version-control state may be necessary, but they do not prove behavior.
 
 Use test-driven development when a focused automated test can state the changed observable behavior. Verify
@@ -175,7 +191,7 @@ units and dependency order, not just in a closing recommendation:
    or recovery scenarios. Give sensitive or irreversible work deeper scrutiny before coding; name an early independent
    review when a concrete risk or repository requirement warrants its cost.
 2. **During implementation:** perform self-review, the applicable test loop, coding-rule checks, and proportionate
-   integration validation. Record observed outcomes; a command written in the plan is not a result.
+   integration validation. Record observed results; a command written in the plan is not a result.
 3. **After a substantive unit:** an independent reviewer examines the exact change and its evidence before dependent
    work proceeds. Identify the role or assignment mechanism. Independence requires someone other than the implementer;
    a second self-review cannot be labeled independent. For a small low-impact change, a documented self-review and
@@ -219,7 +235,7 @@ execution order.
 ## Record and Place the Plan
 
 Keep intended work distinct from execution evidence. The plan states actions and expected observations. The
-repository's existing tracker or completion-record convention holds actual results, deviations, reviewed revisions, and
+repository's existing tracker or execution-record convention holds actual results, deviations, reviewed revisions, and
 unresolved findings. Link that record rather than creating a competing ledger. If no convention exists, use one clearly
 separated execution-record section in the plan. Keep status in that record and write expected results as expectations,
 so explanatory prose never reads as an observation. Update the intended approach when an authorized adaptation changes
@@ -252,10 +268,10 @@ exposed:
 - names the user chose for an earlier shape of the work, such as a folder, command, or tool, re-checked. Ask
   about each name whose reason a revision removed before the first commit. A leftover name reads as if
   the dropped decision still holds;
-- a completion record that will identify applied guidance, reviewed revisions, results, finding dispositions, and
+- an execution record that will identify applied guidance, reviewed revisions, results, finding dispositions, and
   unverified obligations; and
 - the `writing-for-humans` **reader-ready** pass, read as an unfamiliar implementer. The first action and what it
-  unlocks, how each unit achieves its outcome, what completion looks like, and how to respond to a failed check must
+  unlocks, how each unit achieves its result, what completion looks like, and how to respond to a failed check must
   all be clear without reconstructing the spec or design conversation.
 
 Headings and command lists alone do not establish an actionable plan.

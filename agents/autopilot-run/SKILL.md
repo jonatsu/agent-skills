@@ -15,7 +15,8 @@ own, at a point the user can read in one pass when they return.
 
 The run starts when the user tells you to keep going without them. The list may arrive now, sit in a file they
 name, or be one settled earlier in the conversation. The list is the settled design, and each item is a
-confirmed draft. Build each item without drafting it first.
+confirmed draft. Build each item without drafting it first. When a plan governs the run, the list's items are its
+units. Run, unit, slice, and follow-up mean what `implementation-planning`'s Planning Terms define.
 
 ## Hand Over Before the User Leaves
 
