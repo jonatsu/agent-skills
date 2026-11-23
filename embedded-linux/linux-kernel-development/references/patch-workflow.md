@@ -12,6 +12,7 @@ that changed between kernel releases is read from the target tree, never recalle
 - Send
 - Revise After Review
 - Stable Releases
+- Patches Carried in a Build Layer
 
 ## Read the Tree's Rules
 
@@ -204,3 +205,17 @@ and follow `Documentation/process/security-bugs.rst`.
 
 A vendor tree on a long-term kernel takes stable updates in its own way. Ask the user which process applies
 (inference).
+
+## Patches Carried in a Build Layer
+
+A product often carries kernel patches in its build layer against a pinned release, such as a Yocto layer or a
+Buildroot patch directory, instead of sending them upstream. No list reviews them, so the layer must hold the review
+evidence itself (inference):
+
+- Generate each patch with `git format-patch` from a branch on the pinned release, so it keeps its author, message,
+  and `Signed-off-by:`.
+- Give each patch the header the build system's patch policy requires, stating its upstream status and where it came
+  from. Read the field names from that build system's manual.
+- Run the tree's `checkpatch.pl` on each patch, as for a patch that goes upstream.
+- When the pin moves, rebase the series onto the new release, drop each patch that upstream now contains, and rebuild
+  after each patch, as in Shape the Series.
