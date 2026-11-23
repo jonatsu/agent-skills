@@ -38,17 +38,18 @@ These hold across every skill in the design.
 
 ## Decisions
 
-| Subject                           | Decision                                                                                                                                                                                                                                                                                   |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| C standard                        | `-std=gnu17` for new Linux userspace and MCU code, set explicitly because GCC 15 defaults to C23. C99 for portable library code and MISRA C:2012 work. Kernel and U-Boot code keep `gnu11`.                                                                                                |
-| C++ standard                      | `-std=gnu++17`, the floor most dependencies accept (Qt 6, MISRA C++:2023). C++20 when every supported toolchain is GCC 13 or newer and the code needs it. Firmware SDKs that default lower (Zephyr and the Pico SDK use C++11) are raised explicitly.                                      |
-| C++ exceptions and RTTI           | Off in MCU firmware, where no runtime supports them (`-fno-exceptions -fno-rtti`). New Linux userspace code returns errors as values, such as `std::optional` or a result type, instead of throwing. An existing project's policy wins in both.                                            |
-| Braces on single statements       | Required in new userspace and firmware code, following CERT and MISRA. Never in kernel or U-Boot code, whose styles forbid them. A project's own style wins.                                                                                                                               |
-| `_FORTIFY_SOURCE`                 | Leave the level the build system sets (Yocto sets 2, Buildroot offers a choice). In a standalone build, use 3 when the toolchain has GCC 12 or newer and glibc 2.34 or newer, and 2 otherwise.                                                                                             |
-| Other hardening flags             | The OpenSSF Compiler Options Hardening Guide is the basis: PIE, full RELRO, `-fstack-protector-strong`, `-fstack-clash-protection`, a non-executable stack, control-flow protection per architecture, and `-D_GLIBCXX_ASSERTIONS`. Check the finished binary with `readelf` or `checksec`. |
-| Runtime ASLR and kernel hardening | Stay in `yocto-security-hardening`, which already covers `randomize_va_space` and KASLR. The C skills point there.                                                                                                                                                                         |
-| Firmware C                        | A reference inside `c-style` now. A separate firmware skill comes later, through `TODO.md`, only if the reference outgrows the skill.                                                                                                                                                      |
-| Placement                         | `c-style`, `cpp-style`, and `c-cpp-testing` in a new `development/c-cpp/` group, following `development/python/` and `development/rust/`. `linux-kernel-development` in the existing `embedded-linux/` group. The new group needs an installer entry.                                      |
+| Subject                           | Decision                                                                                                                                                                                                                                                                                                                                                    |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C standard                        | `-std=gnu17` for new Linux userspace and MCU code, set explicitly because GCC 15 defaults to C23. C99 for portable library code and MISRA C:2012 work. Kernel and U-Boot code keep `gnu11`.                                                                                                                                                                 |
+| C++ standard                      | `-std=gnu++17`, the floor most dependencies accept (Qt 6, MISRA C++:2023). C++20 when every supported toolchain is GCC 13 or newer and the code needs it. Firmware SDKs that default lower (Zephyr and the Pico SDK use C++11) are raised explicitly.                                                                                                       |
+| C++ exceptions and RTTI           | Off in MCU firmware, where no runtime supports them (`-fno-exceptions -fno-rtti`).                                                                                                                                                                                                                                                                          |
+| C++ errors in Linux userspace     | Default: errors as values with standard types, `std::error_code` or a status enum on C++17, and `std::expected` from C++23. A project may instead allow exceptions caught at the top of `main`. In both, an exception never crosses a C callback or a C library interface. An existing project's policy wins.                                               |
+| Braces on single statements       | Follow the layout style in force: required where that style requires them, and in new userspace and firmware code with no style set, following CERT and MISRA. A `.clang-format` counts as a style, so a repository using `BreakBeforeBraces: Linux` without `InsertBraces` gets no added braces. Never in kernel or U-Boot code, whose styles forbid them. |
+| `_FORTIFY_SOURCE`                 | Leave the level the build system sets (Yocto sets 2 and drops it at `-O0`, Buildroot offers a choice). In a standalone build, use 3 when the toolchain has GCC 12 or newer and glibc 2.34 or newer, and 2 otherwise. A build at `-O0` gets no fortification, so a debug-build test does not exercise it.                                                    |
+| Other hardening flags             | The OpenSSF Compiler Options Hardening Guide is the basis: PIE, full RELRO, `-fstack-protector-strong`, `-fstack-clash-protection`, a non-executable stack, control-flow protection per architecture, and `-D_GLIBCXX_ASSERTIONS`. Check the finished binary with `readelf` or `checksec`.                                                                  |
+| Runtime ASLR and kernel hardening | Stay in `yocto-security-hardening`, which already covers `randomize_va_space` and KASLR. The C skills point there.                                                                                                                                                                                                                                          |
+| Firmware C                        | A reference inside `c-style` now. A separate firmware skill comes later, through `TODO.md`, only if the reference outgrows the skill.                                                                                                                                                                                                                       |
+| Placement                         | `c-style`, `cpp-style`, and `c-cpp-testing` in a new `development/c-cpp/` group, following `development/python/` and `development/rust/`. `linux-kernel-development` in the existing `embedded-linux/` group. The new group needs an installer entry.                                                                                                       |
 
 ## The Skills
 
@@ -58,7 +59,9 @@ Writes, reviews, and refactors C for Linux userspace, MCU firmware, and code tha
 Its body covers the decisions that apply to every place: checking the tree's conventions first, the standard and
 warning set, error handling and resource cleanup, integer conversions, and the rules from the work session (an
 explicit `-std` in the shared flag variable, a comment naming the bound beside any cast that silences `-Wconversion`,
-and test-only macros that replace inputs but never checks).
+and test-only macros that replace inputs but never checks). The shared flag variable has a concrete pattern for
+Yocto: one `.inc` file holds `-std` and the warning set, every recipe requires it, and the host test script reads the
+same file, so host checks and target builds use the same flags.
 
 References, each loaded only when its branch applies:
 
@@ -69,16 +72,24 @@ References, each loaded only when its branch applies:
   standard each targets, freestanding constraints, and C99-clean headers for code shared across SDKs.
 - `hardening.md`: the OpenSSF flag set with each flag's cost, how Yocto and Buildroot inject their own flags, the
   `_FORTIFY_SOURCE` rule above, which flags still apply on an MCU without a memory management unit, and how to verify
-  a binary.
-- `tooling.md`: clang-format with the tree's configuration and `git clang-format` for changed lines, the kernel-style
-  clang-format settings that keep pure tabs, restricting the pre-commit clang-format hook to C and C++, the clang-tidy
-  and cppcheck checks to turn off with their reasons, and running cppcheck once per configuration. It also carries the
-  clangd recipes: how each kind of tree produces `compile_commands.json`, the `--query-driver` limit for cross
-  compilers, and the `.clangd` settings for a GCC-built kernel.
+  a binary. To confirm that flags reached a Yocto compile, read `temp/run.do_compile`, because `log.do_compile` does
+  not show the compiler command.
+- `tooling.md`: clang-format with the tree's configuration and `git clang-format` for changed lines, and the
+  kernel-style clang-format settings that keep pure tabs, kept together with `BreakStringLiterals: false` so
+  user-visible messages stay searchable. It restricts the pre-commit clang-format hook to C and C++, and excludes
+  `.clang-format` and `.clang-tidy` from `check-metaschema`, which parses them as JSON. It lists the clang-tidy and
+  cppcheck checks to turn off, each with its reason written out, such as cppcheck's `variableScope` against
+  declarations at the top of a block and `constParameter` on `main`'s `argv`, and it runs cppcheck once per `-D`/`-U`
+  configuration. Tool versions are pinned, because clang-format, clang-tidy, and cppcheck change their output between
+  releases: the pre-commit clang-format mirror's revision, clang-tidy through `uvx --from clang-tidy==<version>`, and
+  cppcheck from the distribution or a container, since the PyPI `cppcheck` package is a third-party wheel. The
+  reference also carries the clangd recipes: how each kind of tree produces `compile_commands.json`, the
+  `--query-driver` limit for cross compilers, and the `.clangd` settings for a GCC-built kernel.
 
 ### `cpp-style` (new)
 
-Writes, reviews, and refactors C++ for the same places. It covers the standard choice, the exception and RTTI policy,
+Writes, reviews, and refactors C++ for the same places. It covers the standard choice, the exception, RTTI, and
+error-handling policy from the decisions above,
 resource ownership (RAII, no raw owning pointers), `constexpr` and compile-time tables, avoiding the heap and
 `iostream` on small targets, and headers that C code includes through `extern "C"`. It points to `c-style` for
 hardening, tooling, and clangd, and carries its own short version of the tree-decides rule, because an agent may load
@@ -100,7 +111,13 @@ The body also carries the work session's sanitizer rule: set distinct exit codes
 References:
 
 - `embedded-linux.md`: Yocto ptest and testimage, Buildroot's runtime tests, QEMU user mode for one cross-built
-  binary, Valgrind on the target, and coverage collection with `GCOV_PREFIX`.
+  binary, Valgrind on the target, and coverage collection with `GCOV_PREFIX`. It also carries the userspace seams. A
+  vendor or firmware library is replaced by a stub shared library, built from a header that declares only the
+  functions used, whose behaviour an environment variable selects. For an action that cannot be undone, such as a one-time-programmable
+  memory write, a fuse, or an erase, the stub counts each call, and every refusal test asserts that count as well as the
+  exit status, because an exit status alone passes when the tool fails for an earlier, wrong reason. A tool that reads
+  sysfs, procfs, or device-tree files gets an alternate root path as a test-only compile-time macro. A test that uses
+  `O_DIRECT` needs a temporary directory on a disk file system, or on tmpfs from Linux 6.6.
 - `firmware.md`: the firmware testing practice, the largest gap in existing guidance. It covers what to test on the
   host, in emulation, and on hardware; the seams that let a test replace hardware (a hardware abstraction layer,
   link-time substitution, function-pointer interfaces, and register-level fakes); how to add tests to a codebase that
