@@ -5,15 +5,16 @@ Date: 2026-11-23. Prepared for new C and C++ skills and for extending the embedd
 these skills serve lives in three places, the Linux kernel, U-Boot, and Linux userspace on embedded devices, and must
 match each place's own conventions, with improvements added on top.
 
-| File                                                       | What it holds                                                                                                               |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| [c-cpp-practice.md](c-cpp-practice.md)                     | Coding standards, compiler hardening, analysis and sanitizers, userspace patterns, modern C and C++, and per-codebase rules |
-| [embedded-linux-practice.md](embedded-linux-practice.md)   | Yocto and OpenEmbedded, Buildroot, expert training material, device robustness, and product security                        |
-| [language-standards.md](language-standards.md)             | Compiler defaults per build system and release, the standards projects and SDKs declare, and proposed default standards     |
-| [third-party-skills.md](third-party-skills.md)             | About 90 third-party agent skills surveyed, 11 assessed in depth, with licences, pins, and red flags                        |
-| [work-session-refinements.md](work-session-refinements.md) | Eight refinements found by applying a draft C rule set to two small tools, with the tool versions used                      |
+| File                                                       | What it holds                                                                                                                           |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| [c-cpp-practice.md](c-cpp-practice.md)                     | Coding standards, compiler hardening, analysis and sanitizers, userspace patterns, modern C and C++, and per-codebase rules             |
+| [embedded-linux-practice.md](embedded-linux-practice.md)   | Yocto and OpenEmbedded, Buildroot, expert training material, device robustness, and product security                                    |
+| [c-cpp-testing.md](c-cpp-testing.md)                       | Unit test frameworks, Valgrind and sanitizers, coverage, on-target, kernel, U-Boot, and MCU firmware testing, with a tool set per place |
+| [language-standards.md](language-standards.md)             | Compiler defaults per build system and release, the standards projects and SDKs declare, and proposed default standards                 |
+| [third-party-skills.md](third-party-skills.md)             | About 90 third-party agent skills surveyed, 11 assessed in depth, with licences, pins, and red flags                                    |
+| [work-session-refinements.md](work-session-refinements.md) | Eight refinements found by applying a draft C rule set to two small tools, with the tool versions used                                  |
 
-Four Sonnet research lanes wrote the first four files from primary sources where reachable, and each marks what a
+Five Sonnet research lanes wrote the first five files from primary sources where reachable, and each marks what a
 source says apart from its own inference. Each file lists what it could not reach.
 
 ## What the Sources Settle
