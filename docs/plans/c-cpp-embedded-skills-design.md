@@ -225,7 +225,7 @@ Body sections, about 180 lines:
 7. Done when checkpatch is clean, `W=1` adds no new warnings, and the relevant KUnit or kselftest suites pass.
 
 References: `patch-workflow.md` (`format-patch`, `get_maintainer.pl`, cover letters, and revising a series),
-`analysis-and-debug.md` (sparse, Coccinelle, the sanitizers, and syzkaller), and `device-tree-bindings.md` (binding
+`debug-tools.md` (sparse, Coccinelle, the sanitizers, and syzkaller), and `device-tree-bindings.md` (binding
 schemas and `dt_binding_check`).
 
 It is inspired by `UtsavBalar1231/kernel-development-skills` (MIT). Its material is rewritten, not copied, and the
