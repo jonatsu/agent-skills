@@ -91,6 +91,9 @@ exit
   Filter out any line that could hold a secret before printing it, for example `grep -v 'AGE-SECRET-KEY'`, and check
   afterwards that no secret reached any log with `rg -c` for the secret's prefix.
 
+- Write every file a retry may rewrite with `>|`. Many shells set `noclobber`, and then a rerun after a cancelled
+  prompt fails with "cannot overwrite existing file" and keeps the old file.
+
 - When the operator says "done" but a command is missing from the log, run the read-only check yourself rather than
   sending them back.
 
@@ -109,10 +112,13 @@ exit
    key can produce come first, backed up and read back.
 4. **Run each step as a witnessed log.** One block per step, ending at a natural checkpoint. Name, inside the block's
    instructions, every prompt the operator will see and the answer to give, including "current PIN is the factory
-   `123456`" where it applies. For a token that types its output, name the window to focus.
+   `123456`" where it applies. For a token that types its output, name the window to focus. Give every step as a
+   command, never as a comment the operator must act on, and check its effect in the next block. For an OpenPGP card,
+   follow [references/openpgp-card.md](references/openpgp-card.md).
 5. **Verify from the log and the stores.** For each secret: read the backup back and compare (`cmp`, fingerprint with
    `ssh-keygen -lf`, an `age` round trip, `gpg --import` in a throwaway keyring). For each public registration: fetch
-   the public endpoint. Done when every backup and registration has a check that passed in this session.
+   the public endpoint. List each password-manager item's field names and compare them with what the record says it
+   holds. Done when every backup and registration has a check that passed in this session.
 6. **Record.** Write the step and what verified it to the work's plan or record, and any surprise to a findings
    note, then commit. Correct an earlier claim the step proved wrong in the same commit and in the next reply.
 7. **Clean up.** Delete temporary keyrings, key files, and copies once their backups are verified, and archive the plan

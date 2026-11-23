@@ -34,6 +34,14 @@ age-plugin-yubikey --list   # age identities in PIV slots
   the attestation key and certificate.
 - The firmware cannot be updated. A feature that needs newer firmware needs a newer key.
 
+## OpenPGP Touch
+
+- `ykman openpgp keys set-touch KEY POLICY` sets a slot's touch policy, with KEY one of `sig`, `dec`, `aut`, or `att`
+  and POLICY one of `off`, `on`, `fixed`, `cached` (15 seconds), or `cached-fixed`. It needs the Admin PIN. `fixed` and
+  `cached-fixed` cannot be turned off without replacing the slot's key.
+- Run `gpgconf --kill scdaemon` first, because scdaemon holds the card. Set touch after `keytocard`: on firmware 5.7.4,
+  `keytocard` was observed to reset every slot to Off. Check with `ykman openpgp info`.
+
 ## PIV and age
 
 - `age-plugin-yubikey` stores its identity in a retired slot (slot 82 for its slot 1). When it finds the factory PIN, it

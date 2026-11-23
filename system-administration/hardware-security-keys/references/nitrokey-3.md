@@ -23,6 +23,8 @@ nitropy nk3 piv --experimental info
 
 - `nitropy nk3 set-config opcard.use_se050_backend true` moves OpenPGP keys into the secure element and wipes the
   OpenPGP applet by itself.
+- Touch is GnuPG's user interaction flag: `gpg-card uif N on|off|permanent`, with N 1 for signing, 2 for decryption,
+  and 3 for authentication. `permanent` cannot be turned off again. Check with `gpg --card-status`.
 - `nitropy nk3 factory-reset-app opcard` resets OpenPGP only; `nitropy nk3 factory-reset` wipes every applet.
 
 ## PIV (firmware v1.9.1)

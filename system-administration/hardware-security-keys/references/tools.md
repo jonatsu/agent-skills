@@ -14,8 +14,9 @@ password-manager CLIs, and GitHub key registration.
 - Layout: a certify-only primary key kept offline (in the password manager), with sign, encrypt, and authenticate
   subkeys on the card. A lost card then costs new subkeys, not the identity. `keytocard` replaces the local secret with
   a stub; `sec#` means the primary secret is absent, `ssb>` means the subkey is on a card.
-- Generate in a temporary `GNUPGHOME` on tmpfs (`$XDG_RUNTIME_DIR`). Save and restore the daily `GNUPGHOME` rather than
-  unsetting it, because a non-default daily path breaks when unset.
+- Generate in a temporary `GNUPGHOME` on tmpfs (`$XDG_RUNTIME_DIR`), with the daily `gpg.conf` and `scdaemon.conf`
+  copied in. Save and restore the daily `GNUPGHOME` rather than unsetting it, because a non-default daily path breaks
+  when unset. [openpgp-card.md](openpgp-card.md) has the full procedure.
 - A plugged-in card with keys becomes gpg's default signing key even in a fresh `--homedir`, because that home's agent
   starts scdaemon. A throwaway keyring that must sign with its own key needs `disable-scdaemon` in its
   `gpg-agent.conf`, or `--local-user` on each call.
@@ -80,7 +81,10 @@ password-manager CLIs, and GitHub key registration.
   another shell, a hook, or an agent's shell asks again.
 - Bitwarden `rbw`: `rbw get --raw ITEM` returns JSON with the note body at `.notes` and custom fields under `.fields[]`
   (`.name`, `.value`); notes keep line breaks. Items with attachments or notes are created in the Bitwarden app; run
-  `rbw sync` before reading a new item. Chezmoi's `(rbw "ITEM").notes` reads the same field.
+  `rbw sync` before reading a new item. Chezmoi's `(rbw "ITEM").notes` reads the same field. rbw 1.15 cannot read
+  attachments (`rbw get` has no attachment option) or write custom fields. The agent can read back a backup kept in a
+  note or field itself; one kept as an attachment the operator must download into `$XDG_RUNTIME_DIR` and `cmp`.
+  Bitwarden attachments need Premium or an organization vault.
 
 ## GitHub Key Registration
 
