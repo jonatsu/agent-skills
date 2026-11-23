@@ -15,6 +15,8 @@ a synthesis, not a statement in the cited page.
 - Integer Overflow Checks
 - Wiping Secrets
 - Dropping Privileges
+- Single-Run Command-Line Tools
+- Device Conditions
 
 ## Default Written Style
 
@@ -180,6 +182,39 @@ Treat every byte from a file, socket, or device as hostile until a parser has ac
   that `*endptr` ends the field.
 - Never use `atoi`; it reports no error.
 
+Binary input needs three more rules:
+
+- Read each integer by copying its bytes with `memcpy` into an integer variable, then converting the byte order with
+  `be32toh`, `le64toh`, and the related functions in `<endian.h>` (endian(3)). Never cast a byte buffer to a struct
+  or integer pointer: the cast ignores alignment and byte order, and breaks the aliasing rules (inference).
+  Device-tree properties are big-endian, so a property read into a `uint32_t` needs `be32toh` too.
+- Check lengths in an order in which no sum can overflow: compare a field's length with the bytes remaining, never
+  `offset + length` with the total (inference).
+- Validate the whole input before acting on any part of it, so malformed input changes nothing (inference).
+
+```c
+#include <endian.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
+
+/* Read a big-endian u32 at off; false when fewer than 4 bytes remain. */
+static bool read_be32(const unsigned char *buf, size_t len, size_t off, uint32_t *out)
+{
+    uint32_t raw;
+
+    if (off > len || len - off < sizeof(raw)) {
+        return false;
+    }
+    memcpy(&raw, buf + off, sizeof(raw));
+    *out = be32toh(raw);
+    return true;
+}
+```
+
+Give every such parser a fuzz target; `c-cpp-testing` describes the setup.
+
 ```c
 #include <errno.h>
 #include <limits.h>
@@ -220,8 +255,16 @@ A plain `memset` before `free` can be removed by the optimiser, because the prog
   optimisations do not remove the erase. It is a nonstandard extension, available since glibc 2.25 and on the BSDs.
 - `memset_explicit` is the C23 equivalent, and glibc 2.43 declares it in `string.h`. Check the installed C library
   first, because older glibc and other C libraries may lack it.
+- Wipe on every exit path, failures included, not only after success (inference). A cleanup ladder or the `die()`
+  helper below is the place.
+- When the program links OpenSSL, `OPENSSL_cleanse` does the same job.
 - Zeroing a buffer does not clear registers, spilled copies, swap, or core dumps (inference). Where secrets matter,
   add `mlock`, `madvise` with `MADV_DONTDUMP`, and short lifetimes.
+- Turn core dumps off with `setrlimit(RLIMIT_CORE, ...)` at zero and `prctl(PR_SET_DUMPABLE, 0)`. A process that is
+  not dumpable also cannot be attached with `ptrace(PTRACE_ATTACH)`, and root owns its `/proc/<pid>` files
+  (PR_SET_DUMPABLE(2const)). A change of user or group ID resets the attribute, so call it after dropping privileges.
+- Never pass a secret in `argv`, where `ps` and `/proc/<pid>/cmdline` show it to other users, and never write one to
+  a message or a log (inference). Read it from a file, a descriptor, or standard input.
 
 ## Dropping Privileges
 
@@ -240,3 +283,27 @@ request (Provos, Friedl, Honeyman, USENIX Security 2003).
    and `execve`, and it cannot be unset. It stops set-user-ID bits and file capabilities from adding privilege. An
    unprivileged seccomp filter requires it (no_new_privs.rst; seccomp(2)).
 5. Prefer a unit file or init script to a sandbox library on an embedded target (inference).
+
+## Single-Run Command-Line Tools
+
+A tool that runs once and exits may end through a `die()` helper instead of a cleanup ladder, when that helper first
+wipes secrets and removes partial output (inference). Library code still returns errors to its caller.
+
+- List every exit status in the file's header comment, and keep each value stable, because scripts branch on it.
+  Callers test the status, never the message text.
+- Write each message to standard error as `<program>: <what failed>; <what to do next>`.
+
+For the wider design of options, messages, and exit statuses, use the `cli-ui-ux` skill.
+
+## Device Conditions
+
+An embedded device breaks three assumptions that desktop code makes (inference):
+
+- The wall clock may be wrong until a time server sets it, or for ever on a device without one. Measure intervals,
+  timeouts, and retries with `clock_gettime(CLOCK_MONOTONIC, ...)`, and use the wall clock only for timestamps shown
+  to people.
+- Flash wears with every write. Keep state that lasts one boot, such as PID files, sockets, and caches, on tmpfs under
+  `/run`, and write persistent state only when it changes.
+- Power can fail during a write. When rewriting a block device or a raw partition, order the writes so that an
+  interrupted run leaves nothing a reader accepts: invalidate the header, write the payload, then write the header
+  last. Call `fsync` on the device descriptor after each step, so the device does not reorder them.

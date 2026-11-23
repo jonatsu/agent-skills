@@ -77,11 +77,16 @@ Start new code from this set, which follows the OpenSSF Compiler Options Hardeni
 -Wnull-dereference -Wcast-align -Werror=format-security
 ```
 
-Add these to the C flags only, because `g++` rejects them:
+Add these to the C flags only, because `g++` warns on each that it is not valid for C++:
 
 ```text
+-Wstrict-prototypes -Wmissing-prototypes
 -Werror=implicit -Werror=incompatible-pointer-types -Werror=int-conversion
 ```
+
+Under `gnu17`, `int f()` still declares a function without a prototype, which `-Wstrict-prototypes` reports.
+`-Wmissing-prototypes` reports an external function with no prior declaration, which is usually one that should be
+`static`.
 
 In C, `-Wconversion` also enables `-Wsign-conversion`. In C++, add `-Wsign-conversion` separately.
 `-Wnull-dereference` works only while the compiler deletes null-pointer checks. The production flag
@@ -89,7 +94,9 @@ In C, `-Wconversion` also enables `-Wsign-conversion`. In C++, add `-Wsign-conve
 builds.
 
 Use `-Werror` in development and CI builds only. In shipped source and recipes, use selective `-Werror=<warning>`,
-because a blanket `-Werror` breaks the build when a newer compiler adds a warning.
+because a blanket `-Werror` breaks the build when a newer compiler adds a warning. A build layer that pins its
+toolchain may use a blanket `-Werror` on purpose, so that a toolchain update shows every new warning at once; keep
+that choice where the tree makes it.
 
 Honour the build system's flag variables: `CC`, `CXX`, `CPPFLAGS`, `CFLAGS`, `CXXFLAGS`, and `LDFLAGS`. Yocto passes
 them in the environment, and Buildroot passes them on the `make` command line. Both carry hardening and sysroot

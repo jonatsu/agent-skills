@@ -40,7 +40,19 @@
         "Checks the count times size multiplication for overflow, with `__builtin_mul_overflow` or an equivalent bound check, using `size_t`.",
         "Checks every read and allocation result, including short reads.",
         "Frees the buffer on every error path, with one clear owner of the returned buffer.",
-        "Uses no variable-length array, `alloca`, or unbounded copy."
+        "Uses no variable-length array, `alloca`, or unbounded copy.",
+        "Reads each header integer by copying its bytes with `memcpy` and converting with `le32toh`, or by assembling bytes with shifts, never by casting the byte buffer to an integer or struct pointer."
+      ]
+    },
+    {
+      "id": "unlock-key-cli",
+      "prompt": "Write a small C17 command-line tool for our device that unlocks an encrypted partition. It takes the 32-byte unlock key, derives a volume key with our existing function `int derive_key(const unsigned char *in, size_t len, unsigned char out[32])`, and passes the volume key to `int volume_unlock(const char *dev, const unsigned char key[32])`. Both return 0 on success. Decide how the key reaches the tool, and handle every failure.\n",
+      "behavior": "Keep the secrets out of argv, logs, and core dumps, and wipe them on every path.",
+      "outcomes": [
+        "Reads the key from a file, a descriptor, or standard input, never from a command-line argument.",
+        "Wipes both keys with `explicit_bzero`, `memset_explicit`, or `OPENSSL_cleanse` on the failure paths as well as on success.",
+        "Disables core dumps before handling the key, with `setrlimit(RLIMIT_CORE)` at zero, `prctl(PR_SET_DUMPABLE, 0)`, or both.",
+        "Prints no key bytes in any message, and gives each failure a distinct, documented exit status."
       ]
     }
   ]

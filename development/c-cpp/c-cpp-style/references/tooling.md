@@ -42,23 +42,26 @@ sources avoid the fences, because other people run other clang-format versions.
 ### Kernel Style With Pure Tabs
 
 Kernel style indents with tabs. `UseTab: Always` combined with `AlignAfterOpenBracket: Align` mixes tabs and spaces on
-continuation lines, which fails `editorconfig-checker` under `indent_style = tab`. Set the first three options together,
-and add the fourth with them:
+continuation lines, which fails `editorconfig-checker` under `indent_style = tab`. Set these options together:
 
 ```yaml
 UseTab: Always
 AlignAfterOpenBracket: DontAlign
 AlignOperands: DontAlign
+ContinuationIndentWidth: 8
 BreakStringLiterals: false
 ```
 
+An LLVM base sets `ContinuationIndentWidth` to 4, so without it a wrapped argument or a wrapped `if` condition gets one
+tab plus four spaces. With it, clang-format 21 and 23 indent both with tabs only.
+
 `BreakStringLiterals: false` keeps a user-visible message on one line, so `rg` finds it by its text.
 
-LLVM-based styles indent a wrapped `if` condition by four spaces, which breaks the pure-tab rule. Assign the call's
-result to a variable before the `if`:
+A wrapped `if` condition then starts at the same indent as the body, so the two run together. Assign the call's
+result to a variable before the `if` to keep the condition on one line:
 
 ```text
-/* Wraps with four extra spaces under an LLVM-based style. */
+/* The continuation lines up with the body. */
 if (parse_header(buf, len, &hdr) < 0 ||
     hdr.version != EXPECTED_VERSION) {
 
@@ -136,11 +139,13 @@ Turn these off in `.clang-tidy`, with the reason beside each so a later reader c
 ```yaml
 Checks: >-
   bugprone-*,cert-*,clang-analyzer-*,
+  -bugprone-signed-bitwise,
   -hicpp-signed-bitwise,
   -cert-err33-c,
   -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling
-# hicpp-signed-bitwise: flags every uint8_t operand through integer promotion. -Wconversion and
-#   -Wsign-conversion cover the real cases. clang-tidy 23 names it bugprone-signed-bitwise.
+# bugprone-signed-bitwise, named hicpp-signed-bitwise before clang-tidy 23: flags every uint8_t operand
+#   through integer promotion. -Wconversion and -Wsign-conversion cover the real cases. Negate both names,
+#   because bugprone-* enables the new one and an unknown name is ignored.
 # cert-err33-c: flags every fprintf to stderr. Review still covers calls whose result matters.
 # clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling: asks for the Annex K *_s functions,
 #   which glibc does not provide.
@@ -187,10 +192,14 @@ cppcheck -UHOST_TEST src/
 Suppress these two findings, and keep the reason where the suppression lives:
 
 - `variableScope` conflicts with declarations at the top of a block, which kernel style requires. Pass
-  `--suppress=variableScope` in the recipe and write the reason in a comment beside it.
+  `--suppress=variableScope` in the check script or task recipe, and write the reason in a comment beside it.
 - `constParameter` flags the `argv` parameter of `main` as pointer to const, while `main` keeps its standard
   signature. Put `// cppcheck-suppress constParameter` on the line above, with a comment giving the reason.
-  cppcheck reads inline suppressions only with `--inline-suppr`, so add that flag to the recipe.
+  cppcheck reads inline suppressions only with `--inline-suppr`, so add that flag to the check script or task recipe.
+
+A struct that mirrors a firmware or hardware layout has members that no code reads, such as reserved fields or end
+tags. `unusedStructMember` is then correct but irrelevant in every configuration, so suppress it inline on the member,
+with the reason.
 
 Feed cppcheck the compilation database with `--project=compile_commands.json`, and pass `--platform` or a platform XML
 that matches the target when char width or pointer size differs from the host. The project's `misra.py` addon checks
