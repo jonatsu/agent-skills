@@ -1,6 +1,6 @@
 ---
 name: u-boot-development
-description: "Develop and debug the U-Boot bootloader: board ports, SPL sizing, environment persistence, boot scripts, extlinux and bootstd, FIT signatures, driver model, A/B boot counting, and build provenance. Use when saveenv or fw_setenv changes do not persist, a boot script is never read, a FIT is rejected, SPL overflows, or a bootcmd change loses the console. Route U-Boot GDB sessions to embedded-linux-debugging, kernel boot failures to embedded-linux-bringup, and build recipes to Buildroot, Yocto, or kas skills."
+description: "Develop and debug U-Boot: board ports, SPL sizing, environment persistence, boot scripts, extlinux and bootstd, FIT signatures, driver model, A/B boot counting, provenance, coding style, and sandbox tests. Use when saveenv does not persist, a boot script is never read, a FIT is rejected, SPL overflows, or a U-Boot patch needs checkpatch or tests. Route GDB sessions to embedded-linux-debugging, kernel boot failures to embedded-linux-bringup, and build recipes to Buildroot, Yocto, or kas skills."
 license: MIT
 compatibility: Requires release-matched U-Boot source and build tools; target access is task-specific. The provenance helper requires Bash 4+, Git, and GNU coreutils on Linux.
 metadata:
@@ -24,6 +24,7 @@ applying a command or configuration symbol. Read the relevant reference when ent
 | Boot selection, scripts, image formats, FIT creation, network loading | [Boot scripts](references/uboot-boot-scripts.md)                       |
 | Board port, DT source, driver model, SPL memory, A/B integration      | [Porting](references/uboot-porting.md)                                 |
 | Signature enforcement, shell access, SoC lifecycle, artifact identity | [Security and provenance](references/uboot-security-and-provenance.md) |
+| C coding style, checkpatch, sandbox tests, clangd, sending patches    | [Coding](references/uboot-coding.md)                                   |
 
 Use **embedded-linux-bringup** for the kernel's device tree, runtime drivers, rootfs integrity, OTA integration, and
 host flashing checks. Use **buildroot-development** for `BR2_TARGET_UBOOT_*`, **yocto-openembedded-development** for

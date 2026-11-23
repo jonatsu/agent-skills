@@ -17,6 +17,17 @@ The environment, FIT signature, boot flow and bootstd, bootcount, control device
 release's source and documentation: its failure cases, persistence and verification boundaries, and board-specific
 limits. No upstream implementation is vendored, and no board skeleton is copied.
 
+### The U-Boot developers: coding style, testing, and patch documentation
+
+- Source: <https://github.com/u-boot/u-boot>, `doc/develop/codingstyle.rst`, `doc/develop/testing.rst`,
+  `doc/develop/sending_patches.rst`, the top `Makefile`, `arch/sandbox/config.mk`, and
+  `scripts/gen_compile_commands.py`
+- License: `GPL-2.0-or-later`
+- Version: `e578056c766d`
+
+The coding rules, build flags, checks, sandbox tests and sanitizer support, compilation database script, and patch
+tools in the coding reference come from these files. No prose was copied.
+
 ## Third-party Sources
 
 ### Michael Opdenacker, Bootlin: Implementing A/B System Updates with U-Boot
