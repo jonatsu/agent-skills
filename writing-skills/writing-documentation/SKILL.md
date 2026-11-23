@@ -105,8 +105,8 @@ place it.
 
 Two further types fall outside the four. A **decision record** makes a decision reviewable after its conditions
 change; see Decision Records below. A **change note** says what changed, who is affected, the required action,
-compatibility effects, and migration or recovery. For a maintained changelog, read
-[references/changelog.md](references/changelog.md).
+compatibility effects, and migration or recovery. A maintained `CHANGELOG.md` file belongs to
+`repo-landing-docs`.
 
 Lead a decision record, change note, runbook notice, or executive summary with the action, result, decision, or
 state. Name the owner and deadline when they matter.

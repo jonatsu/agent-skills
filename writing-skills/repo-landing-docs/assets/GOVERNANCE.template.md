@@ -4,9 +4,7 @@
 
 ## Roles
 
-- **Maintainers** ({{MAINTAINER_LIST_OR_LINK}}) review and merge changes, cut releases, and decide project
-  direction.
-- **Contributors** are anyone whose change has been merged.
+- **{{ROLE_NAME}}** ({{WHO_OR_LINK}}): {{WHAT_THIS_ROLE_DECIDES_OR_DOES}}.
 
 ## How Decisions Are Made
 

@@ -1,6 +1,6 @@
 ---
 name: repo-audit
-description: Audit an existing repository read-only, then land the fixes the user approves. Covers its linter, type-checker, and formatter configuration (stale suppressions and exclusions, outdated or misconfigured checkers, unused rules worth enabling with their violation counts) and its hygiene (tracked files that should be ignored, large files and history blobs, committed secrets and personal paths). Use for a lint or config audit, a cleanup assessment, a secrets or large-file scan, or to enable an approved rule and fix its violations. Setting up hooks and config files belongs to repo-setup, and a security review of the code to security-review.
+description: Audit an existing repository read-only, then land the fixes the user approves. Covers its linter, type-checker, and formatter configuration (stale suppressions and exclusions, outdated or misconfigured checkers, unused rules worth enabling with their violation counts) and its hygiene (tracked files that should be ignored, large files and history blobs, committed secrets and personal paths). Use for a lint or config audit, a cleanup assessment, a scan of the repository for committed secrets or large files, or to enable a checker rule and fix its violations. Setting up hooks and config files belongs to repo-setup, and a security review of the code to security-review.
 license: MIT
 compatibility: Runs the repository's own checkers, so each one the audit covers must be installed; the hygiene audit uses git and a credential scanner such as Betterleaks. Reading latest releases needs network access.
 metadata:
@@ -23,8 +23,8 @@ such as one language, a category such as security, or everything. Audit only tha
 out.
 
 The audit is read-only. Every change to configuration, code, or tracked files waits for the user's decision on
-that specific finding, because enabling a rule rewrites code across the tree, suppressing one removes protection,
-and untracking or rewriting history loses data.
+that specific finding. Enabling a rule rewrites code across the tree, and suppressing one removes protection.
+Untracking a file or rewriting history can lose data.
 
 ## Hygiene Audit
 
@@ -48,14 +48,19 @@ Run each scan in the focus and change nothing:
     awk '$1 == "blob"' | sort -k2 -rn | head
   ```
 
-Report paths and the remediation for each finding, never a secret's value. A leaked credential is rotated
-before it is removed from history, because removal does not revoke a copy someone already has. Untracking a file,
-deleting content, and rewriting history each need their own authorization; hand a history rewrite to
-`git-commits-and-recovery`. When the audit should also check whether the README or other documents are still
-true, run `context-architecture`'s truth audit beside it.
+Report each finding with its path and remediation, and never with a secret's value. When the audit should also
+check whether the README or other documents are still true, run `context-architecture`'s truth audit beside it.
 
-The hygiene audit is done when every scan in the focus has run, or is reported as not run with its reason, and
-each finding names its path and remediation.
+The hygiene audit is done when every scan in the focus has run, or is reported as not run with its reason. Each
+finding must also name its path and remediation.
+
+Land each approved hygiene fix on its own, after the user decides that finding:
+
+- **Tracked but ignored file:** untrack it with `git rm --cached -- <path>`, which keeps the working copy. Where
+  the ignore rule itself is wrong, fix `.gitignore` instead, as `repo-setup` describes.
+- **Large file:** move it out of the tree or to Git LFS, as the user chooses.
+- **Leaked credential:** have the owner rotate it first, because removing it from history does not revoke a copy
+  someone already has. Hand the history rewrite to `git-commits-and-recovery`.
 
 ## 1. Inventory the Checkers
 

@@ -1,6 +1,6 @@
 ---
 name: repo-setup
-description: Set up a new repository, or add, refresh, or configure an existing one's baseline files and hygiene hooks (.gitignore, .editorconfig, .gitattributes, pre-commit with formatter, linter, and secret-scanning hooks). Use to set up or bootstrap a repository, or when its hooks or baseline config are missing or out of date. Not for the README and other landing documents (repo-landing-docs), auditing an existing repository's checks or tracked files (repo-audit), or commits and history (git-commits-and-recovery).
+description: Set up a new repository, or add, refresh, or configure an existing one's baseline files and hygiene hooks (.gitignore, .editorconfig, .gitattributes, pre-commit with formatter, linter, and secret-scanning hooks). Use to set up or bootstrap a repository, handing its landing documents to repo-landing-docs, or when its hooks or baseline config are missing or out of date. Not for writing the README and other landing documents alone (repo-landing-docs), auditing or tuning an existing repository's checker rules or tracked files (repo-audit), or commits and history (git-commits-and-recovery).
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -13,20 +13,21 @@ configurations encode the author's personal preferences; treat them as deliberat
 and explicit user choices take precedence when they conflict with those defaults.
 
 This skill owns baseline files and repository-local hygiene hooks. Neighbouring work has its own skill:
-`repo-landing-docs` owns the landing documents; `repo-audit` audits an established repository's checkers and
-tracked files read-only; `git-commits-and-recovery` owns commits, branches, recovery, and history
-rewriting; `git-history-investigation` answers history questions; `using-git-worktrees` covers worktrees; and
-`agents-context-docs` covers agent instruction files.
+
+- `repo-landing-docs` owns the landing documents, such as the README.
+- `repo-audit` audits an established repository's checkers and tracked files.
+- `git-commits-and-recovery` owns commits, branches, recovery, and history rewriting.
+- `git-history-investigation` answers history questions, and `using-git-worktrees` covers worktrees.
+- `agents-context-docs` covers agent instruction files.
 
 ## Choose the Task
 
 - **Targeted change:** add or revise named baseline files or hooks. Inspect only the affected files, their consumers,
   and the repository's existing conventions. A request for one file is not a request for an audit.
-- **Bootstrap:** establish a baseline in a new or nearly empty repository, including its landing documents through
-  `repo-landing-docs`. In a split from an existing repository, the
-  bootstrap is done only when the in-flight state about the moved part has moved or been rewritten. That state includes
-  open review items, TODO and backlog entries, notes, and plans. The README must also document every install route and
-  state a minimum interpreter version, not an exact one.
+- **Bootstrap:** establish a baseline in a new or nearly empty repository. Load `repo-landing-docs` for its landing
+  documents. A split from an existing repository must also carry the in-flight state about the moved part. That
+  state includes open review items, TODO and backlog entries, notes, and plans. The bootstrap is done only when all
+  of it has moved or been rewritten.
 - **Refresh:** compare an established repository with the preferred baseline, then fill approved gaps and
   leave healthy files as they are.
 

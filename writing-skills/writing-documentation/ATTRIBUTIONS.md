@@ -69,7 +69,8 @@ The skill suggested the exemplar-evidence approach behind "Match an Established 
 - License: `MIT`
 - Version: read on or before 2026-09-09
 
-The skill supplied the main ideas for the decision-record section and the changelog reference:
+The skill supplied the main ideas for the decision-record section, and formerly for a changelog reference that
+now lives in the `repo-landing-docs` skill:
 
 - writing a record on a cost-to-reverse trigger;
 - a status lifecycle with superseded records kept;
@@ -134,8 +135,9 @@ it. Nothing was copied due to the content license.
 - License: `MIT`
 - Version: 1.1.0
 
-The convention supplied the grouping vocabulary (added, changed, deprecated, removed, fixed, security) and the
-`Unreleased` section that `references/changelog.md` describes. Nothing was copied.
+Formerly supplied the grouping vocabulary (added, changed, deprecated, removed, fixed, security) and the
+`Unreleased` section for a changelog reference. The current skill carries none of it; the `repo-landing-docs`
+skill carries the reference. Nothing was copied.
 
 ### ASD: ASD-STE100 Simplified Technical English
 

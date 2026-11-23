@@ -15,7 +15,7 @@ Contributions are welcome.
 1. Fork or clone the repository.
 2. Create a branch with a short, descriptive name.
 3. Make the smallest useful change.
-4. Run the project checks documented in the README.
+4. Run `{{CHECK_COMMAND}}` and make it pass.
 5. Open a pull request using the template.
 
 ## Pull request expectations

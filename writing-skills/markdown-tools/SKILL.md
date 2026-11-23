@@ -1,6 +1,6 @@
 ---
 name: markdown-tools
-description: "Rewrap Markdown prose to a line limit and check Markdown files mechanically: broken relative links and heading anchors, links lost in a reference-style conversion, and words lost when a document is moved, merged, or split. Use after editing Markdown when lines run past the limit or a linter reports line length, after moving files or renaming headings, and to prove a restructure dropped nothing. Not for wording (writing-for-humans), document structure (writing-documentation), Mermaid rendering (mermaid-diagrams), or lint configuration (repo-audit)."
+description: "Rewrap Markdown prose to a line limit and check Markdown files mechanically: broken relative links and heading anchors, links lost in a reference-style conversion, and words lost when a document is moved, merged, or split. Use after editing Markdown when lines run past the limit or a linter reports line length, after moving files or renaming headings, and to prove a restructure dropped nothing. Not for wording (writing-for-humans), document structure (writing-documentation), Mermaid rendering (mermaid-diagrams), or setting up or auditing lint configuration (repo-setup, repo-audit)."
 license: MIT
 metadata:
   author: Joonas Onatsu

@@ -23,4 +23,4 @@ warnings, moderation, or removal from project spaces.
 
 ## Attribution
 
-For public OSS projects, use Contributor Covenant or another approved code.
+For a public project, replace this file with a recognised code, such as the Contributor Covenant, copied verbatim.

@@ -1,7 +1,7 @@
 # Changelogs
 
-Detail behind the change-note shape in `SKILL.md`, for a changelog maintained as a file in the project rather
-than a one-off release announcement.
+Rules for a versioned `CHANGELOG.md` in the Keep a Changelog format, maintained as a file in the project. A
+one-off release announcement is a different document, a release note.
 
 ## Decide Whether One Is Warranted
 
@@ -49,6 +49,7 @@ sentence, and copying the second in place of the first is the dominant failure i
 - Link the issue or pull request for the reader who needs the full history, rather than reproducing it.
 - Omit changes with no observable effect: internal refactoring, test-only work, and dependency bumps that alter
   nothing the reader can see. A changelog that records them buries the entries that matter.
+- Omit a fix for a bug that never shipped in a release, because no user saw the bug.
 
 ## Worked Example
 

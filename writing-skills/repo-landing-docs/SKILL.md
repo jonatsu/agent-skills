@@ -45,9 +45,9 @@ the result is uniformly flat because nothing in it was chosen.
   not settle it, ask; an invented purpose is the one error nothing downstream repairs. Start from the file's
   template in `assets/`. Deliver the plain document, then list the devices you recommend and the trigger each
   one meets. Done when every [Before Delivery](#before-delivery) item passes.
-- **Refresh.** Inventory the landing documents the repository has, where each lives, and which ones its kind of
-  project needs, using [Choose the Files](#choose-the-files). Propose the set: each file to add, rewrite, or
-  leave, with its reason. Then draft or rewrite each approved file. Done when every approved file passes its
+- **Refresh.** Inventory the landing documents the repository has and where each lives. Decide which ones its
+  kind of project needs, using [Choose the Files](#choose-the-files). Propose the set: each file to add, rewrite,
+  or leave, with its reason. Then draft or rewrite each approved file. Done when every approved file passes its
   checks and every file left alone is named.
 - **Rewrite.** Diagnose against the reader questions first: which are unanswered, which are answered out of
   order, which sections answer nothing. Show the diagnosis before the replacement. This mode changes the
@@ -68,41 +68,45 @@ the rules each file's template cannot carry, and the check that tells you each f
 Each file answers one visitor question. Add a file when its question will be asked; a file nobody needs is one
 more to keep true.
 
-| File                         | Visitor question                           | Add it when                                       |
-| ---------------------------- | ------------------------------------------ | ------------------------------------------------- |
-| `README.md`                  | What is this, and is it for me?            | Always                                            |
-| `LICENSE`                    | May I use this?                            | The user has chosen a licence                     |
-| `CONTRIBUTING.md`            | How do I get a change accepted?            | Outsiders may send changes                        |
-| `SECURITY.md`                | How do I report a vulnerability privately? | The project is public                             |
-| `CODE_OF_CONDUCT.md`         | How will I be treated, and whom do I tell? | People other than the maintainer interact         |
-| Issue and pull request forms | What do the maintainers need from me?      | Outsiders open issues or pull requests            |
-| `CHANGELOG.md`               | What changed for me since my version?      | Users upgrade between versions or dated states    |
-| `ROADMAP.md`                 | Where is this going, and is my need on it? | Users plan around the project's direction         |
-| `SUPPORT.md`                 | Where do I get help?                       | Help requests arrive in the wrong channel         |
-| `GOVERNANCE.md`              | Who decides, and how?                      | More than one person holds merge or release power |
-| `FUNDING.yml`                | How do I pay for this?                     | The maintainers accept money                      |
+| File                             | Visitor question                           | Add it when                                       |
+| -------------------------------- | ------------------------------------------ | ------------------------------------------------- |
+| `README.md`                      | What is this, and is it for me?            | Always                                            |
+| `LICENSE`                        | May I use this?                            | The user has chosen a licence                     |
+| `CONTRIBUTING.md`                | How do I get a change accepted?            | Outsiders may send changes                        |
+| `SECURITY.md`                    | How do I report a vulnerability privately? | The project is public                             |
+| `CODE_OF_CONDUCT.md`             | How will I be treated, and whom do I tell? | People other than the maintainer interact         |
+| Issue and pull request templates | What do the maintainers need from me?      | Outsiders open issues or pull requests            |
+| `CHANGELOG.md`                   | What changed for me since my version?      | Users upgrade between versions or dated states    |
+| `ROADMAP.md`                     | Where is this going, and is my need on it? | Users plan around the project's direction         |
+| `SUPPORT.md`                     | Where do I get help?                       | Help requests arrive in the wrong channel         |
+| `GOVERNANCE.md`                  | Who decides, and how?                      | More than one person holds merge or release power |
+| `FUNDING.yml`                    | How do I pay for this?                     | The maintainers accept money                      |
 
 Each file's template sits in `assets/` under the file's name, such as `assets/SECURITY.template.md`. The issue
-forms are in `assets/ISSUE_TEMPLATE/`, and the pull request form is `assets/PULL_REQUEST_TEMPLATE.md`. The changelog
-has a versioned and a dated template. `LICENSE` has none; use the licence's canonical text.
+templates are in `assets/ISSUE_TEMPLATE/`, and the pull request template is `assets/PULL_REQUEST_TEMPLATE.md`. The
+changelog has a versioned and a dated template. `LICENSE` has none; use the licence's canonical text.
 
 For the README, read [references/readme-by-audience.md](references/readme-by-audience.md) to choose between the
 generic, open-source, personal, internal, and configuration templates. Its section matrix settles which sections a
 project type needs; the rest of this file makes them worth reading.
 
-Fill a template completely. Replace every `{{PLACEHOLDER}}` with a fact from the repository or the user, because a
-plausible invented contact, command, or response time misleads the visitor who acts on it. Leave a placeholder in
-place and name it in your report when no source supplies the fact. Delete each section that answers no question for
-this project.
+Fill a template completely, and replace every `{{PLACEHOLDER}}` with a fact from the repository or the user. A
+plausible invented contact, command, or response time misleads the visitor who acts on it. When no source supplies
+a fact, leave its placeholder and name it in your report. Delete each section that answers no question for this
+project.
 
 ### Place the Files
 
 Follow the repository's convention first. Many repositories keep `CHANGELOG.md` and `ROADMAP.md` under `docs/`.
-Without a convention, put each file at the root, except the issue templates, the pull request template, and
-`FUNDING.yml`, which go in `.github/`. GitHub reads `README.md` and the community files (`CONTRIBUTING.md`,
-`SECURITY.md`, `CODE_OF_CONDUCT.md`, `SUPPORT.md`) from `.github/`, the root, or `docs/`, in that order, so a copy in
-`.github/` hides one at the root. `FUNDING.yml` works only in `.github/`, and `LICENSE` belongs at the root. Link each
-Markdown landing file and the licence from the README by a one-line pointer, at the path where it actually lives.
+Without a convention, put each file at the root. The issue templates, the pull request template, and `FUNDING.yml`
+go in `.github/` instead. GitHub reads `README.md` and the community files from `.github/`, the root, or `docs/`, in
+that order. The community files are `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, and `SUPPORT.md`. A
+copy in `.github/` therefore hides one at the root. `FUNDING.yml` works only in `.github/`, and `LICENSE` stays at
+the root by convention.
+
+Point to each other landing file that exists from the README in one line, at the path where it lives. That covers
+`CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `SUPPORT.md`, `CHANGELOG.md`, `ROADMAP.md`, `GOVERNANCE.md`,
+and `LICENSE`. Where the audience matrix marks a section "No" for the project type, its pointer goes too.
 
 ## The Five Questions
 
@@ -256,7 +260,7 @@ For every landing file:
 
 - Is every placeholder replaced by a sourced fact, or left in place and named in your report?
 - Does the file sit where the repository's convention, or the placement default, puts it?
-- For a Markdown file or the licence, does the README point to it at the path where it lives?
+- Where Place the Files calls for a README pointer, does it name the path where the file lives?
 
 For the README and its front-door kin:
 
@@ -264,6 +268,8 @@ For the README and its front-door kin:
 - Is there concrete evidence it works, before the install instructions?
 - Does the document state what the project does not do?
 - Can a reader get to a working result from the shortest path shown, without leaving the page?
+- Does the install section cover every install route, with a minimum runtime or interpreter version rather than
+  an exact one?
 - Does every section map to one of the five questions?
 - Are Contributing, Changelog and License pointers rather than prose?
 - Is every example real, with real values and verified output?

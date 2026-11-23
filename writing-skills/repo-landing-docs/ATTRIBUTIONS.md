@@ -142,6 +142,15 @@ matrix in `references/readme-by-audience.md`, and the per-audience section sets 
 - License: `MIT`
 - Version: 1.1.0
 
-The format behind `assets/CHANGELOG.template.md` and the changelog rules: the change types, the `Unreleased`
-section, newest first, ISO dates, and the warnings against commit-log changelogs and unlisted deprecations. The
-rules are written independently; the change-type names are the format's own.
+The format behind `assets/CHANGELOG.template.md` and `references/changelog.md`: the change types, the
+`Unreleased` section, newest first, ISO dates, and the warnings against commit-log changelogs and unlisted
+deprecations. The rules are written independently; the change-type names are the format's own.
+
+### Addy Osmani: `documentation-and-adrs` skill
+
+- Source: <https://github.com/addyosmani/agent-skills>, `skills/documentation-and-adrs/SKILL.md`
+- License: `MIT`
+- Version: read on or before 2026-09-09
+
+The skill supplied ideas behind `references/changelog.md`, which came to this skill from `writing-documentation`.
+Nothing was copied.
