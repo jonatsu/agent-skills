@@ -112,7 +112,7 @@ as `writing-specs` and `technical-design` do.
 | `yocto-security-audit`           | 2026-10-18, `4548d5d8`           | 2026-10-18, `4548d5d8`                            |
 | `yocto-security-hardening`       | 2026-10-18, `50b2a490`           | 2026-10-18, `50b2a490`                            |
 | `yocto-vulnerability-management` | 2026-10-18, `6b1e4d9a`           | 2026-10-18, `6b1e4d9a`                            |
-| `hardware-security-keys`         | 2026-11-23, `7c74229`, new skill | 2026-11-23, `7c74229`, new skill                  |
+| `hardware-security-keys`         | 2026-11-23, `ca60763`            | 2026-11-23, `ca60763`                             |
 
 ## `test-engineer` Activation Datapoint
 
