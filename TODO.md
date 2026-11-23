@@ -330,6 +330,15 @@ tests are inference or come from one low-authority article. Find primary or expe
 books, vendor application notes from ST, NXP, Nordic, TI, or Microchip, RTOS test documentation, and published talks.
 Then mark each piece of the skill's advice with its source, or drop the piece that no source supports.
 
+## Patch Headers for Patches Carried in Build Layers
+
+`linux-kernel-development` and `u-boot-development` tell an agent to give a patch carried in a build layer the
+header its build system's patch policy requires, and to read the field names from that build system's manual. The
+build-system skills, `yocto-openembedded-development` and `buildroot-development`, do not yet describe those policies:
+Yocto's `Upstream-Status:` values and Buildroot's patch requirements. Add each from its project's manual at the
+release the skill targets, with the check that enforces it, such as OE-Core's patch QA test or Buildroot's
+`check-package`.
+
 ## Risk Scan for Third-Party Skills
 
 Vet an upstream skill for risky code before adopting, adapting or re-pinning it. Raised 2026-10-10 by a
