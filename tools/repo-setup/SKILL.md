@@ -1,16 +1,16 @@
 ---
-name: repo-management
-description: "Set up or refresh repository baseline files and hygiene hooks: bootstrap, .gitignore, .editorconfig, .gitattributes, and pre-commit configuration. Not for auditing an existing repository's checks or tracked files (repo-audit), checking whether docs are still true (context-architecture), or commits and history (git-commits-and-recovery)."
+name: repo-setup
+description: Set up a new repository, or add, refresh, or configure an existing one's baseline files and hygiene hooks (.gitignore, .editorconfig, .gitattributes, pre-commit with formatter, linter, and secret-scanning hooks). Use to set up or bootstrap a repository, or when its hooks or baseline config are missing or out of date. Not for the README and other landing documents (repo-landing-docs), auditing an existing repository's checks or tracked files (repo-audit), or commits and history (git-commits-and-recovery).
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-# Repository Management
+# Repository Setup
 
 Apply an opinionated repository baseline without erasing established project conventions. The bundled
-configurations and templates encode the author's personal preferences; treat them as deliberate defaults.
-Repository evidence and explicit user choices take precedence when they conflict with those defaults.
+configurations encode the author's personal preferences; treat them as deliberate defaults. Repository evidence
+and explicit user choices take precedence when they conflict with those defaults.
 
 This skill owns baseline files and repository-local hygiene hooks. Neighbouring work has its own skill:
 `repo-landing-docs` owns the landing documents; `repo-audit` audits an established repository's checkers and
@@ -22,7 +22,8 @@ rewriting; `git-history-investigation` answers history questions; `using-git-wor
 
 - **Targeted change:** add or revise named baseline files or hooks. Inspect only the affected files, their consumers,
   and the repository's existing conventions. A request for one file is not a request for an audit.
-- **Bootstrap:** establish a baseline in a new or nearly empty repository. In a split from an existing repository, the
+- **Bootstrap:** establish a baseline in a new or nearly empty repository, including its landing documents through
+  `repo-landing-docs`. In a split from an existing repository, the
   bootstrap is done only when the in-flight state about the moved part has moved or been rewritten. That state includes
   open review items, TODO and backlog entries, notes, and plans. The README must also document every install route and
   state a minimum interpreter version, not an exact one.
@@ -97,8 +98,8 @@ enabled on existing documents.
 ## Preserve Safety Boundaries
 
 - Leave the license, visibility, governance model, runtime, and framework to the user's choice.
-- Take project names, badges, links, contacts, commands, and supported versions from the repository or the
-  user; a placeholder is better than a plausible invention.
+- Take tool versions, paths, and commands from the repository or the user; a placeholder is better than a
+  plausible invention.
 - Describe a staged-diff secrets hook as covering new commits only, never as a history scan.
 - Run one credential scanner: Betterleaks by default, or Gitleaks or Secretlint's recommended preset when the
   repository or the user selects it. Secretlint's home-path, dotenv, and pattern rules may run beside it, since
@@ -110,9 +111,8 @@ enabled on existing documents.
 
 Check the exact files changed:
 
-- project names, links, contacts, dates, badges, commands, and license references agree;
-- canonical license and official ignore sources were used when applicable;
-- templates contain no unresolved placeholders or irrelevant sections;
+- the official ignore templates were used when applicable;
+- configurations contain no unresolved placeholders or settings for tools the repository does not use;
 - formatting and linting configurations reach a clean second pass on representative files;
 - repository checks pass without weakening existing gates.
 

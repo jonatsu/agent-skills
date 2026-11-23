@@ -67,7 +67,7 @@ as `writing-specs` and `technical-design` do.
 | `prompt-debugging`               | 2026-09-28, `d55d5dd`            | 2026-10-06, `7fe44be0`                            |
 | `document-conversion`            | 2026-09-28, `83bc4a0`            | 2026-09-28, `83bc4a0` and `861d3ea`               |
 | `github-ops`                     | 2026-09-28, `7c7a61f`, no change | 2026-09-28, `7c7a61f`                             |
-| `repo-management`                | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
+| `repo-setup`                     | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
 | `bash-shell`                     | 2026-09-28, `ef71b3f`, no change | 2026-09-28, `ef71b3f`                             |
 | `posix-shell`                    | 2026-09-28, `ef71b3f`            | 2026-09-28, `ef71b3f`                             |
 | `cc-safety-net`                  | 2026-09-28, no change            | 2026-09-28, no change, vendored upstream          |
@@ -145,17 +145,16 @@ realistic skill-change requests that include a description, against near misses 
 
 ## Description Activation Is Unmeasured
 
-The 2026-09 audit rewrote 13 short capability-only descriptions to carry activation clauses and triggers
-(completed 2026-09-07; findings in agent-setup's `docs/evaluations/skills/2026-09-07-skill-description-audit.md`,
-edits in git
-history). Whether the wording drives activation is unmeasured and nothing depends on settling it. Two of the
-13 describe a situation a user never names — `systematic-debugging` and `repo-management`; if they still do
-not activate on work they cover, move their behavior into the agents' always-loaded rules in agent-setup, per
-`AGENTS.md` ("no wording repairs" a moment nobody verbalizes), rather than editing the description again. The
-`test-engineer`/`python-testing` datapoint is tracked above.
+The 2026-09 audit rewrote 13 short capability-only descriptions to carry activation clauses and triggers (completed
+2026-09-07; findings in agent-setup's `docs/evaluations/skills/2026-09-07-skill-description-audit.md`, edits in git
+history). Whether the wording drives activation is unmeasured and nothing depends on settling it. Two of the 13 describe
+a situation a user never names — `systematic-debugging` and `repo-management` (now `repo-setup`, its description
+rewritten around "set up a repository"); if they still do not activate on work they cover, move their behavior into the
+agents' always-loaded rules in agent-setup, per `AGENTS.md` ("no wording repairs" a moment nobody verbalizes), rather
+than editing the description again. The `test-engineer`/`python-testing` datapoint is tracked above.
 
 Usage from 2026-10-08 to 2026-11-16 (`docs/evaluations/2026-11-16-skill-usage.md`): agents loaded
-`systematic-debugging` three times and `repo-management` five times on their own. Five direct-tier skills
+`systematic-debugging` three times and `repo-management` (now `repo-setup`) five times on their own. Five direct-tier skills
 never loaded at all: `context-compression`, `domain-modeling`, `git-history-investigation`, `github-ops`, and
 `writing-specs`.
 

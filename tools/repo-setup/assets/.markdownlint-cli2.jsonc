@@ -47,7 +47,7 @@
 
     // MD013: Enforce a max line length, but not inside code blocks/tables. Prose wraps at 120 with
     // trailing-backslash hard breaks, so the rendered page keeps the short lines too; the
-    // repo-management skill's scripts/mdwrap.py rewraps prose to this width.
+    // The markdown-tools skill's scripts/mdwrap.py rewraps prose to this width.
     "line-length": {
       "code_block_line_length": 80,
       "code_blocks": false,

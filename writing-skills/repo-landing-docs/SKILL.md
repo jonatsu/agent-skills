@@ -1,6 +1,6 @@
 ---
 name: repo-landing-docs
-description: "Write, refresh, or critique a repository's landing documents from bundled templates (README, quickstart or docs landing page, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, SUPPORT, GOVERNANCE, FUNDING.yml, CHANGELOG, ROADMAP, LICENSE, issue and pull request templates). Use when a repository needs one of these, when its README reads flat or template-filled, when its landing docs need refreshing, or when someone asks whether one is good. Not for tutorials, how-tos, references, or runbooks (writing-documentation), for checking whether their claims are still true (context-architecture), or for config files and hooks (repo-management)."
+description: "Write, refresh, or critique a repository's landing documents from bundled templates (README, quickstart or docs landing page, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, SUPPORT, GOVERNANCE, FUNDING.yml, CHANGELOG, ROADMAP, LICENSE, issue and pull request templates). Use when a repository needs one of these, when its README reads flat or template-filled, when its landing docs need refreshing, or when someone asks whether one is good. Not for tutorials, how-tos, references, or runbooks (writing-documentation), for checking whether their claims are still true (context-architecture), or for config files and hooks (repo-setup)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -16,7 +16,7 @@ report a vulnerability or how to get a change accepted.
 
 - `writing-documentation` owns tutorials, how-to guides, references, explanations, runbooks and decision
   records.
-- `repo-management` owns configuration files, hooks, and the repository bootstrap that calls this skill.
+- `repo-setup` owns configuration files, hooks, and the repository bootstrap that calls this skill.
 - `context-architecture` owns the truth audit that checks a document's claims against the tree.
 - `writing-for-humans` owns the sentences. Load it before drafting prose, and finish with its reader-ready pass
   as well as this skill's Before Delivery checks.
