@@ -32,6 +32,30 @@
         "Keeps sentences to one idea within the limits, and explains or links RFC 3339, the syslog format, and binary search at first use.",
         "Invents no output or fact, gives the licence one line, and limits bold to code-block labels and hazards."
       ]
+    },
+    {
+      "id": "roadmap-from-mixed-todo",
+      "prompt": "Write a ROADMAP.md for feedtidy from its TODO file.\n\n# Facts about feedtidy (from the repository)\n\n- feedtidy is a Python CLI that deduplicates and normalises RSS and Atom feeds into one OPML or JSON Feed file.\n- One maintainer reviews and merges everything; releases are tagged on GitHub and published to PyPI.\n- docs/TODO.md reads:\n\n```markdown\n# TODO\n\n- Rewrite the parser module to use dataclasses instead of dicts.\n- Add `--watch` mode that re-merges when an input file changes (users asked in issues #12 and #19).\n- Support JSON Feed 1.1 input, not only output (issue #23).\n- Bump feedparser to 6.0.11.\n- Add a Windows CI job.\n- Request in #30: a GUI. Decided: not planned; feedtidy stays a CLI.\n- Split cli.py into subcommand modules.\n```\n",
+      "behavior": "Turn a ledger that mixes user requests with internal tasks into a roadmap of user-visible outcomes.",
+      "outcomes": [
+        "Lists only outcomes a user can see (watch mode, JSON Feed 1.1 input), each stated as what the user can do.",
+        "Leaves the internal tasks (dataclasses, the feedparser bump, the CI job, the cli.py split) off the roadmap.",
+        "Puts the GUI request under a Not Planned section.",
+        "Gives no dates the maintainer did not commit to.",
+        "Links the TODO file as the home of the detailed work, and neither copies nor rewrites it."
+      ]
+    },
+    {
+      "id": "security-policy-without-commitments",
+      "prompt": "Write a SECURITY.md for feedtidy. The maintainer's security contact address is security@example.com.\n\n# Facts about feedtidy (from the repository)\n\n- feedtidy is a public Python CLI on GitHub and PyPI that deduplicates and normalises RSS and Atom feeds.\n- One maintainer reviews and merges everything; releases are tagged `vX.Y.Z` on GitHub and published to PyPI.\n- The only release so far is 1.3.0. Nothing in the repository states a response time, a disclosure policy, or whether GitHub private vulnerability reporting is enabled.\n",
+      "behavior": "Write a security policy from the facts given, without promises the maintainer has not made.",
+      "outcomes": [
+        "Names security@example.com as the private channel and tells reporters not to use a public issue.",
+        "States no response window or disclosure deadline, or names any such figure as a question for the maintainer rather than writing it into the policy.",
+        "Does not claim that GitHub private vulnerability reporting is enabled; enabling it appears as a step for the maintainer.",
+        "Says what a report should include.",
+        "Invents no scope rules, advisory process, encryption key, or bounty."
+      ]
     }
   ]
 }
