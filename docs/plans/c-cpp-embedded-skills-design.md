@@ -1,6 +1,6 @@
 # Design: C, C++, and Embedded Coding Skills
 
-Status: draft for review. The evidence behind this design is in
+Status: accepted. The evidence behind this design is in
 [the C, C++, and embedded sources](../evaluations/2026-11-23-c-cpp-embedded-sources/README.md).
 
 ## Purpose
@@ -48,20 +48,84 @@ These hold across every skill in the design.
 | `_FORTIFY_SOURCE`                 | Leave the level the build system sets (Yocto sets 2 and drops it at `-O0`, Buildroot offers a choice). In a standalone build, use 3 when the toolchain has GCC 12 or newer and glibc 2.34 or newer, and 2 otherwise. A build at `-O0` gets no fortification, so a debug-build test does not exercise it.                                                    |
 | Other hardening flags             | The OpenSSF Compiler Options Hardening Guide is the basis: PIE, full RELRO, `-fstack-protector-strong`, `-fstack-clash-protection`, a non-executable stack, control-flow protection per architecture, and `-D_GLIBCXX_ASSERTIONS`. Check the finished binary with `readelf` or `checksec`.                                                                  |
 | Runtime ASLR and kernel hardening | Stay in `yocto-security-hardening`, which already covers `randomize_va_space` and KASLR. The C skills point there.                                                                                                                                                                                                                                          |
-| Firmware C                        | A reference inside `c-style` now. A separate firmware skill comes later, through `TODO.md`, only if the reference outgrows the skill.                                                                                                                                                                                                                       |
-| Placement                         | `c-style`, `cpp-style`, and `c-cpp-testing` in a new `development/c-cpp/` group, following `development/python/` and `development/rust/`. `linux-kernel-development` in the existing `embedded-linux/` group. The new group needs an installer entry.                                                                                                       |
+| Firmware C                        | A reference inside `c-cpp-style` now. A separate firmware skill comes later, through `TODO.md`, only if the reference outgrows the skill.                                                                                                                                                                                                                   |
+| Placement                         | `c-cpp-style` and `c-cpp-testing` in a new `development/c-cpp/` group, following `development/python/` and `development/rust/`. `linux-kernel-development` in the existing `embedded-linux/` group. The new group needs an installer entry.                                                                                                                 |
 
 ## The Skills
 
-### `c-style` (new)
+### `c-cpp-style` (new)
 
-Writes, reviews, and refactors C for Linux userspace, MCU firmware, and code that lives beside the kernel or U-Boot.
-Its body covers the decisions that apply to every place: checking the tree's conventions first, the standard and
-warning set, error handling and resource cleanup, integer conversions, and the rules from the work session (an
-explicit `-std` in the shared flag variable, a comment naming the bound beside any cast that silences `-Wconversion`,
-and test-only macros that replace inputs but never checks). The shared flag variable has a concrete pattern for
-Yocto: one `.inc` file holds `-std` and the warning set, every recipe requires it, and the host test script reads the
-same file, so host checks and target builds use the same flags.
+One skill covers both languages, because C and C++ share the trees, build systems, flags, tools, and clangd setup in
+embedded work, and this repository requires each skill to be complete for its own job. Two skills would duplicate
+half their content; the merged skill keeps the language rules as two sections of its body.
+
+Draft description:
+
+> Write, review, or refactor C and C++ for embedded Linux userspace, MCU firmware, and tools beside the kernel or
+> U-Boot: language standard, warnings, error handling, hardening flags, formatting, linting, and clangd. Use when
+> writing or changing .c, .h, .cpp, or .hpp files, choosing -std or compiler flags, or setting up clang-format,
+> clang-tidy, cppcheck, or compile_commands.json. Kernel code goes to linux-kernel-development, U-Boot code to
+> u-boot-development, and tests to c-cpp-testing.
+
+Body sections, about 300 lines:
+
+1. Read the tree first: `.clang-format`, `.editorconfig`, coding-style documents, `AGENTS.md`, the `-std` and warnings
+   in the build files, and the test framework. Done when every default below is confirmed or overridden by the tree.
+2. Route by place: kernel code to `linux-kernel-development`, U-Boot code to `u-boot-development`, userspace and
+   firmware to this skill's references.
+3. Language standard: the C and C++ defaults and the conditions that change them.
+4. Warnings: the OpenSSF baseline (`-Wall -Wextra -Wformat=2 -Wconversion -Wsign-conversion -Wshadow` and others),
+   `-Werror` in development and CI, and the standard and warnings in one shared flag variable. For Yocto, one `.inc`
+   file holds `-std` and the warning set, every recipe requires it, and the host test script reads the same file, so
+   host checks and target builds use the same flags.
+5. Layout: the brace rule and formatters with the tree's own configuration only.
+6. C memory and code hygiene, as concrete practices with the tool that catches each mistake:
+   - initialise at declaration, and never read a variable before every path sets it (CERT EXP33-C);
+     `-ftrivial-auto-var-init=zero` is a safety net that hides the bug from warnings and sanitizers, not a fix;
+   - one owner per allocation, with a comment naming who frees a returned or stored pointer, and release on every
+     exit path through one `goto` cleanup ladder in reverse order of acquisition;
+   - no use after free and no double free (MEM30-C, MEM31-C): set a pointer that outlives the call to `NULL` after
+     freeing it, and keep ownership single, because clearing one copy leaves the others dangling;
+   - no pointer to a local escapes its function, by return, stored callback, or struct member;
+   - every allocation and every non-void return is checked (ERR33-C, Power of Ten rule 7), with `(void)` marking a
+     deliberate ignore;
+   - `size_t` for sizes, allocation sizes checked with `__builtin_mul_overflow` or C23 `ckd_mul` (INT30-C, INT32-C),
+     and no reliance on signed overflow;
+   - a length with every buffer, `snprintf` checked for truncation, and no `strcpy`, `sprintf`, `gets`, or `strncpy`
+     as a safe copy (STR31-C, ARR30-C);
+   - no variable-length arrays (`-Wvla`) and no `alloca` in new code;
+   - `static` for file-local symbols and `const` on pointer parameters the function does not write through;
+   - in firmware, no heap after initialisation, a fixed bound on every loop, and no recursion (Power of Ten);
+   - the catching tools: the warning set, `-fanalyzer` for use after free, double free, and leaks, clang-tidy
+     `bugprone-*`, and ASan and UBSan in host tests.
+     The work session's rules sit here too: a comment naming the bound beside any cast that silences `-Wconversion`,
+     and test-only macros that replace inputs but never checks.
+7. C++ ownership and modern idioms:
+   - RAII for every resource, including descriptors, locks, and hardware handles (Core Guidelines R.1); a raw pointer
+     or reference never owns (R.3); no bare `new` or `delete` (R.11);
+   - `std::unique_ptr` by default, made with `std::make_unique`, and with a custom deleter to wrap a C handle without
+     the heap; `std::shared_ptr` only for genuinely shared ownership, and not in firmware;
+   - the rule of zero, or all five special members defined or deleted for a class that manages a resource itself;
+   - the lifetime traps the compiler misses: a `std::string_view` or `std::span` outliving its buffer, a lambda
+     capturing by reference that runs after its scope ends, an iterator or reference used after a container
+     reallocates (CERT C++ CTR rules), and use after move;
+   - modern features with the standard that brings each: `std::array`, `enum class`, `nullptr`, `override`, `final`,
+     `= delete`, `[[nodiscard]]` on error-returning functions, and `constexpr` tables (C++11 and C++14);
+     `std::optional`, `std::variant`, `std::string_view`, structured bindings, and `if constexpr` (C++17); `std::span`,
+     `consteval`, `constinit`, and designated initialisers (C++20), with a pointer and length in place of `std::span`
+     on C++17;
+   - brace initialisation to catch narrowing (ES.46), and every member initialised at its declaration (ES.20);
+   - the error policy from the decisions above, and an `extern "C"` function that catches everything;
+   - in firmware, no exceptions, RTTI, heap containers, `std::function`, or `iostream`, static or placement
+     allocation, and `-fno-threadsafe-statics` only where nothing runs before the scheduler starts.
+8. Build flags: honour the build system's flag variables and add only what it lacks.
+9. Done when the code builds with the tree's flags at no new warnings, the formatter is clean on changed lines, the
+   linters are clean or each suppression carries its reason, and the tests pass through `c-cpp-testing`.
+
+The hygiene rules give way to the tree. The kernel and U-Boot have their own allocators, managed resources, and
+cleanup idioms, carried by `linux-kernel-development` and U-Boot's coding reference. The Core Guidelines' advice to
+compile C as C++ (CPL.2) is not adopted, because kernel and systemd style contradict it. Core Guidelines rules are
+cited by number with the ideas restated, because their licence allows internal use only.
 
 References, each loaded only when its branch applies:
 
@@ -82,22 +146,26 @@ References, each loaded only when its branch applies:
   declarations at the top of a block and `constParameter` on `main`'s `argv`, and it runs cppcheck once per `-D`/`-U`
   configuration. Tool versions are pinned, because clang-format, clang-tidy, and cppcheck change their output between
   releases: the pre-commit clang-format mirror's revision, clang-tidy through `uvx --from clang-tidy==<version>`, and
-  cppcheck from the distribution or a container, since the PyPI `cppcheck` package is a third-party wheel. The
-  reference also carries the clangd recipes: how each kind of tree produces `compile_commands.json`, the
-  `--query-driver` limit for cross compilers, and the `.clangd` settings for a GCC-built kernel.
-
-### `cpp-style` (new)
-
-Writes, reviews, and refactors C++ for the same places. It covers the standard choice, the exception, RTTI, and
-error-handling policy from the decisions above,
-resource ownership (RAII, no raw owning pointers), `constexpr` and compile-time tables, avoiding the heap and
-`iostream` on small targets, and headers that C code includes through `extern "C"`. It points to `c-style` for
-hardening, tooling, and clangd, and carries its own short version of the tree-decides rule, because an agent may load
-only one of the two.
+  cppcheck from the distribution or a container, since the PyPI `cppcheck` package is a third-party wheel.
+- `clangd.md`: a recipe per tree for producing `compile_commands.json` (kernel, U-Boot, a Yocto recipe or SDK, a
+  Buildroot package, CMake or Meson, and MCU SDKs), the `--query-driver` limit for cross compilers, the `.clangd` file
+  for a GCC-built kernel, `Index: Background: Skip`, and `clang-tidy -p` for the analyzer checks clangd skips.
 
 ### `c-cpp-testing` (new)
 
-Tests C and C++ code in each place. Its body chooses the tool set by place:
+Tests C and C++ code in each place.
+
+Draft description:
+
+> Test C and C++ code on embedded Linux, MCU firmware, the kernel, and U-Boot: unit frameworks and mocks, sanitizers
+> and Valgrind, coverage, on-target and emulated runs, and adding tests to firmware that has none. Use when writing or
+> running C or C++ tests, choosing a test framework such as CppUTest, Unity, cmocka, or GoogleTest, or making
+> hardware-facing code testable.
+
+Body sections, about 180 lines: read the tree's test setup first and use an existing framework; the tool set by
+place; test design rules; memory checking (sanitizers on the host, Valgrind on the target, and when to pick each);
+coverage, including MC/DC from GCC 14; and a done criterion: tests run in CI, each memory-checker run fails on an
+injected defect, and each new seam has a test that uses it. The tool set by place:
 
 | Place                    | Unit framework                                                                                                        | Memory checking                                                                       | Coverage                                 |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------- |
@@ -105,8 +173,9 @@ Tests C and C++ code in each place. Its body chooses the tool set by place:
 | MCU firmware             | Unity with CMock through Ceedling, or CppUTest, on host builds of the same sources; ztest in Zephyr; Unity in ESP-IDF | Sanitizers on the host build                                                          | gcov with gcovr on the host build        |
 | Kernel and U-Boot        | KUnit and kselftest; U-Boot's sandbox `ut` tests and `test/py`                                                        | The kernel's own sanitizers                                                           | The kernel's gcov support                |
 
-The body also carries the work session's sanitizer rule: set distinct exit codes in `ASAN_OPTIONS` and
-`UBSAN_OPTIONS`, so that a test expected to fail cannot pass on a memory error.
+The test design rules include the work session's sanitizer rule: set distinct exit codes in `ASAN_OPTIONS` and
+`UBSAN_OPTIONS`, so that a test expected to fail cannot pass on a memory error. Every test expected to fail must fail
+for the reason it names.
 
 References:
 
@@ -127,16 +196,37 @@ References:
   `TODO.md`).
 - `kernel-and-u-boot.md`: how to run KUnit, kselftest, and U-Boot's tests, and what a patch submitter is expected to
   run.
-
-The name "cpptest" is explained once: CppUTest is the framework to use, the old cpptest library is dead, and Parasoft
-C/C++test is a commercial product.
+- `frameworks.md`: the framework comparison, with licence, whether each runs on target, mocking support, and the C++
+  features it needs. It explains the name "cpptest" once: CppUTest is the framework to use, the old cpptest library
+  is dead, and Parasoft C/C++test is a commercial product.
 
 ### `linux-kernel-development` (new, in `embedded-linux/`)
 
 Writes and reviews kernel code and patches: out-of-tree and in-tree drivers, device-tree bindings, and patches for
-upstream or a vendor tree. It covers reading the tree's coding style and process documents for the version in hand,
-`checkpatch.pl` as the gate, `W=1`, sparse and Coccinelle, the kernel's sanitizers and KUnit, and building the
-compilation database. Kernel-adjacent C, such as a userspace tool shipped in a BSP, belongs to `c-style`.
+upstream or a vendor tree. Kernel-adjacent C, such as a userspace tool shipped in a BSP, belongs to `c-cpp-style`.
+
+Draft description:
+
+> Write, review, and prepare Linux kernel code and patches: drivers, device-tree bindings, and patches for mainline or
+> a vendor tree, following that tree's own coding-style and submission documents. Use when changing kernel source or
+> an out-of-tree module, running checkpatch, sparse, or Coccinelle, or preparing a patch series. Board bring-up goes
+> to embedded-linux-bringup.
+
+Body sections, about 180 lines:
+
+1. Identify the tree and version (mainline or vendor), then read its `coding-style.rst`, `submitting-patches.rst`, and
+   any `coding-assistants.rst` or `AGENTS.md`; version-specific rules come from these.
+2. Style: `checkpatch.pl --strict` as the gate, and formatting of changed lines only with the tree's `.clang-format`.
+3. Memory and cleanup: the kernel's allocators, `devm_*` managed resources, and its cleanup idioms, which replace the
+   userspace hygiene rules.
+4. Build checks: `W=1`, sparse (`C=1`), `coccicheck`, and every affected configuration.
+5. Runtime checks: KASAN, UBSAN, KCSAN, and lockdep in debug configurations, and KUnit.
+6. Out-of-tree modules: building with `M=` and the module's compilation database.
+7. Done when checkpatch is clean, `W=1` adds no new warnings, and the relevant KUnit or kselftest suites pass.
+
+References: `patch-workflow.md` (`format-patch`, `get_maintainer.pl`, cover letters, and revising a series),
+`analysis-and-debug.md` (sparse, Coccinelle, the sanitizers, and syzkaller), and `device-tree-bindings.md` (binding
+schemas and `dt_binding_check`).
 
 It is inspired by `UtsavBalar1231/kernel-development-skills` (MIT). Its material is rewritten, not copied, and the
 upstream skill's stale `Assisted-by:` rule is not carried, in line with the attribution principle.
@@ -152,12 +242,12 @@ sandbox's ASan and libFuzzer support. The skill's routing table gains a row for 
 Adds a hardening section to an existing reference: the `BR2_SSP_*`, `BR2_RELRO_*`, `BR2_FORTIFY_SOURCE_*`, and
 `BR2_PIC_PIE` options, the fact that the toolchain wrapper adds them rather than `CFLAGS`, and how a package honours
 `TARGET_CFLAGS` and `TARGET_LDFLAGS`. Buildroot documents no way to produce a compilation database, so the clangd
-recipe in `c-style` marks its Buildroot method as untested.
+recipe in `c-cpp-style` marks its Buildroot method as untested.
 
 ### Skills left unchanged
 
 `yocto-openembedded-development` and the Yocto security skills already cover flag injection, the `ldflags` QA check,
-`-Werror` handling, and the CVE tool, so they need no change. `c-style` points to `yocto-security-hardening` for
+`-Werror` handling, and the CVE tool, so they need no change. `c-cpp-style` points to `yocto-security-hardening` for
 Yocto's flags. `embedded-linux-bringup` stays as it is.
 
 ## Provenance
@@ -174,16 +264,18 @@ Yocto's flags. `embedded-linux-bringup` stays as it is.
 
 Each step lands as its own commit and passes `just check`.
 
-1. `c-style` with its four references, since the other skills point to it.
-2. `cpp-style`.
-3. `c-cpp-testing` with its three references.
-4. `linux-kernel-development`.
-5. The `u-boot-development` and `buildroot-development` extensions.
-6. A behavioural evaluation for each new skill, with cases drawn from the sources' known traps: an implicit C23
+1. `c-cpp-style` with its five references, since the other skills point to it.
+2. `c-cpp-testing` with its four references.
+3. `linux-kernel-development` with its three references.
+4. The `u-boot-development` and `buildroot-development` extensions.
+5. A behavioural evaluation for each new skill, with cases drawn from the sources' known traps: an implicit C23
    build, a kernel file run through a personal formatter, a hard-coded `CFLAGS`, and a must-fail test that passes on
    a memory error.
-7. Hand-off to agent-setup: the `development/c-cpp/` installer entry and the pointer rules that route C and C++ work
+6. Hand-off to agent-setup: the `development/c-cpp/` installer entry and the pointer rules that route C and C++ work
    to these skills.
+7. Review with the work session that supplied the original ruleset: both sides confirm that the finished skills
+   serve its kernel, U-Boot, and userspace work, and any generic finding it returns is fixed before the work is
+   called done.
 
 ## Open Questions
 
