@@ -3,6 +3,21 @@
 - Author: Joonas Onatsu
 - License: `MIT`
 
+The package adapts upstream material, whose MIT license requires its notice to travel with the material; keep
+`LICENSE.upstream` with the skill.
+
+## First-party Sources
+
+### GitHub: community health file documentation
+
+- Source: <https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions>, with the
+  README, sponsor button, and issue template configuration pages
+- License: `CC-BY-4.0`
+- Version: read on 2026-11-23
+
+The documentation supplied the placement rules: the directories GitHub reads each landing file from and their
+order, the `FUNDING.yml` location, keys, and limits, and the issue template `config.yml` keys. Nothing was copied.
+
 ## Third-party Sources
 
 Nine README files by seven authors were analysed as exemplars of front-door writing. Reading them shaped the
@@ -110,3 +125,23 @@ No other text was copied.
 ASD holds the copyright, and the standard is free to obtain but not free to redistribute. It informed the sentence
 limits and the condition before its command. The skill does not implement the standard, and no rule text was
 copied.
+
+### Leonardo Flores: crafting-effective-readmes skill
+
+- Source: <https://github.com/softaworks/agent-toolkit>, `skills/crafting-effective-readmes`
+- License: `MIT`
+- Version: `011baf4acea99174acb5486a9b662a7e084be63b`
+
+The README project-type taxonomy is adapted from the upstream skill: the four project types, the section-by-audience
+matrix in `references/readme-by-audience.md`, and the per-audience section sets behind the README templates in
+`assets/`, which were rewritten to this skill's placeholder convention.
+
+### Olivier Lacan: Keep a Changelog
+
+- Source: <https://keepachangelog.com/en/1.1.0/>
+- License: `MIT`
+- Version: 1.1.0
+
+The format behind `assets/CHANGELOG.template.md` and the changelog rules: the change types, the `Unreleased`
+section, newest first, ISO dates, and the warnings against commit-log changelogs and unlisted deprecations. The
+rules are written independently; the change-type names are the format's own.

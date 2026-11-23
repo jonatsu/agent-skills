@@ -1,6 +1,6 @@
 ---
 name: writing-documentation
-description: "Design, draft, review, or restructure documentation so its reader understands or acts on the first pass. Use for tutorials, how-to guides, references, explanations, and sorting content by Diátaxis type; specs, PRDs, SRSs, and design documents alongside the skill owning their content; decision records, ADRs, release notes, runbooks, onboarding, and matching a docs set's house style. Not for READMEs, quickstarts, or docs landing pages (writing-readmes), or sentence-level editing (writing-for-humans)."
+description: "Design, draft, review, or restructure documentation so its reader understands or acts on the first pass. Use for tutorials, how-to guides, references, explanations, and sorting content by Diátaxis type; specs, PRDs, SRSs, and design documents alongside the skill owning their content; decision records, ADRs, release notes, runbooks, onboarding, and matching a docs set's house style. Not for READMEs, quickstarts, docs landing pages, or files such as CONTRIBUTING or CHANGELOG (repo-landing-docs), or sentence-level editing (writing-for-humans)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -8,9 +8,9 @@ metadata:
 
 # Writing Documentation
 
-This skill owns the document. It decides the document's reader, type, and content. It also decides where each
-concept is explained, which sources govern its claims, how a reader reaches it, and how its sentences read.
-`writing-readmes` owns a project's front door. A document is done when its intended reader understands the
+This skill owns the document. It decides the document's reader, type, and content. It also decides where each concept is
+explained, which sources govern its claims, how a reader reaches it, and how its sentences read. `repo-landing-docs`
+owns a project's front door and its other landing documents. A document is done when its intended reader understands the
 subject or completes the task on the first pass.
 
 Plain language, as ISO 24495-1:2023 defines it, is wording, structure, and design so clear that the intended

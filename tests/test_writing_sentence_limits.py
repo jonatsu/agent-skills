@@ -14,7 +14,7 @@ from skill_locator import skill_directory
 CANONICAL = ("writing-for-humans", "SKILL.md")
 COPIES = (
     ("writing-documentation", "SKILL.md"),
-    ("writing-readmes", "SKILL.md"),
+    ("repo-landing-docs", "SKILL.md"),
     ("context-architecture", "references/writing-rules.md"),
     ("agents-context-docs", "SKILL.md"),
     ("writing-prompts", "SKILL.md"),

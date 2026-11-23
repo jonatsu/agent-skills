@@ -1,24 +1,27 @@
 ---
-name: writing-readmes
-description: "Write, rewrite, or critique a README or other project front door (quickstart, getting-started page, docs landing page) so a stranger sees the point and can start. Use when a README reads flat or template-filled, a project needs one, or someone asks whether one is good. Not for tutorials, how-tos, references, or runbooks (writing-documentation), for checking whether its claims are still true (context-architecture), or for scaffolding files (repo-management)."
+name: repo-landing-docs
+description: "Write, refresh, or critique a repository's landing documents from bundled templates (README, quickstart or docs landing page, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, SUPPORT, GOVERNANCE, FUNDING.yml, CHANGELOG, ROADMAP, LICENSE, issue and pull request templates). Use when a repository needs one of these, when its README reads flat or template-filled, when its landing docs need refreshing, or when someone asks whether one is good. Not for tutorials, how-tos, references, or runbooks (writing-documentation), for checking whether their claims are still true (context-architecture), or for config files and hooks (repo-management)."
 license: MIT
 metadata:
   author: Joonas Onatsu
 ---
 
-# Writing READMEs
+# Repository Landing Docs
 
-Use this skill for a project's front door: the README, the quickstart or getting-started page, the
-documentation landing page. A front door is the first thing a stranger reads about the project. Someone who
-has not decided to care yet judges it in about ten seconds. Every other document is read by someone who
-already chose the project.
+Use this skill for the documents a visitor reads to judge a project, use it, contribute to it, or follow where it
+is going. The README and its kin, the quickstart and the documentation landing page, are the project's front door.
+A front door is the first thing a stranger reads about the project. Someone who has not decided to care yet judges
+it in about ten seconds. The other landing documents serve a visitor who has a specific question, such as how to
+report a vulnerability or how to get a change accepted.
 
 - `writing-documentation` owns tutorials, how-to guides, references, explanations, runbooks and decision
   records.
-- `repo-management` owns repository scaffolding and the README templates and audience matrix.
-- `context-architecture` owns the truth audit that checks a README's claims against the tree.
+- `repo-management` owns configuration files, hooks, and the repository bootstrap that calls this skill.
+- `context-architecture` owns the truth audit that checks a document's claims against the tree.
 - `writing-for-humans` owns the sentences. Load it before drafting prose, and finish with its reader-ready pass
   as well as this skill's Before Delivery checks.
+- `markdown-tools` owns mechanical Markdown work. Where the repository wraps lines with trailing-backslash hard
+  breaks, rewrap a finished document with its `mdwrap.py` rather than by hand.
 
 Plain language, as ISO 24495-1:2023 defines it, is wording, structure, and design so clear that the intended
 readers can easily do three things. They find what they need, understand what they find, and use that
@@ -39,22 +42,72 @@ the result is uniformly flat because nothing in it was chosen.
 ## Workflow
 
 - **Draft.** Establish what the project is and who it serves before writing a line. Where the repository does
-  not settle it, ask; an invented purpose is the one error nothing downstream repairs. Deliver the plain
-  document, then list the devices you recommend and the trigger each one meets. Done when every
-  [Before Delivery](#before-delivery) item passes.
-- **Rewrite.** Diagnose against the five questions first: which are unanswered, which are answered out of
+  not settle it, ask; an invented purpose is the one error nothing downstream repairs. Start from the file's
+  template in `assets/`. Deliver the plain document, then list the devices you recommend and the trigger each
+  one meets. Done when every [Before Delivery](#before-delivery) item passes.
+- **Refresh.** Inventory the landing documents the repository has, where each lives, and which ones its kind of
+  project needs, using [Choose the Files](#choose-the-files). Propose the set: each file to add, rewrite, or
+  leave, with its reason. Then draft or rewrite each approved file. Done when every approved file passes its
+  checks and every file left alone is named.
+- **Rewrite.** Diagnose against the reader questions first: which are unanswered, which are answered out of
   order, which sections answer nothing. Show the diagnosis before the replacement. This mode changes the
   framing, not the facts. Done when every accurate claim of the original survives or is listed as cut with its
   reason. Every Before Delivery item must pass too.
-- **Critique.** Report against the five questions and the Iron Law, worst first, each finding naming the
+- **Critique.** Report against the reader questions and the Iron Law, worst first, each finding naming the
   reader question it fails. Judge quality only, and route factual verification to `context-architecture`'s
   truth audit. Done when every section is mapped to a question or reported as answering none.
 
 Return text or a diff for an existing file unless the user asked for an in-place edit.
 
+For any file other than the README and its front-door kin, read
+[references/landing-files.md](references/landing-files.md) before drafting, rewriting, or critiquing it. It holds
+the rules each file's template cannot carry, and the check that tells you each file is done.
+
+## Choose the Files
+
+Each file answers one visitor question. Add a file when its question will be asked; a file nobody needs is one
+more to keep true.
+
+| File                         | Visitor question                           | Add it when                                       |
+| ---------------------------- | ------------------------------------------ | ------------------------------------------------- |
+| `README.md`                  | What is this, and is it for me?            | Always                                            |
+| `LICENSE`                    | May I use this?                            | The user has chosen a licence                     |
+| `CONTRIBUTING.md`            | How do I get a change accepted?            | Outsiders may send changes                        |
+| `SECURITY.md`                | How do I report a vulnerability privately? | The project is public                             |
+| `CODE_OF_CONDUCT.md`         | How will I be treated, and whom do I tell? | People other than the maintainer interact         |
+| Issue and pull request forms | What do the maintainers need from me?      | Outsiders open issues or pull requests            |
+| `CHANGELOG.md`               | What changed for me since my version?      | Users upgrade between versions or dated states    |
+| `ROADMAP.md`                 | Where is this going, and is my need on it? | Users plan around the project's direction         |
+| `SUPPORT.md`                 | Where do I get help?                       | Help requests arrive in the wrong channel         |
+| `GOVERNANCE.md`              | Who decides, and how?                      | More than one person holds merge or release power |
+| `FUNDING.yml`                | How do I pay for this?                     | The maintainers accept money                      |
+
+Each file's template sits in `assets/` under the file's name, such as `assets/SECURITY.template.md`. The issue
+forms are in `assets/ISSUE_TEMPLATE/`, and the pull request form is `assets/PULL_REQUEST_TEMPLATE.md`. The changelog
+has a versioned and a dated template. `LICENSE` has none; use the licence's canonical text.
+
+For the README, read [references/readme-by-audience.md](references/readme-by-audience.md) to choose between the
+generic, open-source, personal, internal, and configuration templates. Its section matrix settles which sections a
+project type needs; the rest of this file makes them worth reading.
+
+Fill a template completely. Replace every `{{PLACEHOLDER}}` with a fact from the repository or the user, because a
+plausible invented contact, command, or response time misleads the visitor who acts on it. Leave a placeholder in
+place and name it in your report when no source supplies the fact. Delete each section that answers no question for
+this project.
+
+### Place the Files
+
+Follow the repository's convention first. Many repositories keep `CHANGELOG.md` and `ROADMAP.md` under `docs/`.
+Without a convention, put each file at the root, except the issue templates, the pull request template, and
+`FUNDING.yml`, which go in `.github/`. GitHub reads `README.md` and the community files (`CONTRIBUTING.md`,
+`SECURITY.md`, `CODE_OF_CONDUCT.md`, `SUPPORT.md`) from `.github/`, the root, or `docs/`, in that order, so a copy in
+`.github/` hides one at the root. `FUNDING.yml` works only in `.github/`, and `LICENSE` belongs at the root. Link each
+Markdown landing file and the licence from the README by a one-line pointer, at the path where it actually lives.
+
 ## The Five Questions
 
-A stranger works through these in order. They abandon the page at the first one that goes unanswered.
+The sections from here to Before Delivery govern the README and its front-door kin. A stranger works through
+these questions in order. They abandon the page at the first one that goes unanswered.
 
 1. **What is this?** One sentence, concrete and literal. They should be able to repeat it to a colleague.
 2. **Is it for me?** Who it serves, what problem it solves, and (the part most READMEs skip) what it does
@@ -198,6 +251,14 @@ a reader more than one improved page. `writing-documentation` carries the fuller
 profile. With no documentation set to match, this skill's defaults govern.
 
 ## Before Delivery
+
+For every landing file:
+
+- Is every placeholder replaced by a sourced fact, or left in place and named in your report?
+- Does the file sit where the repository's convention, or the placement default, puts it?
+- For a Markdown file or the licence, does the README point to it at the path where it lives?
+
+For the README and its front-door kin:
 
 - Can a stranger answer "what is this" and "is it for me" from the first five lines alone?
 - Is there concrete evidence it works, before the install instructions?

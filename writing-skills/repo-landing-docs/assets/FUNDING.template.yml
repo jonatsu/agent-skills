@@ -1,0 +1,7 @@
+# FUNDING template. Save as .github/FUNDING.yml on the default branch.
+# Docs: GitHub "Displaying a sponsor button in your repository".
+# Keep only the platforms the project really uses: one account per platform,
+# up to four GitHub Sponsors accounts, and up to four custom URLs.
+# Quote a custom URL that contains a colon.
+github: ["{{GITHUB_SPONSORS_USERNAME}}"]
+custom: ["{{CUSTOM_FUNDING_URL}}"]

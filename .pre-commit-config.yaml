@@ -49,7 +49,7 @@ repos:
       - id: mdformat
         args: ["--wrap", "keep", "--number", "--no-codeformatters"]
         exclude: >-
-          ^((.+/)?skill-forge/scripts/skills-ref/|(.+/)?repo-management/assets/ISSUE_TEMPLATE/|(.+/)?brooks-)
+          ^((.+/)?skill-forge/scripts/skills-ref/|(.+/)?repo-landing-docs/assets/ISSUE_TEMPLATE/|(.+/)?brooks-)
         additional_dependencies:
           - mdformat-footnote==0.1.3
           - mdformat-frontmatter==2.1.2

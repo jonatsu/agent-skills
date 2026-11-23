@@ -58,7 +58,7 @@ as `writing-specs` and `technical-design` do.
 | `implementation-planning`        | 2026-09-28, `accf233`, no change | 2026-09-28, `accf233`                             |
 | `test-engineer`                  | 2026-09-28, `7702d54`, unnamed   | 2026-09-28, `7702d54` and `add69c3`, unnamed      |
 | `coding-standards`               | 2026-09-28, `73a6774`, unnamed   | 2026-09-28, `73a6774`, unnamed                    |
-| `writing-readmes`                | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
+| `repo-landing-docs`              | 2026-09-30, `28da2bd`            | 2026-09-30, `28da2bd`                             |
 | `to-questionnaire`               | 2026-09-28, `e1f25db`            | 2026-09-28, `e1f25db`                             |
 | `domain-modeling`                | 2026-09-28, `f5cf1f9`            | 2026-09-28, `f5cf1f9`                             |
 | `conformance-review`             | 2026-09-28, `d0bc8da`, no change | 2026-09-28, `d0bc8da`                             |
@@ -519,7 +519,8 @@ Do not port `examples/skills/changelog` from `MuhammadUsmanGM/claude-code-best-p
 configuration repository's, which
 deliberately uses date headings and verbatim commit subjects rather than the consumer-facing Keep a Changelog
 format the skill would push. Reconsider when a project here starts cutting versioned releases and adopts Keep a
-Changelog for it.
+Changelog for it. The `repo-landing-docs` skill carries changelog templates for both forms and the rules for
+writing an entry; only a procedure that drafts entries from the commits since a release stays deferred.
 
 Findings worth keeping so the review is not repeated:
 

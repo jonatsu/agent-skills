@@ -95,7 +95,7 @@
     "**/brooks-*/**",
 
     // GitHub issue templates are deployable assets, not repository prose.
-    "**/repo-management/assets/ISSUE_TEMPLATE/**",
+    "**/repo-landing-docs/assets/ISSUE_TEMPLATE/**",
 
     // The Python environment's installed packages carry their own Markdown.
     ".venv/**",

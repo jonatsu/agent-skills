@@ -1,6 +1,6 @@
 ---
 name: repo-management
-description: "Set up or refresh repository baseline files and hygiene hooks: bootstrap, .gitignore, .editorconfig, .gitattributes, pre-commit configuration, community templates, and read-only audits of tracked cruft, large files, and committed secrets. Not for tuning an existing repository's linter rules (lint-config-audit), checking whether docs are still true (context-architecture), or commits and history (git-commits-and-recovery)."
+description: "Set up or refresh repository baseline files and hygiene hooks: bootstrap, .gitignore, .editorconfig, .gitattributes, pre-commit configuration, and read-only audits of tracked cruft, large files, and committed secrets. Not for tuning an existing repository's linter rules (lint-config-audit), checking whether docs are still true (context-architecture), or commits and history (git-commits-and-recovery)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -47,13 +47,10 @@ deleting content, publishing settings, and rewriting history each need their own
 
 ## Apply the Preferred Baseline
 
-Use assets as starting points after inspecting the repository:
+Use assets as starting points after inspecting the repository. The landing documents (README, LICENSE,
+CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, the issue and pull request templates, and their kin) belong to the
+`repo-landing-docs` skill, which holds their templates. On a bootstrap or refresh, load it for those files.
 
-- `README.md`: Start with `assets/README.template.md`. When audience-specific structure helps, read
-  [readme-by-audience.md](references/readme-by-audience.md) and use the matching OSS, personal, internal, or
-  configuration template. The templates settle which sections a type needs; apply `writing-readmes` to make
-  the result worth reading, and `writing-for-humans` for prose quality.
-- `LICENSE`: Add only the license the user selected, using its canonical text.
 - `.gitignore`: Retrieve the applicable official GitHub template and adapt it to confirmed generated files.
 - `.editorconfig`: The bundled profile deliberately uses two spaces as the fallback and supplies targeted
   overrides. Preserve these personal defaults for a new baseline; reconcile them with established project
@@ -73,9 +70,6 @@ Use assets as starting points after inspecting the repository:
   optional check and disables two by name, with the reason attached to each. Adopting it in an established repository
   turns the whole shell tree red at once. The file's own comments carry the sweep procedure and the trap that makes a
   sweep look finished when it is not.
-- Community files: Use the bundled contribution, security, conduct, pull-request, and issue templates when
-  their workflow applies. Replace every placeholder, remove irrelevant sections, and apply `writing-for-humans`
-  to the text you write.
 
 Read [config-adaptation-notes.md](references/config-adaptation-notes.md) before copying or changing a
 configuration asset.
@@ -160,14 +154,9 @@ Report exact validation results and untested environments.
 
 ## Assets
 
-- README templates: `README.template.md` and the OSS, personal, internal, and configuration variants
-- Community templates: `CONTRIBUTING.template.md`, `SECURITY.template.md`,
-  `CODE_OF_CONDUCT.template.md`, `PULL_REQUEST_TEMPLATE.md`, and `ISSUE_TEMPLATE/*`
-- Repository configuration: `.editorconfig`, `.gitattributes`, `.pre-commit-config.yaml`,
-  `.markdownlint-cli2.jsonc`, `.mdformat.toml`, `.secretlintrc.json`, `.shellcheckrc`, `.yamlfmt.yaml`, and
-  `.yamllint.yaml`
+Repository configuration: `.editorconfig`, `.gitattributes`, `.pre-commit-config.yaml`, `.markdownlint-cli2.jsonc`,
+`.mdformat.toml`, `.secretlintrc.json`, `.shellcheckrc`, `.yamlfmt.yaml`, and `.yamllint.yaml`.
 
 ## Provenance
 
-See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) and [LICENSE.upstream](LICENSE.upstream) for the adapted README taxonomy
-and templates.
+See [ATTRIBUTIONS.md](ATTRIBUTIONS.md) for the sources behind the Secretlint guidance.
