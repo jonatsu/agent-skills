@@ -1,0 +1,47 @@
+{
+  "skill_name": "c-cpp-style",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "record": [
+      "client",
+      "model",
+      "date",
+      "source_revision",
+      "prompt",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "material_cost",
+      "result"
+    ],
+    "grading": "Grade outcomes from the response and trace. Do not require exact wording or headings."
+  },
+  "cases": [
+    {
+      "id": "buildroot-makefile-loses-flags",
+      "prompt": "Our small C tool is packaged in Buildroot as a generic-package whose build step is `$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)`. Users report that the package compiles without our `-std=gnu17` and warning flags, and the target toolchain is GCC 15. Fix the Makefile and explain the cause.\n\n```make\nCC ?= gcc\nCFLAGS += -std=gnu17 -Wall -Wextra -Wconversion -O2\n\napp: app.o util.o\n\t$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^\n\n%.o: %.c\n\t$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<\n```\n",
+      "behavior": "Diagnose that command-line variables override the Makefile and keep both the project's and Buildroot's flags.",
+      "outcomes": [
+        "Explains that `TARGET_CONFIGURE_OPTS` passes `CFLAGS` on the make command line, which overrides the Makefile's `CFLAGS +=`.",
+        "Keeps the project's flags in their own variable that a command-line `CFLAGS` cannot replace, or uses `override CFLAGS += ...`.",
+        "Keeps honouring `CC`, `CPPFLAGS`, `CFLAGS`, and `LDFLAGS` from the build system, and hard-codes neither `gcc` nor `CFLAGS = ...`.",
+        "Keeps `-std=gnu17` explicit and notes that GCC 15 otherwise compiles C23."
+      ]
+    },
+    {
+      "id": "untrusted-count-allocation",
+      "prompt": "Write a C17 function for a Linux userspace daemon on our device. It reads a record header from an untrusted file descriptor: a 32-bit little-endian element count followed by a 32-bit little-endian element size. It then allocates a buffer for all elements and reads them. Return the buffer and its length to the caller, or an error.\n",
+      "behavior": "Write the allocation and read without overflow, leak, or unchecked return.",
+      "outcomes": [
+        "Checks the count times size multiplication for overflow, with `__builtin_mul_overflow` or an equivalent bound check, using `size_t`.",
+        "Checks every read and allocation result, including short reads.",
+        "Frees the buffer on every error path, with one clear owner of the returned buffer.",
+        "Uses no variable-length array, `alloca`, or unbounded copy."
+      ]
+    }
+  ]
+}

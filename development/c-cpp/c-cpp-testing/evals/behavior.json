@@ -1,0 +1,47 @@
+{
+  "skill_name": "c-cpp-testing",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "record": [
+      "client",
+      "model",
+      "date",
+      "source_revision",
+      "prompt",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "material_cost",
+      "result"
+    ],
+    "grading": "Grade outcomes from the response and trace. Do not require exact wording or headings."
+  },
+  "cases": [
+    {
+      "id": "otp-refusal-tests",
+      "prompt": "Our C tool `otpburn` writes a key into one-time-programmable memory through the vendor library call `int otp_write(unsigned slot, const unsigned char *key, size_t len)`. It must refuse, with exit status 2, when the slot is already locked, when the key file is shorter than 32 bytes, and when `--confirm` is missing. The only existing test runs the tool against real hardware and checks the exit status. Design and write host tests for the refusal cases that we can run in CI, including a memory-error check.\n",
+      "behavior": "Replace the vendor library with a counting stub and make each refusal test fail only for its named reason.",
+      "outcomes": [
+        "Replaces the vendor library with a stub, by link-time substitution or a stub shared library, so tests run on the host.",
+        "Has the stub count `otp_write` calls, and asserts the expected count as well as the exit status: 0 for the missing `--confirm` and short key, and no completed write for the locked slot.",
+        "Runs the tests under AddressSanitizer and UBSan with exit codes distinct from the tool's own exit codes.",
+        "Asserts the specific refusal reason or message, not only a non-zero exit."
+      ]
+    },
+    {
+      "id": "untested-firmware-first-tests",
+      "prompt": "We have an STM32 firmware project built with the vendor HAL and GCC, about 40 C files, and no tests at all. It has a command parser for the UART, a state machine for the charger, and drivers that talk to the HAL directly. Plan how we start testing it, and write the first test for something you choose.\n",
+      "behavior": "Start from pure logic in a host build and add hardware seams one at a time.",
+      "outcomes": [
+        "Starts with pure logic such as the parser or state machine, built for the host from the same sources.",
+        "Introduces a seam for hardware access, such as a HAL interface, link-time substitution, or register fakes, before testing driver code.",
+        "Keeps a CI job that also compiles the target build, and names what host tests cannot show, such as interrupt timing.",
+        "Puts time behind an interface with a fake clock where the chosen code depends on time."
+      ]
+    }
+  ]
+}

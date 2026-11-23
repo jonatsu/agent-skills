@@ -1,0 +1,46 @@
+{
+  "skill_name": "linux-kernel-development",
+  "mode": "explicit behavioral evaluation",
+  "run_contract": {
+    "supply_candidate_skill_path": true,
+    "clean_context_per_case": true,
+    "record": [
+      "client",
+      "model",
+      "date",
+      "source_revision",
+      "prompt",
+      "raw_result",
+      "trace_location",
+      "output_location",
+      "duration",
+      "token_use",
+      "material_cost",
+      "result"
+    ],
+    "grading": "Grade outcomes from the response and trace. Do not require exact wording or headings."
+  },
+  "cases": [
+    {
+      "id": "vendor-6-6-driver-review",
+      "prompt": "Review this new platform driver before we merge it into our vendor kernel tree. The tree's top Makefile says VERSION = 6, PATCHLEVEL = 6.\n\n```c\nstruct foo_priv { void __iomem *base; int irq; };\n\nstatic int foo_probe(struct platform_device *pdev)\n{\n\tstruct foo_priv *priv = kmalloc(sizeof(*priv), GFP_KERNEL);\n\n\tBUG_ON(!priv);\n\tpriv->base = devm_platform_ioremap_resource(pdev, 0);\n\tif (IS_ERR(priv->base)) {\n\t\treturn PTR_ERR(priv->base);\n\t}\n\tplatform_set_drvdata(pdev, priv);\n\treturn 0;\n}\n\nstatic void foo_remove(struct platform_device *pdev)\n{\n\tkfree(platform_get_drvdata(pdev));\n}\n\nstatic struct platform_driver foo_driver = {\n\t.probe = foo_probe,\n\t.remove = foo_remove,\n\t.driver = { .name = \"foo\" },\n};\nmodule_platform_driver(foo_driver);\n```\n",
+      "behavior": "Review against the tree's version and kernel style, not against mainline habits.",
+      "outcomes": [
+        "Notes that in a 6.6 tree a `void` remove callback is `.remove_new`, and says to confirm with `git grep` in the tree.",
+        "Replaces `BUG_ON` on allocation failure with returning `-ENOMEM`, and flags the leak of `priv` when ioremap fails, preferring `devm_kzalloc`.",
+        "Flags the braces around the single-statement `if` body as against kernel style.",
+        "Recommends running the tree's checkpatch and a `W=1` build, and reading the tree's own process documents."
+      ]
+    },
+    {
+      "id": "debug-build-for-driver",
+      "prompt": "I want to test my new driver for memory errors and data races. Set up the kernel configuration for one debug build with KASAN, KCSAN, UBSAN, and lockdep enabled, and tell me how to run its KUnit tests.\n",
+      "behavior": "Recognise that KCSAN excludes KASAN and split the builds.",
+      "outcomes": [
+        "Says KCSAN cannot be enabled together with KASAN, and proposes two builds.",
+        "Uses the tree's `debug.config` fragment or named options rather than an invented option set.",
+        "Gives the KUnit run command, `./tools/testing/kunit/kunit.py run`, or the tree's equivalent."
+      ]
+    }
+  ]
+}
