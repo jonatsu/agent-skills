@@ -506,9 +506,27 @@ trigger evaluation shows misses.
 Build `tui-ui-ux` beside `ui-ux-skills/cli-ui-ux` for full-screen terminal interfaces: layout, keybindings,
 focus, resizing, redraw, screen-reader behaviour, and a TUI review order. `cli-ui-ux` covers one-shot commands
 and inline prompts and states full-screen interfaces as out of scope, because they need a different checklist.
-Decided by the user on 2026-11-07 while designing `cli-ui-ux`. Candidate sources from that session's survey,
-unread in full: `hyperb1iss/hyperskills` `tui-design` (MIT) and `wimpysworld/nix-config` `tui-design`
-(BlueOak-1.0.0). Check each license at a pinned commit before adapting anything.
+Decided by the user on 2026-11-07 while designing `cli-ui-ux`.
+
+Sources are surveyed and recorded in `docs/evaluations/2026-11-23-tui-ui-ux-sources/`. The strongest existing skill is
+`gfargo/tui-design-skill` (MIT, about 300 KB); `hyperb1iss/hyperskills` `tui-design` is MIT, and
+`wimpysworld/nix-config` `tui-design` is an older MIT copy of gfargo's, despite its repository's BlueOak licence.
+
+Next comes a control round without the skill: five cases, one Sonnet run each.
+
+1. Build a small log-viewer TUI.
+2. Review a fixture TUI with planted defects: Esc quits, colour-only status, no terminal restore after a crash, a
+   hard-coded width, and a Ctrl+S binding.
+3. Add background loading to a list whose selection is tracked by position.
+4. Answer a screen-reader user's report that the app is unusable.
+5. Add tests that the layout survives a resize.
+
+Two questions for the user come first:
+
+- Framework scope: framework-neutral with Ratatui, Textual, and Bubble Tea as examples (recommended), or deeper on
+  the frameworks the user builds with. The answer also picks the fixture language, Python with Textual by default.
+- Wording: a compact skill in our own words crediting gfargo and hyperskills (recommended), or an adaptation of
+  gfargo's MIT references.
 
 ## CI/CD Skill
 
