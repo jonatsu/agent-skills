@@ -24,7 +24,7 @@ these documents would force cutting either real content or the aid that makes th
 
 ## Decision Rules
 
-SKILL.md states each device's trigger. This section holds the evidence behind it and the finer form detail,
+readme.md states each device's trigger. This section holds the evidence behind it and the finer form detail,
 derived from where the exemplars diverge, not from where they happen to agree.
 
 ### Table of Contents
@@ -78,7 +78,7 @@ Real HTML instances across the set:
 
 ### Humor
 
-Two authors arrive independently at SKILL.md's humor rule. One confines it entirely to the sections about the
+Two authors arrive independently at readme.md's humor rule. One confines it entirely to the sections about the
 project's philosophy and community, and it is wholly absent from features, prerequisites, install and
 troubleshooting. The other threads it through each command's lead-in, then drops immediately into a dry,
 joke-free list of exactly what the command does.
