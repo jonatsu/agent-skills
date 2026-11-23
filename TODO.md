@@ -503,6 +503,15 @@ to the new skill rather than growing into a reference manual.
 Write independently from primary sources: `netresearch/github-project-skill` uses CC-BY-SA-4.0 for prose
 despite MIT for scripts and assets, so its prose cannot be lifted into this MIT repository.
 
+## Decide Which Skills Support Windows
+
+Decide which skills should also work on Windows. Most skills here target Linux only, and the user needs Windows support
+for some of them later (stated 2026-11-23); macOS is out of scope, because the user does not use it. No skill has been
+assessed yet, and which ones need Windows is unknown. `system-administration/hardware-security-keys` is laid out for the
+addition: each reference keeps its operating-system facts under a `## Linux` heading, so a `## Windows` section can sit
+beside it, while the vendor CLIs that run on both stay in the shared sections. Its `compatibility` field says Linux and
+would change with that section.
+
 ## Changelog Skill Deferred
 
 Do not port `examples/skills/changelog` from `MuhammadUsmanGM/claude-code-best-practices` (reviewed and rejected
