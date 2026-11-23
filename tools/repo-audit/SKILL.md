@@ -1,23 +1,61 @@
 ---
-name: lint-config-audit
-description: Audit and tighten a repository's existing linter, type-checker, and formatter configuration across its languages. Use to find stale suppressions and exclusions, outdated or misconfigured checkers, and unused rules worth enabling with their violation counts, or to enable an approved rule and fix its violations. Setting up a new repository's baseline hooks belongs to repo-management.
+name: repo-audit
+description: Audit an existing repository read-only, then land the fixes the user approves. Covers its linter, type-checker, and formatter configuration (stale suppressions and exclusions, outdated or misconfigured checkers, unused rules worth enabling with their violation counts) and its hygiene (tracked files that should be ignored, large files and history blobs, committed secrets and personal paths). Use for a lint or config audit, a cleanup assessment, a secrets or large-file scan, or to enable an approved rule and fix its violations. Setting up hooks and config files belongs to repo-management, and a security review of the code to security-review.
 license: MIT
-compatibility: Runs the repository's own checkers, so each one the audit covers must be installed. Reading latest releases needs network access.
+compatibility: Runs the repository's own checkers, so each one the audit covers must be installed; the hygiene audit uses git and a credential scanner such as Betterleaks. Reading latest releases needs network access.
 metadata:
   author: Joonas Onatsu
 ---
 
-# Lint Config Audit
+# Repository Audit
 
-Make a repository's checks catch more without losing anything they catch today. The audit finds suppressions
-whose reason is gone, checkers that are stale or misconfigured, and rules worth enabling, each backed by a
-count the agent ran. Implementation then lands each approved change on its own.
+Find what a repository's checks miss and what it tracks that it should not, without changing anything until the
+user decides. The audit has two kinds:
 
-The request may name a focus, such as one language, a category such as security, or everything. Audit only
-that focus, and name what you left out.
+- **Checker audit:** make the checks catch more without losing anything they catch today. It finds suppressions
+  whose reason is gone, checkers that are stale or misconfigured, and rules worth enabling, each backed by a count
+  the agent ran. Follow steps 1 to 6.
+- **Hygiene audit:** find tracked files that should be ignored, large files, and committed secrets or personal
+  paths. Follow [Hygiene Audit](#hygiene-audit).
 
-The audit is read-only. Every change to configuration or code waits for the user's decision on that specific
-finding, because enabling a rule rewrites code across the tree and suppressing one removes protection.
+Run the kind the request names, and both when it asks for a full audit. The request may also narrow the focus,
+such as one language, a category such as security, or everything. Audit only that focus, and name what you left
+out.
+
+The audit is read-only. Every change to configuration, code, or tracked files waits for the user's decision on
+that specific finding, because enabling a rule rewrites code across the tree, suppressing one removes protection,
+and untracking or rewriting history loses data.
+
+## Hygiene Audit
+
+Run each scan in the focus and change nothing:
+
+- Gitignored but tracked files: `git ls-files -ci --exclude-standard`.
+
+- Large tracked files: `git ls-files -z | xargs -0 du -k -- | sort -rn | head`. The NUL separators and the `--`
+  keep a file name such as `-big file` from being read as an option.
+
+- Committed secrets: `betterleaks git .`, or the repository's established credential scanner.
+
+- Personal paths and project-specific patterns, where the repository configures Secretlint:
+  `pre-commit run secretlint --all-files`. It reads the working tree, not history.
+
+- Large blobs anywhere in history: offer this heavier scan, and run it only when the user wants it:
+
+  ```sh
+  git rev-list --objects --all |
+    git cat-file --batch-check='%(objecttype) %(objectsize) %(rest)' |
+    awk '$1 == "blob"' | sort -k2 -rn | head
+  ```
+
+Report paths and the remediation for each finding, never a secret's value. A leaked credential is rotated
+before it is removed from history, because removal does not revoke a copy someone already has. Untracking a file,
+deleting content, and rewriting history each need their own authorization; hand a history rewrite to
+`git-commits-and-recovery`. When the audit should also check whether the README or other documents are still
+true, run `context-architecture`'s truth audit beside it.
+
+The hygiene audit is done when every scan in the focus has run, or is reported as not run with its reason, and
+each finding names its path and remediation.
 
 ## 1. Inventory the Checkers
 

@@ -77,7 +77,7 @@ as `writing-specs` and `technical-design` do.
 | `chezmoi-dotfiles`               | 2026-10-04, `46487dd3`           | 2026-09-28, no change                             |
 | `mise-tools`                     | 2026-09-28, `9ae6e8a`            | 2026-09-28, `9ae6e8a`                             |
 | `drawio-diagrams`                | 2026-09-29, `1fe21f2`            | 2026-09-29, `1fe21f2`                             |
-| `lint-config-audit`              | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |
+| `repo-audit`                     | 2026-09-30, `9b0b52f`, new skill | 2026-09-30, `9b0b52f`, new skill                  |
 | `note-for-later`                 | 2026-09-30, `b691642`, new skill | 2026-09-30, `b691642`, new skill                  |
 | `debug-hardware`                 | 2026-09-30, `606289f`, new skill | 2026-09-30, `7ba3a4a`, probe guard hook added     |
 | `debug-server-tools`             | 2026-09-30, `606289f`, new skill | 2026-09-30, `606289f`, new skill                  |

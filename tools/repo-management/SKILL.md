@@ -1,6 +1,6 @@
 ---
 name: repo-management
-description: "Set up or refresh repository baseline files and hygiene hooks: bootstrap, .gitignore, .editorconfig, .gitattributes, pre-commit configuration, and read-only audits of tracked cruft, large files, and committed secrets. Not for tuning an existing repository's linter rules (lint-config-audit), checking whether docs are still true (context-architecture), or commits and history (git-commits-and-recovery)."
+description: "Set up or refresh repository baseline files and hygiene hooks: bootstrap, .gitignore, .editorconfig, .gitattributes, and pre-commit configuration. Not for auditing an existing repository's checks or tracked files (repo-audit), checking whether docs are still true (context-architecture), or commits and history (git-commits-and-recovery)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -12,9 +12,9 @@ Apply an opinionated repository baseline without erasing established project con
 configurations and templates encode the author's personal preferences; treat them as deliberate defaults.
 Repository evidence and explicit user choices take precedence when they conflict with those defaults.
 
-This skill owns baseline files, repository-local hygiene hooks, community templates, and read-only hygiene
-audits. Neighbouring work has its own skill: `lint-config-audit` audits and tightens the checkers an
-established repository already runs; `git-commits-and-recovery` owns commits, branches, recovery, and history
+This skill owns baseline files and repository-local hygiene hooks. Neighbouring work has its own skill:
+`repo-landing-docs` owns the landing documents; `repo-audit` audits an established repository's checkers and
+tracked files read-only; `git-commits-and-recovery` owns commits, branches, recovery, and history
 rewriting; `git-history-investigation` answers history questions; `using-git-worktrees` covers worktrees; and
 `agents-context-docs` covers agent instruction files.
 
@@ -28,7 +28,6 @@ rewriting; `git-history-investigation` answers history questions; `using-git-wor
   state a minimum interpreter version, not an exact one.
 - **Refresh:** compare an established repository with the preferred baseline, then fill approved gaps and
   leave healthy files as they are.
-- **Audit:** report tracked cruft, large files, committed secrets, or missing hygiene, and change nothing.
 
 ## Work Proportionately
 
@@ -41,9 +40,6 @@ rewriting; `git-history-investigation` answers history questions; `using-git-wor
 4. Apply the smallest coherent delta, and keep existing content unless the user authorized replacing it.
 5. Validate each changed artifact with its real consumers and the repository's checks.
 6. Report completed work, deferred findings, and external settings that still need the user's action.
-
-An audit stays read-only through all of this. Report remediation separately, because untracking files,
-deleting content, publishing settings, and rewriting history each need their own authorization.
 
 ## Apply the Preferred Baseline
 
@@ -98,35 +94,6 @@ repository already soft-wraps by convention, keep its convention.
 Rewrap long prose with the `markdown-tools` skill's `mdwrap.py`, typically right after the Markdown hooks are
 enabled on existing documents.
 
-## Run Hygiene Audits When Requested
-
-Run the full audit only when the user requests an audit, cleanup assessment, or broad refresh that includes
-hygiene. Keep it read-only:
-
-- Gitignored but tracked files: `git ls-files -ci --exclude-standard`.
-
-- Large tracked files: `git ls-files -z | xargs -0 du -k -- | sort -rn | head`. The NUL separators and the
-  `--` keep a file name such as `-big file` from being read as an option.
-
-- Committed secrets: use `betterleaks git .`, or the repository's established scanner.
-
-- Personal paths and project-specific patterns, where the repository configures Secretlint:
-  `pre-commit run secretlint --all-files`. It reads the working tree, not history.
-
-- Historical large blobs: offer this heavier scan of every object in history, and run it only when requested:
-
-  ```sh
-  git rev-list --objects --all |
-    git cat-file --batch-check='%(objecttype) %(objectsize) %(rest)' |
-    awk '$1 == "blob"' | sort -k2 -rn | head
-  ```
-
-Report paths and remediation without exposing secret values. Rotate a leaked credential before removing it
-from history. Hand history rewriting to `git-commits-and-recovery`.
-
-When the audit should also check whether the README or other documents are still true, run
-`context-architecture`'s truth audit alongside it.
-
 ## Preserve Safety Boundaries
 
 - Leave the license, visibility, governance model, runtime, and framework to the user's choice.
@@ -147,8 +114,7 @@ Check the exact files changed:
 - canonical license and official ignore sources were used when applicable;
 - templates contain no unresolved placeholders or irrelevant sections;
 - formatting and linting configurations reach a clean second pass on representative files;
-- repository checks pass without weakening existing gates; and
-- audits changed no repository state.
+- repository checks pass without weakening existing gates.
 
 Report exact validation results and untested environments.
 
