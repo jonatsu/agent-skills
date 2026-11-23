@@ -1,6 +1,6 @@
 ---
 name: security-review
-description: Review code, configuration, and infrastructure for exploitable security defects. Use for a security review, vulnerability hunt, threat model, OWASP assessment, or hardening pass over a diff, a component, or a whole repository, and whenever a change touches authentication, authorization, secrets, input parsing, deserialization, file uploads, outbound requests, or agent tool-use surfaces.
+description: Review code, configuration, and infrastructure for exploitable security defects. Use for a security review, vulnerability hunt, threat model, OWASP assessment, or hardening pass over a diff, a component, or a whole repository, and whenever a change touches authentication, authorization, secrets, input parsing, deserialization, file uploads, outbound requests, or agent tool-use surfaces. A standalone scan of a repository for committed secrets, without a security review, belongs to repo-audit.
 license: MIT
 compatibility: Requires `rg` and `fd` for discovery. Uses the project's own audit tooling where it is configured, and prefers `betterleaks` over `gitleaks` for secret scanning; both are optional.
 metadata:
