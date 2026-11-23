@@ -46,6 +46,9 @@ and after and refuses any change.
     line starts with `#`.
 15. **Only MD013's default mode was counted.** A repository that sets MD013's `stern` or `strict` option failed the
     linter while check mode reported nothing to rewrap. Fixed with `--line-length-mode`.
+16. **A short last word past the width passed.** MD013's default mode replaces the last word with one character before
+    measuring, so a line whose last word starts one column past the width fails it. The script required whitespace
+    past the width and missed that line. Fixed: the default mode measures the way MD013 does.
 
 ## Limitations
 

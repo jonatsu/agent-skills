@@ -108,6 +108,8 @@ BLOCK_START = re.compile(
 LINT_HEADING = re.compile(r"^#")
 # A line that MD013's stern mode accepts however long: no whitespace after its leading `#`, `>` and spaces.
 NOT_WRAPPABLE = re.compile(r"^(?:[#>\s]*\s)?\S*$")
+# The last run of non-whitespace, which MD013's default mode lets run past the width.
+LAST_RUN = re.compile(r"\S*$")
 DELIMITER_RUN = re.compile(r"^[*_~]+$")
 # A line holding only one of these is a thematic break, a setext underline or a complete HTML tag (a block).
 RULE_WORD = re.compile(rf"^(?:\*{{3,}}|_{{3,}}|-+|=+|<{_TAG_NAME}(?:{_ATTRIBUTE})*\s*/?>|</{_TAG_NAME}\s*>)$")
@@ -394,8 +396,9 @@ def container_prefix(first_line: str, content: str) -> tuple[str, str] | None:
 def too_long(line: str, width: int, mode: LengthMode = LengthMode.DEFAULT) -> bool:
     """Return whether a line breaks the width the way markdownlint's MD013 counts it in the given mode.
 
-    The default mode accepts a line that runs past the width with no whitespace beyond it, such as one ending in
-    a long URL, because no break can shorten it. Stern mode accepts only a line with no whitespace after its
+    The default mode replaces the line's last run of non-whitespace with one character before measuring, so a line
+    ending in a long URL passes when the URL starts within the width, and a short last word that starts past the
+    width still fails. Stern mode accepts only a line with no whitespace after its
     leading markers, and strict mode accepts no line past the width. Stern mode also accepts a line holding only
     links, which this function cannot see, so such a line may be rewrapped although the linter passes it.
     """
@@ -405,7 +408,7 @@ def too_long(line: str, width: int, mode: LengthMode = LengthMode.DEFAULT) -> bo
         return True
     if mode is LengthMode.STERN:
         return not NOT_WRAPPABLE.match(line)
-    return any(character.isspace() for character in line[width:])
+    return len(LAST_RUN.sub("#", line, count=1)) > width
 
 
 def wrap_segment(segment: Segment, lead: str, other_prefix: str, options: Options) -> list[str] | None:

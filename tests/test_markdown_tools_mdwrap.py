@@ -555,6 +555,18 @@ class MdwrapStructureTests(ScriptTestCase):
                 self.assertEqual(status, EXIT_FINDINGS)
                 self.assertEqual({int(line.split(":")[1]) for line in out.splitlines()}, flagged, out)
 
+    def test_a_short_last_word_starting_past_the_width_counts_as_too_long(self) -> None:
+        # MD013's default mode replaces the last word with one character before measuring, so a line whose last
+        # word starts at column 41 of 40 still fails it, even with no whitespace past the width.
+        cases = {
+            "x" * 39 + " a": True,  # 41 characters; the last word starts at column 41
+            "x" * 38 + " abc": False,  # 42 characters; the last word starts at column 40
+        }
+        for line, flagged in cases.items():
+            with self.subTest(length=len(line), flagged=flagged):
+                status, out = self._check(f"{line}\n", "--width", "40")
+                self.assertEqual(status, EXIT_FINDINGS if flagged else EXIT_CLEAN, out)
+
     def test_stern_mode_rewraps_until_only_unbreakable_lines_are_long(self) -> None:
         url = "https://example.com/" + "a" * 60
         status, text, out = self._write_any(
