@@ -101,6 +101,24 @@ optimisation produces false uninitialised-value reports.
 Drop `_FORTIFY_SOURCE` in sanitizer builds, because the OpenSSF hardening guide lists it as incompatible with
 AddressSanitizer.
 
+## Fuzz Parsers of Untrusted Input
+
+Give every parser of input an attacker can control a fuzz target: file formats, network messages, command lines read
+from a file, and data from removable media. Unit tests check the inputs someone thought of; a fuzzer finds the rest.
+
+- Write the target as `int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)`, declared `extern "C"` in C++.
+  It passes the bytes to the parser and returns 0. The target must not call `exit()`, and should leave no global
+  state behind between calls.
+- With clang, build it with libFuzzer and the sanitizers: `clang -g -O1 -fsanitize=fuzzer,address,undefined`.
+- Where the tree builds only with GCC, run the same target under AFL++. Its `afl-gcc-fast` and `afl-clang-fast`
+  wrappers instrument the build, and its `libAFLDriver.a` supplies the `main` that calls the target.
+- Seed the corpus with a few valid inputs, such as the test fixtures. Run the fuzzer in CI for a bounded time, for
+  example `./fuzz_header corpus/ -max_total_time=60` with libFuzzer.
+- Turn every crash into a regression test that feeds the saved input to the parser.
+
+libFuzzer's original authors have stopped active work on it, though LLVM still fixes important bugs; check the
+installed release's documentation before relying on an option.
+
 ## Measure Coverage
 
 Compile with `--coverage`, run the tests, and report with gcovr. Coverage at `-O0` maps to source lines; higher
@@ -129,5 +147,6 @@ The work is done when:
 
 - the tests run in CI, or in the tree's documented test command;
 - each memory checker, given one injected defect, fails the run with its own exit code;
+- each parser of untrusted input has a fuzz target that builds and runs in CI;
 - each new seam has at least one test that uses it;
 - each test expected to fail asserts the reason for the failure, not only that it failed.

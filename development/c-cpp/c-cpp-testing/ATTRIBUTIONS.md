@@ -28,6 +28,16 @@ repository. No prose or code was copied.
 The memory checkers' coverage and costs, Valgrind's CI options, cross-target coverage collection, and MC/DC support
 come from this documentation. No prose was copied.
 
+### libFuzzer and AFL++: fuzzing documentation
+
+- Source: <https://llvm.org/docs/LibFuzzer.html>, <https://github.com/AFLplusplus/AFLplusplus>,
+  `utils/aflpp_driver/README.md` and `instrumentation/README.gcc_plugin.md`
+- License: `Apache-2.0 WITH LLVM-exception AND AGPL-3.0-or-later`
+- Version: LLVM documentation read 2026-11-23, AFL++ `d798677805de`
+
+The fuzz target's signature and rules, the libFuzzer build and time-limit options, the project's maintenance status,
+and AFL++'s driver and GCC plugin come from this documentation. No prose was copied.
+
 ### Yocto Project, Buildroot, and QEMU: test documentation
 
 - Source: <https://docs.yoctoproject.org/test-manual/>, <https://buildroot.org/downloads/manual/manual.html>,
