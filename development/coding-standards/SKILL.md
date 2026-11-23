@@ -102,6 +102,11 @@ or package convention. Keep constants and types visually distinct from ordinary 
 that distinction. A language-specific rule overrides this where a pattern is not idiomatic, and casing and
 framework prefixes belong to that rule.
 
+Give each concept one name, and each name one meaning, across the whole codebase: identifiers, record keys,
+file names, and the documentation that explains them. A word that means two things leads the next reader to write
+the wrong check, as when `absent` names both an outcome a run failed to produce and one expected never to appear.
+When you find such a word, rename one side, with every reader of it, before you build on either.
+
 Give a function a name rather than passing a long anonymous closure, since a name helps both the reader and the
 stack trace. Keep closures short where they are idiomatic.
 
