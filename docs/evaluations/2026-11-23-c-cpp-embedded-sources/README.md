@@ -14,6 +14,7 @@ match each place's own conventions, with improvements added on top.
 | [clangd.md](clangd.md)                                     | clangd configuration, compilation databases per tree, formatting through clangd, and cross-build pitfalls, with a recipe per tree       |
 | [third-party-skills.md](third-party-skills.md)             | About 90 third-party agent skills surveyed, 11 assessed in depth, with licences, pins, and red flags                                    |
 | [work-session-refinements.md](work-session-refinements.md) | Eight refinements found by applying a draft C rule set to two small tools, with the tool versions used                                  |
+| [userspace-device-access.md](userspace-device-access.md)   | GPIO, I2C, SPI, UIO, serial, and other device interfaces from userspace, permissions, and when a kernel driver is the better choice     |
 
 Six Sonnet research lanes wrote the first six files from primary sources where reachable, and each marks what a
 source says apart from its own inference. Each file lists what it could not reach.
