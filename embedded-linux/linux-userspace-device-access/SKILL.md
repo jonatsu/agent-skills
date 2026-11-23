@@ -76,8 +76,8 @@ versions. Version-dependent facts follow:
 
 This step is done when each device the code touches has its interface named, and that interface exists in the
 target kernel. For each bus interface, its traps, and `/dev/mem`, read [references/buses.md](references/buses.md).
-For serial, input, LEDs, sensors, the watchdog, and uevents, read
-[references/other-interfaces.md](references/other-interfaces.md). Command-line bring-up and reading the running
+For serial, input, LEDs, sensors, the watchdog, uevents, and device-tree properties, read
+[references/other-interfaces.md](references/other-interfaces.md). Command-line bring-up and exploring the running
 device tree belong to `embedded-linux-bringup`; a new kernel driver belongs to `linux-kernel-development`.
 
 ## Hold the Device Correctly

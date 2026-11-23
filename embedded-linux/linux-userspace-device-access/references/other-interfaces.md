@@ -1,4 +1,4 @@
-# Serial, Input, LEDs, Sensors, Watchdog, and Uevents
+# Serial, Input, LEDs, Sensors, Watchdog, Uevents, and Device-Tree Properties
 
 The device classes whose kernel driver already exists, so userspace only consumes the interface it exposes. Each
 section names the document to read in the target tree or its man pages.
@@ -11,6 +11,7 @@ section names the document to read in the target tree or its man pages.
 - hwmon and IIO
 - Watchdog
 - Device Arrival
+- Device-Tree Properties
 
 ## Serial and RS-485
 
@@ -122,3 +123,11 @@ Without systemd, one daemon opens `/dev/watchdog`:
 Wait for a device to appear by monitoring uevents, filtered by subsystem, rather than polling `/dev`. In new code, use
 the `sd_device_monitor_*` functions from `libsystemd`, declared in `<systemd/sd-device.h>`. systemd documents
 `libudev` as supported but not for new projects. In Python, `pyudev` wraps libudev.
+
+## Device-Tree Properties
+
+A program that reads a property of the running device tree, such as the board's `model` or a vendor property, reads a
+file under `/proc/device-tree`. Integer properties are sequences of big-endian 32-bit cells. Read each cell by copying
+4 bytes with `memcpy` into a `uint32_t` and converting it with `be32toh`, never by reading the file straight into an
+integer, and check that the file's length is a whole number of cells. A string property ends in a NUL byte, and a
+string list holds several. For exploring the tree by hand, use `embedded-linux-bringup`.
