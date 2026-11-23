@@ -39,7 +39,8 @@ Notable changes to this project are listed here, newest first. The format follow
 
 - {{VULNERABILITY_FIXED}}
 
-<!-- Make each version heading a link: move these definitions out of this comment, one per heading.
+<!-- Make each version heading a link: move these definitions below this comment, one per heading, fill in each
+placeholder, and delete the comment.
 [Unreleased]: {{REPOSITORY_URL}}/compare/v{{VERSION}}...HEAD
 [{{VERSION}}]: {{REPOSITORY_URL}}/compare/v{{PREVIOUS_VERSION}}...v{{VERSION}}
 -->
