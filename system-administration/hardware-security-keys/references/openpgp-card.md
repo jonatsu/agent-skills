@@ -62,9 +62,14 @@ export into a throwaway keyring with `disable-scdaemon`, so a plugged-in card's 
 ```bash
 CHECK=$(mktemp -d -p "$XDG_RUNTIME_DIR" gnupg-check.XXXXXX)
 echo disable-scdaemon >| "$CHECK/gpg-agent.conf"
-gpg --homedir "$CHECK" --import "$WORK/secret.asc" && gpg --homedir "$CHECK" -K
+gpg --homedir "$CHECK" --pinentry-mode loopback --import "$WORK/secret.asc"
+gpg --homedir "$CHECK" --list-secret-keys --with-colons | grep -E '^(sec|ssb)' | cut -d: -f1,5,12,15
 gpgconf --homedir "$CHECK" --kill all; rm -rf "$CHECK"
 ```
+
+Import with `--pinentry-mode loopback`. Through pinentry, GnuPG 2.4.8 rejected a cv25519 subkey (`Bad secret key`)
+yet still reported `secret keys imported: 1`. The check passes only when every `sec` and `ssb` line ends in `+`; a
+`#` means that secret is missing.
 
 ## 4. Card PINs and Data
 
@@ -114,6 +119,9 @@ such as on a host whose password manager owns SSH. Publish as `tools.md` describ
 ## Later Changes
 
 Each needs the primary secret: import `secret.asc` from the password manager into a fresh temporary home (part 1).
+Import `secret.asc` with `--pinentry-mode loopback` and run part 3's check. Before a new export replaces the backup,
+run `gpg --list-packets` on it and confirm that no secret key shows `gnu-dummy`. A keyring that lost a subkey exports
+it as a stub, and the card would become that subkey's only copy.
 
 - **Renew:** `gpg --quick-set-expire "$FPR" 2y '*'` renews every subkey; `gpg --quick-set-expire "$FPR" 10y` renews the
   primary. Export the public key, import it into the daily keyring, and publish it. The card needs no change.
