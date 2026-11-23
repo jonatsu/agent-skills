@@ -287,7 +287,9 @@ request (Provos, Friedl, Honeyman, USENIX Security 2003).
 ## Single-Run Command-Line Tools
 
 A tool that runs once and exits may end through a `die()` helper instead of a cleanup ladder, when that helper first
-wipes secrets and removes partial output (inference). Library code still returns errors to its caller.
+wipes secrets and removes partial output (inference). Library code still returns errors to its caller. Keep the parser
+returning an error too, and call `die()` only from `main` and its top-level steps, so a fuzz target can call the parser
+directly.
 
 - List every exit status in the file's header comment, and keep each value stable, because scripts branch on it.
   Callers test the status, never the message text.

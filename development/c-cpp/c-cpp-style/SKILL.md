@@ -77,7 +77,8 @@ Start new code from this set, which follows the OpenSSF Compiler Options Hardeni
 -Wnull-dereference -Wcast-align -Werror=format-security
 ```
 
-Add these to the C flags only, because `g++` warns on each that it is not valid for C++:
+Add these to the C flags only. `g++` warns that each is not valid for C++, and `-Werror` turns that into a build
+failure:
 
 ```text
 -Wstrict-prototypes -Wmissing-prototypes
