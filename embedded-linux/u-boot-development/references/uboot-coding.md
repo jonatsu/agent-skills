@@ -26,6 +26,10 @@ single statements, and `scripts/checkpatch.pl` as the gate. U-Boot adds its own 
 - Log with `log_*()` and the driver model's device helpers, not the kernel's `printk` or `dev_*()`.
 - Put a blank line before a function's final `return`.
 - The kernel's networking comment style exception does not apply in U-Boot.
+- Treat data from removable media, the network, or an unsigned image as hostile. Read multi-byte fields with
+  `get_unaligned_be32()` and its relatives, or `fdt32_to_cpu()` for a raw device-tree cell, never by casting a byte
+  buffer to a struct or integer pointer. Check each length against the bytes remaining, so no sum can overflow, and
+  validate the whole input before acting on it.
 
 The tree ships its own `.clang-format`, which differs from the kernel's, including a U-Boot `ForEachMacros` block.
 Format only the lines you changed, with `git clang-format`, so unrelated lines keep their history. A personal
@@ -83,3 +87,10 @@ releases, wrapping the build in Bear should produce one (inference; untested). P
 
 `b4` is the tree's preferred tool for preparing and sending a series, and the tree ships a `.b4-config`. `patman`
 now lives outside the U-Boot tree. Read `doc/develop/sending_patches.rst` for the release in hand before sending.
+
+### Patches Carried in a Build Layer
+
+A product's build layer often carries U-Boot patches against a pinned release instead of sending them upstream. Keep
+each one as a `git format-patch` file with its author and `Signed-off-by:`, give it the header the build system's
+patch policy requires, and run the tree's `scripts/checkpatch.pl` on it. When the pin moves, rebase the patches onto
+the new release, drop those upstream now contains, and build after each one.
