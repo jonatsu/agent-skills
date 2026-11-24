@@ -126,7 +126,9 @@ named-field assertions), or the response can change past recognition without fai
 ## Step 5: Sweep the coverage taxonomy
 
 Walk this list per high-risk behavior rather than recalling edge cases freely. Recall reliably misses
-whole categories; a sweep makes the misses deliberate. Most entries will not apply; say so and move on.
+whole categories; a sweep makes the misses deliberate. Most entries will not apply; say so and move on. Keep a
+scenario only when its failure would otherwise pass silently and cost something, unless the brief asks for
+deeper testing, and record the rest as non-goals in Step 7.
 
 - **Equivalence classes**: partition the input domain, one representative per class.
 - **Boundaries**: at, either side of, and beyond every limit: 0, 1, n, n+1, empty, single, max, overflow.
@@ -167,8 +169,8 @@ private method carrying the whole risk, and output that exists only as a log lin
 Every plan leaves things uncovered. A plan that does not say which one is claiming total coverage by omission,
 and the reader will believe it.
 
-For each: what is not tested, why (cost, low risk, covered elsewhere, blocked), and what would change the
-answer. "Not tested" with a reason is a decision; "not tested" silently is a hole.
+For each: what is not tested, why (cost, low risk, covered elsewhere, fails loudly on first use, blocked), and
+what would change the answer. "Not tested" with a reason is a decision; "not tested" silently is a hole.
 
 ## Suite health rules
 

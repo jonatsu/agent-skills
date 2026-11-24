@@ -14,9 +14,13 @@ all its affected files at once. Formatting, linting, and a green build do not pr
 ## How to Write a Test
 
 Structure each test as arrange, act, assert, and keep its assertions focused on one behavior. Give each test a
-descriptive name that reads as a specification, and keep it isolated so it runs alone and in any order. Cover
-the edge cases, not just the happy path: empty inputs, null values, and boundary conditions. Keep unit tests
-fast, so the feedback loop stays tight. Set coverage goals by risk and rate of change rather than a blanket
+descriptive name that reads as a specification, and keep it isolated so it runs alone and in any order. Write a
+test for each behavior whose failure would otherwise pass silently and cost something, such as a wrong signature,
+lost work, a deleted file, or a leaked secret, and stop there. Edge cases meet the same bar: test an empty input,
+a null value, or a boundary only where it can fail that way. Leave out a test that repeats what another test
+already guards, a failure that shows loudly on first use, and an edge case that is unlikely to break. A
+repository's own test policy, or a request for deeper testing, may set a stricter bar. Keep unit tests fast, so
+the feedback loop stays tight. Set coverage goals by risk and rate of change rather than a blanket
 percentage, and track the trend to catch a regression. Treat a green suite as a merge gate for production
 changes. Write suites that read as documentation of how the system behaves.
 

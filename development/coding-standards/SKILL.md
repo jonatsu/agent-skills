@@ -210,6 +210,7 @@ app can start more than once within a minute.
 ## Testing
 
 Write and structure tests to the standards in `references/testing-standards.md`: test behavior rather than
-implementation, cover the edge cases, keep each test fast and isolated, and solve the problem rather than the
-test. For test-first implementation of a specific behavior, load `test-driven-development`; for strategy,
-coverage judgment, and adversarial validation, load `test-engineer`.
+implementation, test each behavior whose failure would otherwise pass silently and cost something, keep each
+test fast and isolated, and solve the problem rather than the test. For test-first implementation of a specific
+behavior, load `test-driven-development`; for strategy, coverage judgment, and adversarial validation, load
+`test-engineer`.
