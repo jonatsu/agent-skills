@@ -3,8 +3,10 @@
 These assets encode the author's preferred repository baseline. Preserve the profile for a new repository;
 adapt it when an established repository already carries deliberate conventions.
 
-- Preserve patch/diff safety by default. Formatters and fixing hooks should not rewrite `*.patch` or `*.diff`
-  files unless the repo explicitly requests it.
+- Preserve patch/diff safety by default. Formatters, fixing hooks, and Git's own whitespace handling
+  (`apply.whitespace=fix`, `git diff --check`) must not rewrite or flag `*.patch` or `*.diff` files unless the
+  repository explicitly requests it. That takes the hook exclusions, the EditorConfig section, and
+  `-text -whitespace` in `.gitattributes` together.
 - Add repo-specific exclusions only after confirming generated, vendored, or archived paths with the
   maintainer. Examples: generated docs, snapshots, or bundled third-party directories.
 - Keep the active YAML, Markdown, and shell hooks when applying the preferred profile. Add further

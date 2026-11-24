@@ -15,8 +15,8 @@ user decides. The audit has two kinds:
 - **Checker audit:** make the checks catch more without losing anything they catch today. It finds suppressions
   whose reason is gone, checkers that are stale or misconfigured, and rules worth enabling, each backed by a count
   the agent ran. Follow steps 1 to 6.
-- **Hygiene audit:** find tracked files that should be ignored, large files, and committed secrets or personal
-  paths. Follow [Hygiene Audit](#hygiene-audit).
+- **Hygiene audit:** find tracked files that should be ignored, large files, committed secrets or personal
+  paths, and patch files Git may rewrite. Follow [Hygiene Audit](#hygiene-audit).
 
 Run the kind the request names, and both when it asks for a full audit. The request may also narrow the focus,
 such as one language, a category such as security, or everything. Audit only that focus, and name what you left
@@ -40,6 +40,12 @@ Run each scan in the focus and change nothing:
 - Personal paths and project-specific patterns, where the repository configures Secretlint:
   `pre-commit run secretlint --all-files`. It reads the working tree, not history.
 
+- Patch protection, where `git ls-files '*.patch' '*.diff'` lists any file:
+  `git check-attr text whitespace -- <one listed file>` must report both as `unset`. The fixing hooks must
+  exclude those files, and `.editorconfig` must unset its rules for them. Without `-whitespace`, a global
+  `apply.whitespace=fix` makes `git apply`, `git am`, and apply-based rebases strip context-line spaces inside
+  a patch file and corrupt it.
+
 - Large blobs anywhere in history: offer this heavier scan, and run it only when the user wants it:
 
   ```sh
@@ -59,6 +65,7 @@ Land each approved hygiene fix on its own, after the user decides that finding:
 - **Tracked but ignored file:** untrack it with `git rm --cached -- <path>`, which keeps the working copy. Where
   the ignore rule itself is wrong, fix `.gitignore` instead, as `repo-setup` describes.
 - **Large file:** move it out of the tree or to Git LFS, as the user chooses.
+- **Unprotected patch file:** add the missing protection, as `repo-setup`'s assets show.
 - **Leaked credential:** have the owner rotate it first, because removing it from history does not revoke a copy
   someone already has. Hand the history rewrite to `git-commits-and-recovery`.
 

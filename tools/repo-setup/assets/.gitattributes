@@ -41,9 +41,10 @@
 *.tgz      binary
 *.zip      binary
 
-# Preserve patches and diffs as-is; formatters/hooks should not rewrite them.
-*.patch    -text
-*.diff     -text
+# Preserve patches and diffs as-is: no line-ending conversion, and no
+# whitespace checks or fixes by git diff --check, git apply, or git am.
+*.patch    -text -whitespace
+*.diff     -text -whitespace
 
 # Optional for source-distribution archives only:
 # .github/ export-ignore
