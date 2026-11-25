@@ -53,8 +53,27 @@ triage and the framework-identification gate. Nothing was copied.
 
 ### Titus Winters, Tom Manshreck, and Hyrum Wright: Software Engineering at Google
 
-- Source: <https://abseil.io/resources/swe-book>, chapter 11, "Testing Overview"
+- Source: <https://abseil.io/resources/swe-book>, chapters 11, "Testing Overview", and 12, "Unit Testing"
 - License: `CC-BY-NC-ND-4.0`
 - Version: first edition, O'Reilly, 2020
 
-The chapter supplied the test-size axis used in `references/test-strategy.md`. Nothing was copied.
+Chapter 11 supplied the test-size axis used in `references/test-strategy.md`. Chapter 12 supplied the rule against
+one test per function. Nothing was copied.
+
+### Jim Shore: Fail Fast
+
+- Source: <https://martinfowler.com/ieeeSoftware/failFast.pdf>
+- License: `LicenseRef-Proprietary`
+- Version: IEEE Software, vol. 21, no. 5, 2004
+
+The article is copyrighted by IEEE. It supplied the fail-fast check that stands in for tests of input variations.
+Nothing was copied.
+
+### Koen Claessen and John Hughes: QuickCheck
+
+- Source: <https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf>
+- License: `LicenseRef-Proprietary`
+- Version: ICFP 2000
+
+The paper is copyrighted by ACM. It supplied the preference for one property-based test over many examples in the
+input categories of the coverage taxonomy. Nothing was copied.

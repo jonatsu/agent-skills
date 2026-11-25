@@ -154,9 +154,10 @@ already decided; the checklist below is the whole method there.
 Applies to `TEST-IMPLEMENTATION`, `VALIDATION`, `REGRESSION`, and `BUG-REPRO`.
 
 01. Scope: confirm task is test-only. If not, stop.
-02. Risk: identify the behavior, regression, acceptance criteria, and edge cases whose failure would otherwise
-    pass silently and cost something, and leave the rest untested unless the brief or the repository's test
-    policy asks for deeper testing. Unsure what deserves a test? That is `TEST-STRATEGY`; switch modes.
+02. Risk: identify the behaviors, regressions, acceptance criteria, and edge cases whose failure would otherwise
+    pass silently and cost something; a reproduced defect always qualifies. Skip what a type or a loud check
+    already catches, unless the brief or the repository's test policy asks for deeper testing. Unsure what
+    deserves a test? That is `TEST-STRATEGY`; switch modes.
 03. Existing coverage: inspect nearby tests and reuse local conventions.
 04. Framework: load `coding-standards`, and the language's testing skill when one is available:
     `python-testing` for Python, `bash-shell` for Bash, `posix-shell` for portable `sh`, `nix-flakes` for flake
@@ -231,7 +232,9 @@ Good focus:
 Anti-patterns:
 
 - Testing mocks instead of behavior.
-- A test that repeats what another test already guards, or that pins a failure which shows loudly on first use.
+- A test per function or per input variation, where boundary validation or a type already rejects the bad input.
+- A test that repeats another test's guard, or that pins a failure which shows loudly the first time the code
+  runs, before it ships.
 - Asserting private calls, internal order, or incidental structure.
 - Broad snapshots without human-readable intent.
 - Large fixture magic that obscures the scenario.

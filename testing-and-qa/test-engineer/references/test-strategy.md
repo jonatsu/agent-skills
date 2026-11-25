@@ -35,7 +35,7 @@ the promises the system makes, and it dies at the next refactor.
 
 For each behavior, record the **consequence of it being wrong**. That sentence is the input to step 2 and the
 justification for every cost the plan asks for. Behaviors whose failure costs nothing are where a plan gets to
-say "no test".
+say "no test". A behavior that a type or a loud check already guards gets "no test" too; name the guard.
 
 Sources, in order: the acceptance criteria or issue, the public interface (API routes, CLI surface, exported
 functions, events, schemas), the error paths that interface admits to, and the incident or bug history.
@@ -127,8 +127,10 @@ named-field assertions), or the response can change past recognition without fai
 
 Walk this list per high-risk behavior rather than recalling edge cases freely. Recall reliably misses
 whole categories; a sweep makes the misses deliberate. Most entries will not apply; say so and move on. Keep a
-scenario only when its failure would otherwise pass silently and cost something, unless the brief asks for
-deeper testing, and record the rest as non-goals in Step 7.
+scenario only when its failure would otherwise pass silently and cost something, unless the brief or the
+repository's test policy asks for deeper testing. Record the rest as non-goals in Step 7. For the input
+categories (equivalence classes, boundaries, null and absence, type and shape), prefer one property-based test or
+fuzz target over many examples. Skip such a category where boundary validation already rejects the input.
 
 - **Equivalence classes**: partition the input domain, one representative per class.
 - **Boundaries**: at, either side of, and beyond every limit: 0, 1, n, n+1, empty, single, max, overflow.
@@ -169,8 +171,9 @@ private method carrying the whole risk, and output that exists only as a log lin
 Every plan leaves things uncovered. A plan that does not say which one is claiming total coverage by omission,
 and the reader will believe it.
 
-For each: what is not tested, why (cost, low risk, covered elsewhere, fails loudly on first use, blocked), and
-what would change the answer. "Not tested" with a reason is a decision; "not tested" silently is a hole.
+For each: what is not tested, why (cost, low risk, covered elsewhere, guarded by a type or a loud check, fails
+loudly the first time the code runs, blocked), and what would change the answer. "Not tested" with a reason is a
+decision; "not tested" silently is a hole.
 
 ## Suite health rules
 

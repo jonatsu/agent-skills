@@ -62,3 +62,66 @@ optimization under KISS, and the sequential-await and over-fetching items in the
 The skill supplied four ideas for the comment rules: a doc-comment says only what the signature cannot, keeping a
 comment and its length are separate tests, a label survives only with a checkable fact, and numbered step comments
 point to functions waiting to be extracted. The rules were written independently; no text was copied.
+
+### Alexis King: Parse, don't validate
+
+- Source: <https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/>
+- License: `LicenseRef-No-License`
+- Version: 2019-11-05
+
+The post declares no license, so all rights remain with its author. It supplied the rule to parse input at the
+system boundary into types the rest of the code trusts, in `SKILL.md` and `references/testing-standards.md`.
+Nothing was copied.
+
+### Jim Shore: Fail Fast
+
+- Source: <https://martinfowler.com/ieeeSoftware/failFast.pdf>
+- License: `LicenseRef-Proprietary`
+- Version: IEEE Software, vol. 21, no. 5, 2004
+
+The article is copyrighted by IEEE. It supplied the fail-fast layer of the testing bar and the line between loud
+checks and tests: checks guard the seams, and tests still own the logic inside a function. Nothing was copied.
+
+### Oracle: Programming With Assertions
+
+- Source: <https://docs.oracle.com/javase/8/docs/technotes/guides/language/assert.html>
+- License: `LicenseRef-Proprietary`
+- Version: Java SE 8
+
+The guide is copyrighted by Oracle. It supplied the rule to keep assertions for states the code rules out and to
+check public arguments explicitly, because assertions can be disabled. Nothing was copied.
+
+### Kent Beck: answer on how much to test
+
+- Source: <https://stackoverflow.com/a/153565>
+- License: `CC-BY-SA-2.5`
+- Version: 2008-09-30
+
+The answer supplied the aim of testing for confidence rather than coverage. Nothing was copied.
+
+### Kent Beck: Canon TDD
+
+- Source: <https://tidyfirst.substack.com/p/canon-tdd>
+- License: `LicenseRef-No-License`
+- Version: 2023-12-11
+
+The post declares no license, so all rights remain with its author. It supplied the point that writing a test
+first decides when a test is written, not whether it is worth writing. Nothing was copied.
+
+### Titus Winters, Tom Manshreck, and Hyrum Wright: Software Engineering at Google
+
+- Source: <https://abseil.io/resources/swe-book>, chapter 12, "Unit Testing"
+- License: `CC-BY-NC-ND-4.0`
+- Version: first edition, O'Reilly, 2020
+
+The chapter supplied the rule to test behaviors rather than methods, and the rule that a bug fix includes the
+test case that was missing. Nothing was copied.
+
+### Koen Claessen and John Hughes: QuickCheck
+
+- Source: <https://www.cs.tufts.edu/~nr/cs257/archive/john-hughes/quick.pdf>
+- License: `LicenseRef-Proprietary`
+- Version: ICFP 2000
+
+The paper is copyrighted by ACM. It supplied property-based testing as the replacement for many hand-picked
+examples over a large input space. Nothing was copied.

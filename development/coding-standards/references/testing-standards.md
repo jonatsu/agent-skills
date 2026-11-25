@@ -2,7 +2,33 @@
 
 Load this when writing tests, judging whether coverage is adequate, or planning what to test.
 
-## What to Test
+## What Deserves a Test
+
+A test is the last guard, not the first. Catch each possible failure at the cheapest level that can catch it:
+
+1. Design it out. Parse input at the system boundary into types that cannot hold invalid values, and let
+   constructors enforce invariants. The compiler or the parser then rejects the failure.
+2. Make it loud. Validate at the boundary and fail fast with a clear error, assert internal invariants, and exit
+   nonzero. The failure then shows the first time the code runs.
+3. Test what remains: each behavior whose failure would otherwise pass silently and cost something. Examples are
+   a wrong result, a wrong signature, lost work, a deleted file, a leaked secret, a race, or a broken contract
+   between components.
+
+Loud checks replace tests of input variations, not tests of logic: a calculation that returns a wrong value fails
+silently, so it still gets a test. Test a validator at the boundary, once for each rule whose failure would let
+dangerous input through, rather than every function with every bad input. Where correctness depends on a large
+input space, as in a parser or an encoder, write one property-based test or fuzz target instead of many
+hand-picked examples.
+
+A reproduced defect always earns a regression test, loud or not, because it has shown that it happens. When the
+fix makes the whole defect class impossible, the type or parser that now rejects it is the regression guard.
+
+Leave out a test that repeats what another test already guards. Leave out a failure that shows loudly the first
+time the code runs, before it ships, and an edge case that is unlikely to break. Writing a test first changes
+when it is written, not whether it is worth writing. Test more deeply when the repository's test policy or the
+user asks for it.
+
+## Where to Test
 
 Test behavior at the level where it must hold, not the implementation that delivers it. Unit-test pure logic
 with real inputs and outputs, mocking only a genuine side-effect boundary such as a third-party service, the
@@ -14,13 +40,8 @@ all its affected files at once. Formatting, linting, and a green build do not pr
 ## How to Write a Test
 
 Structure each test as arrange, act, assert, and keep its assertions focused on one behavior. Give each test a
-descriptive name that reads as a specification, and keep it isolated so it runs alone and in any order. Write a
-test for each behavior whose failure would otherwise pass silently and cost something, such as a wrong signature,
-lost work, a deleted file, or a leaked secret, and stop there. Edge cases meet the same bar: test an empty input,
-a null value, or a boundary only where it can fail that way. Leave out a test that repeats what another test
-already guards, a failure that shows loudly on first use, and an edge case that is unlikely to break. A
-repository's own test policy, or a request for deeper testing, may set a stricter bar. Keep unit tests fast, so
-the feedback loop stays tight. Set coverage goals by risk and rate of change rather than a blanket
+descriptive name that reads as a specification, and keep it isolated so it runs alone and in any order. Keep unit
+tests fast, so the feedback loop stays tight. Set coverage goals by risk and rate of change rather than a blanket
 percentage, and track the trend to catch a regression. Treat a green suite as a merge gate for production
 changes. Write suites that read as documentation of how the system behaves.
 

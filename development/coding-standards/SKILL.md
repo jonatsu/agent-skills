@@ -180,11 +180,19 @@ file. State the degree of rewrite accurately in the notice and the commit messag
 misstates which license governs the code. When it is unclear whether code is derived or where its notice belongs,
 ask the user before committing it.
 
-## Input Validation
+## Input Validation and Assertions
 
 Validate every input at the system boundary before processing, using schema-based validation where it is
 available, and fail fast with a clear message. Treat all external data as untrusted: API responses, user input,
 and file content.
+
+Parse validated input into a type the rest of the code trusts, so inner functions neither re-check it nor need
+tests for bad input.
+
+Assert each internal invariant the code relies on but the type system cannot express. A broken assumption then
+stops the program where it happened, instead of corrupting data later. Reserve assertions for states the code
+itself rules out. Check public arguments and external data with explicit validation, because a runtime flag can
+disable assertions.
 
 ## Errors and Configuration
 
@@ -210,7 +218,7 @@ app can start more than once within a minute.
 ## Testing
 
 Write and structure tests to the standards in `references/testing-standards.md`: test behavior rather than
-implementation, test each behavior whose failure would otherwise pass silently and cost something, keep each
-test fast and isolated, and solve the problem rather than the test. For test-first implementation of a specific
-behavior, load `test-driven-development`; for strategy, coverage judgment, and adversarial validation, load
-`test-engineer`.
+implementation, design a failure out or make it loud before testing it, then test each behavior whose failure
+would otherwise pass silently and cost something. Keep each test fast and isolated, and solve the problem rather
+than the test. For test-first implementation of a specific behavior, load `test-driven-development`; for strategy,
+coverage judgment, and adversarial validation, load `test-engineer`.

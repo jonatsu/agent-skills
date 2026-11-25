@@ -33,9 +33,14 @@ direct available validation and report what automated regression evidence remain
 Add a test only when it protects changed observable behavior, a durable contract, or a reproduced defect. Do not add one
 merely because a function, line, private helper, constant, configuration text, or coverage target is new.
 
-Name a plausible production bug the test would catch, one that would otherwise pass silently and cost something, and add
-no test that repeats what another test already guards. When you cannot name one, test a consumer-visible result instead,
-or skip the test and validate directly. Test more deeply when the user or the repository's test policy asks for it.
+Before writing a test, prefer a type or a loud check that rejects the failure. Then name a plausible production bug the
+test would catch, one that would otherwise pass silently and cost something. Add no test that repeats what another test
+already guards. A reproduced defect always earns its test, loud or not, unless the fix makes the defect class
+impossible. When you cannot name such a bug, test a consumer-visible result instead, or skip the test and validate
+directly. Test more deeply when the user or the repository's test policy asks for it.
+
+Test-first decides when a test is written, not which tests are worth writing. List the scenarios, put each through this
+gate, and stop when the remaining ones no longer worry you.
 
 Test pure logic directly with real inputs and outputs, and prefer externally visible behavior and durable contracts over
 private calls, source text, or incidental structure. Unit tests may mock only genuine side-effect boundaries, such as
