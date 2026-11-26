@@ -76,6 +76,13 @@ but the surrounding platform must grant the same ID access to mounted data.
 Give a copied file to the runtime user with `COPY --chown=<user>:<group>` only when the process writes to it. A later
 `RUN chown -R` copies every affected file into a new layer, so the image carries them twice.
 
+`COPY` keeps the permission bits that files have in the build context. A checkout made under a restrictive umask, such
+as `0027`, leaves files unreadable to other users. A non-root runtime user that does not own them then cannot read the
+application, although the build, which runs as root, passes. Set the modes in the `COPY`, or normalize the context
+first with `chmod -R u=rwX,go=rX`. Use an octal mode, such as `--chmod=0644`, for files only, because it applies the
+same mode to directories. BuildKit accepts symbolic modes such as `u=rwX,go=rX` from Dockerfile syntax 1.14, but
+buildah 1.42 rejects them.
+
 Keep credentials out of `ARG`, `ENV`, copied files, and command text. Use BuildKit secret mounts for commands that need
 a credential during the build:
 

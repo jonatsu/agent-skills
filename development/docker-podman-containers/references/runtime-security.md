@@ -35,6 +35,13 @@ For a typical Linux application workload, test these controls together:
 Device plugins, low-level networking, debuggers, init systems, and infrastructure workloads may need exceptions. Keep
 the exception local to that service and test it on the target host.
 
+A non-root process reaches a host device, such as a USB node under `/dev/bus/usb`, through the device node's numeric
+group ID on the host. Pass the device with `--device`, then grant the group. A group created in the image by name, such
+as `plugdev`, grants access only when its ID matches the host's. Add the host's group ID at run time with
+`--group-add <gid>`, Compose `group_add`, or create the image group with that ID. Rootless Podman can instead pass the
+invoking user's own supplementary groups with `--group-add keep-groups`. That option works only with the crun runtime,
+excludes other `--group-add` values, and is unavailable to remote clients.
+
 ## Bound Runtime Logs
 
 Prefer application logs on standard output and standard error so the runtime's logging path captures them. Inspect the
