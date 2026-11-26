@@ -14,7 +14,7 @@ Use these primary sources to recover current syntax and behavior:
 - [Docker Engine security](https://docs.docker.com/engine/security/)
 - [Docker seccomp profiles](https://docs.docker.com/engine/security/seccomp/)
 - [Docker logging drivers](https://docs.docker.com/engine/logging/configure/)
-- [Docker content trust and signing](https://docs.docker.com/engine/security/trust/)
+- [Podman and Buildah signature policy (`containers-policy.json`)](https://github.com/containers/container-libs/blob/main/image/docs/containers-policy.json.5.md)
 - [Podman documentation](https://docs.podman.io/en/latest/)
 - [Quadlet (`podman-systemd.unit`)](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html)
 - [Podman for Docker users (transfer guide)](https://github.com/containers/podman/blob/main/transfer.md)

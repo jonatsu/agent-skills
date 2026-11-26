@@ -21,8 +21,10 @@ command or default carries over.
 - **Rootless networking, Podman 5.x default.** pasta is the default rootless network tool since Podman 5.0
   (previously slirp4netns); netavark is the default network backend since 4.0, with CNI deprecated. pasta copies
   the host interface IP into the container, so cross-container connectivity can need explicit configuration.
-  Rootless bridge port-forwarding uses `rootlessport`, which does not preserve the client source IP unless
-  `rootless_port_forwarder="pasta"` is set (experimental).
+  Rootless bridge port forwarding uses `rootlessport`, which keeps the client source IP for remote TCP clients
+  when `nft` or `iptables` is available; UDP, loopback, and same-host clients see a rewritten source. Setting
+  `rootless_port_forwarder="pasta"` in `containers.conf` keeps it for all of them. That setting is experimental
+  and needs a passt release that ships `pesto` (`passt-0^20260507` or later).
 - **Podman 6.0 removes the 5.x fallbacks, accepted for Fedora Linux 45 as of 2026-03-11.** slirp4netns and its
   `--network-cmd-path` option are removed entirely, so a rootless setup must already run netavark and pasta
   before upgrading; netavark also drops iptables support in favor of nftables (Fedora's default since Fedora
