@@ -459,6 +459,10 @@ sources, record provenance, and decide whether the source overlaps an existing s
   `skills/qemu/`, `skills/security/reverse-engineering`). The rest of the repository is unread: list its
   skill directories, check each against our skills for coverage gaps, and write any adopted material
   independently or carry the MIT notice per `skill-forge`'s `references/provenance.md`.
+- [washabii14/agent-skills](https://github.com/washabii14/agent-skills): its only skill folder,
+  `skills/automotive-embedded-skills`, suggests automotive embedded material; compare it with the embedded
+  skills for coverage gaps. The GitHub API reported an MIT licence and a last push on 2026-02-27 when this
+  entry was written; the LICENSE file itself is unread.
 
 ## Session Backtrace Skill
 
