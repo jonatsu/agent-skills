@@ -32,6 +32,39 @@ files land in that directory on the host, and no image is created.
 Choose the base image using `base-image-comparison.md`. Pin production bases to a resolved digest and retain enough
 version metadata for maintainers to understand and update the image.
 
+## Slim an Image
+
+Find where the size comes from before changing anything; `image-probing.md` has a probe for each source:
+
+- **A heavy base image**, such as a full development image, carries tooling before the Dockerfile adds anything.
+  Start from a slim distribution base, and add development tooling only in a development stage or as dev container
+  features (`dev-containers.md`).
+- **Build tools in the final stage**, such as compilers, headers, CMake, and Git. Build native libraries and every
+  Python wheel in a builder stage. `COPY` the installed tree, such as a `DESTDIR` staging of `/usr/local`, into the
+  runtime stage, and install the wheels from a `RUN --mount=type=bind,from=builder` so they never form a layer.
+- **Hard dependencies on a GUI or toolkit** that the workload never loads, which `--no-install-recommends` cannot
+  drop. Where the distribution splits the compiled libraries into their own packages, install only the libraries the
+  workload uses. Take pure-Python modules from the full package with `apt-get download` and `dpkg-deb -x`; dpkg then
+  records no owner for the copied files. A library's own hard dependency can still pull a few toolkit libraries.
+- **Recommended packages**, which can also carry required plugins; check them before dropping them.
+
+Pick the base release by the binary interface its packages share with pip. A distribution Python extension built
+against an older major version of a library that pip pins, such as numpy 1.x under numpy 2.x, risks a binary
+mismatch. Compare versions on `packages.debian.org` or `packages.ubuntu.com` with
+`search?keywords=<pkg>&searchon=names&exact=1&suite=all&section=all`. Prefer the release whose Python version has
+prebuilt wheels for the target architecture, because a missing wheel means a source build, which is slow under
+emulation.
+
+Run one Python. Mixing a base image's own Python with the distribution's packages through `PYTHONPATH` makes every
+distribution package shadow its pip copy, because `PYTHONPATH` precedes `site-packages`. It also breaks tools that
+install user packages, such as the dev container `python` feature. Use the distribution's interpreter with
+`python3 -m venv --system-site-packages /opt/venv`: the distribution's bindings stay importable, the virtual
+environment's pins win, and PEP 668 stays intact. Check which copy wins with
+`python -c 'import <mod>; print(<mod>.__version__, <mod>.__file__)'`.
+
+When a library built into `/usr/local/lib` shares a soname with a distribution package, pin the search order and fail
+the build on the wrong copy, as `image-probing.md` shows.
+
 ## Control Privilege and Files
 
 Create or select a non-root runtime user when the workload permits it. Keep application code and its directory owned

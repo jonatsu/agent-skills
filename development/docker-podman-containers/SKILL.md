@@ -1,6 +1,6 @@
 ---
 name: docker-podman-containers
-description: Build, run, diagnose, and secure Docker and Podman containers and OCI images. Use for Dockerfiles or Containerfiles, slow builds and the build cache, Compose applications, rootless Podman and Quadlet systemd units, container runtime hardening, image scanning, SBOMs, and signing, container build and publish pipelines in CI, or Kubernetes workload hardening. Excludes general Kubernetes cluster administration, general application security review, and general CI/CD pipeline design unrelated to containers.
+description: Build, run, diagnose, and secure Docker and Podman containers and OCI images. Use for Dockerfiles or Containerfiles, slow builds and the build cache, oversized images, building images for another CPU architecture, dev containers and devcontainer.json, Compose applications, rootless Podman and Quadlet systemd units, container runtime hardening, image scanning, SBOMs, and signing, container build and publish pipelines in CI, or Kubernetes workload hardening. Excludes general Kubernetes cluster administration, general application security review, and general CI/CD pipeline design unrelated to containers.
 license: MIT
 compatibility: Requires the container, registry, scanner, or Kubernetes tools used by the target project.
 metadata:
@@ -60,18 +60,20 @@ runtime settings rather than inferring them from a Dockerfile alone.
 
 Read the branch reference before making its decisions:
 
-| Branch                                                              | Reference                                                     |
-| ------------------------------------------------------------------- | ------------------------------------------------------------- |
-| Dockerfile, build context, base image, BuildKit                     | `references/dockerfile-patterns.md`                           |
-| Build cache: invalidation, cache mounts, external cache, GC         | `references/build-cache.md`                                   |
-| Compose modeling, lifecycle, health, and data                       | `references/docker-compose.md`                                |
-| Runtime isolation, replacement, logging, and supply-chain security  | `references/runtime-security.md`                              |
-| Container build and publication in CI                               | `references/ci-cd.md`                                         |
-| Kubernetes workload hardening                                       | `references/kubernetes-pod-security.md`                       |
-| Compose managed by systemd                                          | `references/compose-systemd.md` and the `systemd-units` skill |
-| Podman: rootless, compose providers, Quadlet                        | `references/podman-differences.md`                            |
-| Image contents: dependency, soname, wheel, and size probes; cleanup | `references/image-probing.md`                                 |
-| Current specifications and tool documentation                       | `references/official-docs.md`                                 |
+| Branch                                                                        | Reference                                                     |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Dockerfile, build context, base image, BuildKit, image slimming               | `references/dockerfile-patterns.md`                           |
+| Build cache: invalidation, cache mounts, external cache, GC                   | `references/build-cache.md`                                   |
+| Compose modeling, lifecycle, health, and data                                 | `references/docker-compose.md`                                |
+| Runtime isolation, replacement, logging, and supply-chain security            | `references/runtime-security.md`                              |
+| Container build and publication in CI                                         | `references/ci-cd.md`                                         |
+| Kubernetes workload hardening                                                 | `references/kubernetes-pod-security.md`                       |
+| Compose managed by systemd                                                    | `references/compose-systemd.md` and the `systemd-units` skill |
+| Podman: rootless, compose providers, Quadlet                                  | `references/podman-differences.md`                            |
+| Image contents: dependency, soname, wheel, and size probes; cleanup           | `references/image-probing.md`                                 |
+| Foreign-architecture builds: QEMU binfmt, host packages, Docker beside Podman | `references/cross-arch-builds.md`                             |
+| Dev containers: slim base with features, Dev Containers CLI on either engine  | `references/dev-containers.md`                                |
+| Current specifications and tool documentation                                 | `references/official-docs.md`                                 |
 
 The remaining references provide additional examples but do not override this workflow or current official
 documentation.
