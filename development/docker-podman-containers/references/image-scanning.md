@@ -29,6 +29,12 @@ Verification must constrain the expected artifact, signer identity, issuer, and 
 the same verification policy used by deployment. Publishing a signature without enforcing an identity policy provides
 little deployment assurance.
 
+Podman and Buildah enforce signatures at pull time through `policy.json`. They read
+`$HOME/.config/containers/policy.json` when it exists, otherwise `/etc/containers/policy.json`. Use a
+`sigstoreSigned` requirement for Cosign-style keys, or `signedBy` for GPG keys. The `registries.d` files give the
+location of a registry's detached signatures under `lookaside` and `lookaside-staging`. `podman push` signs with
+`--sign-by-sigstore-private-key`, or with `--sign-by` for GPG.
+
 ## Install Tools Safely
 
 Prefer the project's package manager, pinned tool environment, or a release artifact whose checksum and signature can

@@ -26,6 +26,10 @@ Grant a Compose secret to each service that needs it. For a file-backed secret, 
 load-bearing: Docker Compose implements it as a bind mount and ignores long-syntax `uid`, `gid`, and `mode` remapping.
 Check the effective permissions as the container user.
 
+Many official images read a credential from a file when its variable name carries a `_FILE` suffix, such as
+`POSTGRES_PASSWORD_FILE=/run/secrets/db_password`. Pair that variable with a Compose secret. Each image decides
+this for itself, so check its documentation.
+
 Keep development placeholder credentials out of production overlays. Do not render secret-bearing configuration into
 logs or review output.
 
@@ -59,6 +63,9 @@ services:
 
 Add writable mounts, capabilities, devices, published ports, and resource values from workload evidence. Validate the
 result on the target engine because host security modules and rootless mode can change effective behavior.
+
+Attach a service that needs no outside access, such as a database, to a network with `internal: true`. That
+network has no external connectivity, so only the services also attached to it can reach the service.
 
 ## Classify Lifecycle Commands
 

@@ -12,7 +12,11 @@ command or default carries over.
   require under Podman; order the Podman socket or the generated unit instead.
 - **Rootless by default, via user namespaces.** Rootless Podman maps container root to the invoking user
   through `/etc/subuid` and `/etc/subgid`; missing entries make commands fail. Container UID 0 is already
-  isolated from host root without `--userns` remapping.
+  isolated from host root without `--userns` remapping. A pause process holds the rootless namespace, so a
+  change to `/etc/subuid` or `/etc/subgid` takes effect only after `podman system migrate` stops it and the
+  user's containers. `podman unshare` runs a command inside that namespace as its UID 0. Use it to read the
+  mapping, with `podman unshare cat /proc/self/uid_map`, or to fix the ownership of a bind-mounted directory,
+  with `podman unshare chown`.
 - **Ports below 1024** cannot be bound rootless without `net.ipv4.ip_unprivileged_port_start`, a capability
   grant, or a proxy; an unprivileged process is denied `CAP_NET_BIND_SERVICE`.
 - **Volume mount suffixes Docker lacks:** `:U` recursively chowns the source to the container's UID/GID (slow
@@ -24,7 +28,8 @@ command or default carries over.
   Rootless bridge port forwarding uses `rootlessport`, which keeps the client source IP for remote TCP clients
   when `nft` or `iptables` is available; UDP, loopback, and same-host clients see a rewritten source. Setting
   `rootless_port_forwarder="pasta"` in `containers.conf` keeps it for all of them. That setting is experimental
-  and needs a passt release that ships `pesto` (`passt-0^20260507` or later).
+  and needs a passt release that ships `pesto` (`passt-0^20260507` or later). `podman unshare --rootless-netns`
+  enters the rootless network namespace, from which a bridge container is reachable by IP.
 - **Podman 6.0 removes the 5.x fallbacks, accepted for Fedora Linux 45 as of 2026-03-11.** slirp4netns and its
   `--network-cmd-path` option are removed entirely, so a rootless setup must already run netavark and pasta
   before upgrading; netavark also drops iptables support in favor of nftables (Fedora's default since Fedora
@@ -66,6 +71,13 @@ target-version checks.
 - **`daemon-reload` (or reboot) is required** for the generator to pick up new or changed files.
 - **A rootless Quadlet is one placed in a rootless search path** under the user's own systemd instance.
   Quadlet does not honor `User=`/`Group=`/`DynamicUser=`; do not try to make a system unit "rootless" that way.
+  It starts at boot and outlives the user's login only when lingering is enabled with
+  `loginctl enable-linger <user>`.
+- `AutoUpdate=registry` lets `podman auto-update` pull a newer image for the unit's tag and restart the unit.
+  It needs a fully qualified image reference, and `podman auto-update --dry-run` lists what would change.
+- A `.socket` unit can pass its listening socket to the container. An activated socket bypasses the container's
+  network namespace, so `Network=none` still serves it, and its traffic skips pasta. This needs Podman 4.4 or
+  later, cgroup v2 for Quadlet, and an application that accepts a passed socket.
 - **Restart gotcha:** a `.pod` defaults to `ExitPolicy=stop`, so a pod whose containers all exit cleanly
   returns 0 and does **not** trip `Restart=on-failure`. Set `Restart=always` when clean-exit restart is wanted.
 - `.kube` wraps `podman kube play` against a `Yaml=` path; `podman kube play --down`/`--replace` manages that
@@ -81,6 +93,11 @@ target-version checks.
 - Podman/Buildah-specific: a `LABEL io.containers.capabilities=CAP1,CAP2` in the Dockerfile records the
   capability subset the resulting container should run with (no Docker equivalent). The list must be a subset of
   Podman's default capabilities; otherwise Podman prints an error and runs the container with its defaults.
+- Podman resolves a short image name, such as `node:22`, through `unqualified-search-registries` in
+  `registries.conf`, and a distribution may configure none, so the pull fails. With several search registries
+  and no terminal, `short-name-mode = "enforcing"` fails too. The unset default, `permissive`, falls back to
+  trying every registry. Write fully qualified references, such as `docker.io/library/node:22`, in a Dockerfile
+  meant for either engine.
 
 ## Security-Default Divergences
 
@@ -110,5 +127,8 @@ the systemd-managed wrappers around pod creation and `kube play`.
 - `podman volume create` errors if the volume exists (Docker's is idempotent), and a bind mount of a
   nonexistent host path errors instead of creating it. Do not rely on the Docker auto-create behavior in a
   script.
+- Containers on the default network cannot resolve each other by name. The `podman` network has DNS disabled
+  for compatibility with Docker's default `bridge`, which reaches containers only by IP. Create a network with
+  `podman network create` for name resolution. Compose creates one per project.
 - The Dev Containers CLI needs a wrapper on Podman for features and foreign architectures; `dev-containers.md` has
   it.

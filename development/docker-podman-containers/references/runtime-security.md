@@ -13,6 +13,10 @@ diagnosis.
 Membership in a rootful Docker daemon's control group commonly grants root-equivalent host power. Do not present a
 service account with Docker socket access as a meaningful host privilege boundary.
 
+Rootless Docker avoids that grant. Run `dockerd-rootless-setuptool.sh install` as the user: it starts a per-user
+daemon and creates a CLI context named `rootless`. Rootless mode restricts some features, so check the workload
+against Docker's rootless documentation.
+
 ## Replace Deployed Containers
 
 Apply application, package, and image-configuration changes through version-controlled inputs, then build, qualify, and
