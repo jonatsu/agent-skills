@@ -62,12 +62,13 @@ repos:
 
   # Detect secrets like passwords, API keys, and tokens with Betterleaks:
   # https://github.com/betterleaks/betterleaks
-  # The `betterleaks` id builds the Go binary via pre-commit's golang language.
-  # Use `betterleaks-docker` where no Go toolchain is available, or
+  # The `betterleaks` id builds the Go binary via pre-commit's golang language,
+  # which downloads a Go toolchain when the host has none. Use
+  # `betterleaks-docker` to run the published image instead, or
   # `betterleaks-system` when the binary is already installed.
   # The hook scans the staged diff only — it does NOT scan history.
   - repo: https://github.com/betterleaks/betterleaks
-    rev: "v1.8.1"
+    rev: "v1.10.1"
     hooks:
       - id: betterleaks
 
@@ -87,7 +88,8 @@ repos:
   # recommended credential preset stays off, because it would scan the same diff
   # as Betterleaks. Rules live in .secretlintrc.json; add the pattern rule there
   # for project-specific data, as references/config-adaptation-notes.md shows.
-  # Needs Node.js 22+. Keep every package on one version: `pre-commit
+  # Needs Node.js 22+; where the host's is older, set `language_version` to an
+  # exact release or `lts`. Keep every package on one version: `pre-commit
   # autoupdate` does not bump `additional_dependencies`.
   # https://github.com/secretlint/secretlint
   - repo: local
@@ -97,14 +99,14 @@ repos:
         language: node
         entry: secretlint --no-glob
         additional_dependencies:
-          - secretlint@13.0.7
-          - "@secretlint/secretlint-rule-no-homedir@13.0.7"
-          - "@secretlint/secretlint-rule-no-dotenv@13.0.7"
+          - secretlint@13.1.0
+          - "@secretlint/secretlint-rule-no-homedir@13.1.0"
+          - "@secretlint/secretlint-rule-no-dotenv@13.1.0"
 
   # Check files for EditorConfig compliance:
   # https://github.com/editorconfig-checker/editorconfig-checker.python
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 3.6.1
+    rev: 3.11.1
     hooks:
       - id: editorconfig-checker
 
@@ -133,7 +135,7 @@ repos:
       - id: mdformat
         additional_dependencies:
           - mdformat-footnote==0.1.3
-          - mdformat-frontmatter==2.1.2
+          - mdformat-frontmatter==2.2.0
           - mdformat-gfm==1.0.0
           - mdformat-gfm-alerts==2.1.0
           - mdformat-simple-breaks==0.1.0
@@ -144,7 +146,7 @@ repos:
   # Check Markdown documents with Markdownlint:
   # https://github.com/DavidAnson/markdownlint-cli2
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: "v0.23.2"
+    rev: "v0.24.2"
     hooks:
       # Report only. mdformat is the sole Markdown writer.
       - id: markdownlint-cli2
@@ -184,7 +186,7 @@ repos:
   # https://www.shellcheck.net/
   # https://github.com/shellcheck-py/shellcheck-py
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: "v0.11.0.1"
+    rev: "v0.11.0.1-1"
     hooks:
       - id: shellcheck
         args: ["--severity=style"]
@@ -192,7 +194,7 @@ repos:
   # Format shell scripts with shfmt (pairs with ShellCheck above):
   # https://github.com/scop/pre-commit-shfmt
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: "v3.13.1-1"
+    rev: "v3.14.1-1"
     hooks:
       - id: shfmt
         # shfmt reads .editorconfig for indent/style when no -i flag is passed;

@@ -89,12 +89,15 @@ addresses or internal host names. The profile enables the first two; add `patter
 duplicate Betterleaks, so use them only where Secretlint is the repository's chosen credential scanner.
 
 - Run it as a local `language: node` hook with its rule packages in `additional_dependencies`, as the bundled
-  `.pre-commit-config.yaml` does. It needs no `package.json` and no Docker. pre-commit uses the host's Node.js when
-  `node` and `npm` are on `PATH`, and Secretlint then needs version 22 or later. Without them, pre-commit downloads
-  Node.js through nodeenv. Secretlint publishes no `.pre-commit-hooks.yaml`, so there is no hook repository to pin. Its
-  README's example is a local `docker_image` hook on `secretlint/secretlint:latest`. The Docker image and the release
-  binaries, however, bundle only `preset-recommend`, `pattern`, and the SARIF formatter, so neither carries `no-homedir`
-  or `no-dotenv`.
+  `.pre-commit-config.yaml` does. It needs no `package.json` and no Docker. Secretlint publishes no
+  `.pre-commit-hooks.yaml`, so there is no hook repository to pin. Its README's example is a local `docker_image` hook
+  on `secretlint/secretlint:latest`. The Docker image and the release binaries, however, bundle only
+  `preset-recommend`, `pattern`, and the SARIF formatter, so neither carries `no-homedir` or `no-dotenv`.
+- Secretlint needs Node.js 22 or later. pre-commit uses the host's Node.js whenever `node` and `npm` are both on
+  `PATH`, and downloads one through nodeenv only when they are not, so an older host Node.js breaks the hook. Ubuntu
+  24.04 ships Node.js 18. Set `language_version` on the hook to an exact release, such as `22.23.5`, or to `lts`, and
+  pre-commit downloads that version instead. nodeenv accepts an exact version, `lts`, `latest`, or `system`, but not a
+  bare major version such as `22`.
 - Pin every Secretlint package to the same version, since they release together. `pre-commit autoupdate`
   updates `rev` fields only, so bump `additional_dependencies` by hand from the release page.
 - Keep `--no-glob` in the entry. pre-commit passes literal paths, and a path such as `src/(auth)/login.ts` would
@@ -105,7 +108,7 @@ duplicate Betterleaks, so use them only where Secretlint is the repository's cho
   spelling out a customer name or internal host publishes that name. A literal that must stay private belongs in a
   configuration outside the repository, passed with `--secretlintrc`.
 - Test every `pattern` rule on a fixture before enabling it. An email pattern whose domain part accepts digits
-  matches the hook's own `"@secretlint/secretlint-rule-pattern@13.0.7"` dependency lines; requiring a
+  matches the hook's own `"@secretlint/secretlint-rule-pattern@13.1.0"` dependency lines; requiring a
   letters-only top-level domain, `\.[A-Za-z]{2,}`, avoids that.
 - Secretlint skips `.gitignore`d paths since v13, reads `.secretlintignore` as well, and never scans its own
   `.secretlintrc*` files. Silence a single finding with `allowMessageIds` on the rule, or with

@@ -184,6 +184,19 @@ is unknown; it is installed through mise but has no version set. Candidate fixes
 
 Until then, the session memory rule is to make no commit while subagents edit the same tree.
 
+## `repo-setup` Hook Majors Not Yet Taken
+
+The template pins two hooks below a newer major version. Done when each is bumped or ruled out.
+
+- **Secretlint 14.** The template pins 13.1.0. Version 14.1.0 bundles the official rules into `secretlint`, with
+  the same rule IDs, and runs `preset-recommend` when no configuration file exists. `no-homedir` and `no-dotenv`
+  stay separate packages (`docs/migrations/v13-to-v14.md` in secretlint/secretlint). Check the bundled
+  `.secretlintrc.json` and the local hook's dependency list against 14 before bumping.
+- **editorconfig-checker 4.** The wrapper `editorconfig-checker.python` has no release past 3.11.1, which runs
+  checker 3. Upstream 4.0.0 renames the binary from `ec` to `editorconfig-checker`, stops finding `.ecrc` by
+  default, and fails Latin-1 files under `charset=utf-8`. The wrapper's `main` branch already changes the hook's
+  entry. Bump when the wrapper tags a 4.x release, and check the template's `.editorconfig` against it.
+
 ## Invocation Control Audit
 
 Checked 2026-09-11: no skill in this repository sets `disable-model-invocation` or `user-invocable`,
