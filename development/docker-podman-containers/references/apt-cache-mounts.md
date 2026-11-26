@@ -48,7 +48,8 @@ Each part prevents a specific failure:
 - `apt-get` keeps a stable command line for scripts, where `apt` may change behavior between versions.
 - `DEBIAN_FRONTEND=noninteractive` on the command, rather than as an `ENV`, keeps it out of the final image.
 - `--no-install-recommends` skips recommended packages, so the image gets only the named packages and their
-  required dependencies.
+  required dependencies. A recommended package can carry plugins the workload loads at run time, so check what the
+  recommends hold before dropping them, as `image-probing.md` shows.
 - Keep `apt-get update` in the same `RUN` as the install. The cached lists only make the refresh cheaper; without
   it, the install can request package versions the mirror no longer serves.
 

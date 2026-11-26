@@ -108,3 +108,7 @@ the systemd-managed wrappers around pod creation and `kube play`.
 - `podman volume create` errors if the volume exists (Docker's is idempotent), and a bind mount of a
   nonexistent host path errors instead of creating it. Do not rely on the Docker auto-create behavior in a
   script.
+- The Dev Containers CLI passes `build.options` from `devcontainer.json`, such as `--platform`, to the main image
+  build only, not to the helper build that packages the features. A foreign-architecture build with features
+  therefore gets a host-architecture helper image, and on Podman it fails to resolve the short name
+  `dev_container_feature_content_temp`. Under Docker, `DOCKER_DEFAULT_PLATFORM=linux/<arch>` covers both builds.
