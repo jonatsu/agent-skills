@@ -35,4 +35,14 @@ re-raising the signal.
 
 ## Declined Sources
 
-None yet. Each entry gives the source URL and commit, the date it was read, and why it was declined.
+Each entry gives the source URL and commit, the date it was read, and why it was declined.
+
+- [github/awesome-copilot](https://github.com/github/awesome-copilot) at `93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf`,
+  read 2026-11-26. This covers the PowerShell, Copilot hooks, C++ language-service and caveman-mode instructions,
+  and the agents `adr-generator`, `blueprint-mode`, `critical-thinking`, `github-actions-expert`,
+  `principal-software-engineer`, `swe-subagent` and `terminal-helper`. Existing skills and subagents cover their
+  subjects. The PowerShell file paraphrases Microsoft's free guidelines, and the hooks file is stale against
+  GitHub's current hooks reference.
+- [kimgoetzke/coding-agent-configs](https://github.com/kimgoetzke/coding-agent-configs) at
+  `9aa27f7ff021728ce1bf2eb2eccc06b00008c61b`, read 2026-11-26. Its `web-researcher` agent duplicates
+  `deep-research` and `librarian`.

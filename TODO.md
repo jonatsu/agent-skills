@@ -556,6 +556,63 @@ to the new skill rather than growing into a reference manual.
 Write independently from primary sources: `netresearch/github-project-skill` uses CC-BY-SA-4.0 for prose
 despite MIT for scripts and assets, so its prose cannot be lifted into this MIT repository.
 
+[wshobson/agents `plugins/cicd-automation`](https://github.com/wshobson/agents/tree/c96b5f6552dba32e4492307493ee613581430715/plugins/cicd-automation)
+(MIT, read 2026-11-26) is usable only as a topic checklist, because its examples fail against the GitHub and
+GitLab docs. They pin actions to mutable tags, deploy with long-lived cloud keys, and gate GitLab jobs with the
+deprecated `only`/`except`. They treat a `when: manual` job as a blocking gate, though it defaults to
+`allow_failure: true`, and read `needs.<job>.outputs` without listing that job in `needs`. Its five agents are
+personas with no checkable content. Facts the skill needs that the source lacks:
+
+- GitHub gives runs from untrusted triggers, such as `pull_request_target`, read-only access to default-branch
+  caches unless a job declares a write-capable `cache-mode`.
+- Required reviewers on environments work only in public repositories on the Free, Pro, and Team plans.
+- New GitLab CI/CD variables default to Masked visibility since GitLab 18.3.
+- GitLab can key a cache on lockfiles with `cache:key:files` and fall back with `fallback_keys`.
+
+## Embedded Firmware Skill
+
+The collection has MCU debugging (`mcu-firmware-debugging`) and firmware C style (`c-cpp-style`'s
+`references/firmware.md`), but nothing for writing firmware: registers and GPIO, timers, ADC with DMA, UART, I2C,
+SPI and CAN, RTOS patterns, low-power modes, and linker scripts. Write it from primary sources: the chosen
+family's reference manual and CMSIS/HAL headers, the FreeRTOS docs and kernel source, and the ARM architecture
+manuals.
+
+[Jeffallan/claude-skills `plugin/skills/embedded-systems`](https://github.com/Jeffallan/claude-skills/tree/bdbd3bb9179a3512b92d2b0ce593b42e4b8fd819/plugin/skills/embedded-systems)
+(MIT, read 2026-11-26) gives a topic outline for STM32F4 and FreeRTOS. About half its register code is wrong
+against ST's CMSIS headers and HAL, so take the outline only. Its errors double as the traps the skill must cover:
+
+- timing maths against the wrong bus clock;
+- assumed LSI frequencies;
+- `SLEEPDEEP` left set after Stop mode;
+- DMA stream flags left uncleared before re-enabling;
+- ST flag-clear sequences done out of order;
+- `FromISR` calls without regard to `configMAX_SYSCALL_INTERRUPT_PRIORITY`;
+- a vector table without `KEEP`, which `--gc-sections` discards.
+
+Ideas worth keeping: work deferred from an ISR to a task, task notifications instead of a semaphore when one task
+waits, BASEPRI-aware critical sections, stack painting below the stack pointer, unused pins set to analog mode,
+and clock gating per peripheral.
+
+## GNU Make Skill
+
+No skill teaches GNU Make, though the kernel, U-Boot, and Buildroot skills all drive it. Write one from the GNU
+Make manual. Cover layout, pattern rules, header dependencies with `-MMD -MP`, and order-only prerequisites for
+directories. Also cover special targets such as `.DELETE_ON_ERROR`, and debugging with `-n`, `-p`, and
+`--debug`.
+[github/awesome-copilot `instructions/makefile.instructions.md`](https://github.com/github/awesome-copilot/blob/93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf/instructions/makefile.instructions.md)
+(MIT, read 2026-11-26) is a mostly sound outline. Its advice to order prerequisites by how often they change
+has no basis in the manual.
+
+## AI-Output Verification Skill
+
+The user has used awesome-copilot's `doublecheck` and found that it worked well. It checks AI-generated output in
+three layers (a self-audit, verification against sources, and an adversarial review) and reports each claim with
+its source links. Read
+[`skills/doublecheck/SKILL.md`](https://github.com/github/awesome-copilot/blob/93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf/skills/doublecheck/SKILL.md)
+(MIT; not yet read) and its wrapper `agents/doublecheck.agent.md`. Compare them with `deep-research`,
+`librarian`, and the reviewer subagents of the installing setup, then decide whether to adapt the skill or write
+one independently.
+
 ## Decide Which Skills Support Windows
 
 Decide which skills should also work on Windows. Most skills here target Linux only, and the user needs Windows support
