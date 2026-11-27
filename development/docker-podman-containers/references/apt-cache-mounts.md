@@ -46,7 +46,10 @@ Each part prevents a specific failure:
   and the default `shared` mode lets parallel builds use the same files at once.
 - Reusing the same `id` values in every stage and Dockerfile lets all of them share one cache.
 - `apt-get` keeps a stable command line for scripts, where `apt` may change behavior between versions.
-- `DEBIAN_FRONTEND=noninteractive` on the command, rather than as an `ENV`, keeps it out of the final image.
+- `DEBIAN_FRONTEND=noninteractive` as a prefix on `apt-get install`, or as an `ARG`, applies only during the build.
+  As an `ENV` it persists into every container and derived image and changes `apt-get` behaviour for the image's
+  users, as the Dockerfile reference's `ENV` section warns. A prefix reaches only the command it precedes, so put it
+  on `install`, not on an `update` earlier in the same `&&` chain.
 - `--no-install-recommends` skips recommended packages, so the image gets only the named packages and their
   required dependencies. A recommended package can carry plugins the workload loads at run time, so check what the
   recommends hold before dropping them, as `image-probing.md` shows.
