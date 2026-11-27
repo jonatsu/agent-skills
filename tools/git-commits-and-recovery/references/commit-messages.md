@@ -128,3 +128,6 @@ repository whose last twenty commits carry no such trailer has already answered 
 **A repository instruction file that authorizes the trailer is the user asking.** `AGENTS.md`, `CLAUDE.md`, or an
 equivalent file is the user's standing instruction for that repository. Its permission settles the question there but
 does not carry to another repository. `SKILL.md` lists every condition that permits a trailer.
+
+When a trailer is permitted, name a tool or model only as the user or the repository's convention does: a
+model name or version in a trailer is a claim that `git log` cannot verify.
