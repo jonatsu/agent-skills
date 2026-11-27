@@ -36,7 +36,8 @@ silently raise the minimum Bash version.
    [failure-semantics.md](references/failure-semantics.md) for those decisions.
 4. Treat paths, temporary resources, signals, and replacement writes as lifecycle concerns. Read
    [data-and-path-safety.md](references/data-and-path-safety.md) before implementing deletion, recursive file
-   operations, temporary storage, signal handling, or atomic replacement.
+   operations, temporary storage, signal handling, or atomic replacement, or editing a colon-separated list such
+   as `PATH`.
 5. Prefer Bash builtins when they improve correctness or remove a process. Prefer readable external tools when
    a pure-Bash replacement would obscure intent. Detect required commands and handle GNU/BSD differences only
    for supported platforms.

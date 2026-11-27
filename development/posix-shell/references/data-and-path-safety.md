@@ -20,6 +20,19 @@ POSIX text files end records with newline characters. Processing arbitrary pathn
 NUL-delimited producer and consumer; declare and test those extensions rather than presenting them as portable
 POSIX utilities.
 
+## Delimited Path Lists
+
+`PATH` and variables like it are colon-separated by interface, the one case where a delimited variable is correct.
+Treat each as a list of whole components:
+
+- Test membership against the list wrapped in delimiters, `case ":$PATH:" in *":$dir:"*)`, so `/usr/bin` does not
+  match `/usr/bin/extra`.
+- Append with `PATH=${PATH:+$PATH:}$dir`, so an empty list gains no stray colon, and drop empty components when
+  rebuilding a list. An empty component, including a leading or trailing colon, names the current directory, so a
+  command would resolve to a file in whatever directory the script runs from.
+- When a function collects several additions before writing the list, check each one against the pending additions
+  as well as the current list, so one call cannot add the same directory twice.
+
 ## Option and Path Boundaries
 
 `--` is portable only for utilities whose specification or required implementations accept it. When a path

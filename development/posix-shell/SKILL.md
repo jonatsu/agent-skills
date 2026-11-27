@@ -31,9 +31,9 @@ remain unverified. A script is portable only within its declared standard, utili
 1. Keep argument parsing, validation, core logic, and side effects distinguishable. Validate before the first
    side effect.
 2. Preserve argument boundaries with positional parameters and `"$@"`. Do not imitate arrays with a delimited
-   string when values may contain the delimiter. Read
-   [data-and-path-safety.md](references/data-and-path-safety.md) for filename, path, and temporary-resource
-   handling.
+   string when values may contain the delimiter; a colon-separated list such as `PATH` is the exception. Read
+   [data-and-path-safety.md](references/data-and-path-safety.md) for filename, path, `PATH`-list, and
+   temporary-resource handling.
 3. Make expected nonzero statuses explicit. Choose `errexit`, `nounset`, pipelines, subshells, and traps only
    after checking their effect on the complete control flow. Read
    [failure-semantics.md](references/failure-semantics.md) for those decisions.
@@ -50,7 +50,7 @@ remain unverified. A script is portable only within its declared standard, utili
 
 Shell variables cannot preserve NUL bytes, and command substitution removes trailing newlines, so neither can
 store an arbitrary filename stream. Read [data-and-path-safety.md](references/data-and-path-safety.md) before
-handling filenames, option terminators, deletion, or replacement.
+handling filenames, option terminators, deletion, or replacement, or editing a `PATH`-style list.
 
 ### Error Handling
 
