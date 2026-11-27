@@ -639,7 +639,6 @@ and harness, as `change-review` did for `code-reviewer`. These candidates come f
 `0580e169`:
 
 - `deep-research`: its method, notes file, and report have no skill.
-- `cli-ux-tester`: its rules for running the tool under test copy `cli-ui-ux`, and one variant has drifted.
 
 Structuring an application in a layered or hexagonal style also has no home: dependency direction, interfaces to
 external systems defined in the inner layer, and framework types kept out of the domain. `technical-design`
