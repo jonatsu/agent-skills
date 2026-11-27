@@ -257,7 +257,8 @@ In evidence or a list of findings, cite only the identifiers whose presence chan
 the rest in one clause, such as "the other names agree", instead of listing them.
 
 Link every source the document names. A reader must reach every document they need by following links; one who
-needs a text search to find it has hit a defect.
+needs a text search to find it has hit a defect. Give every reference-link definition a use, and every label
+the body uses a definition. An undefined label renders as plain text. `markdown-tools` checks both.
 
 Pin a source with an identifier that survives regeneration. Use a release, tag, or commit, or the version or date
 the material carries. Never use the hash of a file rebuilt on each update. Keep the precision the evidence
@@ -317,6 +318,10 @@ Restructure a documentation set from the inside, one piece at a time. Pick one d
 with the two type questions. Make the single change that serves its reader best, and repeat. A new structure
 emerges from these changes. Never create empty per-type sections or directories up front. Never split a mixed
 document into four files in one move.
+
+When you move a topic out of a document, search the result for that topic's own terms. The move is done when
+they appear only where the document mentions the topic on purpose. A check that nothing was lost cannot show
+this.
 
 ## Review and Finish
 

@@ -39,12 +39,16 @@ Give it these rules as well:
 - **Leave approved wording alone,** even where a shorter phrasing exists.
 - **Check each replacement, not only the defect it fixes.** A rewrite of a key-first opener can arrive in the
   passive.
+- **Reject a damaged copy whole.** A pass told to rewrite while preserving content can return a near-verbatim copy
+  whose only changes are damage, such as line continuations stripped from code. Dispatch it again with a
+  before-and-after example rather than patching its output.
 
 ## Verify What a Pass Adds
 
 Fact-check every explanation a pass adds. Passes asked to explain concepts have written plausible wrong facts.
 Examples include placing a userspace daemon in the kernel and describing a hash tree as covering each image when
 it covers the whole payload. The draft-copy workflow makes this check cheap, because every addition appears in the diff.
+When a pass must leave code untouched, prove every code block unchanged with `markdown-tools`.
 
 Keep parallel passes on disjoint files. Keep a concurrent formatter or pre-commit run away from files a pass
 is editing.
