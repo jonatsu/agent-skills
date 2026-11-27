@@ -67,7 +67,7 @@ repos:
           - wcwidth==0.9.2
   # markdownlint owns the 120-column ceiling; its ignores live in .markdownlint-cli2.jsonc.
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: b82a6c8896e491b9cb377a99ff3412131920681b # frozen: v0.23.2
+    rev: d4df4cec471ce155946474590d7b95920f623ccb # frozen: v0.24.2
     hooks:
       - id: markdownlint-cli2
         args: ["--no-globs"]
