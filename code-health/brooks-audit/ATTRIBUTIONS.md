@@ -15,4 +15,5 @@ The package vendors upstream material, whose MIT license requires its notice to 
 - Version: `29fd7761cdb59a1bd9d2b5b6458277807c674c4f`
 
 The skill body, its guides, and the shared framework files under `references/` are vendored from upstream, adapted
-only to deploy as a flat, self-contained package and reformatted by this repository's Markdown formatter.
+only to deploy as a flat, self-contained package, with an exclusion added to its description, and reformatted by
+this repository's Markdown formatter.
