@@ -67,25 +67,36 @@ Check every area below. For each one, name the command or code line that shows t
 
 ## Judge Findings
 
-Grade each finding by its consequence:
+Give each finding one tier, by its consequence:
 
-- **High:** data loss, a hang in automation, a broken pipeline or script, a secret exposed.
-- **Medium:** a misleading error, a missing machine format that scripts need, inconsistency that causes misuse.
-- **Low:** friction or style that slows a person down.
+- **Must fix:** data loss, a hang in automation, a broken pipeline or script, or a secret exposed.
+- **Should fix:** a misleading error, a missing machine format that scripts need, or an inconsistency that causes
+  misuse.
+- **Consider:** friction or style that slows a person down. Report at most five, and say how many you left out.
 
 Report a departure from one of this skill's defaults only when the tool is inconsistent with itself or the
 choice causes harm. A tool that applies its own convention consistently, such as `-v` for version or verb-noun
 grammar, has no finding there.
 
+The review is done when every area above is checked or listed as not checked with its reason, and each finding
+carries its evidence.
+
 ## Write the Report
 
-Lead with the findings, ordered by severity. Give each finding:
+1. **Verdict**: `Ready`, `Ready after changes`, or `Not ready`, then one sentence saying why. Any open Must fix
+   finding rules out `Ready`; use `Not ready` when the interface needs redesign rather than local fixes.
+2. **Scope**: the tool and version reviewed; how you reviewed it, by code reading or by probes and in which modes;
+   and each area not checked, with why, such as commands that reach the network.
+3. **Findings**, most consequential first, each tagged `F1`, `F2`, and so on. Give each its tier, a one-line
+   statement of the problem, the evidence (the command run or the code line, and what it showed), the convention it
+   breaks marked as a rule or a default, and the fix as a concrete change. Add a regression test from
+   [testing.md](testing.md) when the defect could return as a failure that would otherwise pass silently and cost
+   something, or when the user or the repository's test policy asks for one.
+4. **Unverified**: behaviour you suspect but could not probe, each with the probe or test target that would
+   settle it.
+5. **Next checks**: the probes or tests still to run, and the reviews to run next.
+6. **What holds**, only when something specific should survive a redesign: at most two sentences, with its
+   command or code line.
 
-1. a one-line statement of the problem;
-2. the evidence: the command run or the code line, and what it showed;
-3. the convention it breaks, marked as a rule or a default;
-4. the fix, as a concrete change; and
-5. a regression test that would catch it, from [testing.md](testing.md).
-
-After the findings, list what was not checked and why, such as commands that reach the network. Write the
-report where the user asks; without a stated path, return it inline rather than writing into the project.
+A tool with no findings gets the verdict, the scope, and the next checks. Write the report where the user asks;
+without a stated path, return it inline rather than writing into the project.
