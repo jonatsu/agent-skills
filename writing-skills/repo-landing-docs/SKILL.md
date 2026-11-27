@@ -53,9 +53,9 @@ the result is uniformly flat because nothing in it was chosen.
   order, which sections answer nothing. Show the diagnosis before the replacement. This mode changes the
   framing, not the facts. Done when every accurate claim of the original survives or is listed as cut with its
   reason. Every Before Delivery item must pass too.
-- **Critique.** Report against the reader questions and the Iron Law, worst first, each finding naming the
-  reader question it fails. Judge quality only, and route factual verification to `context-architecture`'s
-  truth audit. Done when every section is mapped to a question or reported as answering none.
+- **Critique.** Report as [Critique Report](#critique-report) describes. Judge quality only, and route factual
+  verification to `context-architecture`'s truth audit. Done when every section is mapped to a question or
+  reported as answering none.
 
 Return text or a diff for an existing file unless the user asked for an in-place edit.
 
@@ -153,3 +153,28 @@ For every landing file:
 - Did every fact, number, and condition from the project's sources survive, with nothing added they do not state?
 
 - For the README and its front-door kin, did every check in `references/readme.md` pass too?
+
+## Critique Report
+
+A critique judges how well each file answers its visitor's questions, and changes nothing. Report:
+
+1. **Verdict**: `Ready`, `Ready after changes`, or `Not ready`, then one sentence saying whether a visitor gets
+   the file's questions answered, in order. Any open Must fix finding rules out `Ready`; use `Not ready` when the
+   file needs a rewrite rather than local fixes.
+2. **Scope**: the files and their revision, the template or audience row judged against, and the section map:
+   each section with the reader question it answers, or "none".
+3. **Findings**, most consequential first, each tagged `F1`, `F2`, and so on. Give each its tier, the section,
+   the reader question it fails, what that costs the visitor, and the fix as a concrete change.
+   - **Must fix**: the file fails the question it exists for. Examples are a README that never says what the
+     project is or how to start, a `SECURITY.md` with no private channel, and a placeholder or invented fact
+     left in.
+   - **Should fix**: a question answered late or out of order, a section that answers no question, a term a
+     stranger cannot follow, or template filler.
+   - **Consider**: an optional improvement. Report at most five, and say how many you left out.
+4. **Unverified**: each claim whose truth the critique cannot judge, such as a command or a contact, left for
+   `context-architecture`'s truth audit.
+5. **Next checks**: that truth audit, and any check from the file's reference still to run.
+6. **What holds**, only when something specific should survive a rewrite: at most two sentences, with its
+   location.
+
+A clean file gets the verdict, the scope, and the next checks.
