@@ -46,6 +46,8 @@ Apply each question that fits the target, and skip the rest rather than inventin
    larger than expected. Ask what happens when a dependency is slow, down, or changes its interface without
    notice. Ask which signal reports each failure and who receives it, including a change that reports success but
    produces a wrong result. Ask whether recovery has been tested: a backup restored, a failover, a rollback.
+   When the design states quality targets, check that each has a measure and the load it holds at, that the
+   capacity estimate's inputs are marked, and that every single point of failure is removed or accepted.
 6. **Data.** Name the owner of each piece of data and the components allowed to change it. Check that each
    consistency choice, strong or eventual, fits what the readers of that data need.
 7. **Trust boundaries.** Are they where the design believes? Flag input treated as trusted without a stated

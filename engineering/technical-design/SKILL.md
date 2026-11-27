@@ -1,6 +1,6 @@
 ---
 name: technical-design
-description: Design how a bounded software system or change should realize an accepted spec or request, and write its design document, before implementation planning. Use for architecture, interfaces, state and data flow, failure handling, compatibility, migration, rollout, or rollback decisions, and for writing or revising a design document or arc42 design; not for ideation, writing specs, task sequencing, or reviewing a settled design (architecture-review).
+description: Design how a bounded software system or change should realize an accepted spec or request, and write its design document, before implementation planning. Use for architecture, interfaces, state and data flow, failure handling, compatibility, migration, rollout, or rollback decisions, and for writing or revising a design document or arc42 design; not for ideation, writing specs, task sequencing, sizing or quality targets alone (system-design), or reviewing a settled design (architecture-review).
 license: MIT AND CC-BY-SA-4.0
 metadata:
   author: Joonas Onatsu
@@ -131,6 +131,16 @@ confirm when the user is the domain expert; drive when the user relies on the ag
 the design basis, state the stance in one line. The user can then redirect cheaply instead of granting expertise each
 time. Example: the agent will drive the domain expertise on a named area unless the user is the authority there.
 
+## Settle System Qualities
+
+Before defining the system, settle what it must achieve under load and failure. Load the `system-design` skill
+and run its steps whenever the design adds or changes load, availability, latency, data growth or retention, or
+deployment structure. Its targets, estimate, decomposition, and failure pass feed every part of "Define the
+System". For a change that touches none of these, say so in one sentence in the design basis.
+
+The step is done when every quality target has a measure and the load it holds at, every estimate input is
+marked measured or assumed, and every single point of failure is removed or accepted by its owner.
+
 ## Define the System
 
 Settle the parts relevant to the requested outcome:
@@ -229,6 +239,7 @@ Before handing the design to implementation planning, check that:
   behavior, journeys, or acceptance no spec covers;
 - consequential requirements map to system guarantees without invented product policy;
 - consequential behavior and architecture no longer require invention;
+- the "Settle System Qualities" step ran, or the design basis says why no quality target changes;
 - responsibilities, interfaces, and state or data flows agree;
 - the reader can identify component responsibilities, follow an important scenario, and explain the major decisions;
 - names, interfaces, state transitions, and numerical claims agree across prose, diagrams, tables, and scenarios;

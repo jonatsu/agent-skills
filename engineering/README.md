@@ -95,7 +95,9 @@ can realize it without inventing product policy.
 **Design.** `technical-design` decides how the system realizes the spec, or the accepted request when there is no
 spec: architecture, interfaces, data flow, failure and recovery, compatibility, migration, and rollout. Before
 it hands off, `interview-me` pressure-tests its load-bearing, hard-to-reverse decisions, and the user confirms the
-whole design once.
+whole design once. Its "Settle System Qualities" step runs `system-design`, which turns quality targets into
+numbers, estimates capacity, and shapes components, data, and deployment around them. A sizing question on its
+own goes straight to `system-design`.
 
 **Plan.** `implementation-planning` turns the accepted design into dependency-ordered units, each with its
 verification and its review stage: before implementation, after each substantive unit, after corrections, and at
