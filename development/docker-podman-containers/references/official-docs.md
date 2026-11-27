@@ -12,6 +12,7 @@ Use these primary sources to recover current syntax and behavior:
 - [Docker build best practices](https://docs.docker.com/build/building/best-practices/)
 - [Docker Compose reference](https://docs.docker.com/reference/compose-file/)
 - [Docker Engine security](https://docs.docker.com/engine/security/)
+- [Docker rootless mode](https://docs.docker.com/engine/security/rootless/)
 - [Docker seccomp profiles](https://docs.docker.com/engine/security/seccomp/)
 - [Docker logging drivers](https://docs.docker.com/engine/logging/configure/)
 - [Podman and Buildah signature policy (`containers-policy.json`)](https://github.com/containers/container-libs/blob/main/image/docs/containers-policy.json.5.md)

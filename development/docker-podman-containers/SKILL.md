@@ -11,9 +11,10 @@ metadata:
 
 Use this skill for container images, Dockerfiles, Compose applications, container runtime settings, image supply chains,
 and workload-side Kubernetes controls. Guidance is written for Docker and applies to Podman except where
-`references/podman-differences.md` overrides it; read that reference for rootless operation, the compose providers, and
-Quadlet. Use the `systemd-units` skill as well when a Compose deployment or Quadlet unit is managed by systemd. This skill
-does not cover general cluster administration, application security, or unrelated CI design.
+`references/podman-differences.md` overrides it; read that reference for rootless operation, networking and name
+resolution, short image names, the compose providers, and Quadlet. Use the `systemd-units` skill as well when a
+Compose deployment or Quadlet unit is managed by systemd. This skill does not cover general cluster administration,
+application security, or unrelated CI design.
 
 Treat the target tool's installed help and official documentation as the authority. Container and orchestration features
 change across Docker Engine, Docker Compose, containerd, Kubernetes, scanners, registries, and operating systems. Record
@@ -69,7 +70,7 @@ Read the branch reference before making its decisions:
 | Container build and publication in CI                                         | `references/ci-cd.md`                                         |
 | Kubernetes workload hardening                                                 | `references/kubernetes-pod-security.md`                       |
 | Compose managed by systemd                                                    | `references/compose-systemd.md` and the `systemd-units` skill |
-| Podman: rootless, compose providers, Quadlet                                  | `references/podman-differences.md`                            |
+| Podman: rootless, networking, short image names, compose providers, Quadlet   | `references/podman-differences.md`                            |
 | Image contents: dependency, soname, wheel, and size probes; cleanup           | `references/image-probing.md`                                 |
 | Foreign-architecture builds: QEMU binfmt, host packages, Docker beside Podman | `references/cross-arch-builds.md`                             |
 | Dev containers: slim base with features, Dev Containers CLI on either engine  | `references/dev-containers.md`                                |

@@ -112,6 +112,8 @@ A Docker-hardening habit ported to Podman must account for these; do not assume 
   needing its own `/etc/subuid` entry).
 - **Seccomp** is a profile shared across Podman, Buildah, and CRI-O (`seccomp_profile` in `containers.conf`),
   not Docker's bundled default. Compare the actual profiles when the syscall set matters.
+- **Image signatures** are enforced at pull time through `policy.json`, which Docker has no equivalent for;
+  `image-scanning.md` covers the policy and how to sign.
 
 ## Pods
 
