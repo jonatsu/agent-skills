@@ -102,6 +102,40 @@ first fails.
 - Spend time validating or repairing an archived skill marked deferred, unless its review is explicitly
   resumed.
 
+## Review Report Shape
+
+Every skill that reviews, audits, or evaluates an artifact reports in one shape, so a reader, or a caller merging
+several reviews, meets the same parts and words everywhere. Each skill carries its own copy, sized to its job.
+Match this shape when you write or change a review skill's report, and take only content, never the report
+format, from a third-party source.
+
+1. **Verdict**: one of three words, then one sentence that answers the review's question in the domain's own
+   terms, such as "does not conform to WCAG 2.2 AA".
+   - `Ready`: no Must fix finding is open.
+   - `Ready after changes`: fixing the listed findings makes it ready, with no rework.
+   - `Not ready`: it needs rework or a decision that the findings cannot settle.
+2. **Scope**: what was examined, what it was judged against, and how: reading, a scan, or a test run.
+3. **Findings**, most consequential first, tagged `F1`, `F2`, and so on. Each gives where it is, what is wrong
+   and its consequence, the evidence, and the fix. A domain with a published rating, such as a WCAG level or a
+   security severity, adds that rating as a field.
+4. **Unverified**: suspicions the evidence does not yet support, each with the check that would settle it.
+5. **Next checks**: the tests or commands still to run, and the reviews to run next.
+6. **What holds**, only when something specific should survive a revision: at most two sentences, with its
+   location.
+
+Give each finding one of three tiers, by what the verdict needs:
+
+- **Must fix**: the verdict cannot be `Ready` while it is open.
+- **Should fix**: worth fixing now, and it may wait for a recorded follow-up.
+- **Consider**: an optional improvement. Report at most five, and say how many you left out.
+
+Report a finding only when its evidence holds, and put every suspicion under Unverified. Leave out scores, grades,
+percentages, and health totals, because they claim a measurement nobody made; a count of findings is fine. A
+clean result is the verdict, the scope, and the next checks.
+
+The vendored brooks skills keep their upstream format. A report that is not a review, such as a diagnosis or
+research notes, is outside this shape.
+
 ## Writing Documentation
 
 A durable document describes its subject as it stands. These rules come from
