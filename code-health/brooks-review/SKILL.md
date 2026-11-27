@@ -1,6 +1,6 @@
 ---
 name: brooks-review
-description: "PR code review that surfaces decay risks, design smells, and maintainability issues with concrete Symptom → Source → Consequence → Remedy findings, drawing on twelve classic engineering books. Triggers when: user asks to review code, check a PR, shares a diff or pastes code asking \"does this look right?\" / \"any issues here?\" / \"ready to merge?\", or asks for feedback on a function, class, or file. Also triggers when the user asks about design smells or maintainability principles in code they have shared. Do NOT trigger for: questions about how to write code from scratch, language syntax questions, or framework/tool questions where no existing code is shared."
+description: "Review code for design decay, such as change propagation, knowledge duplication, accidental complexity, dependency disorder, and domain model distortion, with Symptom → Source → Consequence → Remedy findings drawn from twelve classic engineering books. Use when asked about design smells, decay, or the long-term maintainability of a change, file, or module. A correctness review of a change before merge belongs to change-review."
 license: MIT
 metadata:
   author: hyhmrright

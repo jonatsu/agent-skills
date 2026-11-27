@@ -46,3 +46,6 @@ Each entry gives the source URL and commit, the date it was read, and why it was
 - [kimgoetzke/coding-agent-configs](https://github.com/kimgoetzke/coding-agent-configs) at
   `9aa27f7ff021728ce1bf2eb2eccc06b00008c61b`, read 2026-11-26. Its `web-researcher` agent duplicates
   `deep-research` and `librarian`.
+- [FerroxLabs/wayland](https://github.com/FerroxLabs/wayland) at `4c030c7b01c241df7b6e3535635a970f10d781af`,
+  read 2026-11-27. Its `code-review-patterns` skill covers how a human team runs review, such as SLAs, metrics,
+  and team size, which no skill here serves.

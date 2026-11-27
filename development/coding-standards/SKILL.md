@@ -1,6 +1,6 @@
 ---
 name: coding-standards
-description: "Write, refactor, and check code against language-agnostic standards: design principles, naming, comments, formatting, types, errors, logging, and code smells. Use before writing a new file or function, when copying or adapting code from another project, when refactoring, when applying the quality gate before a commit, or when checking a change against these standards. Language-specific style belongs to that language's skill (python-style), a broad PR or design review to brooks-review, and writing tests to test-engineer."
+description: "Write, refactor, and check code against language-agnostic standards: design principles, naming, comments, formatting, types, errors, logging, and code smells. Use before writing a new file or function, when copying or adapting code from another project, when refactoring, when applying the quality gate before a commit, or when checking a change against these standards. Language-specific style belongs to that language's skill (python-style), a correctness review of a change to change-review, design decay to brooks-review, and writing tests to test-engineer."
 license: MIT
 metadata:
   author: Joonas Onatsu

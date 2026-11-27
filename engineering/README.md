@@ -120,6 +120,7 @@ them.
 
 The plan names an independent review after each substantive unit and at final integration. Each harness supplies
 that reviewer in its own way, as a subagent, a separate session, or a review skill run in the main session.
+Whichever supplies it, `change-review` holds the method a correctness reviewer applies.
 
 ## Skills used at any stage
 
