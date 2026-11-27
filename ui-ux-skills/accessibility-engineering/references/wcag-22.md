@@ -54,6 +54,10 @@ nothing about their level. Read the level marker.
 - **1.4.12 Text Spacing, AA:** nothing is lost when users apply four settings, each a multiple of the font
   size. The values are line height 1.5, paragraph spacing 2, letter spacing 0.12, and word spacing 0.16.
 
+- **2.2.1 Timing Adjustable, A:** a time limit can be turned off, adjusted to at least ten times its length, or
+  extended: the user is warned before it expires, gets at least 20 seconds to extend it with a simple action, and
+  can extend it at least ten times. Real-time events, essential limits, and limits over 20 hours are exempt.
+
 - **2.2.2 Pause, Stop, Hide, A:** moving, blinking, or scrolling content that starts automatically, lasts more
   than five seconds, and is shown alongside other content needs a way to pause, stop, or hide it.
 

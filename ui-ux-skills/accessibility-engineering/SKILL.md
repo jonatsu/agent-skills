@@ -1,6 +1,6 @@
 ---
 name: accessibility-engineering
-description: Design, build, evaluate, review, and fix interfaces for accessibility against WCAG 2.2, by default at Level AA, for web content and native apps, with EN 301 549 for non-web software, documents, and hardware such as kiosks. Use when designing or building a page, app, component, or device so it is accessible from the start; when checking whether one meets WCAG or accessibility requirements; when fixing barriers for keyboard or screen reader users; or when preparing an accessibility statement or planning accessibility testing. Use usability-engineering for general ease of use and cli-ui-ux for command-line tools.
+description: Design, build, evaluate, review, and fix interfaces for accessibility against WCAG 2.2, by default at Level AA, for web content and native apps, with EN 301 549 for non-web software, documents, and hardware such as kiosks. Use when designing or building a page, app, component, or device so it is accessible from the start; when checking whether one meets WCAG or accessibility requirements; when fixing barriers for keyboard, screen reader, or cognitive and learning disability users; or when preparing an accessibility statement or planning accessibility testing. Use usability-engineering for general ease of use and cli-ui-ux for command-line tools.
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -23,6 +23,10 @@ that works without a terminal, and no animation in a pipe. General ease of use b
 When the user names a law or a contract, check which WCAG version and level it cites before you judge.
 [references/standards.md](references/standards.md) holds the versions the main regulations cite, and how EN
 301 549 applies WCAG beyond the web.
+
+When the users include people with cognitive or learning disabilities, or the user asks about them, read
+[references/cognitive.md](references/cognitive.md). Most of its guidance goes beyond Level AA, so report a
+missing pattern as a recommendation, not a failure.
 
 ## Fit the Evaluation to the Request
 
@@ -105,16 +109,22 @@ checks, what automated tools can and cannot find, and how to involve users.
 
   1. **Ways of use.** Sight, hearing, touch, speech, a keyboard, a switch, or a screen reader.
   2. **Structure.** Native elements first, as [Fix With Native Elements First](#fix-with-native-elements-first)
-     says, then headings, a page title, and the page language (1.3.1, 2.4.2, 2.4.6, 3.1.1, 4.1.2).
+     says, then headings, a page title, and the page language (1.3.1, 2.4.2, 2.4.6, 3.1.1, 4.1.2). Navigation,
+     the names of repeated components, and the help mechanism keep their order, wording, and place across pages
+     (3.2.3, 3.2.4, 3.2.6).
   3. **Operation.** Every function works by keyboard, in a logical focus order. Focus stays visible and
      uncovered. Dragging has a single-pointer alternative, and targets are at least 24 by 24 CSS pixels
-     (2.1.1, 2.4.3, 2.4.7, 2.4.11, 2.5.7, 2.5.8).
+     (2.1.1, 2.4.3, 2.4.7, 2.4.11, 2.5.7, 2.5.8). When content changes, move focus to where the user acts next.
+     Move it into a dialog when it opens, and back to its trigger when it closes. Move it to the new heading
+     after a route or step change, and to the error summary after a failed submission. Announce content that
+     arrives without the user's action through a status message instead.
   4. **Presentation.** Text contrast is at least 4.5:1, or 3:1 for large text and for controls. Colour is never
      the only cue, and the layout reflows at 320 CSS pixels (1.4.1, 1.4.3, 1.4.10, 1.4.11). Check contrast and
      focus in every theme the interface ships, such as light, dark, and high contrast.
-  5. **Input and errors.** Each label is visible and matches the accessible name. Errors are named in text with
-     a suggestion. Nothing asks for data twice, and sign-in needs no memory test (2.5.3, 3.3.1, 3.3.2, 3.3.3,
-     3.3.7, 3.3.8).
+  5. **Input and errors.** Each label is visible and matches the accessible name, and a field that collects the
+     user's own data carries its `autocomplete` purpose. Errors are named in text with a suggestion. A legal,
+     financial, or data-changing submission can be reversed, checked, or confirmed. Nothing asks for data twice,
+     and sign-in needs no memory test (1.3.5, 2.5.3, 3.3.1, 3.3.2, 3.3.3, 3.3.4, 3.3.7, 3.3.8).
   6. **Media and change.** Images and media have text alternatives, captions, and audio description. Status
      messages are announced, and time limits and motion stay under the user's control (1.1.1, 1.2.2, 1.2.5,
      2.2.1, 2.2.2, 4.1.3). Honour the platform's reduced-motion setting for animation an interaction triggers;
