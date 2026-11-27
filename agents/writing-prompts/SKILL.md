@@ -82,8 +82,8 @@ The receiver starts cold. It has not seen the conversation, and it may not load 
 - **What you established.** Paths with line numbers, decisions taken, hypotheses ruled out, so it does not redo them.
 - **Rules it must follow.** The instructions that apply to this task and that it may not inherit, such as staging
   rules, writing style, or a required tool. Restate them; a reference to a file it will not read carries nothing.
-  Name the domain skills the work needs and tell the receiver to load them, such as `cli-ui-ux` and
-  `usability-engineering` for a command a person runs.
+  Name the domain skills the work needs and tell the receiver when to load each, such as `cli-ui-ux` and
+  `usability-engineering` before designing a command a person runs, or `python-testing` before the first test.
 - **Tools.** The tool or family to use, the fallback, and a reminder to load any tool that loads on demand.
   When the receiver fetches the web, give the whole fallback chain, including the escalation past an anti-bot
   wall, and name the sites known to block crawlers. A chain written in the brief replaces the receiver's own
@@ -93,7 +93,9 @@ The receiver starts cold. It has not seen the conversation, and it may not load 
   where none exists.
 - **Ownership.** The files it may edit, disjoint from any parallel worker, and what it must leave untouched. Name
   the folder for its working files, and the durable file each result belongs in, such as a tracked document or
-  ledger. You move each result there when the receiver returns.
+  ledger. You move each result there when the receiver returns. Tell it to remove what else it created when it
+  finishes: build output, dependency caches, probe installs, worktrees, and scratch files. Name any of these you
+  will inspect afterwards, which it keeps.
 - **Stop condition.** When to stop and report instead of pushing on: scope exceeded, a check fails twice, or a
   decision belongs to you.
 - **Result.** The report's exact shape and size, verified facts kept apart from inference. Large output goes to a
@@ -101,11 +103,30 @@ The receiver starts cold. It has not seen the conversation, and it may not load 
   has refused subagents' Markdown files whose names start with `report`, `summary`, `findings`, or `analysis`, for
   a cause not yet found.
 
+### Implementation Work
+
+A general-purpose subagent writing code has no conventions of its own, so the brief is its whole specification.
+Every gap in it comes back as a repair. Add these to the items above:
+
+- **The contract.** State the exact interface: inputs, outputs and their format, exit statuses, error text, and
+  the files it creates or edits. Name the sibling file whose structure, style, and error handling it copies.
+- **An exhaustive done.** Phrase the outcome as a set to exhaust: "every caller updated, `<command>` passes", not
+  "implement X". A criterion that names the whole set drives the legwork a looser one leaves optional.
+- **Proven commands.** Run every command the brief tells the receiver to run once before sending it. A wrong test
+  command or a missing import path costs the receiver its first attempts and invites a silent workaround.
+- **Named assumptions.** List each premise the design rests on that you have not verified, and make each one's
+  failure a stop condition: "if the parser normalizes line endings, stop and report what it keeps".
+- **The test bar.** List the behaviours that need a test, and require each failure test to be shown failing
+  against deliberately broken code before it is trusted.
+- **A deviation report.** Ask for every place it departed from the brief and why, with each command it ran and
+  its result.
+
 Keep the judgment calls and send the work. A brief that pastes the transcript hands over noise; a brief that asks the
 receiver to decide what you should decide hands over your job.
 
 Done when a cold reader could start without a question back, and the brief states outcome, context, ownership,
-tools, stop condition, and result.
+tools, stop condition, and result. A brief for implementation work also carries every item under Implementation
+Work.
 
 ## Before Sending or Delivering
 

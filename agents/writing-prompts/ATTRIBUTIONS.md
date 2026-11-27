@@ -34,7 +34,9 @@ copied.
 - Version: read on or before 2026-09-28
 
 The skill supplied the leading words, the completion criteria on each branch, positive targets over negation, cutting
-instructions the model already follows, and pointing to the environment instead of copying it. Nothing was copied.
+instructions the model already follows, and pointing to the environment instead of copying it. It also supplied
+completion criteria whose demand sets how much legwork they force, which shaped the exhaustive done of an
+implementation brief, and pointers worded with the moment to load their target. Nothing was copied.
 
 ### ISO: ISO 24495-1:2023, Plain language, Part 1: Governing principles and guidelines
 
