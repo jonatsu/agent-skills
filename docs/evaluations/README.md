@@ -46,6 +46,9 @@ Each entry gives the source URL and commit, the date it was read, and why it was
 - [kimgoetzke/coding-agent-configs](https://github.com/kimgoetzke/coding-agent-configs) at
   `9aa27f7ff021728ce1bf2eb2eccc06b00008c61b`, read 2026-11-26. Its `web-researcher` agent duplicates
   `deep-research` and `librarian`.
+- [magnus919/agent-skills](https://github.com/magnus919/agent-skills) at `0f83b91d44d692a665b6f487c4f60fac07e632cb`,
+  read 2026-11-27. Its `documents` skill validates Office and PDF files only structurally, and Anthropic's `docx`,
+  `xlsx`, `pptx` and `pdf` skills cover creating and editing those formats in more depth.
 - [FerroxLabs/wayland](https://github.com/FerroxLabs/wayland) at `4c030c7b01c241df7b6e3535635a970f10d781af`,
   read 2026-11-27. Its `code-review-patterns` skill covers how a human team runs review, such as SLAs, metrics,
   and team size, which no skill here serves.
