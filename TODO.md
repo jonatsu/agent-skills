@@ -609,7 +609,7 @@ has no basis in the manual.
 
 ## AI-Output Verification Skill
 
-The user has used awesome-copilot's `doublecheck` and found that it worked well. It checks AI-generated output in
+I have used awesome-copilot's `doublecheck`, and it worked well. It checks AI-generated output in
 three layers (a self-audit, verification against sources, and an adversarial review) and reports each claim with
 its source links. Read
 [`skills/doublecheck/SKILL.md`](https://github.com/github/awesome-copilot/blob/93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf/skills/doublecheck/SKILL.md)
