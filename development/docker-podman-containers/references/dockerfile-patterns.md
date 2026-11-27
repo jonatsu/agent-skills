@@ -1,6 +1,7 @@
 # Dockerfiles and Builds
 
-Design the image around the target workload and build context.
+Design the image around the target workload and build context. Use `official-docs.md` to locate the Dockerfile
+reference and Docker's build best practices.
 
 ## Inspect Before Building
 
