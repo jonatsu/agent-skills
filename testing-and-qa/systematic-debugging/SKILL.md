@@ -25,7 +25,8 @@ test, check, hook, build, or review the same way before you call it a blocker or
    instead of tuning arbitrary delays.
 3. **Test a focused hypothesis.** Predict what a small experiment will show, change one behavioral variable,
    and read the result. Keep investigation notes where the repository puts task artifacts, or in the response.
-   Leave tracked project files untouched until the fix. After three refuted hypotheses, recheck the reproduction
+   Leave tracked project files untouched until the fix. Revert each experiment before the next, so only one
+   variable differs between runs. After three refuted hypotheses, recheck the reproduction
    and assumptions, widen the search, or consider whether the architecture needs discussion.
 4. **Fix and verify.** When the causal chain is supported, state it. When the required behavior is settled and
    the fix is local, reversible, and in scope, make the smallest cause-level change. Run the reproduction and
@@ -56,6 +57,23 @@ test, check, hook, build, or review the same way before you call it a blocker or
   user will find it, and continue with independent authorized work.
 - Use independent test review when the task, risk, or user requests it. `test-engineer` owns test work and does
   not own production changes.
+
+## Report
+
+Lead with the diagnosis, evidence first:
+
+1. **Reproduction**: the command or steps that trigger the failure. When it does not reproduce, give the bounded
+   evidence instead: inputs, versions, environment, logs, and frequency.
+2. **Root cause**: one sentence, then the causal chain from the trigger to the failure. Label a cause the evidence
+   does not yet confirm as suspected.
+3. **Fix**: the smallest cause-level change, with its diff, applied or proposed. Label a mitigation as one. When
+   the fix would change accepted behavior, architecture, or scope, give the options and your recommendation
+   instead.
+4. **Verification**: the reproduction now passing, and the regression checks you ran, with their output read.
+5. **Open**: what remains unverified or risky, and whether the fix needs independent test review.
+
+When the report covers more than one distinct defect, tag each `F1`, `F2`, and so on, so the reader can cite it
+back.
 
 ## Completion
 
