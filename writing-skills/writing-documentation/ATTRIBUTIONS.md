@@ -206,6 +206,29 @@ Nothing was copied.
 The skill supplied the idea that every image and diagram needs a text alternative. The rules were written independently;
 no text was copied.
 
+### FerroxLabs: wayland `technical-writer` agent and `technical-documentation` skill
+
+- Source: <https://github.com/FerroxLabs/wayland>,
+  `src/process/resources/skills-library/bodies/agents/engineering/technical-writer/SKILL.md` and
+  `src/process/resources/skills-library/bodies/skills/software-engineering/technical-documentation/SKILL.md`
+- License: `AGPL-3.0-or-later`
+- Version: `4c030c7b01c241df7b6e3535635a970f10d781af`
+
+The repository's `package.json` declares the licence, and each file's frontmatter claims Apache-2.0. The files
+supplied the per-input questions in the interface reference, errors documented with their recovery, deprecation
+marked with its versions and replacement, running every example the reader runs, and reserved example values.
+Every rule was written independently; nothing was copied.
+
+### Magnus Hedemark: agent-skills `technical-documentation` skill
+
+- Source: <https://github.com/magnus919/agent-skills>, `technical-documentation/`
+- License: `MIT`
+- Version: `0f83b91d44d692a665b6f487c4f60fac07e632cb`
+
+The skill supplied documenting the interface rather than the implementation, the per-item field order in the
+interface reference, and showing each request with its response and a failure beside the success. Nothing was
+copied.
+
 ## Upstream License Notice
 
 Copyright (c) 2026 Pete Pei

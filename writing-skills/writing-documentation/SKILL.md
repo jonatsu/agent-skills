@@ -98,9 +98,13 @@ place it.
 - **How-to guide:** address one task for a reader who already has the basics. Put prerequisites, decision forks,
   expected results, and recovery beside the step they affect. In a runbook, put the rule that decides the run,
   such as when to rebuild, where every reader sees it. Answer the questions the operator will ask in the guide
-  itself. Give commands they can copy as written, with no placeholder such as `NNNN` left to fill in.
+  itself. Give commands they can copy as written, with no placeholder such as `NNNN` left to fill in, except a
+  secret or a value only the reader knows, which the prerequisites name with where to find it.
 - **Reference:** mirror the structure of what it describes. Cover inputs, outputs, options, defaults, limits,
-  and failure cases, each stated plainly enough to look up.
+  and failure cases, each stated plainly enough to look up. Describe the contract a caller relies on, not the
+  implementation behind it. Before writing or reviewing a reference to an interface, such as an API, a
+  configuration schema, or a command's options, read
+  [references/interface-reference.md](references/interface-reference.md).
 - **Explanation:** answer one bounded "why" question: context, constraints, alternatives, and trade-offs.
 
 Two further types fall outside the four. A **decision record** makes a decision reviewable after its conditions
@@ -278,8 +282,12 @@ published document.
   language cannot skim, so each passage must make sense without jumping ahead.
 - Put prerequisites, irreversible effects, limits, and caveats before the reader meets them.
 - Use a realistic example where it settles a concept, decision, or task, and omit setup that does not affect it.
-- Validate instructions the reader will follow when the environment or access is available; otherwise name what
-  remains unverified.
+- Build examples from reserved values: `example.com` for hosts and email addresses, `192.0.2.0/24`,
+  `198.51.100.0/24`, or `203.0.113.0/24` for IPv4, and `2001:db8::/32` for IPv6. Write a secret as a named
+  placeholder, such as `YOUR_API_KEY`, and never put a real credential, host, or person in an example.
+- Run every command and example the reader will run, in a sandbox or a throwaway copy, and read its output.
+  Leave a command that would change a real system unrun. Name in the delivery each one that ran and each one
+  that did not, with why. Where the set already tests its examples, such as with doctest, add each new one.
 - For a failure, state the failed condition, its known cause, and the next action. Name the invalid value,
   required form, limit, or conflicting state when known.
 - Use link text that names its target.
@@ -372,11 +380,36 @@ When reviewing a high-stakes document, or delegating any review or readability p
 
 The document is complete when it is reader-ready and every remaining evidence gap is visible in the delivery.
 
+## Review Report
+
+A review judges the document against the checks in "Review and Finish" and changes nothing. Report:
+
+1. **Verdict**: `Ready`, `Ready after changes`, or `Not ready`, then one sentence saying whether the intended
+   reader can understand or act on the document on the first pass. Any open Must fix finding rules out `Ready`;
+   use `Not ready` when the document needs another type, another reader, or a restructure.
+2. **Scope**: the document and its revision, the reader and outcome judged against, the governing sources
+   checked, and how: reading, running its commands, or a reader test.
+3. **Findings**, most consequential first and structural before prose within a tier, each tagged `F1`, `F2`, and
+   so on. Give each its tier, the passage, what is wrong and what it costs the reader, the evidence, and the fix
+   as a concrete change.
+   - **Must fix**: a reader who follows the document fails, is misled, or comes to harm. Examples are a wrong
+     command or claim, a step hidden in a note, a missing or late warning, caveat, or prerequisite, and a failure
+     the reader will meet with no recovery.
+   - **Should fix**: the reader succeeds only with effort. Examples are a leaked type, an unexplained term, a
+     heading that predicts nothing, noise, a sentence that breaks the prose rules, and an accessibility gap.
+   - **Consider**: an optional improvement. Report at most five, and say how many you left out.
+4. **Unverified**: each claim you could not check against its governing source, with the check that would settle
+   it.
+5. **Next checks**: the commands or reader tests still to run, and the reviews to run next.
+6. **What holds**, only when something specific should survive a rewrite: at most two sentences, with its
+   location.
+
+A clean document gets the verdict, the scope, and the next checks.
+
 ## Response Modes
 
 - **Draft:** produce the document in its selected type.
-- **Review:** report missing context, type leaks, structural problems, inaccurate examples, accessibility gaps,
-  and unclear recovery before suggesting edits.
+- **Review:** report as "Review Report" describes, before suggesting edits.
 - **Condense:** remove noise and misplaced content, judging each passage by what it gives the reader rather
   than by its section's label. Keep reader-critical context, decisions, prerequisites, examples, caveats, and
   recovery.
