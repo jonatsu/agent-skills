@@ -92,14 +92,15 @@ that would settle it, and drop the rest. Where your permissions allow, run the n
 settles a doubtful finding; otherwise name its command. Three real findings serve the reader better than a long
 list they must triage.
 
-Rate each reported finding by its consequence:
+Give each reported finding one tier, by what the verdict needs:
 
-- **Critical** blocks the change: broken behavior, data loss, a security hole, or an explicit rule broken.
-- **Required** must be fixed before merge, such as poor error handling or a missing test. A test is missing for
-  a reproduced defect the change fixes, for a failure that would otherwise pass silently and cost something, and
-  for anything the user or the repository's test policy asks to be tested.
-- **Optional** is worth doing but not required, such as a simpler design, a useful refactor, or removing a test
-  that repeats another test's guard.
+- **Must fix**: broken behavior, data loss, a security hole, an explicit rule broken, poor error handling, or a
+  missing test. A test is missing for a reproduced defect the change fixes, for a failure that would otherwise pass
+  silently and cost something, and for anything the user or the repository's test policy asks to be tested.
+- **Should fix**: a defect with bounded consequence that may wait for a recorded follow-up, such as a slow path
+  that no caller runs often yet.
+- **Consider**: an optional improvement, such as a simpler design, a useful refactor, or removing a test that
+  repeats another test's guard. Report at most five, and say how many you left out.
 
 The review is done when every changed hunk has passed every check, the omission check has run, and each finding
 cites a file and line.
@@ -108,21 +109,22 @@ cites a file and line.
 
 Report in this order:
 
-1. **Scope**: the range or files reviewed, and the task you judged them against.
-2. **Verdict**: `APPROVE` or `REQUEST CHANGES`, with one sentence saying why. Any Critical finding makes it
-   `REQUEST CHANGES`.
-3. **Findings**, most severe first, each tagged `F1`, `F2`, and so on, so the reader can cite it back. Give each
-   its severity, its confidence, the file and line, what is wrong with its concrete consequence, and the
-   specific fix.
-4. **What is done well**, only when there is something specific to say: at most two sentences, with the file and
-   line.
-5. **Verification**: what the tests cover, which tests you ran with their results and any change a run made to
+1. **Verdict**: `Ready`, `Ready after changes`, or `Not ready`, then one sentence saying why. Any open Must fix
+   finding rules out `Ready`; use `Not ready` when the change needs rework or a decision rather than the listed
+   fixes. On a pull request, `Ready` approves and the other two request changes.
+2. **Scope**: the range or files reviewed, the task you judged them against, and whether you read, scanned, or
+   ran tests.
+3. **Findings**, most consequential first, each tagged `F1`, `F2`, and so on. Give each its tier, the file and
+   line, what is wrong with its concrete consequence, the evidence, and the specific fix.
+4. **Unverified**: the suspicions below the threshold, each with the check that would settle it.
+5. **Next checks**: what the tests cover, which tests you ran with their results and any change a run made to
    the tree, and the commands the caller should still run. Name each missing test by its input and expected
    result. Name the reviews you recommend next.
-6. **Unverified**: the suspicions below the threshold, each with the check that would settle it.
+6. **What holds**, only when something specific should survive a revision: at most two sentences, with the file
+   and line.
 
-A clean change gets a short report: scope, `APPROVE`, and verification. Post to a pull request or change its
-review state only when the user asked for that.
+A clean change gets the verdict, the scope, and the next checks. Post to a pull request or change its review
+state only when the user asked for that.
 
 ## Attributions
 
