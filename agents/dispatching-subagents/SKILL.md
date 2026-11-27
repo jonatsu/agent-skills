@@ -48,6 +48,11 @@ at a temporary target, because a probe install can write the real home directory
 check cover the batch, and each unit keeps its own commit. The batch is done when its live check passes, because
 green suites have missed defects that only the live check found.
 
+Before fanning out lanes that build, estimate each lane's build output against free disk. A fresh checkout or
+worktree rebuilds every dependency, and a Rust `target/` directory alone can reach gigabytes, so parallel
+builders multiply it. Point them at the toolchain's shared cache where one exists. When the total still does not
+fit, cap the number of parallel builders, even when the user asked for speed.
+
 Own the only orchestration layer. A lane does its task itself and dispatches no subagents or reviewers of its
 own; review comes from you, after it reports. While a lane runs, do other work, never the lane's own task.
 
@@ -90,6 +95,8 @@ Before calling delegated work done:
    errors a summary hides.
 4. Move every result a lane left in its working folder into the durable file its brief named. You own what the
    lanes leave behind, and nobody else will move it.
+5. Check that each lane left only its result: its worktree, build output, and scratch files are gone, apart
+   from what its brief kept for inspection. Remove what remains before reporting the work done.
 
 Done when the checks pass on the combined tree, where any lane changed code, every claim you relied on has been
-checked, and every result sits in its durable file.
+checked, every result sits in its durable file, and no lane's leftovers remain.
