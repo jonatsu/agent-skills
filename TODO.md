@@ -631,6 +631,28 @@ specification and an official SDK. Cover at least these: a stdio server writes o
 logs to stderr, a failing backend comes back as a tool result marked as an error while the server keeps running,
 and a tool bounds its input, its run time, and the size of what it returns.
 
+## Move Reusable Methods Out of Subagent Definitions
+
+Several subagent definitions in agent-setup carry a method that no skill holds, copied across their Claude, Codex,
+and Oh-My-Pi variants. Move each method into a skill, and leave in the definition only what is specific to its lane
+and harness, as `change-review` did for `code-reviewer`. These candidates come from a survey of agent-setup at
+`0580e169`:
+
+- `plan-critic`: its review questions, evidence rules, and report have no skill. A `plan-review` skill would hold
+  them; check its triggers against `interview-me`, which also answers "poke holes in this".
+- `deep-research`: its method, notes file, and report have no skill.
+- `deep-debugger`: much of it restates `systematic-debugging`. Decide whether its report shape moves into the skill.
+- `cli-ux-tester`: its rules for running the tool under test copy `cli-ui-ux`, and one variant has drifted.
+- `git-operations`: it names parts of `git-commits-and-recovery` that the skill does not contain, and its trailer
+  rule is stricter than the skill's.
+
+Structuring an application in a layered or hexagonal style also has no home: dependency direction, interfaces to
+external systems defined in the inner layer, and framework types kept out of the domain. `technical-design`
+covers the design process, not architectural styles. FerroxLabs/wayland's `clean-architecture-patterns` skill at
+`4c030c7b01c241df7b6e3535635a970f10d781af` is a source of ideas only.
+
+The entry is done when each listed definition keeps only its lane and harness text, or the user has declined the move.
+
 ## Decide Which Skills Support Windows
 
 Decide which skills should also work on Windows. Most skills here target Linux only, and the user needs Windows support
