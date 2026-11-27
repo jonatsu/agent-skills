@@ -78,9 +78,10 @@ When a reviewer lane judges another lane's work, hand it the task, the diff, and
 anything. Keep "do not flag X" and pre-set severities out of its brief: a finding you think is wrong gets rejected
 afterwards, with your reason, where the user can see it.
 
-Send findings back to the lane that wrote the code, by their finding tags (`F1`, `F2`), while the harness can
-resume it; its context still holds the task and its own choices. Then ask the reviewer for a scoped re-review:
-each tagged finding addressed or not, plus new breakage in the fix diff only.
+Send findings back to the lane that wrote the code, by their finding tags (`F1`, `F2`), while the harness can resume it;
+its context still holds the task and its own choices. When you merge reports from parallel lanes, qualify each tag by
+its lane, such as `code-reviewer F2`, because every review numbers its findings from `F1`. Then ask the reviewer for a
+scoped re-review: each tagged finding addressed or not, plus new breakage in the fix diff only.
 
 After two fix rounds that leave a finding open, stop repeating them. Reassess: a fresh lane on a stronger tier
 with the findings and the prior report, a smaller task, or the work taken back.
