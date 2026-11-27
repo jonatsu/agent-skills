@@ -638,8 +638,6 @@ and Oh-My-Pi variants. Move each method into a skill, and leave in the definitio
 and harness, as `change-review` did for `code-reviewer`. These candidates come from a survey of agent-setup at
 `0580e169`:
 
-- `plan-critic`: its review questions, evidence rules, and report have no skill. A `plan-review` skill would hold
-  them; check its triggers against `interview-me`, which also answers "poke holes in this".
 - `deep-research`: its method, notes file, and report have no skill.
 - `deep-debugger`: much of it restates `systematic-debugging`. Decide whether its report shape moves into the skill.
 - `cli-ux-tester`: its rules for running the tool under test copy `cli-ui-ux`, and one variant has drifted.
