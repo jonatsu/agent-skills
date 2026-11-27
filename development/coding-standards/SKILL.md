@@ -1,6 +1,6 @@
 ---
 name: coding-standards
-description: "Write, refactor, and check code against language-agnostic standards: design principles, naming, comments, formatting, types, errors, logging, and code smells. Use before writing a new file or function, when copying or adapting code from another project, when refactoring, when applying the quality gate before a commit, or when checking a change against these standards. Language-specific style belongs to that language's skill (python-style), a correctness review of a change to change-review, design decay to brooks-review, and writing tests to test-engineer."
+description: "Write, refactor, and check code against language-agnostic standards: design principles, naming, comments, formatting, types, errors, logging, and code smells. Use before writing a new file or function, when copying or adapting code from another project, when refactoring, when applying the quality gate before a commit, or when reviewing a change for maintainability against these standards. Language-specific style belongs to that language's skill (python-style), a correctness review of a change to change-review, design decay to brooks-review, and writing tests to test-engineer."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -23,6 +23,7 @@ Load a reference when its concern is in play:
   `references/solid-and-quality.md`.
 - Comment content, annotations, and worked examples: `references/comments.md`.
 - Testing standards and the solve-the-problem-not-the-test rule: `references/testing-standards.md`.
+- Reviewing a change for maintainability, with its method and report: `references/maintainability-review.md`.
 
 A language-specific rule always wins over a default here where the two differ.
 
@@ -98,7 +99,9 @@ Give everything a descriptive, intention-revealing name, so the name says what t
 a comment. Name a function for what it does, such as `getUserById` rather than a bare `fetch` or `get`. Avoid
 abbreviations except ones that are universally understood, such as `url` or `id`. Write a boolean name as a
 claim that reads as a question, such as `isLoading`, `hasError`, or `canSubmit`, under the applicable language
-or package convention. Keep constants and types visually distinct from ordinary values where the language draws
+or package convention. Name a boolean positively, such as `isReady` rather than `isNotReady`, so a negation never
+doubles. Replace a noise word that carries no meaning, such as `data`, `info`, or `manager`, with what the value
+holds or the unit does. Keep constants and types visually distinct from ordinary values where the language draws
 that distinction. A language-specific rule overrides this where a pattern is not idiomatic, and casing and
 framework prefixes belong to that rule.
 
@@ -136,6 +139,12 @@ function or invert a guard.
 Keep a function focused on one job. Past roughly 50 lines it is usually doing several, so split it, unless the
 length is one unavoidable sequence, such as a long switch or a builder, that a split would only obscure. Keep
 the parameter list short; past three or four parameters, bundle the related ones into a type.
+
+### Mixed Levels and Side Effects
+
+Keep each function at one level of abstraction: a function that calls named steps does not also open a connection
+or build a query inline. Let a function either change state or answer a question, not both, so a caller can ask
+without causing an effect.
 
 ### Hardcoded Values
 

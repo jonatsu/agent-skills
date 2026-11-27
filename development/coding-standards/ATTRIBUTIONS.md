@@ -63,6 +63,26 @@ The skill supplied four ideas for the comment rules: a doc-comment says only wha
 comment and its length are separate tests, a label survives only with a checkable fact, and numbered step comments
 point to functions waiting to be extracted. The rules were written independently; no text was copied.
 
+### luongnv89: claude-howto `clean-code-reviewer` agent
+
+- Source: <https://github.com/luongnv89/claude-howto>, `04-subagents/clean-code-reviewer.md`
+- License: `MIT`
+- Version: `b9a973bf32bc28bdccb106012397e10235779bc3`
+
+The agent supplied the split of a maintainability review from a correctness review, and the categories that
+review checks. No text was copied.
+
+### FerroxLabs: wayland `clean-code` skill
+
+- Source: <https://github.com/FerroxLabs/wayland>,
+  `src/process/resources/skills-library/bodies/skills/software-engineering/clean-code/SKILL.md`
+- License: `AGPL-3.0-or-later`
+- Version: `4c030c7b01c241df7b6e3535635a970f10d781af`
+
+The repository's `package.json` declares the licence, and the file's frontmatter claims Apache-2.0. The skill
+supplied four ideas: positive booleans, replacing noise words, one level of abstraction per function, and
+separating commands from queries. Every rule was written independently, and no text was copied.
+
 ### Alexis King: Parse, don't validate
 
 - Source: <https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/>
