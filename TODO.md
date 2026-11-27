@@ -463,6 +463,10 @@ sources, record provenance, and decide whether the source overlaps an existing s
   `skills/automotive-embedded-skills`, suggests automotive embedded material; compare it with the embedded
   skills for coverage gaps. The GitHub API reported an MIT licence and a last push on 2026-02-27 when this
   entry was written; the LICENSE file itself is unread.
+- [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills): a single `CLAUDE.md`
+  of coding guidelines drawn from Andrej Karpathy's observations on LLM coding pitfalls, which I once installed
+  as the `karpathy-guidelines` skill. Compare it with `coding-standards`. The GitHub API reported no licence on
+  2026-11-27.
 
 ## Session Backtrace Skill
 
@@ -619,6 +623,13 @@ A skill for making a Pi extension run on oh-my-pi (OMP), and for keeping one ext
 it from OMP's own source for its Pi compatibility layer, verified against the OMP version current at the time.
 The skill is coupled to Pi and OMP, so it goes in an agent-named directory, the first in this repository: decide
 the directory name, and add the new group to the installer's Kasetto entries.
+
+## MCP Server Skill
+
+No skill covers writing an MCP server; the collection only configures and reviews them. Write one from the MCP
+specification and an official SDK. Cover at least these: a stdio server writes only protocol messages to stdout and
+logs to stderr, a failing backend comes back as a tool result marked as an error while the server keeps running,
+and a tool bounds its input, its run time, and the size of what it returns.
 
 ## Decide Which Skills Support Windows
 
