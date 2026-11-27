@@ -640,8 +640,6 @@ and harness, as `change-review` did for `code-reviewer`. These candidates come f
 
 - `deep-research`: its method, notes file, and report have no skill.
 - `cli-ux-tester`: its rules for running the tool under test copy `cli-ui-ux`, and one variant has drifted.
-- `git-operations`: it names parts of `git-commits-and-recovery` that the skill does not contain, and its trailer
-  rule is stricter than the skill's.
 
 Structuring an application in a layered or hexagonal style also has no home: dependency direction, interfaces to
 external systems defined in the inner layer, and framework types kept out of the domain. `technical-design`
