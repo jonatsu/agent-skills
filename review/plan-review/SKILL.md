@@ -26,7 +26,9 @@ nothing from it, because a small plan fails at the step it skipped.
 2. **Ground every claim.** Check each thing the plan asserts about the code, APIs, tools, or environment against
    its source: the files, the language server's definitions and references, or the dependency's documentation at
    the version the project pins. A plan that needs a capability the environment lacks, or an approach the
-   platform forbids, fails here, before any other step matters.
+   platform forbids, fails here, before any other step matters. When the plan builds code that does not exist yet,
+   hold its claims against its own stated premise and the environment it names, such as the platform, language
+   version, and tools, and check each against its documentation.
 3. **Check coverage both ways.** Map each acceptance criterion to the plan items that satisfy it, and each item
    back to a criterion. Count prohibitions and negative guarantees as criteria, since a plan misses them
    silently. A criterion no item covers is a gap, usually Must fix. An item no criterion asks for is unmapped
