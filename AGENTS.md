@@ -64,7 +64,9 @@ first fails.
 **Always:**
 
 - Use `skill-forge` and `writing-for-agents` when drafting or making any change to a skill, before the draft is
-  shown, and `writing-skill-descriptions` whenever a description is written or changed.
+  shown, and `writing-skill-descriptions` whenever a description is written or changed. Invoke each one for every
+  new draft, even when an earlier draft in the session loaded it: a compaction drops their text, and reading one of
+  their reference files does not load the skill.
 - Use `skill-forge`'s review mode for every skill review. It governs assessment and evidence; its authoring
   mode governs the shape of a proposed repair and any separately authorized edit.
 - Keep every skill self-contained: no link, path or script reference may leave its folder. `just check` fails a
