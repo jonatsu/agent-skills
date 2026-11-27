@@ -60,7 +60,7 @@ repos:
           - mdformat-config==0.2.1
           - mdformat-wikilink==0.3.0
           - markdown-it-py==4.2.0
-          - mdit-py-plugins==0.6.1
+          - mdit-py-plugins==0.7.0
           - mdurl==0.1.2
           - ruamel.yaml==0.19.1
           - taplo==0.9.3
