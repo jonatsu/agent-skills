@@ -1,6 +1,6 @@
 ---
 name: interview-me
-description: Interview the user until you both share an understanding of a plan, design, problem, requirement, or decision, one question at a time, batching only simple independent ones, recommending an answer to each and keeping a written record of what was decided. Use when asked to grill, interview, pressure-test, or poke holes in something, or to make sure you understand it the same way before acting. Use idea-brainstorming to shape an idea that has no direction yet; not for reviewing existing code.
+description: Interview the user until you both share an understanding of a plan, design, problem, requirement, or decision, one question at a time, batching only simple independent ones, recommending an answer to each and keeping a written record of what was decided. Use when asked to grill, interview, pressure-test, or poke holes in something, or to make sure you understand it the same way before acting. Use idea-brainstorming to shape an idea that has no direction yet; not for reviewing existing code or a written review of a plan (plan-review).
 license: MIT
 metadata:
   author: Joonas Onatsu

@@ -133,6 +133,7 @@ Whichever supplies it, `change-review` holds the method a correctness reviewer a
 - `systematic-debugging` finds the root cause when a failure's cause is unclear.
 - `security-review` joins review when a change touches a trust boundary or the plan's risk calls for it.
 - `architecture-review` judges a design before it is built, or an existing architecture, against its requirements.
+- `plan-review` reviews a plan before it is built, from its basis to whether its implementer can carry it out.
 - `writing-documentation` shapes any document above for its reader.
 - `session-handoff`, `note-for-later`, `dispatching-subagents`, and `writing-prompts` carry the work across
   sessions and lanes. No harness passes a goal to a subagent, so a brief restates the criteria its lane owns.

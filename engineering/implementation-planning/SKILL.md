@@ -189,7 +189,7 @@ units and dependency order, not just in a closing recommendation:
 
 1. **Before implementation:** the implementer checks scope, prerequisites, required practices, test seams, and failure
    or recovery scenarios. Give sensitive or irreversible work deeper scrutiny before coding; name an early independent
-   review when a concrete risk or repository requirement warrants its cost.
+   review when a concrete risk or repository requirement warrants its cost, such as one run with `plan-review`.
 2. **During implementation:** perform self-review, the applicable test loop, coding-rule checks, and proportionate
    integration validation. Record observed results; a command written in the plan is not a result.
 3. **After a substantive unit:** an independent reviewer examines the exact change and its evidence before dependent
