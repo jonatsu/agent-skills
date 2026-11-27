@@ -613,6 +613,13 @@ its source links. Read
 `librarian`, and the reviewer subagents of the installing setup, then decide whether to adapt the skill or write
 one independently.
 
+## Pi Extension Porting Skill
+
+A skill for making a Pi extension run on oh-my-pi (OMP), and for keeping one extension working on both hosts. Write
+it from OMP's own source for its Pi compatibility layer, verified against the OMP version current at the time.
+The skill is coupled to Pi and OMP, so it goes in an agent-named directory, the first in this repository: decide
+the directory name, and add the new group to the installer's Kasetto entries.
+
 ## Decide Which Skills Support Windows
 
 Decide which skills should also work on Windows. Most skills here target Linux only, and the user needs Windows support
