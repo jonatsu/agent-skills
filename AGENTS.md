@@ -63,8 +63,8 @@ first fails.
 
 **Always:**
 
-- Use `skill-forge` and `writing-for-agents` when creating, editing, restructuring, or replacing a skill, and
-  `writing-skill-descriptions` whenever a description is written or changed.
+- Use `skill-forge` and `writing-for-agents` when drafting or making any change to a skill, before the draft is
+  shown, and `writing-skill-descriptions` whenever a description is written or changed.
 - Use `skill-forge`'s review mode for every skill review. It governs assessment and evidence; its authoring
   mode governs the shape of a proposed repair and any separately authorized edit.
 - Keep every skill self-contained: no link, path or script reference may leave its folder. `just check` fails a
