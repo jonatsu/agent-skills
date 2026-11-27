@@ -1,6 +1,6 @@
 ---
 name: markdown-tools
-description: "Rewrap Markdown prose to a line limit and check Markdown files mechanically: broken relative links and heading anchors, links lost in a reference-style conversion, and words lost when a document is moved, merged, or split. Use after editing Markdown when lines run past the limit or a linter reports line length, after moving files or renaming headings, and to prove a restructure dropped nothing. Not for wording (writing-for-humans), document structure (writing-documentation), Mermaid rendering (mermaid-diagrams), or setting up or auditing lint configuration (repo-setup, repo-audit)."
+description: "Rewrap Markdown prose to a line limit and check Markdown files mechanically: broken relative links and heading anchors, links lost in a reference-style conversion, words lost when a document is moved, merged, or split, and code blocks altered by a prose rewrite. Use after editing Markdown when lines run past the limit or a linter reports line length, after moving files or renaming headings, to prove a restructure dropped nothing, and to prove a rewrite left code untouched. Not for wording (writing-for-humans), document structure (writing-documentation), Mermaid rendering (mermaid-diagrams), or setting up or auditing lint configuration (repo-setup, repo-audit)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -103,6 +103,22 @@ uv run scripts/tokendiff.py --from /tmp/install.md /tmp/upgrade.md --to docs/set
 Account for every lost token: restore it, or confirm that its loss was deliberate, such as a removed duplicate or
 filler. Pass deliberate losses with `--ignore WORD` or `--ignore-file FILE`. The restructure is done when it exits
 0 with those ignores.
+
+## Verify a Rewrite Left Code Untouched
+
+A prose rewrite must leave code blocks alone, but its damage there is invisible to a word diff: a stripped `\`
+continuation, a Unicode symbol swapped for an ASCII look-alike, lost trailing whitespace, or CRLF turned into LF.
+`tokendiff.py` skips code blocks, so run `codeblocks.py` on the version before and the version after:
+
+```bash
+git show HEAD:docs/guide.md > /tmp/guide-old.md
+uv run scripts/codeblocks.py /tmp/guide-old.md docs/guide.md
+```
+
+It compares every fenced and indented block byte for byte, fence lines included, and reports each changed,
+missing, or added block with its line in both versions and the first differing line escaped. Re-indenting a list
+counts as a change to every fenced block inside it. The rewrite is done when it exits 0. Run `reflinks.py` on the
+same pair to prove the rewrite kept every link, too.
 
 ## Attributions
 
