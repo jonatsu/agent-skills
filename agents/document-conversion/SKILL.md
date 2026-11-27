@@ -1,6 +1,6 @@
 ---
 name: document-conversion
-description: Convert Office, OpenDocument, RTF, EPUB, CSV, PDF and other documents to Markdown. Use for document contents an agent cannot read directly, batch conversion, PDF classification or coordinates, scanned-page OCR, and the MarkItDown MCP server. Routes among anydoc, pdf-inspector, and MarkItDown. Not for creating or editing documents, or pixel-faithful rendering.
+description: Convert Office, OpenDocument, RTF, EPUB, CSV, PDF and other documents to Markdown. Use for reading or summarizing document contents an agent cannot read directly, batch conversion, PDF classification or coordinates, scanned-page OCR, and the MarkItDown MCP server. Routes among anydoc, pdf-inspector, and MarkItDown. Not for creating or editing Word, Excel, or PowerPoint files (docx, xlsx, pptx), merging, splitting, or filling PDF forms (pdf), or pixel-faithful rendering.
 license: MIT
 compatibility: anydoc's npx fallback needs Node 20+; pdf-inspector has Node, Python 3.8+, Rust, and browser builds; MarkItDown needs Python 3.10+ and uv. Native extraction is local. Model acquisition and the named remote-service workflows use network access.
 metadata:
