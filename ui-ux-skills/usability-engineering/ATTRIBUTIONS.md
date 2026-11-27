@@ -164,3 +164,21 @@ sentence was written independently; no prose or code was copied.
 The skill supplied three ideas: empty, loading, and failed states must look different, an interface follows the
 user's own settings, and nothing the system adds may cover what the user is working on. The questions were
 written independently; no text was copied.
+
+### FerroxLabs: wayland `ux-audit` skill
+
+- Source: <https://github.com/FerroxLabs/wayland>,
+  `src/process/resources/skills-library/bodies/skills/design-creative/ux-audit/SKILL.md`
+- License: `AGPL-3.0-or-later`
+- Version: `4c030c7b01c241df7b6e3535635a970f10d781af`
+
+The repository's `package.json` declares the licence, and the file's frontmatter claims Apache-2.0. The skill
+supplied four ideas in the heuristic audit:
+
+- behaviour that static material cannot show goes under Unverified;
+- each frequency is marked as measured or estimated;
+- findings that one change fixes are reported as one, with a systemic fix for a systemic cause;
+- a pattern that may be required is flagged rather than rated, and each platform is judged against its own
+  conventions.
+
+Every rule was written independently; nothing was copied.

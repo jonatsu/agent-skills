@@ -36,7 +36,7 @@ not a statement of it.
 - **Quick check.** The user asks for a brief look, such as a quick or rough check. The same holds when the
   user states that only a few known people use the interface. Leave `references/` unread, and write only this:
 
-  1. The answer first: usable enough or not, and what to fix first.
+  1. The verdict first, `Ready`, `Ready after changes`, or `Not ready`, and what to fix first.
   2. One sentence of assumptions.
   3. The few findings that matter most, each with the problem, its severity and consequence, and the fix.
   4. One sentence naming the test that would confirm them.
@@ -116,7 +116,7 @@ Judge three factors: frequency, impact, and persistence. Frequency is how often 
 hurts when it does, and persistence is whether users overcome it once they know.
 
 State that consequence in words beside the rating. An example: "every caller who asks for an agent is sent back
-to the main menu". Order findings by rating, worst first.
+to the main menu". Order findings by tier, then by rating, worst first.
 
 Report severity only in this form. A total score, a grade, or a percentage of principles met claims a
 measurement nobody made, so leave them out. The same holds for predicted success rates and task times.
@@ -125,16 +125,38 @@ measurement nobody made, so leave them out. The same holds for predicted success
 
 A full evaluation writes the report in this order; a quick check uses its own shape above.
 
-1. **Answer.** One or two sentences: is it usable enough for its users, and what to fix first.
-2. **Scope and assumptions.** The users, tasks, and context you assumed, what you examined, and the method.
-3. **Findings.** Give each one, worst first, with five parts:
+1. **Verdict**: `Ready`, `Ready after changes`, or `Not ready`, then one sentence saying whether it is usable
+   enough for its users and what to fix first. Any open Must fix finding rules out `Ready`; use `Not ready` when
+   the interface needs redesign rather than local fixes.
+
+2. **Scope**: the users, tasks, and context you assumed; what you examined and in what form, such as a running
+   build, a prototype, screenshots, or a specification; and the method and the skill it follows.
+
+3. **Findings**, most consequential first, each tagged `F1`, `F2`, and so on, with six parts:
+
+   - its tier;
    - where it occurs;
    - what the user experiences;
    - the principle it breaks;
-   - the severity, with its consequence;
+   - the severity, with its consequence and whether its frequency comes from data or your estimate;
    - a concrete fix that fits the medium.
-4. **Confirm with users.** Which users to test with, which tasks, and what would show each top finding. This
-   slot is required in every report, including a quick check, where one sentence fills it.
+
+   Give each finding one tier:
+
+   - **Must fix**: users fail a main task, lose work, or come to harm, usually severity 3 or 4.
+   - **Should fix**: users succeed only with effort or errors, usually severity 2.
+   - **Consider**: an optional improvement, usually severity 1. Report at most five, and say how many you left
+     out.
+
+4. **Unverified**: behaviour the material cannot show, and patterns that may be required, each with the check
+   that would settle it.
+
+5. **Next checks**: the user test that would confirm the top findings, as
+   [Confirm With Users](#confirm-with-users) describes, and the reviews to run next, such as an accessibility
+   review. Every report has this part; in a quick check, one sentence fills it.
+
+6. **What holds**, only when something specific should survive a redesign: at most two sentences, with its
+   location.
 
 ## Confirm With Users
 

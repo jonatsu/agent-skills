@@ -10,13 +10,18 @@ succeed.
    device, the environment, how often they use it, and what a failure costs them. Take the inputs from the
    request and the project's files. Where one is missing, choose a plausible value and list it as an assumption.
 2. **Narrow the scope.** Choose the screens, states, or tasks to inspect. A whole product in one pass yields a
-   shallow list.
+   shallow list. Note what the material can show. A screenshot, mockup, or specification cannot show feedback,
+   undo, error and recovery behaviour, or shortcuts. Put each finding about those under Unverified, with the
+   interaction that would settle it.
 3. **Pass one: learn the flow.** Go through each main task once as the user would. Note the states, modes,
    and messages you meet, including the error and empty states.
 4. **Pass two: check each principle.** For every element and state in scope, ask the questions in
    [principles.md](principles.md) for the dimensions the medium has. Record each violation as it appears.
-5. **Merge and rate.** Merge duplicates that share one cause. Rate each finding on the severity scale in
-   `SKILL.md`, from its frequency, impact, and persistence. A violation that does no harm in this context is a
+5. **Merge and rate.** Merge duplicates that share one cause, and report findings that one change fixes as one
+   finding. When many findings come from one systemic cause, such as no shared component for inline validation,
+   give the systemic fix rather than a patch for each. Rate each finding on the severity scale in `SKILL.md`,
+   from its frequency, impact, and persistence. Say whether the frequency comes from data, such as analytics,
+   test results, or support tickets, or from your estimate. A violation that does no harm in this context is a
    0: say why and drop it.
 6. **Write the fix.** Give each finding a concrete fix that the medium can build. Where a fix trades against
    another principle, name the trade-off.
@@ -33,7 +38,8 @@ Record each finding with these parts, so findings can be merged and ranked:
 Where:       the screen, state, control, or step
 Problem:     what the user experiences, in their terms
 Principle:   the principle it breaks
-Severity:    0 to 4, and the consequence in words
+Tier:        Must fix, Should fix, or Consider
+Severity:    0 to 4, the consequence in words, and whether the frequency is measured or estimated
 Fix:         a concrete change the medium can build
 ```
 
@@ -44,6 +50,10 @@ Fix:         a concrete change the medium can build
   more evaluators or a user test.
 - A heuristic violation is not automatically a problem. A convention may break a principle for a good reason,
   so judge it by its consequence for these users.
+- A pattern that looks like a violation may be required by a regulation, a contract, or the platform. Report it
+  under Unverified for its owner to confirm, rather than rating it.
+- On several platforms, judge each against its own conventions, and report an inconsistency between the
+  platforms as its own finding.
 - One evaluator's severity rating is unreliable, and Nielsen found the mean of three ratings satisfactory. Mark
   a lone rating as provisional.
-- The audit predicts. The report's confirmation slot names the test that would confirm the top findings.
+- The audit predicts. The report's Next checks name the test that would confirm the top findings.

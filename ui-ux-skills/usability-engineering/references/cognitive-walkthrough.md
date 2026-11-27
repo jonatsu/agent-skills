@@ -41,8 +41,9 @@ Step N: <the action the design requires>
   Fix:       <a concrete change>
 ```
 
-After the steps, list the failures worst first, each naming the step where it stops the user. Close with the
-confirmation slot: a test with first-time users on this task.
+After the steps, list the failures most consequential first, each tagged `F1`, `F2`, and so on, with its tier as
+`SKILL.md` defines it and the step where it stops the user. Close with the Next checks: a test with first-time
+users on this task.
 
 The walk is done when every action in the correct sequence has all four answers, and every "no" has a
 consequence and a fix.
