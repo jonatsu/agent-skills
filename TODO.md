@@ -476,9 +476,8 @@ current, and remaining steps. Feasibility was assessed on 2026-09-30 and deferre
 the task-list, checkpoint, and working-notes rules, and the recovery when a session did not keep them.
 
 Source: ducktape's `skills/backtrace/SKILL.md` at `4ad338af25ea537dc7f817390b2e25c2a7a903f0`
-(<https://github.com/agentydragon/ducktape>), AGPL-3.0, so take ideas only and write the text independently. A
-copy of it is in `.scratch/research/ducktape/backtrace/`, which is scratch and may be gone. Its history
-recovery leans on a `session_logs` skill that was never fetched.
+(<https://github.com/agentydragon/ducktape>), AGPL-3.0, so take ideas only and write the text independently. Its
+history recovery leans on a `session_logs` skill that was never fetched.
 
 What the assessment established:
 
