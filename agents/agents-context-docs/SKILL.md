@@ -133,8 +133,8 @@ A script the agent runs is weaker than a gate the repository runs. When the repo
 pre-commit configuration, or continuous integration, propose wiring this check into it, so the next edit is
 measured whether or not an agent loads this skill.
 
-For an audit, deliver findings by severity with evidence, affected clients, and consequences. Keep mechanical
+For an audit, report in the shape [references/audit.md](references/audit.md) sets, keeping mechanical
 validity, loading and topology, content quality, whole-ruleset coherence, maintenance safety, and behavioral
-evidence as separate judgments. Do not collapse them into an aggregate score or letter grade.
+evidence as separate judgments in its Scope. Do not collapse them into an aggregate score or letter grade.
 
 Preserve `ATTRIBUTIONS.md` and `LICENSE.upstream` during every update.

@@ -48,13 +48,40 @@ observed task outcomes.
 ## Evidence and Findings
 
 Verify command and path claims against authoritative repository sources. Label vendor-documentation claims,
-controlled observations, user reports, and inferences distinctly. Mark a dimension unassessed when required
-evidence is unavailable.
+controlled observations, user reports, and inferences distinctly. Name a dimension as unassessed in Scope when
+required evidence is unavailable.
 
-Lead with findings by severity. For each finding, give the evidence, affected clients or tasks, consequence,
-and smallest credible correction. Report strengths after risks so the preservation target remains visible.
+Report in these parts:
 
-Always flag:
+1. **Verdict:** `Ready`, `Ready after changes`, or `Not ready`, then one sentence on whether the context works
+   for its clients, such as "Codex loads none of the root rules, because it reads no `CLAUDE.md` (F1)".
+2. **Scope:** the target clients, the surface, the method behind each dimension (live inspection,
+   reconstruction, a script run, or behavioral cases), and each dimension's result kept separate, with any
+   unassessed dimension named.
+3. **Findings**, tagged `F1`, `F2`, and so on, most consequential first. Each gives:
+   - where it is, and for a rendered ruleset whether it lives in the source or in an output;
+   - the dimension;
+   - what is wrong and its consequence for the affected clients or tasks;
+   - the evidence, with its label;
+   - the tier; and
+   - the smallest credible correction.
+4. **Unverified:** inferences and claims the evidence cannot settle, each with the check that would.
+5. **Next checks:** behavioral cases and script runs still to do, and the reviews to run next.
+6. **What holds**, only when a rule or structure should survive the corrections: at most two sentences, with
+   its location.
+
+Give each finding one tier:
+
+- **Must fix:** an agent acts wrongly. An effective rule reaches the wrong client or none, contradicts
+  another, or grants autonomy for risky actions.
+- **Should fix:** a cost or maintenance defect, such as duplication, accumulated narrative, copies prone to
+  drift, or prose where a gate is needed.
+- **Consider:** an optional improvement. Report at most five, and say how many you left out.
+
+The verdict is `Ready` when no Must fix finding is open, `Ready after changes` when the corrections need no
+restructuring, and `Not ready` when they do.
+
+Always report as a finding, at the tier its consequence sets:
 
 - an instruction file that has accumulated incident narrative, dated measurements, commit identifiers, or
   superseded-state history in place of imperative rules, and the always-loaded cost that imposes;
