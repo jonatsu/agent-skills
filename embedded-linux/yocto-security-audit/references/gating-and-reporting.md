@@ -81,15 +81,49 @@ Each has its own shape, and each is covered where the finding is produced:
 
 ## The report
 
-Five things, in this order. Anything less is not actionable:
+Report in these parts. Anything less is not actionable:
 
-1. **The artefact.** Which image, which recipe (`PN`, not the filename), which release, and whether it is what
-   ships. If you do not know, say so; it bounds everything below.
-2. **The lane and the tooling.** Host-side or on-target, which tools at which versions.
-3. **Coverage.** What was checked, and **what was not** (the part that gets skipped), including checks
-   disabled by default in the tools you ran.
-4. **Findings**, each with the observation that produced it and the artefact path it came from.
-5. **Severity against a stated purpose**, or an explicit "purpose unknown".
+1. **Verdict:** `Ready`, `Ready after changes`, or `Not ready`, then one sentence about the artefact, such as
+   "the shipped image allows root login with an empty password (F1)". A clean run says what was checked, never
+   that the image is secure.
+
+2. **Scope:**
+
+   - the artefact: which image, which recipe (`PN`, not the filename), which release, and whether it is what
+     ships;
+   - the stated purpose, or "purpose unknown";
+   - the lane and the tooling: host-side or on-target, and which tools at which versions; and
+   - the coverage: what was checked and **what was not**, including the checks disabled by default in the
+     tools you ran.
+
+   An unknown shipping status bounds everything below, so say so here.
+
+3. **Findings**, tagged `F1`, `F2`, and so on, most consequential first. Each gives:
+
+   - the observation that produced it, and the artefact path it came from;
+   - the severity against the stated purpose, or "unknown: critical if this ships; expected if it does not";
+   - the tier; and
+   - the fix.
+
+4. **Unverified:** properties the configuration predicts but the artefact has not confirmed, such as a kernel
+   command line or an overlay that may override the disk, each with the check that would confirm it.
+
+5. **Next checks:** the checks not run, the on-target lane when only the host side ran, CVE questions for
+   **yocto-vulnerability-management**, and the reviews to run next.
+
+6. **What holds**, only when a hardening choice should survive a revision: at most two sentences, with its
+   location.
+
+Set each tier against the stated purpose:
+
+- **Must fix:** a finding that grants access or breaks a security property the purpose requires, and a gate
+  that fails open.
+- **Should fix:** a weakness that needs another flaw before anyone can exploit it, or a missing hardening that
+  the purpose expects.
+- **Consider:** hardening beyond what the purpose needs. Report at most five, and say how many you left out.
+
+When the purpose is unknown, tier as if the artefact ships, and say so in the finding. The verdict is then
+`Not ready` while any Must fix finding depends on that purpose, because only the owner can settle it.
 
 ## What an audit cannot conclude
 
