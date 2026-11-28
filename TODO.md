@@ -631,22 +631,16 @@ specification and an official SDK. Cover at least these: a stdio server writes o
 logs to stderr, a failing backend comes back as a tool result marked as an error while the server keeps running,
 and a tool bounds its input, its run time, and the size of what it returns.
 
-## Move Reusable Methods Out of Subagent Definitions
+## Add an Architecture Styles Skill
 
-Several subagent definitions in agent-setup carry a method that no skill holds, copied across their Claude, Codex,
-and Oh-My-Pi variants. Move each method into a skill, and leave in the definition only what is specific to its lane
-and harness, as `change-review` did for `code-reviewer`. These candidates come from a survey of agent-setup at
-`0580e169`:
+Structuring an application in a layered or hexagonal style has no home: when a style earns its cost, dependency
+direction, interfaces to external systems defined in the inner layer, and framework types kept out of the domain.
+`technical-design` covers the design process, not architectural styles, and `python-architecture` carries only the
+Python form of the inward dependency rule. Write a language-agnostic skill with Python and Rust examples, and point
+`technical-design` and `python-architecture` to it for depth. FerroxLabs/wayland's `clean-architecture-patterns`
+skill at `4c030c7b01c241df7b6e3535635a970f10d781af` is a source of ideas only.
 
-- `deep-research`: the `deep-research` skill now holds its method, notes file, and report, and the definition still
-  carries its own copy.
-
-Structuring an application in a layered or hexagonal style also has no home: dependency direction, interfaces to
-external systems defined in the inner layer, and framework types kept out of the domain. `technical-design`
-covers the design process, not architectural styles. FerroxLabs/wayland's `clean-architecture-patterns` skill at
-`4c030c7b01c241df7b6e3535635a970f10d781af` is a source of ideas only.
-
-The entry is done when each listed definition keeps only its lane and harness text, or the user has declined the move.
+The entry is done when the skill has landed and both pointers are in place.
 
 ## Move Review Skills to the Report Shape
 
