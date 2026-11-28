@@ -114,6 +114,30 @@ as `writing-specs` and `technical-design` do.
 | `yocto-vulnerability-management` | 2026-10-18, `6b1e4d9a`           | 2026-10-18, `6b1e4d9a`                            |
 | `hardware-security-keys`         | 2026-11-23, `ca60763`            | 2026-11-23, `ca60763`                             |
 
+## CI/CD Skill
+
+Build a general CI/CD skill covering GitHub Actions and GitLab CI; the user needs it soon (decided 2026-11-18).
+Intended scope on both platforms: pipeline structure, matrix and cache design, self-hosted runners, reusable
+workflows and templates, environments and deployment gates, secrets, artifact retention, and each platform's
+expression or rules language. `tools/github-ops/references/actions-basics.md` stays a short orientation and points
+to the new skill rather than growing into a reference manual.
+
+Write independently from primary sources: `netresearch/github-project-skill` uses CC-BY-SA-4.0 for prose
+despite MIT for scripts and assets, so its prose cannot be lifted into this MIT repository.
+
+[wshobson/agents `plugins/cicd-automation`](https://github.com/wshobson/agents/tree/c96b5f6552dba32e4492307493ee613581430715/plugins/cicd-automation)
+(MIT, read 2026-11-26) is usable only as a topic checklist, because its examples fail against the GitHub and
+GitLab docs. They pin actions to mutable tags, deploy with long-lived cloud keys, and gate GitLab jobs with the
+deprecated `only`/`except`. They treat a `when: manual` job as a blocking gate, though it defaults to
+`allow_failure: true`, and read `needs.<job>.outputs` without listing that job in `needs`. Its five agents are
+personas with no checkable content. Facts the skill needs that the source lacks:
+
+- GitHub gives runs from untrusted triggers, such as `pull_request_target`, read-only access to default-branch
+  caches unless a job declares a write-capable `cache-mode`.
+- Required reviewers on environments work only in public repositories on the Free, Pro, and Team plans.
+- New GitLab CI/CD variables default to Masked visibility since GitLab 18.3.
+- GitLab can key a cache on lockfiles with `cache:key:files` and fall back with `fallback_keys`.
+
 ## `test-engineer` Activation Datapoint
 
 On 2026-09-06 a session wrote new pytest integration tests — squarely `test-engineer`'s declared modes — and no
@@ -549,30 +573,6 @@ Two questions for the user come first:
   the frameworks the user builds with. The answer also picks the fixture language, Python with Textual by default.
 - Wording: a compact skill in our own words crediting gfargo and hyperskills (recommended), or an adaptation of
   gfargo's MIT references.
-
-## CI/CD Skill
-
-Build a general CI/CD skill covering GitHub Actions and GitLab CI; the user needs it soon (decided 2026-11-18).
-Intended scope on both platforms: pipeline structure, matrix and cache design, self-hosted runners, reusable
-workflows and templates, environments and deployment gates, secrets, artifact retention, and each platform's
-expression or rules language. `tools/github-ops/references/actions-basics.md` stays a short orientation and points
-to the new skill rather than growing into a reference manual.
-
-Write independently from primary sources: `netresearch/github-project-skill` uses CC-BY-SA-4.0 for prose
-despite MIT for scripts and assets, so its prose cannot be lifted into this MIT repository.
-
-[wshobson/agents `plugins/cicd-automation`](https://github.com/wshobson/agents/tree/c96b5f6552dba32e4492307493ee613581430715/plugins/cicd-automation)
-(MIT, read 2026-11-26) is usable only as a topic checklist, because its examples fail against the GitHub and
-GitLab docs. They pin actions to mutable tags, deploy with long-lived cloud keys, and gate GitLab jobs with the
-deprecated `only`/`except`. They treat a `when: manual` job as a blocking gate, though it defaults to
-`allow_failure: true`, and read `needs.<job>.outputs` without listing that job in `needs`. Its five agents are
-personas with no checkable content. Facts the skill needs that the source lacks:
-
-- GitHub gives runs from untrusted triggers, such as `pull_request_target`, read-only access to default-branch
-  caches unless a job declares a write-capable `cache-mode`.
-- Required reviewers on environments work only in public repositories on the Free, Pro, and Team plans.
-- New GitLab CI/CD variables default to Masked visibility since GitLab 18.3.
-- GitLab can key a cache on lockfiles with `cache:key:files` and fall back with `fallback_keys`.
 
 ## Embedded Firmware Skill
 
