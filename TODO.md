@@ -330,31 +330,9 @@ reach the right document is unmeasured. Open work:
   global rules; agent-setup `84964278` and `4ab748c5`, live from 2026-11-18 16:20 +02:00). Run it once at
   least 100 discovered first reads per agent follow that time, with the same mining method as the record.
 
-## Prose-Limit Tests or a Third-Party Prose Checker
+## Measure the Skills' Own Sentences With Vale
 
-Open question for the user: should the repository keep its own test for prose-style limits, or move that job to a
-maintained third-party checker? The user questioned such tests on 2026-11-18, after the sentence-limit test failed CI
-by reading a "2,000 words" budget as a limit (fixed in `c480d92`). On 2026-10-11 they said they prefer third-party
-checkers to home-grown ones.
-
-The only such test, `tests/test_writing_sentence_limits.py`, measures no prose. It checks that the seven skills that
-copy `writing-for-humans`'s sentence limits still state the same numbers, which the rule that every skill carries its
-own copy of a shared rule requires. The options:
-
-1. Keep the drift test as it is. No prose checker can do this job, because it compares stated numbers across skills
-   rather than measuring sentences. Its cost is a regex that can misread a new phrasing, as on 2026-11-18.
-2. Drop the drift test, and rely on updating every copy by hand when the limit changes. A limit that is changed in
-   one place and missed in another then goes unnoticed.
-3. Keep the drift test, and also measure the skills' own prose with a maintained checker such as Vale and a
-   sentence-length rule. This adds a capability the repository does not have today. Its cost is tuning out false
-   positives on code blocks, tables, and lists.
-
-Recommendation: option 1. The test guards rule consistency, not prose style, so the preference for third-party
-checkers does not apply to it. Take up option 3 separately only if measuring the skills' own sentences is wanted;
-if it is, use Vale rather than writing a measurer here.
-
-Decided on 2026-11-19: the user chose option 1. Option 3 stays open until measuring the skills' own sentences is
-wanted.
+Measure the skills' own sentence lengths with Vale, if that becomes wanted.
 
 ## Worked Example for `test-engineer`
 
