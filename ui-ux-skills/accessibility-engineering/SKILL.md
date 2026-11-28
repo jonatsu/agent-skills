@@ -33,8 +33,8 @@ missing pattern as a recommendation, not a failure.
 An evaluation takes one of two depths. Design, review, and fix work keep to their own scope, set in
 [Modes](#modes).
 
-- **Quick check.** The user asks for a brief look, such as a quick or rough check, or names one component.
-  Report the barriers you find and the test that would confirm them, in under 300 words. A quick check never
+- **Quick check.** The user asks for a brief look, such as a quick or rough check, or names one component. Report the
+  verdict, the barriers you find, and the next checks that would confirm them, in under 300 words. A quick check never
   supports a conformance claim, so say so.
 - **Full evaluation.** Every other evaluation request. Cover every criterion at the target level for the pages,
   screens, or processes in scope. Use the full report shape.
@@ -92,7 +92,7 @@ navigation is a disclosure, a button that shows a list of links, not an ARIA `me
 ### Name the Tests That Confirm It
 
 Reading code and running scanners predicts barriers; testing confirms them. Every report, including a quick
-check and a fix, ends by naming the tests still needed:
+check and a fix, names the tests still needed:
 
 - keyboard only, with focus visible at every step;
 - a screen reader with its usual browser, such as NVDA or JAWS with Chrome, and VoiceOver with Safari;
@@ -139,7 +139,7 @@ checks, what automated tools can and cannot find, and how to involve users.
   the scope, and report in the shape below.
 
 - **Review**: a proposed or recent change. Check what changed and what it touches, at the target level, and
-  that no barrier came back. Report the findings in the five parts below, then the tests.
+  that no barrier came back. Report in the shape below.
 
 - **Fix**: change the code by the rules above. Report what you changed, with the criterion each change
   meets, the barriers that remain, and the tests.
@@ -159,19 +159,30 @@ not a score, a grade, or a percentage of criteria met, because those claim a mea
 
 ## Report Shape
 
-An evaluation reports in four parts:
+An evaluation or a review reports in these parts:
 
-1. **Answer.** Whether it meets the target, and what to fix first. One failure makes the answer "does not
-   conform".
-2. **Scope and method.** The target version and level, what you examined, and how: source reading, a scan, or
-   testing.
-3. **Findings.** Give each one, worst first, with five parts:
+1. **Verdict**: `Ready`, `Ready after changes`, or `Not ready`, then one sentence in WCAG's terms, such as "does
+   not conform to WCAG 2.2 AA; fix F1 first". One failure at the target level makes the sentence "does not
+   conform". Without a full evaluation, the sentence says what was checked, never "conforms".
+2. **Scope**: the target version and level, what you examined, and how: source reading, a scan, or testing.
+3. **Findings**, tagged `F1`, `F2`, and so on, ordered by tier, then by severity. Give each one in six parts:
    - where it occurs;
    - who it blocks, and how;
    - the criterion by number, name, and level;
    - the severity, with its consequence;
+   - the tier;
    - a concrete fix.
-4. **Tests still needed.** The tests from [Name the Tests That Confirm It](#name-the-tests-that-confirm-it).
+4. **Unverified**: barriers that reading or a scan suggests but cannot confirm, each with the test that would.
+5. **Next checks**: the tests from [Name the Tests That Confirm It](#name-the-tests-that-confirm-it), then the
+   reviews to run next.
+6. **What holds**, only when a specific accessible pattern should survive a revision: at most two sentences, with
+   its location.
+
+Give each finding a tier. A failure of a criterion at the target level is **Must fix**, whatever its severity,
+because the interface cannot conform while it stands. A barrier outside the target level is **Should fix** when it
+is a blocker or major, and **Consider** when it is minor; report at most five Consider findings, and say how many
+you left out. The verdict is `Ready` only when no Must fix finding is open, `Ready after changes` when the listed
+fixes need no redesign, and `Not ready` when they do.
 
 ## Attributions
 
