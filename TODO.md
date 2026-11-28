@@ -59,25 +59,6 @@ personas with no checkable content. Facts the skill needs that the source lacks:
 - New GitLab CI/CD variables default to Masked visibility since GitLab 18.3.
 - GitLab can key a cache on lockfiles with `cache:key:files` and fall back with `fallback_keys`.
 
-## `test-engineer` Activation Datapoint
-
-On 2026-09-06 a session wrote new pytest integration tests — squarely `test-engineer`'s declared modes — and no
-test skill surfaced in the available-skills listing; they loaded only when named. The cost was real: the
-committed tests carried four defects (the material one order-dependent) that `test-engineer`'s rules name
-directly. Full incident and the `searchable-code` precedent are in
-agent-setup's `docs/findings/skill-discovery-limits.md`.
-
-The `test-engineer` and `python-testing` descriptions were edited 2026-09-06 with `Use when` clauses and literal
-triggers (`test-driven-development` was correctly left alone), but **activation was not measured**. The next
-session that writes or fixes tests without being told to load a skill is the datapoint: record whether the test
-skills appeared and whether they loaded unprompted (a deploy-then-appear does not count). If they still do not
-fire, wording is not the lever — move the behavior into always-loaded instructions, as `searchable-code`
-already concluded.
-
-Usage from 2026-10-08 to 2026-11-16 (`docs/evaluations/2026-11-16-skill-usage.md`) points that way: no agent
-loaded `test-engineer` on its own, and its six loads were all typed by the user, while `python-testing` loaded
-21 times by agents.
-
 ## `writing-skill-descriptions` Misses Descriptions Inside a Larger Change
 
 The user reports that `writing-skill-descriptions` usually loads on its own, but not always. A datapoint from
@@ -90,18 +71,22 @@ realistic skill-change requests that include a description, against near misses 
 
 ## Description Activation Is Unmeasured
 
-The 2026-09 audit rewrote 13 short capability-only descriptions to carry activation clauses and triggers (completed
-2026-09-07; findings in agent-setup's `docs/evaluations/skills/2026-09-07-skill-description-audit.md`, edits in git
-history). Whether the wording drives activation is unmeasured and nothing depends on settling it. Two of the 13 describe
-a situation a user never names — `systematic-debugging` and `repo-management` (now `repo-setup`, its description
-rewritten around "set up a repository"); if they still do not activate on work they cover, move their behavior into the
-agents' always-loaded rules in agent-setup, per `AGENTS.md` ("no wording repairs" a moment nobody verbalizes), rather
-than editing the description again. The `test-engineer`/`python-testing` datapoint is tracked above.
+Three skills describe work a user rarely names: `systematic-debugging`, `repo-setup` (then `repo-management`), and
+`test-engineer`. The first two were among the 13 descriptions the 2026-09 audit rewrote to carry activation clauses
+(agent-setup's `docs/evaluations/skills/2026-09-07-skill-description-audit.md`). `test-engineer` and `python-testing`
+got `Use when` clauses on 2026-09-06. That came after a session wrote pytest tests without loading either skill and
+committed four defects that their rules name (agent-setup's `docs/findings/skill-discovery-limits.md`).
 
 Usage from 2026-10-08 to 2026-11-16 (`docs/evaluations/2026-11-16-skill-usage.md`): agents loaded
-`systematic-debugging` three times and `repo-management` (now `repo-setup`) five times on their own. Five direct-tier skills
-never loaded at all: `context-compression`, `domain-modeling`, `git-history-investigation`, `github-ops`, and
-`writing-specs`.
+`systematic-debugging` three times, `repo-setup` five times and `python-testing` 21 times on their own. No agent
+loaded `test-engineer`; the user typed all six of its loads. Five direct-tier skills never loaded at all:
+`context-compression`, `domain-modeling`, `git-history-investigation`, `github-ops`, and `writing-specs`.
+
+Record the next session that writes or fixes tests without being told to load a skill: whether the test skills were
+listed and whether they loaded unprompted. A skill that appears only after a deploy does not count. If one of the
+three still does not activate on work it covers, move its behavior into the agents' always-loaded rules in
+agent-setup instead of editing its description again. `AGENTS.md` states the reason: no wording repairs a skill for
+a moment nobody verbalizes.
 
 The user moved `context-compression`, `domain-modeling`, `writing-specs` (agent-setup `aab1bb2a`), and
 `git-history-investigation` (agent-setup `2038566c`) to the lazy tier. `github-ops` stays direct with its
