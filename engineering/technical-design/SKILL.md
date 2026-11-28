@@ -156,6 +156,9 @@ Settle the parts relevant to the requested outcome:
 - compatibility and migration behavior; and
 - observability, rollout, and rollback when the change requires them.
 
+When the design sets an application's internal structure, such as layers or ports and adapters, decide it with the
+`architecture-styles` skill.
+
 Translate accepted product harms into system guarantees. Define relevant denial, disclosure, failure, and recovery
 behavior. Verification commands and implementation order belong to implementation planning.
 

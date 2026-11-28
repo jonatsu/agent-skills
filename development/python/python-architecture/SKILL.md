@@ -135,7 +135,9 @@ core, not in the layer that happens to use it first.
 
 Record the intended layering in the repository's own documentation, and treat an import that violates it as a
 defect rather than a shortcut. The interpreter and the type checker both accept such an import, so only a
-review or an import-contract tool such as `import-linter`'s `layers` contract will catch it.
+review or an import-contract tool such as `import-linter`'s `layers` contract will catch it. The
+`architecture-styles` skill covers when layering earns its cost, defining ports, wiring adapters, and testing through
+fakes.
 
 ## Before Calling Structural Work Done
 

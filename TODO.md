@@ -631,17 +631,6 @@ specification and an official SDK. Cover at least these: a stdio server writes o
 logs to stderr, a failing backend comes back as a tool result marked as an error while the server keeps running,
 and a tool bounds its input, its run time, and the size of what it returns.
 
-## Add an Architecture Styles Skill
-
-Structuring an application in a layered or hexagonal style has no home: when a style earns its cost, dependency
-direction, interfaces to external systems defined in the inner layer, and framework types kept out of the domain.
-`technical-design` covers the design process, not architectural styles, and `python-architecture` carries only the
-Python form of the inward dependency rule. Write a language-agnostic skill with Python and Rust examples, and point
-`technical-design` and `python-architecture` to it for depth. FerroxLabs/wayland's `clean-architecture-patterns`
-skill at `4c030c7b01c241df7b6e3535635a970f10d781af` is a source of ideas only.
-
-The entry is done when the skill has landed and both pointers are in place.
-
 ## Move Review Skills to the Report Shape
 
 AGENTS.md's "Review Report Shape" sets one report for every review skill. These still report in their own shape:

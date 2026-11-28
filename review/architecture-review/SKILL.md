@@ -31,7 +31,8 @@ Apply each question that fits the target, and skip the rest rather than inventin
 1. **Proportion and placement.** Is the shape proportional to the problem, with its boundaries drawn where they
    belong? Flag a design built for a hypothetical future or too small for its real load, and a component doing
    work that belongs elsewhere. Where the design adopts a style, such as layers or ports and adapters, check that
-   its cost pays for itself where it is applied; a simple data-entry path needs no full layering.
+   its cost pays for itself where it is applied; a simple data-entry path needs no full layering. The
+   `architecture-styles` skill holds the signals that a style earns its cost.
 2. **Feasibility.** Can it ship as drawn? Flag a design that needs a change from a team that does not own the
    system, an approval nobody holds, or a break in a promised contract or deprecation timeline. When it abandons
    an existing decision, pattern, or stack, ask what it gains over evolving the current one and how the
