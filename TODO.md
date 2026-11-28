@@ -380,10 +380,10 @@ routes, must-follow rules in files the client loads by itself, a current loading
 boundary and goals slots in the floor template. Whether the search-findability rules raise how often agents
 reach the right document is unmeasured. Open work:
 
-- Re-review both skills against the record's controlled comparison, which hit its ceiling: in a small
-  repository every route and search condition reached the document. Aim for "ready with risks" at most. A
-  harder follow-up, with a task the floor has no route for or a larger document set, is optional and needs the
-  user's go-ahead for its runs.
+- Re-review both skills against the record's controlled comparison, which hit its ceiling: in a small repository every
+  route and search condition reached the document. Aim for `Ready` with its unmeasured behavior named, at most. A harder
+  follow-up, with a task the floor has no route for or a larger document set, is optional and needs the user's go-ahead
+  for its runs.
 - Compare both agents' floor-route rate before and after agent-setup's routing rule ("Instruction Routes" in the
   global rules; agent-setup `84964278` and `4ab748c5`, live from 2026-11-18 16:20 +02:00). Run it once at
   least 100 discovered first reads per agent follow that time, with the same mining method as the record.
@@ -634,7 +634,7 @@ and a tool bounds its input, its run time, and the size of what it returns.
 ## Move Review Skills to the Report Shape
 
 AGENTS.md's "Review Report Shape" sets one report for every review skill. These still report in their own shape:
-`skill-forge`'s review mode and verdicts, `context-architecture`'s truth audit, `agents-context-docs`' audit,
+`context-architecture`'s truth audit, `agents-context-docs`' audit,
 `repo-audit`, and `yocto-security-audit`. Move each in its own commit, keeping a published domain rating as a field. The
 entry is done when every listed report follows the shape.
 
