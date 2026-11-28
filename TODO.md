@@ -230,24 +230,11 @@ evaluation work starts here, and at least monthly, in the status line of
 `docs/plans/evaluation/skill-evaluation-redesign.md` there. Once the harness runs, move this repository's
 evaluations onto it and stop running them by hand.
 
-## Compare `skill-forge` With Anthropic's `skill-creator` Plugin
+## Deferred Model Evaluations
 
-Check `skill-forge` against Anthropic's official `skill-creator` plugin, including the assets that ship beside the
-skill: its agents and its evaluation pipeline, which could improve this repository's authoring and evaluation setup.
-Source: <https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator/skills/skill-creator>.
-`skill-forge`'s `ATTRIBUTIONS.md` already credits the plugin's skill at `fa59bc9037741ecfa131aa27938272605710d7b2`
-for ideas only; the agents and the pipeline have not been evaluated. Weigh the pipeline against agent-setup's
-evaluation harness (see "Check the agent-setup Evaluation Harness" above). The plugin is `Apache-2.0`, so adapting
-material brings that license's obligations. Raised 2026-10-11.
+Each waits for allowance and a decision, and moves onto agent-setup's harness once that runs.
 
-## Compare the Custom Agents With Anthropic's `pr-review-toolkit` Plugin
-
-Check the custom agent definitions in agent-setup against Anthropic's `pr-review-toolkit` plugin:
-<https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pr-review-toolkit>. The work belongs to
-agent-setup, which owns those definitions; it is recorded here so it is not lost, and moves there when picked up.
-Raised 2026-10-11.
-
-## Prompt Debugging Behavioral Evaluation
+### `prompt-debugging`
 
 `prompt-debugging` (renamed from `prompt-optimizer` on 2026-09-28) is `Ready` on static review, with its model
 behavior unmeasured; its workflow and fixtures derive from observed failures, but it has not been exercised as a
@@ -263,7 +250,7 @@ skill (deferred to protect the weekly Codex allowance). When allowance and a dec
   correct final diff fails if the trace edited before preserving the failure.
 - Report token and allowance use from a first run before expanding to a full matrix or repetitions.
 
-## Context Compression Behavioral Evaluation
+### `context-compression`
 
 The independently written `context-compression` replacement has durable fixtures and static validation; its
 model evaluation is deferred to protect the weekly allowance. When allowance and a decision justify it:
@@ -281,12 +268,45 @@ model evaluation is deferred to protect the weekly allowance. When allowance and
 - Add a second client only if the first run supports deployment confidence or exposes a model-specific
   uncertainty; report live allowance before repetitions.
 
-## Behavioral Evaluations Left by Completed Plans
+### `skill-forge`
 
-This skill shipped with static review only, and its plan closed with the model runs still deferred:
+`skill-forge`, including its review mode, which absorbed `skill-review` on 2026-09-28, shipped with static review
+only, and its plan closed with the model runs still deferred. The 2026-09-04 refresh left it `Ready` on static
+review, with its model behavior unmeasured: no baseline or candidate run.
 
-- `skill-forge`, including its review mode, which absorbed `skill-review` on 2026-09-28. The 2026-09-04 refresh
-  left it `Ready` on static review, with its model behavior unmeasured: no baseline or candidate run.
+### `usability-engineering` Eval Gaps
+
+The `ui-ux-skills/usability-engineering` evaluation (`docs/evaluations/2026-11-16-usability-skill.md`) has no case for
+review mode, the holistic review, or a voice interface, and ran once per model on one client. Add
+a case for each, built on fixtures unlike the existing five, and rerun with at least two repetitions. While
+there, make `evals/grade.py` ignore a report that says it gives no score.
+
+### `accessibility-engineering` Eval Gaps
+
+The `ui-ux-skills/accessibility-engineering` evaluation (`docs/evaluations/2026-11-16-accessibility-skill.md`) has no case
+for review mode, the quick check and its 300-word cap, a target the user sets at AAA, a document or
+native app under EN 301 549 clauses 10 and 11, or a clean page where the agent finds no failure and must still
+refuse to write "conforms". It ran once per model on one client. Add a case for each, such as a review of a diff
+that adds a sticky header and a 20-pixel icon button, and rerun with at least two repetitions. The description
+has no trigger for contrast, alt text, ARIA, or a procurement conformance report (VPAT); add one only if a
+trigger evaluation shows misses.
+
+## Compare `skill-forge` With Anthropic's `skill-creator` Plugin
+
+Check `skill-forge` against Anthropic's official `skill-creator` plugin, including the assets that ship beside the
+skill: its agents and its evaluation pipeline, which could improve this repository's authoring and evaluation setup.
+Source: <https://github.com/anthropics/claude-plugins-official/tree/main/plugins/skill-creator/skills/skill-creator>.
+`skill-forge`'s `ATTRIBUTIONS.md` already credits the plugin's skill at `fa59bc9037741ecfa131aa27938272605710d7b2`
+for ideas only; the agents and the pipeline have not been evaluated. Weigh the pipeline against agent-setup's
+evaluation harness (see "Check the agent-setup Evaluation Harness" above). The plugin is `Apache-2.0`, so adapting
+material brings that license's obligations. Raised 2026-10-11.
+
+## Compare the Custom Agents With Anthropic's `pr-review-toolkit` Plugin
+
+Check the custom agent definitions in agent-setup against Anthropic's `pr-review-toolkit` plugin:
+<https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pr-review-toolkit>. The work belongs to
+agent-setup, which owns those definitions; it is recorded here so it is not lost, and moves there when picked up.
+Raised 2026-10-11.
 
 ## Deferred Engineering Pipeline Designs
 
@@ -502,23 +522,6 @@ What the assessment established:
   are undocumented and can change, so test the script against a real transcript. Transcripts can hold
   secrets; the output stays local.
 - **Keep it separate from `session-handoff`,** which briefs a different recipient; this answers the user now.
-
-## `usability-engineering` Eval Gaps
-
-The `ui-ux-skills/usability-engineering` evaluation (`docs/evaluations/2026-11-16-usability-skill.md`) has no case for
-review mode, the holistic review, or a voice interface, and ran once per model on one client. Add
-a case for each, built on fixtures unlike the existing five, and rerun with at least two repetitions. While
-there, make `evals/grade.py` ignore a report that says it gives no score.
-
-## `accessibility-engineering` Eval Gaps
-
-The `ui-ux-skills/accessibility-engineering` evaluation (`docs/evaluations/2026-11-16-accessibility-skill.md`) has no case
-for review mode, the quick check and its 300-word cap, a target the user sets at AAA, a document or
-native app under EN 301 549 clauses 10 and 11, or a clean page where the agent finds no failure and must still
-refuse to write "conforms". It ran once per model on one client. Add a case for each, such as a review of a diff
-that adds a sticky header and a 20-pixel icon button, and rerun with at least two repetitions. The description
-has no trigger for contrast, alt text, ARIA, or a procurement conformance report (VPAT); add one only if a
-trigger evaluation shows misses.
 
 ## `tui-ui-ux` Sibling Skill
 
