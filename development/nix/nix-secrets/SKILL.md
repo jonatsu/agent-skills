@@ -1,6 +1,6 @@
 ---
 name: nix-secrets
-description: "Manage encrypted secrets in NixOS and home-manager with agenix or sops-nix. Use when choosing between them, generating or converting age or SSH keys, creating or rekeying encrypted secret files, editing .sops.yaml or secrets.nix, or wiring a secret into a service, template, or user password without leaking it into the Nix store."
+description: "Manage encrypted secrets in NixOS and home-manager with agenix or sops-nix. Use when choosing between them, generating or converting age or SSH keys, creating or rekeying encrypted secret files, editing .sops.yaml or secrets.nix, or wiring a secret into a service, template, or user password without leaking it into the Nix store. Not for sops or age outside Nix (sops-secrets, age-encryption)."
 license: MIT
 metadata:
   author: Joonas Onatsu
@@ -67,7 +67,8 @@ nix-shell -p ssh-to-age --run "ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/
 nix-shell -p ssh-to-age --run 'ssh-keyscan <hostname> | ssh-to-age'
 ```
 
-Add every host that must decrypt a secret to its recipients; a host missing from the list cannot decrypt it.
+Add every host that must decrypt a secret to its recipients; a host missing from the list cannot decrypt it. For
+hardware keys, post-quantum keys, or a backup recipient, use the `age-encryption` skill.
 
 ## Step 3: Create Encrypted Secret Files
 
@@ -139,6 +140,10 @@ current recipient in `.sops.yaml`.
 ```bash
 nix-shell -p sops --run "sops updatekeys secrets/example.yaml"
 ```
+
+To remove a recipient, also run `sops rotate -i` on each file and then replace the secret values, because the removed
+key still opens every older copy in Git history. The `sops-secrets` skill has the full order, and covers diffs, merge
+conflicts, and CI.
 
 Example `secrets/example.yaml`:
 
