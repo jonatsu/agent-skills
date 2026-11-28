@@ -634,9 +634,8 @@ and a tool bounds its input, its run time, and the size of what it returns.
 ## Move Review Skills to the Report Shape
 
 AGENTS.md's "Review Report Shape" sets one report for every review skill. These still report in their own shape:
-`agents-context-docs`' audit,
-`repo-audit`, and `yocto-security-audit`. Move each in its own commit, keeping a published domain rating as a field. The
-entry is done when every listed report follows the shape.
+`repo-audit` and `yocto-security-audit`. Move each in its own commit, keeping a published domain rating as a field.
+The entry is done when every listed report follows the shape.
 
 ## Decide Which Skills Support Windows
 
