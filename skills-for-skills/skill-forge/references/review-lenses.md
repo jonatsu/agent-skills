@@ -32,7 +32,7 @@ them only in an authorized full evaluation. Keywords alone say nothing about how
 
 Inventory each subject, tool, language, workflow, and output, then find the shared task or decision boundary
 the package establishes for them. One workflow whose safe execution crosses those boundaries is a deliberate
-relationship. Unrelated guidance is a material defect that makes the skill `not ready`; recommend splitting
+relationship. Unrelated guidance is a Must fix finding; recommend splitting
 or removing it.
 
 ## Behavioral Value
@@ -177,7 +177,7 @@ portable the prose is. It passes every check until someone else installs the ski
 
 Infer repo-local scope only from declared `metadata.scope: repo-local`, never because undeclared local
 bindings make that reading convenient. Inside a repo-local skill, report avoidable environment coupling as a
-lower-severity finding rather than exempting it, since the repository's own layout and runner also move.
+Should fix finding rather than exempting it, since the repository's own layout and runner also move.
 
 A tool-subject skill may depend on its subject without pretending to be tool-agnostic. That exception does not
 cover secondary tools, repository runners, or authoring-machine paths; check each of those normally.

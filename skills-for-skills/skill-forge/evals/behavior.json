@@ -172,7 +172,7 @@
         "Runs applicable mechanical checks and inspects the complete package heuristically.",
         "Does not start subagents, behavioral model runs, baselines, or comparative grading.",
         "Reports hard or material defects instead of granting provisional use when one exists.",
-        "Reports at most ready with risks when no material defect remains and names unmeasured behavior.",
+        "Reports Ready when no Must fix finding remains, naming the unmeasured behavior in the verdict sentence.",
         "Strongly recommends full evaluation later without blocking the user's provisional trial.",
         "Preserves real-use failures and corrections as inputs to that later evaluation."
       ]

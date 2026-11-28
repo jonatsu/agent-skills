@@ -12,7 +12,7 @@ evidence classes, and verdicts.
 4. Choose the tier
 5. Run full evaluation when authorized
 6. Form findings
-7. Deliver the verdict
+7. Deliver the report
 
 ## 1. Establish the Contract
 
@@ -33,8 +33,8 @@ Identify:
 - whether this is review lite or an authorized full evaluation.
 
 Where the package leaves these implicit, infer only what the package and its environment support. Mark consequential
-uncertainty rather than grading against an invented contract. Record unread files and unavailable environments as
-coverage limits.
+uncertainty rather than grading against an invented contract. Name unread files and unavailable environments in
+Scope.
 
 For a revision, identify the behavior that must stay stable and the corrections the user authorized. Inspect available
 prior versions, cases, and execution evidence. The author's claims and cases are inputs to verify, not the whole
@@ -42,7 +42,7 @@ contract. Derive obligations from the intended task, and name the consequential 
 
 ## 2. Check the Hard Gates
 
-Run and report the [hard gates](rubric.md#hard-gates). A failed gate sets the verdict to `invalid`; continue the
+Run and report the [hard gates](rubric.md#hard-gates). A failed gate is a Must fix finding; continue the
 design inspection only as far as it helps the repair.
 
 ## 3. Inspect the Design
@@ -92,15 +92,16 @@ approval.
 ## 6. Form Findings
 
 Report a finding only when evidence supports a behavioral consequence, a hard-gate failure, or a material
-maintenance risk. Give each material finding:
+maintenance risk. Tag each finding `F1`, `F2`, and so on, and give it:
 
-- **severity:** blocker, high, medium, or low, ranked from consequence and likelihood rather than textual
-  prominence;
-- **confidence:** confirmed or suspected;
-- **evidence:** a file and location, validator output, observed run, or authoritative source;
+- **tier:** Must fix, Should fix, or Consider, from the [rubric](rubric.md#verdicts);
+- **evidence:** a file and location, validator output, observed run, or authoritative source, with its evidence
+  class;
 - **consequence:** the effect on discovery, execution, safety, portability, maintenance, or evidence;
-- **repair:** the smallest correction that preserves working behavior; and
-- **validation:** how to prove the repair worked.
+- **fix:** the smallest correction that preserves working behavior; and
+- **validation:** how to prove the fix worked.
+
+List a suspected finding under Unverified instead, with the check that would settle it.
 
 Consolidate findings that share one root cause. Include only what helps the user decide or act: no generic
 praise, repeated summaries, or narration of routine checks. Mention a strength only when a revision must
@@ -109,12 +110,18 @@ preserve it.
 Leave the reviewed package unchanged until the user separately authorizes repair. An authorized repair
 follows [authoring.md](authoring.md), preserves working behavior, and reruns the affected review tier.
 
-## 7. Deliver the Verdict
+## 7. Deliver the Report
 
-Lead with material findings. Then report:
+Report in these parts, in this order:
 
-- **Verdict:** one of the rubric's four, with the unmeasured behavior named when it is `ready with risks`;
-- **Validity:** each validator's result, kept separate;
-- **Evidence:** evaluations performed, their baseline, coverage limits, and each item's evidence class;
-- **Findings:** ordered by severity; and
-- **Preserve:** effective design choices a repair must not regress, when any matter.
+1. **Verdict:** one of the [rubric's](rubric.md#verdicts) three words, then its sentence.
+2. **Scope:** the review tier, the files read and those left unread, each validator's result kept separate, the
+   evaluations performed with their baseline, and each piece of evidence's class.
+3. **Findings:** most consequential first.
+4. **Unverified:** suspected findings and coverage limits, each with the check that would settle it.
+5. **Next checks:** validators not run, the recommended full evaluation with its cost details, and the reviews
+   to run next.
+6. **What holds**, only when a design choice a repair must not regress exists: at most two sentences, with its
+   location.
+
+A clean result is the verdict, the scope, and the next checks.

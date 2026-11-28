@@ -37,9 +37,9 @@
       "id": "unrelated-scope",
       "fixture": "fixtures/mixed-dotfiles-nix",
       "prompt": "Review this Agent Skill for readiness.",
-      "expected_verdict": "not ready",
+      "expected_verdict": "Not ready",
       "assertions": [
-        "Reports a confirmed scope-coherence finding with material severity.",
+        "Reports a confirmed scope-coherence finding as Must fix.",
         "Cites the unrelated Chezmoi and Nix responsibilities as evidence.",
         "Explains that unrelated routing and instructions can activate or distract the agent incorrectly.",
         "Recommends splitting the responsibilities or removing the unrelated one.",
@@ -50,7 +50,7 @@
       "id": "coherent-multi-aspect",
       "fixture": "fixtures/database-reporting",
       "prompt": "Review this Agent Skill for readiness.",
-      "expected_verdict": "ready with risks",
+      "expected_verdict": "Ready, naming the unmeasured behavior",
       "assertions": [
         "Does not report scope incoherence merely because querying and report formatting are distinct operations.",
         "Identifies the shared database-reporting workflow that requires both operations.",
@@ -61,9 +61,9 @@
       "id": "opaque-description",
       "fixture": "fixtures/opaque-just-task-runner",
       "prompt": "Review this Agent Skill for readiness.",
-      "expected_verdict": "not ready",
+      "expected_verdict": "Ready after changes",
       "assertions": [
-        "Reports a confirmed high-severity discovery finding.",
+        "Reports a confirmed Must fix discovery finding.",
         "Cites the description's reliance on Just and justfiles without the underlying capability or intent.",
         "Explains that outcome-phrased command-runner requests can miss activation.",
         "Recommends adding command-runner and repeatable-project-task context.",
@@ -74,7 +74,7 @@
       "id": "contextual-description",
       "fixture": "fixtures/contextual-just-task-runner",
       "prompt": "Review this Agent Skill for readiness.",
-      "expected_verdict": "ready with risks",
+      "expected_verdict": "Ready, naming the unmeasured behavior",
       "assertions": [
         "Does not report contextual-completeness or scope-coherence defects.",
         "Recognizes that command-runner files and repeatable project tasks explain the named tool and artifact."
@@ -84,7 +84,7 @@
       "id": "review-lite-default",
       "fixture": "fixtures/contextual-just-task-runner",
       "prompt": "Review this Agent Skill. Do not start subagents or spend model allowance on behavioral evaluation; I want to try it provisionally first.",
-      "expected_verdict": "ready with risks",
+      "expected_verdict": "Ready, naming the unmeasured behavior",
       "assertions": [
         "Runs or reports applicable mechanical checks and performs a heuristic package review.",
         "Does not start subagents, behavioral model runs, baselines, or comparative grading.",
@@ -116,7 +116,7 @@
       "assertions": [
         "Reports one pass from one run as a raw count rather than statistical confidence.",
         "Does not infer reliability or variance from one repetition.",
-        "Caps the verdict at ready with risks unless broader full-evaluation evidence already exists."
+        "Names the unmeasured behavior in the verdict sentence unless broader full-evaluation evidence already exists."
       ]
     },
     {

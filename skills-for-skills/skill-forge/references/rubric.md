@@ -24,7 +24,8 @@ A valid package can still be ineffective, and a strong static design can still l
 
 ## Hard Gates
 
-A hard gate is pass or fail, never a quality point. Any failed gate makes the skill `invalid`.
+A hard gate is pass or fail, never a quality point. Any failed gate is a Must fix finding, and the verdict
+sentence calls the skill invalid and names the gate.
 
 - The specification validator rejects the package.
 - An applicable repository-policy check rejects the package.
@@ -82,23 +83,33 @@ reference file nobody wrote. Treat a skill that only its author has scored as un
 
 ## Verdicts
 
-| Verdict            | Condition                                                                           |
-| ------------------ | ----------------------------------------------------------------------------------- |
-| `invalid`          | A hard gate failed.                                                                 |
-| `not ready`        | A material design, behavioral, or safety defect remains.                            |
-| `ready with risks` | Review lite found no material defect, or full evaluation left bounded, named risks. |
-| `ready`            | Full evaluation supports the intended job with no material unresolved risk.         |
+Report the verdict as one of three words, then one sentence in the skill's terms.
 
-**Without a full evaluation, the ceiling is `ready with risks`.** Name the behavior that remains unmeasured
-whenever you report it. The ceiling holds for an author's closing review as much as for an independent review,
-since neither observed the skill running.
+| Verdict               | Condition                                                                                 |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| `Ready`               | No Must fix finding is open.                                                              |
+| `Ready after changes` | Fixing the listed findings makes the skill ready, with no rework.                         |
+| `Not ready`           | It needs rework, such as a split or a redesign, or a decision the findings cannot settle. |
 
-Two defects are always material and make the skill `not ready`:
+**The sentence states the evidence behind the verdict.** Without a full evaluation, a `Ready` sentence names the
+behavior that remains unmeasured, such as "Ready: passes review lite; discovery and execution on Codex are
+unmeasured." Only a full evaluation that supports the intended job lets the sentence drop that limit. The rule
+holds for an author's closing review as much as for an independent review, since neither observed the skill
+running.
+
+Give each finding one tier, ranked from consequence and likelihood rather than textual prominence:
+
+- **Must fix:** a failed hard gate, or a material design, behavioral, or safety defect.
+- **Should fix:** a maintenance risk, or a defect with a real but bounded consequence that can wait for a
+  recorded follow-up.
+- **Consider:** an optional improvement. Report at most five, and say how many you left out.
+
+Two defects are always Must fix:
 
 - **Unjustified scope mixing:** the package combines aspects that no shared job requires (the rule is under
-  "One coherent job" in `SKILL.md`).
+  "One coherent job" in `SKILL.md`). Its repair is a split, so the verdict is `Not ready`.
 - **Opaque specialized name:** the description relies on a tool, product, or artifact name without stating the
-  capability or user intent it stands for. This is a high-severity discovery defect.
+  capability or user intent it stands for. This is a discovery defect.
 
 ## Numeric Ratings
 
