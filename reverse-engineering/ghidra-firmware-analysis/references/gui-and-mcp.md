@@ -9,6 +9,10 @@ capabilities; tool names and mutation semantics are not interchangeable across p
 exists, describe the required extension and client configuration and use an available script/GUI route. Configuring or\
 connecting a new service requires the user's applicable authority; existing authorization persists.
 
+If an unrelated program is open, leave it untouched and continue independent work until the intended program is available.\
+When GUI usability is required, verify installation, loading, and persistence in the intended GUI profile and Ghidra version.\
+Headless checks and another profile's results support only those environments.
+
 For the GUI route, open the intended program in CodeBrowser and enable the compatible GhidraMCP extension. GhidraMCP\
 runs as the `ghidra-mcp` command. In GUI mode it connects to the plugin's HTTP server, set with `--ghidra-server`; in\
 headless mode it imports and analyses one binary itself through PyGhidra. Probe a plugin with `GET /health`, which\

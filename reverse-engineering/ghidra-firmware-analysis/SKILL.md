@@ -73,9 +73,16 @@ the next hypothesis, not its truth status.
 Read [FunctionID and type metadata](references/functionid-and-typeinfo.md) before generating or applying donors,\
 function signatures, header-derived archives, or recovered structures. Function identity, prototype, calling\
 convention, and layout are separate claims. Validate architecture/ABI, argument and return storage, widths, alignment,\
-and field offsets before propagation. Inventory existing user annotations and the pre-application names/types/failures\
-so effects and rollback are visible. A program finds each type archive by its file name, so keep archive names stable\
-and in a directory the GUI searches; the metadata reference explains how.
+and field offsets before propagation.
+
+Inventory existing user annotations, names, types, and analysis failures so effects and rollback are visible.\
+For deferred edits, record input hash, language, image base, address, exact before-value, proposed replacement, and\
+supporting evidence. Distinguish an absent value from an unchecked value. Recheck every before-value immediately before\
+mutation, and stop on any mismatch.\
+Keep proposed changes separate from applied metadata until saving and verification after reopening succeed.
+
+A program finds each type archive by its file name, so keep archive names stable and in a directory the GUI searches;\
+the metadata reference explains how.
 
 Work from known callee boundaries into callers. Correct one supported type or signature, redecompile, then inspect both\
 the intended improvement and unrelated branches for propagation errors. Rename from context as understanding grows, and\
