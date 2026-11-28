@@ -1,11 +1,11 @@
 # Host-Side Tool Facts
 
 These facts hold whatever token is plugged in. Current known versions, checked on real tokens or against upstream source
-on 2026-11-23: GnuPG 2.4.8, OpenSSH 10.2, age 1.3.2, age-plugin-fido2-hmac v0.5.0. Before relying on a fact with a newer
-version, re-check it against that tool's `--help` or changelog.
+on 2026-11-23: GnuPG 2.4.8 and OpenSSH 10.2. Before relying on a fact with a newer version, re-check it against that
+tool's `--help` or changelog.
 
-Sections: OpenPGP cards with GnuPG, FIDO2 SSH keys and `ssh` key selection, age identities through FIDO2,
-password-manager CLIs, and GitHub key registration.
+Sections: OpenPGP cards with GnuPG, FIDO2 SSH keys and `ssh` key selection, password-manager CLIs, and GitHub key
+registration.
 
 ## OpenPGP Cards (GnuPG)
 
@@ -59,19 +59,6 @@ password-manager CLIs, and GitHub key registration.
 - A FIDO2 reset deletes every credential, and also ends every non-resident `hmac-secret` identity (such as an age
   identity), because the token derives them from a device secret that the reset replaces. The FIDO2 PIN allows 8 tries
   and has no unblocking code; after 3 wrong tries in a row the token needs a replug.
-
-## Age Identities Through FIDO2
-
-- `age-plugin-fido2-hmac -g` enrolls without using a FIDO2 slot; the identity file holds the credential ID, so losing
-  every copy loses the data. Answer yes to "require a PIN" (the PIN becomes part of the derived secret) and yes to
-  "separate identity" (a native recipient, unlinkable files). Set `FIDO2_HMAC_PQ=0` for a classical recipient.
-- Take the recipient from the identity file's `# public key:` line. `age-plugin-fido2-hmac -y` prints a long
-  `age1fido2-hmac1…` plugin recipient instead and needs the token to do it.
-- Decrypting copies the identity into memory, weaker than a key that never leaves a card (a PIV identity).
-- `age` refuses to mix post-quantum and classical recipients in one file.
-- With the token absent, `age` given only the plugin identity waits for it without end; given a native identity as
-  well, in either order, it decrypts with the native one at once. Test with `timeout` and `< /dev/null`.
-- Stream a fallback key from the password manager without writing it: `age -d -i <(op read 'op://…') FILE`.
 
 ## Password-Manager CLIs
 

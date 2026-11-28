@@ -1,6 +1,6 @@
 ---
 name: hardware-security-keys
-description: Explain and set up hardware security keys such as a YubiKey, Nitrokey, or OnlyKey, covering what their FIDO2, U2F, OpenPGP, PIV, OTP, and hmac-secret functions are for and how to provision, reset, back up, and verify the keys they hold. Use when someone asks what a hardware key can do or which function to use for something, wants a token set up for web sign-in, SSH, Git signing, encryption, disk unlock, or sudo, or is resetting, re-provisioning, backing up, or registering a token's keys. Not for software-only keys, or for encrypted secrets files such as sops (nix-secrets).
+description: Explain and set up hardware security keys such as a YubiKey, Nitrokey, or OnlyKey, covering what their FIDO2, U2F, OpenPGP, PIV, OTP, and hmac-secret functions are for and how to provision, reset, back up, and verify the keys they hold. Use when someone asks what a hardware key can do or which function to use for something, wants a token set up for web sign-in, SSH, Git signing, encryption, disk unlock, or sudo, or is resetting, re-provisioning, backing up, or registering a token's keys. Not for software-only keys, encrypted secrets files such as sops (sops-secrets), or using a token as an age identity (age-encryption).
 license: MIT
 compatibility: Linux. Needs the user present with the token; uses gpg, ssh-keygen, script, and the token's vendor CLI.
 metadata:
@@ -34,7 +34,8 @@ backup, and Linux specifics.
 
 For a token with no file, read its vendor's documentation and tool help before offering any step, and tell the person
 which facts are unverified until the inventory confirms them. Host-side facts that hold for every token (GnuPG, `ssh`
-key selection, age, password-manager CLIs, GitHub registration) are in [references/tools.md](references/tools.md).
+key selection, password-manager CLIs, GitHub registration) are in [references/tools.md](references/tools.md). Using a
+token as an age identity, from enrolment to backups, is in the `age-encryption` skill.
 
 ## Explain and Advise
 

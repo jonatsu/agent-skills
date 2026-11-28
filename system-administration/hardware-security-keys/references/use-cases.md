@@ -28,8 +28,9 @@ nothing it can use. U2F is the older protocol: second factor only, touch and no 
 The token mixes a salt from the computer with a secret that never leaves the token and returns the result, which the
 computer uses as a key. Browsers expose it as the WebAuthn `prf` extension.
 
-- Uses: full-disk unlock (`systemd-cryptenroll --fido2-device`), an age identity (`age-plugin-fido2-hmac`, in
-  [tools.md](tools.md)), and unlocking a password manager with a passkey where the manager and browser support `prf`.
+- Uses: full-disk unlock (`systemd-cryptenroll --fido2-device`), an age identity (`age-plugin-fido2-hmac`; the
+  `age-encryption` skill covers it), and unlocking a password manager with a passkey where the manager and browser
+  support `prf`.
 - Trap: a FIDO reset replaces the token's secret, so everything derived from it is gone. Keep another way in for each.
 
 ## OpenPGP Card
@@ -53,7 +54,8 @@ signature), 9d encryption, 9e card authentication (no PIN), and 82 to 95 retired
 - **When it helps on Linux:** a service that wants a client certificate or a PKCS#11 token, such as a VPN (OpenVPN
   `--pkcs11-id`, strongSwan's `pkcs11` plugin), browser client certificates, code signing (`osslsigncode`), smart-card
   login through SSSD or `pam_p11`, or an organisation that runs a certificate authority. An age identity that never
-  leaves the token (`age-plugin-yubikey`) is the one personal use with no certificate authority behind it.
+  leaves the token (`age-plugin-yubikey`, YubiKey 4 and 5 only; the `age-encryption` skill covers it) is the one
+  personal use with no certificate authority behind it.
 - **When it does not:** for personal SSH, Git signing, and web sign-in, FIDO2 does the same with less setup.
 - **SSH through PIV:** `ssh -I /path/to/module.so` or `PKCS11Provider`; `ssh-keygen -D MODULE -e` prints the public key.
   The slot needs a certificate even for SSH, because the PKCS#11 library reads the public key from it. `ssh-agent`
