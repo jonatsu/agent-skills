@@ -638,7 +638,8 @@ and Oh-My-Pi variants. Move each method into a skill, and leave in the definitio
 and harness, as `change-review` did for `code-reviewer`. These candidates come from a survey of agent-setup at
 `0580e169`:
 
-- `deep-research`: its method, notes file, and report have no skill.
+- `deep-research`: the `deep-research` skill now holds its method, notes file, and report, and the definition still
+  carries its own copy.
 
 Structuring an application in a layered or hexagonal style also has no home: dependency direction, interfaces to
 external systems defined in the inner layer, and framework types kept out of the domain. `technical-design`
