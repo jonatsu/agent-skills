@@ -19,8 +19,8 @@ This supplements code, security, test, and operational review; it replaces none 
 
 Compare against the accepted spec when one exists, together with its compatible technical design and the
 implementation plan or completion record. Without a spec, compare against the accepted technical design and
-implementation plan, and report the missing spec as a coverage limit: a design and plan say how the system
-realizes intent, not what the product must do, so user-visible behavior and acceptance that only a spec
+implementation plan, and report the missing spec as a coverage limit under Unverified: a design and plan say
+how the system realizes intent, not what the product must do, so user-visible behavior and acceptance that only a spec
 would fix stay unverified. When no accepted spec, design, or plan governs the work, conformance has no basis;
 say so and return the request as general code review.
 
@@ -77,7 +77,7 @@ Check for:
 
 Prove behavioral conformance with behavioral evidence. File presence, substring searches, formatting, typing, builds,
 clean version-control state, and narrow unit tests support structural claims only. Report unavailable evidence
-as a coverage limit rather than assuming either conformance or failure.
+under Unverified rather than assuming either conformance or failure.
 
 Accept implementation-level variation that preserves the accepted behavior, system guarantees, safety boundaries,
 compatibility, and operational obligations. Naming, file placement, decomposition, and low-level technique that differ
@@ -101,10 +101,11 @@ The governing documents stay as accepted: report accidental implementation behav
 to keep it to the document's owner as a proposed change. When evidence supports more than one class, state the
 uncertainty and name the authority or observation that would distinguish them.
 
-## Report Findings in the Active Review
+## Report Findings
 
-Lead with material findings ordered by severity. For each finding include:
+Tag each material finding `F1`, `F2`, and so on, ordered by tier. For each finding include:
 
+- its tier;
 - the governing requirement, design guarantee, or plan obligation, stated in words, with its identifier in
   parentheses where one exists;
 - the implementation and evidence inspected;
@@ -113,15 +114,60 @@ Lead with material findings ordered by severity. For each finding include:
 - the smallest responsible owner or phase for correction; and
 - the evidence that would close the finding.
 
-Use the enclosing review's severity vocabulary and output format when one is established. Put a finding at a changed
-line only when that line materially causes or exposes it; broader drift belongs in the review summary. Dispatched as a
-final integration gate's separate conformance review, use the vocabulary the brief names and return the report to the
-dispatcher, which records it with the gate's other findings. With no enclosing review, return a standalone report and
-apply `writing-for-humans` and its reader-ready check to it.
+Give each finding a tier by its consequence. **Must fix** applies when the mismatch breaks accepted behavior, a design
+guarantee, a safety boundary, or compatibility. **Should fix** applies when it adds unplanned scope, leaves a governing
+document stale, or rests on evidence too narrow to prove its claim. **Consider** covers drift with no behavioral
+consequence; report at most five, and say how many you left out.
 
-Record conformance as coverage in the summary, not as per-item comments: which requirement areas were examined, what
-evidence supports them, and what remained unverified. Deliver everything in the review or the returned report; post to
-GitHub, change external review state, or create files only when the user requested that effect.
+Inside an enclosing review, use its severity vocabulary and output format. Put a finding at a changed line only when
+that line materially causes or exposes it; broader drift belongs in the review summary. Dispatched as a final
+integration gate's separate conformance review, use the vocabulary the brief names and return the report to the
+dispatcher, which records it with the gate's other findings. With no enclosing review, return this report, then
+apply `writing-for-humans` and its reader-ready check:
+
+```markdown
+## Conformance Review: <implementation> against <documents>
+
+**Verdict:** <Ready | Ready after changes | Not ready>: <one sentence, such as "conforms to the export spec r3
+except its restart guarantee (F1)">
+
+### Scope
+
+The compared revision of each governing document and of the implementation, the requirement areas examined, and
+the evidence behind each: tests, fixtures, runtime observation, or reading.
+
+### Findings
+
+#### F1: <commitment>: <the mismatch in a few words>
+
+- **Tier**: Must fix
+- **Commitment**: the requirement, guarantee, or obligation, in words
+- **Inspected**: the implementation and evidence examined
+- **Mismatch**: what differs, classified as an implementation defect
+- **Consequence**: who or what it affects
+- **Owner**: the phase or skill that corrects it
+- **Closes it**: the evidence that would close the finding
+
+### Unverified
+
+Each commitment without evidence, and each coverage limit such as a missing spec, with the check that would settle it.
+
+### Next checks
+
+The tests or observations still to run, and the reviews to run next.
+
+### What holds
+
+At most two sentences on a conforming part a revision must keep, with its location.
+```
+
+The verdict is `Ready` when no Must fix finding is open, `Ready after changes` when every Must fix finding is an
+implementation defect or an evidence gap with a known repair, and `Not ready` when a finding needs a document owner's
+decision.
+
+Record conformance as coverage in Scope, or in the enclosing review's summary, not as per-item comments. Deliver
+everything in the review or the returned report; post to GitHub, change external review state, or create files only
+when the user requested that effect.
 
 ## Preserve Review Authority
 
@@ -131,7 +177,7 @@ the findings show is needed, to `writing-specs`, technical gaps to `technical-de
 `implementation-planning` or `test-engineer`, and security defects to `security-review`.
 
 A conformance review is complete when it states the compared revision of each governing document and of the
-implementation, gives every commitment in the map a disposition (conforms with cited evidence, a classified finding,
-or unverified), and lists the coverage limits, including a missing spec. “No material mismatch found” is
-supportable only for the examined scope and evidence; it is not proof that the implementation is correct in every
-respect.
+implementation, gives every commitment in the map a disposition (conforms with cited evidence, a classified finding, or
+unverified), and lists every unverified commitment and coverage limit, including a missing spec, under Unverified. “No
+material mismatch found” is supportable only for the examined scope and evidence; it is not proof that the
+implementation is correct in every respect.

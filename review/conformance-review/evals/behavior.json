@@ -123,10 +123,10 @@
     {
       "id": "design-and-plan-without-spec",
       "prompt": "Review this change against its accepted technical design and implementation plan. The design adds a nightly job that archives projects inactive for 90 days; the plan lists the job, its migration, and its tests. No product specification exists. The implementation follows the design, but archived projects vanish from the dashboard without notifying their owners.",
-      "behavior": "Without a spec, compare against the design and plan, and report the missing spec as a coverage limit.",
+      "behavior": "Without a spec, compare against the design and plan, and report the missing spec as a coverage limit under Unverified.",
       "outcomes": [
         "Compares the implementation with the design and the plan item by item.",
-        "Reports the missing spec as a coverage limit.",
+        "Reports the missing spec as a coverage limit under Unverified.",
         "Treats the missing owner notice as user-visible behavior that stays unverified, neither a conformance pass nor a failure.",
         "Does not state that the change fully conforms."
       ]
