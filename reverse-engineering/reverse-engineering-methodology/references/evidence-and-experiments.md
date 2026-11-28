@@ -19,6 +19,11 @@ observation at that boundary: one memory access, argument preparation, branch ou
 Check prerequisite state before interpreting a failed execution as a property of the binary. Keep each experiment's\
 starting state, intervention, prediction, observation, and effect on the hypotheses.
 
+When classifying storage, resolve the selected object's dispatch table and concrete opener before assigning a backend.\
+Shared seek/read/write helpers and suggestive names do not distinguish regular files, raw flash, and bus devices.\
+Record the opened path or device and the selection evidence.\
+Keep physical chip and partition mappings unresolved until separate evidence establishes them.
+
 Change one load mapping, signature, hook, or environment variable at a time when isolating a disagreement. If several\
 changes are required to run, record their combined assumptions and avoid claiming causal isolation. Return to\
 instructions when decompiler output omits stores, merges unrelated values, or contradicts callers. Return to the\
