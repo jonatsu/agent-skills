@@ -325,13 +325,6 @@ for ideas only; the agents and the pipeline have not been evaluated. Weigh the p
 evaluation harness (see "Check the agent-setup Evaluation Harness" above). The plugin is `Apache-2.0`, so adapting
 material brings that license's obligations. Raised 2026-10-11.
 
-## Compare the Custom Agents With Anthropic's `pr-review-toolkit` Plugin
-
-Check the custom agent definitions in agent-setup against Anthropic's `pr-review-toolkit` plugin:
-<https://github.com/anthropics/claude-plugins-official/tree/main/plugins/pr-review-toolkit>. The work belongs to
-agent-setup, which owns those definitions; it is recorded here so it is not lost, and moves there when picked up.
-Raised 2026-10-11.
-
 ## Deferred Engineering Pipeline Designs
 
 The planning and design skills refactor deferred two companions until the pipeline's artifacts stabilized:
