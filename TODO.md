@@ -249,10 +249,9 @@ Raised 2026-10-11.
 
 ## Prompt Debugging Behavioral Evaluation
 
-`prompt-debugging` (renamed from `prompt-optimizer` on 2026-09-28) is statically `ready with risks`; its workflow
-and fixtures derive from observed failures, but it has not been exercised as a skill (deferred to protect the
-weekly Codex allowance). When allowance and a
-decision justify it:
+`prompt-debugging` (renamed from `prompt-optimizer` on 2026-09-28) is `Ready` on static review, with its model
+behavior unmeasured; its workflow and fixtures derive from observed failures, but it has not been exercised as a
+skill (deferred to protect the weekly Codex allowance). When allowance and a decision justify it:
 
 - Run the seven package cases in Claude Code and Codex with the skill supplied explicitly; require correct
   layer classification before judging the proposed repair.
@@ -287,7 +286,7 @@ model evaluation is deferred to protect the weekly allowance. When allowance and
 This skill shipped with static review only, and its plan closed with the model runs still deferred:
 
 - `skill-forge`, including its review mode, which absorbed `skill-review` on 2026-09-28. The 2026-09-04 refresh
-  left it `ready with risks` with no baseline or candidate run.
+  left it `Ready` on static review, with its model behavior unmeasured: no baseline or candidate run.
 
 ## Deferred Engineering Pipeline Designs
 
