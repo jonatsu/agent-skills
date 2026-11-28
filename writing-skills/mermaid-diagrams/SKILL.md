@@ -229,8 +229,25 @@ diagram renders. It proves the syntax, not the layout, so look at an export of a
 - [mermaidx](https://github.com/MohammadRaziei/mermaidx) - Offline, with no browser or Node.js:
   `mermaidx -i input.mmd -o output.svg`
 - [Mermaid Live Editor](https://mermaid.live) - Online editor with PNG/SVG export
-- Mermaid CLI - `npm install -g @mermaid-js/mermaid-cli` then `mmdc -i input.mmd -o output.png`
-- Docker - `docker run --rm -v $(pwd):/data minlag/mermaid-cli -i /data/input.mmd -o /data/output.png`
+- Mermaid CLI (`mmdc`): see [Render to a File With mermaid-cli](#render-to-a-file-with-mermaid-cli)
+
+### Render to a File With mermaid-cli
+
+`mmdc`, Mermaid's own CLI, renders through a headless browser, so its output matches what a browser shows. Check
+`command -v mmdc` first. When it is missing, report that, rather than running it through `npx` or Docker, which
+download the package and a browser at run time.
+
+```bash
+mmdc -i flow.mmd -o flow.svg                         # the output extension picks svg, png, or pdf
+mmdc -i flow.mmd -o flow.png -t dark -b transparent  # theme and background; -b has no effect on PDF
+mmdc -i flow.mmd -o flow.png -s 2                    # scale factor, for a sharper PNG
+mmdc -i design.md -o design.out.md                   # one SVG per mermaid block, and a copy that links them
+```
+
+`-` as the input or output reads stdin or writes stdout, and `-e` picks the format where no output extension can: on
+stdout, or for the images of a Markdown input. `-c` takes a Mermaid JSON configuration. A browser launch error comes
+from the host's browser or sandbox setup: report it with the error text, and leave the browser's launch options and the
+`-p` Puppeteer configuration to whoever set up the host.
 
 ## Common Pitfalls
 

@@ -17,6 +17,14 @@ The package vendors upstream material, whose MIT license requires its notice to 
 The skill body and every file under `references/` are vendored from upstream and adapted to this repository's skill
 conventions.
 
+### mermaid-js: mermaid-cli
+
+- Source: <https://github.com/mermaid-js/mermaid-cli>, `README.md` and `src/index.js`
+- License: `MIT`
+- Version: `12.2.0`, `9f50aac44c71707cf94bd3ca7f4e6eaf4f9f623c`
+
+The README and the command-line source supplied the `mmdc` flags and its Markdown mode.
+
 ### Miqdad Badjuber: antislop `antislop-human` skill
 
 - Source: <https://github.com/miqdadbadjuber/anti-slop>, `skills/antislop-human/`
