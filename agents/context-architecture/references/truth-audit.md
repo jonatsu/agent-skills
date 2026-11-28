@@ -18,8 +18,8 @@ The audit is read-only. Nothing changes until the user selects items from the me
 - 2. Map the claims
 - 3. Verify before reporting
 - 4. Classify the problems
-- 5. Rank
-- 6. Report the action menu
+- 5. Tier and rank
+- 6. Report and ask
 - 7. Execute the selected items
 
 ## 1. Learn the Repository's Conventions
@@ -59,7 +59,8 @@ Check each checkable claim against the source that owns it:
 - present-tense operational claims against live behavior, when a safe probe exists.
 
 Search for every reference to a document before proposing to move, merge, rename, or archive it. A claim you
-cannot verify with the evidence available becomes an investigation item, labeled as such, never a finding.
+cannot verify with the evidence available goes under Unverified, with the evidence that would settle it, never
+under Findings.
 
 ## 4. Classify the Problems
 
@@ -91,22 +92,46 @@ usually need one owner and two pointers, not three edits.
   here.
 - **Missing check:** a runbook step without an observable success condition, or a procedure with no rollback.
 
-## 5. Rank
+## 5. Tier and Rank
 
-Order findings by impact on the reader, confidence of the evidence, and cost of the fix, putting verified,
-high-impact, cheap fixes first. Weight by how often the text is loaded: a sentence in an always-loaded
+Give each finding one tier by what the document does to its reader:
+
+- **Must fix:** a reader who follows the text now acts wrongly, such as running a stale command, trusting a
+  finished plan, or crossing a permission or safety boundary.
+- **Should fix:** the text is true now but goes wrong at the next change of its source, as with a duplicated
+  or unowned fact, a mirror, a wrong home, or no update path. A defect that costs every session in an
+  always-loaded file is also Should fix.
+- **Consider:** an optional tidy-up, such as knowledge to promote or retire, or a generic explanation. Report
+  at most five, and say how many you left out.
+
+Within each tier, order findings by impact on the reader, confidence of the evidence, and cost of the fix,
+putting verified, high-impact, cheap fixes first. Weight by how often the text is loaded: a sentence in an always-loaded
 instruction file costs every session, while a page read on demand costs only its readers, so the same cut is
 worth more on the floor.
 
-## 6. Report the Action Menu
+## 6. Report and Ask
 
-Open with one or two sentences on the surface covered and what was found. Then list each actionable item under
-a letter, in rank order. Letters continue `A` to `Z`, then `AA`, and never change meaning within the
-conversation, so the user can answer with them. Write each item as:
+Report in these parts:
+
+1. **Verdict:** `Ready` when no Must fix finding is open, `Ready after changes` when the listed changes fix it,
+   and `Not ready` when a finding needs the owner to decide which source is right. Then one sentence on the
+   documents' truth, such as "the setup guide no longer matches the build: two commands fail (F1, F2)".
+2. **Scope:** the surface covered, the conventions it was judged against, and how each kind of claim was
+   checked: the tree, a command, a safe probe, or reading.
+3. **Findings**, tagged `F1`, `F2`, and so on, in tier and rank order. Tags never change meaning within the
+   conversation, so the user can answer with them.
+4. **Unverified:** each claim the evidence could not settle, with the evidence that would.
+5. **Next checks:** probes not run, and the reviews to run next.
+6. **What holds**, only when a document's design should survive the fixes: at most two sentences, with its
+   location.
+
+Write each finding as:
 
 ```markdown
-B. Mark the finished auth migration plan as done
+#### F2: Mark the finished auth migration plan as done
 
+- Tier: Must fix
+- Class: misleading status
 - Evidence: `docs/plans/auth-migration.md` reads as active; the deploy config and `docs/auth.md` show the
   migration completed.
 - Why it matters: agents treat its open steps as pending work.
@@ -114,14 +139,14 @@ B. Mark the finished auth migration plan as done
 - Done when: the plan sits in the archive, and the backlog holds both questions.
 ```
 
-Label investigation items as such in the title, and state what evidence would settle each. Record the audit in
-the repository's evaluations genre when it has one.
+Record the audit in the repository's evaluations genre when it has one.
 
-Then ask which letters to execute. Accept any compact answer, such as `A C`, `all except D`, or `investigate B first`.
+Then ask which findings to execute. Accept any compact answer, such as `F1 F3`, `all except F4`, or
+`investigate the flag default first`.
 
 ## 7. Execute the Selected Items
 
-Restate the selected letters in one sentence. Re-read each affected document before editing, because the tree
+Restate the selected findings in one sentence. Re-read each affected document before editing, because the tree
 may have changed since the audit. Change only what the selected items name, and leave unrelated work in the
 tree as it is. When re-reading shows an item no longer holds, stop that item and report why.
 

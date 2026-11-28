@@ -41,13 +41,13 @@ existing repository's established conventions outrank this skill's defaults.
   instruction-file internals to the `agents-context-docs` skill's audit branch. Coverage is a separate
   question from navigation, and the walk test cannot ask it: compare the decisions the repository visibly
   made (framework and dependency choices, data models, authentication strategies, anything expensive to
-  reverse) against the records in its decisions genre, and report an unrecorded one as a gap. Deliver
-  findings by severity with evidence; record measurements as a dated file in the repository's evaluations
-  genre.
+  reverse) against the records in its decisions genre, and report an unrecorded one as a gap. Report in the
+  shape that [references/truth-audit.md](references/truth-audit.md) step 6 sets, tiering each finding by its
+  cost to navigation or coverage; record measurements as a dated file in the repository's evaluations genre.
 - **Truth audit:** check whether documents still tell the truth, from one README to the whole tree: stale
   claims, duplicated or unowned facts, copies of volatile facts, misleading status, and knowledge in the wrong
-  home. Read [references/truth-audit.md](references/truth-audit.md) and follow its steps; it ends in an action
-  menu the user selects from.
+  home. Read [references/truth-audit.md](references/truth-audit.md) and follow its steps; it ends in a report
+  whose findings the user selects from.
 
 Read [references/writing-rules.md](references/writing-rules.md) before writing or reviewing any agent-facing
 document in any branch.
