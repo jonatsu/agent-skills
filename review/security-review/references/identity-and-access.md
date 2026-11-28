@@ -95,4 +95,4 @@ cookie protections above.
 An access-control finding is worth a maintainer's time only when you can name the caller, the object, and the
 missing comparison. Trace the request to the line where the check should be. Confirm that no middleware,
 decorator, policy layer, or scoped query already applies it. If you cannot rule that out, the item belongs
-under Needs Verification with the exact question.
+under Unverified with the exact question.

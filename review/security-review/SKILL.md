@@ -125,31 +125,31 @@ alphanumerics, and scan it in a scratch directory outside the tree. A bare AWS k
 because betterleaks reports one only beside a secret access key. Betterleaks also filters values that end in
 `EXAMPLE`. A rule's pattern does not show what the scanner reports, so confirm against the binary.
 
-Where you cannot run a configured check, say which one and why under Coverage Limits. Mark the review
-incomplete when this step was skipped.
+Where you cannot run a configured check, say which one and why under Next checks, and say in the verdict
+sentence that the review is incomplete.
 
 ### 7. Gate on confidence, then on severity
 
 | Confidence | Test                                                                  | What to do                         |
 | ---------- | --------------------------------------------------------------------- | ---------------------------------- |
 | High       | Vulnerable construct plus a traced attacker-controlled input          | Report as a finding                |
-| Medium     | Vulnerable construct, but the input source or a mitigation is unclear | List under Needs Verification      |
+| Medium     | Vulnerable construct, but the input source or a mitigation is unclear | List under Unverified              |
 | Low        | Theoretical, stylistic, or defense in depth with no reachable path    | Leave out, or note once in passing |
 
 Severity describes impact once exploitability is established.
 
-| Severity | Meaning                                                 | Required action     |
-| -------- | ------------------------------------------------------- | ------------------- |
-| Critical | Direct exploit, severe impact, no authentication needed | Block the merge     |
-| High     | Exploitable under realistic conditions, major impact    | Block the merge     |
-| Medium   | Needs specific conditions, or bounded impact            | Fix before release  |
-| Low      | Defense in depth, minimal direct impact                 | Track, do not block |
-| Info     | Observation with no impact claim                        | Record only         |
+| Severity | Meaning                                                 | Tier       |
+| -------- | ------------------------------------------------------- | ---------- |
+| Critical | Direct exploit, severe impact, no authentication needed | Must fix   |
+| High     | Exploitable under realistic conditions, major impact    | Must fix   |
+| Medium   | Needs specific conditions, or bounded impact            | Should fix |
+| Low      | Defense in depth, minimal direct impact                 | Consider   |
+| Info     | Observation with no impact claim                        | Consider   |
 
 ### 8. Report
 
 Follow the output contract below. Done when every trust boundary from step 2 has been through steps 3 to 5. A
-boundary that skipped them is named under Coverage Limits, with the reason.
+boundary that skipped them is named in Scope, with the reason.
 
 ## Common False Positives
 
@@ -185,10 +185,10 @@ demonstrated as unverified. Do not run an exploit against infrastructure you wer
 Never copy a discovered secret's value into the report, a commit, or a message. Give its location and its
 type. Treat any secret that reached version control as already compromised and needing rotation.
 
-Record the controls that are working. A report that lists only gaps reads as reflexive and gets discounted.
+List the controls verified working in Scope. A report that lists only gaps reads as reflexive and gets discounted.
 
-State your coverage limits: what you did not read, which tool you could not run, and which question you could
-not settle.
+State what the review could not cover: what you did not read goes in Scope, a check you could not run in Next
+checks, and a question you could not settle in Unverified.
 
 Write the report for a developer who is not a security specialist. Name each vulnerability class in words at
 first use, such as server-side request forgery (SSRF). Before delivering, apply `writing-for-humans` and its
@@ -199,40 +199,43 @@ reader-ready check.
 ```markdown
 ## Security Review: <scope>
 
-### Summary
+**Verdict:** <Ready | Ready after changes | Not ready>: <one sentence, such as "safe to merge once F1 is fixed">
 
-One paragraph: overall posture, the worst finding, and whether the scope is safe to merge.
-Counts by severity. Coverage limits.
+### Scope
+
+What was reviewed, against which deployment context and trust boundaries, and how: reading, the checks run in
+step 6, or a test. Name any boundary that skipped steps 3 to 5, with the reason. List the controls verified working
+on the surfaces reviewed.
 
 ### Findings
 
-#### <Vulnerability class> in <component> — <Severity> (SEC-001)
+#### F1: <Vulnerability class> in <component>
 
+- **Tier**: Must fix
+- **Severity**: High
 - **Location**: `path/to/file.ext:120`
-- **Confidence**: High
 - **Issue**: what is wrong
 - **Attack path**: entry point, the traced route to this line, and what the attacker gets
 - **Evidence**: the smallest quoted snippet that shows the defect
-- **Remediation**: the concrete change, and why it closes the path
+- **Fix**: the concrete change, and why it closes the path
 
-### Needs Verification
+### Unverified
 
-#### <Potential issue> (VER-001)
+- `path/to/file.ext:88`: the suspected issue, and exactly what a maintainer must confirm.
 
-- **Location**: `path/to/file.ext:88`
-- **Open question**: exactly what a maintainer must confirm
+### Next checks
 
-### Working Controls
+Each configured check not run in step 6 and why, then the reviews to run next.
 
-What the code already gets right, relevant to the surfaces reviewed.
+### What holds
 
-### Coverage Limits
-
-What was out of scope, unread, or unresolvable.
+At most two sentences on a control the fix must keep, with its location.
 ```
 
-When nothing qualifies, say "No high-confidence findings" and still deliver the working controls and coverage
-limits. Silence is not the same as a clean result.
+Order findings by tier, then by severity. The verdict is `Ready` only when no Must fix finding is open,
+`Ready after changes` when fixing the listed findings needs no rework, and `Not ready` when a fix needs redesign or a
+decision. Report at most five Consider findings, and say how many you left out. When nothing qualifies, report the
+verdict, the scope with its working controls, and the next checks: silence is not a clean result.
 
 ## Fixing, After Approval
 
