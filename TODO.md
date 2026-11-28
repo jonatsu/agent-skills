@@ -631,12 +631,6 @@ specification and an official SDK. Cover at least these: a stdio server writes o
 logs to stderr, a failing backend comes back as a tool result marked as an error while the server keeps running,
 and a tool bounds its input, its run time, and the size of what it returns.
 
-## Move Review Skills to the Report Shape
-
-AGENTS.md's "Review Report Shape" sets one report for every review skill. These still report in their own shape:
-`yocto-security-audit`. Move it in its own commit, keeping a published domain rating as a field.
-The entry is done when every listed report follows the shape.
-
 ## Decide Which Skills Support Windows
 
 Decide which skills should also work on Windows. Most skills here target Linux only, and the user needs Windows support
