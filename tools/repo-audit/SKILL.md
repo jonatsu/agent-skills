@@ -54,7 +54,8 @@ Run each scan in the focus and change nothing:
     awk '$1 == "blob"' | sort -k2 -rn | head
   ```
 
-Report each finding with its path and remediation, and never with a secret's value. When the audit should also
+Report each finding in [the shape step 5 sets](#5-report), with its path and remediation, and never with a
+secret's value. When the audit should also
 check whether the README or other documents are still true, run `context-architecture`'s truth audit beside it.
 
 The hygiene audit is done when every scan in the focus has run, or is reported as not run with its reason. Each
@@ -136,21 +137,44 @@ convention the repository already documents in its style guide or agent instruct
 
 ## 5. Report
 
-Present findings in this order, because each group costs less to act on than the next:
+Report in these parts:
 
-1. **Misconfiguration and staleness:** stale suppressions with their proof, available version updates, invalid
-   or conflicting entries, and layer gaps.
-2. **Free guardrails:** every zero-violation candidate, listed together.
-3. **Rules worth enabling:** one entry per candidate, in rank order.
-4. **Tightenings:** stricter modes of enabled rules, lower thresholds, and broad ignores that could narrow to
-   the files that need them.
-5. **Work already open:** existing branches or pull requests that change the same configuration, so the user
-   can batch.
+1. **Verdict:** `Ready` when no Must fix finding is open, `Ready after changes` when the listed changes fix it,
+   and `Not ready` when a finding needs a decision the audit cannot make, such as rotating a leaked
+   credential. Then one sentence on what the checks miss, such as "the linter never runs in CI (F1), and two
+   suppressions are stale (F2, F3)".
+2. **Scope:** the audit kinds and the focus, what was left out, each checker and layer examined, and open
+   branches or pull requests that change the same configuration, so the user can batch.
+3. **Findings**, tagged `F1`, `F2`, and so on, by tier. Within each tier, keep this order, because each group
+   costs less to act on than the next:
+   - **Misconfiguration and staleness:** stale suppressions with their proof, available version updates,
+     invalid or conflicting entries, and layer gaps.
+   - **Free guardrails:** every zero-violation candidate, listed together as one finding.
+   - **Rules worth enabling:** one finding per candidate, in rank order.
+   - **Tightenings:** stricter modes of enabled rules, lower thresholds, and broad ignores that could narrow
+     to the files that need them.
+4. **Unverified:** suppressions or rules whose count the command could not prove, each with the check that
+   would.
+5. **Next checks:** scans not run, with the reason for each, the heavier history scan if the user wants it,
+   and the reviews to run next.
+6. **What holds**, only when a configuration decision should survive the changes: at most two sentences, with
+   its location.
+
+Give each finding one tier:
+
+- **Must fix:** a check does not run where the repository believes it does, or a tracked file is harming the
+  repository: a committed secret, or a patch file Git may corrupt.
+- **Should fix:** a stale suppression, a misconfiguration, a version update, a tracked-but-ignored or large
+  file, the free guardrails, and a rule worth enabling that catches real defects.
+- **Consider:** a rule that enforces a style preference, and a tightening. Report at most five, and say how
+  many you left out.
 
 Write each rule worth enabling as:
 
 ````markdown
-### <tool> <rule>: <what it catches> (<count> violations)
+#### F<n>: <tool> <rule>: <what it catches> (<count> violations)
+
+Tier: <Should fix or Consider>.
 
 <Why it matters for this repository.>
 
