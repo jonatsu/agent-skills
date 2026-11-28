@@ -5,6 +5,7 @@ For deciding whether an operation is safe, use the ladder in
 worktree, use the `using-git-worktrees` skill.
 
 - [First move, always](#first-move-always)
+- [Missing Git LFS payload](#missing-git-lfs-payload)
 - [Commits missing after a reset, rebase or amend](#commits-missing-after-a-reset-rebase-or-amend)
 - [A branch was deleted](#a-branch-was-deleted)
 - [The commit recorded the wrong content](#the-commit-recorded-the-wrong-content)
@@ -35,6 +36,13 @@ on. Past that, `git fsck --lost-found` is the remaining hope, and only until the
 
 Record the current hash before attempting any repair: `git rev-parse HEAD`. A repair that goes wrong is
 recoverable only if you can name where you started.
+
+## Missing Git LFS Payload
+
+For a missing file tracked through Git LFS, inspect its historical pointer and local LFS objects before planning another
+download.
+Verify recovered bytes against the pointer's object identifier and size.
+A pointer in Git history does not establish that its payload remains available.
 
 ## Commits Missing After a Reset, Rebase, or Amend
 
